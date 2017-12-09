@@ -1,0 +1,25 @@
+// install the following packages:
+// npm install --save-dev eslint prettier eslint-config-airbnb@^16.1.0 eslint-config-prettier eslint-plugin-prettier eslint-plugin-react eslint-plugin-import eslint-plugin-jsx-a11y@^6.0.2
+
+{
+	"extends": ["airbnb", "prettier", "prettier/react"],
+	"plugins": ["prettier"],
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"ecmaVersion": 2017,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"env": {
+		"es6": true,
+		"browser": true,
+		"node": true
+	},
+	"rules": {
+		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+		"jsx-a11y/anchor-is-valid": ["error", { "specialLink": ["to"] }],
+		"linebreak-style": ["error", "windows"]
+	}
+}
