@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import LoginForm from '../forms/LoginForm';
+import LoginForm from '../forms/loginForm';
 
 class Login extends React.Component {
 	constructor(props){

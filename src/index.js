@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import "semantic-ui-css/semantic.min.css";
-import App from './App';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import App from './app';
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from 'firebase';
+import './css/grid.min.css';
+import './css/main.css';
 
 var config = {
 	apiKey: "AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0",
@@ -17,9 +19,11 @@ var config = {
 firebase.initializeApp(config);
 
 ReactDOM.render(
-	<Router>
-		<App />
-	</Router>,
+	<MuiThemeProvider>
+		<Router>
+			<App />
+		</Router>
+	</MuiThemeProvider>,
 	document.getElementById('root')
 );
 registerServiceWorker();
