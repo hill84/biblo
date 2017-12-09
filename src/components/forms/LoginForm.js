@@ -47,7 +47,7 @@ class LoginForm extends React.Component {
 		const { data, errors } = this.state;
 
 		return(
-			<form onSubmit={this.onSubmit} noValidate>
+			<form onSubmit={this.onSubmit} noValidate id="loginFormComponent">
 				<div>
 					<TextField
 						name="email"

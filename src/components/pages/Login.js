@@ -14,7 +14,7 @@ class Login extends React.Component {
 
 	render(){
 		return (
-			<div>
+			<div id="loginComponent">
 				<h1>Login</h1>
 				<Link to="/">Home</Link>
 				<LoginForm submit={this.submit} />
