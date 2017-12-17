@@ -1,20 +1,12 @@
 import React from 'react';
-import AppBar from 'material-ui/AppBar';
-import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
-import AccountCircle from 'material-ui/svg-icons/social/person';
-import FlatButton from 'material-ui/FlatButton';
-import { Link } from 'react-router-dom';
-
-const Login = (props) => (   
+import { AppBar, Drawer, Avatar, MenuItem, IconButton, FlatButton, IconMenu, Dialog, CircularProgress } from 'material-ui';
+import { MoreVertIcon, NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
+import { NavLink, Link } from 'react-router-dom';
+import LoginForm from './forms/loginForm';
+/*
+const Login = (props) => (
     <FlatButton {...props} label="Login" containerElement={<Link to="/login" />} />
 );
-
 Login.muiName = 'FlatButton';
 
 const Logged = (props) => (
@@ -26,50 +18,87 @@ const Logged = (props) => (
     >
         <MenuItem primaryText="Refresh" />
         <MenuItem primaryText="Help" />
-        <MenuItem primaryText="Sign out" />
+        <MenuItem primaryText="Log out" onClick={this.props.logout} />
     </IconMenu>
 );
-
 Logged.muiName = 'IconMenu';
-
+*/
 export default class Layout extends React.Component {
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
-            logged: false,
-            drawer: false
+            drawer: false,
+            authDialog: false
         }
     }
 
-    handleToggle = () => this.setState({drawer: !this.state.drawer});
-    
-    handleClose = () => this.setState({drawer: false});
+    toggleDrawer = () => this.setState({drawer: !this.state.drawer});
+    closeDrawer = () => this.setState({drawer: false});
 
-    render(){
+    openAuthDialog = () => this.setState({authDialog: true});
+    closeAuthDialog = () => this.setState({authDialog: false});
+
+    render(props) {
         return (
             <div id="layoutComponent">
                 <AppBar 
+                    id="appBarComponent"
                     position="static"
                     title="Delibris"
                     iconElementLeft={
-                        <IconButton onClick={this.handleToggle}> 
+                        <IconButton onClick={this.toggleDrawer}> 
                             {this.state.drawer ? <NavigationClose /> : <NavigationMenu />}
                         </IconButton>
                     }
-                    iconElementRight={this.state.logged ? <Logged /> : <Login />}
+                    iconElementRight={this.props.user ? (
+                        <FlatButton label="Logout" onClick={this.props.logout} /> 
+                    ) : (
+                        <FlatButton label="Login" onClick={this.openAuthDialog} />
+                    )}
                 />
+                
                 <Drawer
                     docked={false}
                     open={this.state.drawer}
-                    onRequestChange={(drawer) => this.setState({drawer})}
-                >
-                    <MenuItem onClick={this.handleClose}>Menu Item</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Menu Item 2</MenuItem>
+                    onRequestChange={(drawer) => this.setState({drawer})}>
+                    <nav onClick={this.closeDrawer}>
+                        {this.props.user ? ( 
+                            <NavLink to="/profile" className="auth-header">
+                                <div className="background" style={{backgroundImage: `url(${this.props.user.photoURL}})`}} />
+                                <div className="user">
+                                    <Avatar src={this.props.user.photoURL} />
+                                    <div className="user-info">
+                                        <div className="user-name">{this.props.user.displayName}</div>
+                                        <div className="user-email">{this.props.user.email}</div>
+                                    </div>
+                                </div>
+                            </NavLink>
+                        ) : (
+                            <MenuItem><NavLink to="/login">Login</NavLink></MenuItem> 
+                        )}
+                        <MenuItem><NavLink to="/">Home</NavLink></MenuItem>
+                        <MenuItem><NavLink to="/dashboard">Dashboard</NavLink></MenuItem>
+                    </nav>
                 </Drawer>
+                
                 <div className="container">
                     {this.props.children}
                 </div>
-            </div>
+                
+                <Dialog
+                    contentClassName="dialog"
+                    title="Accedi"
+                    open={this.state.authDialog}
+                    contentStyle={{width: '340px', maxWidth: '94%', textAlign: 'center'}}>
+                    <LoginForm 
+                        googleAuth={this.props.googleAuth} 
+                        facebookAuth={this.props.facebookAuth} 
+                        twitterAuth={this.props.twitterAuth} 
+                        closeAuthDialog={this.closeAuthDialog} 
+                    />
+                    {this.props.loading ? <div className="loader"><CircularProgress /></div> : ''}
+                </Dialog>
+            </div> 
         )
     }
 }

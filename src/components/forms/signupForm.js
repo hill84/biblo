@@ -1,10 +1,11 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+//import PropTypes from 'prop-types';
 import isEmail from 'validator/lib/isEmail';
 import { TextField } from 'material-ui';
 import { auth } from '../../config/firebase.js';
 
-export default class LoginForm extends React.Component {
+export default class SignupForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -29,7 +30,8 @@ export default class LoginForm extends React.Component {
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
-			auth.signInWithEmailAndPassword(this.state.data.email, this.state.data.password).then(() => {
+			//this.props.submit(this.state.data);
+			auth.createUserWithEmailAndPassword(this.state.data.email, this.state.data.password).then(() => {
 				this.setState({redirectToReferrer: true});
 			});
 		}
@@ -44,7 +46,9 @@ export default class LoginForm extends React.Component {
 		}
 		if (!data.password) { 
 			errors.password = "Inserisci una password";
-		} 
+		} else if (data.password.length < 8) {
+			errors.password = "Password troppo corta";
+		}
 		return errors;
 	};
 
@@ -53,7 +57,7 @@ export default class LoginForm extends React.Component {
 		const { from } = '/';
 
 		return (
-			<div id="loginFormComponent">
+			<div id="signupFormComponent">
 				{redirectToReferrer && (
 					<Redirect to={from || '/dashboard'}/>
 				)}
@@ -100,10 +104,15 @@ export default class LoginForm extends React.Component {
 					</div>
 
 					<div className="footer no-gutter">
-						<button className="btn-footer primary" onClick={this.handleSubmit}>Accedi</button>
+						<button className="btn-footer primary" onClick={this.handleSubmit}>Registrati</button>
 					</div>
 				</form>
 			</div>
 		);
 	}
 }
+/*
+SignupForm.propTypes = {
+	submit: PropTypes.func.isRequired
+}
+*/
