@@ -53,11 +53,7 @@ export default class LoginForm extends React.Component {
 		const { data, errors, redirectToReferrer } = this.state;
 		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
 
-		if (redirectToReferrer) {
-			return (
-				<Redirect to={from} />
-			)
-		}
+		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
 			<div id="loginFormComponent">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Drawer, Avatar, MenuItem, IconButton, FlatButton, /*IconMenu,*/ Dialog, CircularProgress } from 'material-ui';
 import { /*MoreVertIcon,*/ NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, Redirect } from 'react-router-dom';
 import { auth } from '../config/firebase.js';
 
 export default class Layout extends React.Component {

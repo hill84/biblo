@@ -39,7 +39,7 @@ export default class App extends React.Component {
 						<PrivateRoute path="/dashboard" component={Dashboard} />
 						<Route path="/login" component={Login} />
 						<Route path="/password-reset" component={PasswordResetForm} />
-						<Route path="/profile" exact component={Profile} />
+						<PrivateRoute path="/profile" exact component={Profile} />
 						<Route path="/signup" component={Signup} />
 
 						<Redirect from="/home" to="/" />

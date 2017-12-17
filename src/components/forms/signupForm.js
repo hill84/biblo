@@ -54,17 +54,13 @@ export default class SignupForm extends React.Component {
 	};
 
 	render(props) {
-		const { data, errors, redirectToReferrer } = this.state;
-		const { from } = '/';
+        const { data, errors, redirectToReferrer } = this.state;
+		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
+
+		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
 			<div id="signupFormComponent">
-				{redirectToReferrer && (
-					<Redirect to={from || '/dashboard'}/>
-				)}
-				{from && (
-					<p>You must log in to view the page at {from.pathname}</p>
-				)}
 				<SocialAuth />
 
 				<form onSubmit={this.onSubmit} noValidate>

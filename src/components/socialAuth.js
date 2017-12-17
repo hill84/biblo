@@ -1,5 +1,6 @@
 import React from 'react';
-//import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { CircularProgress } from 'material-ui';
 import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, storageKey } from '../config/firebase.js';
 
 export default class SocialAuth extends React.Component {
@@ -7,7 +8,8 @@ export default class SocialAuth extends React.Component {
 		super();
 		this.state = {
 			user: null,
-			loading: false
+            loading: false,
+            redirectToReferrer: false
 		}
 	}
 
@@ -16,9 +18,17 @@ export default class SocialAuth extends React.Component {
         auth.signInWithPopup(provider) 
             .then(result => {
             const user = result.user;
-			this.setState({ user, loading: false });
-		});
-		setTimeout(() => this.setState({ loading: false }), 3000);
+			this.setState({ 
+                user, 
+                loading: false 
+            });
+		}).then(() => {
+            this.setState({
+                loading: false,
+                redirectToReferrer: true
+            });
+        });
+		setTimeout(() => this.setState({ loading: false }), 10000);
 	}
 	googleAuth = () => this.socialAuth(GoogleAuthProvider);
 	facebookAuth = () => this.socialAuth(FacebookAuthProvider);
@@ -37,6 +47,11 @@ export default class SocialAuth extends React.Component {
 	}
 
 	render() {
+        const { redirectToReferrer } = this.state;
+		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
+
+		if (redirectToReferrer) return <Redirect to={from} />
+
 		return (
 			<div className="row socialButtons" id="socialAuthComponent">
                 <div className="col-4">
@@ -48,6 +63,7 @@ export default class SocialAuth extends React.Component {
                 <div className="col-4">
                     <button className="btnTwitter" onClick={this.twitterAuth}>Twitter</button>
                 </div>
+                {this.state.loading ? <div className="loader"><CircularProgress /></div> : ''}
             </div>
 		);
 	}

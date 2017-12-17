@@ -17,6 +17,7 @@ a { text-decoration: none; color: #68D4F8; }
 
 /* CARDS */
 .card {
+    position: relative;
     background-color: #fff;
     padding: 24px;
     margin: 10px auto;
