@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { TextField } from 'material-ui';
 import { auth } from '../../config/firebase.js';
+import SocialAuth from '../socialAuth';
 
 export default class LoginForm extends React.Component {
 	constructor(props) {
@@ -50,27 +51,17 @@ export default class LoginForm extends React.Component {
 
 	render(props) {
 		const { data, errors, redirectToReferrer } = this.state;
-		const { from } = '/';
+		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
+
+		if (redirectToReferrer) {
+			return (
+				<Redirect to={from} />
+			)
+		}
 
 		return (
 			<div id="loginFormComponent">
-				{redirectToReferrer && (
-					<Redirect to={from || '/dashboard'}/>
-				)}
-				{from && (
-					<p>You must log in to view the page at {from.pathname}</p>
-				)}
-				<div className="row socialButtons" onClick={this.props.closeAuthDialog }>
-					<div className="col-4">
-						<button className="btnGoogle" onClick={this.props.googleAuth}>Google</button>
-					</div>
-					<div className="col-4">
-						<button className="btnFacebook" onClick={this.props.facebookAuth}>Facebook</button>
-					</div>
-					<div className="col-4">
-						<button className="btnTwitter" onClick={this.props.twitterAuth}>Twitter</button>
-					</div>
-				</div>
+				<SocialAuth />
 
 				<form onSubmit={this.onSubmit} noValidate>
 					<div className="form-group">

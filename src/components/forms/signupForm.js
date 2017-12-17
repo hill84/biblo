@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { TextField } from 'material-ui';
 import { auth } from '../../config/firebase.js';
+import SocialAuth from '../socialAuth';
 
 export default class SignupForm extends React.Component {
 	constructor(props) {
@@ -64,17 +65,7 @@ export default class SignupForm extends React.Component {
 				{from && (
 					<p>You must log in to view the page at {from.pathname}</p>
 				)}
-				<div className="row socialButtons" onClick={this.props.closeAuthDialog }>
-					<div className="col-4">
-						<button className="btnGoogle" onClick={this.props.googleAuth}>Google</button>
-					</div>
-					<div className="col-4">
-						<button className="btnFacebook" onClick={this.props.facebookAuth}>Facebook</button>
-					</div>
-					<div className="col-4">
-						<button className="btnTwitter" onClick={this.props.twitterAuth}>Twitter</button>
-					</div>
-				</div>
+				<SocialAuth />
 
 				<form onSubmit={this.onSubmit} noValidate>
 					<div className="form-group">

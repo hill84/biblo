@@ -8,33 +8,15 @@ import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import NoMatch from './components/pages/nomatch';
-import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, storageKey, isAuthenticated } from './config/firebase.js';
+import { auth, storageKey, isAuthenticated } from './config/firebase.js';
 
 export default class App extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			user: null,
-			loading: false
+			user: null
 		}
 	}
-
-    logout = () => {
-        auth.signOut()
-        .then(() => this.setState({ user: null }) );
-	}
-	socialAuth = provider => {
-		this.setState({ loading: true });
-        auth.signInWithPopup(provider) 
-            .then(result => {
-            const user = result.user;
-			this.setState({ user, loading: false });
-		});
-		setTimeout(() => this.setState({ loading: false }), 3000);
-	}
-	googleAuth = () => this.socialAuth(GoogleAuthProvider);
-	facebookAuth = () => this.socialAuth(FacebookAuthProvider);
-	twitterAuth = () => this.socialAuth(TwitterAuthProvider);
 
 	componentDidMount() {
 		auth.onAuthStateChanged(user => {
@@ -51,13 +33,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div id="appComponent">
-				<Layout 
-					user={this.state.user} 
-					loading={this.state.loading} 
-					googleAuth={this.googleAuth} 
-					facebookAuth={this.facebookAuth} 
-					twitterAuth={this.twitterAuth} 
-					logout={this.logout}>
+				<Layout user={this.state.user}>
 					<Switch>
 						<Route path="/" exact component={Home} />
 						<PrivateRoute path="/dashboard" component={Dashboard} />

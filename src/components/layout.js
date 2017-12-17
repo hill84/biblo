@@ -1,42 +1,25 @@
 import React from 'react';
-import { AppBar, Drawer, Avatar, MenuItem, IconButton, FlatButton, IconMenu, Dialog, CircularProgress } from 'material-ui';
-import { MoreVertIcon, NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
+import { AppBar, Drawer, Avatar, MenuItem, IconButton, FlatButton, /*IconMenu,*/ Dialog, CircularProgress } from 'material-ui';
+import { /*MoreVertIcon,*/ NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
 import { NavLink, Link } from 'react-router-dom';
-import LoginForm from './forms/loginForm';
-/*
-const Login = (props) => (
-    <FlatButton {...props} label="Login" containerElement={<Link to="/login" />} />
-);
-Login.muiName = 'FlatButton';
+import { auth } from '../config/firebase.js';
 
-const Logged = (props) => (
-    <IconMenu
-        {...props}
-        iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-        targetOrigin={{horizontal: 'right', vertical: 'top'}}
-        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-    >
-        <MenuItem primaryText="Refresh" />
-        <MenuItem primaryText="Help" />
-        <MenuItem primaryText="Log out" onClick={this.props.logout} />
-    </IconMenu>
-);
-Logged.muiName = 'IconMenu';
-*/
 export default class Layout extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             drawer: false,
-            authDialog: false
+            dialog: false
         }
     }
 
     toggleDrawer = () => this.setState({drawer: !this.state.drawer});
     closeDrawer = () => this.setState({drawer: false});
 
-    openAuthDialog = () => this.setState({authDialog: true});
-    closeAuthDialog = () => this.setState({authDialog: false});
+    openDialog = () => this.setState({dialog: true});
+    closeDialog = () => this.setState({dialog: false});
+
+    logout = () => auth.signOut();
 
     render(props) {
         return (
@@ -50,11 +33,24 @@ export default class Layout extends React.Component {
                             {this.state.drawer ? <NavigationClose /> : <NavigationMenu />}
                         </IconButton>
                     }
-                    iconElementRight={this.props.user ? (
-                        <FlatButton label="Logout" onClick={this.props.logout} /> 
-                    ) : (
-                        <FlatButton label="Login" onClick={this.openAuthDialog} />
-                    )}
+                    iconElementRight={
+                        this.props.user ? (
+                            /*
+                            <IconMenu
+                                iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+                                targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                                anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                            >
+                                <MenuItem primaryText="Refresh" />
+                                <MenuItem primaryText="Help" />
+                                <MenuItem primaryText="Log out" onClick={this.logout} />
+                            </IconMenu> 
+                            */
+                            <FlatButton label="Logout" onClick={this.logout} />
+                        ) : (
+                            <FlatButton label="Login" containerElement={<Link to="/login" />} />
+                        )
+                    }
                 />
                 
                 <Drawer
@@ -64,7 +60,7 @@ export default class Layout extends React.Component {
                     <nav onClick={this.closeDrawer}>
                         {this.props.user ? ( 
                             <NavLink to="/profile" className="auth-header">
-                                <div className="background" style={{backgroundImage: `url(${this.props.user.photoURL}})`}} />
+                                <div className="background" style={{backgroundImage: `url(${this.props.user.photoURL})`}} />
                                 <div className="user">
                                     <Avatar src={this.props.user.photoURL} />
                                     <div className="user-info">
@@ -74,7 +70,10 @@ export default class Layout extends React.Component {
                                 </div>
                             </NavLink>
                         ) : (
-                            <MenuItem><NavLink to="/login">Login</NavLink></MenuItem> 
+                            <div className="auth-header-buttons">
+                                <MenuItem><NavLink to="/login">Login</NavLink></MenuItem> 
+                                <MenuItem><NavLink to="/signup">Signup</NavLink></MenuItem>
+                            </div>
                         )}
                         <MenuItem><NavLink to="/">Home</NavLink></MenuItem>
                         <MenuItem><NavLink to="/dashboard">Dashboard</NavLink></MenuItem>
@@ -87,15 +86,10 @@ export default class Layout extends React.Component {
                 
                 <Dialog
                     contentClassName="dialog"
-                    title="Accedi"
-                    open={this.state.authDialog}
+                    title="Dialog title"
+                    open={this.state.dialog}
                     contentStyle={{width: '340px', maxWidth: '94%', textAlign: 'center'}}>
-                    <LoginForm 
-                        googleAuth={this.props.googleAuth} 
-                        facebookAuth={this.props.facebookAuth} 
-                        twitterAuth={this.props.twitterAuth} 
-                        closeAuthDialog={this.closeAuthDialog} 
-                    />
+                    Some text
                     {this.props.loading ? <div className="loader"><CircularProgress /></div> : ''}
                 </Dialog>
             </div> 
