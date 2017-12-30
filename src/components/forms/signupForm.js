@@ -34,6 +34,8 @@ export default class SignupForm extends React.Component {
 			//this.props.submit(this.state.data);
 			auth.createUserWithEmailAndPassword(this.state.data.email, this.state.data.password).then(() => {
 				this.setState({redirectToReferrer: true});
+			}).catch(error => {
+				console.log(error);
 			});
 		}
 	};
@@ -91,7 +93,7 @@ export default class SignupForm extends React.Component {
 					</div>
 
 					<div className="footer no-gutter">
-						<button className="btn-footer primary" onClick={this.handleSubmit}>Registrati</button>
+						<button className="btn btn-footer primary" onClick={this.handleSubmit}>Registrati</button>
 					</div>
 				</form>
 			</div>

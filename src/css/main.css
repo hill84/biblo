@@ -41,7 +41,7 @@ a { text-decoration: none; color: #68D4F8; }
 .card-container .sub-footer { font-size: 85%; }
 
 /* BUTTONS */
-.btn, button {
+.btn {
     display: block;
     -webkit-appearance: none;
     outline: none !important;
@@ -63,10 +63,10 @@ a { text-decoration: none; color: #68D4F8; }
     cursor: pointer;
     box-sizing: border-box;
 } 
-.btn:hover, button:hover {
+.btn:hover {
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
 }
-.btn:active, button:active, .btn.active, button.active {
+.btn:active, .btn.active {
     transform: scale(.98) translateY(1px);
     color: rgba(0,0,0,.3);
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
@@ -101,11 +101,15 @@ a { text-decoration: none; color: #68D4F8; }
     left: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center;
     border-radius: 3px;
     background: rgba(255,255,255,0.8);
-    padding: calc(50% - 40px);
+    padding: 20px;
+    text-align: center;
     box-sizing: border-box;
-    z-index: 1;
+    z-index: 3;
 }
 
 /* CUSTOM */

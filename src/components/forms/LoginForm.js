@@ -87,7 +87,7 @@ export default class LoginForm extends React.Component {
 					</div>
 
 					<div className="footer no-gutter">
-						<button className="btn-footer primary" onClick={this.handleSubmit}>Accedi</button>
+						<button className="btn btn-footer primary" onClick={this.handleSubmit}>Accedi</button>
 					</div>
 				</form>
 			</div>

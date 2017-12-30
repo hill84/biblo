@@ -55,13 +55,13 @@ export default class SocialAuth extends React.Component {
 		return (
 			<div className="row socialButtons" id="socialAuthComponent">
                 <div className="col-4">
-                    <button className="btnGoogle" onClick={this.googleAuth}>Google</button>
+                    <button className="btn btnGoogle" onClick={this.googleAuth}>Google</button>
                 </div>
                 <div className="col-4">
-                    <button className="btnFacebook" onClick={this.facebookAuth}>Facebook</button>
+                    <button className="btn btnFacebook" onClick={this.facebookAuth}>Facebook</button>
                 </div>
                 <div className="col-4">
-                    <button className="btnTwitter" onClick={this.twitterAuth}>Twitter</button>
+                    <button className="btn btnTwitter" onClick={this.twitterAuth}>Twitter</button>
                 </div>
                 {this.state.loading ? <div className="loader"><CircularProgress /></div> : ''}
             </div>
