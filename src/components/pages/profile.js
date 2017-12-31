@@ -9,11 +9,16 @@ export default class Profile extends React.Component {
 		super(props);
 		this.state = {
 			user: {
+				uid: '',
 				displayName: '',
-				email: ''
+				email: '',
+				photoURL: '',
+				registration_date: null,
+				shelf_num: 0,
+				wishlist_num: 0
 			},
 			loading: false,
-			errors: {},
+			errors: {}
 		}
 	}
 
@@ -54,14 +59,16 @@ export default class Profile extends React.Component {
 	};
 
 	render() {
-		const { user, errors } = this.state;
+		const { user, loading, errors } = this.state;
+
+		if(!user) return null;
 
 		return (
 			<div id="profileComponent">
 				<h2>Profile</h2>
 				<div className="card">
-					{this.state.loading ? <div className="loader"><CircularProgress /></div> : ''}
-                    <Avatar src={user.photoURL} />
+					{loading ? <div className="loader"><CircularProgress /></div> : ''}
+					{user.photoURL ? <Avatar src={user.photoURL} /> : <Avatar>{user.displayName.charAt(0)}</Avatar>}
 					<p>{user.displayName}</p>
 					<p>{user.email}</p>
 
