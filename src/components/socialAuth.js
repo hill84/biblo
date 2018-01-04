@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { CircularProgress } from 'material-ui';
-import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, storageKey } from '../config/firebase.js';
+import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, storageKey, userRef } from '../config/firebase';
 
 export default class SocialAuth extends React.Component {
 	constructor() {
@@ -12,27 +12,6 @@ export default class SocialAuth extends React.Component {
             redirectToReferrer: false
 		}
 	}
-
-	socialAuth = provider => {
-		this.setState({ loading: true });
-        auth.signInWithPopup(provider) 
-            .then(result => {
-            const user = result.user;
-			this.setState({ 
-                user, 
-                loading: false 
-            });
-		}).then(() => {
-            this.setState({
-                loading: false,
-                redirectToReferrer: true
-            });
-        });
-		setTimeout(() => this.setState({ loading: false }), 10000);
-	}
-	googleAuth = () => this.socialAuth(GoogleAuthProvider);
-	facebookAuth = () => this.socialAuth(FacebookAuthProvider);
-	twitterAuth = () => this.socialAuth(TwitterAuthProvider);
 
 	componentDidMount() {
 		auth.onAuthStateChanged(user => {
@@ -45,6 +24,32 @@ export default class SocialAuth extends React.Component {
 			}
 		});
 	}
+
+	socialAuth = provider => {
+		auth.signInWithPopup(provider).then(result => {
+			this.setState({ loading: true });
+			if (result) {
+				const user = result.user;
+				this.setState({ user });
+				userRef(user.uid).set({
+					displayName: user.displayName,
+					email: user.email,
+					photoURL: user.photoURL,
+					creationTime: user.metadata.creationTime
+				});
+			}
+		}).then(() => {
+			this.setState({
+				redirectToReferrer: true
+			});
+		}).catch(error => {
+			console.log(error);
+			this.setState({ loading: false });
+		});
+	}
+	googleAuth = () => this.socialAuth(GoogleAuthProvider);
+	facebookAuth = () => this.socialAuth(FacebookAuthProvider);
+	twitterAuth = () => this.socialAuth(TwitterAuthProvider);
 
 	render() {
         const { redirectToReferrer } = this.state;
@@ -63,7 +68,7 @@ export default class SocialAuth extends React.Component {
                 <div className="col-4">
                     <button className="btn btnTwitter" onClick={this.twitterAuth}>Twitter</button>
                 </div>
-                {this.state.loading ? <div className="loader"><CircularProgress /></div> : ''}
+                {this.state.loading && <div className="loader"><CircularProgress /></div>}
             </div>
 		);
 	}

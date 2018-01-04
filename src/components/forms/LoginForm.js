@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { TextField } from 'material-ui';
-import { auth } from '../../config/firebase.js';
+import { auth } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
 
 export default class LoginForm extends React.Component {
@@ -15,6 +15,7 @@ export default class LoginForm extends React.Component {
 			},
 			loading: false,
 			errors: {},
+			authError: '',
 			redirectToReferrer: false
 		};
 	}
@@ -27,11 +28,19 @@ export default class LoginForm extends React.Component {
 
 	handleSubmit = e => {
 		e.preventDefault();
+		this.setState({ loading: true });
 		const errors = this.validate(this.state.data);
-		this.setState({ errors });
+		this.setState({ authError: '', errors });
 		if(Object.keys(errors).length === 0) {
 			auth.signInWithEmailAndPassword(this.state.data.email, this.state.data.password).then(() => {
-				this.setState({redirectToReferrer: true});
+				this.setState({
+					redirectToReferrer: true
+				});
+			}).catch(error => {
+				this.setState({
+					authError: error.message,
+					loading: false
+				});
 			});
 		}
 	};
@@ -50,8 +59,8 @@ export default class LoginForm extends React.Component {
 	};
 
 	render(props) {
-		const { data, errors, redirectToReferrer } = this.state;
-		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
+		const { authError, data, errors, redirectToReferrer } = this.state;
+		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/profile' } };
 
 		if (redirectToReferrer) return <Redirect to={from} />
 
@@ -85,6 +94,8 @@ export default class LoginForm extends React.Component {
 							fullWidth={true}
 						/>
 					</div>
+
+					{(authError) ? <div className="row"><div className="col message error">{authError}</div></div> : ''}
 
 					<div className="footer no-gutter">
 						<button className="btn btn-footer primary" onClick={this.handleSubmit}>Accedi</button>

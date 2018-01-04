@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 //import PropTypes from 'prop-types';
 import isEmail from 'validator/lib/isEmail';
 import { TextField } from 'material-ui';
-import { auth } from '../../config/firebase.js';
+import { auth, userRef } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
 
 export default class SignupForm extends React.Component {
@@ -11,11 +11,13 @@ export default class SignupForm extends React.Component {
 		super(props);
 		this.state = {
 			data: {
+				displayName: '',
 				email: '',
 				password: ''
 			},
 			loading: false,
 			errors: {},
+			authError: '',
 			redirectToReferrer: false
 		};
 	}
@@ -29,19 +31,34 @@ export default class SignupForm extends React.Component {
 	handleSubmit = e => {
 		e.preventDefault();
 		const errors = this.validate(this.state.data);
-		this.setState({ errors });
+		this.setState({ authError: '', errors });
 		if(Object.keys(errors).length === 0) {
-			//this.props.submit(this.state.data);
-			auth.createUserWithEmailAndPassword(this.state.data.email, this.state.data.password).then(() => {
-				this.setState({redirectToReferrer: true});
-			}).catch(error => {
-				console.log(error);
+			auth.createUserWithEmailAndPassword(this.state.data.email, this.state.data.password).catch(error => {
+				this.setState({
+					authError: error.message,
+					loading: false
+				});
+			});
+			auth.onAuthStateChanged(user => {
+				if (user) {
+					userRef(user.uid).set({
+						displayName: this.state.data.displayName,
+						email: user.email,
+						creationTime: user.metadata.creationTime
+					});
+					this.setState({ 
+						redirectToReferrer: true 
+					});
+				}
 			});
 		}
 	};
 
 	validate = data => {
 		const errors = {};
+		if (!data.displayName) { 
+			errors.displayName = "Inserisci un nome utente";
+		}
 		if(data.email) {
 			if(!isEmail(data.email)) errors.email = "Email non valida";
 		} else {
@@ -56,7 +73,7 @@ export default class SignupForm extends React.Component {
 	};
 
 	render(props) {
-        const { data, errors, redirectToReferrer } = this.state;
+    const { authError, data, errors, redirectToReferrer } = this.state;
 		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
 
 		if (redirectToReferrer) return <Redirect to={from} />
@@ -66,6 +83,19 @@ export default class SignupForm extends React.Component {
 				<SocialAuth />
 
 				<form onSubmit={this.onSubmit} noValidate>
+					<div className="form-group">
+						<TextField
+							name="displayName"
+							type="text"
+							hintText="Mario Rossi"
+							errorText={errors.displayName}
+							floatingLabelText="Nome"
+							value={data.displayName}
+							onChange={this.handleChange}
+							fullWidth={true}
+						/>
+					</div>
+
 					<div className="form-group">
 						<TextField
 							name="email"
@@ -91,6 +121,8 @@ export default class SignupForm extends React.Component {
 							fullWidth={true}
 						/>
 					</div>
+
+					{authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
 					<div className="footer no-gutter">
 						<button className="btn btn-footer primary" onClick={this.handleSubmit}>Registrati</button>

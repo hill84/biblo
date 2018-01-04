@@ -11,16 +11,14 @@ const config = {
 
 firebase.initializeApp(config);
 
+export const storageKey = 'KEY_FOR_LOCAL_STORAGE';
+export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey);
 export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
 export const auth = firebase.auth();
 export const db = firebase.database();
-
-export const storageKey = 'KEY_FOR_LOCAL_STORAGE';
-
-export const isAuthenticated = () => {
-  return !!auth.currentUser || !!localStorage.getItem(storageKey);
-}
+export const userRef = uid => db.ref().child('users').child(uid);
+export const shelfRef = uid => db.ref().child('shelves').child(uid);
 
 export default firebase;

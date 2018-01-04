@@ -1,7 +1,7 @@
 import React from 'react';
 import isEmail from 'validator/lib/isEmail';
 import { TextField, CircularProgress } from 'material-ui';
-import { auth } from '../../config/firebase.js';
+import { auth } from '../../config/firebase';
 
 export default class PasswordResetForm extends React.Component {
 	constructor(props) {
@@ -9,6 +9,7 @@ export default class PasswordResetForm extends React.Component {
 		this.state = {
 			email: '',
 			loading: false,
+			authError: null,
 			errors: {}
 		};
 	}
@@ -19,11 +20,17 @@ export default class PasswordResetForm extends React.Component {
 
 	handleSubmit = e => {
 		e.preventDefault();
+		this.setState({ loading: true });
 		const errors = this.validate(this.state.email);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			auth.sendPasswordResetEmail(this.state.email).then(() => {
-				this.setState({redirectToReferrer: true});
+				this.setState({ redirectToReferrer: true });
+			}).catch(error => {
+				this.setState({
+					authError: error.message,
+					loading: false
+				});
 			});
 		}
 	};
@@ -39,6 +46,8 @@ export default class PasswordResetForm extends React.Component {
 	};
 
 	render() {
+		const { authError, email, errors } = this.state;
+
 		return (
 			<div className="card-container" id="passwordResetFormComponent">
 				<h2>Recupero password</h2>
@@ -50,19 +59,21 @@ export default class PasswordResetForm extends React.Component {
                                 name="email"
                                 type="email"
                                 hintText="esempio@esempio.com"
-                                errorText={this.state.errors.email}
+                                errorText={errors.email}
                                 floatingLabelText="Email"
-								value={this.state.email}
+								value={email}
 								onChange={this.handleChange}
                                 fullWidth={true}
                             />
                         </div>
 
+						{authError && <div className="row"><div className="col message error">{authError}</div></div>}
+
                         <div className="footer no-gutter">
-                            <button className="btn-footer primary" onClick={this.handleSubmit}>Recupera password</button>
+                            <button className="btn btn-footer primary" onClick={this.handleSubmit}>Recupera password</button>
                         </div>
                     </form>
-					{this.props.loading ? <div className="loader"><CircularProgress /></div> : ''}
+					{this.props.loading && <div className="loader"><CircularProgress /></div>}
                 </div>
 			</div>
 		);
