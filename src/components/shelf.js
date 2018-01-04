@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { auth, shelfRef } from '../config/firebase';
 
@@ -63,4 +64,11 @@ export default class Shelf extends React.Component {
 			</div>
 		);
 	}
+}
+
+Shelf.propTypes = {
+    uid: PropTypes.string,
+    user: PropTypes.shape({
+        shelf_num: PropTypes.number
+    })
 }
