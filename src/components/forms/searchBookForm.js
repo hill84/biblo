@@ -1,5 +1,6 @@
 import React from 'react';
-import { AutoComplete, /* CircularProgress */ } from 'material-ui';
+import { AutoComplete/* , CircularProgress */ } from 'material-ui';
+import { booksRef } from '../../config/firebase';
 
 export default class SearchBookForm extends React.Component {
   constructor(props){
@@ -7,40 +8,30 @@ export default class SearchBookForm extends React.Component {
     this.state = {
       searchText: '',
       loading: false,
-      options: [{
-        key: 1,
-        value: 1,
-        text: "first book"
-      },{
-        key: 2,
-        value: 2,
-        text: "second book"
-      },{
-        key: 3,
-        value: 3,
-        text: "third book"
-      },{
-        key: 4,
-        value: 4,
-        text: "fourth book"
-      }],
-      books: {}
+      options: []
     }
   }
 
-  handleUpdateInput = (e, data) => {
+  onUpdateInput = (searchText) => {
     clearTimeout(this.timer);
-    this.setState({ searchText: data });
-    this.timer = setTimeout(this.fetchOptions, 1000);
+    this.setState({ searchText: searchText });
+    this.timer = setTimeout(this.fetchOptions, 500);
   }
 
   fetchOptions = () => {
     if (!this.state.searchText) return;
     this.setState({ loading: true });
+    booksRef.on('value', snap => {
+      this.setState({
+        loading: false,
+        options: snap.val()
+      });
+    });
   }
 
-  onNewRequest = () => {
-    this.setState({ searchText: '', loading: false });
+  onNewRequest = (chosenRequest) => {
+    this.setState({ loading: false });
+    this.props.onBookSelect(chosenRequest);
   }
 
   onClose = () => {
@@ -51,19 +42,21 @@ export default class SearchBookForm extends React.Component {
     return (
       <form id="SearchBookFormComponent" className="container-sm">
         <div className="form-group">
-          {/*this.state.loading && <div className="loader"><CircularProgress /></div>*/}
+          {/* this.state.loading && <div className="loader"><CircularProgress /></div> */}
           <AutoComplete
             name="search"
             floatingLabelText="Cerca un libro inserendo il titolo"
             hintText="Es: Il grande Gatsby"
-            // searchText={this.state.searchText}
-            // filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
-            onUpdateInput={this.handleUpdateInput}
+            searchText={this.state.searchText}
+            //filter={(searchText, key) => searchText !== '' && key.indexOf(searchText) !== -1}
+            onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onNewRequest}
             onClose={this.onClose}
             fullWidth={true}
-            maxSearchResults={3}
+            filter={AutoComplete.fuzzyFilter}
+            maxSearchResults={5}
             dataSource={this.state.options}
+            dataSourceConfig={{text: 'title', value: 'ISBN_num'}}
           />
         </div>
       </form>

@@ -39,9 +39,7 @@ export default class SocialAuth extends React.Component {
 				});
 			}
 		}).then(() => {
-			this.setState({
-				redirectToReferrer: true
-			});
+			this.setState({ redirectToReferrer: true });
 		}).catch(error => {
 			console.log(error);
 			this.setState({ loading: false });

@@ -74,7 +74,7 @@ a.active { color: var(--orange600); }
     background-color: var(--cyan700);
     box-shadow: 0 1px 2px rgba(0,0,0,.1);
     font-family: Roboto, sans-serif;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255,255,255,.9);
     font-size: 14px;
     text-transform: uppercase;
     font-weight: 500;
@@ -88,7 +88,7 @@ a.active { color: var(--orange600); }
     color: #fff;
 }
 .btn:active, .btn.active {
-    transform: scale(.98) translateY(1px);
+    transform: scale(.98)/*  translateY(1px) */;
     color: rgba(0,0,0,.3);
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
 }
@@ -235,6 +235,7 @@ a.active { color: var(--orange600); }
 
 /* CUSTOM */
 /*#appBarComponent { background-color: var(--cyan700) !important; box-shadow: 0 1px 3px rgba(0,0,0,.1) !important; }*/
+#BookFormComponent { margin-top: 20px; border-top: 1px solid rgba(0,0,0,.1); }
 
 .auth-header { 
     position: relative;

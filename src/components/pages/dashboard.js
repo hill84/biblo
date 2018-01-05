@@ -44,7 +44,7 @@ export default class Dashboard extends React.Component {
 							<div className="col">
 								<p className="username">{user.displayName}</p>
 								<p className="info-row">
-									{user.sex && <span className="counter">{user.sex === 1 ? 'Uomo' : user.sex === 2 ? 'Donna' : ''}</span>}
+									{user.sex && <span className="counter">{user.sex === 1 ? 'Uomo' : user.sex === 2 ? 'Donna' : 'Altro'}</span>}
 									{user.birth_date && <span className="counter">{userAge(user.birth_date)} anni</span>}
 									{user.location && <span className="counter">{user.location}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}

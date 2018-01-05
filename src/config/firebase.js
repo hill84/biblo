@@ -20,5 +20,6 @@ export const auth = firebase.auth();
 export const db = firebase.database();
 export const userRef = uid => db.ref().child('users').child(uid);
 export const shelfRef = uid => db.ref().child('shelves').child(uid);
+export const booksRef = db.ref().child('books');
 
 export default firebase;
