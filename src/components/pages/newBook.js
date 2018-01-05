@@ -20,8 +20,8 @@ export default class NewBook extends React.Component {
 				<h2>Aggiungi un libro</h2>
 				<div className="card">
 					<SearchBookForm onBookSelect={this.onBookSelect} />
-					{this.state.book && <BookForm submit={this.addBook} book={this.state.book} />}
 				</div>
+				{this.state.book && <div className="card"><BookForm submit={this.addBook} book={this.state.book} /></div>}
 			</div>
 		);
 	}

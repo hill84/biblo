@@ -23,6 +23,24 @@ export default class BookForm extends React.Component {
       errors: {}
     }
   }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      data: {
+        ISBN_num: props.book.ISBN_num,
+        title: props.book.title,
+        subtitle: props.book.subtitle,
+        authors: props.book.authors,
+        format: props.book.format,
+        cover: props.book.covers[0],
+        pages_num: props.book.pages_num,
+        publisher: props.book.publisher,
+        publication: props.book.publication,
+        genres: props.book.genres
+      },
+      covers: props.book.covers
+    })
+  }
   
   onChange = e => {
     this.setState({
@@ -147,7 +165,16 @@ export default class BookForm extends React.Component {
             </div>
           </div>
           <div className="col">
-            <img src={data.cover} alt={data.title} width="100px" className="cover" />
+            {data.cover ? 
+              <div className="cover" style={{backgroundImage: `url(${data.cover})`}}></div>
+            :
+              <div className="cover">
+                <h2 className="title">{data.title}</h2>
+                {data.subtitle.length > 0 && <h3 className="subtitle">{data.subtitle}</h3>}
+                <span className="author">{data.authors}</span>
+                <span className="publisher">{data.publisher}</span>
+              </div>
+            }
           </div>
         </div>
         <div className="footer no-gutter">

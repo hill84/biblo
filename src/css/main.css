@@ -36,6 +36,8 @@ a.active { color: var(--orange600); }
 /* CARDS */
 .card {
     position: relative;
+    float: left;
+    width: 100%;
     background-color: #fff;
     color: #212529;
     padding: 24px;
@@ -213,6 +215,14 @@ a.active { color: var(--orange600); }
 .column-left.prepend, .column-left.pend, .column-left.append, .column-left.toppend, .column-left.bottompend, 
 .column-right.prepend, .column-right.pend, .column-right.append, .column-right.toppend, .column-right.bottompend { margin-left: 0; margin-right: 0; }
 
+.card.toppend + .card {
+    border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	margin-top: 0;
+}
+
 /* LOADING */
 .dialog.loading:after, .card.loading:after, .loader { 
     content: "";
@@ -235,7 +245,6 @@ a.active { color: var(--orange600); }
 
 /* CUSTOM */
 /*#appBarComponent { background-color: var(--cyan700) !important; box-shadow: 0 1px 3px rgba(0,0,0,.1) !important; }*/
-#BookFormComponent { margin-top: 20px; border-top: 1px solid rgba(0,0,0,.1); }
 
 .auth-header { 
     position: relative;
@@ -289,6 +298,33 @@ a.active { color: var(--orange600); }
 }
 .counter:last-child:after { content: none; }
 .counter:empty { display: none; }
+
+.cover {
+    --gutter: 15px;
+    position: relative;
+    width: 120px;
+    height: 180px;
+    background-color: var(--cyan700);
+    background-size: cover;
+    background-position: top center;
+    box-shadow: 0 2px 3px rgba(0,0,0,.12);
+    overflow: hidden;
+    border-radius: 2px;
+    font-size: 60%;
+    line-height: 1.4;
+    box-sizing: border-box;
+    padding: var(--gutter);
+}
+.cover * {
+    float: left;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cover .title, .cover .subtitle { white-space: normal; max-height: 60px; margin: 0 0 2px 0; font-weight: 500; }
+.cover .title { color: #fff; }
+.cover .publisher { position: absolute; width: auto; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); }
 
 .message.alert { color: var(--orange600); }
 .message.error { color: var(--red500); }
