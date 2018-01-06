@@ -21,7 +21,11 @@ export default class NewBook extends React.Component {
 				<div className="card">
 					<SearchBookForm onBookSelect={this.onBookSelect} />
 				</div>
-				{this.state.book && <div className="card"><BookForm submit={this.addBook} book={this.state.book} /></div>}
+				{this.state.book && 
+					<div className="card" style={{marginTop: 20}}>
+						<BookForm submit={this.addBook} book={this.state.book} />
+					</div>
+				}
 			</div>
 		);
 	}

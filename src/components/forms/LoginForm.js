@@ -49,18 +49,14 @@ export default class LoginForm extends React.Component {
 		const errors = {};
 		if(data.email) {
 			if(!isEmail(data.email)) errors.email = "Email non valida";
-		} else {
-			errors.email = "Inserisci un indirizzo email";
-		}
-		if (!data.password) { 
-			errors.password = "Inserisci una password";
-		} 
+		} else { errors.email = "Inserisci un indirizzo email"; }
+		if (!data.password) { errors.password = "Inserisci una password"; } 
 		return errors;
 	};
 
 	render(props) {
 		const { authError, data, errors, redirectToReferrer } = this.state;
-		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/profile' } };
+		const { from } = /* this.props.location.state || */ { from: { pathname: '/profile' } };
 
 		if (redirectToReferrer) return <Redirect to={from} />
 

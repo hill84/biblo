@@ -1,6 +1,5 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-//import PropTypes from 'prop-types';
 import isEmail from 'validator/lib/isEmail';
 import { TextField } from 'material-ui';
 import { auth, userRef } from '../../config/firebase';
@@ -22,13 +21,13 @@ export default class SignupForm extends React.Component {
 		};
 	}
 
-	handleChange = e => {
+	onChange = e => {
 		this.setState({ 
 			data: { ...this.state.data, [e.target.name]: e.target.value }
 		});
 	};
 
-	handleSubmit = e => {
+	onSubmit = e => {
 		e.preventDefault();
 		const errors = this.validate(this.state.data);
 		this.setState({ authError: '', errors });
@@ -56,19 +55,12 @@ export default class SignupForm extends React.Component {
 
 	validate = data => {
 		const errors = {};
-		if (!data.displayName) { 
-			errors.displayName = "Inserisci un nome utente";
-		}
-		if(data.email) {
+		if (!data.displayName) { errors.displayName = "Inserisci un nome utente"; }
+		if(data.email) { 
 			if(!isEmail(data.email)) errors.email = "Email non valida";
-		} else {
-			errors.email = "Inserisci un indirizzo email";
-		}
-		if (!data.password) { 
-			errors.password = "Inserisci una password";
-		} else if (data.password.length < 8) {
-			errors.password = "Password troppo corta";
-		}
+		} else { errors.email = "Inserisci un indirizzo email"; }
+		if (!data.password) { errors.password = "Inserisci una password"; 
+		} else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
 		return errors;
 	};
 
@@ -91,7 +83,7 @@ export default class SignupForm extends React.Component {
 							errorText={errors.displayName}
 							floatingLabelText="Nome"
 							value={data.displayName}
-							onChange={this.handleChange}
+							onChange={this.onChange}
 							fullWidth={true}
 						/>
 					</div>
@@ -104,7 +96,7 @@ export default class SignupForm extends React.Component {
 							errorText={errors.email}
 							floatingLabelText="Email"
 							value={data.email}
-							onChange={this.handleChange}
+							onChange={this.onChange}
 							fullWidth={true}
 						/>
 					</div>
@@ -117,7 +109,7 @@ export default class SignupForm extends React.Component {
 							errorText={errors.password}
 							floatingLabelText="Password"
 							value={data.password}
-							onChange={this.handleChange}
+							onChange={this.onChange}
 							fullWidth={true}
 						/>
 					</div>
@@ -125,15 +117,10 @@ export default class SignupForm extends React.Component {
 					{authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
 					<div className="footer no-gutter">
-						<button className="btn btn-footer primary" onClick={this.handleSubmit}>Registrati</button>
+						<button className="btn btn-footer primary" onClick={this.onSubmit}>Registrati</button>
 					</div>
 				</form>
 			</div>
 		);
 	}
 }
-/*
-SignupForm.propTypes = {
-	submit: PropTypes.func.isRequired
-}
-*/

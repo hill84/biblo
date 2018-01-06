@@ -12,7 +12,7 @@ export default class SearchBookForm extends React.Component {
     }
   }
 
-  onUpdateInput = (searchText) => {
+  onUpdateInput = searchText => {
     clearTimeout(this.timer);
     this.setState({ searchText: searchText });
     this.timer = setTimeout(this.fetchOptions, 500);
@@ -29,14 +29,12 @@ export default class SearchBookForm extends React.Component {
     });
   }
 
-  onNewRequest = (chosenRequest) => {
+  onNewRequest = chosenRequest => {
     this.setState({ loading: false });
     this.props.onBookSelect(chosenRequest);
   }
 
-  onClose = () => {
-    this.setState({ loading: false });
-  }
+  onClose = () => this.setState({ loading: false });
 
   render() {
     return (
@@ -46,7 +44,7 @@ export default class SearchBookForm extends React.Component {
           <AutoComplete
             name="search"
             floatingLabelText="Cerca un libro inserendo il titolo"
-            hintText="Es: Il grande Gatsby"
+            hintText="Es: Sherlock Holmes"
             searchText={this.state.searchText}
             //filter={(searchText, key) => searchText !== '' && key.indexOf(searchText) !== -1}
             onUpdateInput={this.onUpdateInput}

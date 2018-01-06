@@ -36,8 +36,6 @@ a.active { color: var(--orange600); }
 /* CARDS */
 .card {
     position: relative;
-    float: left;
-    width: 100%;
     background-color: #fff;
     color: #212529;
     padding: 24px;

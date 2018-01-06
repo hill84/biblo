@@ -42,19 +42,19 @@ export default class Profile extends React.Component {
 		});
 	}
 
-	handleChange = e => {
+	onChange = e => {
 		this.setState({ success: false, changes: true, userSnap: { ...this.state.userSnap, [e.target.name]: e.target.value } });
 	};
 
-	handleDateChange = (e, date) => {
+	onDateChange = (e, date) => {
 		this.setState({ success: false, changes: true, userSnap: { ...this.state.userSnap, birth_date: String(date) } });
 	};
 
-	handleSelectChange = (e, i, val) => {
+	onSelectChange = (e, i, val) => {
 		this.setState({ success: false, changes: true, userSnap: { ...this.state.userSnap, sex: val } });
 	};
 
-	handleSubmit = e => {
+	onSubmit = e => {
 		e.preventDefault();
 		const errors = this.validate(this.state.userSnap);
 		this.setState({ errors });
@@ -119,7 +119,7 @@ export default class Profile extends React.Component {
 									errorText={errors.displayName}
 									floatingLabelText="Nome e cognome"
 									value={userSnap.displayName || ''}
-									onChange={this.handleChange}
+									onChange={this.onChange}
 									fullWidth={true}
 								/>
 							</div>
@@ -131,7 +131,7 @@ export default class Profile extends React.Component {
 										errorText={errors.sex}
 										floatingLabelText="Sesso"
 										value={userSnap.sex || null}
-										onChange={this.handleSelectChange}
+										onChange={this.onSelectChange}
 										fullWidth={true}
 									>
 										<MenuItem value={1} primaryText="Uomo" />
@@ -148,7 +148,7 @@ export default class Profile extends React.Component {
 										errorText={errors.birth_date}
 										floatingLabelText="Data di nascita"
 										value={userSnap.birth_date ? new Date(userSnap.birth_date) : null}
-										onChange={this.handleDateChange}
+										onChange={this.onDateChange}
 										fullWidth={true}
 									/>
 								</div>
@@ -159,7 +159,7 @@ export default class Profile extends React.Component {
 							<div>&nbsp;</div>
 						
 							<div className="form-group">
-								<button className={`btn centered primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.handleSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
+								<button className={`btn centered primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
 							</div>
 						</form>
 					</div>

@@ -14,11 +14,11 @@ export default class PasswordResetForm extends React.Component {
 		};
 	}
 
-	handleChange = e => {
+	onChange = e => {
 		this.setState({ email: e.target.value });
 	};
 
-	handleSubmit = e => {
+	onSubmit = e => {
 		e.preventDefault();
 		this.setState({ loading: true });
 		const errors = this.validate(this.state.email);
@@ -62,7 +62,7 @@ export default class PasswordResetForm extends React.Component {
                                 errorText={errors.email}
                                 floatingLabelText="Email"
 								value={email}
-								onChange={this.handleChange}
+								onChange={this.onChange}
                                 fullWidth={true}
                             />
                         </div>
@@ -70,7 +70,7 @@ export default class PasswordResetForm extends React.Component {
 						{authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
                         <div className="footer no-gutter">
-                            <button className="btn btn-footer primary" onClick={this.handleSubmit}>Recupera password</button>
+                            <button className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
                         </div>
                     </form>
 					{this.props.loading && <div className="loader"><CircularProgress /></div>}

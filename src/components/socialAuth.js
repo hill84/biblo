@@ -4,8 +4,8 @@ import { CircularProgress } from 'material-ui';
 import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, storageKey, userRef } from '../config/firebase';
 
 export default class SocialAuth extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.state = {
 			user: null,
             loading: false,
@@ -49,9 +49,9 @@ export default class SocialAuth extends React.Component {
 	facebookAuth = () => this.socialAuth(FacebookAuthProvider);
 	twitterAuth = () => this.socialAuth(TwitterAuthProvider);
 
-	render() {
+	render(props) {
         const { redirectToReferrer } = this.state;
-		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
+		const { from } = /* this.props.location.state || */ { from: { pathname: '/' } };
 
 		if (redirectToReferrer) return <Redirect to={from} />
 

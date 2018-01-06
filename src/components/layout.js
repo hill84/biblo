@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { appName } from '../config/shared';
 import { AppBar, Avatar, CircularProgress, Dialog, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
 import { NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
@@ -90,9 +91,7 @@ export default class Layout extends React.Component {
     }
 }
 
-const logout = function(){
-    auth.signOut();
-} 
+const logout = () => auth.signOut();
 
 const Logged = props => (
     <IconMenu
@@ -107,3 +106,19 @@ const Logged = props => (
     </IconMenu>
 );
 Logged.muiName = 'IconMenu';
+
+Layout.propTypes = {
+    user: PropTypes.shape({
+        birth_date: PropTypes.string,
+        creationTime: PropTypes.string.isRequired,
+        displayName: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        location: PropTypes.string,
+        photoURL: PropTypes.string,
+        sex: PropTypes.number,
+        shelf_num: PropTypes.number,
+        wishlist_num: PropTypes.number,
+        ratings_num: PropTypes.number,
+        reviews_num: PropTypes.number
+    })
+}
