@@ -299,6 +299,10 @@ a.active { color: var(--orange600); }
 .counter:last-child:after { content: none; }
 .counter:empty { display: none; }
 
+.book {
+    display: grid;
+    justify-items: center;
+}
 .cover {
     --gutter: 15px;
     position: relative;
@@ -314,6 +318,7 @@ a.active { color: var(--orange600); }
     line-height: 1.4;
     box-sizing: border-box;
     padding: var(--gutter);
+    margin: 10px;
 }
 .cover * {
     float: left;

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CircularProgress, TextField } from 'material-ui';
+import { CircularProgress, FlatButton, TextField } from 'material-ui';
 
 export default class BookForm extends React.Component {
 	constructor(props) {
@@ -19,6 +19,7 @@ export default class BookForm extends React.Component {
         genres: this.props.book.genres
       },
       covers: this.props.book.covers,
+      index: 0,
       loading: false,
       errors: {}
     }
@@ -66,6 +67,15 @@ export default class BookForm extends React.Component {
     }
   };
 
+  changeCover = () => {
+    const { index, covers } = this.state;
+    const newIndex = index + 1 >= covers.length ? 0 : index + 1;
+    this.setState({
+      index: newIndex,
+      data: { ...this.state.data, cover: covers[newIndex] }
+    });
+  };
+
   validate = data => {
     const errors = {};
     if (!data.title) errors.title = "Inserisci il titolo";
@@ -90,7 +100,7 @@ export default class BookForm extends React.Component {
 			<form onSubmit={this.onSubmit} id="BookFormComponent">
         {this.state.loading && <div className="loader"><CircularProgress /></div>}
         <div className="row">
-          <div className="col">
+          <div className="col-md-6">
             <div className="form-group">
               <TextField
                 name="title"
@@ -127,29 +137,31 @@ export default class BookForm extends React.Component {
                 fullWidth={true}
               />
             </div>
-            <div className="form-group">
-              <TextField
-                name="ISBN_num"
-                type="number"
-                hintText="es: 9788854152601"
-                errorText={errors.ISBN_num}
-                floatingLabelText="ISBN"
-                value={data.ISBN_num}
-                onChange={this.onChangeNumber}
-                fullWidth={true}
-              />
-            </div>
-            <div className="form-group">
-              <TextField
-                name="pages_num"
-                type="number"
-                hintText="es: 128"
-                errorText={errors.pages_num}
-                floatingLabelText="Pagine"
-                value={data.pages_num}
-                onChange={this.onChangeNumber}
-                fullWidth={true}
-              />
+            <div className="row">
+              <div className="form-group col-8">
+                <TextField
+                  name="ISBN_num"
+                  type="number"
+                  hintText="es: 9788854152601"
+                  errorText={errors.ISBN_num}
+                  floatingLabelText="ISBN"
+                  value={data.ISBN_num}
+                  onChange={this.onChangeNumber}
+                  fullWidth={true}
+                />
+              </div>
+              <div className="form-group col-4">
+                <TextField
+                  name="pages_num"
+                  type="number"
+                  hintText="es: 128"
+                  errorText={errors.pages_num}
+                  floatingLabelText="Pagine"
+                  value={data.pages_num}
+                  onChange={this.onChangeNumber}
+                  fullWidth={true}
+                />
+              </div>
             </div>
             <div className="form-group">
               <TextField
@@ -164,15 +176,20 @@ export default class BookForm extends React.Component {
               />
             </div>
           </div>
-          <div className="col">
+          <div className="col-md-6">
             {data.cover ? 
-              <div className="cover" style={{backgroundImage: `url(${data.cover})`}}></div>
+              <div className="book">
+                <div className="cover" style={{backgroundImage: `url(${data.cover})`}}></div>
+                {this.state.covers.length > 1 && <FlatButton onClick={this.changeCover} label="Cambia copertina"/>}
+              </div>
             :
-              <div className="cover">
-                <h2 className="title">{data.title}</h2>
-                {data.subtitle.length > 0 && <h3 className="subtitle">{data.subtitle}</h3>}
-                <span className="author">{data.authors}</span>
-                <span className="publisher">{data.publisher}</span>
+              <div className="book">
+                <div className="cover">
+                  <h2 className="title">{data.title}</h2>
+                  {data.subtitle.length > 0 && <h3 className="subtitle">{data.subtitle}</h3>}
+                  <span className="author">{data.authors}</span>
+                  <span className="publisher">{data.publisher}</span>
+                </div>
               </div>
             }
           </div>
