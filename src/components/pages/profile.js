@@ -7,21 +7,7 @@ export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			uid: '',
-			user: {
-				displayName: '',
-				email: '',
-				photoURL: '',
-				creationTime: '',
-				sex: '',
-				birth_date: '',
-				location: '',
-				shelf_num: 0,
-				wishlist_num: 0,
-				reviews_num: 0,
-				ratings_num: 0
-			},
-			userSnap: {},
+			user: {},
 			changes: false,
 			success: false,
 			errors: {},
@@ -33,9 +19,8 @@ export default class Profile extends React.Component {
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				userRef(user.uid).on('value', snap => {
-					this.setState({
-						uid: user.uid, 
-						userSnap: snap.val()
+					this.setState({ 
+						user: snap.val()
 					});
 				});
 			}
@@ -43,29 +28,29 @@ export default class Profile extends React.Component {
 	}
 
 	onChange = e => {
-		this.setState({ success: false, changes: true, userSnap: { ...this.state.userSnap, [e.target.name]: e.target.value } });
+		this.setState({ success: false, changes: true, user: { ...this.state.user, [e.target.name]: e.target.value } });
 	};
 
 	onDateChange = (e, date) => {
-		this.setState({ success: false, changes: true, userSnap: { ...this.state.userSnap, birth_date: String(date) } });
+		this.setState({ success: false, changes: true, user: { ...this.state.user, birth_date: String(date) } });
 	};
 
 	onSelectChange = (e, i, val) => {
-		this.setState({ success: false, changes: true, userSnap: { ...this.state.userSnap, sex: val } });
+		this.setState({ success: false, changes: true, user: { ...this.state.user, sex: val } });
 	};
 
 	onSubmit = e => {
 		e.preventDefault();
-		const errors = this.validate(this.state.userSnap);
+		const errors = this.validate(this.state.user);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
-			userRef(this.state.uid).set({
-				...this.state.userSnap,
-				photoURL: this.state.userSnap.photoURL || '',
-				sex: this.state.userSnap.sex || '',
-				birth_date: this.state.userSnap.birth_date || '',
-				location: this.state.userSnap.location || ''
+			userRef(this.props.uid).set({
+				...this.state.user,
+				photoURL: this.state.user.photoURL || '',
+				sex: this.state.user.sex || '',
+				birth_date: this.state.user.birth_date || '',
+				location: this.state.user.location || ''
 			}).then(() => {
 				this.setState({ 
 					loading: false,
@@ -84,13 +69,15 @@ export default class Profile extends React.Component {
 
 	validate = user => {
 		const errors = {};
-		if(!user.displayName) errors.displayName = "Inserisci un nome utente";
-		if(userAge(user.birth_date) < 13) errors.birth_date = "Devi avere almeno 14 anni";
+		if (!user.displayName) errors.displayName = "Inserisci un nome utente";
+		if (userAge(user.birth_date) < 13) errors.birth_date = "Devi avere almeno 14 anni";
 		return errors;
 	};
 
-	render() {
-		const { authError, changes, errors, success, userSnap } = this.state;
+	render(props) {
+		const { authError, changes, errors, success, user } = this.state;
+
+		if (!user) return null;
 
 		return (
 			<div id="profileComponent">
@@ -100,11 +87,11 @@ export default class Profile extends React.Component {
 					<div className="container-sm">
 						<div className="row basic-profile">
 							<div className="col-auto">
-								{userSnap.photoURL ? <Avatar src={userSnap.photoURL} size={80} backgroundColor={'transparent'} /> : userSnap.displayName && <Avatar size={80}>{userSnap.displayName.charAt(0)}</Avatar>}
+								{user.photoURL ? <Avatar src={user.photoURL} size={80} backgroundColor={'transparent'} /> : user.displayName && <Avatar size={80}>{user.displayName.charAt(0)}</Avatar>}
 							</div>
 							<div className="col">
-								<p className="username">{userSnap.displayName}</p>
-								<p className="email">{userSnap.email}</p>
+								<p className="username">{user.displayName}</p>
+								<p className="email">{user.email}</p>
 							</div>
 						</div>
 
@@ -118,7 +105,7 @@ export default class Profile extends React.Component {
 									hintText="Mario Rossi"
 									errorText={errors.displayName}
 									floatingLabelText="Nome e cognome"
-									value={userSnap.displayName || ''}
+									value={user.displayName || ''}
 									onChange={this.onChange}
 									fullWidth={true}
 								/>
@@ -130,7 +117,7 @@ export default class Profile extends React.Component {
 										name="sex"
 										errorText={errors.sex}
 										floatingLabelText="Sesso"
-										value={userSnap.sex || null}
+										value={user.sex || null}
 										onChange={this.onSelectChange}
 										fullWidth={true}
 									>
@@ -147,7 +134,7 @@ export default class Profile extends React.Component {
 										openToYearSelection={true} 
 										errorText={errors.birth_date}
 										floatingLabelText="Data di nascita"
-										value={userSnap.birth_date ? new Date(userSnap.birth_date) : null}
+										value={user.birth_date ? new Date(user.birth_date) : null}
 										onChange={this.onDateChange}
 										fullWidth={true}
 									/>

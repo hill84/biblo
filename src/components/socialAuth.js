@@ -1,28 +1,15 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { CircularProgress } from 'material-ui';
-import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, storageKey, userRef } from '../config/firebase';
+import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 
 export default class SocialAuth extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: null,
             loading: false,
             redirectToReferrer: false
 		}
-	}
-
-	componentDidMount() {
-		auth.onAuthStateChanged(user => {
-			if (user) {
-				window.localStorage.setItem(storageKey, user.uid);
-				this.setState({ user });
-			} else {
-				window.localStorage.removeItem(storageKey);
-				this.setState({ user: null });
-			}
-		});
 	}
 
 	socialAuth = provider => {
@@ -31,12 +18,14 @@ export default class SocialAuth extends React.Component {
 			if (result) {
 				const user = result.user;
 				this.setState({ user });
-				userRef(user.uid).set({
-					displayName: user.displayName,
-					email: user.email,
-					photoURL: user.photoURL,
-					creationTime: user.metadata.creationTime
-				});
+				if (result.additionalUserInfo.isNewUser) {
+					userRef(user.uid).set({
+						displayName: user.displayName,
+						email: user.email,
+						photoURL: user.photoURL,
+						creationTime: user.metadata.creationTime
+					});
+				}
 			}
 		}).then(() => {
 			this.setState({ redirectToReferrer: true });

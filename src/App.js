@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { muiTheme } from './config/shared';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Route, Switch, Redirect } from 'react-router-dom';
@@ -17,6 +18,7 @@ export default class App extends React.Component {
 	constructor() {
 		super();
 		this.state = {
+			uid: null,
 			user: null
 		}
 	}
@@ -26,26 +28,28 @@ export default class App extends React.Component {
 			if (user) {
 				window.localStorage.setItem(storageKey, user.uid);
 				userRef(user.uid).on('value', snap => {
-          this.setState({ user: snap.val() });
+          this.setState({ user: snap.val(), uid: user.uid });
         });
 			} else {
 				window.localStorage.removeItem(storageKey);
-				this.setState({ user: null });
+				this.setState({ user: null, uid: null });
 			}
 		});
 	}
 
 	render() {
+		const { user, uid } = this.state;
+
 		return (
 			<MuiThemeProvider muiTheme={muiTheme} id="appComponent">
-				<Layout user={this.state.user}>
+				<Layout user={user}>
 					<Switch>
 						<Route path="/" exact component={Home} />
-						<PrivateRoute path="/dashboard" component={Dashboard} />
+						<PrivateRoute path="/dashboard" component={Dashboard} user={user} uid={uid} />
 						<Route path="/login" component={Login} />
-						<PrivateRoute path="/books/new" component={NewBook} />
+						<PrivateRoute path="/books/new" component={NewBook} uid={uid} />
 						<Route path="/password-reset" component={PasswordResetForm} />
-						<PrivateRoute path="/profile" exact component={Profile} />
+						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />
 						<Route path="/signup" component={Signup} />
 
 						<Redirect from="/home" to="/" />
@@ -59,13 +63,13 @@ export default class App extends React.Component {
 
 const PrivateRoute = ({component: Component, ...rest}) => (
 	<Route {...rest} render={props => (
-		isAuthenticated() ? (
+		isAuthenticated() ?
 			<Component {...props} {...rest} />
-		) : (
-			<Redirect to={{
-				pathname: '/login',
-				state: {from: props.location}
-			}} />
-		)
-	)}/>
+		:
+			<Redirect to={{ pathname: '/login', state: {from: props.location} }} />
+	)} />
 )
+
+App.PropTypes = {
+	uid: PropTypes.string
+}

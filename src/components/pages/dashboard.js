@@ -1,6 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { appName, userAge } from '../../config/shared';
-import { auth, userRef } from '../../config/firebase';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -9,28 +9,14 @@ import Shelf from '../shelf';
 export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			uid: '',
-			user: {}
-		}
-	}
-
-	componentDidMount() {
-		auth.onAuthStateChanged(user => {
-			if (user) {
-				userRef(user.uid).on('value', snap => {
-					this.setState({
-						uid: user.uid,
-						user: snap.val()
-					});
-				});
-			}
-		});
+		this.state = { }
 	}
 
 	render(props) {
-		const { user, uid } = this.state;
+		const { user, uid } = this.props;
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
+
+		if (!user && !uid) return null
 
 		return (
 			<div id="dashboardComponent">
@@ -39,7 +25,11 @@ export default class Dashboard extends React.Component {
 					<div className="basic-profile">
 						<div className="row">
 							<div className="col-auto">
-								{user.photoURL ? <Avatar src={user.photoURL} size={100} backgroundColor={'transparent'} /> : user.displayName && <Avatar size={100}>{user.displayName.charAt(0)}</Avatar> }
+								{user.photoURL ? 
+									<Avatar src={user.photoURL} size={100} backgroundColor={'transparent'} /> 
+								: user.displayName && 
+									<Avatar size={100}>{user.displayName.charAt(0)}</Avatar> 
+								}
 							</div>
 							<div className="col">
 								<p className="username">{user.displayName}</p>
@@ -84,4 +74,21 @@ export default class Dashboard extends React.Component {
 			</div>
 		);
 	}
+}
+
+Dashboard.propTypes = {
+	uid: PropTypes.string,
+	user: PropTypes.shape({
+			birth_date: PropTypes.string,
+			creationTime: PropTypes.string.isRequired,
+			displayName: PropTypes.string.isRequired,
+			email: PropTypes.string.isRequired,
+			location: PropTypes.string,
+			photoURL: PropTypes.string,
+			sex: PropTypes.number,
+			shelf_num: PropTypes.number,
+			wishlist_num: PropTypes.number,
+			ratings_num: PropTypes.number,
+			reviews_num: PropTypes.number
+	})
 }

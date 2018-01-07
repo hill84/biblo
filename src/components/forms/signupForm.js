@@ -41,6 +41,7 @@ export default class SignupForm extends React.Component {
 			auth.onAuthStateChanged(user => {
 				if (user) {
 					userRef(user.uid).set({
+						...user,
 						displayName: this.state.data.displayName,
 						email: user.email,
 						creationTime: user.metadata.creationTime
