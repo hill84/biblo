@@ -212,6 +212,7 @@ BookForm.propTypes = {
   book: PropTypes.shape({
     ISBN_num: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
+    title_sort: PropTypes.string.isRequired,
     subtitle: PropTypes.string,
     authors: PropTypes.string.isRequired, //PropTypes.arrayOf(PropTypes.string).isRequired,
     format: PropTypes.string,

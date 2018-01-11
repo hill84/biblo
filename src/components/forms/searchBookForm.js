@@ -14,18 +14,22 @@ export default class SearchBookForm extends React.Component {
 
   onUpdateInput = searchText => {
     clearTimeout(this.timer);
-    this.setState({ searchText: searchText });
+    this.setState({ searchText: searchText.toLowerCase() });
     this.timer = setTimeout(this.fetchOptions, 500);
   }
 
   fetchOptions = () => {
-    if (!this.state.searchText) return;
+    const { searchText } = this.state;
+    if (!searchText) return;
     this.setState({ loading: true });
-    booksRef.on('value', snap => {
-      this.setState({
-        loading: false,
-        options: snap.val()
-      });
+    booksRef.orderByChild('title_sort').startAt(searchText).endAt(searchText + "\uf8ff").limitToFirst(5).on('value', snap => {
+      console.log(snap.val());
+      if(snap.val() !== null){
+        this.setState({
+          loading: false,
+          options: snap.val()
+        });
+      }
     });
   }
 
