@@ -31,12 +31,12 @@ export default class Profile extends React.Component {
 		this.setState({ success: false, changes: true, user: { ...this.state.user, [e.target.name]: e.target.value } });
 	};
 
-	onDateChange = (e, date) => {
+	onChangeDate = (e, date) => {
 		this.setState({ success: false, changes: true, user: { ...this.state.user, birth_date: String(date) } });
 	};
 
-	onSelectChange = (e, i, val) => {
-		this.setState({ success: false, changes: true, user: { ...this.state.user, sex: val } });
+	onChangeSelect = type => (e, i, val) => {
+		this.setState({ success: false, changes: true, user: { ...this.state.user, [type]: val } });
 	};
 
 	onSubmit = e => {
@@ -114,11 +114,10 @@ export default class Profile extends React.Component {
 							<div className="row">
 								<div className="col-6 form-group">
 									<SelectField
-										name="sex"
 										errorText={errors.sex}
 										floatingLabelText="Sesso"
 										value={user.sex || null}
-										onChange={this.onSelectChange}
+										onChange={this.onChangeSelect("sex")}
 										fullWidth={true}
 									>
 										<MenuItem value={1} primaryText="Uomo" />
@@ -135,7 +134,7 @@ export default class Profile extends React.Component {
 										errorText={errors.birth_date}
 										floatingLabelText="Data di nascita"
 										value={user.birth_date ? new Date(user.birth_date) : null}
-										onChange={this.onDateChange}
+										onChange={this.onChangeDate}
 										fullWidth={true}
 									/>
 								</div>
