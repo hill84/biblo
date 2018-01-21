@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CircularProgress, FlatButton, MenuItem, SelectField, TextField } from 'material-ui';
+import { languages } from '../../config/shared';
 
 export default class BookForm extends React.Component {
 	constructor(props) {
@@ -125,15 +126,8 @@ export default class BookForm extends React.Component {
 	
 	render() {
     const { data, errors } = this.state;
-    const langMap = [
-      { id: "en", name: "English" },
-      { id: "fr", name: "Français" },
-      { id: "de", name: "Deutsch" },
-      { id: "el", name: "Afrikanns" },
-      { id: "es", name: "Español" },
-      { id: "it", name: "Italiano" }
-    ];
-    const languages = langMap.map(l => <MenuItem value={`${l.id}`} key={`${l.id}`} primaryText={`${l.name}`} />);
+    const menuItemsMap = arr => arr.map(item => <MenuItem value={`${item.id}`} key={`${item.id}`} primaryText={`${item.name}`} />);
+		const languagesMenuItems = menuItemsMap(languages);
 
 		return (
 			<form onSubmit={this.onSubmit} id="BookFormComponent">
@@ -222,7 +216,7 @@ export default class BookForm extends React.Component {
                 onChange={this.onChangeSelect("language")}
                 fullWidth={true}
               >
-                {languages}
+                {languagesMenuItems}
               </SelectField>
             </div>
           </div>

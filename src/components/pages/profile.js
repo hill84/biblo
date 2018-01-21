@@ -1,13 +1,16 @@
 import React from 'react';
-import { userAge } from '../../config/shared';
+import { calcAge, languages, continents, europeanCountries, northAmericanCountries, italianProvinces } from '../../config/shared';
 import { auth, userRef } from '../../config/firebase';
-import { Avatar, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import { Avatar, CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 
 export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: {},
+			user: {
+				languages: []
+			},
+			loading: true,
 			changes: false,
 			success: false,
 			errors: {},
@@ -19,11 +22,17 @@ export default class Profile extends React.Component {
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				userRef(user.uid).get().then(doc => {
+					this.setState({ loading: false });
 					if (doc.exists) {
 						this.setState({ 
 							user: doc.data()
 						});
 					}
+				}).catch(error => {
+					this.setState({ 
+						authError: error.message,
+						loading: false 
+					});
 				});
 			}
 		});
@@ -52,7 +61,8 @@ export default class Profile extends React.Component {
 				photoURL: this.state.user.photoURL || '',
 				sex: this.state.user.sex || '',
 				birth_date: this.state.user.birth_date || '',
-				location: this.state.user.location || ''
+				city: this.state.user.city || '',
+				country: this.state.user.country || ''
 			}).then(() => {
 				this.setState({ 
 					loading: false,
@@ -74,19 +84,31 @@ export default class Profile extends React.Component {
 		if (!user.displayName) errors.displayName = "Inserisci un nome utente";
 		if (new Date(user.birth_date) > new Date()) {
 			errors.birth_date = "Data di nascita non valida"
-		} else if (userAge(user.birth_date) < 13) {
-			errors.birth_date = "Devi avere almeno 14 anni";
+		} else if (calcAge(user.birth_date) < 13) {
+			errors.birth_date = "Età minima 14 anni";
 		}
+		if (user.city && user.city.length > 150) errors.city = "Lunghezza massima 150 caratteri";
 		return errors;
 	};
 
 	render(props) {
-		const { authError, changes, errors, success, user } = this.state;
-
+		const { authError, changes, errors, loading, success, user } = this.state;
+		//const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
+		const menuItemsMap = (arr, values) => arr.map(item => 
+			<MenuItem 
+				value={item.name} 
+				key={item.id} 
+				insetChildren={values ? true : false} 
+				checked={values ? values.includes(item.name) : false} 
+				primaryText={item.name} 
+			/>
+		);
+		
 		if (!user) return null;
 
 		return (
 			<div id="profileComponent">
+				{loading && <div className="loader"><CircularProgress /></div>}
 				<h2>Profile</h2>
 				<div className="card">
 					
@@ -126,8 +148,8 @@ export default class Profile extends React.Component {
 										onChange={this.onChangeSelect("sex")}
 										fullWidth={true}
 									>
-										<MenuItem value={'male'} primaryText="Uomo" />
-										<MenuItem value={'female'} primaryText="Donna" />
+										<MenuItem value={'m'} primaryText="Uomo" />
+										<MenuItem value={'f'} primaryText="Donna" />
 									</SelectField>
 								</div>
 
@@ -143,6 +165,67 @@ export default class Profile extends React.Component {
 										fullWidth={true}
 									/>
 								</div>
+							</div>
+
+							<div className="form-group">
+								<SelectField
+									floatingLabelText={`Lingue conosciute ${this.state.user.languages.length > 1 ? ` (${this.state.user.languages.length})` : ""}`}
+									value={user.languages || null}
+									onChange={this.onChangeSelect("languages")}
+									fullWidth={true}
+									multiple={true}
+								>
+									{menuItemsMap(languages, user.languages)}
+								</SelectField>
+							</div>
+
+							<div className="form-group">
+								<SelectField
+									floatingLabelText="Continente"
+									value={user.continent || null}
+									onChange={this.onChangeSelect("continent")}
+									fullWidth={true}
+								>
+									{menuItemsMap(continents)}
+								</SelectField>
+							</div>
+
+							{(user.continent === 'Europa' || user.continent === 'Nordamerica') && 
+								<div className="form-group">
+									<SelectField
+										floatingLabelText="Nazione"
+										value={user.country || null}
+										onChange={this.onChangeSelect("country")}
+										fullWidth={true}
+									>
+										{(user.continent === 'Europa') && menuItemsMap(europeanCountries)}
+										{(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
+									</SelectField>
+								</div>
+							}
+
+							<div className="form-group">
+								{(user.country) && (user.country === "Italia‎") ?
+									<SelectField
+										floatingLabelText="Provincia"
+										value={user.city || null}
+										onChange={this.onChangeSelect("city")}
+										fullWidth={true}
+									>
+										{menuItemsMap(italianProvinces)}
+									</SelectField>
+								:
+									<TextField
+										name="city"
+										type="text"
+										hintText="es: New York"
+										errorText={errors.city}
+										floatingLabelText="Città"
+										value={user.city || ''}
+										onChange={this.onChange}
+										fullWidth={true}
+									/>
+								}
 							</div>
 
 							{authError && <div className="row"><div className="col message error">{authError}</div></div>}

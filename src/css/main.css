@@ -280,18 +280,12 @@ a.active { color: var(--orange600); }
     margin-top: 0;
     margin-bottom: 0;
 }
-.info-row .counter {
-    display: table-cell;
-    padding: 0 20px 0 0;
-    margin-top: 15px;
-    position: relative;
-}
+.info-row .counter { margin-top: 15px; }
+.counter b { font-weight: 500; }
 .counter:after {
     content: '|';
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 7px;
+    display: inline-block;
+    margin: 0 10px;
     color: #ccc;
 }
 .counter:last-child:after { content: none; }

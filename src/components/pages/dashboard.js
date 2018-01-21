@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { appName, userAge } from '../../config/shared';
+import { appName, calcAge } from '../../config/shared';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -15,6 +15,12 @@ export default class Dashboard extends React.Component {
 	render(props) {
 		const { user, uid } = this.props;
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
+		const joinToLowerCase = arr => arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ').toLowerCase() : arr;
+		/* 
+		const objectName = (id, objs) => objs.map(obj => (obj.id === id) && obj.name);
+		const arrNameMap = (arr, objs) => arr.map(item => <span key={item}>{objectName(item, objs)}</span> + '&nbsp;');
+		const arrName = (id, objs) => <span key={id}>{objectName(id, objs)}</span>; 
+		*/
 
 		if (!user && !uid) return null
 
@@ -34,9 +40,12 @@ export default class Dashboard extends React.Component {
 							<div className="col">
 								<p className="username">{user.displayName}</p>
 								<p className="info-row">
-									{user.sex && <span className="counter">{user.sex === 1 ? 'Uomo' : user.sex === 2 ? 'Donna' : 'Altro'}</span>}
-									{user.birth_date && <span className="counter">{userAge(user.birth_date)} anni</span>}
-									{user.location && <span className="counter">{user.location}</span>}
+									{user.sex && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : 'Altro'}</span>}
+									{user.birth_date && <span className="counter">{calcAge(user.birth_date)} anni</span>}
+									{user.city && <span className="counter">{user.city}</span>}
+									{user.country && <span className="counter">{user.country}</span>}
+									{user.continent && <span className="counter">{user.continent}</span>}
+									{user.languages && <span className="counter">Parla {joinToLowerCase(user.languages)}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 									<span className="counter"><Link to="/profile">Modifica profilo</Link></span>
 								</p>
@@ -83,7 +92,10 @@ Dashboard.propTypes = {
 			creationTime: PropTypes.string.isRequired,
 			displayName: PropTypes.string.isRequired,
 			email: PropTypes.string.isRequired,
-			location: PropTypes.string,
+			languages: PropTypes.arrayOf(PropTypes.string),
+			continent: PropTypes.string,
+			country: PropTypes.string,
+			city: PropTypes.string,
 			photoURL: PropTypes.string,
 			sex: PropTypes.string,
 			shelf_num: PropTypes.number,
