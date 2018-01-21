@@ -54,7 +54,7 @@ export default class Layout extends React.Component {
                                 <NavLink to="/profile" className="auth-header">
                                     <div className="background" style={{backgroundImage: `url(${user.photoURL})`}} />
                                     <div className="user">
-                                        {user.photoURL ? <Avatar src={user.photoURL} /> : <Avatar>{user.displayName.charAt(0)}</Avatar>}
+                                        {user.photoURL ? <Avatar src={user.photoURL} /> : <Avatar>{user.displayName && user.displayName.charAt(0)}</Avatar>}
                                         <div className="user-info">
                                             <div className="user-name">{user.displayName}</div>
                                             <div className="user-email">{user.email}</div>
@@ -115,7 +115,7 @@ Layout.propTypes = {
         email: PropTypes.string.isRequired,
         location: PropTypes.string,
         photoURL: PropTypes.string,
-        sex: PropTypes.number,
+        sex: PropTypes.string,
         shelf_num: PropTypes.number,
         wishlist_num: PropTypes.number,
         ratings_num: PropTypes.number,

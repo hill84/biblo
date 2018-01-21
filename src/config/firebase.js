@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import 'firebase/firestore';
 
 const config = {
 	apiKey: "AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0",
@@ -17,9 +18,11 @@ export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
 export const auth = firebase.auth();
-export const db = firebase.database();
-export const userRef = uid => db.ref().child('users').child(uid);
-export const shelfRef = uid => db.ref().child('shelves').child(uid);
-export const booksRef = db.ref().child('books');
+
+export const db = firebase.firestore();
+export const userRef = uid => db.collection('users').doc(uid);
+export const shelfRef = uid => db.collection('shelves').doc(uid);
+export const bookRef = bid => db.collection('books').doc(bid);
+export const booksRef = db.collection('books');
 
 export default firebase;

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CircularProgress, FlatButton, TextField } from 'material-ui';
+import { CircularProgress, FlatButton, MenuItem, SelectField, TextField } from 'material-ui';
 
 export default class BookForm extends React.Component {
 	constructor(props) {
@@ -16,7 +16,8 @@ export default class BookForm extends React.Component {
         pages_num: this.props.book.pages_num,
         publisher: this.props.book.publisher,
         publication: this.props.book.publication,
-        genres: this.props.book.genres
+        genres: this.props.book.genres,
+        language: this.props.book.language
       },
       covers: this.props.book.covers,
       index: 0,
@@ -37,7 +38,8 @@ export default class BookForm extends React.Component {
         pages_num: props.book.pages_num,
         publisher: props.book.publisher,
         publication: props.book.publication,
-        genres: props.book.genres
+        genres: props.book.genres,
+        language: props.book.language
       },
       covers: props.book.covers
     })
@@ -57,12 +59,34 @@ export default class BookForm extends React.Component {
     });
   };
 
+  onChangeSelect = type => (e, i, val) => {
+		this.setState({ 
+      ...this.state,
+      data: { ...this.state.data, [type]: val } 
+    });
+	};
+
   onSubmit = e => {
     e.preventDefault();
     const errors = this.validate(this.state.data);
     this.setState({ errors });
     if (Object.keys(errors).length === 0) {
       this.setState({ loading: true });
+
+      /* booksRef(this.props.uid).set({
+				...this.state.data
+			}).then(() => {
+				this.setState({ 
+					loading: false
+				});
+				//this.setState({ redirectToReferrer: true });
+			}).catch(error => {
+				this.setState({
+					authError: error.message,
+					loading: false
+				});
+			}); */
+
       this.props.submit(this.state.data).catch(err => {
         this.setState({ 
           errors: err.response.data.errors, 
@@ -95,11 +119,21 @@ export default class BookForm extends React.Component {
     if (!data.ISBN_num) errors.ISBN_num = "Inserisci il codice ISBN";
     else if (data.ISBN_num.toString().length !== 13) errors.ISBN_num = "L'ISBN deve essere composto da 13 cifre";
     else if (data.ISBN_num.toString().substring(0,3) !== "978") errors.ISBN_num = "l'ISBN deve iniziare per 978";
+    if (!data.language) errors.language = "Seleziona la lingua";
     return errors;
   }
 	
 	render() {
     const { data, errors } = this.state;
+    const langMap = [
+      { id: "en", name: "English" },
+      { id: "fr", name: "Français" },
+      { id: "de", name: "Deutsch" },
+      { id: "el", name: "Afrikanns" },
+      { id: "es", name: "Español" },
+      { id: "it", name: "Italiano" }
+    ];
+    const languages = langMap.map(l => <MenuItem value={`${l.id}`} key={`${l.id}`} primaryText={`${l.name}`} />);
 
 		return (
 			<form onSubmit={this.onSubmit} id="BookFormComponent">
@@ -180,6 +214,17 @@ export default class BookForm extends React.Component {
                 fullWidth={true}
               />
             </div>
+            <div className="form-group">
+              <SelectField
+                errorText={errors.language}
+                floatingLabelText="Lingua"
+                value={data.language || null}
+                onChange={this.onChangeSelect("language")}
+                fullWidth={true}
+              >
+                {languages}
+              </SelectField>
+            </div>
           </div>
           <div className="col-md-6">
             {data.cover ? 
@@ -220,6 +265,7 @@ BookForm.propTypes = {
     pages_num: PropTypes.number.isRequired,
     publisher: PropTypes.string.isRequired,
     publication: PropTypes.string,
-    genres: PropTypes.string //PropTypes.arrayOf(PropTypes.string)
+    genres: PropTypes.string, //PropTypes.arrayOf(PropTypes.string),
+    language: PropTypes.string
   }).isRequired
 }

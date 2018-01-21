@@ -22,14 +22,15 @@ export default class SearchBookForm extends React.Component {
     const { searchText } = this.state;
     if (!searchText) return;
     this.setState({ loading: true });
-    booksRef.orderByChild('title_sort').startAt(searchText).endAt(searchText + "\uf8ff").limitToFirst(5).on('value', snap => {
-      console.log(snap.val());
-      if(snap.val() !== null){
-        this.setState({
-          loading: false,
-          options: snap.val()
-        });
-      }
+    booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(5).onSnapshot(snap => {
+      let books = [];
+      snap.forEach(doc => {
+        books.push(doc.data())
+      });
+      this.setState({
+        loading: false,
+        options: books
+      });
     });
   }
 

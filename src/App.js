@@ -27,8 +27,10 @@ export default class App extends React.Component {
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				window.localStorage.setItem(storageKey, user.uid);
-				userRef(user.uid).on('value', snap => {
-          this.setState({ user: snap.val(), uid: user.uid });
+				userRef(user.uid).get().then(doc => {
+					if (doc.exists) {
+						this.setState({ user: doc.data(), uid: user.uid });
+					}
         });
 			} else {
 				window.localStorage.removeItem(storageKey);

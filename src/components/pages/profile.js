@@ -18,10 +18,12 @@ export default class Profile extends React.Component {
 	componentDidMount() {
 		auth.onAuthStateChanged(user => {
 			if (user) {
-				userRef(user.uid).on('value', snap => {
-					this.setState({ 
-						user: snap.val()
-					});
+				userRef(user.uid).get().then(doc => {
+					if (doc.exists) {
+						this.setState({ 
+							user: doc.data()
+						});
+					}
 				});
 			}
 		});
@@ -70,7 +72,11 @@ export default class Profile extends React.Component {
 	validate = user => {
 		const errors = {};
 		if (!user.displayName) errors.displayName = "Inserisci un nome utente";
-		if (userAge(user.birth_date) < 13) errors.birth_date = "Devi avere almeno 14 anni";
+		if (new Date(user.birth_date) > new Date()) {
+			errors.birth_date = "Data di nascita non valida"
+		} else if (userAge(user.birth_date) < 13) {
+			errors.birth_date = "Devi avere almeno 14 anni";
+		}
 		return errors;
 	};
 
@@ -120,9 +126,8 @@ export default class Profile extends React.Component {
 										onChange={this.onChangeSelect("sex")}
 										fullWidth={true}
 									>
-										<MenuItem value={1} primaryText="Uomo" />
-										<MenuItem value={2} primaryText="Donna" />
-										<MenuItem value={3} primaryText="Altro" />
+										<MenuItem value={'male'} primaryText="Uomo" />
+										<MenuItem value={'female'} primaryText="Donna" />
 									</SelectField>
 								</div>
 

@@ -85,7 +85,7 @@ Dashboard.propTypes = {
 			email: PropTypes.string.isRequired,
 			location: PropTypes.string,
 			photoURL: PropTypes.string,
-			sex: PropTypes.number,
+			sex: PropTypes.string,
 			shelf_num: PropTypes.number,
 			wishlist_num: PropTypes.number,
 			ratings_num: PropTypes.number,

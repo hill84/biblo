@@ -17,10 +17,12 @@ export default class Shelf extends React.Component {
     componentDidMount() {
         auth.onAuthStateChanged(user => {
             if (user) {
-                shelfRef(user.uid).on('value', snap => {
-                    this.setState({
-                        shelf: snap.val()
-                    });
+                shelfRef(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        this.setState({
+                            shelf: doc.data()
+                        });
+                    }
                 });
             }
         });
@@ -59,7 +61,7 @@ Shelf.propTypes = {
         email: PropTypes.string.isRequired,
         location: PropTypes.string,
         photoURL: PropTypes.string,
-        sex: PropTypes.number,
+        sex: PropTypes.string,
         shelf_num: PropTypes.number,
         wishlist_num: PropTypes.number,
         ratings_num: PropTypes.number,
