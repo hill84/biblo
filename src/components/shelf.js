@@ -32,11 +32,15 @@ export default class Shelf extends React.Component {
         const { user, uid } = this.props;
 
         return (
-            <div id="shelfComponent">
+            <div ref="shelfComponent">
                 <div className="card bottompend">
                     <div className="row justify-content-center">
                         <div className="col-auto">
-                            {user.shelf_num > 0 ? <p>La libreria di {uid}</p> : <Link to="/books/new" className="btn primary">Aggiungi libro</Link>}
+                            {user.shelf_num > 0 ? 
+                                <p>La libreria di {uid}</p> 
+                            : 
+                                <Link to="/books/add" className="btn primary">Aggiungi libro</Link>
+                            }
                         </div>
                     </div>
 

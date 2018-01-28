@@ -25,7 +25,7 @@ export default class Dashboard extends React.Component {
 		if (!user && !uid) return null
 
 		return (
-			<div id="dashboardComponent">
+			<div ref="dashboardComponent">
 				<h2>Dashboard</h2>
 				<div className="card">
 					<div className="basic-profile">

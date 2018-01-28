@@ -28,10 +28,18 @@ h1, h2, h3, h4, h5, h6 { margin-top: .5em; margin-bottom: .5em; font-weight: 400
 p { margin-top: 0; margin-bottom: .5em; }
 p:last-child { margin-bottom: 0; }
 
-a { text-decoration: none; color: var(--cyan700); }
-a:hover { color: var(--cyan600); }
-a:active { color: var(--cyan800); }
-a.active { color: var(--orange600); }
+.link {
+    display: inline;
+    -webkit-appearance: none;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+a, .link { text-decoration: none; color: var(--cyan700); outline: none; transition: all .2s ease-in-out; }
+a:hover, .link:hover { color: var(--cyan600); }
+a:active, .link:active { color: var(--cyan800); }
+a.active, .link.active { color: var(--orange600); }
 
 /* CARDS */
 .card {
@@ -39,7 +47,7 @@ a.active { color: var(--orange600); }
     background-color: #fff;
     color: #212529;
     padding: 24px;
-    margin: 10px auto;
+    margin: 10px auto 20px auto;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
 }
@@ -62,11 +70,11 @@ a.active { color: var(--orange600); }
 
 /* BUTTONS */
 .btn {
-    display: block;
+    display: inline-block;
     -webkit-appearance: none;
     outline: none !important;
     padding: 0 .8rem;
-    margin: 3px;
+    margin: 3px auto;
     height: 36px;
     line-height: 36px;
     border: 0;
@@ -92,6 +100,8 @@ a.active { color: var(--orange600); }
     color: rgba(0,0,0,.3);
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
 }
+.btn + .btn { margin-left: 6px; }
+.btn.centered, .link.centered { display: block; }
 .btn-footer {
     -ms-flex: 0 0 100%;
     flex: 0 0 100%;
@@ -105,6 +115,9 @@ a.active { color: var(--orange600); }
     border-top-right-radius: 0;
 }
 .btn-footer, .btn-footer:hover, .btn-footer:active { box-shadow: none; transform: none; }
+
+.btn.flat { background-color: transparent; box-shadow: none; }
+.btn.flat:hover { background-color: rgba(0, 0, 0, 0.1); }
 
 .btn.primary { background-color: var(--cyan700); }
 .btn.primary:hover { background-color: var(--cyan600); }
@@ -323,6 +336,11 @@ a.active { color: var(--orange600); }
 .cover .title { color: #fff; }
 .cover .publisher { position: absolute; width: auto; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); }
 
+.book-profile .title, .book-profile .subtitle { margin: 0 auto; line-height: 130%; font-weight: 500; }
+.book-profile .title { font-size: 250%; }
+.book-profile .subtitle { font-size: 150%; }
+
+.message {font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.3); }
 .message.alert { color: var(--orange600); }
 .message.error { color: var(--red500); }
 .message.success { color: var(--green600); }

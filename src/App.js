@@ -4,10 +4,11 @@ import { muiTheme } from './config/shared';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './components/layout';
+import AddBook from './components/pages/addBook';
+import BookProfile from './components/pages/bookProfile';
 import Dashboard from './components/pages/dashboard';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
-import NewBook from './components/pages/newBook';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import PasswordResetForm from './components/forms/passwordResetForm';
@@ -49,7 +50,8 @@ export default class App extends React.Component {
 						<Route path="/" exact component={Home} />
 						<PrivateRoute path="/dashboard" component={Dashboard} user={user} uid={uid} />
 						<Route path="/login" component={Login} />
-						<PrivateRoute path="/books/new" component={NewBook} uid={uid} />
+						<PrivateRoute path="/books/add" component={AddBook} uid={uid} />
+						<PrivateRoute path="/book/:title" component={BookProfile} uid={uid} />
 						<Route path="/password-reset" component={PasswordResetForm} />
 						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />
 						<Route path="/signup" component={Signup} />

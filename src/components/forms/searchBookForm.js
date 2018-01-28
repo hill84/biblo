@@ -14,7 +14,7 @@ export default class SearchBookForm extends React.Component {
 
   onUpdateInput = searchText => {
     clearTimeout(this.timer);
-    this.setState({ searchText: searchText.toLowerCase() });
+    this.setState({ searchText: searchText.normalize().toLowerCase() });
     this.timer = setTimeout(this.fetchOptions, 500);
   }
 
@@ -43,7 +43,7 @@ export default class SearchBookForm extends React.Component {
 
   render() {
     return (
-      <form id="SearchBookFormComponent" className="container-sm">
+      <form ref="SearchBookFormComponent" className="container-sm">
         <div className="form-group">
           {/* this.state.loading && <div className="loader"><CircularProgress /></div> */}
           <AutoComplete
@@ -59,7 +59,7 @@ export default class SearchBookForm extends React.Component {
             filter={AutoComplete.fuzzyFilter}
             maxSearchResults={5}
             dataSource={this.state.options}
-            dataSourceConfig={{text: 'title', value: 'ISBN_num'}}
+            dataSourceConfig={{text: 'title', value: 'bid'}}
           />
         </div>
       </form>

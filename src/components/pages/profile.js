@@ -107,7 +107,7 @@ export default class Profile extends React.Component {
 		if (!user) return null;
 
 		return (
-			<div id="profileComponent">
+			<div ref="profileComponent">
 				{loading && <div className="loader"><CircularProgress /></div>}
 				<h2>Profile</h2>
 				<div className="card">
@@ -197,6 +197,7 @@ export default class Profile extends React.Component {
 										value={user.country || null}
 										onChange={this.onChangeSelect("country")}
 										fullWidth={true}
+										maxHeight={350}
 									>
 										{(user.continent === 'Europa') && menuItemsMap(europeanCountries)}
 										{(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
@@ -211,6 +212,7 @@ export default class Profile extends React.Component {
 										value={user.city || null}
 										onChange={this.onChangeSelect("city")}
 										fullWidth={true}
+										maxHeight={300}
 									>
 										{menuItemsMap(italianProvinces)}
 									</SelectField>
@@ -231,11 +233,11 @@ export default class Profile extends React.Component {
 							{authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
 							<div>&nbsp;</div>
-						
-							<div className="form-group">
-								<button className={`btn centered primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
-							</div>
+
 						</form>
+					</div>
+					<div className="footer no-gutter">
+						<button className={`btn btn-footer primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
 					</div>
 				</div>
 			</div>

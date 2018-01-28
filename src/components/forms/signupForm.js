@@ -71,7 +71,7 @@ export default class SignupForm extends React.Component {
 		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
-			<div id="signupFormComponent">
+			<div ref="signupFormComponent">
 				<SocialAuth />
 
 				<form onSubmit={this.onSubmit} noValidate>
