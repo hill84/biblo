@@ -42,12 +42,12 @@ export default class Profile extends React.Component {
 		this.setState({ success: false, changes: true, user: { ...this.state.user, [e.target.name]: e.target.value } });
 	};
 
-	onChangeDate = (e, date) => {
-		this.setState({ success: false, changes: true, user: { ...this.state.user, birth_date: String(date) } });
+	onChangeDate = key => (e, date) => {
+		this.setState({ success: false, changes: true, user: { ...this.state.user, [key]: String(date) } });
 	};
 
-	onChangeSelect = type => (e, i, val) => {
-		this.setState({ success: false, changes: true, user: { ...this.state.user, [type]: val } });
+	onChangeSelect = key => (e, i, val) => {
+		this.setState({ success: false, changes: true, user: { ...this.state.user, [key]: val } });
 	};
 
 	onSubmit = e => {
@@ -82,7 +82,7 @@ export default class Profile extends React.Component {
 	validate = user => {
 		const errors = {};
 		if (!user.displayName) errors.displayName = "Inserisci un nome utente";
-		if (new Date(user.birth_date) > new Date()) {
+		if (Date(user.birth_date) > new Date()) {
 			errors.birth_date = "Data di nascita non valida"
 		} else if (calcAge(user.birth_date) < 13) {
 			errors.birth_date = "Età minima 14 anni";
@@ -157,11 +157,12 @@ export default class Profile extends React.Component {
 									<DatePicker 
 										name="birth_date"
 										hintText="1998-01-01" 
+										cancelLabel="Annulla"
 										openToYearSelection={true} 
 										errorText={errors.birth_date}
 										floatingLabelText="Data di nascita"
 										value={user.birth_date ? new Date(user.birth_date) : null}
-										onChange={this.onChangeDate}
+										onChange={this.onChangeDate("birth_date")}
 										fullWidth={true}
 									/>
 								</div>

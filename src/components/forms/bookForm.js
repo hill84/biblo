@@ -27,8 +27,8 @@ export default class BookForm extends React.Component {
         description: this.props.book.description,
         incipit: this.props.book.incipit
       },
-      description_maxChars: 2000,
-      incipit_maxChars: 5000,
+      description_maxChars: 1000,
+      incipit_maxChars: 2500,
       loading: false,
       errors: {},
       authError: '',
@@ -57,16 +57,21 @@ export default class BookForm extends React.Component {
     });
   };
 
-  onChangeSelect = type => (e, i, val) => {
+  onChangeSelect = key => (e, i, val) => {
 		this.setState({ 
-      ...this.state, data: { ...this.state.data, [type]: val }, changes: true
+      ...this.state, data: { ...this.state.data, [key]: val }, changes: true
     });
   };
+
+  onChangeDate = key => (e, date) => {
+		this.setState({ 
+      ...this.state, data: { ...this.state.data, [key]: String(date) }, changes: true
+    });
+	};
   
   onChangeMaxChars = e => {
     let leftChars = `${e.target.name}_leftChars`;
     let maxChars = `${e.target.name}_maxChars`;
-    console.log(leftChars, this.state[maxChars]);
     this.setState({
       ...this.state, data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
     });
@@ -115,7 +120,7 @@ export default class BookForm extends React.Component {
     if (!data.ISBN_num) errors.ISBN_num = "Inserisci il codice ISBN";
     else if (data.ISBN_num.toString().length !== 13) errors.ISBN_num = "L'ISBN deve essere composto da 13 cifre";
     else if (data.ISBN_num.toString().substring(0,3) !== "978") errors.ISBN_num = "l'ISBN deve iniziare per 978";
-    if (new Date(data.publication) > new Date()) errors.birth_date = "Data di pubblicazione non valida";
+    if (Date(data.publication) > new Date()) errors.publication = "Data di pubblicazione non valida";
     else if (data.edition.toString().length > 2) errors.pages_num = "Max 2 cifre";
     if (data.description && data.description.length > this.state.description_maxChars) errors.description = `Lunghezza massima ${this.state.description_maxChars} caratteri`;
     if (data.incipit && data.incipit.length > this.state.incipit_maxChars) errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
@@ -219,13 +224,14 @@ export default class BookForm extends React.Component {
               <div className="row">
                 <div className="col-8 form-group">
 									<DatePicker 
-										name="publication"
-										hintText="2013-05-01" 
+                    name="publication"
+                    hintText="2013-05-01" 
+                    cancelLabel="Annulla"
 										openToYearSelection={true} 
 										errorText={errors.publication}
 										floatingLabelText="Data di pubblicazione"
 										value={data.publication ? new Date(data.publication) : null}
-										onChange={this.onChangeDate}
+										onChange={this.onChangeDate("publication")}
 										fullWidth={true}
 									/>
 								</div>
@@ -236,7 +242,7 @@ export default class BookForm extends React.Component {
                     hintText="es: 1"
                     errorText={errors.edition}
                     floatingLabelText="Edizione"
-                    value={data.edition || null}
+                    value={data.edition || ''}
                     onChange={this.onChangeNumber}
                     fullWidth={true}
                   />
@@ -246,7 +252,7 @@ export default class BookForm extends React.Component {
                 <SelectField
                   errorText={errors.languages}
                   floatingLabelText="Lingua"
-                  value={data.languages || null}
+                  value={data.languages || ''}
                   onChange={this.onChangeSelect("languages")}
                   fullWidth={true}
                   multiple={true}

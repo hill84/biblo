@@ -340,7 +340,7 @@ a.active, .link.active { color: var(--orange600); }
 .book-profile .title { font-size: 250%; }
 .book-profile .subtitle { font-size: 150%; }
 
-.message {font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.3); }
+.message {font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.5); }
 .message.alert { color: var(--orange600); }
 .message.error { color: var(--red500); }
 .message.success { color: var(--green600); }

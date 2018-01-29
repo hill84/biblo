@@ -13,11 +13,13 @@ export default class Cover extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      data: nextProps.book,
-      cover: nextProps.book.covers[0] || '',
-      index: 0,
-    });
+    if (nextProps !== this.props) {
+      this.setState({
+        data: nextProps.book,
+        cover: nextProps.book ? nextProps.book.covers[0] : '',
+        index: 0,
+      });
+    }
   }
 
   changeCover = () => {

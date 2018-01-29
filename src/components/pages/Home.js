@@ -10,7 +10,7 @@ const Home = () => (
 				<li><Link to="/signup">Signup</Link></li>
 				<li><Link to="/password-reset">Reset password</Link></li>
 				<li><Link to="/dashboard">Dashboard</Link></li>
-				<li><Link to="/books/new">New book</Link></li>
+				<li><Link to="/books/add">Add book</Link></li>
 				<li><Link to="/profile">Profile</Link></li>
 				<li><Link to="/error404">No match</Link></li>
 			</ul>
