@@ -1,9 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { bookType, funcType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
-import Cover from '../cover';
 import { languages } from '../../config/shared';
 import { bookRef } from '../../config/firebase';
+import Cover from '../cover';
 
 export default class BookForm extends React.Component {
 	constructor(props) {
@@ -25,7 +25,8 @@ export default class BookForm extends React.Component {
         genres: this.props.book.genres,
         languages: this.props.book.languages,
         description: this.props.book.description,
-        incipit: this.props.book.incipit
+        incipit: this.props.book.incipit,
+        ratings: this.props.book.ratings
       },
       description_maxChars: 1000,
       incipit_maxChars: 2500,
@@ -313,23 +314,6 @@ export default class BookForm extends React.Component {
 }
 
 BookForm.propTypes = {
-  isEditing: PropTypes.func.isRequired,
-  book: PropTypes.shape({
-    bid: PropTypes.string.isRequired,
-    ISBN_num: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    title_sort: PropTypes.string.isRequired,
-    subtitle: PropTypes.string,
-    authors: PropTypes.string.isRequired, //PropTypes.arrayOf(PropTypes.string).isRequired,
-    format: PropTypes.string,
-    covers: PropTypes.arrayOf(PropTypes.string),
-    pages_num: PropTypes.number.isRequired,
-    publisher: PropTypes.string.isRequired,
-    publication: PropTypes.string,
-    edition: PropTypes.number,
-    genres: PropTypes.arrayOf(PropTypes.string),
-    languages: PropTypes.arrayOf(PropTypes.string),
-    description: PropTypes.string,
-    incipit: PropTypes.string
-  }).isRequired
+  isEditing: funcType.isRequired,
+  book: bookType.isRequired
 }

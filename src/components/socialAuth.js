@@ -7,6 +7,14 @@ export default class SocialAuth extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			stats: {
+				followed_num: 0,
+				followers_num: 0,
+				ratings_num: 0,
+				reviews_num: 0,
+				shelf_num: 0,
+				wishlist_num: 0
+			},
             loading: false,
             redirectToReferrer: false
 		}
@@ -23,7 +31,8 @@ export default class SocialAuth extends React.Component {
 						displayName: user.displayName,
 						email: user.email,
 						photoURL: user.photoURL,
-						creationTime: user.metadata.creationTime
+						creationTime: user.metadata.creationTime,
+						stats: this.state.stats
 					});
 				}
 			}

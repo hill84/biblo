@@ -12,7 +12,15 @@ export default class SignupForm extends React.Component {
 			data: {
 				displayName: '',
 				email: '',
-				password: ''
+				password: '',
+				stats: {
+					followed_num: 0,
+					followers_num: 0,
+					ratings_num: 0,
+					reviews_num: 0,
+					shelf_num: 0,
+					wishlist_num: 0
+				}
 			},
 			loading: false,
 			errors: {},
@@ -43,7 +51,8 @@ export default class SignupForm extends React.Component {
 					userRef(user.uid).set({
 						displayName: this.state.data.displayName,
 						email: user.email,
-						creationTime: user.metadata.creationTime
+						creationTime: user.metadata.creationTime,
+						stats: this.state.stats
 					});
 					this.setState({ 
 						redirectToReferrer: true 

@@ -7,9 +7,7 @@ export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: {
-				languages: []
-			},
+			user: null,
 			loading: true,
 			changes: false,
 			success: false,
@@ -170,7 +168,7 @@ export default class Profile extends React.Component {
 
 							<div className="form-group">
 								<SelectField
-									floatingLabelText={`Lingue conosciute ${this.state.user.languages.length > 1 ? ` (${this.state.user.languages.length})` : ""}`}
+									floatingLabelText={`Lingue conosciute ${user.languages && this.state.user.languages.length > 1 ? ` (${this.state.user.languages.length})` : ""}`}
 									value={user.languages || null}
 									onChange={this.onChangeSelect("languages")}
 									fullWidth={true}

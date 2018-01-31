@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { muiTheme } from './config/shared';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Route, Switch, Redirect } from 'react-router-dom';
@@ -14,6 +13,7 @@ import Signup from './components/pages/signup';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import NoMatch from './components/pages/nomatch';
 import { auth, storageKey, isAuthenticated, userRef } from './config/firebase';
+import { stringType } from './config/types';
 
 export default class App extends React.Component {
 	constructor() {
@@ -28,14 +28,20 @@ export default class App extends React.Component {
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				window.localStorage.setItem(storageKey, user.uid);
-				userRef(user.uid).get().then(doc => {
-					if (doc.exists) {
-						this.setState({ user: doc.data(), uid: user.uid });
+				userRef(user.uid).onSnapshot(snap => {
+					if (snap.data() !== null) {
+						this.setState({ 
+							user: snap.data(), 
+							uid: user.uid 
+						});
 					}
         });
 			} else {
 				window.localStorage.removeItem(storageKey);
-				this.setState({ user: null, uid: null });
+				this.setState({ 
+					user: null, 
+					uid: null 
+				});
 			}
 		});
 	}
@@ -75,5 +81,5 @@ const PrivateRoute = ({component: Component, ...rest}) => (
 )
 
 App.PropTypes = {
-	uid: PropTypes.string
+	uid: stringType
 }

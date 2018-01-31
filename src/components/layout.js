@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { userType } from '../config/types';
 import { appName } from '../config/shared';
 import { AppBar, Avatar, CircularProgress, Dialog, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
 import { NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
@@ -108,20 +108,5 @@ const Logged = props => (
 Logged.muiName = 'IconMenu';
 
 Layout.propTypes = {
-    user: PropTypes.shape({
-        birth_date: PropTypes.string,
-        creationTime: PropTypes.string.isRequired,
-        displayName: PropTypes.string.isRequired,
-        email: PropTypes.string.isRequired,
-        languages: PropTypes.arrayOf(PropTypes.string),
-        continent: PropTypes.string,
-        country: PropTypes.string,
-        city: PropTypes.string,
-        photoURL: PropTypes.string,
-        sex: PropTypes.string,
-        shelf_num: PropTypes.number,
-        wishlist_num: PropTypes.number,
-        ratings_num: PropTypes.number,
-        reviews_num: PropTypes.number
-    })
+    user: userType
 }

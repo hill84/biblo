@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { userType, stringType } from '../../config/types';
 import { appName, calcAge } from '../../config/shared';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
@@ -7,10 +7,10 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import Shelf from '../shelf';
 
 export default class Dashboard extends React.Component {
-	constructor(props) {
+/* 	constructor(props) {
 		super(props);
-		this.state = { }
-	}
+		this.state = {}
+	} */
 
 	render(props) {
 		const { user, uid } = this.props;
@@ -22,7 +22,7 @@ export default class Dashboard extends React.Component {
 		const arrName = (id, objs) => <span key={id}>{objectName(id, objs)}</span>; 
 		*/
 
-		if (!user && !uid) return null
+		if (!user || !uid) return null
 
 		return (
 			<div ref="dashboardComponent">
@@ -53,7 +53,7 @@ export default class Dashboard extends React.Component {
 									<span className="counter">Libri: <b>{user.shelf_num || 0}</b></span>
 									<span className="counter">Wishlist: <b>{user.wishlist_num || 0}</b></span>
 									<span className="counter">Valutazioni: <b>{user.ratings_num || 0}</b></span>
-									<span className="counter">Recensioni: <b>{user.reviews_num || 0}</b></span>
+									<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
 								</p>
 							</div>
 						</div>
@@ -86,21 +86,6 @@ export default class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-	uid: PropTypes.string,
-	user: PropTypes.shape({
-			birth_date: PropTypes.string,
-			creationTime: PropTypes.string.isRequired,
-			displayName: PropTypes.string.isRequired,
-			email: PropTypes.string.isRequired,
-			languages: PropTypes.arrayOf(PropTypes.string),
-			continent: PropTypes.string,
-			country: PropTypes.string,
-			city: PropTypes.string,
-			photoURL: PropTypes.string,
-			sex: PropTypes.string,
-			shelf_num: PropTypes.number,
-			wishlist_num: PropTypes.number,
-			ratings_num: PropTypes.number,
-			reviews_num: PropTypes.number
-	})
+	uid: stringType,
+	user: userType
 }

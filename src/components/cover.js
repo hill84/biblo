@@ -6,7 +6,7 @@ export default class Cover extends React.Component {
 		super(props);
 		this.state = {
       data: this.props.book,
-      cover: this.props.book.covers[0] || '',
+      cover: '',
       index: 0,
       loading: false
     }
@@ -16,7 +16,7 @@ export default class Cover extends React.Component {
     if (nextProps !== this.props) {
       this.setState({
         data: nextProps.book,
-        cover: nextProps.book ? nextProps.book.covers[0] : '',
+        cover: nextProps.book.covers ? nextProps.book.covers[0] : '',
         index: 0,
       });
     }
@@ -40,12 +40,12 @@ export default class Cover extends React.Component {
         {cover ?
           <div>
             <div className="cover" style={{backgroundImage: `url(${cover})`}}></div>
-            {data.covers.length > 1 && <button className="btn" onClick={this.changeCover}>Cambia copertina</button>}
+            {data.covers && data.covers.length > 1 && <button className="btn" onClick={this.changeCover}>Cambia copertina</button>}
           </div>
         :
           <div className="cover">
             <h2 className="title">{data.title}</h2>
-            {data.subtitle.length > 0 && <h3 className="subtitle">{data.subtitle}</h3>}
+            {data.subtitle && data.subtitle.length > 0 && <h3 className="subtitle">{data.subtitle}</h3>}
             <span className="author">{data.authors}</span>
             <span className="publisher">{data.publisher}</span>
           </div>
