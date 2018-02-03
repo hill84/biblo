@@ -310,6 +310,7 @@ a.active, .link.active { color: var(--orange600); }
 .book-profile .title, .book-profile .subtitle { margin: 0 auto; line-height: 130%; font-weight: 500; }
 .book-profile .title { font-size: 250%; }
 .book-profile .subtitle { font-size: 150%; }
+.book-profile .description, .book-profile .incipit { text-align: justify; }
 
 .book {
     display: grid;
@@ -367,7 +368,7 @@ a.active, .link.active { color: var(--orange600); }
     font-size: 23px;
 }
 .react-rater > * { display: inline-block; }
-.react-rate-star {
+.react-rater-star {
     cursor: pointer;
     color: #ccc;
     position: relative; 
@@ -383,6 +384,8 @@ a.active, .link.active { color: var(--orange600); }
     overflow: hidden; 
 }
 .react-rater-star.is-disabled { cursor: default; }
+.user.rating .react-rater-star.will-be-active { color: var(--cyan600); }
+.user.rating .react-rater-star.is-active, .react-rater-star.is-active-half:before { color: var(--cyan700); }
 
 /* MESSAGE */
 .message {font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.5); }
@@ -392,3 +395,5 @@ a.active, .link.active { color: var(--orange600); }
 
 /* HELPERS */
 .centered { float: none; margin-left: auto; margin-right: auto; }
+.show-on-hover, .btn:hover .hide-on-hover { display: none; }
+.btn:hover .show-on-hover, .hide-on-hover { display: block; }

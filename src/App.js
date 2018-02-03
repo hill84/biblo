@@ -4,6 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './components/layout';
 import AddBook from './components/pages/addBook';
+import BookForm from './components/forms/bookForm';
 import BookProfile from './components/pages/bookProfile';
 import Dashboard from './components/pages/dashboard';
 import Home from './components/pages/home';
@@ -13,7 +14,6 @@ import Signup from './components/pages/signup';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import NoMatch from './components/pages/nomatch';
 import { auth, storageKey, isAuthenticated, userRef } from './config/firebase';
-import { stringType } from './config/types';
 
 export default class App extends React.Component {
 	constructor() {
@@ -57,7 +57,8 @@ export default class App extends React.Component {
 						<PrivateRoute path="/dashboard" component={Dashboard} user={user} uid={uid} />
 						<Route path="/login" component={Login} />
 						<PrivateRoute path="/books/add" component={AddBook} uid={uid} />
-						<PrivateRoute path="/book/:title" component={BookProfile} uid={uid} />
+						<PrivateRoute path="/book/edit/:bookTitle" component={BookForm} uid={uid} />
+						<PrivateRoute path="/book/:bookTitle" component={BookProfile} uid={uid} />
 						<Route path="/password-reset" component={PasswordResetForm} />
 						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />
 						<Route path="/signup" component={Signup} />
@@ -79,7 +80,3 @@ const PrivateRoute = ({component: Component, ...rest}) => (
 			<Redirect to={{ pathname: '/login', state: {from: props.location} }} />
 	)} />
 )
-
-App.PropTypes = {
-	uid: stringType
-}

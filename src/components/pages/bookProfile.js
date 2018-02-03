@@ -3,6 +3,7 @@ import { bookType, funcType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
 import { joinToLowerCase } from '../../config/shared';
 import { bookRef } from '../../config/firebase';
+import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
 
@@ -10,9 +11,17 @@ export default class BookForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+      //bookTitle: this.props.match.params.bookTitle,
       book: null,
-      bookInShelf: false,
-      bookInWishlist: true,
+      bookInShelf: this.props.bookInShelf,
+      bookInWishlist: this.props.bookInWishlist,
+      userBooks: this.props.userBooks,
+      userBook: {
+        bid: '123456',
+        title: 'Sherlock Holmes',
+        author: 'Arthur Conan Doyle',
+        rating_num: 0
+      },
       loading: false,
       errors: {}
     }
@@ -21,12 +30,15 @@ export default class BookForm extends React.Component {
   componentWillReceiveProps(nextProps, props) {
     if (nextProps !== this.props) {
       this.setState({
-        book: nextProps.book
+        book: nextProps.book,
+        bookInShelf: nextProps.bookInShelf,
+        bookInWishlist: nextProps.bookInWishlist,
+        userBooks: nextProps.userBooks
       });
     }
   }
 
-  componentDidMount(nextProps, props) {
+  componentDidMount(props) {
     bookRef(this.props.book.bid).onSnapshot(snap => {
       this.setState({
         book: snap.data()
@@ -50,10 +62,22 @@ export default class BookForm extends React.Component {
     this.props.removeBookFromWishlist(this.state.book.bid);
   }
 
+  onRateBook = rate => {
+    if(rate.type === 'click') {
+      this.props.rateBook(this.state.book.bid, rate.rating);
+      this.setState({
+        userBook: {
+          ...this.state.userBook,
+          rating_num: rate.rating
+        }
+      })
+    }
+  }
+
   onEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, bookInShelf, bookInWishlist } = this.state;
+    const { book, bookInShelf, bookInWishlist, userBook } = this.state;
 
     if (!book) return null;
 
@@ -87,11 +111,18 @@ export default class BookForm extends React.Component {
                 }
                 {bookInWishlist ? 
                   <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
-                    <span className="hide-on-hover">Aggiunto a wishlist</span>
-                    <span className="show-on-hover">Rimuovi da wishlist</span>
+                    <span className="hide-on-hover">Aggiunto a lista desideri</span>
+                    <span className="show-on-hover">Rimuovi da lista desideri</span>
                   </button>
                 :
-                  <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a wishlist</button>
+                  <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
+                }
+                {bookInShelf && userBook && 
+                  <div className="user rating">
+                    <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
+                    &nbsp;<span>{userBook.rating_num || 0}</span>
+                    &nbsp;&nbsp;&nbsp;<span>Il tuo voto</span>
+                  </div>
                 }
               </div>
               {book.description && <p className="description">{book.description || ''}</p>}
@@ -114,6 +145,10 @@ export default class BookForm extends React.Component {
 BookForm.propTypes = {
   addBookToShelf: funcType.isRequired,
   addBookToWishlist: funcType.isRequired,
+  removeBookFromShelf: funcType.isRequired,
+  removeBookFromWishlist: funcType.isRequired,
+  rateBook: funcType.isRequired,
   isEditing: funcType.isRequired,
-  book: bookType.isRequired
+  book: bookType.isRequired,
+  //userBook: userBookType.isRequired
 }

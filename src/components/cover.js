@@ -16,7 +16,7 @@ export default class Cover extends React.Component {
     if (nextProps !== this.props) {
       this.setState({
         book: nextProps.book,
-        cover: nextProps.book.covers ? nextProps.book.covers[0] : '',
+        cover: nextProps.book.covers[0],
         index: 0,
       });
     }
