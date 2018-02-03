@@ -1,6 +1,6 @@
 import React from 'react';
 import { userType, stringType } from '../../config/types';
-import { appName, calcAge } from '../../config/shared';
+import { appName, calcAge, joinToLowerCase } from '../../config/shared';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -15,7 +15,6 @@ export default class Dashboard extends React.Component {
 	render(props) {
 		const { user, uid } = this.props;
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
-		const joinToLowerCase = arr => arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ').toLowerCase() : arr;
 		/* 
 		const objectName = (id, objs) => objs.map(obj => (obj.id === id) && obj.name);
 		const arrNameMap = (arr, objs) => arr.map(item => <span key={item}>{objectName(item, objs)}</span> + '&nbsp;');
@@ -38,8 +37,8 @@ export default class Dashboard extends React.Component {
 								}
 							</div>
 							<div className="col">
-								<p className="username">{user.displayName}</p>
-								<p className="info-row">
+								<div className="username">{user.displayName}</div>
+								<div className="info-row">
 									{user.sex && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : 'Altro'}</span>}
 									{user.birth_date && <span className="counter">{calcAge(user.birth_date)} anni</span>}
 									{user.city && <span className="counter">{user.city}</span>}
@@ -48,13 +47,13 @@ export default class Dashboard extends React.Component {
 									{user.languages && <span className="counter">Parla {joinToLowerCase(user.languages)}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 									<span className="counter"><Link to="/profile">Modifica profilo</Link></span>
-								</p>
-								<p className="info-row">
+								</div>
+								<div className="info-row">
 									<span className="counter">Libri: <b>{user.shelf_num || 0}</b></span>
 									<span className="counter">Wishlist: <b>{user.wishlist_num || 0}</b></span>
 									<span className="counter">Valutazioni: <b>{user.ratings_num || 0}</b></span>
 									<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
-								</p>
+								</div>
 							</div>
 						</div>
 						

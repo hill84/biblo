@@ -18,6 +18,8 @@ export const muiTheme = getMuiTheme({
     datePicker: { selectColor: cyan700 }
 });
 
+export const joinToLowerCase = arr => arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ').toLowerCase() : arr;
+
 export const calcAge = userBirthDate => Math.abs(new Date(Date.now() - new Date(userBirthDate).getTime()).getUTCFullYear() - 1970);
 
 export const languages = [

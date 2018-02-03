@@ -28,6 +28,8 @@ h1, h2, h3, h4, h5, h6 { margin-top: .5em; margin-bottom: .5em; font-weight: 400
 p { margin-top: 0; margin-bottom: .5em; }
 p:last-child { margin-bottom: 0; }
 
+.info-row { margin-bottom: .5em; }
+
 .link {
     display: inline;
     -webkit-appearance: none;
@@ -340,6 +342,32 @@ a.active, .link.active { color: var(--orange600); }
 .book-profile .title { font-size: 250%; }
 .book-profile .subtitle { font-size: 150%; }
 
+/* RATING */
+.rating { font-size: 120%; line-height: 1.6; color: #ccc; }
+.react-rater {
+    display: inline-block;
+    line-height: normal;
+    font-size: 23px;
+}
+.react-rater > * { display: inline-block; }
+.react-rate-star {
+    cursor: pointer;
+    color: #ccc;
+    position: relative; 
+}
+.react-rater-star.will-be-active { color: #ffdd99; }
+.react-rater-star.is-active { color: #fc6; }
+.react-rater-star.is-active-half:before {
+    color: #fc6;
+    content: '\2605';
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden; 
+}
+.react-rater-star.is-disabled { cursor: default; }
+
+/* MESSAGE */
 .message {font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.5); }
 .message.alert { color: var(--orange600); }
 .message.error { color: var(--red500); }

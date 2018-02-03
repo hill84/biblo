@@ -1,6 +1,7 @@
 import React from 'react';
 import { bookType, funcType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
+import { joinToLowerCase } from '../../config/shared';
 import { bookRef } from '../../config/firebase';
 import Cover from '../cover';
 import Rating from '../rating';
@@ -10,7 +11,6 @@ export default class BookForm extends React.Component {
 		super(props);
 		this.state = {
       book: null,
-      ratings: null,
       loading: false,
       errors: {}
     }
@@ -56,15 +56,23 @@ export default class BookForm extends React.Component {
             <div className="col">
               <h2 className="title">{book.title}</h2>
               {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
-              <p className="info-row">
+              <div className="info-row">
                 {book.authors && <span className="counter">di {book.authors}</span>}
                 {book.publisher && <span className="counter">editore: {book.publisher}</span>}
                 <button className="link counter" onClick={this.onEditing}>Modifica</button>
-              </p>
-              <p className="info-row">
+              </div>
+              <div className="info-row">
                 <Rating ratings={book.ratings}/>
-              </p>
+              </div>
               {book.description && <p className="description">{book.description || ''}</p>}
+              <div className="info-row">
+                <span className="counter">ISBN: {book.ISBN_num}</span>
+                {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
+                {book.edition && <span className="counter">Edizione: {book.edition}</span>}
+                {book.pages_num && <span className="counter">Pagine: {book.pages_num}</span>}
+                {book.format && <span className="counter">Formato: {book.format}</span>}
+                {book.genres && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
+              </div>
             </div>
           </div>
         </div>

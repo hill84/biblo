@@ -44,12 +44,12 @@ export default class Shelf extends React.Component {
                         </div>
                     </div>
 
-                    <p className="info-row">
+                    <div className="info-row">
                         <span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>
                         <span className="counter">Wishlist: <b>{user.stats.wishlist_num}</b></span>
                         <span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
                         <span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
-                    </p>
+                    </div>
                 </div>
             </div>
         );
