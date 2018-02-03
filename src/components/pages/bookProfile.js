@@ -11,6 +11,8 @@ export default class BookForm extends React.Component {
 		super(props);
 		this.state = {
       book: null,
+      bookInShelf: false,
+      bookInWishlist: true,
       loading: false,
       errors: {}
     }
@@ -40,10 +42,20 @@ export default class BookForm extends React.Component {
     this.props.addBookToWishlist(this.state.book.bid);
   }
 
+  onRemoveBookFromShelf = () => {
+    this.props.removeBookFromShelf(this.state.book.bid);
+  }
+
+  onRemoveBookFromWishlist = () => {
+    this.props.removeBookFromWishlist(this.state.book.bid);
+  }
+
   onEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book } = this.props;
+    const { book, bookInShelf, bookInWishlist } = this.state;
+
+    if (!book) return null;
 
 		return (
       <div ref="BookProfileComponent">
@@ -54,15 +66,33 @@ export default class BookForm extends React.Component {
               <Cover book={book} />
             </div>
             <div className="col">
-              <h2 className="title">{book.title}</h2>
-              {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
+              <h2 className="title">{book.title || ''}</h2>
+              {book.subtitle && <h3 className="subtitle">{book.subtitle || ''}</h3>}
               <div className="info-row">
                 {book.authors && <span className="counter">di {book.authors}</span>}
                 {book.publisher && <span className="counter">editore: {book.publisher}</span>}
                 <button className="link counter" onClick={this.onEditing}>Modifica</button>
               </div>
               <div className="info-row">
-                <Rating ratings={book.ratings}/>
+                <Rating ratings={book.ratings || 0}/>
+              </div>
+              <div className="info-row">
+                {bookInShelf ? 
+                  <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
+                    <span className="hide-on-hover">Aggiunto a libreria</span>
+                    <span className="show-on-hover">Rimuovi da libreria</span>
+                  </button>
+                :
+                  <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
+                }
+                {bookInWishlist ? 
+                  <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
+                    <span className="hide-on-hover">Aggiunto a wishlist</span>
+                    <span className="show-on-hover">Rimuovi da wishlist</span>
+                  </button>
+                :
+                  <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a wishlist</button>
+                }
               </div>
               {book.description && <p className="description">{book.description || ''}</p>}
               <div className="info-row">
@@ -76,8 +106,6 @@ export default class BookForm extends React.Component {
             </div>
           </div>
         </div>
-        <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
-        <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a wishlist</button>
       </div>
 		);
 	}

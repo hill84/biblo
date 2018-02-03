@@ -142,6 +142,7 @@ a.active, .link.active { color: var(--orange600); }
     transform: none;
 }
 .btn.success, btn.success:hover, btn.success:active, .btn.success:disabled { background-color: var(--green600); color: #fff; }
+.btn.error, btn.error:hover, btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: var(--red500); color: #fff; }
 
 .container-xs, .container-sm, .container-md { margin-left: auto; margin-right: auto; float: none; max-width: 100%; }
 .container-xs { width: 320px; }
@@ -306,6 +307,10 @@ a.active, .link.active { color: var(--orange600); }
 .counter:last-child:after { content: none; }
 .counter:empty { display: none; }
 
+.book-profile .title, .book-profile .subtitle { margin: 0 auto; line-height: 130%; font-weight: 500; }
+.book-profile .title { font-size: 250%; }
+.book-profile .subtitle { font-size: 150%; }
+
 .book {
     display: grid;
     justify-items: center;
@@ -321,7 +326,8 @@ a.active, .link.active { color: var(--orange600); }
     box-shadow: 0 2px 3px rgba(0,0,0,.12);
     overflow: hidden;
     border-radius: 2px;
-    font-size: 60%;
+    color: rgba(0,0,0,.6);
+    font-size: 9px;
     line-height: 1.4;
     box-sizing: border-box;
     padding: var(--gutter);
@@ -334,13 +340,24 @@ a.active, .link.active { color: var(--orange600); }
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.cover .title, .cover .subtitle { white-space: normal; max-height: 60px; margin: 0 0 2px 0; font-weight: 500; }
-.cover .title { color: #fff; }
+.cover .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 1%, rgba(0,0,0,0.06) 4%, rgba(255,255,255,0.09) 7%, rgba(255,255,255,0.2) 18%, rgba(255,255,255,0.2) 28%, rgba(255,255,255,0) 100%);
+    background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,rgba(255,255,255,0) 100%);
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,rgba(255,255,255,0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
+}
+.cover .title, .cover .subtitle { white-space: normal; max-height: 60px; margin: 0 0 2px 0; font-weight: 500; font-size: 120%; }
+.cover .title { color: #fff; font-size: 160%; font-weight: 400; }
+.cover .author { font-size: 110%; font-weight: 500; }
 .cover .publisher { position: absolute; width: auto; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); }
-
-.book-profile .title, .book-profile .subtitle { margin: 0 auto; line-height: 130%; font-weight: 500; }
-.book-profile .title { font-size: 250%; }
-.book-profile .subtitle { font-size: 150%; }
 
 /* RATING */
 .rating { font-size: 120%; line-height: 1.6; color: #ccc; }

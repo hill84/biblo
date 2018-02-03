@@ -18,6 +18,10 @@ export default class AddBook extends React.Component {
 
 	addBookToWishlist = bid => console.log('Book added to user wishlist ' + bid);
 
+	removeBookFromShelf = bid => console.log('Book removed from user shelf ' + bid);
+
+	removeBookFromWishlist = bid => console.log('Book removed from user wishlist ' + bid);
+
 	isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
 	
 	render() {
@@ -42,6 +46,8 @@ export default class AddBook extends React.Component {
 							<BookProfile 
 								addBookToShelf={this.addBookToShelf} 
 								addBookToWishlist={this.addBookToWishlist} 
+								removeBookFromShelf={this.removeBookFromShelf} 
+								removeBookFromWishlist={this.removeBookFromWishlist} 
 								isEditing={this.isEditing}
 								book={book} 
 							/>

@@ -5,8 +5,8 @@ export default class Cover extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-      data: this.props.book,
-      cover: '',
+      book: this.props.book,
+      cover: this.props.book.covers[0] || '',
       index: 0,
       loading: false
     }
@@ -15,7 +15,7 @@ export default class Cover extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
       this.setState({
-        data: nextProps.book,
+        book: nextProps.book,
         cover: nextProps.book.covers ? nextProps.book.covers[0] : '',
         index: 0,
       });
@@ -23,31 +23,34 @@ export default class Cover extends React.Component {
   }
 
   changeCover = () => {
-    const { index, data } = this.state;
-    const newIndex = index + 1 >= data.covers.length ? 0 : index + 1;
+    const { index, book } = this.state;
+    const newIndex = index + 1 >= book.covers.length ? 0 : index + 1;
     this.setState({
-      data: { ...this.state.data },
-      cover: data.covers[newIndex],
+      book: { ...this.state.book },
+      cover: this.state.book.covers[newIndex],
       index: newIndex
     });
   };
 
   render() {
-    const { cover, data } = this.state;
+    const { cover, book } = this.state;
 
 		return (
       <div className="book" ref="coverComponent">
         {cover ?
           <div>
-            <div className="cover" style={{backgroundImage: `url(${cover})`}}></div>
-            {data.covers && data.covers.length > 1 && <button className="btn" onClick={this.changeCover}>Cambia copertina</button>}
+            <div className="cover" style={{backgroundImage: `url(${cover})`}}>
+              <div className="overlay"></div>
+            </div>
+            {book.covers && book.covers.length > 1 && <button className="btn" onClick={this.changeCover}>Cambia copertina</button>}
           </div>
         :
           <div className="cover">
-            <h2 className="title">{data.title}</h2>
-            {data.subtitle && data.subtitle.length > 0 && <h3 className="subtitle">{data.subtitle}</h3>}
-            <span className="author">{data.authors}</span>
-            <span className="publisher">{data.publisher}</span>
+            <div className="overlay"></div>
+            <h2 className="title">{book.title}</h2>
+            {book.subtitle && book.subtitle.length > 0 && <h3 className="subtitle">{book.subtitle}</h3>}
+            <span className="author">{book.authors}</span>
+            <span className="publisher">{book.publisher}</span>
           </div>
         }
       </div>
