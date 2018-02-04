@@ -1,5 +1,5 @@
 import React from 'react';
-/* import PropTypes from 'prop-types'; */
+import { minimalbookType } from '../config/types';
 
 export default class Cover extends React.Component {
 	constructor(props) {
@@ -56,4 +56,8 @@ export default class Cover extends React.Component {
       </div>
     );
   }
+}
+
+Cover.propTypes = {
+  book: minimalbookType.isRequired
 }

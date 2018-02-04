@@ -50,6 +50,29 @@ export const bookType = shape({
   }).isRequired
 });
 
+export const minimalbookType = shape({
+  bid: string.isRequired,
+  ISBN_num: number,
+  title: string.isRequired,
+  title_sort: string,
+  subtitle: string,
+  authors: string.isRequired, //arrayOf(string).isRequired,
+  format: string,
+  covers: arrayOf(string),
+  pages_num: number,
+  publisher: string.isRequired,
+  publication: string,
+  edition: number,
+  genres: arrayOf(string),
+  languages: arrayOf(string),
+  description: string,
+  incipit: string,
+  ratings: shape({
+    ratings_num: number.isRequired,
+    totalRating_num: number.isRequired
+  }).isRequired
+});
+
 export const userBookType = shape({
   readingState: string.isRequired,
   rating_num: number.isRequired

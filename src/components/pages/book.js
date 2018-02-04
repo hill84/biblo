@@ -29,12 +29,14 @@ export default class Book extends React.Component {
         if (snap.exists) {
           this.setState({
             userBook: snap.data(),
-            bookInShelf: true
+            bookInShelf: snap.data().shelf,
+            bookInWishlist: snap.data().wishlist
           });
         } else {
           this.setState({
             userBook: null,
-            bookInShelf: false
+            bookInShelf: false,
+            bookInWishlist: false
           });
         }
       });
@@ -46,12 +48,14 @@ export default class Book extends React.Component {
       if (snap.exists) {
         this.setState({
           userBook: snap.data(),
-          bookInShelf: true
+          bookInShelf: snap.data().shelf,
+          bookInWishlist: snap.data().wishlist
         });
       } else {
         this.setState({
           userBook: null,
-          bookInShelf: false
+          bookInShelf: false,
+          bookInWishlist: false
         });
       }
     });

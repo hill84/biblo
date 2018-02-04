@@ -29,6 +29,9 @@ p { margin-top: 0; margin-bottom: .5em; }
 p:last-child { margin-bottom: 0; }
 
 .info-row { margin-bottom: .5em; }
+.info-row:last-child { margin-bottom: 0; }
+.info-row.centered { text-align: center; }
+.card .info-row.footer { display: block; }
 
 .link {
     display: inline;
