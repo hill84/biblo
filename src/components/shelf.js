@@ -50,17 +50,16 @@ export default class Shelf extends React.Component {
         return (
             <div ref="shelfComponent">
                 <div className="card bottompend">
+                    <div className="row justify-content-center shelf">
+                        {shelfBooks && 
+                            <div className="col">
+                                <div className="info-row centered">La libreria di {user.displayName}</div>
+                                <div>{shelfBooks}</div>
+                            </div>
+                        }
+                    </div>
                     <div className="row justify-content-center">
-                        <div className="col-auto">
-                            {user.stats.shelf_num > 0 ? 
-                                <div className="shelf">
-                                    <div className="info-row">La libreria di {user.displayName}</div>
-                                    <div>{shelfBooks}</div>
-                                </div>
-                            : 
-                                <Link to="/books/add" className="btn primary">Aggiungi libro</Link>
-                            }
-                        </div>
+                        <Link to="/books/add" className="btn primary">Aggiungi libro</Link>
                     </div>
 
                     <div className="info-row footer centered">

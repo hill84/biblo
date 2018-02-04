@@ -89,6 +89,7 @@ a.active, .link.active { color: var(--orange600); }
     font-family: Roboto, sans-serif;
     color: rgba(255,255,255,.9);
     font-size: 14px;
+    text-align: center;
     text-transform: uppercase;
     font-weight: 500;
     transition: all .2s ease-in-out 0s;
