@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { auth, shelfRef } from '../config/firebase';
+import { auth, UserBooksRef } from '../config/firebase';
 import { stringType, userType } from '../config/types';
 
 export default class Shelf extends React.Component {
@@ -17,7 +17,7 @@ export default class Shelf extends React.Component {
     componentDidMount() {
         auth.onAuthStateChanged(user => {
             if (user) {
-                shelfRef(user.uid).get().then(doc => {
+                UserBooksRef(user.uid).get().then(doc => {
                     if (doc.exists) {
                         this.setState({
                             shelf: doc.data()

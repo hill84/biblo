@@ -42,7 +42,7 @@ export default class Cover extends React.Component {
             <div className="cover" style={{backgroundImage: `url(${cover})`}}>
               <div className="overlay"></div>
             </div>
-            {book.covers && book.covers.length > 1 && <button className="btn" onClick={this.changeCover}>Cambia copertina</button>}
+            {book.covers && book.covers.length > 1 && <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button>}
           </div>
         :
           <div className="cover">

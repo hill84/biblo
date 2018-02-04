@@ -121,9 +121,13 @@ a.active, .link.active { color: var(--orange600); }
 .btn.flat { background-color: transparent; box-shadow: none; }
 .btn.flat:hover { background-color: rgba(0, 0, 0, 0.1); }
 
+.btn.sm { font-size: 12px; line-height: 26px; height: 26px; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+
 .btn.primary { background-color: var(--cyan700); }
 .btn.primary:hover { background-color: var(--cyan600); }
 .btn.primary:active { background-color: var(--cyan800); }
+
+.btn.neutral { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.4); }
 
 .socialButtons > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
 .socialButtons > [class*="col-"]:first-child { padding-left: 15px; }
@@ -315,6 +319,7 @@ a.active, .link.active { color: var(--orange600); }
 .book {
     display: grid;
     justify-items: center;
+    min-width: 140px;
 }
 .cover {
     --gutter: 15px;
@@ -332,7 +337,7 @@ a.active, .link.active { color: var(--orange600); }
     line-height: 1.4;
     box-sizing: border-box;
     padding: var(--gutter);
-    margin: 10px;
+    margin: 10px auto;
 }
 .cover * {
     float: left;
@@ -383,9 +388,33 @@ a.active, .link.active { color: var(--orange600); }
     width: 50%;
     overflow: hidden; 
 }
+.rating .rating-num { /* color: #fc6; */ margin-left: 5px; margin-right: 15px; }
+/* .user.rating .rating-num { color: var(--cyan700); } */
 .react-rater-star.is-disabled { cursor: default; }
 .user.rating .react-rater-star.will-be-active { color: var(--cyan600); }
 .user.rating .react-rater-star.is-active, .react-rater-star.is-active-half:before { color: var(--cyan700); }
+
+.menuitem-book { padding: 5px 0; }
+.menuitem-book .primaryText { 
+    line-height: 50px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+.menuitem-book .primaryText .thumbnail { 
+    float: left; 
+    width: 25px; 
+    height: 40px; 
+    margin: 5px 10px 5px 0; 
+    vertical-align: middle; 
+}
+.menuitem-book .secondaryText { 
+    line-height: 50px; 
+    font-size: 80%; 
+    font-weight: 300;
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 /* MESSAGE */
 .message {font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.5); }
@@ -397,3 +426,4 @@ a.active, .link.active { color: var(--orange600); }
 .centered { float: none; margin-left: auto; margin-right: auto; }
 .show-on-hover, .btn:hover .hide-on-hover { display: none; }
 .btn:hover .show-on-hover, .hide-on-hover { display: block; }
+.rounded { border-radius: 99px; }

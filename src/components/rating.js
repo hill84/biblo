@@ -26,8 +26,8 @@ export default class Rating extends React.Component {
     return (
       <div className="rating">
         <Rater interactive={false} total={5} rating={this.state.averageRating_num} /> 
-        &nbsp;<span>{this.state.averageRating_num}</span>
-        &nbsp;&nbsp;&nbsp;<span>{this.state.ratings_num} voti</span>
+        <span className="rating-num">{this.state.averageRating_num}</span>
+        <span className="label ratings-num">{this.state.ratings_num} voti</span>
       </div>
     )
   }

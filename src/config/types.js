@@ -50,6 +50,11 @@ export const bookType = shape({
   }).isRequired
 });
 
+export const userBookType = shape({
+  readingState: string.isRequired,
+  rating_num: number.isRequired
+});
+
 export const ratingsType = shape({
   rating_num: number.isRequired,
   totalRatings_num: number.isRequired

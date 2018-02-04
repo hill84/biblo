@@ -1,5 +1,5 @@
 import React from 'react';
-import { AutoComplete/* , CircularProgress */ } from 'material-ui';
+import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
 import { booksRef } from '../../config/firebase';
 
 export default class SearchBookForm extends React.Component {
@@ -23,13 +23,29 @@ export default class SearchBookForm extends React.Component {
     if (!searchText) return;
     this.setState({ loading: true });
     booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(5).onSnapshot(snap => {
-      let books = [];
+      let options = [];
       snap.forEach(doc => {
-        books.push(doc.data())
+        options.push({
+          ...doc.data(),
+          text: doc.data().title,
+          value: (
+            <MenuItem
+              className="menuitem-book"
+              primaryText={(
+                <div className="primaryText">
+                  <img className="thumbnail" src={doc.data().covers.length > 0 && doc.data().covers[0]} alt={doc.data().title} /> 
+                  <span className="title">{doc.data().title}</span>
+                </div>
+              )}
+              secondaryText={<div className="secondaryText">di {doc.data().authors}</div>}
+            />
+          )
+        })
       });
+
       this.setState({
         loading: false,
-        options: books
+        options: options
       });
     });
   }
@@ -59,7 +75,7 @@ export default class SearchBookForm extends React.Component {
             filter={AutoComplete.fuzzyFilter}
             maxSearchResults={5}
             dataSource={this.state.options}
-            dataSourceConfig={{text: 'title', value: 'bid'}}
+            //dataSourceConfig={{text: 'bid', value: 'bid'}}
           />
         </div>
       </form>

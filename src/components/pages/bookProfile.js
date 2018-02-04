@@ -1,5 +1,5 @@
 import React from 'react';
-import { bookType, funcType } from '../../config/types';
+import { bookType, funcType, userBookType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
 import { joinToLowerCase } from '../../config/shared';
 import { bookRef } from '../../config/firebase';
@@ -7,7 +7,7 @@ import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
 
-export default class BookForm extends React.Component {
+export default class BookProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -15,13 +15,7 @@ export default class BookForm extends React.Component {
       book: null,
       bookInShelf: this.props.bookInShelf,
       bookInWishlist: this.props.bookInWishlist,
-      userBooks: this.props.userBooks,
-      userBook: {
-        bid: '123456',
-        title: 'Sherlock Holmes',
-        author: 'Arthur Conan Doyle',
-        rating_num: 0
-      },
+      userBook: this.props.userBook,
       loading: false,
       errors: {}
     }
@@ -33,7 +27,7 @@ export default class BookForm extends React.Component {
         book: nextProps.book,
         bookInShelf: nextProps.bookInShelf,
         bookInWishlist: nextProps.bookInWishlist,
-        userBooks: nextProps.userBooks
+        userBook: nextProps.userBook
       });
     }
   }
@@ -120,8 +114,8 @@ export default class BookForm extends React.Component {
                 {bookInShelf && userBook && 
                   <div className="user rating">
                     <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
-                    &nbsp;<span>{userBook.rating_num || 0}</span>
-                    &nbsp;&nbsp;&nbsp;<span>Il tuo voto</span>
+                    <span className="rating-num">{userBook.rating_num || 0}</span>
+                    <span className="label">Il tuo voto</span>
                   </div>
                 }
               </div>
@@ -142,7 +136,7 @@ export default class BookForm extends React.Component {
 	}
 }
 
-BookForm.propTypes = {
+BookProfile.propTypes = {
   addBookToShelf: funcType.isRequired,
   addBookToWishlist: funcType.isRequired,
   removeBookFromShelf: funcType.isRequired,
@@ -150,5 +144,5 @@ BookForm.propTypes = {
   rateBook: funcType.isRequired,
   isEditing: funcType.isRequired,
   book: bookType.isRequired,
-  //userBook: userBookType.isRequired
+  userBook: userBookType
 }
