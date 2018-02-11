@@ -21,8 +21,8 @@ export const auth = firebase.auth();
 
 export const db = firebase.firestore();
 export const userRef = uid => db.collection('users').doc(uid);
-export const UserBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
-export const UserShelfBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
+export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
+export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
 
 export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');

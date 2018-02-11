@@ -1,8 +1,7 @@
 import React from 'react';
-import { bookType, funcType, userBookType } from '../../config/types';
+import { funcType, userBookType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
 import { joinToLowerCase } from '../../config/shared';
-import { bookRef } from '../../config/firebase';
 import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
@@ -11,33 +10,20 @@ export default class BookProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-      //bookTitle: this.props.match.params.bookTitle,
-      book: null,
-      bookInShelf: this.props.bookInShelf,
-      bookInWishlist: this.props.bookInWishlist,
+      book: this.props.book,
       userBook: this.props.userBook,
       loading: false,
       errors: {}
     }
   }
 
-  componentWillReceiveProps(nextProps, props) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
       this.setState({
         book: nextProps.book,
-        bookInShelf: nextProps.bookInShelf,
-        bookInWishlist: nextProps.bookInWishlist,
         userBook: nextProps.userBook
       });
     }
-  }
-
-  componentDidMount(props) {
-    bookRef(this.props.book.bid).onSnapshot(snap => {
-      this.setState({
-        book: snap.data()
-      });
-    });
   }
 
   onAddBookToShelf = () => {
@@ -71,8 +57,8 @@ export default class BookProfile extends React.Component {
   onEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, bookInShelf, bookInWishlist, userBook } = this.state;
-
+    const { book, userBook } = this.state;
+    
     if (!book) return null;
 
 		return (
@@ -92,10 +78,10 @@ export default class BookProfile extends React.Component {
                 <button className="link counter" onClick={this.onEditing}>Modifica</button>
               </div>
               <div className="info-row">
-                <Rating ratings={book.ratings || 0}/>
+                <Rating ratings={{ratings_num: book.ratings_num, rating_num: book.rating_num}}/>
               </div>
               <div className="info-row">
-                {bookInShelf ? 
+                {userBook.bookInShelf ? 
                   <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
                     <span className="hide-on-hover">Aggiunto a libreria</span>
                     <span className="show-on-hover">Rimuovi da libreria</span>
@@ -103,7 +89,7 @@ export default class BookProfile extends React.Component {
                 :
                   <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
                 }
-                {bookInWishlist ? 
+                {userBook.bookInWishlist ? 
                   <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
                     <span className="hide-on-hover">Aggiunto a lista desideri</span>
                     <span className="show-on-hover">Rimuovi da lista desideri</span>
@@ -111,7 +97,7 @@ export default class BookProfile extends React.Component {
                 :
                   <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
                 }
-                {bookInShelf && userBook && 
+                {userBook.bookInShelf &&
                   <div className="user rating">
                     <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
                     <span className="rating-num">{userBook.rating_num || 0}</span>
@@ -123,10 +109,14 @@ export default class BookProfile extends React.Component {
               <div className="info-row">
                 <span className="counter">ISBN: {book.ISBN_num}</span>
                 {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
-                {book.edition && <span className="counter">Edizione: {book.edition}</span>}
-                {book.pages_num && <span className="counter">Pagine: {book.pages_num}</span>}
+                {book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span>}
+                {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
                 {book.format && <span className="counter">Formato: {book.format}</span>}
-                {book.genres && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
+                {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
+              </div>
+              <div className="info-row">
+                <span className="counter">Lettori: {book.readers_num}</span>
+                <span className="counter">Recensioni: {book.reviews_num}</span>
               </div>
             </div>
           </div>
@@ -143,6 +133,5 @@ BookProfile.propTypes = {
   removeBookFromWishlist: funcType.isRequired,
   rateBook: funcType.isRequired,
   isEditing: funcType.isRequired,
-  book: bookType.isRequired,
-  userBook: userBookType
+  userBook: userBookType.isRequired
 }

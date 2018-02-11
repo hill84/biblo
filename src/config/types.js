@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const { arrayOf, func, shape, number,/*  oneOf, */ string } = PropTypes;
+const { arrayOf, bool, func, shape, number,/*  oneOf, */ string } = PropTypes;
 
 export const funcType = func;
 
@@ -39,46 +39,37 @@ export const bookType = shape({
   pages_num: number.isRequired,
   publisher: string.isRequired,
   publication: string,
-  edition: number,
+  edition_num: number,
   genres: arrayOf(string),
   languages: arrayOf(string),
   description: string,
   incipit: string,
-  ratings: shape({
-    ratings_num: number.isRequired,
-    totalRating_num: number.isRequired
-  }).isRequired
+  readers_num: number.isRequired,
+  reviews_num: number.isRequired,
+  ratings_num: number.isRequired,
+  rating_num: number.isRequired
 });
 
-export const minimalbookType = shape({
+export const coverType = shape({
   bid: string.isRequired,
-  ISBN_num: number,
   title: string.isRequired,
-  title_sort: string,
   subtitle: string,
   authors: string.isRequired, //arrayOf(string).isRequired,
   format: string,
   covers: arrayOf(string),
-  pages_num: number,
   publisher: string.isRequired,
-  publication: string,
-  edition: number,
-  genres: arrayOf(string),
-  languages: arrayOf(string),
-  description: string,
-  incipit: string,
-  ratings: shape({
-    ratings_num: number.isRequired,
-    totalRating_num: number.isRequired
-  }).isRequired
+  incipit: string
 });
 
 export const userBookType = shape({
+  review: string.isRequired,
   readingState: string.isRequired,
-  rating_num: number.isRequired
+  rating_num: number.isRequired,
+  bookInShelf: bool.isRequired,
+  bookInWishlist: bool.isRequired 
 });
 
 export const ratingsType = shape({
   rating_num: number.isRequired,
-  totalRatings_num: number.isRequired
+  ratings_num: number.isRequired
 });

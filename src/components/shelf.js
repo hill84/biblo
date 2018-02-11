@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserBooksRef } from '../config/firebase';
+import { bookRef, userBooksRef } from '../config/firebase';
 import { stringType, userType } from '../config/types';
 import Cover from './cover';
 
@@ -8,7 +8,8 @@ export default class Shelf extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            shelf: null,
+            books: null,
+            userBooks: null,
             loading: false,
             errors: {},
             authError: ''
@@ -16,22 +17,35 @@ export default class Shelf extends React.Component {
     }
 
     componentDidMount(props) {
-        UserBooksRef(this.props.uid).onSnapshot(snap => {
+        userBooksRef(this.props.uid).onSnapshot(snap => {
             //console.log(snap);
             if (!snap.empty) {
-                var books = [];
-                snap.forEach(doc => {
-                    books.push(doc.data());
+                var snapUserBooks = [];
+                var snapBooks = [];
+                snap.forEach(userBook => {
+                    snapUserBooks.push(userBook.data());
+                    if (userBook.data().bid) {
+                        //console.log(userBook.data().bid);
+                        bookRef(userBook.data().bid).get().then(book => {
+                            if (book.exists) {
+                                //console.log('book exists', book.data());
+                                snapBooks.push(book.data());
+                            } else console.log("book doesn't esist");
+                        });
+                    }
                 });
-                //console.log(books);
-                this.setState({
-                    shelf: books
-                });
-                //console.log(this.state.shelf);
+                if (snapBooks[0] && snapUserBooks[0]) {
+                    this.setState({
+                        books: snapBooks,
+                        userBooks: snapUserBooks
+                    });
+                    console.log(this.state.books);
+                }
             } else {
                 //console.log('no books');
                 this.setState({
-                    shelf: null
+                    books: null,
+                    userBooks: null
                 });
             }
         });
@@ -39,22 +53,17 @@ export default class Shelf extends React.Component {
 
     render(props) {
         const { user } = this.props;
-        const { shelf } = this.state;
-        let shelfBooks;
-        if (shelf) {
-            shelfBooks = shelf.map(book =>
-                <Cover key={book.bid} book={book} />
-            );
-        }
+        const { books } = this.state;
+        let covers = books && books.map(book => <Cover key={book.bid} book={book} /> );
 
         return (
             <div ref="shelfComponent">
                 <div className="card bottompend">
                     <div className="row justify-content-center shelf">
-                        {shelfBooks && 
+                        {covers && 
                             <div className="col">
                                 <div className="info-row centered">La libreria di {user.displayName}</div>
-                                <div>{shelfBooks}</div>
+                                <div>{covers}</div>
                             </div>
                         }
                     </div>

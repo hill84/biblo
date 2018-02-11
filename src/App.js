@@ -51,18 +51,17 @@ export default class App extends React.Component {
 
 		return (
 			<MuiThemeProvider muiTheme={muiTheme} id="appComponent">
-				<Layout user={user}>
+				<Layout user={user} uid={uid}>
 					<Switch>
-						<Route path="/" exact component={Home} />
-						<PrivateRoute path="/dashboard" component={Dashboard} user={user} uid={uid} />
+						<Route path="/" exact component={Home} uid={uid} />
+						<PrivateRoute path="/dashboard/:uid" component={Dashboard} user={user} uid={uid} />
 						<Route path="/login" component={Login} />
-						<PrivateRoute path="/books/add" component={AddBook} uid={uid} />
-						<PrivateRoute path="/book/edit/:bookTitle" component={BookForm} uid={uid} />
-						<PrivateRoute path="/book/:bookTitle" component={Book} uid={uid} />
+						<PrivateRoute path="/books/add" component={AddBook} user={user} uid={uid} />
+						<PrivateRoute path="/book/edit/:book" component={BookForm} uid={uid} />
+						<PrivateRoute path="/book/:book" component={Book} user={user} uid={uid} />
 						<Route path="/password-reset" component={PasswordResetForm} />
 						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />
 						<Route path="/signup" component={Signup} />
-
 						<Redirect from="/home" to="/" />
 						<Route component={NoMatch} />
 					</Switch>

@@ -26,7 +26,7 @@ export default class Layout extends React.Component {
 
     render(props) {
         const { dialog, drawer } = this.state;
-        const { user } = this.props;
+        const { user, uid } = this.props;
 
         return (
             <div id="layoutComponent">
@@ -49,7 +49,7 @@ export default class Layout extends React.Component {
                     open={drawer}
                     onRequestChange={drawer => this.setState({drawer})}>
                     <nav onClick={this.closeDrawer}>
-                        {user ? 
+                        {(user && uid) ? 
                             <div>
                                 <NavLink to="/profile" className="auth-header">
                                     <div className="background" style={{backgroundImage: `url(${user.photoURL})`}} />
@@ -61,7 +61,7 @@ export default class Layout extends React.Component {
                                         </div>
                                     </div>
                                 </NavLink>
-                                <MenuItem><NavLink to="/dashboard">Dashboard</NavLink></MenuItem>
+                                <MenuItem><NavLink to={`/dashboard/${uid}`}>Dashboard</NavLink></MenuItem>
                             </div>
                         :
                             <div className="auth-header-buttons">
@@ -101,7 +101,7 @@ const Logged = props => (
         anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     >
         <Link to="/profile"><MenuItem primaryText="Profilo" /></Link>
-        <Link to="/dashboard"><MenuItem primaryText="Dashboard" /></Link>
+        {/* <Link to="/dashboard"><MenuItem primaryText="Dashboard" /></Link> */}
         <MenuItem primaryText="Logout" onClick={logout} />
     </IconMenu>
 );

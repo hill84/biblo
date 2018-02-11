@@ -7,8 +7,8 @@ export default class Rating extends React.Component {
     super(props);
     this.state = {
       ratings_num: this.props.ratings.ratings_num || 0,
-      totalRating_num: this.props.ratings.totalRating_num || 0,
-      averageRating_num: Math.round(this.props.ratings.totalRating_num / this.props.ratings.ratings_num * 10) / 10 || 0
+      rating_num: this.props.ratings.rating_num || 0,
+      averageRating_num: Math.round(this.props.ratings.rating_num / this.props.ratings.ratings_num * 10) / 10 || 0
     }
   }
 
@@ -16,8 +16,8 @@ export default class Rating extends React.Component {
     if (nextProps !== this.props) {
       this.setState({
         ratings_num: nextProps.ratings.ratings_num,
-        totalRating_num: nextProps.ratings.totalRating_num,
-        averageRating_num: Math.round(nextProps.ratings.totalRating_num / nextProps.ratings.ratings_num * 10) / 10 || 0
+        rating_num: nextProps.ratings.rating_num,
+        averageRating_num: Math.round(nextProps.ratings.rating_num / nextProps.ratings.ratings_num * 10) / 10 || 0
       });
     }
   }
@@ -34,5 +34,5 @@ export default class Rating extends React.Component {
 }
 
 Rating.PropTypes = {
-  ratings: ratingsType
+  ratings: ratingsType.isRequired
 }

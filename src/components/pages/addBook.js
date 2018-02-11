@@ -1,5 +1,5 @@
 import React from 'react';
-import { stringType } from '../../config/types';
+import { stringType, userType } from '../../config/types';
 import SearchBookForm from '../forms/searchBookForm';
 import Book from '../pages/book';
 
@@ -22,12 +22,13 @@ export default class AddBook extends React.Component {
 				<div className="card">
 					<SearchBookForm onBookSelect={this.onBookSelect} />
 				</div>
-				{book && <Book book={book} uid={this.props.uid} />}
+				{book && <Book book={book} uid={this.props.uid} user={this.props.user} />}
 			</div>
 		);
 	}
 }
 
 AddBook.propTypes = {
-  uid: stringType
+	uid: stringType,
+	user: userType
 }
