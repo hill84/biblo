@@ -166,9 +166,9 @@ export default class BookForm extends React.Component {
     if (Date(book.publication) > new Date()) {
       errors.publication = "Data di pubblicazione non valida";
     }
-    if (book.edition_num < 1) {
+    if (book.edition_num && book.edition_num < 1) {
       errors.edition_num = "Numero di edizione non valido";
-    } else if (book.edition_num.toString().length > 2) {
+    } else if (book.edition_num && book.edition_num.toString().length > 2) {
       errors.edition_num = "Max 2 cifre";
     }
     if (book.description && book.description.length > this.state.description_maxChars) {
@@ -290,7 +290,7 @@ export default class BookForm extends React.Component {
 								</div>
                 <div className="col-4 form-group">
                   <TextField
-                    name="edition"
+                    name="edition_num"
                     type="number"
                     hintText="es: 1"
                     errorText={errors.edition_num}
