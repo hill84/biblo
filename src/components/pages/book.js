@@ -30,6 +30,7 @@ export default class Book extends React.Component {
         rating_num: this.props.book.rating_num || 0,
         reviews_num: this.props.book.reviews_num || 0
       },
+      userRatings_num: this.props.user.stats.ratings_num || 0,
       ratings_num: this.props.book.ratings_num || 0,
       rating_num: this.props.book.rating_num || 0,
       readers_num: this.props.book.readers_num || 0,
@@ -51,17 +52,27 @@ export default class Book extends React.Component {
         console.log(`Book removed from user ${collection}`);
       }).catch(error => console.log(error));
 
+      var bookRatings_num = this.state.ratings_num;
+      var bookReaders_num = this.state.readers_num;
+      var userRatings_num = this.state.userRatings_num;
+
+      if (this.state.book.rating_num !== 0) {
+        bookRatings_num -= this.state.book.ratings_num;
+        bookReaders_num -= 1;
+        userRatings_num -= 1;
+      }
+
       bookRef(bid).update({
-        rating_num: this.state.rating_num,
-        ratings_num : this.state.ratings_num,
-        readers_num: this.state.readers_num
+        rating_num: this.state.rating_num - this.state.book.rating_num,
+        ratings_num : bookRatings_num,
+        readers_num: bookReaders_num
       }).then(() => {
         this.setState({ 
           book: { 
             ...this.state.book, 
             rating_num: this.state.rating_num, 
-            ratings_num: this.state.ratings_num,
-            readers_num: this.state.readers_num
+            ratings_num: bookRatings_num,
+            readers_num: bookReaders_num
           },
           userBook: { ...this.state.userBook, rating_num: 0 }
         });
@@ -73,7 +84,7 @@ export default class Book extends React.Component {
         userRef(this.props.uid).set({
           ...this.props.user,
           'stats.shelf_num': this.props.user.stats.shelf_num,
-          'stats.ratings_num': this.props.user.stats.ratings_num - 1
+          'stats.ratings_num': userRatings_num
         }).then(() => {
           console.log('Book and rating removed from user shelf stats');
         }).catch(error => console.log(error));
@@ -128,6 +139,12 @@ export default class Book extends React.Component {
   }
   
   addBookToShelf = bid => {
+    var userShelf_num = this.props.user.stats.shelf_num + 1;
+    var userWishlist_num = this.props.user.stats.wishlist_num;
+
+    if (this.state.userBook.bookInWishlist) {
+      userWishlist_num = this.props.user.stats.wishlist_num -1;
+    }
     userBookRef(this.props.uid, bid).set({
       ...this.state.userBook,
       bookInShelf: true,
@@ -148,11 +165,17 @@ export default class Book extends React.Component {
       });
       console.log('Readers number increased');
     }).catch(error => console.log(error));
+
+    userRef(this.props.uid).update({
+      'stats.shelf_num': userShelf_num,
+      'stats.wishlist_num': userWishlist_num
+    }).then(() => {
+      console.log('User shelf number increased');
+    }).catch(error => console.log(error));
 	}
 
 	addBookToWishlist = bid => {
-    userBookRef(this.props.uid, bid).set({
-      ...this.state.userBook,
+    userBookRef(this.props.uid, bid).update({
       bookInShelf: false,
       bookInWishlist: true
     }).then(() => {
@@ -172,35 +195,33 @@ export default class Book extends React.Component {
   }
 
 	rateBook = (bid, rate) => {
-    userBookRef(this.props.uid, bid).set({
-      ...this.state.userBook,
+    userBookRef(this.props.uid, bid).update({
       rating_num: rate
     }).then(() => {
       this.setState({ 
         userBook: { ...this.state.userBook, rating_num: rate }
       });
-      console.log('Book rated with ' + rate + ' stars');
+      console.log('User book rated with ' + rate + ' stars');
     }).catch(error => console.log(error));
 
-    var bookRatings = this.state.ratings_num;
-    var userRatings = this.props.user.stats.ratings_num;
-    if (this.state.rating_num === 0) {
-      bookRatings += 1;
-      userRatings += 1;
-    }
+    var bookRating = this.state.rating_num;
+    var bookRatings = this.state.ratings_num; 
+    var userRatings = this.state.userRatings_num; 
+    if (this.state.rating_num === 0) { 
+      bookRatings += 1; 
+      userRatings += 1; 
+    } 
 
-    bookRef(bid).set({
-      ...this.state.book,
-      rating_num: this.state.rating_num + rate,
+    bookRef(bid).update({
+      rating_num: bookRating - this.props.book.rating_num + rate,
       ratings_num: bookRatings
     }).then(() => {
       this.setState({ 
         book: { 
           ...this.state.book, 
-          rating_num: this.state.rating_num + rate, 
-          ratings_num: bookRatings 
-        },
-        userBook: { ...this.state.userBook, rating_num: rate }
+          rating_num: bookRating - this.props.book.rating_num + rate, 
+          ratings_num: bookRatings
+        }
       });
       console.log('Book rated with ' + rate + ' stars');
     }).catch(error => console.log(error));

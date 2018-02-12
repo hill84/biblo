@@ -1,5 +1,6 @@
 import React from 'react';
 import { coverType } from '../config/types';
+import Rating from './rating';
 
 export default class Cover extends React.Component {
 	constructor(props) {
@@ -42,6 +43,7 @@ export default class Cover extends React.Component {
             <div className="cover" style={{backgroundImage: `url(${cover})`}}>
               <div className="overlay"></div>
             </div>
+            {book.rating_num > 0 && <Rating ratings={{rating_num: book.rating_num}} />}
             {book.covers && book.covers.length > 1 && <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button>}
           </div>
         :

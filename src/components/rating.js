@@ -12,7 +12,7 @@ export default class Rating extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps, props) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
       this.setState({
         ratings_num: nextProps.ratings.ratings_num,
@@ -25,9 +25,13 @@ export default class Rating extends React.Component {
   render() { 
     return (
       <div className="rating">
-        <Rater interactive={false} total={5} rating={this.state.averageRating_num} /> 
-        <span className="rating-num">{this.state.averageRating_num}</span>
-        <span className="label ratings-num">{this.state.ratings_num} voti</span>
+        <Rater interactive={false} total={5} rating={this.state.ratings_num ? this.state.averageRating_num : this.state.rating_num} /> 
+        {this.state.ratings_num && 
+          <div className="rating-labels">
+            <span className="rating-num">{this.state.averageRating_num}</span>
+            <span className="label ratings-num">{this.state.ratings_num} voti</span>
+          </div>
+        }
       </div>
     )
   }

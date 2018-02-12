@@ -7,6 +7,7 @@
     --blueGrey900: rgb(38, 50, 56); /* canvas */
     --green600: rgb(67, 160, 71); /* success */
     --red500: rgb(244, 67, 54); /* error */
+    --booksPerRow-lg: 6;
 }
 
 html {
@@ -322,6 +323,15 @@ a.active, .link.active { color: var(--orange600); }
 .book-profile .subtitle { font-size: 150%; }
 .book-profile .description, .book-profile .incipit { text-align: justify; }
 
+/* SHELF */
+.shelf-row {
+    display: grid;
+    grid-template-columns: repeat(var(--booksPerRow-lg), 1fr);
+    grid-gap: 20px;
+    grid-column-gap: 20px;
+}
+
+/* BOOK COVER */
 .book {
     display: grid;
     justify-items: center;
@@ -343,7 +353,7 @@ a.active, .link.active { color: var(--orange600); }
     line-height: 1.4;
     box-sizing: border-box;
     padding: var(--gutter);
-    margin: 10px auto;
+    margin: auto;
 }
 .cover * {
     float: left;
@@ -373,6 +383,8 @@ a.active, .link.active { color: var(--orange600); }
 
 /* RATING */
 .rating { font-size: 120%; line-height: 1.6; color: #ccc; }
+.book .rating { text-align: center; }
+.rating-labels { display: inline; }
 .react-rater {
     display: inline-block;
     line-height: normal;

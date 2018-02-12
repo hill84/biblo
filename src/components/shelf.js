@@ -17,32 +17,29 @@ export default class Shelf extends React.Component {
     }
 
     componentDidMount(props) {
-        userBooksRef(this.props.uid).onSnapshot(snap => {
-            //console.log(snap);
+        userBooksRef(this.props.uid).onSnapshot(snap => {   
             if (!snap.empty) {
+                //console.log(snap);
                 var snapUserBooks = [];
                 var snapBooks = [];
                 snap.forEach(userBook => {
+                    console.log(userBook.id);
+                    //console.log(userBook.data());
                     snapUserBooks.push(userBook.data());
-                    if (userBook.data().bid) {
-                        //console.log(userBook.data().bid);
-                        bookRef(userBook.data().bid).get().then(book => {
-                            if (book.exists) {
-                                //console.log('book exists', book.data());
-                                snapBooks.push(book.data());
-                            } else console.log("book doesn't esist");
-                        });
-                    }
-                });
-                if (snapBooks[0] && snapUserBooks[0]) {
-                    this.setState({
-                        books: snapBooks,
-                        userBooks: snapUserBooks
+                    bookRef(userBook.id).get().then(book => {
+                        if (book.exists) {
+                            console.log('book exists', book.data());
+                            snapBooks.push(book.data());
+                            this.setState({
+                                books: snapBooks,
+                                userBooks: snapUserBooks
+                            });
+                        } else console.log("book doesn't esist");
                     });
-                    console.log(this.state.books);
-                }
+                });
+                //console.log(this.state.books);
             } else {
-                //console.log('no books');
+                console.log('no books');
                 this.setState({
                     books: null,
                     userBooks: null
@@ -63,7 +60,7 @@ export default class Shelf extends React.Component {
                         {covers && 
                             <div className="col">
                                 <div className="info-row centered">La libreria di {user.displayName}</div>
-                                <div>{covers}</div>
+                                <div className="shelf-row">{covers}</div>
                             </div>
                         }
                     </div>

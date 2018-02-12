@@ -71,5 +71,5 @@ export const userBookType = shape({
 
 export const ratingsType = shape({
   rating_num: number.isRequired,
-  ratings_num: number.isRequired
+  ratings_num: number
 });
