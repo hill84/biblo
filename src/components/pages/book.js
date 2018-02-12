@@ -20,7 +20,7 @@ export default class Book extends React.Component {
         pages_num: this.props.book.pages_num || 0, 
         publisher: this.props.book.publisher || '', 
         publication: this.props.book.publication || '', 
-        edition_num: this.props.book.edition || 0, 
+        edition_num: this.props.book.edition_num || 0, 
         genres: this.props.book.genres || [], 
         languages: this.props.book.languages, 
         description: this.props.book.description || '', 
