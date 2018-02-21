@@ -7,7 +7,7 @@ export default class Cover extends React.Component {
 		super(props);
 		this.state = {
       book: this.props.book,
-      cover: this.props.book.covers[0] || '',
+      cover: (this.props.book && this.props.book.covers[0]) || '',
       index: 0,
       loading: false
     }
@@ -37,7 +37,7 @@ export default class Cover extends React.Component {
     const { cover, book } = this.state;
 
 		return (
-      <div className="book" ref="coverComponent">
+      <div className="book" ref="coverComponent"> 
         {cover ?
           <div>
             <div className="cover" style={{backgroundImage: `url(${cover})`}}>

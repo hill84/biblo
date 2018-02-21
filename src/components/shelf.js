@@ -8,8 +8,9 @@ export default class Shelf extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            books: null,
-            userBooks: null,
+            shelfBooks: [],
+            wishlistBooks: [],
+            userBooks: [],
             loading: false,
             errors: {},
             authError: ''
@@ -20,29 +21,42 @@ export default class Shelf extends React.Component {
         userBooksRef(this.props.uid).onSnapshot(snap => {   
             if (!snap.empty) {
                 //console.log(snap);
-                var snapUserBooks = [];
-                var snapBooks = [];
+                let snapUserBooks = [];
+                let snapShelfBooks = [];
+                let snapWishlistBooks = [];
                 snap.forEach(userBook => {
-                    console.log(userBook.id);
+                    //console.log(userBook.id);
                     //console.log(userBook.data());
                     snapUserBooks.push(userBook.data());
+                    this.setState({
+                        userBooks: snapUserBooks
+                    });
+                    
                     bookRef(userBook.id).get().then(book => {
                         if (book.exists) {
-                            console.log('book exists', book.data());
-                            snapBooks.push(book.data());
-                            this.setState({
-                                books: snapBooks,
-                                userBooks: snapUserBooks
-                            });
-                        } else console.log("book doesn't esist");
+                            //console.log('book exists', book.data());
+                            if (userBook.data().bookInShelf) {
+                                //console.log('book in shelf');
+                                snapShelfBooks.push(book.data());
+                                this.setState({
+                                    shelfBooks: snapShelfBooks
+                                });
+                            } else {
+                                //console.log('book in wishlist');
+                                snapWishlistBooks.push(book.data());
+                                this.setState({
+                                    wishlistBooks: snapWishlistBooks
+                                });
+                            }
+                        } else console.log("book doesn't exist");
                     });
                 });
-                //console.log(this.state.books);
             } else {
                 console.log('no books');
                 this.setState({
-                    books: null,
-                    userBooks: null
+                    shelfBooks: [],
+                    wishlistBooks: [],
+                    userBooks: []
                 });
             }
         });
@@ -50,17 +64,20 @@ export default class Shelf extends React.Component {
 
     render(props) {
         const { user } = this.props;
-        const { books } = this.state;
-        let covers = books && books.map(book => <Cover key={book.bid} book={book} /> );
+        const { shelfBooks, wishlistBooks } = this.state;
+        let shelfCovers = shelfBooks && shelfBooks.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link> );
+        let wishlistCovers = wishlistBooks && wishlistBooks.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link> );
 
         return (
             <div ref="shelfComponent">
                 <div className="card bottompend">
                     <div className="row justify-content-center shelf">
-                        {covers && 
+                        {(shelfCovers || wishlistCovers) && 
                             <div className="col">
-                                <div className="info-row centered">La libreria di {user.displayName}</div>
-                                <div className="shelf-row">{covers}</div>
+                                <h2 className="info-row centered">Libreria</h2>
+                                <div className="shelf-row">{shelfCovers}</div>
+                                <h2 className="info-row centered">Wishlist</h2>
+                                <div className="shelf-row">{wishlistCovers}</div>
                             </div>
                         }
                     </div>

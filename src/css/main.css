@@ -57,7 +57,13 @@ a.active, .link.active { color: var(--orange600); }
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
 }
+.card.dark { 
+    background-color: #32434e; 
+    color: rgba(230,250,255,.7); 
+    font-weight: 200; 
+}
 .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: #212529; }
+.card.dark h1, .card.dark h2, .card.dark h3, .card.dark h4, .card.dark h5, .card.dark h6 { color: rgba(245,250,255,.9); }
 .card .footer, .dialog .footer { 
     display: -ms-flexbox;
     display: flex;
@@ -317,8 +323,10 @@ a.active, .link.active { color: var(--orange600); }
 }
 .counter:last-child:after { content: none; }
 .counter:empty { display: none; }
+.dark .counter:after { color: rgba(240,250,255,.3); font-weight: 400; }
 
 .book-profile .title, .book-profile .subtitle { margin: 0 auto; line-height: 130%; font-weight: 500; }
+.book-profile.dark .title, .book-profile.dark .subtitle { font-weight: 300; }
 .book-profile .title { font-size: 250%; }
 .book-profile .subtitle { font-size: 150%; }
 .book-profile .description, .book-profile .incipit { text-align: justify; }
@@ -376,6 +384,7 @@ a.active, .link.active { color: var(--orange600); }
     background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,rgba(255,255,255,0) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
 }
+.dark .cover .overlay { opacity: .5; }
 .cover .title, .cover .subtitle { white-space: normal; max-height: 60px; margin: 0 0 2px 0; font-weight: 500; font-size: 120%; }
 .cover .title { color: #fff; font-size: 160%; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
@@ -393,7 +402,7 @@ a.active, .link.active { color: var(--orange600); }
 .react-rater > * { display: inline-block; }
 .react-rater-star {
     cursor: pointer;
-    color: #ccc;
+    color: rgba(0,0,0,.2);
     position: relative; 
 }
 .react-rater-star.will-be-active { color: #ffdd99; }
