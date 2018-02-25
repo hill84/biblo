@@ -7,7 +7,7 @@
     --blueGrey900: rgb(38, 50, 56); /* canvas */
     --green600: rgb(67, 160, 71); /* success */
     --red500: rgb(244, 67, 54); /* error */
-    --booksPerRow-lg: 6;
+    --booksPerRow-lg: 7;
 }
 
 html {
@@ -56,6 +56,8 @@ a.active, .link.active { color: var(--orange600); }
     margin: 10px auto 20px auto;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    will-change: opacity;
+    animation: fadeIn .4s ease-out backwards;
 }
 .card.dark { 
     background-color: #32434e; 
@@ -160,6 +162,7 @@ a.active, .link.active { color: var(--orange600); }
 }
 .btn.success, btn.success:hover, btn.success:active, .btn.success:disabled { background-color: var(--green600); color: #fff; }
 .btn.error, btn.error:hover, btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: var(--red500); color: #fff; }
+.btn.error-on-hover { min-width: 170px; }
 
 .container-xs, .container-sm, .container-md { margin-left: auto; margin-right: auto; float: none; max-width: 100%; }
 .container-xs { width: 320px; }
@@ -331,12 +334,15 @@ a.active, .link.active { color: var(--orange600); }
 .book-profile .subtitle { font-size: 150%; }
 .book-profile .description, .book-profile .incipit { text-align: justify; }
 
+.hoverable-items .book .cover:hover { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-2px); }
+.hoverable-items .book .cover:active { transition-duration: .15s; transform: scale(.95) translateY(0); box-shadow: none; }
+
 /* SHELF */
 .shelf-row {
     display: grid;
     grid-template-columns: repeat(var(--booksPerRow-lg), 1fr);
     grid-gap: 20px;
-    grid-column-gap: 20px;
+    grid-column-gap: 10px;
 }
 
 /* BOOK COVER */
@@ -362,7 +368,11 @@ a.active, .link.active { color: var(--orange600); }
     box-sizing: border-box;
     padding: var(--gutter);
     margin: auto;
+    transition: all .2s ease-in-out; 
+    will-change: transform, opacity;
+    animation: scaleIn .3s ease-out backwards .1s;
 }
+
 .cover * {
     float: left;
     width: 100%;
@@ -433,6 +443,7 @@ a.active, .link.active { color: var(--orange600); }
     height: 40px; 
     margin: 5px 10px 5px 0; 
     vertical-align: middle; 
+    animation: scaleIn .2s ease-in-out both;
 }
 .menuitem-book .secondaryText { 
     line-height: 50px; 
@@ -454,3 +465,13 @@ a.active, .link.active { color: var(--orange600); }
 .show-on-hover, .btn:hover .hide-on-hover { display: none; }
 .btn:hover .show-on-hover, .hide-on-hover { display: block; }
 .rounded { border-radius: 99px; }
+
+/* ANIMATIONS */
+@keyframes scaleIn {
+    0% { opacity: 0; transform: scale(.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

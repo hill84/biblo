@@ -1,7 +1,7 @@
 import React from 'react';
 import { funcType, userBookType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
-import { joinToLowerCase } from '../../config/shared';
+import { join } from '../../config/shared';
 import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
@@ -10,7 +10,10 @@ export default class BookProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-      book: this.props.book,
+      book: {
+        ...this.props.book,
+        bid: this.props.book.bid || ''
+      },
       userBook: this.props.userBook,
       loading: false,
       errors: {}
@@ -59,7 +62,7 @@ export default class BookProfile extends React.Component {
 	render() {
     const { book, userBook } = this.state;
     
-    if (!book) return null;
+    if (!book || !userBook) return null;
 
 		return (
       <div ref="BookProfileComponent">
@@ -73,7 +76,7 @@ export default class BookProfile extends React.Component {
               <h2 className="title">{book.title || ''}</h2>
               {book.subtitle && <h3 className="subtitle">{book.subtitle || ''}</h3>}
               <div className="info-row">
-                {book.authors && <span className="counter">di {book.authors}</span>}
+                {book.authors && <span className="counter">di {join(book.authors)}</span>}
                 {book.publisher && <span className="counter">editore: {book.publisher}</span>}
                 <button className="link counter" onClick={this.onEditing}>Modifica</button>
               </div>
@@ -89,12 +92,13 @@ export default class BookProfile extends React.Component {
                 :
                   <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
                 }
-                {userBook.bookInWishlist ? 
+                {userBook.bookInWishlist && 
                   <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
                     <span className="hide-on-hover">Aggiunto a lista desideri</span>
                     <span className="show-on-hover">Rimuovi da lista desideri</span>
                   </button>
-                :
+                }
+                {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
                   <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
                 }
                 {userBook.bookInShelf &&
@@ -112,7 +116,7 @@ export default class BookProfile extends React.Component {
                 {book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span>}
                 {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
                 {book.format && <span className="counter">Formato: {book.format}</span>}
-                {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
+                {book.genres && book.genres[0] && <span className="counter">Genere: {join(book.genres).toLowerCase()}</span>}
               </div>
               <div className="info-row">
                 <span className="counter">Lettori: {book.readers_num}</span>

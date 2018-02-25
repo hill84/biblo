@@ -71,17 +71,21 @@ export default class Shelf extends React.Component {
         return (
             <div ref="shelfComponent">
                 <div className="card bottompend">
-                    <div className="row justify-content-center shelf">
-                        {(shelfCovers || wishlistCovers) && 
-                            <div className="col">
-                                <h2 className="info-row centered">Libreria</h2>
+                    <div className=" justify-content-center shelf">
+                        {shelfCovers[0] && 
+                            <div className="collection hoverable-items">
                                 <div className="shelf-row">{shelfCovers}</div>
-                                <h2 className="info-row centered">Wishlist</h2>
+                            </div>
+                        }
+                        {wishlistCovers[0] && 
+                            <div className="collection hoverable-items">
+                                <h2 className="info-row centered">Lista desideri</h2>
                                 <div className="shelf-row">{wishlistCovers}</div>
                             </div>
                         }
                     </div>
                     <div className="row justify-content-center">
+                        {!shelfCovers[0] && !wishlistCovers[0] && <div className="placeholder">Empy state</div>}
                         <Link to="/books/add" className="btn primary">Aggiungi libro</Link>
                     </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { bookType, funcType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import ChipInput from 'material-ui-chip-input'
 import { languages } from '../../config/shared';
 import { bookRef } from '../../config/firebase';
 import Cover from '../cover';
@@ -15,7 +16,7 @@ export default class BookForm extends React.Component {
         title: this.props.book.title || '', 
         title_sort: this.props.book.title_sort || '', 
         subtitle: this.props.book.subtitle || '', 
-        authors: this.props.book.authors || '', 
+        authors: this.props.book.authors || [], 
         format: this.props.book.format || '', 
         covers: this.props.book.covers || [], 
         pages_num: this.props.book.pages_num || 0, 
@@ -42,7 +43,7 @@ export default class BookForm extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps, props) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
       this.setState({
         book: nextProps.book
@@ -75,27 +76,40 @@ export default class BookForm extends React.Component {
   
   onChange = e => {
     this.setState({
-      ...this.state, book: { ...this.state.book, [e.target.name]: e.target.value }, changes: true
+      book: { ...this.state.book, [e.target.name]: e.target.value }, changes: true
     });
   };
 
   onChangeNumber = e => {
     this.setState({
-      ...this.state, book: { ...this.state.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
+      book: { ...this.state.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
     });
   };
 
   onChangeSelect = key => (e, i, val) => {
 		this.setState({ 
-      ...this.state, book: { ...this.state.book, [key]: val }, changes: true
+      book: { ...this.state.book, [key]: val }, changes: true
     });
   };
 
   onChangeDate = key => (e, date) => {
 		this.setState({ 
-      ...this.state, book: { ...this.state.book, [key]: String(date) }, changes: true
+      book: { ...this.state.book, [key]: String(date) }, changes: true
     });
-	};
+  };
+  
+  onAddChip = (key, chip) => {
+    this.setState({
+      book: { ...this.state.book, [key]: [...this.state.book[key], chip] }, changes: true
+    });
+  };
+
+  onDeleteChip = (key, chip) => {
+    this.setState({
+      //chips: this.state.chips.filter((c) => c !== chip)
+      book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true
+    });
+  };
   
   onChangeMaxChars = e => {
     let leftChars = `${e.target.name}_leftChars`;
@@ -225,14 +239,14 @@ export default class BookForm extends React.Component {
                 />
               </div>
               <div className="form-group">
-                <TextField
+                <ChipInput
                   name="authors"
-                  type="text"
                   hintText="es: Arthur Conan Doyle"
                   errorText={errors.authors}
                   floatingLabelText="Autore (nome e cognome)"
                   value={book.authors}
-                  onChange={this.onChange}
+                  onRequestAdd={chip => this.onAddChip("authors", chip)}
+                  onRequestDelete={chip => this.onDeleteChip("authors", chip)}
                   fullWidth={true}
                 />
               </div>

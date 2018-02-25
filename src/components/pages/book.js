@@ -8,32 +8,7 @@ export default class Book extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			book: {
-        bid: (this.props.book && this.props.book.bid) || '', 
-        ISBN_num: (this.props.book && this.props.book.ISBN_num) || 0, 
-        title: (this.props.book && this.props.book.title) || '', 
-        title_sort: (this.props.book && this.props.book.title_sort) || '', 
-        subtitle: (this.props.book && this.props.book.subtitle) || '', 
-        authors: (this.props.book && this.props.book.authors) || '', 
-        format: (this.props.book && this.props.book.format) || '', 
-        covers: (this.props.book && this.props.book.covers) || [], 
-        pages_num: (this.props.book && this.props.book.pages_num) || 0, 
-        publisher: (this.props.book && this.props.book.publisher) || '', 
-        publication: (this.props.book && this.props.book.publication) || '', 
-        edition_num: (this.props.book && this.props.book.edition_num) || 0, 
-        genres: (this.props.book && this.props.book.genres) || [], 
-        languages: (this.props.book && this.props.book.languages) || [], 
-        description: (this.props.book && this.props.book.description) || '', 
-        incipit: (this.props.book && this.props.book.incipit) || '',
-        readers_num: (this.props.book && this.props.book.readers_num) || 0,
-        ratings_num: (this.props.book && this.props.book.ratings_num) || 0,
-        rating_num: (this.props.book && this.props.book.rating_num) || 0,
-        reviews_num: (this.props.book && this.props.book.reviews_num) || 0
-      },
-      userRatings_num: (this.props.user && this.props.user.stats.ratings_num) || 0,
-      ratings_num: (this.props.book && this.props.book.ratings_num) || 0,
-      rating_num: (this.props.book && this.props.book.rating_num) || 0,
-      readers_num: (this.props.book && this.props.book.readers_num) || 0,
+			book: this.props.book || null,
       userBook: {
         review: '',
         readingState: '',
@@ -72,6 +47,8 @@ export default class Book extends React.Component {
         bookReviews_num -= 1;
       }
 
+      console.log(`Uid: ${this.props.uid}`);
+
       userBookRef(this.props.uid, bid).delete().then(() => {
         this.setState({ 
           userBook: { 
@@ -97,10 +74,6 @@ export default class Book extends React.Component {
             ratings_num: bookRatings_num,
             reviews_num: bookReviews_num,
             readers_num: bookReaders_num
-          },
-          userBook: { 
-            ...this.state.userBook, 
-            rating_num: userBookRating_num 
           }
         });
         console.log('Rating and reader removed');
@@ -108,7 +81,7 @@ export default class Book extends React.Component {
 
       if (collection === 'shelf') {
         console.log('will remove book and rating from user shelf stats');
-        userRef(this.props.uid).set({ //UPDATE?
+        userRef(this.props.uid).update({
           ...this.props.user,
           stats: {
             ...this.props.user.stats,
@@ -120,7 +93,7 @@ export default class Book extends React.Component {
         }).catch(error => console.log(error));
       } else if (collection === 'wishlist') {
         console.log('will remove book from user wishlist stats');
-        userRef(this.props.uid).set({ //UPDATE?
+        userRef(this.props.uid).update({
           ...this.props.user,
           stats: {
             ...this.props.user.stats,
@@ -135,9 +108,29 @@ export default class Book extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
-      this.setState({
-        book: nextProps.book
-      });
+      if (nextProps.book){
+        this.setState({
+          book: nextProps.book
+        });
+        userBookRef(this.props.uid, nextProps.book.bid).onSnapshot(snap => {
+          //console.log(`Update userBook ${nextProps.book.bid} again`);
+          if (snap.exists) {
+            this.setState({
+              userBook: snap.data()
+            });
+          } else {
+            this.setState({
+              userBook: {
+                review: '',
+                readingState: '',
+                rating_num: 0,
+                bookInShelf: false,
+                bookInWishlist: false 
+              }
+            });
+          }
+        });
+      }
     }
   }
 
@@ -145,6 +138,7 @@ export default class Book extends React.Component {
     if (this.props.uid && this.state.book) {
       userBookRef(this.props.uid, this.state.book.bid).onSnapshot(snap => {
         if (snap.exists) {
+          //console.log(`Update userBook ${this.state.book.bid}`);
           this.setState({
             userBook: snap.data()
           });
@@ -152,9 +146,8 @@ export default class Book extends React.Component {
       });
     }
 
-    if (!this.props.book && this.props.uid && this.props.match.params.book) {
-      const matchBid = this.props.match.params.book;
-      //console.log(matchBid);
+    if (this.props.uid && this.props.computedMatch) {
+      const matchBid = this.props.computedMatch.params.book;
       bookRef(matchBid).onSnapshot(snap => {
         if (snap.exists) {
           //console.log(snap.data());
@@ -168,6 +161,7 @@ export default class Book extends React.Component {
       });
       userBookRef(this.props.uid, matchBid).onSnapshot(snap => {
         if (snap.exists) {
+          //console.log(snap.data());
           this.setState({
             userBook: snap.data()
           });
@@ -200,7 +194,6 @@ export default class Book extends React.Component {
     }).catch(error => console.log(error));
 
     bookRef(bid).update({
-      ...this.state.book,
       readers_num: bookReaders_num
     }).then(() => {
       this.setState({ 
@@ -352,9 +345,9 @@ export default class Book extends React.Component {
 	isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
 	
 	render() {
-		const { book, isEditing, userBook } = this.state;
+    const { book, isEditing, userBook } = this.state;
 
-    //if (!book) return null;
+    if (!book) return null;
 
 		return (
 			<div ref="BookComponent">

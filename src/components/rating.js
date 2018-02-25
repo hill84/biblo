@@ -29,7 +29,7 @@ export default class Rating extends React.Component {
         {this.state.ratings_num && 
           <div className="rating-labels">
             <span className="rating-num">{this.state.averageRating_num}</span>
-            <span className="label ratings-num">{this.state.ratings_num} voti</span>
+            <span className="label ratings-num">{this.state.ratings_num} {this.state.ratings_num !== 1 ? 'voti' : 'voto'}</span>
           </div>
         }
       </div>
