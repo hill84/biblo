@@ -3,7 +3,7 @@ import { bookType, funcType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input'
 import { languages } from '../../config/shared';
-import { bookRef } from '../../config/firebase';
+import { bookRef, booksRef } from '../../config/firebase';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
@@ -52,12 +52,14 @@ export default class BookForm extends React.Component {
   }
 
   componentDidMount(props) {
-    bookRef(this.props.book.bid).onSnapshot(snap => {
-      this.setState({
-        ...this.state,
-        data: snap.data()
+    if (this.props.book.bid) {
+      bookRef(this.props.book.bid).onSnapshot(snap => {
+        this.setState({
+          ...this.state,
+          data: snap.data()
+        });
       });
-    });
+    }
   }
 
   onEditDescription = e => {
@@ -126,19 +128,38 @@ export default class BookForm extends React.Component {
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
-        bookRef(this.props.book.bid).set(this.state.book).then(() => {
-          this.setState({ 
-            //redirectToReferrer: true,
-            loading: false,
-            changes: false
+        if (this.props.book.bid) {
+          bookRef(this.props.book.bid).set(this.state.book).then(() => {
+            this.setState({ 
+              //redirectToReferrer: true,
+              loading: false,
+              changes: false
+            });
+            this.props.isEditing();
+          }).catch(error => {
+            this.setState({
+              authError: error.message,
+              loading: false
+            });
           });
-          this.props.isEditing();
-        }).catch(error => {
-          this.setState({
-            authError: error.message,
-            loading: false
+        } else {
+          let newBookRef = booksRef.doc();
+          newBookRef.set({
+            ...this.state.book,
+            bid: newBookRef.id
+          }).then(() => {
+            this.setState({
+              loading: false,
+              changes: false
+            });
+            this.props.isEditing();
+          }).catch(error => {
+            this.setState({
+              authError: error.message,
+              loading: false
+            });
           });
-        });
+        }
       }
     } else {
       this.props.isEditing();

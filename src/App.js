@@ -9,6 +9,7 @@ import Book from './components/pages/book';
 import Dashboard from './components/pages/dashboard';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
+import NewBook from './components/pages/newBook';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import PasswordResetForm from './components/forms/passwordResetForm';
@@ -59,6 +60,7 @@ export default class App extends React.Component {
 						<PrivateRoute path="/books/add" component={AddBook} user={user} uid={uid} />
 						<PrivateRoute path="/book/edit/:book" component={BookForm} uid={uid} />
 						<PrivateRoute path="/book/:book" component={Book} user={user} uid={uid} />
+						<PrivateRoute path="/new-book" component={NewBook} />
 						<Route path="/password-reset" component={PasswordResetForm} />
 						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />
 						<Route path="/signup" component={Signup} />

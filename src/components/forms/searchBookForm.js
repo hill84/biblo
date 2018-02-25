@@ -1,6 +1,8 @@
 import React from 'react';
 import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
 import { booksRef } from '../../config/firebase';
+import { booksAPIRef } from '../../config/API';
+import { normalizeString } from '../../config/shared';
 
 export default class SearchBookForm extends React.Component {
   constructor(props){
@@ -22,32 +24,85 @@ export default class SearchBookForm extends React.Component {
     const { searchText } = this.state;
     if (!searchText) return;
     this.setState({ loading: true });
-    booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(5).onSnapshot(snap => {
-      let options = [];
-      snap.forEach(doc => {
-        options.push({
-          ...doc.data(),
-          text: doc.data().title,
-          value: (
-            <MenuItem
-              className="menuitem-book"
-              primaryText={(
-                <div className="primaryText">
-                  <img className="thumbnail" src={doc.data().covers.length > 0 && doc.data().covers[0]} alt={doc.data().title} /> 
-                  <span className="title">{doc.data().title}</span>
-                </div>
-              )}
-              secondaryText={<div className="secondaryText">di {doc.data().authors}</div>}
-            />
-          )
-        })
+    if (this.props.new) {
+      fetch(new Request(booksAPIRef({q: searchText, inTitle: searchText}), { method: 'GET' })).then(res => res.json()).then(json => {
+        console.log(json.items);   
+        let options = [];
+        if (json.items && json.items.length > 0) {
+          json.items.forEach(item => {
+            let b = item.volumeInfo;
+            options.push({
+              ISBN_num: (b.industryIdentifiers && Number(b.industryIdentifiers[0].identifier)) || 0,
+              authors: b.authors || [],
+              bid: '',
+              covers: (b.imageLinks && [b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail]) || '',
+              description: b.description || '',
+              edition_num: 1,
+              format: b.printType || '',
+              genres: b.categories || [],
+              incipit: '',
+              languages: ['Italiano'] || [],
+              pages_num: b.pageCount || 0,
+              publication: b.publishedDate || '',
+              publisher: b.publisher || '',
+              rating_num: 0,
+              ratings_num: 0,
+              readers_num: 0,
+              reviews_num: 0,
+              subtitle: b.subtitle || '',
+              text: b.title || '',
+              title: b.title || '',
+              title_sort: normalizeString(b.title) || '',
+              value: (
+                <MenuItem
+                  className="menuitem-book"
+                  primaryText={
+                    <div className="primaryText">
+                      {b.imageLinks && <img className="thumbnail" src={[b.imageLinks.smallThumbnail || b.imageLinks.small || b.imageLinks.thumbnail]} alt={b.title} />} 
+                      <span className="title">{b.title}</span>
+                    </div>
+                  }
+                  secondaryText={b.authors && <div className="secondaryText">di {b.authors}</div>}
+                />
+              )
+            })
+          });
+          this.setState({
+            loading: false,
+            options: options
+          });
+        }
+
       });
 
-      this.setState({
-        loading: false,
-        options: options
+    } else {
+      booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(5).onSnapshot(snap => {
+        let options = [];
+        snap.forEach(doc => {
+          options.push({
+            ...doc.data(),
+            text: doc.data().title,
+            value: (
+              <MenuItem
+                className="menuitem-book"
+                primaryText={(
+                  <div className="primaryText">
+                    <img className="thumbnail" src={doc.data().covers.length > 0 && doc.data().covers[0]} alt={doc.data().title} /> 
+                    <span className="title">{doc.data().title}</span>
+                  </div>
+                )}
+                secondaryText={<div className="secondaryText">di {doc.data().authors}</div>}
+              />
+            )
+          })
+        });
+
+        this.setState({
+          loading: false,
+          options: options
+        });
       });
-    });
+    }
   }
 
   onNewRequest = chosenRequest => {
@@ -73,7 +128,7 @@ export default class SearchBookForm extends React.Component {
             onClose={this.onClose}
             fullWidth={true}
             filter={AutoComplete.fuzzyFilter}
-            maxSearchResults={5}
+            maxSearchResults={10}
             dataSource={this.state.options}
             //dataSourceConfig={{text: 'bid', value: 'bid'}}
           />

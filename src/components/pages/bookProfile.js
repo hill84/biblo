@@ -66,7 +66,7 @@ export default class BookProfile extends React.Component {
 
 		return (
       <div ref="BookProfileComponent">
-        <div className="card book-profile">
+        <div className="card book-profile text-align-center-sm">
           {this.state.loading && <div className="loader"><CircularProgress /></div>}
           <div className="row">
             <div className="col-md-auto col-sm-12">
@@ -116,7 +116,7 @@ export default class BookProfile extends React.Component {
                 {book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span>}
                 {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
                 {book.format && <span className="counter">Formato: {book.format}</span>}
-                {book.genres && book.genres[0] && <span className="counter">Genere: {join(book.genres).toLowerCase()}</span>}
+                {book.genres && book.genres[0] && <span className="counter">Genere: {join(book.genres.map(s => s.toLowerCase()))}</span>}
               </div>
               <div className="info-row">
                 <span className="counter">Lettori: {book.readers_num}</span>

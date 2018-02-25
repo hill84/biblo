@@ -22,6 +22,22 @@ export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '
 
 export const joinToLowerCase = arr => arr[0] && join(arr).toLowerCase();
 
+export const normalizeString = str => str.toString().toLowerCase()
+    .replace(/\s+/g,'-')            // Replace spaces with -
+    .replace(/--+/g,'-')            // Replace multiple - with single -
+    .replace(/[àáâãäå]/g,"a")
+    .replace(/[èéêë]/g,"e")
+    .replace(/[ìíîï]/g,"i")
+    .replace(/[òóôõö]/g,"o")
+    .replace(/[ùúûü]/g,"u")
+    .replace(/[ýÿ]/g,"y")
+    .replace(/æ/g,"ae")
+    .replace(/œ/g,"oe")
+    .replace(/ç/g,"c")
+    .replace(/ñ/g,"n")
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+
 export const calcAge = userBirthDate => Math.abs(new Date(Date.now() - new Date(userBirthDate).getTime()).getUTCFullYear() - 1970);
 
 export const languages = [

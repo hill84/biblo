@@ -1,4 +1,0 @@
-const booksAPIKey = 'AIzaSyC_TUnwRz_l4fIo7VpGjKzgPgyMfJ4GG_U';
-export const booksAPIRef = (q, intitle, inauthor, inpublisher, isbn) => console.log(`
-  https://www.googleapis.com/books/v1/volumes?q=${q}${intitle ? `+intitle:${intitle}` : ''}${inauthor ? `+inauthor:${inauthor}` : ''}${inpublisher ? `+inpublisher:${inpublisher}` : ''}${isbn ? `+isbn:${isbn}` : ''}&key=${booksAPIKey}
-`); // EXAMPLE: booksAPIRef(q = 'red', intitle = 'sherlock')

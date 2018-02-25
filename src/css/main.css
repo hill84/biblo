@@ -475,3 +475,29 @@ a.active, .link.active { color: var(--orange600); }
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
+
+/* MEDIA QUERIES */
+@media (max-width: 1200px) {
+    :root {
+        --booksPerRow-lg: 6;
+    }
+    .text-align-center-lg { text-align: center; }
+}
+@media (max-width: 992px) {
+    :root {
+        --booksPerRow-lg: 4;
+    }
+    .text-align-center-md { text-align: center; }
+}
+@media (max-width: 768px) {
+    :root {
+        --booksPerRow-lg: 3;
+    }
+    .text-align-center-sm { text-align: center; }
+}
+@media (max-width: 576px) {
+    :root {
+        --booksPerRow-lg: 2;
+    }
+    .text-align-center-xs { text-align: center; }
+}
