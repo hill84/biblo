@@ -34,7 +34,7 @@ export default class BookForm extends React.Component {
       },
       isEditingDescription: false,
       isEditingIncipit: false,
-      description_maxChars: 1000,
+      description_maxChars: 2000,
       incipit_maxChars: 2500,
       loading: false,
       errors: {},

@@ -20,7 +20,7 @@ export const muiTheme = getMuiTheme({
 
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
 
-export const joinToLowerCase = arr => arr[0] && join(arr).toLowerCase();
+export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
 
 export const normalizeString = str => str.toString().toLowerCase()
     .replace(/\s+/g,'-')            // Replace spaces with -

@@ -344,6 +344,22 @@ a.active, .link.active { color: var(--orange600); }
     grid-gap: 20px;
     grid-column-gap: 10px;
 }
+.shelf-row:empty {
+    margin: auto;
+    width: 100%;
+    height: 180px; /* change height to see repeat-y behavior */
+    background: 
+        linear-gradient(#DBE0DF, #DBE0DF) 0 0, 
+        linear-gradient(#DBE0DF, #DBE0DF) 156px 0, 
+        linear-gradient(#DBE0DF, #DBE0DF) 312px 0, 
+        linear-gradient(#DBE0DF, #DBE0DF) 468px 0, 
+        linear-gradient(#DBE0DF, #DBE0DF) 624px 0,
+        linear-gradient(#DBE0DF, #DBE0DF) 780px 0, 
+        linear-gradient(#DBE0DF, #DBE0DF) 936px 0;
+    background-repeat: no-repeat;
+    background-size: 120px 180px;
+    background-origin: content-box;
+}
 
 /* BOOK COVER */
 .book {

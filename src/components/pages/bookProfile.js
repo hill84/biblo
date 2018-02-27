@@ -1,7 +1,7 @@
 import React from 'react';
 import { funcType, userBookType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
-import { join } from '../../config/shared';
+import { join, joinToLowerCase } from '../../config/shared';
 import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
@@ -116,7 +116,7 @@ export default class BookProfile extends React.Component {
                 {book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span>}
                 {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
                 {book.format && <span className="counter">Formato: {book.format}</span>}
-                {book.genres && book.genres[0] && <span className="counter">Genere: {join(book.genres.map(s => s.toLowerCase()))}</span>}
+                {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
               </div>
               <div className="info-row">
                 <span className="counter">Lettori: {book.readers_num}</span>

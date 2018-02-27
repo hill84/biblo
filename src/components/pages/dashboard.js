@@ -1,7 +1,7 @@
 import React from 'react';
 import { userRef } from '../../config/firebase';
 import { userType, stringType } from '../../config/types';
-import { appName, calcAge, join } from '../../config/shared';
+import { appName, calcAge, joinToLowerCase } from '../../config/shared';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -68,7 +68,7 @@ export default class Dashboard extends React.Component {
 									{user.city && <span className="counter">{user.city}</span>}
 									{user.country && <span className="counter">{user.country}</span>}
 									{user.continent && <span className="counter">{user.continent}</span>}
-									{user.languages[0] && <span className="counter">Parla {join(user.languages).toLowerCase()}</span>}
+									{user.languages && <span className="counter">Parla {joinToLowerCase(user.languages)}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 									<span className="counter"><Link to="/profile">Modifica profilo</Link></span>
 								</div>

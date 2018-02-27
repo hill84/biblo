@@ -2,7 +2,7 @@ import React from 'react';
 import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
 import { booksRef } from '../../config/firebase';
 import { booksAPIRef } from '../../config/API';
-import { normalizeString } from '../../config/shared';
+import { join, normalizeString } from '../../config/shared';
 
 export default class SearchBookForm extends React.Component {
   constructor(props){
@@ -62,7 +62,7 @@ export default class SearchBookForm extends React.Component {
                       <span className="title">{b.title}</span>
                     </div>
                   }
-                  secondaryText={b.authors && <div className="secondaryText">di {b.authors}</div>}
+                  secondaryText={b.authors && <div className="secondaryText">di {join(b.authors)}</div>}
                 />
               )
             })
