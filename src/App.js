@@ -5,7 +5,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './components/layout';
 import AddBook from './components/pages/addBook';
 import BookForm from './components/forms/bookForm';
-import Book from './components/pages/book';
+import BookContainer from './components/pages/bookContainer';
 import Dashboard from './components/pages/dashboard';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
@@ -30,7 +30,7 @@ export default class App extends React.Component {
 			if (user) {
 				window.localStorage.setItem(storageKey, user.uid);
 				userRef(user.uid).onSnapshot(snap => {
-					if (snap.data() !== null) {
+					if (snap.exists) {
 						this.setState({ 
 							user: snap.data(), 
 							uid: user.uid 
@@ -59,7 +59,7 @@ export default class App extends React.Component {
 						<Route path="/login" component={Login} />
 						<PrivateRoute path="/books/add" component={AddBook} user={user} uid={uid} />
 						<PrivateRoute path="/book/edit/:book" component={BookForm} uid={uid} />
-						<PrivateRoute path="/book/:book" component={Book} user={user} uid={uid} />
+						<PrivateRoute path="/book/:bid" component={BookContainer} user={user} uid={uid} />
 						<PrivateRoute path="/new-book" component={NewBook} />
 						<Route path="/password-reset" component={PasswordResetForm} />
 						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />

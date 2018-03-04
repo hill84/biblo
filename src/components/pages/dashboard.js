@@ -48,7 +48,7 @@ export default class Dashboard extends React.Component {
 		if (!user || !uid) return null
 
 		return (
-			<div ref="dashboardComponent">	
+			<div className="container" ref="dashboardComponent">	
 				<h2>Dashboard</h2>
 				<div className="card">
 					<div className="basic-profile">

@@ -9,9 +9,8 @@ export default class Home extends React.Component {
 	}
 
 	render() {
-
 		return (
-			<div id="homeComponent">
+			<div className="container" id="homeComponent">
 				<h2>Home</h2>
 				<div className="card">
 					<ul>

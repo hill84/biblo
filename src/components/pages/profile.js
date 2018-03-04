@@ -19,18 +19,17 @@ export default class Profile extends React.Component {
 	componentDidMount() {
 		auth.onAuthStateChanged(user => {
 			if (user) {
-				userRef(user.uid).get().then(doc => {
+				userRef(user.uid).onSnapshot(snap => {
 					this.setState({ loading: false });
-					if (doc.exists) {
+					if (snap.exists) {
 						this.setState({ 
-							user: doc.data()
+							user: snap.data()
+						});
+					} else {
+						this.setState({
+							loading: false 
 						});
 					}
-				}).catch(error => {
-					this.setState({ 
-						authError: error.message,
-						loading: false 
-					});
 				});
 			}
 		});
@@ -105,7 +104,7 @@ export default class Profile extends React.Component {
 		if (!user) return null;
 
 		return (
-			<div ref="profileComponent">
+			<div className="container" ref="profileComponent">
 				{loading && <div className="loader"><CircularProgress /></div>}
 				<h2>Profile</h2>
 				<div className="card">
@@ -116,8 +115,8 @@ export default class Profile extends React.Component {
 								{user.photoURL ? <Avatar src={user.photoURL} size={80} backgroundColor={'transparent'} /> : user.displayName && <Avatar size={80}>{user.displayName.charAt(0)}</Avatar>}
 							</div>
 							<div className="col">
-								<p className="username">{user.displayName}</p>
-								<p className="email">{user.email}</p>
+								<div className="username">{user.displayName}</div>
+								<div className="email">{user.email}</div>
 							</div>
 						</div>
 
@@ -148,6 +147,7 @@ export default class Profile extends React.Component {
 									>
 										<MenuItem value={'m'} primaryText="Uomo" />
 										<MenuItem value={'f'} primaryText="Donna" />
+										<MenuItem value={'x'} primaryText="Altro" />
 									</SelectField>
 								</div>
 

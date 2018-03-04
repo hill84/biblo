@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 const { arrayOf, bool, func, shape, number,/*  oneOf, */ string } = PropTypes;
 
 export const funcType = func;
-
 export const stringType = string;
+export const boolType = bool;
 
 export const userType = shape({
   creationTime: string.isRequired,

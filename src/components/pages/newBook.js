@@ -1,6 +1,6 @@
 import React from 'react';
 import SearchBookForm from '../forms/searchBookForm';
-import Book from '../pages/book';
+import Book from '../book';
 
 export default class NewBook extends React.Component {
 	constructor(props) {
@@ -16,8 +16,8 @@ export default class NewBook extends React.Component {
 		const { book } = this.state;
 
 		return (
-			<div ref="NewBookComponent">
-				<h2>Crea libro</h2>
+			<div className="container" ref="NewBookComponent">
+				<h2>Crea la tua scheda libro</h2>
 				<div className="card">
 					<SearchBookForm onBookSelect={this.onBookSelect} new={true} />
 				</div>

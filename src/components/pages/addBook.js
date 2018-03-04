@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { stringType, userType } from '../../config/types';
 import SearchBookForm from '../forms/searchBookForm';
-import Book from '../pages/book';
+import Book from '../book';
 
 export default class AddBook extends React.Component {
 	constructor(props) {
@@ -17,12 +18,21 @@ export default class AddBook extends React.Component {
 		const { book } = this.state;
 
 		return (
-			<div ref="AddBookComponent">
+			<div className="container" ref="AddBookComponent">
 				<h2>Aggiungi un libro</h2>
 				<div className="card">
 					<SearchBookForm onBookSelect={this.onBookSelect} />
 				</div>
-				{book && <Book book={book} uid={this.props.uid} user={this.props.user} />}
+				{book ?
+					<Book book={book} uid={this.props.uid} user={this.props.user} />
+				:
+					<div className="text-align-center">
+						<div>&nbsp;</div>
+						<p>Non hai trovato il libro che cercavi?</p>
+						<p><Link to="/new-book" className="btn primary">Crea la tua scheda libro</Link></p>
+					</div>
+				}
+				
 			</div>
 		);
 	}

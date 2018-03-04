@@ -87,7 +87,7 @@ export default class SearchBookForm extends React.Component {
                 className="menuitem-book"
                 primaryText={(
                   <div className="primaryText">
-                    <img className="thumbnail" src={doc.data().covers.length > 0 && doc.data().covers[0]} alt={doc.data().title} /> 
+                    {doc.data().covers.length > 0 && <img className="thumbnail" src={doc.data().covers[0]} alt={doc.data().title} />}
                     <span className="title">{doc.data().title}</span>
                   </div>
                 )}
@@ -114,7 +114,7 @@ export default class SearchBookForm extends React.Component {
 
   render() {
     return (
-      <form ref="SearchBookFormComponent" className="container-sm">
+      <form className="container-sm" ref="SearchBookFormComponent">
         <div className="form-group">
           {/* this.state.loading && <div className="loader"><CircularProgress /></div> */}
           <AutoComplete

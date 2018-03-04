@@ -72,11 +72,19 @@ export default class Shelf extends React.Component {
             <div ref="shelfComponent">
                 <div className="card bottompend">
                     <div className=" justify-content-center shelf">
-                        {shelfCovers[0] && 
-                            <div className="collection hoverable-items">
-                                <div className="shelf-row">{shelfCovers}</div>
+                        
+                        <div className="collection hoverable-items">
+                            <div className="shelf-row">
+                                <Link to="/books/add">
+                                    <div className="book empty">
+                                        <div className="cover"><div className="overlay"></div></div>
+                                        <div className="info"><b className="title">Aggiungi libro</b></div>
+                                    </div>
+                                </Link>
+                                {shelfCovers}
                             </div>
-                        }
+                        </div>
+                        
                         {wishlistCovers[0] && 
                             <div className="collection hoverable-items">
                                 <h2 className="info-row centered">Lista desideri</h2>
@@ -84,10 +92,10 @@ export default class Shelf extends React.Component {
                             </div>
                         }
                     </div>
-                    <div className="row justify-content-center">
+                    {/* <div className="row justify-content-center">
                         {!shelfCovers[0] && !wishlistCovers[0] && <div className="placeholder">Empy state</div>}
                         <Link to="/books/add" className="btn primary">Aggiungi libro</Link>
-                    </div>
+                    </div> */}
 
                     <div className="info-row footer centered">
                         <span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>

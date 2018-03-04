@@ -1,5 +1,5 @@
 import React from 'react';
-import { coverType } from '../config/types';
+import { boolType, coverType, stringType } from '../config/types';
 import { join } from '../config/shared';
 import Rating from './rating';
 
@@ -42,11 +42,8 @@ export default class Cover extends React.Component {
 		return (
       <div className="book" ref="coverComponent"> 
         {cover ?
-          <div>
-            <div className="cover" style={{backgroundImage: `url(${cover})`}}>
-              <div className="overlay"></div>
-            </div>
-            {book.rating_num > 0 && <Rating ratings={{rating_num: book.rating_num}} />}
+          <div className="cover" style={{backgroundImage: `url(${cover})`}}>
+            <div className="overlay"></div>
             {/* book.covers && book.covers.length > 1 && <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> */}
           </div>
         :
@@ -58,11 +55,20 @@ export default class Cover extends React.Component {
             <span className="publisher">{book.publisher}</span>
           </div>
         }
+        {(this.props.info !== "false") && 
+          <div className="info">
+            <strong className="title">{book.title}</strong>
+            <span className="author">di {join(book.authors)}</span>
+            {(book.rating_num > 0 && this.props.rating !== 'false') && <Rating ratings={{rating_num: book.rating_num}} />}
+          </div>
+        }
       </div>
     );
   }
 }
 
 Cover.propTypes = {
-  book: coverType.isRequired
+  book: coverType.isRequired,
+  info: stringType,
+  rating: boolType
 }

@@ -61,22 +61,20 @@ export default class Layout extends React.Component {
                                         </div>
                                     </div>
                                 </NavLink>
-                                <MenuItem><NavLink to={`/dashboard/${uid}`}>Dashboard</NavLink></MenuItem>
+                                <NavLink to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></NavLink>
                             </div>
                         :
                             <div className="auth-header-buttons">
-                                <MenuItem><NavLink to="/login">Login</NavLink></MenuItem> 
-                                <MenuItem><NavLink to="/signup">Signup</NavLink></MenuItem>
+                                <NavLink to="/login"><MenuItem>Login</MenuItem></NavLink>
+                                <NavLink to="/signup"><MenuItem>Signup</MenuItem></NavLink>
                             </div>
                             
                         }
-                        <MenuItem><NavLink to="/" exact>Home</NavLink></MenuItem>
+                        <NavLink to="/" exact><MenuItem>Home</MenuItem></NavLink>
                     </nav>
                 </Drawer>
                 
-                <div className="container">
-                    {this.props.children}
-                </div>
+                {this.props.children}
                 
                 <Dialog
                     contentClassName="dialog"

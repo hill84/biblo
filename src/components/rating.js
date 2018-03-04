@@ -1,5 +1,6 @@
 import React from 'react';
 import { ratingsType } from '../config/types';
+import { ratingLabels } from '../config/shared';
 import Rater from 'react-rater';
 
 export default class Rating extends React.Component {
@@ -22,13 +23,12 @@ export default class Rating extends React.Component {
     }
   }
 
-  render() { 
+  render() {
     return (
       <div className="rating">
-        <Rater interactive={false} total={5} rating={this.state.ratings_num ? this.state.averageRating_num : this.state.rating_num} /> 
+        <Rater title={ratingLabels[this.state.ratings_num ? this.state.averageRating_num : this.state.rating_num]} interactive={false} total={5} rating={this.state.ratings_num ? this.state.averageRating_num : this.state.rating_num} /> 
         {this.state.ratings_num && 
           <div className="rating-labels">
-            <span className="rating-num">{this.state.averageRating_num}</span>
             <span className="label ratings-num">{this.state.ratings_num} {this.state.ratings_num !== 1 ? 'voti' : 'voto'}</span>
           </div>
         }

@@ -66,13 +66,13 @@ export default class BookProfile extends React.Component {
 
 		return (
       <div ref="BookProfileComponent">
-        <div className="card book-profile text-align-center-sm">
+        <div className="card text-align-center-sm">
           {this.state.loading && <div className="loader"><CircularProgress /></div>}
           <div className="row">
             <div className="col-md-auto col-sm-12">
-              <Cover book={book} />
+              <Cover book={book} rating="false" info="false" />
             </div>
-            <div className="col">
+            <div className="col book-profile">
               <h2 className="title">{book.title || ''}</h2>
               {book.subtitle && <h3 className="subtitle">{book.subtitle || ''}</h3>}
               <div className="info-row">
@@ -104,7 +104,7 @@ export default class BookProfile extends React.Component {
                 {userBook.bookInShelf &&
                   <div className="user rating">
                     <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
-                    <span className="rating-num">{userBook.rating_num || 0}</span>
+                    {/* <span className="rating-num">{userBook.rating_num || 0}</span> */}
                     <span className="label">Il tuo voto</span>
                   </div>
                 }

@@ -40,6 +40,8 @@ export const normalizeString = str => str.toString().toLowerCase()
 
 export const calcAge = userBirthDate => Math.abs(new Date(Date.now() - new Date(userBirthDate).getTime()).getUTCFullYear() - 1970);
 
+export const ratingLabels = { 0: "Nessun voto", 1: "Pessimo", 2: "Scarso", 3: "Sufficiente", 4: "Buono", 5: "Ottimo" };
+
 export const languages = [
     { id: "ar", name: "Arabo", nativeName: "العربية" },
     { id: "zh", name: "Cinese", nativeName: "中文 (Zhōngwén)" },
