@@ -1,5 +1,5 @@
 import React from 'react';
-import { boolType, coverType, stringType } from '../config/types';
+import { boolType, coverType } from '../config/types';
 import { join } from '../config/shared';
 import Rating from './rating';
 
@@ -55,11 +55,11 @@ export default class Cover extends React.Component {
             <span className="publisher">{book.publisher}</span>
           </div>
         }
-        {(this.props.info !== "false") && 
+        {(this.props.info !== false) && 
           <div className="info">
             <strong className="title">{book.title}</strong>
             <span className="author">di {join(book.authors)}</span>
-            {(book.rating_num > 0 && this.props.rating !== 'false') && <Rating ratings={{rating_num: book.rating_num}} />}
+            {(book.rating_num > 0 && this.props.rating !== false) && <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />}
           </div>
         }
       </div>
@@ -69,6 +69,6 @@ export default class Cover extends React.Component {
 
 Cover.propTypes = {
   book: coverType.isRequired,
-  info: stringType,
+  info: boolType,
   rating: boolType
 }

@@ -306,8 +306,16 @@ export default class Book extends React.Component {
     let bookRatings_num = this.state.book.ratings_num; 
     let userRatings_num = this.props.user.stats.ratings_num; 
     
-    if (bookRating_num === 0) { 
-      bookRating_num += rate;
+    console.log({
+      'bookRating_num': bookRating_num,
+      'bookRatings_num': bookRatings_num,
+      'rate': rate,
+      'userRatings_num': userRatings_num,
+      'userBookRating_num': userBookRating_num
+    });
+
+    if (userBookRating_num === 0) { 
+      bookRating_num = (bookRating_num + rate) / bookRatings_num;
       bookRatings_num += 1; 
       userRatings_num += 1; 
     } else {

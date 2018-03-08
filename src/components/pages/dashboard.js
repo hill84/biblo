@@ -73,18 +73,15 @@ export default class Dashboard extends React.Component {
 									<span className="counter"><Link to="/profile">Modifica profilo</Link></span>
 								</div>
 								<div className="info-row">
-									<span className="counter">Libri: <b>{user.stats.shelf_num || 0}</b></span>
+									{uid !== match.params.uid && <button className="btn primary">Segui</button>}
+									{/* <span className="counter">Libri: <b>{user.stats.shelf_num || 0}</b></span>
 									<span className="counter">Wishlist: <b>{user.stats.wishlist_num || 0}</b></span>
 									<span className="counter">Valutazioni: <b>{user.stats.ratings_num || 0}</b></span>
-									<span className="counter">Recensioni: <b>{user.stats.reviews_num || 0}</b></span>
+									<span className="counter">Recensioni: <b>{user.stats.reviews_num || 0}</b></span> */}
 									<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
 									<span className="counter">Segue: <b>{user.stats.followed_num || 0}</b></span>
 								</div>
-								{uid !== match.params.uid &&
-									<div className="info-row">
-										<button className="btn primary">Segui {user.displayName}</button>
-									</div>
-								}
+								
 							</div>
 						</div>
 						

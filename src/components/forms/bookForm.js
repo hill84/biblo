@@ -231,185 +231,188 @@ export default class BookForm extends React.Component {
 
 		return (
       <div ref="BookFormComponent">
-        <form onSubmit={this.onSubmit} className="card">
-          {this.state.loading && <div className="loader"><CircularProgress /></div>}
-          <div className="row">
-            <div className="col-md-6">
-              <div className="form-group">
-                <TextField
-                  name="title"
-                  type="text"
-                  hintText="es: Sherlock Holmes"
-                  errorText={errors.title}
-                  floatingLabelText="Titolo"
-                  value={book.title || ''}
-                  onChange={this.onChange}
-                  fullWidth={true}
-                />
-              </div>
-              <div className="form-group">
-                <TextField
-                  name="subtitle"
-                  type="text"
-                  hintText="es: Uno studio in rosso"
-                  errorText={errors.subtitle}
-                  floatingLabelText="Sottotitolo"
-                  value={book.subtitle || ''}
-                  onChange={this.onChange}
-                  fullWidth={true}
-                />
-              </div>
-              <div className="form-group">
-                <ChipInput
-                  name="authors"
-                  hintText="es: Arthur Conan Doyle"
-                  errorText={errors.authors}
-                  floatingLabelText="Autore (nome e cognome)"
-                  value={book.authors}
-                  onRequestAdd={chip => this.onAddChip("authors", chip)}
-                  onRequestDelete={chip => this.onDeleteChip("authors", chip)}
-                  fullWidth={true}
-                />
-              </div>
-              <div className="row">
-                <div className="form-group col-8">
-                  <TextField
-                    name="ISBN_num"
-                    type="number"
-                    hintText="es: 9788854152601"
-                    errorText={errors.ISBN_num}
-                    floatingLabelText="ISBN"
-                    value={book.ISBN_num}
-                    onChange={this.onChangeNumber}
-                    fullWidth={true}
-                  />
-                </div>
-                <div className="form-group col-4">
-                  <TextField
-                    name="pages_num"
-                    type="number"
-                    hintText="es: 128"
-                    errorText={errors.pages_num}
-                    floatingLabelText="Pagine"
-                    value={book.pages_num}
-                    onChange={this.onChangeNumber}
-                    fullWidth={true}
-                  />
-                </div>
-              </div>
-              <div className="form-group">
-                <TextField
-                  name="publisher"
-                  type="text"
-                  hintText="es: Newton Compton (Live)"
-                  errorText={errors.publisher}
-                  floatingLabelText="Editore"
-                  value={book.publisher}
-                  onChange={this.onChange}
-                  fullWidth={true}
-                />
-              </div>
-              <div className="row">
-                <div className="col-8 form-group">
-									<DatePicker 
-                    name="publication"
-                    hintText="2013-05-01" 
-                    cancelLabel="Annulla"
-										openToYearSelection={true} 
-										errorText={errors.publication}
-										floatingLabelText="Data di pubblicazione"
-										value={book.publication ? new Date(book.publication) : ''}
-										onChange={this.onChangeDate("publication")}
-										fullWidth={true}
-									/>
-								</div>
-                <div className="col-4 form-group">
-                  <TextField
-                    name="edition_num"
-                    type="number"
-                    hintText="es: 1"
-                    errorText={errors.edition_num}
-                    floatingLabelText="Edizione"
-                    value={book.edition_num}
-                    onChange={this.onChangeNumber}
-                    fullWidth={true}
-                  />
-                </div>
-              </div>
-              <div className="form-group">
-                <SelectField
-                  errorText={errors.languages}
-                  floatingLabelText="Lingua"
-                  value={book.languages}
-                  onChange={this.onChangeSelect("languages")}
-                  fullWidth={true}
-                  multiple={true}
-                >
-                  {menuItemsMap(languages, book.languages)}
-                </SelectField>
-              </div>
-              {isEditingDescription /* || book.description */ ?
+        <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
+        <div className="container top">
+          <form onSubmit={this.onSubmit} className="card">
+            {this.state.loading && <div className="loader"><CircularProgress /></div>}
+            <div className="row">
+              <div className="col-md-6">
                 <div className="form-group">
                   <TextField
-                    name="description"
+                    name="title"
                     type="text"
-                    hintText={`Inserisci una descrizione del libro (max ${description_maxChars} caratteri)...`}
-                    errorText={errors.description}
-                    floatingLabelText="Descrizione"
-                    value={book.description}
-                    onChange={this.onChangeMaxChars}
+                    hintText="es: Sherlock Holmes"
+                    errorText={errors.title}
+                    floatingLabelText="Titolo"
+                    value={book.title || ''}
+                    onChange={this.onChange}
                     fullWidth={true}
-                    multiLine={true}
-                    rows={4}
                   />
-                  {(description_leftChars !== undefined) && 
-                    <p className={`message ${(description_leftChars < 0) && 'alert'}`}>Caratteri rimanenti: {description_leftChars}</p>
-                  }
                 </div>
-              :
-                <div className="info-row">
-                  <button className="btn flat centered" onClick={this.onEditDescription}>
-                    {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
-                  </button>
-                </div>
-              }
-              {isEditingIncipit /* || book.incipit */ ? 
                 <div className="form-group">
                   <TextField
-                    name="incipit"
+                    name="subtitle"
                     type="text"
-                    hintText={`Inserisci alcuni paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
-                    errorText={errors.incipit}
-                    floatingLabelText="Incipit"
-                    value={book.incipit || ''}
-                    onChange={this.onChangeMaxChars}
+                    hintText="es: Uno studio in rosso"
+                    errorText={errors.subtitle}
+                    floatingLabelText="Sottotitolo"
+                    value={book.subtitle || ''}
+                    onChange={this.onChange}
                     fullWidth={true}
-                    multiLine={true}
-                    rows={4}
                   />
-                  {(incipit_leftChars !== undefined) && 
-                    <p className={`message ${(incipit_leftChars < 0) && 'alert'}`}>Caratteri rimanenti: {incipit_leftChars}</p>
-                  }
                 </div>
-              :
-                <div className="info-row">
-                  <button className="btn flat centered" onClick={this.onEditIncipit}>
-                    {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
-                  </button>
+                <div className="form-group">
+                  <ChipInput
+                    name="authors"
+                    hintText="es: Arthur Conan Doyle"
+                    errorText={errors.authors}
+                    floatingLabelText="Autore (nome e cognome)"
+                    value={book.authors}
+                    onRequestAdd={chip => this.onAddChip("authors", chip)}
+                    onRequestDelete={chip => this.onDeleteChip("authors", chip)}
+                    fullWidth={true}
+                  />
                 </div>
-              }
+                <div className="row">
+                  <div className="form-group col-8">
+                    <TextField
+                      name="ISBN_num"
+                      type="number"
+                      hintText="es: 9788854152601"
+                      errorText={errors.ISBN_num}
+                      floatingLabelText="ISBN"
+                      value={book.ISBN_num}
+                      onChange={this.onChangeNumber}
+                      fullWidth={true}
+                    />
+                  </div>
+                  <div className="form-group col-4">
+                    <TextField
+                      name="pages_num"
+                      type="number"
+                      hintText="es: 128"
+                      errorText={errors.pages_num}
+                      floatingLabelText="Pagine"
+                      value={book.pages_num}
+                      onChange={this.onChangeNumber}
+                      fullWidth={true}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <TextField
+                    name="publisher"
+                    type="text"
+                    hintText="es: Newton Compton (Live)"
+                    errorText={errors.publisher}
+                    floatingLabelText="Editore"
+                    value={book.publisher}
+                    onChange={this.onChange}
+                    fullWidth={true}
+                  />
+                </div>
+                <div className="row">
+                  <div className="col-8 form-group">
+                    <DatePicker 
+                      name="publication"
+                      hintText="2013-05-01" 
+                      cancelLabel="Annulla"
+                      openToYearSelection={true} 
+                      errorText={errors.publication}
+                      floatingLabelText="Data di pubblicazione"
+                      value={book.publication ? new Date(book.publication) : ''}
+                      onChange={this.onChangeDate("publication")}
+                      fullWidth={true}
+                    />
+                  </div>
+                  <div className="col-4 form-group">
+                    <TextField
+                      name="edition_num"
+                      type="number"
+                      hintText="es: 1"
+                      errorText={errors.edition_num}
+                      floatingLabelText="Edizione"
+                      value={book.edition_num}
+                      onChange={this.onChangeNumber}
+                      fullWidth={true}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <SelectField
+                    errorText={errors.languages}
+                    floatingLabelText="Lingua"
+                    value={book.languages}
+                    onChange={this.onChangeSelect("languages")}
+                    fullWidth={true}
+                    multiple={true}
+                  >
+                    {menuItemsMap(languages, book.languages)}
+                  </SelectField>
+                </div>
+                {isEditingDescription /* || book.description */ ?
+                  <div className="form-group">
+                    <TextField
+                      name="description"
+                      type="text"
+                      hintText={`Inserisci una descrizione del libro (max ${description_maxChars} caratteri)...`}
+                      errorText={errors.description}
+                      floatingLabelText="Descrizione"
+                      value={book.description}
+                      onChange={this.onChangeMaxChars}
+                      fullWidth={true}
+                      multiLine={true}
+                      rows={4}
+                    />
+                    {(description_leftChars !== undefined) && 
+                      <p className={`message ${(description_leftChars < 0) && 'alert'}`}>Caratteri rimanenti: {description_leftChars}</p>
+                    }
+                  </div>
+                :
+                  <div className="info-row">
+                    <button className="btn flat centered" onClick={this.onEditDescription}>
+                      {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
+                    </button>
+                  </div>
+                }
+                {isEditingIncipit /* || book.incipit */ ? 
+                  <div className="form-group">
+                    <TextField
+                      name="incipit"
+                      type="text"
+                      hintText={`Inserisci alcuni paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
+                      errorText={errors.incipit}
+                      floatingLabelText="Incipit"
+                      value={book.incipit || ''}
+                      onChange={this.onChangeMaxChars}
+                      fullWidth={true}
+                      multiLine={true}
+                      rows={4}
+                    />
+                    {(incipit_leftChars !== undefined) && 
+                      <p className={`message ${(incipit_leftChars < 0) && 'alert'}`}>Caratteri rimanenti: {incipit_leftChars}</p>
+                    }
+                  </div>
+                :
+                  <div className="info-row">
+                    <button className="btn flat centered" onClick={this.onEditIncipit}>
+                      {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
+                    </button>
+                  </div>
+                }
 
+              </div>
+              <div className="col-md-6">
+                <Cover book={book} />
+              </div>
             </div>
-            <div className="col-md-6">
-              <Cover book={book} />
+            <div className="footer no-gutter">
+              <button className="btn btn-footer primary">Salva</button>
             </div>
+          </form>
+          <div className="form-group">
+            <button onClick={this.exitEditing} className="btn flat centered">Annulla</button>
           </div>
-          <div className="footer no-gutter">
-            <button className="btn btn-footer primary">Salva</button>
-          </div>
-        </form>
-        <div className="form-group">
-          <button onClick={this.exitEditing} className="btn flat centered">Annulla</button>
         </div>
       </div>
 		);

@@ -196,8 +196,10 @@ a [role="menuitem"] { color: inherit !important; }
 }
 .btn.success, btn.success:hover, btn.success:active, .btn.success:disabled { background-color: var(--green600); color: #fff; }
 .btn.error, btn.error:hover, btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: var(--red500); color: #fff; }
-.btn.error-on-hover { min-width: 170px; }
+.btn.error-on-hover { min-width: 175px; }
 
+/* CONTAINER */
+.container .container { position: relative; padding-left: 0; padding-right: 0; }
 .container-xs, .container-sm, .container-md { margin-left: auto; margin-right: auto; float: none; max-width: 100%; }
 .container-xs { width: 320px; }
 .container-sm { width: 400px; }
@@ -313,6 +315,26 @@ a [role="menuitem"] { color: inherit !important; }
 /* CUSTOM */
 /*#appBarComponent { background-color: var(--cyan700) !important; box-shadow: 0 1px 3px rgba(0,0,0,.1) !important; }*/
 
+#BookContainerComponent .content-background, #BookContainerComponent .content-background .bg { 
+    position: absolute; 
+    top: 60px; 
+    left: 0; 
+    width: 100%; 
+    height: 200px; 
+    overflow: hidden;
+    background: var(--cyan800);
+}
+
+#BookContainerComponent .content-background .bg {
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    transform: scale(1.3) translateY(10px);
+    opacity: .7;
+    top: 0;
+}
+#BookContainerComponent .container.top { margin-top: 50px; }
+
 .placeholder { margin: auto; }
 
 .auth-header { 
@@ -333,7 +355,7 @@ a [role="menuitem"] { color: inherit !important; }
     background-position: center;
     transform: scale(1.3);
     filter: blur(3px);
-    opacity: .25;
+    opacity: .3;
 }
 .auth-header img { position: relative; vertical-align: middle; margin-right: 10px; margin-bottom: 10px; }
 .auth-header .user-info { 
@@ -344,7 +366,7 @@ a [role="menuitem"] { color: inherit !important; }
     margin-top: 10px;
 }
 .auth-header .user-name { font-size: 1.15rem; }
-.auth-header .user-email { font-size: .75rem; }
+.auth-header .user-email { font-size: .75rem; color: rgba(255,255,255,.7); }
 
 .basic-profile .username {
     font-size: 30px;
@@ -370,6 +392,21 @@ a [role="menuitem"] { color: inherit !important; }
 .book-profile .title { font-size: 2.2rem; }
 .book-profile .subtitle { font-size: 1.35rem; color: var(--ligthTextColor); }
 .book-profile .description, .book-profile .incipit { text-align: justify; }
+.book-profile .description { transition: all .2s ease-in-out; }
+.book-profile .description.minified { position: relative; max-height: 128px; overflow: hidden; }
+.book-profile .description.minified:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35px;
+    background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 97%);
+    background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 97%);
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 97%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
+    z-index: 1;
+}
 
 .hoverable-items .book:hover .cover { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-2px); }
 .hoverable-items .book:hover .info .title { color: var(--ContrastedTextColor); }
@@ -426,7 +463,7 @@ a [role="menuitem"] { color: inherit !important; }
     margin: auto;
     transition: all .2s ease-in-out; 
     will-change: transform, opacity;
-    animation: scaleIn .3s ease-out backwards .1s;
+    animation: scaleIn .3s ease-out;
 }
 .book.empty .cover {
     border: 3px dashed rgba(0,0,0,.15);
@@ -497,7 +534,7 @@ a [role="menuitem"] { color: inherit !important; }
 /* .user.rating .rating-num { color: var(--cyan700); } */
 .react-rater-star.is-disabled { cursor: default; }
 .user.rating .react-rater-star.will-be-active { color: var(--cyan600); }
-.user.rating .react-rater-star.is-active, .react-rater-star.is-active-half:before { color: var(--cyan700); }
+.user.rating .react-rater-star.is-active, .user.rating .react-rater-star.is-active-half:before { color: var(--cyan700); }
 
 .menuitem-book { padding: 5px 0; }
 .menuitem-book .primaryText { 

@@ -12,7 +12,7 @@ export default class Shelf extends React.Component {
             shelfBooks: [],
             wishlistBooks: [],
             userBooks: [],
-            loading: false,
+            loading: true,
             errors: {},
             authError: ''
         }
@@ -46,10 +46,13 @@ export default class Shelf extends React.Component {
                                 snapWishlistBooks.push(book.data());
                                 this.setState({ wishlistBooks: snapWishlistBooks });
                             }
-                        } else console.log("book doesn't exist");
+                        } else {
+                            console.log("book doesn't exist");
+                        }
                         this.setState({ loading: false });
                     });
                 });
+                
             } else {
                 console.log('no books');
                 this.setState({
@@ -71,16 +74,14 @@ export default class Shelf extends React.Component {
         return (
             <div ref="shelfComponent">
                 <div className="card bottompend">
-                    <div className=" justify-content-center shelf">
+                    <div className="justify-content-center shelf">
                         
                         <div className="collection hoverable-items">
-                            {loading ? 
-                                skltn_shelfRow 
-                            :
-                                <div className="shelf-row">
+                            {loading ? skltn_shelfRow :
+                                <div className="shelf-row" style={shelfBooks.length === 0 ? {gridTemplateColumns: 1 + 'fr'} : {}}>
                                     <Link to="/books/add">
                                         <div className="book empty">
-                                            <div className="cover"><div className="overlay"></div></div>
+                                            <div className="cover"></div>
                                             <div className="info"><b className="title">Aggiungi libro</b></div>
                                         </div>
                                     </Link>
@@ -103,7 +104,7 @@ export default class Shelf extends React.Component {
 
                     <div className="info-row footer centered">
                         <span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>
-                        <span className="counter">Wishlist: <b>{user.stats.wishlist_num}</b></span>
+                        <span className="counter">Desideri: <b>{user.stats.wishlist_num}</b></span>
                         <span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
                         <span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
                     </div>
