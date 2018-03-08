@@ -17,7 +17,8 @@
     --linkColor: var(--cyan700);
     --linkColorHover: var(--cyan600);
     --linkColorActive: var(--cyan800);
-
+    --shelf-row-height: 224px;
+    --skltn-bg: rgba(0,10,20,.06);
 }
 
 html {
@@ -94,6 +95,7 @@ a [role="menuitem"] { color: inherit !important; }
 
 /* DARK */
 .dark {
+    --skltn-bg: rgba(0,10,20,.15);
     --ContrastedTextColor: #fff;
     --mainTextColor: rgba(230,250,255,.7);
     --ligthTextColor: rgba(230,250,255,.5);
@@ -522,6 +524,41 @@ a [role="menuitem"] { color: inherit !important; }
     color: var(--ligthTextColor);
 }
 
+/* SKELETONS */
+.skltn.shelf-row {
+    position: relative;
+    height: var(--shelf-row-height);
+    overflow: hidden;
+}
+.skltn.shelf-row:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .6;
+    background: linear-gradient(90deg, transparent, var(--cardBackgroundColor), transparent) -120px 0;
+    background-size: 150px 100%;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    animation: skltn_shelfRow 2.5s infinite ease-in-out;
+    z-index: 1;
+}
+.skltn.book {
+    min-width: 140px;
+    margin: auto;
+    width: 100%;
+    height: var(--shelf-row-height);
+    background: 
+        linear-gradient(var(--skltn-bg), var(--skltn-bg)) center top, 
+        linear-gradient(var(--skltn-bg), var(--skltn-bg)) center 190px,
+        linear-gradient(var(--skltn-bg), var(--skltn-bg)) center 209px;
+    background-size: 120px 180px, 140px 12px, 90px 11px;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+}
+
 /* MESSAGE */
 .message { font-size: 12px; line-height: 12px; color: rgba(0, 0, 0, 0.5); }
 .message.alert { color: var(--orange600); }
@@ -537,12 +574,13 @@ a [role="menuitem"] { color: inherit !important; }
 
 /* ANIMATIONS */
 @keyframes scaleIn {
-    0% { opacity: 0; transform: scale(.8); }
-    100% { opacity: 1; transform: scale(1); }
+    0% { opacity: 0; transform: scale(.8); } 100% { opacity: 1; transform: scale(1); }
 }
 @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+    0% { opacity: 0; } 100% { opacity: 1; }
+}
+@keyframes skltn_shelfRow {
+    to { background-position: 120% 0; }
 }
 
 /* MEDIA QUERIES */
