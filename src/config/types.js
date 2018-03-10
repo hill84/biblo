@@ -29,7 +29,8 @@ export const userType = shape({
 
 export const bookType = shape({
   bid: string.isRequired,
-  ISBN_num: number.isRequired,
+  ISBN_13: number.isRequired,
+  ISBN_10: number,
   title: string.isRequired,
   title_sort: string.isRequired,
   subtitle: string,

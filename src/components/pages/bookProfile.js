@@ -71,7 +71,7 @@ export default class BookProfile extends React.Component {
           <div className="card text-align-center-sm">
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
             <div className="row">
-              <div className="col-md-auto col-sm-12">
+              <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
                 <Cover book={book} rating={false} info={false} />
               </div>
               <div className="col book-profile">
@@ -81,6 +81,15 @@ export default class BookProfile extends React.Component {
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter">editore: {book.publisher}</span>}
                   <button className="link counter" onClick={this.onEditing}>Modifica</button>
+                </div>
+                <div className="info-row">
+                  <span className="counter">ISBN-13: {book.ISBN_13}</span>
+                  {book.ISBN_10 && <span className="counter">ISBN-10: {book.ISBN_10}</span>}
+                  {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
+                  {/* book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span> */}
+                  {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
+                  {/* book.format && <span className="counter">Formato: {book.format}</span> */}
+                  {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
                 </div>
                 <div className="info-row">
                   <Rating labels={true} ratings={{ratings_num: book.ratings_num, rating_num: book.rating_num}}/>
@@ -111,15 +120,13 @@ export default class BookProfile extends React.Component {
                     </div>
                   }
                 </div>
-                {book.description && <p className={`description ${book.description.length > 570 ? 'minified' : ''}`}>{book.description || ''}</p>}
-                <div className="info-row">
-                  <span className="counter">ISBN: {book.ISBN_num}</span>
-                  {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
-                  {book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span>}
-                  {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
-                  {book.format && <span className="counter">Formato: {book.format}</span>}
-                  {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
-                </div>
+                {book.description && 
+                  <div className="info-row">
+                    <p className={`description ${book.description.length > 570 ? 'minified' : ''}`}>{book.description || ''}</p>
+                    <p>{book.description.length > 570 && <span className="link">Leggi la descrizione completa</span>}</p>
+                  </div>
+                }
+                <div>&nbsp;</div>
                 <div className="info-row">
                   <span className="counter">Lettori: {book.readers_num}</span>
                   <span className="counter">Recensioni: {book.reviews_num}</span>

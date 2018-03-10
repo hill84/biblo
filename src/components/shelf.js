@@ -100,6 +100,7 @@ export default class Shelf extends React.Component {
                     
                     {wishlistCovers[0] && 
                         <div className="collection hoverable-items">
+                            <hr className="line" />
                             <h2 className="info-row centered">Lista desideri</h2>
                             <div className="shelf-row">{wishlistCovers}</div>
                         </div>

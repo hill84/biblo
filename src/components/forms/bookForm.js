@@ -2,7 +2,7 @@ import React from 'react';
 import { bookType, funcType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input'
-import { languages } from '../../config/shared';
+import { formats, genres, languages } from '../../config/shared';
 import { bookRef, booksRef } from '../../config/firebase';
 import Cover from '../cover';
 
@@ -12,7 +12,8 @@ export default class BookForm extends React.Component {
 		this.state = {
       book: {
         bid: this.props.book.bid || '', 
-        ISBN_num: this.props.book.ISBN_num || 0, 
+        ISBN_13: this.props.book.ISBN_13 || 0, 
+        ISBN_10: this.props.book.ISBN_10 || 0,
         title: this.props.book.title || '', 
         title_sort: this.props.book.title_sort || '', 
         subtitle: this.props.book.subtitle || '', 
@@ -193,12 +194,15 @@ export default class BookForm extends React.Component {
     } else if (book.pages_num.toString().length > 5) {
       errors.pages_num = "Lunghezza massima 5 cifre";
     }
-    if (!book.ISBN_num) {
-      errors.ISBN_num = "Inserisci il codice ISBN";
-    } else if (book.ISBN_num.toString().length !== 13) {
-      errors.ISBN_num = "L'ISBN deve essere composto da 13 cifre";
-    } else if (book.ISBN_num.toString().substring(0,3) !== "978") {
-      errors.ISBN_num = "l'ISBN deve iniziare per 978";
+    if (!book.ISBN_13) {
+      errors.ISBN_13 = "Inserisci il codice ISBN";
+    } else if (book.ISBN_13.toString().length !== 13) {
+      errors.ISBN_13 = "Il codice deve essere composto da 13 cifre";
+    } else if (book.ISBN_13.toString().substring(0,3) !== "978") {
+      errors.ISBN_13 = "Il codice deve iniziare per 978";
+    }
+    if (book.ISBN_10 && (book.ISBN_10.toString().length !== 10)) {
+      errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
     }
     if (Date(book.publication) > new Date()) {
       errors.publication = "Data di pubblicazione non valida";
@@ -208,8 +212,20 @@ export default class BookForm extends React.Component {
     } else if (book.edition_num && book.edition_num.toString().length > 2) {
       errors.edition_num = "Max 2 cifre";
     }
+    if (book.languages && (book.languages.length > 4)) {
+      errors.languages = "Scegli massimo 4 lingue";
+    }
+    if (book.genres && (book.genres.length > 3)) {
+      errors.genres = "Scegli massimo 3 generi";
+    }
+    if (book.description && book.description.length < 150) {
+      errors.description = `Lunghezza minima 150 caratteri`;
+    }
     if (book.description && book.description.length > this.state.description_maxChars) {
       errors.description = `Lunghezza massima ${this.state.description_maxChars} caratteri`;
+    }
+    if (book.incipit && book.incipit.length < 255) {
+      errors.incipit = `Lunghezza minima 255 caratteri`;
     }
     if (book.incipit && book.incipit.length > this.state.incipit_maxChars) {
       errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
@@ -268,7 +284,7 @@ export default class BookForm extends React.Component {
                     name="authors"
                     hintText="es: Arthur Conan Doyle"
                     errorText={errors.authors}
-                    floatingLabelText="Autore (nome e cognome)"
+                    floatingLabelText="Autore"
                     value={book.authors}
                     onRequestAdd={chip => this.onAddChip("authors", chip)}
                     onRequestDelete={chip => this.onDeleteChip("authors", chip)}
@@ -276,15 +292,41 @@ export default class BookForm extends React.Component {
                   />
                 </div>
                 <div className="row">
-                  <div className="form-group col-8">
+                  <div className="form-group col-6">
                     <TextField
-                      name="ISBN_num"
+                      name="ISBN_13"
                       type="number"
                       hintText="es: 9788854152601"
-                      errorText={errors.ISBN_num}
-                      floatingLabelText="ISBN"
-                      value={book.ISBN_num}
+                      errorText={errors.ISBN_13}
+                      floatingLabelText="ISBN-13"
+                      value={book.ISBN_13}
                       onChange={this.onChangeNumber}
+                      fullWidth={true}
+                    />
+                  </div>
+                  <div className="form-group col-6">
+                    <TextField
+                      name="ISBN_10"
+                      type="number"
+                      hintText="es: 8854152609"
+                      errorText={errors.ISBN_10}
+                      floatingLabelText="ISBN-10"
+                      value={book.ISBN_10}
+                      onChange={this.onChangeNumber}
+                      fullWidth={true}
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group col-8">
+                    <TextField
+                      name="publisher"
+                      type="text"
+                      hintText="es: Newton Compton (Live)"
+                      errorText={errors.publisher}
+                      floatingLabelText="Editore"
+                      value={book.publisher}
+                      onChange={this.onChange}
                       fullWidth={true}
                     />
                   </div>
@@ -301,20 +343,8 @@ export default class BookForm extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="form-group">
-                  <TextField
-                    name="publisher"
-                    type="text"
-                    hintText="es: Newton Compton (Live)"
-                    errorText={errors.publisher}
-                    floatingLabelText="Editore"
-                    value={book.publisher}
-                    onChange={this.onChange}
-                    fullWidth={true}
-                  />
-                </div>
                 <div className="row">
-                  <div className="col-8 form-group">
+                  <div className="form-group col-8">
                     <DatePicker 
                       name="publication"
                       hintText="2013-05-01" 
@@ -327,7 +357,7 @@ export default class BookForm extends React.Component {
                       fullWidth={true}
                     />
                   </div>
-                  <div className="col-4 form-group">
+                  <div className="form-group col-4">
                     <TextField
                       name="edition_num"
                       type="number"
@@ -340,16 +370,44 @@ export default class BookForm extends React.Component {
                     />
                   </div>
                 </div>
+                <div className="row">
+                  <div className="form-group col-6">
+                    <SelectField
+                      errorText={errors.languages}
+                      floatingLabelText="Lingua"
+                      value={book.languages}
+                      onChange={this.onChangeSelect("languages")}
+                      fullWidth={true}
+                      multiple={true}
+                      maxHeight={300}
+                    >
+                      {menuItemsMap(languages, book.languages)}
+                    </SelectField>
+                  </div>
+                  <div className="form-group col-6">
+                    <SelectField
+                      errorText={errors.format}
+                      floatingLabelText="Formato"
+                      value={book.format}
+                      onChange={this.onChangeSelect("format")}
+                      fullWidth={true}
+                      maxHeight={200}
+                    >
+                      {menuItemsMap(formats, book.format)}
+                    </SelectField>
+                  </div>
+                </div>
                 <div className="form-group">
                   <SelectField
-                    errorText={errors.languages}
-                    floatingLabelText="Lingua"
-                    value={book.languages}
-                    onChange={this.onChangeSelect("languages")}
+                    errorText={errors.genres}
+                    floatingLabelText="Genere"
+                    value={book.genres}
+                    onChange={this.onChangeSelect("genres")}
                     fullWidth={true}
                     multiple={true}
+                    maxHeight={200}
                   >
-                    {menuItemsMap(languages, book.languages)}
+                    {menuItemsMap(genres, book.genres)}
                   </SelectField>
                 </div>
                 {isEditingDescription /* || book.description */ ?

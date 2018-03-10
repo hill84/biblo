@@ -64,6 +64,13 @@ svg { vertical-align: text-bottom; color: currentColor !important; }
 
 a [role="menuitem"] { color: inherit !important; }
 
+hr.line {
+    margin: 30px auto;
+    border: 0;
+    height: 2px;
+    background-color: rgba(0,0,0,.07);
+}
+
 /* CARDS */
 .card {
     position: relative;
@@ -170,7 +177,7 @@ a [role="menuitem"] { color: inherit !important; }
 .btn.flat:hover { background-color: rgba(0,0,0,.1); }
 .btn.flat:active { color: rgba(0,0,0,.3); }
 
-.btn.sm { font-size: .75rem; line-height: 26px; height: 26px; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.btn.sm { padding-left: .6rem; padding-right: .6rem; font-size: .75rem; line-height: 26px; height: 26px; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
 
 .btn.primary { background-color: var(--cyan700); }
 .btn.primary:hover { background-color: var(--cyan600); }
@@ -333,7 +340,7 @@ a [role="menuitem"] { color: inherit !important; }
     opacity: .7;
     top: 0;
 }
-#BookContainerComponent .container.top { margin-top: 50px; }
+#BookContainerComponent .container.top { margin-top: 60px; }
 
 .placeholder { margin: auto; }
 
@@ -400,11 +407,10 @@ a [role="menuitem"] { color: inherit !important; }
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 35px;
-    background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 97%);
-    background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 97%);
-    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 97%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
+    height: 50px;
+    background: -moz-linear-gradient(top, transparent 0%, var(--cardBackgroundColor) 97%);
+    background: -webkit-linear-gradient(top, transparent 0%,var(--cardBackgroundColor) 97%);
+    background: linear-gradient(to bottom, transparent 0%,var(--cardBackgroundColor) 97%);
     z-index: 1;
 }
 
@@ -607,6 +613,7 @@ a [role="menuitem"] { color: inherit !important; }
 .message.success { color: var(--green600); }
 
 /* HELPERS */
+.text-align-right { text-align: right; }
 .text-align-center { text-align: center; }
 .centered { float: none; margin-left: auto; margin-right: auto; }
 .show-on-hover, .btn:hover .hide-on-hover { display: none; }

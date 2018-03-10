@@ -2,7 +2,7 @@ import React from 'react';
 import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
 import { booksRef } from '../../config/firebase';
 import { booksAPIRef } from '../../config/API';
-import { join, normalizeString } from '../../config/shared';
+import { join, normalizeString, switchGenres } from '../../config/shared';
 
 export default class SearchBookForm extends React.Component {
   constructor(props){
@@ -32,14 +32,15 @@ export default class SearchBookForm extends React.Component {
           json.items.forEach(item => {
             let b = item.volumeInfo;
             options.push({
-              ISBN_num: (b.industryIdentifiers && Number(b.industryIdentifiers[0].identifier)) || 0,
+              ISBN_13: (b.industryIdentifiers && Number(b.industryIdentifiers[0].identifier)) || 0,
+              ISBN_10: (b.industryIdentifiers && b.industryIdentifiers[1] && Number(b.industryIdentifiers[1].identifier)) || 0,
               authors: b.authors || [],
               bid: '',
               covers: (b.imageLinks && [b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail]) || '',
               description: b.description || '',
               edition_num: 1,
-              format: b.printType || '',
-              genres: b.categories || [],
+              format: b.printType === 'BOOK' ? 'Libro' : 'Rivista' || '',
+              genres: (b.categories && switchGenres(b.categories)) || [],
               incipit: '',
               languages: ['Italiano'] || [],
               pages_num: b.pageCount || 0,

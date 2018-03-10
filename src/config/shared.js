@@ -42,6 +42,73 @@ export const calcAge = userBirthDate => Math.abs(new Date(Date.now() - new Date(
 
 export const ratingLabels = { 0: "Nessun voto", 1: "Pessimo", 2: "Scarso", 3: "Sufficiente", 4: "Buono", 5: "Ottimo" };
 
+export const formats = [
+    { id: "0", name: "Libro" },
+    { id: "1", name: "Rivista" }
+];
+
+export const genres = [
+    { id: "ac", name: "Architettura" },
+    { id: "ar", name: "Arte" },
+    { id: "av", name: "Avventura" },
+    { id: "bi", name: "Biografia e autobiografia" },
+    { id: "ef", name: "Economia e finanza" }, 
+    { id: "er", name: "Erotico" },
+    { id: "fa", name: "Famiglia, sesso e relazioni" },
+    { id: "sf", name: "Fantascienza" },
+    { id: "fy", name: "Fantasy" },
+    { id: "fi", name: "Filosofia" },
+    { id: "fu", name: "Fumetti e Graphic novel" },
+    { id: "gl", name: "Giallo" },
+    { id: "ho", name: "Horror" },
+    { id: "ju", name: "Per ragazzi" },
+    { id: "ms", name: "Medicina e salute" },
+    { id: "mi", name: "Mistero" },
+    { id: "mu", name: "Musica" },
+    { id: "na", name: "Narrativa" },
+    { id: "po", name: "Poesia" },
+    { id: "ps", name: "Psicologico" },
+    { id: "re", name: "Religione e spiritualità" },
+    { id: "ro", name: "Rosa" },
+    { id: "sa", name: "Saggistica" },
+    { id: "sc", name: "Scienza" },
+    { id: "ss", name: "Scienze sociali" },
+    { id: "st", name: "Storico" },
+    { id: "th", name: "Thriller" },
+    { id: "um", name: "Umoristico" },
+    { id: "vi", name: "Viaggi" }
+];
+
+export const switchGenres = string => {
+    let g = '';
+    switch (string) {
+        case "Architecture":                g = "Architettura"; break;
+        case "Art":                         
+        case "Performing Arts":             g = "Arte"; break;
+        case "Bibles":
+        case "Religion":                    g = "Religione e spiritualità"; break;
+        case "Biography & Autobiography":   g = "Biografia e autobiografia"; break;
+        case "Business & Economics":        g = "Economia e finanza"; break;
+        case "Comics & Graphic Novels":     g = "Fumetti e Graphic novel"; break;
+        case "Family & Relationships":      g = "Famiglia, sesso e relazioni"; break;
+        case "Fiction":                     g = "Narrativa"; break;
+        case "History":                     g = "Storico"; break;
+        case "Humor":                       g = "Umoritistico"; break;
+        case "Juvenile Fiction":            g = "Per ragazzi"; break;
+        case "Literary Criticism":          g = "Saggistica"; break;
+        case "Medical":                     g = "Medicina e salute"; break;
+        case "Mistery":                     g = "Mistero"; break;
+        case "Music":                       g = "Musica"; break;
+        case "Philosophy":                  g = "Filosofia"; break;
+        case "Science":                     g = "Scienza"; break; 
+        case "Science fiction":             g = "Fantascienza"; break; 
+        case "Social Science":              g = "Scienze sociali"; break;
+        case "Travel":                      g = "Viaggi"; break;
+        default:                            g = ""; break;
+    }
+    return g;
+}
+
 export const languages = [
     { id: "ar", name: "Arabo", nativeName: "العربية" },
     { id: "zh", name: "Cinese", nativeName: "中文 (Zhōngwén)" },
