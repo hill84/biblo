@@ -45,9 +45,11 @@ export default class BookForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
-      this.setState({
-        book: nextProps.book
-      });
+      if (nextProps.book) {
+        this.setState({
+          book: nextProps.book
+        });
+      }
     }
   }
 

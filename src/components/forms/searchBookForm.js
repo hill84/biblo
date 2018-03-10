@@ -107,6 +107,7 @@ export default class SearchBookForm extends React.Component {
 
   onNewRequest = chosenRequest => {
     this.setState({ loading: false });
+    //console.log({'chosenRequest': chosenRequest});
     this.props.onBookSelect(chosenRequest);
   }
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { userRef } from '../../config/firebase';
-import { userType, stringType } from '../../config/types';
+import { local_uid, userRef } from '../../config/firebase';
+import { userType } from '../../config/types';
 import { appName, calcAge, joinToLowerCase } from '../../config/shared';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
@@ -11,18 +11,30 @@ export default class Dashboard extends React.Component {
  	constructor(props) {
 		super(props);
 		this.state = {
-			uid: this.props.uid,
+			luid: local_uid,
+			uid: null,
 			user: this.props.user,
 			loading: false
 		}
 	}
 
-	componentWillReceiveProps(props) {
-		if (this.props.user) {
-			this.setState({
-				user: this.props.user,
-				uid: this.props.uid
-			});
+	componentWillReceiveProps(nextProps) {
+		if (nextProps !== this.props) {
+			if (nextProps.match.params.uid) {
+				userRef(nextProps.match.params.uid).onSnapshot(snap => {
+					this.setState({ loading: false });
+					if (snap.exists) {
+						this.setState({
+							user: snap.data(),
+							uid: nextProps.match.params.uid
+						});
+					}
+				});
+			} else {
+				this.setState({
+					user: nextProps.user
+				});
+			}
 		}
 	}
 
@@ -41,9 +53,9 @@ export default class Dashboard extends React.Component {
 	}
 
 	render(props) {
-		const { user, uid } = this.state;
-		const { match } = this.props;
+		const { user, uid, luid } = this.state;
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
+		const isOwner = luid === uid;
 
 		if (!user || !uid) return null
 
@@ -70,40 +82,38 @@ export default class Dashboard extends React.Component {
 									{user.continent && <span className="counter">{user.continent}</span>}
 									{user.languages && <span className="counter">Parla {joinToLowerCase(user.languages)}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
-									<span className="counter"><Link to="/profile">Modifica profilo</Link></span>
+									{isOwner && <span className="counter"><Link to="/profile">Modifica profilo</Link></span>}
 								</div>
 								<div className="info-row">
-									{uid !== match.params.uid && <button className="btn primary">Segui</button>}
-									{/* <span className="counter">Libri: <b>{user.stats.shelf_num || 0}</b></span>
-									<span className="counter">Wishlist: <b>{user.stats.wishlist_num || 0}</b></span>
-									<span className="counter">Valutazioni: <b>{user.stats.ratings_num || 0}</b></span>
-									<span className="counter">Recensioni: <b>{user.stats.reviews_num || 0}</b></span> */}
+									{!isOwner && <button className="btn primary">Segui</button>}
 									<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
 									<span className="counter">Segue: <b>{user.stats.followed_num || 0}</b></span>
 								</div>
-								
 							</div>
 						</div>
-						
 					</div>
 				</div>
 
 				<Tabs style={{marginTop: 20}} tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
 					<Tab label="Libreria">
-						<Shelf user={user} uid={uid} />
-					</Tab>
-					<Tab label="Attività">
-						<div id="activitiesComponent">
-							<div className="card bottompend">
-								<p>Attività</p>
+						<div className="card bottompend">
+							<Shelf uid={uid} />
+							<div className="info-row footer centered">
+								<span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>
+								<span className="counter">Desideri: <b>{user.stats.wishlist_num}</b></span>
+								<span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
+								<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
 							</div>
 						</div>
 					</Tab>
+					<Tab label="Attività">
+						<div className="card bottompend">
+							<p>Attività</p>
+						</div>
+					</Tab>
 					<Tab label="Contatti">
-						<div id="contactsComponent">
-							<div className="card bottompend">
-								<p>Contatti</p>
-							</div>
+						<div className="card bottompend">
+							<p>Contatti</p>
 						</div>
 					</Tab>
 				</Tabs>
@@ -113,6 +123,5 @@ export default class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-	uid: stringType,
 	user: userType
 }

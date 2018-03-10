@@ -4,7 +4,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './components/layout';
 import AddBook from './components/pages/addBook';
-import BookForm from './components/forms/bookForm';
 import BookContainer from './components/pages/bookContainer';
 import Dashboard from './components/pages/dashboard';
 import Home from './components/pages/home';
@@ -14,7 +13,7 @@ import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import NoMatch from './components/pages/nomatch';
-import { auth, storageKey, isAuthenticated, userRef } from './config/firebase';
+import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 
 export default class App extends React.Component {
 	constructor() {
@@ -28,7 +27,7 @@ export default class App extends React.Component {
 	componentDidMount() {
 		auth.onAuthStateChanged(user => {
 			if (user) {
-				window.localStorage.setItem(storageKey, user.uid);
+				window.localStorage.setItem(storageKey_uid, user.uid);
 				userRef(user.uid).onSnapshot(snap => {
 					if (snap.exists) {
 						this.setState({ 
@@ -38,7 +37,7 @@ export default class App extends React.Component {
 					}
         });
 			} else {
-				window.localStorage.removeItem(storageKey);
+				window.localStorage.removeItem(storageKey_uid);
 				this.setState({ 
 					user: null, 
 					uid: null 
@@ -48,22 +47,21 @@ export default class App extends React.Component {
 	}
 
 	render() {
-		const { user, uid } = this.state;
+		const { user } = this.state;
 
 		return (
-			<MuiThemeProvider muiTheme={muiTheme} id="appComponent">
-				<Layout user={user} uid={uid}>
+			<MuiThemeProvider muiTheme={muiTheme}>
+				<Layout user={user}>
 					<Switch>
-						<Route path="/" exact component={Home} uid={uid} />
-						<PrivateRoute path="/dashboard/:uid" component={Dashboard} user={user} uid={uid} />
+						<Route path="/" exact component={Home} />
 						<Route path="/login" component={Login} />
-						<PrivateRoute path="/books/add" component={AddBook} user={user} uid={uid} />
-						<PrivateRoute path="/book/edit/:book" component={BookForm} uid={uid} />
-						<PrivateRoute path="/book/:bid" component={BookContainer} user={user} uid={uid} />
-						<PrivateRoute path="/new-book" component={NewBook} />
 						<Route path="/password-reset" component={PasswordResetForm} />
-						<PrivateRoute path="/profile" exact component={Profile} uid={uid} />
 						<Route path="/signup" component={Signup} />
+						<PrivateRoute path="/books/add" component={AddBook} user={user} />
+						<PrivateRoute path="/book/:bid" component={BookContainer} user={user} />
+						<PrivateRoute path="/dashboard/:uid" component={Dashboard} user={user} />
+						<PrivateRoute path="/new-book" component={NewBook} />
+						<PrivateRoute path="/profile" exact component={Profile} />
 						<Redirect from="/home" to="/" />
 						<Route component={NoMatch} />
 					</Switch>

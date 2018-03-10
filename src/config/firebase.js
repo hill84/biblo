@@ -12,14 +12,16 @@ const config = {
 
 firebase.initializeApp(config);
 
-export const storageKey = 'KEY_FOR_LOCAL_STORAGE';
-export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey);
 export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
 export const auth = firebase.auth();
 
-export const db = firebase.firestore();
+export const storageKey_uid = 'uid';
+export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
+export const local_uid = window.localStorage.getItem(storageKey_uid);
+
+const db = firebase.firestore();
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
 export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);

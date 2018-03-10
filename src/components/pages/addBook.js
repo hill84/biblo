@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { stringType, userType } from '../../config/types';
+import { userType } from '../../config/types';
 import SearchBookForm from '../forms/searchBookForm';
 import Book from '../book';
 
@@ -24,7 +24,7 @@ export default class AddBook extends React.Component {
 					<SearchBookForm onBookSelect={this.onBookSelect} />
 				</div>
 				{book ?
-					<Book book={book} uid={this.props.uid} user={this.props.user} />
+					<Book book={book} user={this.props.user} />
 				:
 					<div className="text-align-center">
 						<div>&nbsp;</div>
@@ -39,6 +39,5 @@ export default class AddBook extends React.Component {
 }
 
 AddBook.propTypes = {
-	uid: stringType,
 	user: userType
 }

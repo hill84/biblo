@@ -5,12 +5,13 @@ import { AppBar, Avatar, CircularProgress, Dialog, Drawer, FlatButton, IconButto
 import { NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import { NavLink, Link } from 'react-router-dom';
-import { auth } from '../config/firebase';
+import { auth, local_uid } from '../config/firebase';
 
 export default class Layout extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            uid: local_uid,
             drawer: false,
             dialog: false
         }
@@ -25,8 +26,8 @@ export default class Layout extends React.Component {
     //logout = () => auth.signOut();
 
     render(props) {
-        const { dialog, drawer } = this.state;
-        const { user, uid } = this.props;
+        const { dialog, drawer, uid } = this.state;
+        const { user } = this.props;
 
         return (
             <div id="layoutComponent">

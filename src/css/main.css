@@ -466,11 +466,15 @@ a [role="menuitem"] { color: inherit !important; }
     animation: scaleIn .3s ease-out;
 }
 .book.empty .cover {
-    border: 3px dashed rgba(0,0,0,.15);
     box-shadow: none;
     background-color: transparent;
+    text-align: center;
+    display: grid;
+    align-items: center;
+    font-size: 4rem;
+    color: rgba(0,0,0,.15);
+    border: 3px dashed rgba(0,0,0,.15);
 }
-.book.empty .overlay { display: none; }
 
 .cover * {
     float: left;

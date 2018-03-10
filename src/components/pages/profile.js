@@ -1,6 +1,6 @@
 import React from 'react';
 import { calcAge, languages, continents, europeanCountries, northAmericanCountries, italianProvinces } from '../../config/shared';
-import { auth, userRef } from '../../config/firebase';
+import { local_uid, userRef } from '../../config/firebase';
 import { Avatar, CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 
 export default class Profile extends React.Component {
@@ -17,19 +17,15 @@ export default class Profile extends React.Component {
 	}
 
 	componentDidMount() {
-		auth.onAuthStateChanged(user => {
-			if (user) {
-				userRef(user.uid).onSnapshot(snap => {
-					this.setState({ loading: false });
-					if (snap.exists) {
-						this.setState({ 
-							user: snap.data()
-						});
-					} else {
-						this.setState({
-							loading: false 
-						});
-					}
+		userRef(local_uid).onSnapshot(snap => {
+			this.setState({ loading: false });
+			if (snap.exists) {
+				this.setState({ 
+					user: snap.data()
+				});
+			} else {
+				this.setState({
+					loading: false 
 				});
 			}
 		});
@@ -53,7 +49,7 @@ export default class Profile extends React.Component {
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
-			userRef(this.props.uid).set({
+			userRef(local_uid).set({
 				...this.state.user,
 				photoURL: this.state.user.photoURL || '',
 				sex: this.state.user.sex || '',

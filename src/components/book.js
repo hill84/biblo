@@ -1,6 +1,6 @@
 import React from 'react';
-import { bookType, stringType } from '../config/types';
-import { bookRef, userBookRef, userRef } from '../config/firebase';
+import { bookType, stringType, userType } from '../config/types';
+import { bookRef, local_uid, userBookRef, userRef } from '../config/firebase';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
 
@@ -47,9 +47,7 @@ export default class Book extends React.Component {
         bookReviews_num -= 1;
       }
 
-      //console.log(`Uid: ${this.props.uid}`);
-
-      userBookRef(this.props.uid, bid).delete().then(() => {
+      userBookRef(local_uid, bid).delete().then(() => {
         this.setState({ 
           userBook: { 
             ...this.state.userBook, 
@@ -81,7 +79,7 @@ export default class Book extends React.Component {
 
       if (collection === 'shelf') {
         //console.log('will remove book and rating from user shelf stats');
-        userRef(this.props.uid).update({
+        userRef(local_uid).update({
           ...this.props.user,
           stats: {
             ...this.props.user.stats,
@@ -93,7 +91,7 @@ export default class Book extends React.Component {
         }).catch(error => console.warn(error));
       } else if (collection === 'wishlist') {
         //console.log('will remove book from user wishlist stats');
-        userRef(this.props.uid).update({
+        userRef(local_uid).update({
           ...this.props.user,
           stats: {
             ...this.props.user.stats,
@@ -122,11 +120,11 @@ export default class Book extends React.Component {
                 ...snap.data()
               }
             });
-          } else { console.warn('No book with bid ' + this.props.bid); }
+          } else { console.warn('No book with bid ' + nextProps.bid); }
         });
       }
-      if (nextProps.uid) {
-        userBookRef(nextProps.uid, (nextProps.bid || nextProps.book.bid)).onSnapshot(snap => {
+      if (nextProps.bid || nextProps.book.bid) {
+        userBookRef(local_uid, (nextProps.bid || nextProps.book.bid)).onSnapshot(snap => {
           //console.log(`Update userBook ${nextProps.bid || nextProps.book.bid} again`);
           if (snap.exists) {
             this.setState({
@@ -149,8 +147,8 @@ export default class Book extends React.Component {
   }
 
   componentDidMount(props) {
-    if (this.props.uid && (this.props.bid || this.state.book)) {
-      userBookRef(this.props.uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
+    if (this.props.bid || this.state.book.bid) {
+      userBookRef(local_uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
         if (snap.exists) {
           //console.log(`Update userBook ${this.state.book.bid}`);
           this.setState({
@@ -183,7 +181,7 @@ export default class Book extends React.Component {
       userWishlist_num -= 1;
     }
     
-    userBookRef(this.props.uid, bid).set({
+    userBookRef(local_uid, bid).set({
       ...this.state.userBook,
       bookInShelf: true,
       bookInWishlist: false
@@ -195,8 +193,8 @@ export default class Book extends React.Component {
           bookInWishlist: false 
         }
       });
-      console.log('Book added to user shelf');
-    }).catch(error => console.log(error));
+      //console.log('Book added to user shelf');
+    }).catch(error => console.warn(error));
 
     bookRef(bid).update({
       readers_num: bookReaders_num
@@ -207,15 +205,15 @@ export default class Book extends React.Component {
           readers_num: bookReaders_num 
         }
       });
-      console.log('Readers number increased');
-    }).catch(error => console.log(error));
+      //console.log('Readers number increased');
+    }).catch(error => console.warn(error));
 
-    userRef(this.props.uid).update({
+    userRef(local_uid).update({
       'stats.shelf_num': this.props.user.stats.shelf_num + 1,
       'stats.wishlist_num': userWishlist_num
     }).then(() => {
-      console.log('User shelf number increased');
-    }).catch(error => console.log(error));
+      //console.log('User shelf number increased');
+    }).catch(error => console.warn(error));
 	}
 
 	addBookToWishlist = bid => {
@@ -247,7 +245,7 @@ export default class Book extends React.Component {
       userBookReview = '';
     }
 
-    userBookRef(this.props.uid, bid).set({
+    userBookRef(local_uid, bid).set({
       ...this.state.userBook,
       rating_num: userBookRating_num,
       review: userBookReview,
@@ -266,7 +264,7 @@ export default class Book extends React.Component {
       //console.log('Book added to user wishlist');
     }).catch(error => console.warn(error));
 
-    userRef(this.props.uid).update({
+    userRef(local_uid).update({
       'stats.shelf_num': userShelf_num,
       'stats.wishlist_num': userWishlist_num,
       'stats.ratings_num': userRatings_num,
@@ -306,13 +304,13 @@ export default class Book extends React.Component {
     let bookRatings_num = this.state.book.ratings_num; 
     let userRatings_num = this.props.user.stats.ratings_num; 
     
-    console.log({
+    /* console.log({
       'bookRating_num': bookRating_num,
       'bookRatings_num': bookRatings_num,
       'rate': rate,
       'userRatings_num': userRatings_num,
       'userBookRating_num': userBookRating_num
-    });
+    }); */
 
     if (userBookRating_num === 0) { 
       bookRating_num = (bookRating_num + rate) / bookRatings_num;
@@ -336,7 +334,7 @@ export default class Book extends React.Component {
       //console.log('Book rated with ' + rate + ' stars');
     }).catch(error => console.warn(error));
 
-    userBookRef(this.props.uid, bid).update({
+    userBookRef(local_uid, bid).update({
       rating_num: rate
     }).then(() => {
       this.setState({ 
@@ -348,7 +346,7 @@ export default class Book extends React.Component {
       //console.log('User book rated with ' + rate + ' stars');
     }).catch(error => console.warn(error));
 
-    userRef(this.props.uid).update({
+    userRef(local_uid).update({
       'stats.ratings_num': userRatings_num
     }).then(() => {
       //console.log('User ratings number increased');
@@ -387,7 +385,7 @@ export default class Book extends React.Component {
 }
 
 Book.propTypes = {
-  uid: stringType,
   bid: stringType,
-  book: bookType
+  book: bookType,
+  user: userType
 }
