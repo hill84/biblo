@@ -14,6 +14,7 @@ export default class Dashboard extends React.Component {
 			luid: local_uid,
 			uid: null,
 			user: this.props.user,
+			follow: false,
 			loading: false
 		}
 	}
@@ -26,7 +27,8 @@ export default class Dashboard extends React.Component {
 					if (snap.exists) {
 						this.setState({
 							user: snap.data(),
-							uid: nextProps.match.params.uid
+							uid: nextProps.match.params.uid,
+							follow: (nextProps.user && nextProps.user.stats.followed && nextProps.user.stats.followed.indexOf(nextProps.match.params.uid) > -1) ? true : false
 						});
 					}
 				});
@@ -36,6 +38,7 @@ export default class Dashboard extends React.Component {
 				});
 			}
 		}
+		console.log(this.state.follow);
 	}
 
 	componentDidMount(props) {
@@ -45,11 +48,55 @@ export default class Dashboard extends React.Component {
 				if (snap.exists) {
 					this.setState({
 						user: snap.data(),
-						uid: this.props.match.params.uid
+						uid: this.props.match.params.uid,
+						follow: (this.props.user && this.props.user.stats.followed && this.props.user.stats.followed.indexOf(this.props.match.params.uid) > -1) ? true : false
 					});
 				}
 			});
 		}
+	}
+
+	onFollowUser = (luid, uid) => {
+		luid = this.state.luid;
+		uid = this.state.uid;
+
+		let visitedFollowers_num = this.state.user.stats.followers_num;
+		let visitedFollowers = this.state.user.stats.followers;
+		let visitedFollowersIndex = visitedFollowers.indexOf(luid);
+
+		let visitorFollowed_num = this.props.user.stats.followed_num;
+		let visitorFollowed = this.props.user.stats.followed; // TODO
+		let visitorFollowedIndex = visitorFollowed.indexOf(uid);
+
+		if (this.state.follow/*  || visitedFollowersIndex > -1 */) {
+			visitedFollowers_num -= 1;
+			visitorFollowed_num -= 1;
+			visitedFollowers.splice(visitedFollowersIndex, 1);
+			visitorFollowed.push(uid);
+		} else {
+			visitedFollowers_num += 1;
+			visitorFollowed_num += 1;
+			visitedFollowers.push(luid);
+			visitorFollowed.splice(visitorFollowedIndex, 1);
+		}
+
+		// VISITED
+		userRef(uid).update({
+			'stats.followers_num': visitedFollowers_num,
+			'stats.followers': visitedFollowers
+		}).then(() => {
+			console.log('follow');
+			this.setState({ follow: true });
+		});
+
+		// VISITOR
+		userRef(luid).update({
+			'stats.followed_num': visitorFollowed_num,
+			'stats.followed': visitorFollowed
+		}).then(() => {
+			console.log('unfollow');
+			this.setState({ follow: false });
+		});
 	}
 
 	render(props) {
@@ -85,8 +132,8 @@ export default class Dashboard extends React.Component {
 									{isOwner && <span className="counter"><Link to="/profile">Modifica profilo</Link></span>}
 								</div>
 								<div className="info-row">
-									{!isOwner && <button className="btn primary">Segui</button>}
-									<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
+									{!isOwner && <button className="btn primary" onClick={this.onFollowUser}>Segui</button>}
+									<span className="counter">Follower: <b>{user.stats.followers_num || 0}</b></span>
 									<span className="counter">Segue: <b>{user.stats.followed_num || 0}</b></span>
 								</div>
 							</div>
