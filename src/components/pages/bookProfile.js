@@ -110,7 +110,7 @@ export default class BookProfile extends React.Component {
                     </button>
                   }
                   {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                    <button className="btn primary" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
+                    <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
                   }
                   {userBook.bookInShelf &&
                     <div className="user rating">

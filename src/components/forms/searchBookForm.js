@@ -32,7 +32,7 @@ export default class SearchBookForm extends React.Component {
           json.items.forEach(item => {
             let b = item.volumeInfo;
             options.push({
-              ISBN_13: (b.industryIdentifiers && Number(b.industryIdentifiers[0].identifier)) || 0,
+              ISBN_13: (b.industryIdentifiers && b.industryIdentifiers[0] && Number(b.industryIdentifiers[0].identifier)) || 0,
               ISBN_10: (b.industryIdentifiers && b.industryIdentifiers[1] && Number(b.industryIdentifiers[1].identifier)) || 0,
               authors: b.authors || [],
               bid: '',
@@ -43,7 +43,7 @@ export default class SearchBookForm extends React.Component {
               genres: (b.categories && switchGenres(b.categories)) || [],
               incipit: '',
               languages: ['Italiano'] || [],
-              pages_num: b.pageCount || 0,
+              pages_num: (b.pageCount && Number(b.pageCount)) || 0,
               publication: b.publishedDate || '',
               publisher: b.publisher || '',
               rating_num: 0,
@@ -51,7 +51,7 @@ export default class SearchBookForm extends React.Component {
               readers_num: 0,
               reviews_num: 0,
               subtitle: b.subtitle || '',
-              text: b.title || '',
+              text: b.title || '', // OPTION TEXT
               title: b.title || '',
               title_sort: normalizeString(b.title) || '',
               value: (

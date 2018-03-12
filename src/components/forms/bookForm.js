@@ -193,6 +193,8 @@ export default class BookForm extends React.Component {
       errors.pages_num = "Inserisci il numero di pagine";
     } else if (book.pages_num.toString().length > 5) {
       errors.pages_num = "Lunghezza massima 5 cifre";
+    } else if (book.pages_num < 20) {
+      errors.pages_num = "Minimo 20 pagine";
     }
     if (!book.ISBN_13) {
       errors.ISBN_13 = "Inserisci il codice ISBN";
@@ -204,7 +206,7 @@ export default class BookForm extends React.Component {
     if (book.ISBN_10 && (book.ISBN_10.toString().length !== 10)) {
       errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
     }
-    if (Date(book.publication) > new Date()) {
+    if (Date(book.publication) > new Date()) { // DOESN'T WORK
       errors.publication = "Data di pubblicazione non valida";
     }
     if (book.edition_num && book.edition_num < 1) {
@@ -400,7 +402,7 @@ export default class BookForm extends React.Component {
                 <div className="form-group">
                   <SelectField
                     errorText={errors.genres}
-                    floatingLabelText="Genere"
+                    floatingLabelText="Genere (max 3)"
                     value={book.genres}
                     onChange={this.onChangeSelect("genres")}
                     fullWidth={true}
@@ -467,7 +469,7 @@ export default class BookForm extends React.Component {
               </div>
             </div>
             <div className="footer no-gutter">
-              <button className="btn btn-footer primary">Salva</button>
+              <button className="btn btn-footer primary">Salva le modifiche</button>
             </div>
           </form>
           <div className="form-group">

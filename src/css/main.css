@@ -175,7 +175,7 @@ hr.line {
 .btn-footer, .btn-footer:hover, .btn-footer:active { box-shadow: none; transform: none; }
 
 .btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; color: var(--cyan600); }
-.btn.flat:hover { background-color: rgba(0,0,0,.1); }
+.btn.flat:hover { background-color: rgba(0,0,0,.07); }
 .btn.flat:active { color: rgba(0,0,0,.3); }
 
 .btn.sm { padding-left: .6rem; padding-right: .6rem; font-size: .75rem; line-height: 26px; height: 26px; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
@@ -650,6 +650,7 @@ hr.line {
         --booksPerRow-lg: 3;
     }
     .text-align-center-sm { text-align: center; }
+    .book-profile .title { font-size: 1.6rem; }
 }
 @media (max-width: 576px) {
     :root {

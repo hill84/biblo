@@ -51,10 +51,11 @@ export const genres = [
     { id: "ac", name: "Architettura" },
     { id: "ar", name: "Arte" },
     { id: "av", name: "Avventura" },
-    { id: "bi", name: "Biografia e autobiografia" },
+    { id: "bi", name: "Biografie e autobiografie" },
+    { id: "cu", name: "Cucina" },
     { id: "ef", name: "Economia e finanza" }, 
     { id: "er", name: "Erotico" },
-    { id: "fa", name: "Famiglia, sesso e relazioni" },
+    { id: "fa", name: "Famiglia e relazioni" },
     { id: "sf", name: "Fantascienza" },
     { id: "fy", name: "Fantasy" },
     { id: "fi", name: "Filosofia" },
@@ -79,7 +80,7 @@ export const genres = [
     { id: "vi", name: "Viaggi" }
 ];
 
-export const switchGenres = string => {
+export const switchGenres = array => array.map(string => {
     let g = '';
     switch (string) {
         case "Architecture":                g = "Architettura"; break;
@@ -87,10 +88,11 @@ export const switchGenres = string => {
         case "Performing Arts":             g = "Arte"; break;
         case "Bibles":
         case "Religion":                    g = "Religione e spiritualità"; break;
-        case "Biography & Autobiography":   g = "Biografia e autobiografia"; break;
+        case "Biography & Autobiography":   g = "Biografie e autobiografie"; break;
         case "Business & Economics":        g = "Economia e finanza"; break;
         case "Comics & Graphic Novels":     g = "Fumetti e Graphic novel"; break;
-        case "Family & Relationships":      g = "Famiglia, sesso e relazioni"; break;
+        case "Cooking":                     g = "Cucina"; break;
+        case "Family & Relationships":      g = "Famigliae relazioni"; break;
         case "Fiction":                     g = "Narrativa"; break;
         case "History":                     g = "Storico"; break;
         case "Humor":                       g = "Umoritistico"; break;
@@ -100,6 +102,7 @@ export const switchGenres = string => {
         case "Mistery":                     g = "Mistero"; break;
         case "Music":                       g = "Musica"; break;
         case "Philosophy":                  g = "Filosofia"; break;
+        case "Poetry":                      g = "Poesia"; break;
         case "Science":                     g = "Scienza"; break; 
         case "Science fiction":             g = "Fantascienza"; break; 
         case "Social Science":              g = "Scienze sociali"; break;
@@ -107,7 +110,7 @@ export const switchGenres = string => {
         default:                            g = ""; break;
     }
     return g;
-}
+});
 
 export const languages = [
     { id: "ar", name: "Arabo", nativeName: "العربية" },
@@ -244,7 +247,7 @@ export const countries = [
     { id: "BJ", name: "Benin" },
     { id: "BM", name: "Bermuda" },
     { id: "BT", name: "Bhutan" },
-    { id: "BO", name: "Bolivia, Plurinational State of" },
+    { id: "BO", name: "Bolivia" },
     { id: "BQ", name: "Bonaire, Sint Eustatius and Saba" },
     { id: "BA", name: "Bosnia and Herzegovina" },
     { id: "BW", name: "Botswana" },
@@ -315,14 +318,14 @@ export const countries = [
     { id: "GY", name: "Guyana" },
     { id: "HT", name: "Haiti" },
     { id: "HM", name: "Heard Island and McDonald Islands" },
-    { id: "VA", name: "Holy See (Vatican City State)" },
+    { id: "VA", name: "Holy See" },
     { id: "HN", name: "Honduras" },
     { id: "HK", name: "Hong Kong" },
     { id: "HU", name: "Hungary" },
     { id: "IS", name: "Iceland" },
     { id: "IN", name: "India" },
     { id: "ID", name: "Indonesia" },
-    { id: "IR", name: "Iran, Islamic Republic of" },
+    { id: "IR", name: "Iran" },
     { id: "IQ", name: "Iraq" },
     { id: "IE", name: "Ireland" },
     { id: "IM", name: "Isle of Man" },
@@ -335,11 +338,11 @@ export const countries = [
     { id: "KZ", name: "Kazakhstan" },
     { id: "KE", name: "Kenya" },
     { id: "KI", name: "Kiribati" },
-    { id: "KP", name: "Korea, Democratic People's Republic of" },
-    { id: "KR", name: "Korea, Republic of" },
+    { id: "KP", name: "Korea (North)" },
+    { id: "KR", name: "Korea (South)" },
     { id: "KW", name: "Kuwait" },
     { id: "KG", name: "Kyrgyzstan" },
-    { id: "LA", name: "Lao People's Democratic Republic" },
+    { id: "LA", name: "Lao" },
     { id: "LV", name: "Latvia" },
     { id: "LB", name: "Lebanon" },
     { id: "LS", name: "Lesotho" },
@@ -349,7 +352,7 @@ export const countries = [
     { id: "LT", name: "Lithuania" },
     { id: "LU", name: "Luxembourg" },
     { id: "MO", name: "Macao" },
-    { id: "MK", name: "Macedonia, the former Yugoslav Republic of" },
+    { id: "MK", name: "Macedonia" },
     { id: "MG", name: "Madagascar" },
     { id: "MW", name: "Malawi" },
     { id: "MY", name: "Malaysia" },
@@ -362,8 +365,8 @@ export const countries = [
     { id: "MU", name: "Mauritius" },
     { id: "YT", name: "Mayotte" },
     { id: "MX", name: "Mexico" },
-    { id: "FM", name: "Micronesia, Federated States of" },
-    { id: "MD", name: "Moldova, Republic of" },
+    { id: "FM", name: "Micronesia" },
+    { id: "MD", name: "Moldova" },
     { id: "MC", name: "Monaco" },
     { id: "MN", name: "Mongolia" },
     { id: "ME", name: "Montenegro" },
@@ -387,7 +390,7 @@ export const countries = [
     { id: "OM", name: "Oman" },
     { id: "PK", name: "Pakistan" },
     { id: "PW", name: "Palau" },
-    { id: "PS", name: "Palestinian Territory, Occupied" },
+    { id: "PS", name: "Palestinian Territory" },
     { id: "PA", name: "Panama" },
     { id: "PG", name: "Papua New Guinea" },
     { id: "PY", name: "Paraguay" },
@@ -434,10 +437,10 @@ export const countries = [
     { id: "SZ", name: "Swaziland" },
     { id: "SE", name: "Sweden" },
     { id: "CH", name: "Switzerland" },
-    { id: "SY", name: "Syrian Arab Republic" },
-    { id: "TW", name: "Taiwan, Province of China" },
+    { id: "SY", name: "Syria" },
+    { id: "TW", name: "Taiwan" },
     { id: "TJ", name: "Tajikistan" },
-    { id: "TZ", name: "Tanzania, United Republic of" },
+    { id: "TZ", name: "Tanzania" },
     { id: "TH", name: "Thailand" },
     { id: "TL", name: "Timor-Leste" },
     { id: "TG", name: "Togo" },
@@ -458,7 +461,7 @@ export const countries = [
     { id: "UY", name: "Uruguay" },
     { id: "UZ", name: "Uzbekistan" },
     { id: "VU", name: "Vanuatu" },
-    { id: "VE", name: "Venezuela, Bolivarian Republic of" },
+    { id: "VE", name: "Venezuela" },
     { id: "VN", name: "Viet Nam" },
     { id: "VG", name: "Virgin Islands, British" },
     { id: "VI", name: "Virgin Islands, U.S." },

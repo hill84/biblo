@@ -129,7 +129,7 @@ export default class Dashboard extends React.Component {
 									{user.continent && <span className="counter">{user.continent}</span>}
 									{user.languages && <span className="counter">Parla {joinToLowerCase(user.languages)}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
-									{isOwner && <span className="counter"><Link to="/profile">Modifica profilo</Link></span>}
+									{isOwner && <button className="btn sm flat counter"><Link to="/profile">Modifica profilo</Link></button>}
 								</div>
 								<div className="info-row">
 									{!isOwner && <button className="btn primary" onClick={this.onFollowUser}>Segui</button>}
