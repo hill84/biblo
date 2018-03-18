@@ -80,7 +80,7 @@ export default class Shelf extends React.Component {
 
         return (
             <div ref="shelfComponent">
-                <div className="justify-content-center shelf">
+                <div className="shelf">
                     
                     <div className="collection hoverable-items">
                         {loading ? skltn_shelfRow :

@@ -255,8 +255,11 @@ export default class BookForm extends React.Component {
         <div className="container top">
           <form onSubmit={this.onSubmit} className="card">
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
-            <div className="row">
-              <div className="col-md-6">
+            <div className="container-md">
+              <div className="edit-book-cover">
+                <Cover book={book} />
+              </div>
+              <div className="edit-book-info">
                 <div className="form-group">
                   <TextField
                     name="title"
@@ -294,7 +297,7 @@ export default class BookForm extends React.Component {
                   />
                 </div>
                 <div className="row">
-                  <div className="form-group col-6">
+                  <div className="form-group col-sm-6">
                     <TextField
                       name="ISBN_13"
                       type="number"
@@ -306,7 +309,7 @@ export default class BookForm extends React.Component {
                       fullWidth={true}
                     />
                   </div>
-                  <div className="form-group col-6">
+                  <div className="form-group col-sm-6">
                     <TextField
                       name="ISBN_10"
                       type="number"
@@ -463,9 +466,6 @@ export default class BookForm extends React.Component {
                   </div>
                 }
 
-              </div>
-              <div className="col-md-6">
-                <Cover book={book} />
               </div>
             </div>
             <div className="footer no-gutter">

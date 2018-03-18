@@ -2,6 +2,7 @@ import React from 'react';
 import { local_uid, userRef } from '../../config/firebase';
 import { userType } from '../../config/types';
 import { appName, calcAge, joinToLowerCase } from '../../config/shared';
+import { icon } from '../../config/icons';
 import { Link } from 'react-router-dom';
 import { Avatar } from 'material-ui';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -13,47 +14,44 @@ export default class Dashboard extends React.Component {
 		this.state = {
 			luid: local_uid,
 			uid: null,
-			user: this.props.user,
+			user: null,
 			follow: false,
 			loading: false
 		}
 	}
 
 	componentWillReceiveProps(nextProps) {
+		const { user, match } = nextProps;
 		if (nextProps !== this.props) {
-			if (nextProps.match.params.uid) {
-				userRef(nextProps.match.params.uid).onSnapshot(snap => {
+			if (match.params.uid) {
+				userRef(match.params.uid).onSnapshot(snap => {
 					this.setState({ loading: false });
 					if (snap.exists) {
 						this.setState({
 							user: snap.data(),
-							uid: nextProps.match.params.uid,
-							follow: (nextProps.user && nextProps.user.stats.followed && nextProps.user.stats.followed.indexOf(nextProps.match.params.uid) > -1) ? true : false
+							uid: match.params.uid,
+							follow: (user && user.stats.followed) && user.stats.followed.indexOf(match.params.uid) > -1
 						});
 					}
 				});
-			} else {
-				this.setState({
-					user: nextProps.user
-				});
-			}
+			} else this.setState({ user: user });
 		}
-		console.log(this.state.follow);
 	}
 
 	componentDidMount(props) {
-		if (this.props.match.params.uid) {
-			userRef(this.props.match.params.uid).onSnapshot(snap => {
+		const { user, match } = this.props;
+		if (match.params.uid) {
+			userRef(match.params.uid).onSnapshot(snap => {
 				this.setState({ loading: false });
 				if (snap.exists) {
 					this.setState({
 						user: snap.data(),
-						uid: this.props.match.params.uid,
-						follow: (this.props.user && this.props.user.stats.followed && this.props.user.stats.followed.indexOf(this.props.match.params.uid) > -1) ? true : false
+						uid: match.params.uid,
+						follow: (user && user.stats.followed) && user.stats.followed.indexOf(match.params.uid) > -1
 					});
 				}
 			});
-		}
+		} else this.setState({ user: user });
 	}
 
 	onFollowUser = (luid, uid) => {
@@ -61,23 +59,23 @@ export default class Dashboard extends React.Component {
 		uid = this.state.uid;
 
 		let visitedFollowers_num = this.state.user.stats.followers_num;
-		let visitedFollowers = this.state.user.stats.followers;
+		let visitedFollowers = this.state.user.stats.followers || [];
 		let visitedFollowersIndex = visitedFollowers.indexOf(luid);
 
 		let visitorFollowed_num = this.props.user.stats.followed_num;
-		let visitorFollowed = this.props.user.stats.followed; // TODO
+		let visitorFollowed = this.props.user.stats.followed || [];
 		let visitorFollowedIndex = visitorFollowed.indexOf(uid);
 
 		if (this.state.follow/*  || visitedFollowersIndex > -1 */) {
 			visitedFollowers_num -= 1;
 			visitorFollowed_num -= 1;
 			visitedFollowers.splice(visitedFollowersIndex, 1);
-			visitorFollowed.push(uid);
+			visitorFollowed.splice(visitorFollowedIndex, 1);
 		} else {
 			visitedFollowers_num += 1;
 			visitorFollowed_num += 1;
 			visitedFollowers.push(luid);
-			visitorFollowed.splice(visitorFollowedIndex, 1);
+			visitorFollowed.push(uid);
 		}
 
 		// VISITED
@@ -86,7 +84,6 @@ export default class Dashboard extends React.Component {
 			'stats.followers': visitedFollowers
 		}).then(() => {
 			console.log('follow');
-			this.setState({ follow: true });
 		});
 
 		// VISITOR
@@ -95,12 +92,11 @@ export default class Dashboard extends React.Component {
 			'stats.followed': visitorFollowed
 		}).then(() => {
 			console.log('unfollow');
-			this.setState({ follow: false });
 		});
 	}
 
 	render(props) {
-		const { user, uid, luid } = this.state;
+		const { follow, user, uid, luid } = this.state;
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const isOwner = luid === uid;
 
@@ -108,11 +104,11 @@ export default class Dashboard extends React.Component {
 
 		return (
 			<div className="container" ref="dashboardComponent">	
-				<h2>Dashboard</h2>
+				<h2>{isOwner && 'La mia '}Dashboard</h2>
 				<div className="card">
 					<div className="basic-profile">
-						<div className="row">
-							<div className="col-auto">
+						<div className="row text-align-center-sm">
+							<div className="col-md-auto col-sm-12">
 								{user.photoURL ? 
 									<Avatar src={user.photoURL} size={100} backgroundColor={'transparent'} /> 
 								: user.displayName && 
@@ -120,21 +116,32 @@ export default class Dashboard extends React.Component {
 								}
 							</div>
 							<div className="col">
-								<div className="username">{user.displayName}</div>
+								<h2 className="username">{user.displayName}</h2>
 								<div className="info-row">
 									{user.sex && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : 'Altro'}</span>}
 									{user.birth_date && <span className="counter">{calcAge(user.birth_date)} anni</span>}
-									{user.city && <span className="counter">{user.city}</span>}
-									{user.country && <span className="counter">{user.country}</span>}
-									{user.continent && <span className="counter">{user.continent}</span>}
-									{user.languages && <span className="counter">Parla {joinToLowerCase(user.languages)}</span>}
+									<span className="counter comma">
+										{user.city && <span className="counter">{user.city}</span>}
+										{user.country && <span className="counter">{user.country}</span>}
+										{user.continent && <span className="counter">{user.continent}</span>}
+									</span>
+									{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 									{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
-									{isOwner && <button className="btn sm flat counter"><Link to="/profile">Modifica profilo</Link></button>}
+									{isOwner && <button className="btn sm flat counter"><Link to="/profile">{icon.pencil()} Modifica profilo</Link></button>}
 								</div>
 								<div className="info-row">
-									{!isOwner && <button className="btn primary" onClick={this.onFollowUser}>Segui</button>}
-									<span className="counter">Follower: <b>{user.stats.followers_num || 0}</b></span>
-									<span className="counter">Segue: <b>{user.stats.followed_num || 0}</b></span>
+									{!isOwner && 
+										<button className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} onClick={this.onFollowUser}>
+											{follow ? 
+												<span>
+													<span className="hide-on-hover">{icon.check()} Segui</span>
+													<span className="show-on-hover">Non seguire</span>
+												</span> 
+											: <span>{icon.plus()} Segui</span> }
+										</button>
+									}
+									<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
+									<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{user.stats.followed_num || 0}</b></span>
 								</div>
 							</div>
 						</div>

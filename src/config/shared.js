@@ -22,6 +22,8 @@ export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '
 
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
 
+export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
+
 export const normalizeString = str => str.toString().toLowerCase()
     .replace(/\s+/g,'-')            // Replace spaces with -
     .replace(/--+/g,'-')            // Replace multiple - with single -

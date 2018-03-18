@@ -29,4 +29,6 @@ export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).colle
 export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');
 
+export const collectionsRef = cid => db.collection('collections').doc(cid).collection('books');
+
 export default firebase;
