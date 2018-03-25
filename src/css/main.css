@@ -48,6 +48,7 @@ p:last-child { margin-bottom: 0; }
 .info-row:last-child { margin-bottom: 0; }
 .info-row.centered { text-align: center; }
 .card .info-row.footer { display: block; }
+.info-row .btn { margin-top: 0; margin-bottom: 0; }
 
 .link {
     display: inline;
@@ -89,7 +90,7 @@ hr.line {
     background-color: var(--cardBackgroundColor);
     color: var(--mainTextColor);
     padding: 24px;
-    margin: 10px auto 20px auto;
+    margin: 15px auto;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
     will-change: opacity;
@@ -457,8 +458,8 @@ hr.line {
     grid-column-gap: 8px;
     padding-top: 4px;
 }
-.shelf.collection .info-row { margin-bottom: 1rem; }
-.shelf.collection .collection-title { font-weight: 400; font-size: 1.2rem; }
+.shelf.collection .info-row { line-height: 26px; margin-bottom: .5rem; }
+.shelf.collection .collection-title { font-weight: 400; font-size: 1.1rem; }
 .shelf.scrollable {
     position: relative;
     overflow: hidden;

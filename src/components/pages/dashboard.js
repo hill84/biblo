@@ -103,9 +103,8 @@ export default class Dashboard extends React.Component {
 		if (!user || !uid) return null
 
 		return (
-			<div className="container" ref="dashboardComponent">	
-				<h2>{isOwner && 'La mia '}Dashboard</h2>
-				<div className="card">
+			<div className="container" ref="dashboardComponent">
+				<div className="card dark">
 					<div className="basic-profile">
 						<div className="row text-align-center-sm">
 							<div className="col-md-auto col-sm-12">
@@ -148,7 +147,7 @@ export default class Dashboard extends React.Component {
 					</div>
 				</div>
 
-				<Tabs style={{marginTop: 20}} tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
+				<Tabs style={{marginTop: 15}} tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
 					<Tab label="Libreria">
 						<div className="card bottompend">
 							<Shelf uid={uid} />

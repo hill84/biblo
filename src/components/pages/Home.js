@@ -18,7 +18,6 @@ export default class Home extends React.Component {
 		
 		return (
 			<div className="container" id="homeComponent">
-				<h2>{icon.home({style: {width: '1.5rem'}})} Home</h2>
 				<div className="card dark">
 					<BookCollection cid="Harry Potter" bcid="bcid" limit={7} scrollable={true}/>
 				</div>
