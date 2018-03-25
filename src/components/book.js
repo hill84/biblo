@@ -10,6 +10,11 @@ export default class Book extends React.Component {
 		this.state = {
 			book: this.props.book || null,
       userBook: {
+        authors: (this.props.book && this.props.book.authors) || [],
+        covers: (this.props.book && [this.props.book.covers[0]]) || [],
+        publisher: (this.props.book && this.props.book.publisher) || '',
+        title: (this.props.book && this.props.book.title) || '',
+        subtitle: (this.props.book && this.props.book.subtitle) || '',
         review: '',
         readingState: '',
         rating_num: 0,
@@ -19,7 +24,7 @@ export default class Book extends React.Component {
 			isEditing: false
     }
     
-    this.removeBookFromUserBooks = (bid, collection) => {
+    this.removeBookFromUserBooks = (bid, bookshelf) => {
       let userShelf_num = this.props.user.stats.shelf_num;
       let userWishlist_num = this.props.user.stats.wishlist_num;
       let bookRating_num = this.state.book.rating_num;
@@ -56,7 +61,7 @@ export default class Book extends React.Component {
             rating_num: userBookRating_num
           }
         });
-        //console.log(`Book removed from user ${collection}`);
+        //console.log(`Book removed from user ${bookshelf}`);
       }).catch(error => console.warn(error));
 
       bookRef(bid).update({
@@ -77,7 +82,7 @@ export default class Book extends React.Component {
         //console.log('Rating and reader removed');
       }).catch(error => console.warn(error));
 
-      if (collection === 'shelf') {
+      if (bookshelf === 'shelf') {
         //console.log('will remove book and rating from user shelf stats');
         userRef(local_uid).update({
           ...this.props.user,
@@ -89,7 +94,7 @@ export default class Book extends React.Component {
         }).then(() => {
           //console.log('Book and rating removed from user shelf stats');
         }).catch(error => console.warn(error));
-      } else if (collection === 'wishlist') {
+      } else if (bookshelf === 'wishlist') {
         //console.log('will remove book from user wishlist stats');
         userRef(local_uid).update({
           ...this.props.user,
@@ -108,7 +113,15 @@ export default class Book extends React.Component {
     if (nextProps !== this.props) {
       if (nextProps.book) {
         this.setState({
-          book: nextProps.book
+          book: nextProps.book,
+          userBook: {
+            ...this.state.userBook,
+            authors: nextProps.book.authors || [],
+            covers: [nextProps.book.covers[0]] || [],
+            publisher: nextProps.book.publisher || '',
+            title: nextProps.book.title || '',
+            subtitle: nextProps.book.subtitle || ''
+          }
         });
       } else if (nextProps.bid) {
         bookRef(nextProps.bid).onSnapshot(snap => {
@@ -118,6 +131,14 @@ export default class Book extends React.Component {
               book: {
                 ...this.state.book,
                 ...snap.data()
+              },
+              userBook: {
+                ...this.state.userBook,
+                authors: snap.data().authors || [],
+                covers: [snap.data().covers[0]] || [],
+                publisher: snap.data().publisher || '',
+                title: snap.data().title || '',
+                subtitle: snap.data().subtitle || ''
               }
             });
           } else { console.warn('No book with bid ' + nextProps.bid); }
@@ -133,6 +154,12 @@ export default class Book extends React.Component {
           } else {
             this.setState({
               userBook: {
+                bid: '',
+                authors: [],
+                covers: [],
+                publisher: '',
+                title: '',
+                subtitle: '',
                 review: '',
                 readingState: '',
                 rating_num: 0,

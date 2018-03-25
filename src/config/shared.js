@@ -24,6 +24,8 @@ export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase(
 
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
+export const normalizeCover = str => str && str.replace('&edge=curl', '');
+
 export const normalizeString = str => str.toString().toLowerCase()
     .replace(/\s+/g,'-')            // Replace spaces with -
     .replace(/--+/g,'-')            // Replace multiple - with single -
@@ -83,7 +85,7 @@ export const genres = [
 ];
 
 export const switchGenres = array => array.map(string => {
-    let g = '';
+    let g;
     switch (string) {
         case "Architecture":                g = "Architettura"; break;
         case "Art":                         
@@ -113,6 +115,26 @@ export const switchGenres = array => array.map(string => {
     }
     return g;
 });
+
+export const switchLanguages = string => {
+    let l;
+    switch (string) {
+        case "ar": l = "Arabo"; break;
+        case "zh": l = "Cinese"; break;
+        case "ko": l = "Coreano"; break;
+        case "fr": l = "Francese"; break;
+        case "ja": l = "Giapponese"; break;
+        case "el": l = "Greco"; break;
+        case "en": l = "Inglese"; break;
+        case "it": l = "Italiano"; break;
+        case "pt": l = "Portoghese"; break;
+        case "ru": l = "Russo"; break;
+        case "es": l = "Spagnolo"; break;
+        case "de": l = "Tedesco"; break; 
+        default: l = ""; break;
+    }
+    return l;
+};
 
 export const languages = [
     { id: "ar", name: "Arabo", nativeName: "العربية" },

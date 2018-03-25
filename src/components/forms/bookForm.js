@@ -3,7 +3,7 @@ import { bookType, funcType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input'
 import { formats, genres, languages } from '../../config/shared';
-import { bookRef, booksRef } from '../../config/firebase';
+import { bookRef, booksRef, collectionsRef, local_uid } from '../../config/firebase';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
@@ -19,7 +19,10 @@ export default class BookForm extends React.Component {
         subtitle: this.props.book.subtitle || '', 
         authors: this.props.book.authors || [], 
         format: this.props.book.format || '', 
+        collections: this.props.book.collections || [],
         covers: this.props.book.covers || [], 
+        lastEdit: new Date().getTime(),
+        lastEditBy: local_uid,
         pages_num: this.props.book.pages_num || 0, 
         publisher: this.props.book.publisher || '', 
         publication: this.props.book.publication || '', 
@@ -120,7 +123,8 @@ export default class BookForm extends React.Component {
     let leftChars = `${e.target.name}_leftChars`;
     let maxChars = `${e.target.name}_maxChars`;
     this.setState({
-      ...this.state, book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
+      ...this.state, 
+      book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
     });
   };
 
@@ -149,7 +153,8 @@ export default class BookForm extends React.Component {
           let newBookRef = booksRef.doc();
           newBookRef.set({
             ...this.state.book,
-            bid: newBookRef.id
+            bid: newBookRef.id,
+            creationTime: new Date().getTime()
           }).then(() => {
             this.setState({
               loading: false,
@@ -161,6 +166,18 @@ export default class BookForm extends React.Component {
               authError: error.message,
               loading: false
             });
+          });
+        }
+        if (this.state.book.collections) {
+          this.state.book.collections.forEach(cid => {
+            collectionsRef(cid).doc(this.state.book.bid).set({
+              bid: this.state.book.bid || '', 
+              covers: [this.state.book.covers[0]] || [],
+              title: this.state.book.title || '',  
+              subtitle: this.state.book.subtitle || '', 
+              authors: this.state.book.authors || [], 
+              publisher: this.state.book.publisher
+            }).then(() => console.log('Collection set')).catch(error => console.warn(error));
           });
         }
       }
@@ -215,10 +232,16 @@ export default class BookForm extends React.Component {
       errors.edition_num = "Max 2 cifre";
     }
     if (book.languages && (book.languages.length > 4)) {
-      errors.languages = "Scegli massimo 4 lingue";
+      errors.languages = "Massimo 4 lingue";
     }
     if (book.genres && (book.genres.length > 3)) {
-      errors.genres = "Scegli massimo 3 generi";
+      errors.genres = "Massimo 3 generi";
+    }
+    if (book.collections && (book.collections.length > 5)) {
+      errors.collections = "Massimo 5 collezioni";
+    }
+    if (book.collections && book.collections.length > 255) {
+      errors.collections = "Lunghezza massima 255 caratteri";
     }
     if (book.description && book.description.length < 150) {
       errors.description = `Lunghezza minima 150 caratteri`;
@@ -415,6 +438,18 @@ export default class BookForm extends React.Component {
                     {menuItemsMap(genres, book.genres)}
                   </SelectField>
                 </div>
+                <div className="form-group">
+                  <ChipInput
+                    name="collections"
+                    hintText="es: Sherlock Holmes"
+                    errorText={errors.collections}
+                    floatingLabelText="Collezione (max 5)"
+                    value={book.collections}
+                    onRequestAdd={chip => this.onAddChip("collections", chip)}
+                    onRequestDelete={chip => this.onDeleteChip("collections", chip)}
+                    fullWidth={true}
+                  />
+                </div>
                 {isEditingDescription /* || book.description */ ?
                   <div className="form-group">
                     <TextField
@@ -445,7 +480,7 @@ export default class BookForm extends React.Component {
                     <TextField
                       name="incipit"
                       type="text"
-                      hintText={`Inserisci alcuni paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
+                      hintText={`Inserisci i primi paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
                       errorText={errors.incipit}
                       floatingLabelText="Incipit"
                       value={book.incipit || ''}

@@ -42,12 +42,14 @@ export default class Cover extends React.Component {
 		return (
       <div className="book" ref="coverComponent"> 
         {cover ?
-          <div className="cover" style={{backgroundImage: `url(${cover})`}}>
+          <div className="cover" style={{backgroundImage: `url(${cover})`}} title={book.title}>
             <div className="overlay"></div>
-            {/* book.covers && book.covers.length > 1 && <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> */}
+            {/* (book.covers && book.covers.length > 1) && 
+              <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
+            */}
           </div>
         :
-          <div className="cover">
+          <div className="cover" title={book.title}>
             <div className="overlay"></div>
             <h2 className="title">{book.title}</h2>
             {book.subtitle && book.subtitle.length > 0 && <h3 className="subtitle">{book.subtitle}</h3>}
@@ -59,7 +61,9 @@ export default class Cover extends React.Component {
           <div className="info">
             <strong className="title">{book.title}</strong>
             <span className="author">di {join(book.authors)}</span>
-            {(book.rating_num > 0 && this.props.rating !== false) && <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />}
+            {(book.rating_num > 0) && (this.props.rating !== false) && 
+              <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
+            }
           </div>
         }
       </div>

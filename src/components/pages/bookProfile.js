@@ -84,10 +84,10 @@ export default class BookProfile extends React.Component {
                 </div>
                 <div className="info-row">
                   <span className="counter">ISBN-13: {book.ISBN_13}</span>
-                  {book.ISBN_10 && <span className="counter">ISBN-10: {book.ISBN_10}</span>}
+                  {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: {book.ISBN_10}</span>}
                   {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
-                  {/* book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span> */}
-                  {book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
+                  {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
+                  {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
                   {/* book.format && <span className="counter">Formato: {book.format}</span> */}
                   {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
                 </div>

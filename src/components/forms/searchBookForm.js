@@ -1,8 +1,8 @@
 import React from 'react';
 import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
-import { booksRef } from '../../config/firebase';
+import { booksRef, local_uid } from '../../config/firebase';
 import { booksAPIRef } from '../../config/API';
-import { join, normalizeString, switchGenres } from '../../config/shared';
+import { join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 
 export default class SearchBookForm extends React.Component {
   constructor(props){
@@ -36,13 +36,16 @@ export default class SearchBookForm extends React.Component {
               ISBN_10: (b.industryIdentifiers && b.industryIdentifiers[1] && Number(b.industryIdentifiers[1].identifier)) || 0,
               authors: b.authors || [],
               bid: '',
-              covers: (b.imageLinks && [b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail]) || '',
+              collections: [],
+              covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || '',
               description: b.description || '',
               edition_num: 1,
               format: b.printType === 'BOOK' ? 'Libro' : 'Rivista' || '',
               genres: (b.categories && switchGenres(b.categories)) || [],
               incipit: '',
-              languages: ['Italiano'] || [],
+              languages: [(b.language && switchLanguages(b.language))] || [],
+              lastEdit: new Date.getTime(),
+              lastEditBy: local_uid,
               pages_num: (b.pageCount && Number(b.pageCount)) || 0,
               publication: b.publishedDate || '',
               publisher: b.publisher || '',

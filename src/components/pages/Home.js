@@ -1,45 +1,26 @@
 import React from 'react';
-import { collectionsRef, local_uid } from '../../config/firebase';
+import { local_uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { stringType } from '../../config/types';
 import { Link } from 'react-router-dom';
-import { skltn_shelfRow } from '../skeletons';
-import Cover from '../cover';
+import BookCollection from '../bookCollection';
 
 export default class Home extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			collection: null,
-			collectionLoading: true,
 			uid: local_uid || ''
 		}
 	}
 
-	componentDidMount(props) {
-		collectionsRef('Harry Potter').get().then(book => {
-			this.setState({ collectionLoading: false });
-			// TODO
-		});
-	}
-
 	render() {
-		const { collection, collectionLoading, uid } = this.state;
-		let collectionCovers = collection && collection.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link> );
-
+		const { uid } = this.state;
+		
 		return (
 			<div className="container" id="homeComponent">
 				<h2>{icon.home({style: {width: '1.5rem'}})} Home</h2>
 				<div className="card dark">
-					<div className="shelf">       
-						<div className="collection hoverable-items">
-							{collectionLoading ? skltn_shelfRow :
-								<div className="shelf-row">
-									{collectionCovers}
-								</div>
-							}
-						</div>
-					</div>
+					<BookCollection cid="Harry Potter" bcid="bcid" limit={7} scrollable={true}/>
 				</div>
 
 				<div className="card">
