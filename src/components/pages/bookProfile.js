@@ -16,7 +16,9 @@ export default class BookProfile extends React.Component {
       },
       userBook: this.props.userBook,
       loading: false,
-      errors: {}
+      errors: {},
+      isIncipitOpen: false,
+      isMinified: false
     }
   }
 
@@ -25,6 +27,14 @@ export default class BookProfile extends React.Component {
       this.setState({
         book: nextProps.book,
         userBook: nextProps.userBook
+      });
+    }
+  }
+
+  componentDidMount(props) {
+    if (this.props.book.description.length > 570) {
+      this.setState({
+        isMinified: true
       });
     }
   }
@@ -53,14 +63,26 @@ export default class BookProfile extends React.Component {
           ...this.state.userBook,
           rating_num: rate.rating
         }
-      })
+      });
     }
+  }
+
+  onMinify = () => {
+    this.setState(prevState => ({
+      isMinified: !prevState.isMinified
+    })); 
+  }
+
+  onOpenIncipit = () => {
+    this.setState(prevState => ({
+      isIncipitOpen: !prevState.isIncipitOpen
+    })); 
   }
 
   onEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, userBook } = this.state;
+    const { book, isIncipitOpen, isMinified, userBook } = this.state;
     
     if (!book || !userBook) return null;
 
@@ -72,7 +94,14 @@ export default class BookProfile extends React.Component {
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
             <div className="row">
               <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
-                <Cover book={book} rating={false} info={false} />
+                {book.incipit ? 
+                  <div role="button" className="hoverable-items" onClick={this.onOpenIncipit}>
+                    <Cover book={book} rating={false} info={false} />
+                    {isIncipitOpen && <div role="modal" className="book-incipit"><p>{book.incipit}</p></div>}
+                  </div>
+                :
+                  <Cover book={book} rating={false} info={false} />
+                }
               </div>
               <div className="col book-profile">
                 <h2 className="title">{book.title || ''}</h2>
@@ -112,6 +141,8 @@ export default class BookProfile extends React.Component {
                   {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
                     <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
                   }
+                </div>
+                <div className="info-row">
                   {userBook.bookInShelf &&
                     <div className="user rating">
                       <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
@@ -122,8 +153,8 @@ export default class BookProfile extends React.Component {
                 </div>
                 {book.description && 
                   <div className="info-row">
-                    <p className={`description ${book.description.length > 570 ? 'minified' : ''}`}>{book.description || ''}</p>
-                    <p>{book.description.length > 570 && <span className="link">Leggi la descrizione completa</span>}</p>
+                    <p className={`description ${isMinified ? 'minified' : 'expanded'}`}>{book.description || ''}</p>
+                    {isMinified && <p><button className="link" onClick={this.onMinify}>Mostra tutto</button></p>}
                   </div>
                 }
                 <div>&nbsp;</div>

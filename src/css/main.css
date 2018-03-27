@@ -11,6 +11,7 @@
     --cardBackgroundColor: var(--mainBackground);
     --green600: rgb(67, 160, 71); /* success */
     --red500: rgb(244, 67, 54); /* error */
+    --cardPadding: 24px;
     --booksPerRow-lg: 7;
     --shelf-rowHeight: 224px;
     --bookWidth: 140px;
@@ -33,7 +34,7 @@ html {
 *, *:before, *:after { box-sizing: inherit; }
 body {
     margin: 0;
-    font-family: Roboto, sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: .9rem;
     font-weight: 400;
     line-height: 1.5;
@@ -41,24 +42,25 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 { margin-top: .5rem; margin-bottom: .5rem; font-weight: 400; color: var(--cyan600); }
-p { margin-top: 0; margin-bottom: .5rem; font-weight: 300; }
+p { margin-top: 0; margin-bottom: .5rem; font-weight: 300; color: var(--mainTextColor); }
 p:last-child { margin-bottom: 0; }
 
 .info-row { margin-bottom: .5rem; }
 .info-row:last-child { margin-bottom: 0; }
 .info-row.centered { text-align: center; }
 .card .info-row.footer { display: block; }
-.info-row .btn { margin-top: 0; margin-bottom: 0; }
+/* .info-row .btn { margin-top: 0; margin-bottom: 0; } */
 
 .link {
     display: inline;
     -webkit-appearance: none;
     border: 0;
+    padding: 0;
     background-color: transparent;
     cursor: pointer;
 }
 
-a, .link { text-decoration: none; color: var(--linkColor); outline: none; transition: all .2s ease-in-out; }
+a, .link { color: var(--linkColor); text-decoration: none; font-weight: 400; outline: none; transition: all .2s ease-in-out; }
 a:hover, .link:hover { color: var(--linkColorHover); }
 a:active, .link:active { color: var(--linkColorActive); }
 a.active, .link.active { color: var(--orange600); }
@@ -89,7 +91,7 @@ hr.line {
     position: relative;
     background-color: var(--cardBackgroundColor);
     color: var(--mainTextColor);
-    padding: 24px;
+    padding: var(--cardPadding);
     margin: 15px auto;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
@@ -102,10 +104,10 @@ hr.line {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-right: -24px;
-    margin-left: -24px;
-    margin-bottom: -24px;
-    padding: 24px;
+    margin-right: calc(-1 * var(--cardPadding));
+    margin-left: calc(-1 * var(--cardPadding));
+    margin-bottom: calc(-1 * var(--cardPadding));
+    padding: var(--cardPadding);
 }
 .card .footer.no-gutter, .dialog .footer.no-gutter { padding: 0; }
 .card-container { margin: auto; text-align: center; }
@@ -124,18 +126,21 @@ hr.line {
     --linkColorActive: var(--cyan700);
     --cardBackgroundColor: var(--blueGray801);
 }
-.card.dark, .dark .card { 
+.card.dark, .dark .card,
+.card.primary, .primary .card { 
     font-weight: 200; 
 }
 
 /* PRIMARY */
 .primary {
+    --skltn-bg: rgba(0,10,20,.15);
+    --ContrastedTextColor: #fff;
+    --mainTextColor: rgba(230,250,255,.7);
+    --ligthTextColor: rgba(230,250,255,.5);
     --linkColor: rgba(255, 255, 255, .9);
     --linkColorHover: rgba(255, 255, 255, 1);
     --linkColorActive: rgba(255, 255, 255, .8);
-}
-.card.primary {
-    background-color: var(--cyan700);
+    --cardBackgroundColor: var(--cyan700);
 }
 
 /* BUTTONS */
@@ -187,7 +192,8 @@ hr.line {
 }
 .btn-footer, .btn-footer:hover, .btn-footer:active { box-shadow: none; transform: none; }
 
-.btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; color: var(--cyan600); }
+.btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; }
+.btn.flat { color: var(--linkColor); }
 .btn.flat:hover { background-color: rgba(0,0,0,.07); }
 .btn.flat:active { color: rgba(0,0,0,.3); }
 
@@ -223,6 +229,7 @@ hr.line {
 .btn.sm svg { width: 14px !important; height: 14px !important; }
 
 /* CONTAINER */
+/* .container { transition: all .2s ease-in-out; } */
 .container .container { position: relative; padding-left: 0; padding-right: 0; }
 .container-xs, .container-sm, .container-md { margin-left: auto; margin-right: auto; float: none; max-width: 100%; }
 .container-xs { width: 320px; }
@@ -339,12 +346,28 @@ hr.line {
 /* CUSTOM */
 /*#appBarComponent { background-color: var(--cyan700) !important; box-shadow: 0 1px 3px rgba(0,0,0,.1) !important; }*/
 
+#BookContainerComponent .content-background { z-index: -1; }
+#BookContainerComponent .content-background:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background: -moz-linear-gradient(top, transparent 0%, var(--mainBackground) 95%);
+    background: -webkit-linear-gradient(top, transparent 0%,var(--mainBackground) 95%);
+    background: linear-gradient(to bottom, transparent 0%,var(--mainBackground) 95%);
+    opacity: 1;
+    will-change: opacity;
+    transition: all .4s ease-in-out;
+    z-index: 1;
+}
 #BookContainerComponent .content-background, #BookContainerComponent .content-background .bg { 
     position: absolute; 
     top: 60px; 
     left: 0; 
     width: 100%; 
-    height: 200px; 
+    height: 250px; 
     overflow: hidden;
     background: var(--cyan800);
 }
@@ -423,26 +446,93 @@ hr.line {
 .counter.comma .counter:last-child:after { content: none; }
 .counter.btn { margin-top: 0; margin-bottom: 0; }
 
+.book-incipit {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 480px;
+    height: 680px;
+    max-width: calc(100% - 60px);
+    max-height: calc(100% - 160px);
+    background-color: #fff;
+    background-color: rgba(255,255,255,.97);
+    padding: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 10px 50px 10px rgba(40,40,40,.15);
+    transform-origin: top left;
+    will-change: opacity transform;
+    transition: all .4s ease-in-out;
+    animation: flipIn .4s ease-in-out;
+    z-index: 3;
+}
+.book-incipit::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    background: 0 0;
+}
+.book-incipit:before, .book-incipit:after {
+    content: "";
+    display: block;
+    position: sticky;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    z-index: 1;
+}
+.book-incipit:after {
+    bottom: 0;
+    background: -moz-linear-gradient(top, transparent 0%, var(--cardBackgroundColor) 90%);
+    background: -webkit-linear-gradient(top, transparent 0%,var(--cardBackgroundColor) 90%);
+    background: linear-gradient(to bottom, transparent 0%,var(--cardBackgroundColor) 90%);
+}
+.book-incipit:before {
+    top: 0;
+    background: -moz-linear-gradient(bottom, transparent 0%, var(--cardBackgroundColor) 90%);
+    background: -webkit-linear-gradient(bottom, transparent 0%,var(--cardBackgroundColor) 90%);
+    background: linear-gradient(to top, transparent 0%,var(--cardBackgroundColor) 90%);
+}
+.book-incipit p { 
+    padding: 25px 35px; 
+    line-height: 1.5rem; 
+    text-indent: 40px; 
+    text-align: justify;     
+    font-family: serif;
+    font-size: 1.05rem; 
+    user-select: none;
+}
+.book-incipit p::first-letter { font-size: 2rem; }
+
 .book-profile .title, .book-profile .subtitle { margin-top: 0; margin-left: auto; margin-right: auto; line-height: 130%; }
 .book-profile.dark .title, .book-profile.dark .subtitle { font-weight: 300; }
 .book-profile .title { font-size: 2.2rem; }
 .book-profile .subtitle { font-size: 1.35rem; color: var(--ligthTextColor); }
-.book-profile .description, .book-profile .incipit { text-align: justify; }
-.book-profile .description { transition: all .2s ease-in-out; }
+.book-profile .description { text-align: justify; }
+.book-profile .description { position: relative; overflow: hidden; transition: all .4s ease-in-out; max-height: 400px; }
 .book-profile .description.minified { position: relative; max-height: 128px; overflow: hidden; }
-.book-profile .description.minified:after {
+.book-profile .description:after {
     content: "";
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 50px;
-    background: -moz-linear-gradient(top, transparent 0%, var(--cardBackgroundColor) 97%);
-    background: -webkit-linear-gradient(top, transparent 0%,var(--cardBackgroundColor) 97%);
-    background: linear-gradient(to bottom, transparent 0%,var(--cardBackgroundColor) 97%);
+    background: -moz-linear-gradient(top, transparent 0%, var(--cardBackgroundColor) 90%);
+    background: -webkit-linear-gradient(top, transparent 0%,var(--cardBackgroundColor) 90%);
+    background: linear-gradient(to bottom, transparent 0%,var(--cardBackgroundColor) 90%);
+    opacity: 0;
+    will-change: opacity;
+    transition: all .4s ease-in-out;
     z-index: 1;
 }
+.book-profile .description.minified:after { opacity: 1; }
 
+.hoverable-items .book { cursor: pointer; }
 .hoverable-items .book:hover .cover { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-3px); }
 .hoverable-items .book:hover .info .title { color: var(--ContrastedTextColor); }
 .hoverable-items .book.empty:hover .cover { box-shadow: none; transform: none; border-color: var(--cyan700); color: var(--cyan700); }
@@ -464,22 +554,35 @@ hr.line {
     position: relative;
     overflow: hidden;
 }
-.shelf.scrollable:before {
+.shelf.scrollable:before, .shelf.scrollable:after {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 0;
     height: 100%;
     width: var(--bookWidth);
     pointer-events: none;
-    background: -moz-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 97%);
-    background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(97%,var(--cardBackgroundColor)));
-    background: -webkit-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 97%);
-    background: -o-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 97%);
-    background: -ms-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 97%);
-    background: linear-gradient(to right,transparent 0,var(--cardBackgroundColor) 97%);
     z-index: 10;
+}
+.shelf.scrollable:before {
+    left: 0;
+    width: var(--cardPadding);
+    background: -moz-linear-gradient(right,transparent 0,var(--cardBackgroundColor) 90%);
+    background: -webkit-gradient(right top,left top,color-stop(0,transparent),color-stop(90%,var(--cardBackgroundColor)));
+    background: -webkit-linear-gradient(right,transparent 0,var(--cardBackgroundColor) 90%);
+    background: -o-linear-gradient(right,transparent 0,var(--cardBackgroundColor) 90%);
+    background: -ms-linear-gradient(right,transparent 0,var(--cardBackgroundColor) 90%);
+    background: linear-gradient(to left,transparent 0,var(--cardBackgroundColor) 90%);
+}
+.shelf.scrollable:after {
+    right: 0;
+    width: var(--bookWidth);
+    background: -moz-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 90%);
+    background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(90%,var(--cardBackgroundColor)));
+    background: -webkit-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 90%);
+    background: -o-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 90%);
+    background: -ms-linear-gradient(left,transparent 0,var(--cardBackgroundColor) 90%);
+    background: linear-gradient(to right,transparent 0,var(--cardBackgroundColor) 90%);
 }
 .shelf.scrollable .info-row { position: relative; z-index: 11; }
 .scrollable .shelf-row {
@@ -488,7 +591,6 @@ hr.line {
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    height: var(--shelf-rowHeight);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -506,6 +608,16 @@ hr.line {
 }
 .scrollable .shelf-row a:first-child, .scrollable .shelf-row .skltn:first-child { margin-left: 0; }
 .scrollable .shelf-row a:last-child, .scrollable .shelf-row .skltn:last-child { margin-right: 0; }
+.card .shelf.scrollable { 
+    margin-right: calc(-1 * var(--cardPadding));
+    margin-left: calc(-1 * var(--cardPadding));
+}
+.card .shelf.scrollable .info-row {
+    margin-right: var(--cardPadding);
+    margin-left: var(--cardPadding);
+}
+.card .scrollable .shelf-row a:first-child, .card .scrollable .shelf-row .skltn:first-child { margin-left: var(--cardPadding); }
+.card .scrollable .shelf-row a:last-child, .card .scrollable .shelf-row .skltn:last-child { margin-right: var(--cardPadding); }
 
 /* BOOK COVER */
 .book {
@@ -561,12 +673,12 @@ hr.line {
     height: 100%;
     z-index: 1;
     opacity: .8;
-    background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 1%, rgba(0,0,0,0.06) 4%, rgba(255,255,255,0.09) 7%, rgba(255,255,255,0.2) 18%, rgba(255,255,255,0.2) 28%, rgba(255,255,255,0) 100%);
-    background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,rgba(255,255,255,0) 100%);
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,rgba(255,255,255,0) 100%);
+    background: -moz-linear-gradient(left, transparent 0%, rgba(255,255,255,0.02) 1%, rgba(0,0,0,0.06) 4%, rgba(255,255,255,0.09) 7%, rgba(255,255,255,0.2) 18%, rgba(255,255,255,0.2) 28%, transparent 100%);
+    background: -webkit-linear-gradient(left, transparent 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,transparent 100%);
+    background: linear-gradient(to right, transparent 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,transparent 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
 }
-.dark .cover .overlay { opacity: .5; }
+.dark .cover .overlay { opacity: .2; }
 .cover .title, .cover .subtitle { white-space: normal; max-height: 65px; margin: 0 0 2px 0; font-weight: 500; font-size: 120%; }
 .cover .title { color: #fff; font-size: .8rem; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
@@ -690,6 +802,10 @@ hr.line {
 @keyframes fadeIn {
     0% { opacity: 0; } 100% { opacity: 1; }
 }
+@keyframes flipIn {
+    0% { opacity: 0; transform: perspective(1000) scale(.12) rotateY(90deg); } 
+    100% { opacity: 1; transform: perspective(1000) scale(1) rotateY(0deg); }
+}
 @keyframes skltn_shelfRow {
     to { background-position: 120% 0; }
 }
@@ -706,6 +822,7 @@ hr.line {
         --booksPerRow-lg: 4;
     }
     .text-align-center-md { text-align: center; }
+    .book-profile .description { max-height: 600px; }
 }
 @media (max-width: 768px) {
     :root {
@@ -719,4 +836,5 @@ hr.line {
         --booksPerRow-lg: 2;
     }
     .text-align-center-xs { text-align: center; }
+    .book-profile .description { max-height: 1300px; }
 }
