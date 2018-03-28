@@ -172,6 +172,7 @@ export default class BookForm extends React.Component {
           this.state.book.collections.forEach(cid => {
             collectionsRef(cid).doc(this.state.book.bid).set({
               bid: this.state.book.bid || '', 
+              bcid: 0, //CHECK NUMBER BEFORE WRITING
               covers: [this.state.book.covers[0]] || [],
               title: this.state.book.title || '',  
               subtitle: this.state.book.subtitle || '', 

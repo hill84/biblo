@@ -502,8 +502,10 @@ hr.line {
     line-height: 1.5rem; 
     text-indent: 40px; 
     text-align: justify;     
-    font-family: serif;
+    font-family: Bookerly, Georgia, Arial;
     font-size: 1.05rem; 
+    white-space: pre-line;
+    word-wrap: break-word;
     user-select: none;
 }
 .book-incipit p::first-letter { font-size: 2rem; }
@@ -512,7 +514,7 @@ hr.line {
 .book-profile.dark .title, .book-profile.dark .subtitle { font-weight: 300; }
 .book-profile .title { font-size: 2.2rem; }
 .book-profile .subtitle { font-size: 1.35rem; color: var(--ligthTextColor); }
-.book-profile .description { text-align: justify; }
+.book-profile .description { text-align: justify; white-space: pre-line; word-wrap: break-word; }
 .book-profile .description { position: relative; overflow: hidden; transition: all .4s ease-in-out; max-height: 400px; }
 .book-profile .description.minified { position: relative; max-height: 128px; overflow: hidden; }
 .book-profile .description:after {
@@ -837,4 +839,9 @@ hr.line {
     }
     .text-align-center-xs { text-align: center; }
     .book-profile .description { max-height: 1300px; }
+    .book-incipit p { font-size: .9rem; }
+}
+@media (max-width: 420px) {
+    .text-align-center-xxs { text-align: center; }
+    .book-incipit p { text-align: left; }
 }
