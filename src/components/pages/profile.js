@@ -1,6 +1,6 @@
 import React from 'react';
-import { calcAge, languages, continents, europeanCountries, northAmericanCountries, italianProvinces } from '../../config/shared';
-import { local_uid, userRef } from '../../config/firebase';
+import { calcAge, languages, continents, europeanCountries, northAmericanCountries, italianProvinces, validateImg } from '../../config/shared';
+import { local_uid, storageRef, userRef } from '../../config/firebase';
 import { Avatar, CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 
 export default class Profile extends React.Component {
@@ -8,6 +8,8 @@ export default class Profile extends React.Component {
 		super(props);
 		this.state = {
 			user: null,
+			imgPreview: null,
+			imgProgress: 0,
 			loading: true,
 			changes: false,
 			success: false,
@@ -21,7 +23,8 @@ export default class Profile extends React.Component {
 			this.setState({ loading: false });
 			if (snap.exists) {
 				this.setState({ 
-					user: snap.data()
+					user: snap.data(),
+					imgPreview: snap.data().photoURL || ''
 				});
 			} else {
 				this.setState({
@@ -51,7 +54,7 @@ export default class Profile extends React.Component {
 			this.setState({ loading: true });
 			userRef(local_uid).set({
 				...this.state.user,
-				photoURL: this.state.user.photoURL || '',
+				photoURL: this.state.imgPreview || '',
 				sex: this.state.user.sex || '',
 				birth_date: this.state.user.birth_date || '',
 				city: this.state.user.city || '',
@@ -84,8 +87,34 @@ export default class Profile extends React.Component {
 		return errors;
 	};
 
+	onImageChange = e => {
+		e.preventDefault();
+		const file = e.target.files[0];
+		//console.log(file);
+		const errors = validateImg(file, 1048576);
+		this.setState({ errors });
+		if(Object.keys(errors).length === 0) {
+			const uploadTask = storageRef(`users/${local_uid}`, 'avatar').put(file);
+			uploadTask.on('state_changed', snap => {
+				this.setState({
+					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
+				});
+			}, error => {
+				console.warn('upload error: ' + error);
+				errors.upload = true;
+			}, () => {
+				//console.log('upload completed');
+				this.setState({
+					imgPreview: uploadTask.snapshot.downloadURL,
+					changes: true,
+					success: false
+				});
+			});
+		}
+	};
+
 	render(props) {
-		const { authError, changes, errors, loading, success, user } = this.state;
+		const { authError, changes, errors, imgPreview, loading, imgProgress, success, user } = this.state;
 		//const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
 		const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
@@ -102,13 +131,24 @@ export default class Profile extends React.Component {
 		return (
 			<div className="container" ref="profileComponent">
 				{loading && <div className="loader"><CircularProgress /></div>}
-				<h2>Profile</h2>
 				<div className="card">
 					
 					<div className="container-sm">
 						<div className="row basic-profile">
+							
 							<div className="col-auto">
-								{user.photoURL ? <Avatar src={user.photoURL} size={80} backgroundColor={'transparent'} /> : user.displayName && <Avatar size={80}>{user.displayName.charAt(0)}</Avatar>}
+								<div className={`upload-avatar ${errors.upload ? 'error' : ''}`}>
+									{imgPreview ? 
+										<Avatar src={imgPreview} size={80} backgroundColor={'transparent'} alt="avatar"/> 
+									: user.displayName && 
+										<Avatar size={80} alt="avatar">{user.displayName.charAt(0)}</Avatar>
+									}
+									<div className="overlay">
+										<span title="Carica un'immagine">+</span>
+										<input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)}/>
+									</div>
+									<progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+								</div>
 							</div>
 							<div className="col">
 								<div className="username">{user.displayName}</div>

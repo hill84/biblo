@@ -52,22 +52,20 @@ export default class BookCollection extends React.Component {
     this.setState({ loading: true });
     
     let nextBooks = [];
-    console.log({'nextBooks': nextBooks});
 		collectionsRef(this.state.cid).orderBy(this.state.bcid).startAfter(startAfter).limit(this.state.limit).get().then(nextSnap => {
-      console.log({'nextBooks': nextBooks});
       nextSnap.forEach(book => nextBooks.push(book.data()));
 			this.setState({ 
 				collection: nextBooks,
         loading: false,
 				lastVisible: nextSnap.docs[nextSnap.docs.length-1]
 			});
-			console.log(nextBooks);
+			//console.log(nextBooks);
 		}).catch(error => console.warn("Error fetching next collection:", error));
   }
 
 	render() {
 		const { cid, collection, loading, pagination, scrollable } = this.state;
-		let covers = collection && collection.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} rating={true} /></Link> );
+		const covers = collection && collection.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} rating={true} index={index} /></Link> );
 
 		return (
       <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>    
@@ -75,7 +73,7 @@ export default class BookCollection extends React.Component {
           <strong className="pull-left collection-title">{cid}</strong>
           <span className="pull-right">
             {pagination ?
-              <span>
+              <span role="navigation">
                 <button className="btn sm flat" onClick={this.fetch('prev')}>Prev</button>
                 <button className="btn sm flat" onClick={this.fetch('next')}>Next</button>
               </span>

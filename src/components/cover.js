@@ -36,20 +36,21 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
+    const { index } = this.props;
 
     if (!book) return null;
 
 		return (
       <div className="book" ref="coverComponent"> 
         {cover ?
-          <div className="cover" style={{backgroundImage: `url(${cover})`}} title={book.title}>
+          <div className="cover" style={{backgroundImage: `url(${cover})`, animationDelay: `.${index}s`}} title={book.title}>
             <div className="overlay"></div>
             {/* (book.covers && book.covers.length > 1) && 
               <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
             */}
           </div>
         :
-          <div className="cover" title={book.title}>
+          <div className="cover" title={book.title} style={{animationDelay: `.${index}s`}}>
             <div className="overlay"></div>
             <h2 className="title">{book.title}</h2>
             {book.subtitle && book.subtitle.length > 0 && <h3 className="subtitle">{book.subtitle}</h3>}

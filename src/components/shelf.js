@@ -75,8 +75,8 @@ export default class Shelf extends React.Component {
     render(props) {
         const { luid, loading, shelfBooks, uid, wishlistBooks } = this.state;
         const isOwner = luid === uid;
-        let shelfCovers = shelfBooks && shelfBooks.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link> );
-        let wishlistCovers = wishlistBooks && wishlistBooks.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link> );
+        let shelfCovers = shelfBooks && shelfBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index}/></Link> );
+        let wishlistCovers = wishlistBooks && wishlistBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index}/></Link> );
 
         return (
             <div ref="shelfComponent">
@@ -84,7 +84,7 @@ export default class Shelf extends React.Component {
                     
                     <div className="collection hoverable-items">
                         {loading ? skltn_shelfRow :
-                            <div className="shelf-row" style={shelfBooks.length === 0 ? {gridTemplateColumns: 1 + 'fr'} : {}}>
+                            <div className="shelf-row" /* style={shelfBooks.length === 0 ? {gridTemplateColumns: 1 + 'fr'} : {}} */>
                                 { isOwner &&
                                     <Link to="/books/add">
                                         <div className="book empty">

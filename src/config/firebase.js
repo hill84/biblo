@@ -13,6 +13,7 @@ const config = {
 firebase.initializeApp(config);
 
 const db = firebase.firestore();
+const storage = firebase.storage();
 /* export const timestamp = firebase.database.ServerValue.TIMESTAMP; */
 
 export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
@@ -32,5 +33,7 @@ export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');
 
 export const collectionsRef = cid => db.collection('collections').doc(cid).collection('books');
+
+export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 
 export default firebase;

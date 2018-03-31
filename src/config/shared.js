@@ -26,6 +26,21 @@ export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
 export const normalizeCover = str => str && str.replace('&edge=curl', '');
 
+export const validateImg = (file, maxSize) => {
+    const errors = {};
+    const fileExtension = file.name.split('.').pop();
+    const ext = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'svg', 'SVG', 'gif', 'GIF', 'webp', 'WEBP'];
+
+    if (ext.indexOf(fileExtension) === -1) {
+        console.warn(`File extension not supperted: ${fileExtension}`);
+        errors.upload = 'Tipo file non valido';
+    } else if (file.size > maxSize) {
+        console.warn('File size too big');
+        errors.upload = 'Dimensione file eccessiva';
+    }
+    return errors;
+}
+
 export const normalizeString = str => str.toString().toLowerCase()
     .replace(/\s+/g,'-')            // Replace spaces with -
     .replace(/--+/g,'-')            // Replace multiple - with single -

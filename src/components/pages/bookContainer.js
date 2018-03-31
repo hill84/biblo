@@ -5,7 +5,7 @@ import Book from '../book';
 const BookContainer = props => {
   return (
     <div id="BookContainerComponent">
-      <Book bid={props.match.params.bid} user={props.user} />
+      <Book bid={props.match.params.bid} user={props.user}/>
     </div>
   );
 };

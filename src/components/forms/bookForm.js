@@ -2,8 +2,8 @@ import React from 'react';
 import { bookType, funcType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input'
-import { formats, genres, languages } from '../../config/shared';
-import { bookRef, booksRef, collectionsRef, local_uid } from '../../config/firebase';
+import { formats, genres, languages, validateImg } from '../../config/shared';
+import { bookRef, booksRef, collectionsRef, local_uid, storageRef } from '../../config/firebase';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
@@ -36,6 +36,8 @@ export default class BookForm extends React.Component {
         rating_num: this.props.book.totalRating_num || 0,
         reviews_num: this.props.book.reviews_num || 0
       },
+      imgPreview: null,
+      imgProgress: 0,
       isEditingDescription: false,
       isEditingIncipit: false,
       description_maxChars: 2000,
@@ -259,10 +261,36 @@ export default class BookForm extends React.Component {
     return errors;
   }
 
+	onImageChange = e => {
+		e.preventDefault();
+		const file = e.target.files[0];
+		//console.log(file);
+		const errors = validateImg(file, 1048576);
+		this.setState({ errors });
+		if(Object.keys(errors).length === 0) {
+			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
+			uploadTask.on('state_changed', snap => {
+				this.setState({
+					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
+				});
+			}, error => {
+				console.warn('upload error: ' + error);
+				errors.upload = true;
+			}, () => {
+				//console.log('upload completed');
+				this.setState({
+					imgPreview: uploadTask.snapshot.downloadURL,
+					changes: true,
+					success: false
+				});
+			});
+		}
+	};
+
   exitEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, description_leftChars, description_maxChars, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
+    const { book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
 		const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
@@ -282,6 +310,12 @@ export default class BookForm extends React.Component {
             <div className="container-md">
               <div className="edit-book-cover">
                 <Cover book={book} />
+                {!book.covers[0] && 
+                  <button className="btn sm neutral centered overlay">
+                    <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
+                    <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+                  </button>
+                }
               </div>
               <div className="edit-book-info">
                 <div className="form-group">
@@ -455,6 +489,7 @@ export default class BookForm extends React.Component {
                   <div className="form-group">
                     <TextField
                       name="description"
+                      id="description"
                       type="text"
                       hintText={`Inserisci una descrizione del libro (max ${description_maxChars} caratteri)...`}
                       errorText={errors.description}
@@ -480,6 +515,7 @@ export default class BookForm extends React.Component {
                   <div className="form-group">
                     <TextField
                       name="incipit"
+                      id="incipit"
                       type="text"
                       hintText={`Inserisci i primi paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
                       errorText={errors.incipit}

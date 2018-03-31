@@ -343,6 +343,71 @@ hr.line {
     z-index: 3;
 }
 
+/* UPLOAD */
+.upload-avatar { 
+    position: relative; 
+    border-radius: 99px;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    overflow: hidden;
+    background-color: rgba(0,0,0,.05);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+    transition: all .2s ease-in-out;
+}
+
+.upload-avatar.error .overlay { 
+    opacity: 1;
+    background-color: rgba(244,67,54,.5);
+    transform: rotate(45deg);
+}
+.upload-avatar .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 99px;
+    overflow: hidden;
+    background-color: rgba(0,151,167,.5);
+    box-shadow: inset 1px 1px 0 rgba(0,0,0,.05);
+    font-size: 2.6rem;
+    color: #fff;
+    text-align: center;
+    line-height: inherit;
+    will-change: opacity;
+    opacity: 0;
+    transition: all .2s ease-in-out;
+    z-index: 2;
+}
+.upload-avatar:hover .overlay { opacity: 1; }
+.upload-avatar:active .overlay { color: rgba(0,0,0,.3); }
+.upload { 
+    -webkit-appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.progress { -webkit-appearance: none; }
+.upload-avatar .progress { 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.upload-avatar progress[value]::-webkit-progress-bar {
+    background-color: transparent;
+}
+.upload-avatar progress[value]::-webkit-progress-value {
+    background-color: rgba(67,160,71,.5);
+}
+
 /* CUSTOM */
 /*#appBarComponent { background-color: var(--cyan700) !important; box-shadow: 0 1px 3px rgba(0,0,0,.1) !important; }*/
 
@@ -468,7 +533,7 @@ hr.line {
     transform-origin: top left;
     will-change: opacity transform;
     transition: all .4s ease-in-out;
-    animation: flipIn .4s ease-in-out;
+    animation: flipInY .4s ease-in-out;
     z-index: 3;
 }
 .book-incipit::-webkit-scrollbar {
@@ -503,7 +568,7 @@ hr.line {
     text-indent: 40px; 
     text-align: justify;     
     font-family: Bookerly, Georgia, Arial;
-    font-size: 1.05rem; 
+    font-size: 1rem; 
     white-space: pre-line;
     word-wrap: break-word;
     user-select: none;
@@ -645,7 +710,7 @@ hr.line {
     margin: auto;
     transition: all .2s ease-in-out; 
     will-change: transform, opacity;
-    animation: scaleIn .3s ease-out;
+    animation: scaleIn .3s ease-out backwards;
 }
 .book.empty .cover {
     box-shadow: none;
@@ -795,18 +860,23 @@ hr.line {
 .show-on-hover, .btn:hover .hide-on-hover { display: none; }
 .btn:hover .show-on-hover, .hide-on-hover { display: block; }
 .rounded { border-radius: 99px; }
-.pull-right {float: right; }
+.pull-left { float: left; }
+.pull-right { float: right; }
 
 /* ANIMATIONS */
 @keyframes scaleIn {
-    0% { opacity: 0; transform: scale(.8); } 100% { opacity: 1; transform: scale(1); }
+    0% { opacity: 0; transform: scale(.9); } 100% { opacity: 1; transform: scale(1); }
 }
 @keyframes fadeIn {
     0% { opacity: 0; } 100% { opacity: 1; }
 }
-@keyframes flipIn {
+@keyframes flipInY {
     0% { opacity: 0; transform: perspective(1000) scale(.12) rotateY(90deg); } 
     100% { opacity: 1; transform: perspective(1000) scale(1) rotateY(0deg); }
+}
+@keyframes flipInX {
+    0% { opacity: 0; transform: perspective(1000) scale(.12) rotateX(90deg); } 
+    100% { opacity: 1; transform: perspective(1000) scale(1) rotateX(0deg); }
 }
 @keyframes skltn_shelfRow {
     to { background-position: 120% 0; }
@@ -832,6 +902,7 @@ hr.line {
     }
     .text-align-center-sm { text-align: center; }
     .book-profile .title { font-size: 1.6rem; }
+    .book-incipit { transform-origin: top center; animation-name: flipInX; }
 }
 @media (max-width: 576px) {
     :root {
