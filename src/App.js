@@ -5,6 +5,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './components/layout';
 import AddBook from './components/pages/addBook';
 import BookContainer from './components/pages/bookContainer';
+import Collection from './components/pages/collection';
 import Dashboard from './components/pages/dashboard';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
@@ -57,6 +58,7 @@ export default class App extends React.Component {
 						<Route path="/login" component={Login} />
 						<Route path="/password-reset" component={PasswordResetForm} />
 						<Route path="/signup" component={Signup} />
+						<Route path="/collection/:cid" component={Collection} />
 						<PrivateRoute path="/books/add" component={AddBook} user={user} />
 						<PrivateRoute path="/book/:bid" component={BookContainer} user={user} />
 						<PrivateRoute path="/dashboard/:uid" component={Dashboard} user={user} />

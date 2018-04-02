@@ -21,7 +21,7 @@ export default class BookForm extends React.Component {
         format: this.props.book.format || '', 
         collections: this.props.book.collections || [],
         covers: this.props.book.covers || [], 
-        lastEdit: new Date().getTime(),
+        lastEdit: (new Date()).getTime(),
         lastEditBy: local_uid,
         pages_num: this.props.book.pages_num || 0, 
         publisher: this.props.book.publisher || '', 
@@ -32,8 +32,8 @@ export default class BookForm extends React.Component {
         description: this.props.book.description || '', 
         incipit: this.props.book.incipit || '',
         readers_num: this.props.book.readers_num || 0,
+        rating_num: this.props.book.rating_num || 0,
         ratings_num: this.props.book.ratings_num || 0,
-        rating_num: this.props.book.totalRating_num || 0,
         reviews_num: this.props.book.reviews_num || 0
       },
       imgPreview: null,
@@ -49,7 +49,7 @@ export default class BookForm extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  getDerivedStateFromProps(nextProps) {
     if (nextProps !== this.props) {
       if (nextProps.book) {
         this.setState({
@@ -172,15 +172,24 @@ export default class BookForm extends React.Component {
         }
         if (this.state.book.collections) {
           this.state.book.collections.forEach(cid => {
-            collectionsRef(cid).doc(this.state.book.bid).set({
-              bid: this.state.book.bid || '', 
-              bcid: 0, //CHECK NUMBER BEFORE WRITING
-              covers: [this.state.book.covers[0]] || [],
-              title: this.state.book.title || '',  
-              subtitle: this.state.book.subtitle || '', 
-              authors: this.state.book.authors || [], 
-              publisher: this.state.book.publisher
-            }).then(() => console.log('Collection set')).catch(error => console.warn(error));
+            let bcid = 0;
+            collectionsRef(cid).doc(this.state.book.bid).get().then(book => {
+              if (book.exists) bcid = book.data().bcid;
+              collectionsRef(cid).doc(this.state.book.bid).set({
+                bid: this.state.book.bid, 
+                bcid: bcid,
+                covers: [this.state.book.covers[0]] || [],
+                title: this.state.book.title,  
+                subtitle: this.state.book.subtitle, 
+                authors: this.state.book.authors, 
+                publisher: this.state.book.publisher,
+                publication: this.state.book.publication,
+                rating_num: this.state.book.rating_num,
+                ratings_num: this.state.book.ratings_num
+              }).then(() => {
+                //console.log(`Book added to ${cid} collection`)
+              }).catch(error => console.warn(error));
+            }).catch(error => console.warn(error));
           });
         }
       }
@@ -274,7 +283,7 @@ export default class BookForm extends React.Component {
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
 				});
 			}, error => {
-				console.warn('upload error: ' + error);
+				console.warn(`upload error: ${error}`);
 				errors.upload = true;
 			}, () => {
 				//console.log('upload completed');

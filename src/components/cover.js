@@ -14,7 +14,7 @@ export default class Cover extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  getDerivedStateFromProps(nextProps) {
     if (nextProps !== this.props) {
       this.setState({
         book: nextProps.book,
@@ -36,7 +36,7 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
-    const { index } = this.props;
+    const { full, index } = this.props;
 
     if (!book) return null;
 
@@ -62,6 +62,7 @@ export default class Cover extends React.Component {
           <div className="info">
             <strong className="title">{book.title}</strong>
             <span className="author">di {join(book.authors)}</span>
+            {full && <span className="publisher">{book.publisher}</span>}
             {(book.rating_num > 0) && (this.props.rating !== false) && 
               <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
             }
@@ -75,5 +76,6 @@ export default class Cover extends React.Component {
 Cover.propTypes = {
   book: coverType.isRequired,
   info: boolType,
-  rating: boolType
+  rating: boolType,
+  full: boolType,
 }

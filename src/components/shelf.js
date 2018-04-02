@@ -20,7 +20,7 @@ export default class Shelf extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    getDerivedStateFromProps(nextProps) {
 		if (nextProps !== this.props) {
             if (nextProps.uid !== this.props.uid) {
                 this.setState({ uid: nextProps.uid });

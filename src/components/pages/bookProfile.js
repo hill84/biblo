@@ -97,7 +97,11 @@ export default class BookProfile extends React.Component {
                 {book.incipit ? 
                   <div role="button" className="hoverable-items" onClick={this.onOpenIncipit}>
                     <Cover book={book} rating={false} info={false} />
-                    {isIncipitOpen && <div role="dialog" aria-describedby="incipit" className="book-incipit"><p id="incipit">{book.incipit}</p></div>}
+                    {isIncipitOpen && 
+                      <div role="dialog" aria-describedby="incipit" className="dialog book-incipit">
+                        <p id="incipit">{book.incipit}</p>
+                      </div>
+                    }
                   </div>
                 :
                   <Cover book={book} rating={false} info={false} />

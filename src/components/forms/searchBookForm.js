@@ -44,7 +44,7 @@ export default class SearchBookForm extends React.Component {
               genres: (b.categories && switchGenres(b.categories)) || [],
               incipit: '',
               languages: [(b.language && switchLanguages(b.language))] || [],
-              lastEdit: new Date.getTime(),
+              lastEdit: (new Date()).getTime(),
               lastEditBy: local_uid,
               pages_num: (b.pageCount && Number(b.pageCount)) || 0,
               publication: b.publishedDate || '',

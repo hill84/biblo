@@ -1,6 +1,6 @@
 import React from 'react';
 import { bookType, stringType, userType } from '../config/types';
-import { bookRef, local_uid, userBookRef, userRef } from '../config/firebase';
+import { bookRef, collectionsRef, local_uid, userBookRef, userRef } from '../config/firebase';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
 
@@ -94,6 +94,16 @@ export default class Book extends React.Component {
         }).then(() => {
           //console.log('Book and rating removed from user shelf stats');
         }).catch(error => console.warn(error));
+        if (this.state.book.collections) {
+          this.state.book.collections.forEach(cid => {
+            collectionsRef(cid).doc(this.state.book.bid).update({
+              rating_num: bookRating_num, 
+              ratings_num: bookRatings_num
+            }).then(() => {
+              console.log(`updated book rating in "${cid}" collection`)
+            }).catch(error => console.warn(error));
+          });
+        };
       } else if (bookshelf === 'wishlist') {
         //console.log('will remove book from user wishlist stats');
         userRef(local_uid).update({
@@ -105,11 +115,11 @@ export default class Book extends React.Component {
         }).then(() => {
           //console.log('Book removed from user wishlist stats');
         }).catch(error => console.warn(error));
-      }
+      } else console.warn(`no bookshelf named "${bookshelf}"`);
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  getDerivedStateFromProps(nextProps) {
     if (nextProps !== this.props) {
       if (nextProps.book) {
         this.setState({
@@ -340,7 +350,7 @@ export default class Book extends React.Component {
     }); */
 
     if (userBookRating_num === 0) { 
-      bookRating_num = (bookRating_num + rate) / bookRatings_num;
+      bookRating_num = (bookRating_num === 0) ? rate : (bookRating_num + rate) / bookRatings_num;
       bookRatings_num += 1; 
       userRatings_num += 1; 
     } else {
@@ -360,6 +370,18 @@ export default class Book extends React.Component {
       });
       //console.log('Book rated with ' + rate + ' stars');
     }).catch(error => console.warn(error));
+
+    if (this.state.book.collections) {
+      this.state.book.collections.forEach(cid => {
+        //console.log(cid);
+        collectionsRef(cid).doc(this.state.book.bid).update({
+          rating_num: bookRating_num, 
+          ratings_num: bookRatings_num
+        }).then(() => {
+          //console.log(`updated book rating in "${cid}" collection`)
+        }).catch(error => console.warn(error));
+      });
+    };
 
     userBookRef(local_uid, bid).update({
       rating_num: rate

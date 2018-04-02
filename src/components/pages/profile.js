@@ -61,6 +61,7 @@ export default class Profile extends React.Component {
 				country: this.state.user.country || ''
 			}).then(() => {
 				this.setState({ 
+					imgProgress: 0,
 					loading: false,
 					changes: false,
 					success: true

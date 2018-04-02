@@ -19,7 +19,7 @@ export default class Home extends React.Component {
 		return (
 			<div className="container" id="homeComponent">
 				<div className="card dark">
-					<BookCollection cid="Harry Potter" bcid="bcid" limit={7} scrollable={true}/>
+					<BookCollection cid="Harry Potter" limit={7} scrollable={true} />
 				</div>
 
 				<div className="card">

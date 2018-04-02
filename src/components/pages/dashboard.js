@@ -20,7 +20,7 @@ export default class Dashboard extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
+	getDerivedStateFromProps(nextProps) {
 		const { user, match } = nextProps;
 		if (nextProps !== this.props) {
 			if (match.params.uid) {
@@ -83,7 +83,7 @@ export default class Dashboard extends React.Component {
 			'stats.followers_num': visitedFollowers_num,
 			'stats.followers': visitedFollowers
 		}).then(() => {
-			console.log('follow');
+			//console.log('follow');
 		});
 
 		// VISITOR
@@ -91,7 +91,7 @@ export default class Dashboard extends React.Component {
 			'stats.followed_num': visitorFollowed_num,
 			'stats.followed': visitorFollowed
 		}).then(() => {
-			console.log('unfollow');
+			//console.log('unfollow');
 		});
 	}
 
