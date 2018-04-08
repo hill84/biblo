@@ -1,11 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { local_uid, userRef } from '../../config/firebase';
 import { userType } from '../../config/types';
 import { appName, calcAge, joinToLowerCase } from '../../config/shared';
 import { icon } from '../../config/icons';
-import { Link } from 'react-router-dom';
-import { Avatar } from 'material-ui';
 import { Tabs, Tab } from 'material-ui/Tabs';
+import Avatar from '../avatar';
 import Shelf from '../shelf';
 
 export default class Dashboard extends React.Component {
@@ -20,7 +20,7 @@ export default class Dashboard extends React.Component {
 		}
 	}
 
-	getDerivedStateFromProps(nextProps) {
+	componentWillReceiveProps(nextProps) {
 		const { user, match } = nextProps;
 		if (nextProps !== this.props) {
 			if (match.params.uid) {
@@ -108,11 +108,7 @@ export default class Dashboard extends React.Component {
 					<div className="basic-profile">
 						<div className="row text-align-center-sm">
 							<div className="col-md-auto col-sm-12">
-								{user.photoURL ? 
-									<Avatar src={user.photoURL} size={100} backgroundColor={'transparent'} /> 
-								: user.displayName && 
-									<Avatar size={100}>{user.displayName.charAt(0)}</Avatar> 
-								}
+								<Avatar size={100} src={user.photoURL} alt={user.displayName} />
 							</div>
 							<div className="col">
 								<h2 className="username">{user.displayName}</h2>
@@ -134,7 +130,7 @@ export default class Dashboard extends React.Component {
 											{follow ? 
 												<span>
 													<span className="hide-on-hover">{icon.check()} Segui</span>
-													<span className="show-on-hover">Non seguire</span>
+													<span className="show-on-hover">Smetti</span>
 												</span> 
 											: <span>{icon.plus()} Segui</span> }
 										</button>

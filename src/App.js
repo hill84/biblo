@@ -62,7 +62,7 @@ export default class App extends React.Component {
 						<PrivateRoute path="/books/add" component={AddBook} user={user} />
 						<PrivateRoute path="/book/:bid" component={BookContainer} user={user} />
 						<PrivateRoute path="/dashboard/:uid" component={Dashboard} user={user} />
-						<PrivateRoute path="/new-book" component={NewBook} />
+						<PrivateRoute path="/new-book" component={NewBook} user={user} />
 						<PrivateRoute path="/profile" exact component={Profile} />
 						<Redirect from="/home" to="/" />
 						<Route component={NoMatch} />

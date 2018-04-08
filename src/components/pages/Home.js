@@ -1,8 +1,8 @@
 import React from 'react';
-import { local_uid } from '../../config/firebase';
-import { icon } from '../../config/icons';
-import { stringType } from '../../config/types';
 import { Link } from 'react-router-dom';
+import { local_uid } from '../../config/firebase';
+import { stringType } from '../../config/types';
+import { icon } from '../../config/icons';
 import BookCollection from '../bookCollection';
 
 export default class Home extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
-import { booksRef, local_uid } from '../../config/firebase';
+import { booksRef } from '../../config/firebase';
 import { booksAPIRef } from '../../config/API';
 import { join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 
@@ -26,7 +26,7 @@ export default class SearchBookForm extends React.Component {
     this.setState({ loading: true });
     if (this.props.new) {
       fetch(new Request(booksAPIRef({q: searchText, inTitle: searchText}), { method: 'GET' })).then(res => res.json()).then(json => {
-        console.log(json.items);   
+        //console.log(json.items);   
         let options = [];
         if (json.items && json.items.length > 0) {
           json.items.forEach(item => {
@@ -34,6 +34,11 @@ export default class SearchBookForm extends React.Component {
             options.push({
               ISBN_13: (b.industryIdentifiers && b.industryIdentifiers[0] && Number(b.industryIdentifiers[0].identifier)) || 0,
               ISBN_10: (b.industryIdentifiers && b.industryIdentifiers[1] && Number(b.industryIdentifiers[1].identifier)) || 0,
+              EDIT: {
+                createdBy: this.props.user.displayName || '',
+                createdByUid: this.props.user.uid || '',
+                created_num: (new Date()).getTime() || 0
+              },
               authors: b.authors || [],
               bid: '',
               collections: [],
@@ -44,8 +49,6 @@ export default class SearchBookForm extends React.Component {
               genres: (b.categories && switchGenres(b.categories)) || [],
               incipit: '',
               languages: [(b.language && switchLanguages(b.language))] || [],
-              lastEdit: (new Date()).getTime(),
-              lastEditBy: local_uid,
               pages_num: (b.pageCount && Number(b.pageCount)) || 0,
               publication: b.publishedDate || '',
               publisher: b.publisher || '',
@@ -115,7 +118,10 @@ export default class SearchBookForm extends React.Component {
     this.props.onBookSelect(chosenRequest);
   }
 
-  onClose = () => this.setState({ loading: false });
+  onClose = () => {
+    clearTimeout(this.timer);
+    this.setState({ loading: false });
+  }
 
   render() {
     return (

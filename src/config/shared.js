@@ -15,7 +15,8 @@ export const muiTheme = getMuiTheme({
     },
     appBar: { height: 60 },
     drawer: { color: blueGrey900 },
-    datePicker: { selectColor: cyan700 }
+    datePicker: { selectColor: cyan700 },
+    menuItem: { hoverColor: "rgba(0, 151, 167, 0.1)" }
 });
 
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
@@ -42,8 +43,8 @@ export const validateImg = (file, maxSize) => {
 }
 
 export const normalizeString = str => str.toString().toLowerCase()
-    .replace(/\s+/g,'-')            // Replace spaces with -
-    .replace(/--+/g,'-')            // Replace multiple - with single -
+    .replace(/\s+/g,'-')        // Replace spaces with -
+    .replace(/--+/g,'-')        // Replace multiple - with single -
     .replace(/[àáâãäå]/g,"a")
     .replace(/[èéêë]/g,"e")
     .replace(/[ìíîï]/g,"i")
@@ -54,10 +55,30 @@ export const normalizeString = str => str.toString().toLowerCase()
     .replace(/œ/g,"oe")
     .replace(/ç/g,"c")
     .replace(/ñ/g,"n")
-    .replace(/^-+/, '')             // Trim - from start of text
-    .replace(/-+$/, '');            // Trim - from end of text
+    .replace(/^-+/, '')         // Trim - from start of text
+    .replace(/-+$/, '');        // Trim - from end of text
 
-export const calcAge = userBirthDate => Math.abs(new Date(Date.now() - new Date(userBirthDate).getTime()).getUTCFullYear() - 1970);
+export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
+
+export const calcReadingTime = pages => minutesToTime(pages * .85);
+
+const minutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) && `${Math.floor(minutes%60)} minuti`}`;
+
+export const timeSince = date => {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+  
+    if (interval > 1) { return `${interval} anni fa`; }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) { return `${interval} mesi fa`; }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) { return `${interval} giorni fa`; }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) { return `${interval} ore fa`; }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) { return `${interval} minuti fa`; }
+    return 'pochi secondi fa'; //`${Math.floor(seconds)} secondi fa`;
+};
 
 export const ratingLabels = { 0: "Nessun voto", 1: "Pessimo", 2: "Scarso", 3: "Sufficiente", 4: "Buono", 5: "Ottimo" };
 

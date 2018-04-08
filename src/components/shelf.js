@@ -50,14 +50,16 @@ export default class Shelf extends React.Component {
                             if (userBook.data().bookInShelf) {
                                 //console.log('book in shelf');
                                 snapShelfBooks.push(book.data());
-                                this.setState({ shelfBooks: snapShelfBooks });
                             } else {
                                 //console.log('book in wishlist');
                                 snapWishlistBooks.push(book.data());
-                                this.setState({ wishlistBooks: snapWishlistBooks });
                             }
-                        } else console.log("book doesn't exist");
-                        this.setState({ loading: false });
+                        } else { console.warn("book doesn't exist"); }
+                        this.setState({ 
+                            shelfBooks: snapShelfBooks, 
+                            wishlistBooks: snapWishlistBooks, 
+                            loading: false 
+                        });
                     });
                 });
             } else {
@@ -75,8 +77,8 @@ export default class Shelf extends React.Component {
     render(props) {
         const { luid, loading, shelfBooks, uid, wishlistBooks } = this.state;
         const isOwner = luid === uid;
-        let shelfCovers = shelfBooks && shelfBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index}/></Link> );
-        let wishlistCovers = wishlistBooks && wishlistBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index}/></Link> );
+        let shelfCovers = shelfBooks && shelfBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} /></Link> );
+        let wishlistCovers = wishlistBooks && wishlistBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={false} /></Link> );
 
         return (
             <div ref="shelfComponent">

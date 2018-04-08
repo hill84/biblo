@@ -1,10 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { funcType, userBookType } from '../../config/types';
-import { CircularProgress } from 'material-ui';
-import { join, joinToLowerCase } from '../../config/shared';
+import { CircularProgress/* , TextField */ } from 'material-ui';
+import { calcReadingTime, join, joinToLowerCase, timeSince } from '../../config/shared';
+import { icon } from '../../config/icons';
 import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
+import Avatar from '../avatar';
 
 export default class BookProfile extends React.Component {
 	constructor(props) {
@@ -14,6 +17,7 @@ export default class BookProfile extends React.Component {
         ...this.props.book,
         bid: this.props.book.bid || ''
       },
+      user: this.props.user || {},
       userBook: this.props.userBook,
       loading: false,
       errors: {},
@@ -26,7 +30,8 @@ export default class BookProfile extends React.Component {
     if (nextProps !== this.props) {
       this.setState({
         book: nextProps.book,
-        userBook: nextProps.userBook
+        userBook: nextProps.userBook,
+        user: nextProps.user
       });
     }
   }
@@ -82,7 +87,7 @@ export default class BookProfile extends React.Component {
   onEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, isIncipitOpen, isMinified, userBook } = this.state;
+    const { book, isIncipitOpen, isMinified, user, userBook } = this.state;
     
     if (!book || !userBook) return null;
 
@@ -122,7 +127,7 @@ export default class BookProfile extends React.Component {
                   {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
                   {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
                   {/* book.format && <span className="counter">Formato: {book.format}</span> */}
-                  {book.genres && book.genres[0] && <span className="counter">Genere: {joinToLowerCase(book.genres)}</span>}
+                  {book.genres && book.genres[0] && <span className="counter">Gener{book.genres[1] ? 'i' : 'e'}: {joinToLowerCase(book.genres)}</span>}
                 </div>
                 <div className="info-row">
                   <Rating labels={true} ratings={{ratings_num: book.ratings_num, rating_num: book.rating_num}}/>
@@ -164,11 +169,54 @@ export default class BookProfile extends React.Component {
                 <div>&nbsp;</div>
                 <div className="info-row">
                   <span className="counter">Lettori: {book.readers_num}</span>
+                  {book.pages_num && <span className="counter">Lettura: {calcReadingTime(book.pages_num)}</span>}
                   <span className="counter">Recensioni: {book.reviews_num}</span>
+                </div>
+              </div>
+              {book.EDIT &&
+                <div className="edit-info">
+                  {icon.informationOutline()}
+                  <div className="show-on-hover">
+                    {book.EDIT.lastEdit_num ? 
+                      <span>Modificato da <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{book.EDIT.lastEditBy}</Link> {timeSince(new Date(book.EDIT.lastEdit_num))}</span> 
+                    : 
+                      <span>Creato da <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{book.EDIT.createdBy}</Link> {timeSince(new Date(book.EDIT.created_num))}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div className="card primary user-review">
+            <div className="row review">
+              <div className="col-auto left">
+                <Avatar src={user.photoURL} alt={user.displayName} />
+              </div>
+              <div className="col right">
+                <div className="header">
+                  <h3 className="author">{user.displayName}</h3>
                 </div>
               </div>
             </div>
           </div>
+
+          <div className="card dark reviews">
+            <div className="row review">
+              <div className="col-auto left">
+                Avatar
+              </div>
+              <div className="col right">
+                <div className="header">
+                  <h3 className="author">Nome Cognome</h3>
+                  Rating
+                </div>
+                <div className="text">Text</div>
+                <div className="footer">Date <div className="pull-right">Like</div></div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 		);

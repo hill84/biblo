@@ -1,7 +1,8 @@
 import React from 'react';
 import { calcAge, languages, continents, europeanCountries, northAmericanCountries, italianProvinces, validateImg } from '../../config/shared';
 import { local_uid, storageRef, userRef } from '../../config/firebase';
-import { Avatar, CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import Avatar from '../avatar';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -139,11 +140,7 @@ export default class Profile extends React.Component {
 							
 							<div className="col-auto">
 								<div className={`upload-avatar ${errors.upload ? 'error' : ''}`}>
-									{imgPreview ? 
-										<Avatar src={imgPreview} size={80} backgroundColor={'transparent'} alt="avatar"/> 
-									: user.displayName && 
-										<Avatar size={80} alt="avatar">{user.displayName.charAt(0)}</Avatar>
-									}
+									<Avatar size={80} src={imgPreview} alt={user.displayName} />
 									<div className="overlay">
 										<span title="Carica un'immagine">+</span>
 										<input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)}/>

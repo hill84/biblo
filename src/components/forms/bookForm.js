@@ -1,5 +1,5 @@
 import React from 'react';
-import { bookType, funcType } from '../../config/types';
+import { bookType, funcType, userType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input'
 import { formats, genres, languages, validateImg } from '../../config/shared';
@@ -11,30 +11,36 @@ export default class BookForm extends React.Component {
 		super(props);
 		this.state = {
       book: {
-        bid: this.props.book.bid || '', 
-        ISBN_13: this.props.book.ISBN_13 || 0, 
         ISBN_10: this.props.book.ISBN_10 || 0,
-        title: this.props.book.title || '', 
-        title_sort: this.props.book.title_sort || '', 
-        subtitle: this.props.book.subtitle || '', 
+        ISBN_13: this.props.book.ISBN_13 || 0, 
+        EDIT: {
+          createdBy: this.props.book.createdBy || '',
+          createdByUid: this.props.book.createdByUid || '',
+          created_num: this.props.book.created || 0,
+          lastEditBy: this.props.book.lastEditBy || '',
+          lastEditByUid: this.props.book.lastEditByUid || '',
+          lastEdit_num: this.props.book.lastEdit || 0,
+        },
         authors: this.props.book.authors || [], 
-        format: this.props.book.format || '', 
+        bid: this.props.book.bid || '', 
         collections: this.props.book.collections || [],
         covers: this.props.book.covers || [], 
-        lastEdit: (new Date()).getTime(),
-        lastEditBy: local_uid,
+        description: this.props.book.description || '', 
+        edition_num: this.props.book.edition_num || 0, 
+        format: this.props.book.format || '', 
+        genres: this.props.book.genres || [], 
+        incipit: this.props.book.incipit || '',
+        languages: this.props.book.languages, 
         pages_num: this.props.book.pages_num || 0, 
         publisher: this.props.book.publisher || '', 
         publication: this.props.book.publication || '', 
-        edition_num: this.props.book.edition_num || 0, 
-        genres: this.props.book.genres || [], 
-        languages: this.props.book.languages, 
-        description: this.props.book.description || '', 
-        incipit: this.props.book.incipit || '',
         readers_num: this.props.book.readers_num || 0,
         rating_num: this.props.book.rating_num || 0,
         ratings_num: this.props.book.ratings_num || 0,
-        reviews_num: this.props.book.reviews_num || 0
+        reviews_num: this.props.book.reviews_num || 0,
+        subtitle: this.props.book.subtitle || '', 
+        title: this.props.book.title || '', 
+        title_sort: this.props.book.title_sort || '', 
       },
       imgPreview: null,
       imgProgress: 0,
@@ -59,16 +65,15 @@ export default class BookForm extends React.Component {
     }
   }
 
-  componentDidMount(props) {
+  /* componentDidMount(props) {
     if (this.props.book.bid) {
       bookRef(this.props.book.bid).onSnapshot(snap => {
         this.setState({
-          ...this.state,
-          data: snap.data()
+          book: snap.data()
         });
       });
     }
-  }
+  } */
 
   onEditDescription = e => {
     e.preventDefault();
@@ -138,7 +143,15 @@ export default class BookForm extends React.Component {
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.props.book.bid) {
-          bookRef(this.props.book.bid).set(this.state.book).then(() => {
+          bookRef(this.props.book.bid).set({
+            ...this.state.book,
+            EDIT: {
+              ...this.state.EDIT,
+              lastEdit_num: (new Date()).getTime(),
+              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditByUid: local_uid || ''
+            }
+          }).then(() => {
             this.setState({ 
               //redirectToReferrer: true,
               loading: false,
@@ -156,7 +169,11 @@ export default class BookForm extends React.Component {
           newBookRef.set({
             ...this.state.book,
             bid: newBookRef.id,
-            creationTime: new Date().getTime()
+            EDIT: {
+              created_num: (new Date()).getTime(),
+              createdBy: (this.props.user && this.props.user.displayName) || '',
+              createdByUid: local_uid || ''
+            }
           }).then(() => {
             this.setState({
               loading: false,
@@ -257,15 +274,19 @@ export default class BookForm extends React.Component {
     }
     if (book.description && book.description.length < 150) {
       errors.description = `Lunghezza minima 150 caratteri`;
+      this.setState({ isEditingDescription: true });
     }
     if (book.description && book.description.length > this.state.description_maxChars) {
       errors.description = `Lunghezza massima ${this.state.description_maxChars} caratteri`;
+      this.setState({ isEditingDescription: true });
     }
     if (book.incipit && book.incipit.length < 255) {
       errors.incipit = `Lunghezza minima 255 caratteri`;
+      this.setState({ isEditingIncipit: true });
     }
     if (book.incipit && book.incipit.length > this.state.incipit_maxChars) {
       errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
+      this.setState({ isEditingIncipit: true });
     }
     return errors;
   }
@@ -300,7 +321,7 @@ export default class BookForm extends React.Component {
 	
 	render() {
     const { book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
-		const menuItemsMap = (arr, values) => arr.map(item => 
+    const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
 				key={item.id} 
@@ -563,6 +584,7 @@ export default class BookForm extends React.Component {
 }
 
 BookForm.propTypes = {
+  book: bookType.isRequired,
   isEditing: funcType.isRequired,
-  book: bookType.isRequired
+  user: userType
 }

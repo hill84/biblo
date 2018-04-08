@@ -13,9 +13,9 @@ export default class Cover extends React.Component {
       //loading: false
     }
   }
-
-  getDerivedStateFromProps(nextProps) {
-    if (nextProps !== this.props) {
+  
+  componentWillReceiveProps(nextProps) { // NO getDerivedStateFromProps
+    if (nextProps.book !== this.props.book) {
       this.setState({
         book: nextProps.book,
         cover: nextProps.book && nextProps.book.covers[0],

@@ -11,8 +11,8 @@ const Collection = props => {
           </div>
         </div>
         <div className="col-lg-6">
-          <div className="card">...</div>
-          <div className="card">...</div>
+          <div className="card primary">...</div>
+          <div className="card dark">...</div>
         </div>
       </div>
     </div>

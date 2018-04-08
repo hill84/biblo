@@ -10,9 +10,14 @@ export default class SignupForm extends React.Component {
 		super(props);
 		this.state = {
 			data: {
+				uid: '',
 				displayName: '',
 				email: '',
 				password: '',
+				roles: {
+					admin: false,
+					editor: true
+				},
 				stats: {
 					followed_num: 0,
 					followers_num: 0,
@@ -49,9 +54,11 @@ export default class SignupForm extends React.Component {
 			auth.onAuthStateChanged(user => {
 				if (user) {
 					userRef(user.uid).set({
+						uid: user.uid,
 						displayName: this.state.data.displayName,
 						email: user.email,
 						creationTime: user.metadata.creationTime,
+						roles: this.state.roles,
 						stats: this.state.stats
 					});
 					this.setState({ 

@@ -23,7 +23,7 @@ export const auth = firebase.auth();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
-export const local_uid = window.localStorage.getItem(storageKey_uid);
+export const local_uid = window.localStorage.getItem(storageKey_uid); // NOT SECURE !!!
 
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');

@@ -7,6 +7,10 @@ export default class SocialAuth extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			roles: {
+				admin: false,
+				editor: true
+			},
 			stats: {
 				followed_num: 0,
 				followers_num: 0,
@@ -28,10 +32,12 @@ export default class SocialAuth extends React.Component {
 				this.setState({ user });
 				if (result.additionalUserInfo.isNewUser) {
 					userRef(user.uid).set({
+						uid: user.uid,
 						displayName: user.displayName,
 						email: user.email,
 						photoURL: user.photoURL,
 						creationTime: user.metadata.creationTime,
+						roles: this.state.roles,
 						stats: this.state.stats
 					});
 				}

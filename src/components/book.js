@@ -23,7 +23,6 @@ export default class Book extends React.Component {
       },
 			isEditing: false
     }
-    
     this.removeBookFromUserBooks = (bid, bookshelf) => {
       let userShelf_num = this.props.user.stats.shelf_num;
       let userWishlist_num = this.props.user.stats.wishlist_num;
@@ -33,25 +32,25 @@ export default class Book extends React.Component {
       let bookReviews_num = this.state.book.reviews_num;
       let userRatings_num = this.props.user.stats.ratings_num;
       let userBookRating_num = this.state.userBook.rating_num;
-
+  
       if (this.state.userBook.bookInShelf) {
         userShelf_num -= 1;
         bookReaders_num -= 1;
       } else {
         userWishlist_num -= 1;
       }
-
+  
       if (this.state.book.rating_num !== 0) {
         bookRating_num -= userBookRating_num;
         bookRatings_num -= 1;
         userRatings_num -= 1;
         userBookRating_num = 0;
       }
-
+  
       if (this.state.book.reviews_num !== 0) {
         bookReviews_num -= 1;
       }
-
+  
       userBookRef(local_uid, bid).delete().then(() => {
         this.setState({ 
           userBook: { 
@@ -63,7 +62,7 @@ export default class Book extends React.Component {
         });
         //console.log(`Book removed from user ${bookshelf}`);
       }).catch(error => console.warn(error));
-
+  
       bookRef(bid).update({
         rating_num: bookRating_num,
         ratings_num: bookRatings_num,
@@ -81,7 +80,7 @@ export default class Book extends React.Component {
         });
         //console.log('Rating and reader removed');
       }).catch(error => console.warn(error));
-
+  
       if (bookshelf === 'shelf') {
         //console.log('will remove book and rating from user shelf stats');
         userRef(local_uid).update({
@@ -100,7 +99,7 @@ export default class Book extends React.Component {
               rating_num: bookRating_num, 
               ratings_num: bookRatings_num
             }).then(() => {
-              console.log(`updated book rating in "${cid}" collection`)
+              //console.log(`updated book rating in "${cid}" collection`)
             }).catch(error => console.warn(error));
           });
         };
@@ -119,7 +118,7 @@ export default class Book extends React.Component {
     }
   }
 
-  getDerivedStateFromProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
       if (nextProps.book) {
         this.setState({
@@ -205,7 +204,7 @@ export default class Book extends React.Component {
               ...snap.data()
             }
           });
-        } else { console.warn('No book with bid ' + this.props.bid); }
+        } else console.warn(`No book with bid ${this.props.bid}`);
       });
     }
   }
@@ -329,7 +328,7 @@ export default class Book extends React.Component {
       });
       //console.log('Rating and reader removed');
     }).catch(error => console.warn(error));
-	}
+  }
 
 	removeBookFromShelf = bid => this.removeBookFromUserBooks(bid, 'shelf');
 
@@ -415,6 +414,7 @@ export default class Book extends React.Component {
           <BookForm 
             isEditing={this.isEditing} 
             book={book} 
+            user={this.props.user}
           />
         :
           <BookProfile 
@@ -426,6 +426,7 @@ export default class Book extends React.Component {
             isEditing={this.isEditing}
             book={book}
             userBook={userBook}
+            user={this.props.user}
           />
         }
 			</div>

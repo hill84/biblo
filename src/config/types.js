@@ -9,6 +9,7 @@ export const numberType = number;
 
 export const userType = shape({
   creationTime: string.isRequired,
+  uid: string.isRequired,
   displayName: string.isRequired,
   email: string.isRequired,
   birth_date: string,
@@ -18,6 +19,10 @@ export const userType = shape({
   languages: arrayOf(string),
   photoURL: string,
   sex: string,
+  roles: shape({
+    admin: bool.isRequired,
+    editor: bool.isRequired
+  }).isRequired,
   stats: shape({
     //followed_num: number.isRequired,
     followers_num: number.isRequired,
@@ -29,27 +34,35 @@ export const userType = shape({
 });
 
 export const bookType = shape({
-  bid: string.isRequired,
-  ISBN_13: number.isRequired,
   ISBN_10: number,
-  title: string.isRequired,
-  title_sort: string.isRequired,
-  subtitle: string,
+  ISBN_13: number.isRequired,
+  EDIT: shape({
+    createdBy: string.isRequired,
+    createdByUid: string.isRequired,
+    created_num: number.isRequired,
+    lastEditBy: string,
+    lastEditByUid: string,
+    lastEdit_num: number
+  }),
   authors: arrayOf(string).isRequired,
-  format: string,
+  bid: string.isRequired,
   covers: arrayOf(string),
+  description: string,
+  edition_num: number,
+  format: string,
+  genres: arrayOf(string),
+  incipit: string,
+  languages: arrayOf(string),
   pages_num: number.isRequired,
   publisher: string.isRequired,
   publication: string,
-  edition_num: number,
-  genres: arrayOf(string),
-  languages: arrayOf(string),
-  description: string,
-  incipit: string,
   readers_num: number.isRequired,
   reviews_num: number.isRequired,
   ratings_num: number.isRequired,
-  rating_num: number.isRequired
+  rating_num: number.isRequired,
+  subtitle: string,
+  title: string.isRequired,
+  title_sort: string.isRequired
 });
 
 export const coverType = shape({
