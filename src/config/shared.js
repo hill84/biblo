@@ -16,7 +16,35 @@ export const muiTheme = getMuiTheme({
     appBar: { height: 60 },
     drawer: { color: blueGrey900 },
     datePicker: { selectColor: cyan700 },
-    menuItem: { hoverColor: "rgba(0, 151, 167, 0.1)" }
+    menuItem: { hoverColor: 'rgba(0, 151, 167, 0.1)' }
+});
+
+export const muiThemeDark = getMuiTheme({
+    palette: {
+        textColor: '#fff',
+        secondaryTextColor: 'rgba(255,255,255,.7)',
+        alternateTextColor: '#303030',
+        canvasColor: '#303030',
+        borderColor: 'rgba(255,255,255,.3)',
+        disabledColor: 'rgba(255,255,255,.3)',
+        pickerHeaderColor: 'rgba(255,255,255,.12)',
+        clockCircleColor: 'rgba(255,255,255,.12)',
+    }
+});
+
+export const muiThemePrimary = getMuiTheme({
+    palette: {
+        primary1Color: 'rgba(255,255,255,.7)',
+        primary2Color: '#fff',
+        textColor: '#fff',
+        secondaryTextColor: 'rgba(255,255,255,.7)',
+        alternateTextColor: '#303030',
+        canvasColor: '#303030',
+        borderColor: 'rgba(255,255,255,.3)',
+        disabledColor: 'rgba(255,255,255,.3)',
+        pickerHeaderColor: 'rgba(255,255,255,.12)',
+        clockCircleColor: 'rgba(255,255,255,.12)',
+    }
 });
 
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;

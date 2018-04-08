@@ -77,16 +77,16 @@ export default class BookForm extends React.Component {
 
   onEditDescription = e => {
     e.preventDefault();
-    this.setState({
-      isEditingDescription: !this.state.isEditingDescription
-    });
+    this.setState(prevState => ({
+      isEditingDescription: !prevState.isEditingDescription
+    }));
   }
 
   onEditIncipit = e => {
     e.preventDefault();
-    this.setState({
-      isEditingIncipit: !this.state.isEditingIncipit
-    });
+    this.setState(prevState => ({
+      isEditingIncipit: !prevState.isEditingIncipit
+    }));
   }
   
   onChange = e => {
@@ -143,14 +143,13 @@ export default class BookForm extends React.Component {
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.props.book.bid) {
-          bookRef(this.props.book.bid).set({
-            ...this.state.book,
-            EDIT: {
-              ...this.state.EDIT,
-              lastEdit_num: (new Date()).getTime(),
-              lastEditBy: (this.props.user && this.props.user.displayName) || '',
-              lastEditByUid: local_uid || ''
-            }
+          const fullBook = this.state.book;
+          const { EDIT, ...noEDIT } = fullBook; // Exclude EDIT from fullBook
+          bookRef(this.props.book.bid).update({
+            ...noEDIT, 
+            'EDIT.lastEdit_num': (new Date()).getTime(),
+            'EDIT.lastEditBy': (this.props.user && this.props.user.displayName) || '',
+            'EDIT.lastEditByUid': local_uid || ''
           }).then(() => {
             this.setState({ 
               //redirectToReferrer: true,
@@ -445,7 +444,7 @@ export default class BookForm extends React.Component {
                       openToYearSelection={true} 
                       errorText={errors.publication}
                       floatingLabelText="Data di pubblicazione"
-                      value={book.publication ? new Date(book.publication) : ''}
+                      value={book.publication ? new Date(book.publication) : null}
                       onChange={this.onChangeDate("publication")}
                       fullWidth={true}
                     />

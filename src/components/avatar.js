@@ -1,4 +1,5 @@
 import React from 'react';
+import { numberType, stringType } from '../config/types';
 import { Avatar as MuiAvatar } from 'material-ui';
 
 const Avatar = props => (
@@ -10,5 +11,11 @@ const Avatar = props => (
     }
   </div>
 );
+
+Avatar.propTypes = {
+  src: stringType,
+  alt: stringType,
+  size: numberType
+}
 
 export default Avatar;

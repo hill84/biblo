@@ -7,7 +7,8 @@ import { icon } from '../../config/icons';
 import Rater from 'react-rater';
 import Cover from '../cover';
 import Rating from '../rating';
-import Avatar from '../avatar';
+import UserReview from '../userReview';
+import Review from '../review';
 
 export default class BookProfile extends React.Component {
 	constructor(props) {
@@ -89,13 +90,13 @@ export default class BookProfile extends React.Component {
 	render() {
     const { book, isIncipitOpen, isMinified, user, userBook } = this.state;
     
-    if (!book || !userBook) return null;
+    //if (!book || !userBook) return null;
 
 		return (
       <div ref="BookProfileComponent">
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
         <div className="container top">
-          <div className="card text-align-center-sm">
+          <div className="card main text-align-center-sm">
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
             <div className="row">
               <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
@@ -118,7 +119,7 @@ export default class BookProfile extends React.Component {
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter">editore: {book.publisher}</span>}
-                  <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>
+                  {user && user.roles && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
                 </div>
                 <div className="info-row">
                   <span className="counter">ISBN-13: {book.ISBN_13}</span>
@@ -188,33 +189,19 @@ export default class BookProfile extends React.Component {
             </div>
           </div>
 
-          <div className="card primary user-review">
-            <div className="row review">
-              <div className="col-auto left">
-                <Avatar src={user.photoURL} alt={user.displayName} />
-              </div>
-              <div className="col right">
-                <div className="header">
-                  <h3 className="author">{user.displayName}</h3>
-                </div>
-              </div>
-            </div>
-          </div>
+          <UserReview bid={book.bid} user={user} userBook={userBook} />
 
           <div className="card dark reviews">
-            <div className="row review">
-              <div className="col-auto left">
-                Avatar
-              </div>
-              <div className="col right">
-                <div className="header">
-                  <h3 className="author">Nome Cognome</h3>
-                  Rating
-                </div>
-                <div className="text">Text</div>
-                <div className="footer">Date <div className="pull-right">Like</div></div>
-              </div>
-            </div>
+            <Review review={{
+              avatarURL: '',
+              createdBy: 'Mario Rossi',
+              createdByUid: 'abc',
+              created_num: 0,
+              likes: 0,
+              rating_num: 0,
+              text: "Testo della recensione",
+              title: "Titolo",
+            }} />
           </div>
 
         </div>
