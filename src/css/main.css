@@ -759,7 +759,7 @@ hr.line {
     margin: auto;
     transition: all .2s ease-in-out; 
     will-change: transform, opacity;
-    animation: scaleIn .3s ease-out backwards;
+    animation: showIn .3s ease-out backwards;
 }
 .book.empty .cover {
     box-shadow: none;
@@ -868,7 +868,7 @@ hr.line {
     height: 40px; 
     margin: 5px 10px 5px 0; 
     vertical-align: middle; 
-    animation: scaleIn .2s ease-in-out both;
+    animation: showIn .2s ease-in-out both;
 }
 .menuitem-book .secondaryText { 
     line-height: 50px; 
@@ -882,10 +882,18 @@ hr.line {
 
 /* REVIEWS */
 .card.user-review, .card.reviews { padding-top: 14px; padding-bottom: 14px; }
+.review + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
 .review .left { padding-right: 0; }
-.review .header { line-height: 40px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-.review .header h3 { margin: 0 auto; }
+.review .head { line-height: 40px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
 .review .title { color: var(--ContrastedTextColor); }
+.review .foot { color: var(--ligthTextColor); }
+.edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
+
+.review .foot .like { margin-right: 4px; }
+.like.false, .like.true:hover, .like:disabled { color: rgba(0,0,0,.2); }
+.like.true, .like.false:hover { color: var(--linkColor); }
+.like:disabled { opacity: .5; cursor: not-allowed; }
 
 /* SKELETONS */
 .skltn.shelf-row {
@@ -949,7 +957,10 @@ hr.line {
 .pull-right { float: right; }
 
 /* ANIMATIONS */
-@keyframes scaleIn {
+@keyframes slideDown {
+    from { opacity: 0; max-height: 36px; } to { opacity: 1; }
+}
+@keyframes showIn {
     0% { opacity: 0; transform: scale(.9); } 100% { opacity: 1; transform: scale(1); }
 }
 @keyframes fadeIn {
@@ -969,30 +980,23 @@ hr.line {
 
 /* MEDIA QUERIES */
 @media (max-width: 1200px) {
-    :root {
-        --booksPerRow-lg: 6;
-    }
+    :root { --booksPerRow-lg: 6; }
     .text-align-center-lg { text-align: center; }
 }
 @media (max-width: 992px) {
-    :root {
-        --booksPerRow-lg: 4;
-    }
+    :root { --booksPerRow-lg: 4; }
     .text-align-center-md { text-align: center; }
     .book-profile .description { max-height: 600px; }
+    .edit-review { max-height: 950px; }
 }
 @media (max-width: 768px) {
-    :root {
-        --booksPerRow-lg: 3;
-    }
+    :root { --booksPerRow-lg: 3; }
     .text-align-center-sm { text-align: center; }
     .book-profile .title { font-size: 1.6rem; }
     .book-incipit { transform-origin: top center; animation-name: flipInX; }
 }
 @media (max-width: 576px) {
-    :root {
-        --booksPerRow-lg: 2;
-    }
+    :root { --booksPerRow-lg: 2; }
     .text-align-center-xs { text-align: center; }
     .book-profile .description { max-height: 1300px; }
     .book-incipit p { font-size: .9rem; }

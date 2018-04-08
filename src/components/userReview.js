@@ -99,13 +99,13 @@ export default class UserReview extends React.Component {
     return (
       <div className="card primary user-review">
         {userBook.review && !isEditing ?
-          <div className="row review">
-            <div className="col-auto left">
-              <Avatar src={user.photoURL} alt={user.displayName} />
-            </div>
-            <div className="col right">
-              <div className="header">
-                <div className="row">
+          <div className="review">
+            <div className="row">
+              <div className="col-auto left">
+                <Avatar src={user.photoURL} alt={user.displayName} />
+              </div>
+              <div className="col right">
+                <div className="head row">
                   <div className="col-auto author">
                     <h3>{user.displayName}</h3>
                   </div>
@@ -113,12 +113,12 @@ export default class UserReview extends React.Component {
                     <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
                   </div>
                 </div>
-              </div>
-              <h4 className="title">Titolo</h4>
-              <p className="text">Testo della recensione</p>
-              <div className="row">
-                <div className="col-auto likes">Like</div>
-                <div className="col text-align-right">Date</div>
+                <h4 className="title">Titolo</h4>
+                <p className="text">Testo della recensione</p>
+                <div className="foot row">
+                  <div className="col-auto likes">Like</div>
+                  <div className="col text-align-right">Date</div>
+                </div>
               </div>
             </div>
           </div>

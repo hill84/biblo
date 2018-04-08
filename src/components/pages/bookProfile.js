@@ -193,14 +193,27 @@ export default class BookProfile extends React.Component {
 
           <div className="card dark reviews">
             <Review review={{
-              avatarURL: '',
+              avatarURL: undefined,
               createdBy: 'Mario Rossi',
               createdByUid: 'abc',
-              created_num: 0,
-              likes: 0,
-              rating_num: 0,
+              created_num: 1523207380751,
+              like: false,
+              likes_num: 32,
+              rating_num: 3,
               text: "Testo della recensione",
               title: "Titolo",
+            }} />
+
+            <Review review={{
+              avatarURL: undefined,
+              createdBy: 'Rocco Bianchi',
+              createdByUid: 'abc',
+              created_num: 1523209995452,
+              like: true,
+              likes_num: 7,
+              rating_num: 4,
+              text: "Testo della recensione",
+              title: "",
             }} />
           </div>
 

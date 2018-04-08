@@ -1,30 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { reviewType } from '../config/types';
-//import { CircularProgress } from 'material-ui';
 import { timeSince } from '../config/shared';
 import Rating from './rating';
 import Avatar from './avatar';
+import { icon } from '../config/icons';
   
 const Review = props => (
-  <div className="row review">
-    <Link to="/" className="col-auto left">
-      <Avatar src={undefined} alt="Mario Rossi" />
-    </Link>
-    <div className="col right">
-      <div className="header">
-        <div className="row">
-          <Link to="/" className="col-auto author">
-            <h3>Mario Rossi</h3>
+  <div className="review">
+    <div className="row">
+      <Link to={`/dashboard/${props.review.createdByUid}`} className="col-auto left">
+        <Avatar src={props.review.avatarURL} alt={props.review.createdBy} />
+      </Link>
+      <div className="col right">
+        <div className="head row">
+          <Link to={`/dashboard/${props.review.createdByUid}`} className="col-auto author">
+            <h3>{props.review.createdBy}</h3>
           </Link>
-          <div className="col text-align-right rating"><Rating ratings={{rating_num: 0}} /></div>
+          <div className="col text-align-right rating"><Rating ratings={{rating_num: props.review.rating_num}} /></div>
         </div>
-      </div>
-      <h4 className="title">Titolo</h4>
-      <p className="text">Testo della recensione</p>
-      <div className="row">
-        <div className="col-auto likes">Like</div>
-        <div className="col text-align-right date">Date</div>
+        {props.review.title && <h4 className="title">{props.review.title}</h4>}
+        <p className="text">{props.review.text}</p>
+        <div className="foot row">
+          <div className="col-auto likes">
+            <button className={`link flat like ${props.review.like}`}>{icon.thumbUp()}</button> {props.review.likes_num} Like
+          </div>
+          <div className="col text-align-right date">{timeSince(props.review.created_num)}</div>
+        </div>
       </div>
     </div>
   </div>

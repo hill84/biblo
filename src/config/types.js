@@ -94,7 +94,8 @@ export const reviewType = shape({
   createdBy: stringType.isRequired,
   createdByUid: stringType,
   created_num: numberType.isRequired,
-  likes: numberType.isRequired,
+  like: boolType.isRequired,
+  likes_num: numberType.isRequired,
   rating_num: numberType.isRequired,
   text: stringType.isRequired,
   title: stringType
