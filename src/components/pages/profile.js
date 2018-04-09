@@ -263,7 +263,7 @@ export default class Profile extends React.Component {
 								}
 							</div>
 
-							{authError && <div className="row"><div className="col message error">{authError}</div></div>}
+							{authError && <div className="info-row"><div className="message error">{authError}</div></div>}
 
 							<div>&nbsp;</div>
 

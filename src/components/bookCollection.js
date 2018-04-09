@@ -10,7 +10,7 @@ export default class BookCollection extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-      cid: this.props.cid || 'Top_10',
+      cid: this.props.cid || 'top',
       bcid: this.props.bcid || 'bcid',
       limit: this.props.limit || (this.props.pagination || this.props.scrollable) ? 7 : 98,
       scrollable: this.props.scrollable || false,
@@ -24,7 +24,7 @@ export default class BookCollection extends React.Component {
     }
   }
   
-  getDerivedStateFromProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.cid !== this.props.cid || nextProps.bcid !== this.props.bcid || nextProps.limit !== this.props.limit) {
       this.setState({ cid: nextProps.cid });
       this.fetchCollection(nextProps.cid, nextProps.bcid, nextProps.limit);

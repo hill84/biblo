@@ -26,6 +26,12 @@ export default class UserReview extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps, prevState) {
+    if (nextProps.userBook !== prevState.userBook) {
+      this.setState({ userBook: nextProps.userBook });
+    }
+  }
+
   onEditing = () => this.setState({ isEditing: true });
 
   onSubmit = e => {

@@ -37,11 +37,9 @@ export default class BookProfile extends React.Component {
     }
   }
 
-  componentDidMount(props) {
+  componentWillMount(props) {
     if (this.props.book.description.length > 570) {
-      this.setState({
-        isMinified: true
-      });
+      this.setState({ isMinified: true });
     }
   }
 

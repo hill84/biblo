@@ -319,7 +319,7 @@ export default class BookForm extends React.Component {
   exitEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
+    const { authError, book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
     const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
@@ -566,6 +566,8 @@ export default class BookForm extends React.Component {
                     </button>
                   </div>
                 }
+
+                {authError && <div className="info-row"><div className="message error">{authError}</div></div>}
 
               </div>
             </div>

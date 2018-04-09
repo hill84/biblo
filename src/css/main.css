@@ -891,9 +891,9 @@ hr.line {
 .edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
 
 .review .foot .like { margin-right: 4px; }
-.like.false, .like.true:hover, .like:disabled { color: rgba(0,0,0,.2); }
-.like.true, .like.false:hover { color: var(--linkColor); }
-.like:disabled { opacity: .5; cursor: not-allowed; }
+.like.false, .like.true:hover, .like:disabled { color: var(--ligthTextColor); opacity: .7; }
+.like.true, .like.false:hover { color: var(--linkColor); opacity: 1; }
+.like:disabled { opacity: .4; cursor: not-allowed; }
 
 /* SKELETONS */
 .skltn.shelf-row {
