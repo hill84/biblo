@@ -7,6 +7,7 @@ export const stringType = string;
 export const boolType = bool;
 export const numberType = number;
 export const objectType = object;
+export const shapeType = props => shape(props);
 
 export const userType = shape({
   creationTime: string.isRequired,
@@ -91,8 +92,8 @@ export const ratingsType = shape({
 });
 
 export const reviewType = shape({
-  avatarURL: stringType,
-  createdBy: stringType.isRequired,
+  photoURL: stringType,
+  displayName: stringType.isRequired,
   createdByUid: stringType,
   created_num: numberType.isRequired,
   like: boolType.isRequired,

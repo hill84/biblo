@@ -10,10 +10,7 @@ const config = {
 	messagingSenderId: "144759497905"
 };
 
-if (!firebase.apps.length) {
-	console.log('initialize firebase app');
-	firebase.initializeApp(config);
-}
+if (!firebase.apps.length) firebase.initializeApp(config);
 
 const db = firebase.firestore();
 const storage = firebase.storage();
@@ -28,15 +25,6 @@ export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
 export const uid = auth.currentUser || localStorage.getItem(storageKey_uid);
 
-if (isAuthenticated()) {
-	console.log('authenticated');
-} else {
-	console.log('not authenticated');
-}
-
-console.log(auth.currentUser);
-console.log(localStorage.getItem(storageKey_uid));
-
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
 export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
@@ -45,6 +33,8 @@ export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');
 
 export const collectionsRef = cid => db.collection('collections').doc(cid).collection('books');
+
+export const reviewsRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
 
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 

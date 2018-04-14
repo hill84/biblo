@@ -11,12 +11,12 @@ const Review = props => (
   <div className="review">
     <div className="row">
       <Link to={`/dashboard/${props.review.createdByUid}`} className="col-auto left">
-        <Avatar src={props.review.avatarURL} alt={props.review.createdBy} />
+        <Avatar src={props.review.photoURL} alt={props.review.displayName} />
       </Link>
       <div className="col right">
         <div className="head row">
           <Link to={`/dashboard/${props.review.createdByUid}`} className="col-auto author">
-            <h3>{props.review.createdBy}</h3>
+            <h3>{props.review.displayName}</h3>
           </Link>
           <div className="col text-align-right rating"><Rating ratings={{rating_num: props.review.rating_num}} /></div>
         </div>

@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { userType, userBookType } from '../config/types';
-import { muiThemePrimary } from '../config/shared';
+import { TextField } from 'material-ui';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { CircularProgress, TextField } from 'material-ui';
-import { timeSince } from '../config/shared';
 import Rater from 'react-rater';
+import { uid } from '../config/firebase';
+import { muiThemePrimary } from '../config/shared';
+import { userBookType } from '../config/types';
 import Avatar from './avatar';
  
 export default class UserReview extends React.Component {
@@ -178,6 +177,6 @@ export default class UserReview extends React.Component {
 }
 
 UserReview.propTypes = {
-  user: userType,
+  //user: userType.isRequired,
   userBook: userBookType
 }

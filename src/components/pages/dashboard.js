@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tab, Tabs } from 'material-ui/Tabs';
 import { Link } from 'react-router-dom';
-import { uid, userRef } from '../../config/firebase';
+import { isAuthenticated, uid, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { appName, calcAge, joinToLowerCase } from '../../config/shared';
 import { userType } from '../../config/types';
@@ -17,7 +17,7 @@ export default class Dashboard extends React.Component {
 			uid: null,
 			user: null,
 			follow: false,
-			loading: false
+			loading: true
 		}
 	}
 
@@ -33,7 +33,7 @@ export default class Dashboard extends React.Component {
 							uid: match.params.uid,
 							follow: (user && user.stats.followed) && user.stats.followed.indexOf(match.params.uid) > -1
 						});
-					}
+					} else this.setState({ user: null });
 				});
 			} else this.setState({ user: user });
 		}
@@ -50,7 +50,7 @@ export default class Dashboard extends React.Component {
 						uid: match.params.uid,
 						follow: (user && user.stats.followed) && user.stats.followed.indexOf(match.params.uid) > -1
 					});
-				}
+				} else this.setState({ user: null });
 			});
 		} else this.setState({ user: user });
 	}
@@ -97,16 +97,27 @@ export default class Dashboard extends React.Component {
 	}
 
 	render(props) {
-		const { follow, user, uid, luid } = this.state;
+		const { follow, loading, luid, uid, user } = this.state;
+
+		if (!user) {
+			if (loading) {
+				return <div className="container"><div className="card dark empty text-align-center">caricamento in corso...</div></div>
+			} else {
+				return <NoMatch title="Dashboard utente non trovata" location={this.props.location} />
+			}
+		}
+
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const isOwner = luid === uid;
-
-		if (!user) return <NoMatch title="Dashboard utente non trovata" location={this.props.location} />
 
 		return (
 			<div className="container" ref="dashboardComponent">
 				<div className="card dark">
 					<div className="basic-profile">
+						<div className="role-badges">
+							{user.roles.admin && <div className="badge admin">Admin</div>}
+							{user.roles.editor && <div className="badge editor">Editor</div>}
+						</div>
 						<div className="row text-align-center-sm">
 							<div className="col-md-auto col-sm-12">
 								<Avatar size={100} src={user.photoURL} alt={user.displayName} />
@@ -127,7 +138,10 @@ export default class Dashboard extends React.Component {
 								</div>
 								<div className="info-row">
 									{!isOwner && 
-										<button className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} onClick={this.onFollowUser}>
+										<button 
+											className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
+											disabled={!isAuthenticated()}
+											onClick={this.onFollowUser}>
 											{follow ? 
 												<span>
 													<span className="hide-on-hover">{icon.check()} Segui</span>

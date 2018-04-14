@@ -1,10 +1,10 @@
 import React from 'react';
-import { objectType } from '../config/types';
+import { objectType, shapeType } from '../config/types';
 
 export default class NoMatch extends React.Component {
-  static contextTypes = {
+  /* static contextTypes = {
     router: () => true // replace with PropTypes.object if you use them
-  }
+  } */
 
   render(props) {
     const { imgUrl, location, title } = this.props;
@@ -16,7 +16,7 @@ export default class NoMatch extends React.Component {
             <h1>{title || 'Pagina non trovata'}</h1>
             <p>Controlla di aver digitato correttamente l'indirizzo{location && <span>: <big><code>{location.pathname}</code></big></span>}.</p>
             {imgUrl && <img src={imgUrl} alt="Pagina non trovata" />}
-            <button onClick={this.context.router.history.goBack} className="btn flat">Torna indietro</button>
+            <button onClick={this.context.router && this.context.router.history.goBack} className="btn flat">Torna indietro</button>
           </div>
         </div>
       </div>
@@ -25,5 +25,7 @@ export default class NoMatch extends React.Component {
 }
 
 NoMatch.propTypes = {
-  router: objectType.isRequired
+  context: shapeType({
+    router: objectType.isRequired
+  })
 }

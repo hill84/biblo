@@ -1,15 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { funcType, userBookType } from '../../config/types';
 import { CircularProgress } from 'material-ui';
-import { calcReadingTime, join, joinToLowerCase, timeSince } from '../../config/shared';
-import { isAuthenticated } from '../../config/firebase';
-import { icon } from '../../config/icons';
 import Rater from 'react-rater';
+import { Link } from 'react-router-dom';
+import { isAuthenticated, reviewsRef } from '../../config/firebase';
+import { icon } from '../../config/icons';
+import { calcReadingTime, join, joinToLowerCase, timeSince } from '../../config/shared';
+import { funcType, userBookType } from '../../config/types';
 import Cover from '../cover';
 import Rating from '../rating';
-import UserReview from '../userReview';
 import Review from '../review';
+import UserReview from '../userReview';
 
 export default class BookProfile extends React.Component {
 	constructor(props) {
@@ -21,6 +21,7 @@ export default class BookProfile extends React.Component {
       },
       user: this.props.user || {},
       userBook: this.props.userBook,
+      reviews: null,
       loading: false,
       errors: {},
       isIncipitOpen: false,
@@ -35,13 +36,43 @@ export default class BookProfile extends React.Component {
         userBook: nextProps.userBook,
         user: nextProps.user
       });
+      if (nextProps.book.bid !== this.props.book.bid) {
+        this.fetchReviews(nextProps.book.bid);
+      }
     }
   }
 
   componentWillMount(props) {
-    if (this.props.book.description.length > 570) {
+    if (this.props.book.description.length > 700) {
       this.setState({ isMinified: true });
     }
+  }
+
+  componentDidMount(props) {
+    this.fetchReviews(this.state.book.bid);
+  }
+
+  fetchReviews = bid => {
+    let reviews = [];
+    reviewsRef(bid).orderBy('created_num').orderBy('likes_num').limit(10).get().then(snap => {
+      if (!snap.empty) {
+        snap.forEach(review => reviews.push(review.data()));
+        this.setState({ 
+          reviews: reviews,
+          loading: false,
+          page: 1,
+          //lastVisible: snap.docs[snap.docs.length-1]
+        });
+        //console.log(reviews);
+      } else {
+        this.setState({ 
+          reviews: null,
+          loading: false,
+          page: null,
+          //lastVisible: null
+        });
+      }
+    }).catch(error => console.warn("Error fetching reviews:", error));
   }
 
   onAddBookToShelf = () => {
@@ -87,9 +118,26 @@ export default class BookProfile extends React.Component {
   onEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, isIncipitOpen, isMinified, user, userBook } = this.state;
-    
-    //if (!book || !userBook) return null;
+    const { book, isIncipitOpen, isMinified, reviews, user, userBook } = this.state;
+    const reviewsStack = ((reviews && reviews.length > 0) ? 
+      <div>
+        {reviews.map(review => 
+          <Review key={review.createdByUid} review={{
+            photoURL: review.photoURL || '',
+            displayName: review.displayName || '',
+            createdByUid: review.createdByUid || '',
+            created_num: review.created_num || 0,
+            like: false,
+            likes_num: review.likes_num || 0,
+            rating_num: review.rating_num || 0,
+            text: review.text || '',
+            title: review.title || '',
+          }} />
+        )}
+      </div>
+    : 
+      <div className="info-row empty text-align-center">Non ci sono ancora recensioni per questo libro.</div>
+    );
 
 		return (
       <div ref="BookProfileComponent">
@@ -135,7 +183,7 @@ export default class BookProfile extends React.Component {
                 </div>
 
                 {isAuthenticated() &&
-                  <React.Fragment>
+                  <div>
                     <div className="info-row">
                       {userBook.bookInShelf ? 
                         <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
@@ -164,7 +212,7 @@ export default class BookProfile extends React.Component {
                         </div>
                       }
                     </div>
-                  </React.Fragment>
+                  </div>
                 }
 
                 {book.description && 
@@ -195,47 +243,9 @@ export default class BookProfile extends React.Component {
             </div>
           </div>
 
-          {isAuthenticated() && 
-            <UserReview bid={book.bid} user={user} userBook={userBook} />
-          }
+          {isAuthenticated() && <UserReview bid={book.bid} user={user} userBook={userBook} />}
 
-          <div className="card dark reviews">
-            <Review review={{
-              avatarURL: undefined,
-              createdBy: 'Mario Rossi',
-              createdByUid: 'abc',
-              created_num: 1523207380751,
-              like: false,
-              likes_num: 32,
-              rating_num: 3,
-              text: "Testo della recensione",
-              title: "Titolo",
-            }} />
-
-            <Review review={{
-              avatarURL: undefined,
-              createdBy: 'Rocco Bianchi',
-              createdByUid: 'abc',
-              created_num: 1523209995452,
-              like: true,
-              likes_num: 7,
-              rating_num: 4,
-              text: "Testo della recensione",
-              title: "",
-            }} />
-
-            <Review review={{
-              avatarURL: undefined,
-              createdBy: 'Andrea Verdi',
-              createdByUid: 'abc',
-              created_num: 1523209992450,
-              like: false,
-              likes_num: 0,
-              rating_num: 0,
-              text: "Testo della recensione",
-              title: "",
-            }} />
-          </div>
+          <div className="card dark reviews">{reviewsStack}</div>
 
         </div>
       </div>

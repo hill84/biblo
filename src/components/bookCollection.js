@@ -97,12 +97,17 @@ export default class BookCollection extends React.Component {
 
 	render() {
 		const { cid, collection, collectionCount, limit, loading, page, pagination, scrollable, stacked } = this.state;
-    const covers = (collection && (collection.length > 0)) ? 
+    const covers = (collection && (collection.length > 0) ?
       <div className={`shelf-row ${stacked ? 'stacked' : 'abreast'}`}>
-        {collection.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} rating={true} full={stacked} index={index} /></Link> )}
+        {collection.map((book, index) => 
+          <Link key={book.bid} to={`/book/${book.bid}`}>
+            <Cover book={book} rating={true} full={stacked} index={index} />
+          </Link>
+        )}
       </div>
     : 
-      <div className="info-row empty">Non ci sono libri in questa collezione.</div>;
+      <div className="info-row empty">Non ci sono libri in questa collezione.</div>
+    );
 
 		return (
       <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>    

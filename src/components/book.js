@@ -1,6 +1,7 @@
 import React from 'react';
 import { bookRef, collectionsRef, isAuthenticated, uid, userBookRef, userRef } from '../config/firebase';
 import { bookType, stringType, userType } from '../config/types';
+import NoMatch from './noMatch';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
 
@@ -21,7 +22,8 @@ export default class Book extends React.Component {
         bookInShelf: false,
         bookInWishlist: false 
       },
-			isEditing: false
+      isEditing: false,
+      loading: false
     }
     
     this.removeBookFromUserBooks = (bid, bookshelf) => {
@@ -134,6 +136,7 @@ export default class Book extends React.Component {
           }
         });
       } else if (nextProps.bid) {
+        this.setState({ loading: true });
         bookRef(nextProps.bid).onSnapshot(snap => {
           if (snap.exists) {
             //console.log(snap.data());
@@ -151,7 +154,8 @@ export default class Book extends React.Component {
                 subtitle: snap.data().subtitle || ''
               }
             });
-          } else { console.warn('No book with bid ' + nextProps.bid); }
+          } else console.warn(`No book with bid ${nextProps.bid}`);
+          this.setState({ loading: false });
         });
       }
       if (isAuthenticated() && (nextProps.bid || nextProps.book.bid)) {
@@ -196,6 +200,7 @@ export default class Book extends React.Component {
     }
 
     if (this.props.bid) {
+      this.setState({ loading: true });
       bookRef(this.props.bid).onSnapshot(snap => {
         if (snap.exists) {
           //console.log(snap.data());
@@ -206,6 +211,7 @@ export default class Book extends React.Component {
             }
           });
         } else console.warn(`No book with bid ${this.props.bid}`);
+        this.setState({ loading: false });
       });
     }
   }
@@ -405,24 +411,24 @@ export default class Book extends React.Component {
   isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
 	
 	render(props) {
-    const { book, isEditing, userBook } = this.state;
+    const { book, isEditing, loading, userBook } = this.state;
 
-    if (!book) return null;
+    if (!book) {
+      if (loading) {
+        return <div className="container"><div className="card dark empty text-align-center">caricamento in corso...</div></div>
+      } else {
+        return <NoMatch title="Libro non trovato" location={this.props.location} />
+      }
+    }
 
 		return (
 			<div ref="BookComponent">
-        {isEditing ?
-          <React.Fragment>
-            {isAuthenticated() ? 
-              <BookForm 
-                isEditing={this.isEditing} 
-                book={book} 
-                user={this.props.user}
-              />
-            : 
-              <div>Registrati</div>
-            }
-          </React.Fragment>
+        {isEditing && isAuthenticated() ?
+          <BookForm 
+            isEditing={this.isEditing} 
+            book={book} 
+            user={this.props.user}
+          />
         :
           <BookProfile 
             addBookToShelf={this.addBookToShelf} 

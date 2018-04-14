@@ -10,11 +10,13 @@
     --alertClr: rgb(251, 140, 0);           /* orange600 */
     --blueGrey900: rgb(38, 50, 56);         /* blueGrey900 canvas */
     --blueGray801: rgb(50, 67, 78);         /* blueGray801 dark paper */
+    --blueGrey701: rgb(64, 86, 99);         /* blueGrey701 */
     --mainBg: var(--blueGrey900);
     --cardBg: var(--mainBg);
     --btnHeight: 36px;
     --btnPad: .8rem;
     --btnFontSize: .9rem;
+    --btnDisabledBg: rgba(0, 0, 0, .07);
     --cardPad: 24px;
     --booksPerRow-lg: 7;
     --shelf-rowHeight: 224px;
@@ -177,7 +179,7 @@ hr.line {
 }
 
 /* DARK */
-.dark {
+.dark, .dark .primary {
     --skltnBg: rgba(0,10,20,.15);
     --ContrastedTextClr: #fff;
     --mainTextClr: rgba(230,250,255,.7);
@@ -186,6 +188,7 @@ hr.line {
     --linkClr: var(--primaryLigthClr);
     --linkClrHover: var(--primaryLigtherClr);
     --linkClrActive: var(--primaryClr);
+    --btnDisabledBg: var(--blueGrey701);
     --cardBg: var(--blueGray801);
 }
 .card.dark, .dark .card,
@@ -203,6 +206,7 @@ hr.line {
     --linkClr: rgba(255, 255, 255, .9);
     --linkClrHover: rgba(255, 255, 255, 1);
     --linkClrActive: rgba(255, 255, 255, .8);
+    --btnDisabledBg: var(--primaryLigthClr);
     --cardBg: var(--primaryClr);
 }
 
@@ -288,7 +292,7 @@ hr.line {
 .btnTwitter { background-color: #00ACED; }
 
 .btn:disabled, .btn:disabled:hover, .btn:disabled:active, .btn.disabled { 
-    background-color: rgba(0,0,0,.07);
+    background-color: var(--btnDisabledBg);
     border-color: transparent;
     color: rgba(0,0,0,.15); 
     box-shadow: none; 
@@ -561,6 +565,17 @@ hr.line {
     margin-top: 0;
 }
 .basic-profile .email { color: var(--ligthTextClr); }
+.basic-profile .role-badges { position: absolute; top: var(--cardPad); right: var(--cardPad); }
+.role-badges .badge { 
+    display: block; 
+    float: left; 
+    margin-right: 4px; 
+    background-color: rgba(0,0,0,.07);
+    color: var(--ligtherTextClr);
+    font-size: .8rem;
+    border-radius: 3px; 
+    padding: 3px .4rem; 
+}
 
 .counter { line-height: 2; }
 .counter b { font-weight: 500; }
