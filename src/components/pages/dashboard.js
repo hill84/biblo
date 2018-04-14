@@ -1,18 +1,19 @@
 import React from 'react';
+import { Tab, Tabs } from 'material-ui/Tabs';
 import { Link } from 'react-router-dom';
-import { local_uid, userRef } from '../../config/firebase';
-import { userType } from '../../config/types';
-import { appName, calcAge, joinToLowerCase } from '../../config/shared';
+import { uid, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { Tabs, Tab } from 'material-ui/Tabs';
+import { appName, calcAge, joinToLowerCase } from '../../config/shared';
+import { userType } from '../../config/types';
 import Avatar from '../avatar';
 import Shelf from '../shelf';
+import NoMatch from '../noMatch';
 
 export default class Dashboard extends React.Component {
  	constructor(props) {
 		super(props);
 		this.state = {
-			luid: local_uid,
+			luid: uid,
 			uid: null,
 			user: null,
 			follow: false,
@@ -100,7 +101,7 @@ export default class Dashboard extends React.Component {
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const isOwner = luid === uid;
 
-		if (!user || !uid) return null
+		if (!user) return <NoMatch title="Dashboard utente non trovata" location={this.props.location} />
 
 		return (
 			<div className="container" ref="dashboardComponent">

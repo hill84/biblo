@@ -1,7 +1,7 @@
 import React from 'react';
-import { calcAge, languages, continents, europeanCountries, northAmericanCountries, italianProvinces, validateImg } from '../../config/shared';
-import { local_uid, storageRef, userRef } from '../../config/firebase';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import { storageRef, uid, userRef } from '../../config/firebase';
+import { calcAge, continents, europeanCountries, italianProvinces, languages, northAmericanCountries, validateImg } from '../../config/shared';
 import Avatar from '../avatar';
 
 export default class Profile extends React.Component {
@@ -20,7 +20,7 @@ export default class Profile extends React.Component {
 	}
 
 	componentDidMount() {
-		userRef(local_uid).onSnapshot(snap => {
+		userRef(uid).onSnapshot(snap => {
 			this.setState({ loading: false });
 			if (snap.exists) {
 				this.setState({ 
@@ -53,7 +53,7 @@ export default class Profile extends React.Component {
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
-			userRef(local_uid).set({
+			userRef(uid).set({
 				...this.state.user,
 				photoURL: this.state.imgPreview || '',
 				sex: this.state.user.sex || '',
@@ -96,7 +96,7 @@ export default class Profile extends React.Component {
 		const errors = validateImg(file, 1048576);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
-			const uploadTask = storageRef(`users/${local_uid}`, 'avatar').put(file);
+			const uploadTask = storageRef(`users/${uid}`, 'avatar').put(file);
 			uploadTask.on('state_changed', snap => {
 				this.setState({
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
@@ -135,7 +135,7 @@ export default class Profile extends React.Component {
 				{loading && <div className="loader"><CircularProgress /></div>}
 				<div className="card">
 					
-					<div className="container-sm">
+					<div className="container sm">
 						<div className="row basic-profile">
 							
 							<div className="col-auto">

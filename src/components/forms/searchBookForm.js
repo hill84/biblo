@@ -125,7 +125,7 @@ export default class SearchBookForm extends React.Component {
 
   render() {
     return (
-      <form className="container-sm" ref="SearchBookFormComponent">
+      <form className="container sm" ref="SearchBookFormComponent">
         <div className="form-group">
           {/* this.state.loading && <div className="loader"><CircularProgress /></div> */}
           <AutoComplete

@@ -10,11 +10,14 @@ const config = {
 	messagingSenderId: "144759497905"
 };
 
-firebase.initializeApp(config);
+if (!firebase.apps.length) {
+	console.log('initialize firebase app');
+	firebase.initializeApp(config);
+}
 
 const db = firebase.firestore();
 const storage = firebase.storage();
-/* export const timestamp = firebase.database.ServerValue.TIMESTAMP; */
+export const timestamp = firebase.database.ServerValue.TIMESTAMP;
 
 export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
@@ -23,7 +26,16 @@ export const auth = firebase.auth();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
-export const local_uid = window.localStorage.getItem(storageKey_uid); // NOT SECURE !!!
+export const uid = auth.currentUser || localStorage.getItem(storageKey_uid);
+
+if (isAuthenticated()) {
+	console.log('authenticated');
+} else {
+	console.log('not authenticated');
+}
+
+console.log(auth.currentUser);
+console.log(localStorage.getItem(storageKey_uid));
 
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');

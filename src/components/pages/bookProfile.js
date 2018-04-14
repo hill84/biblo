@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { funcType, userBookType } from '../../config/types';
-import { CircularProgress/* , TextField */ } from 'material-ui';
+import { CircularProgress } from 'material-ui';
 import { calcReadingTime, join, joinToLowerCase, timeSince } from '../../config/shared';
+import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import Rater from 'react-rater';
 import Cover from '../cover';
@@ -128,37 +129,44 @@ export default class BookProfile extends React.Component {
                   {/* book.format && <span className="counter">Formato: {book.format}</span> */}
                   {book.genres && book.genres[0] && <span className="counter">Gener{book.genres[1] ? 'i' : 'e'}: {joinToLowerCase(book.genres)}</span>}
                 </div>
+
                 <div className="info-row">
                   <Rating labels={true} ratings={{ratings_num: book.ratings_num, rating_num: book.rating_num}}/>
                 </div>
-                <div className="info-row">
-                  {userBook.bookInShelf ? 
-                    <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
-                      <span className="hide-on-hover">Aggiunto a libreria</span>
-                      <span className="show-on-hover">Rimuovi da libreria</span>
-                    </button>
-                  :
-                    <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
-                  }
-                  {userBook.bookInWishlist && 
-                    <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
-                      <span className="hide-on-hover">Aggiunto a lista desideri</span>
-                      <span className="show-on-hover">Rimuovi da lista desideri</span>
-                    </button>
-                  }
-                  {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                    <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
-                  }
-                </div>
-                <div className="info-row">
-                  {userBook.bookInShelf &&
-                    <div className="user rating">
-                      <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
-                      {/* <span className="rating-num">{userBook.rating_num || 0}</span> */}
-                      <span className="label">Il tuo voto</span>
+
+                {isAuthenticated() &&
+                  <React.Fragment>
+                    <div className="info-row">
+                      {userBook.bookInShelf ? 
+                        <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
+                          <span className="hide-on-hover">Aggiunto a libreria</span>
+                          <span className="show-on-hover">Rimuovi da libreria</span>
+                        </button>
+                      :
+                        <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
+                      }
+                      {userBook.bookInWishlist && 
+                        <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
+                          <span className="hide-on-hover">Aggiunto a lista desideri</span>
+                          <span className="show-on-hover">Rimuovi da lista desideri</span>
+                        </button>
+                      }
+                      {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
+                        <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
+                      }
                     </div>
-                  }
-                </div>
+                    <div className="info-row">
+                      {userBook.bookInShelf &&
+                        <div className="user rating">
+                          <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
+                          {/* <span className="rating-num">{userBook.rating_num || 0}</span> */}
+                          <span className="label">Il tuo voto</span>
+                        </div>
+                      }
+                    </div>
+                  </React.Fragment>
+                }
+
                 {book.description && 
                   <div className="info-row">
                     <p className={`description ${isMinified ? 'minified' : 'expanded'}`}>{book.description || ''}</p>
@@ -187,7 +195,9 @@ export default class BookProfile extends React.Component {
             </div>
           </div>
 
-          <UserReview bid={book.bid} user={user} userBook={userBook} />
+          {isAuthenticated() && 
+            <UserReview bid={book.bid} user={user} userBook={userBook} />
+          }
 
           <div className="card dark reviews">
             <Review review={{
@@ -210,6 +220,18 @@ export default class BookProfile extends React.Component {
               like: true,
               likes_num: 7,
               rating_num: 4,
+              text: "Testo della recensione",
+              title: "",
+            }} />
+
+            <Review review={{
+              avatarURL: undefined,
+              createdBy: 'Andrea Verdi',
+              createdByUid: 'abc',
+              created_num: 1523209992450,
+              like: false,
+              likes_num: 0,
+              rating_num: 0,
               text: "Testo della recensione",
               title: "",
             }} />

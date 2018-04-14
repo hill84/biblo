@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { reviewType } from '../config/types';
 import { timeSince } from '../config/shared';
+import { isAuthenticated } from '../config/firebase';
 import Rating from './rating';
 import Avatar from './avatar';
 import { icon } from '../config/icons';
@@ -23,7 +24,7 @@ const Review = props => (
         <p className="text">{props.review.text}</p>
         <div className="foot row">
           <div className="col-auto likes">
-            <button className={`link flat like ${props.review.like}`}>{icon.thumbUp()}</button> {props.review.likes_num} Like
+            <button className={`link thumb up ${props.review.like}`} disabled={!isAuthenticated()} title="mi piace">{icon.thumbUp()}</button> {props.review.likes_num > 0 ? props.review.likes_num : 'Mi piace'}
           </div>
           <div className="col text-align-right date">{timeSince(props.review.created_num)}</div>
         </div>

@@ -1,15 +1,15 @@
 import React from 'react';
-import { skltn_shelfRow }from './skeletons'
 import { Link } from 'react-router-dom';
-import { bookRef, local_uid, userBooksRef } from '../config/firebase';
+import { bookRef, uid, userBooksRef } from '../config/firebase';
 import { stringType } from '../config/types';
 import Cover from './cover';
+import { skltn_shelfRow } from './skeletons';
 
 export default class Shelf extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            luid: local_uid,
+            luid: uid,
             uid: this.props.uid,
             shelfBooks: [],
             wishlistBooks: [],

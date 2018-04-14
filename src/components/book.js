@@ -1,6 +1,6 @@
 import React from 'react';
+import { bookRef, collectionsRef, isAuthenticated, uid, userBookRef, userRef } from '../config/firebase';
 import { bookType, stringType, userType } from '../config/types';
-import { bookRef, collectionsRef, local_uid, userBookRef, userRef } from '../config/firebase';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
 
@@ -23,6 +23,7 @@ export default class Book extends React.Component {
       },
 			isEditing: false
     }
+    
     this.removeBookFromUserBooks = (bid, bookshelf) => {
       let userShelf_num = this.props.user.stats.shelf_num;
       let userWishlist_num = this.props.user.stats.wishlist_num;
@@ -51,7 +52,7 @@ export default class Book extends React.Component {
         bookReviews_num -= 1;
       }
   
-      userBookRef(local_uid, bid).delete().then(() => {
+      userBookRef(uid, bid).delete().then(() => {
         this.setState({ 
           userBook: { 
             ...this.state.userBook, 
@@ -83,7 +84,7 @@ export default class Book extends React.Component {
   
       if (bookshelf === 'shelf') {
         //console.log('will remove book and rating from user shelf stats');
-        userRef(local_uid).update({
+        userRef(uid).update({
           ...this.props.user,
           stats: {
             ...this.props.user.stats,
@@ -105,7 +106,7 @@ export default class Book extends React.Component {
         };
       } else if (bookshelf === 'wishlist') {
         //console.log('will remove book from user wishlist stats');
-        userRef(local_uid).update({
+        userRef(uid).update({
           ...this.props.user,
           stats: {
             ...this.props.user.stats,
@@ -153,8 +154,8 @@ export default class Book extends React.Component {
           } else { console.warn('No book with bid ' + nextProps.bid); }
         });
       }
-      if (nextProps.bid || nextProps.book.bid) {
-        userBookRef(local_uid, (nextProps.bid || nextProps.book.bid)).onSnapshot(snap => {
+      if (isAuthenticated() && (nextProps.bid || nextProps.book.bid)) {
+        userBookRef(uid, (nextProps.bid || nextProps.book.bid)).onSnapshot(snap => {
           //console.log(`Update userBook ${nextProps.bid || nextProps.book.bid} again`);
           if (snap.exists) {
             this.setState({
@@ -183,8 +184,8 @@ export default class Book extends React.Component {
   }
 
   componentDidMount(props) {
-    if (this.props.bid || this.state.book.bid) {
-      userBookRef(local_uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
+    if (isAuthenticated() && (this.props.bid || this.state.book.bid)) {
+      userBookRef(uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
         if (snap.exists) {
           //console.log(`Update userBook ${this.state.book.bid}`);
           this.setState({
@@ -217,7 +218,7 @@ export default class Book extends React.Component {
       userWishlist_num -= 1;
     }
     
-    userBookRef(local_uid, bid).set({
+    userBookRef(uid, bid).set({
       ...this.state.userBook,
       bookInShelf: true,
       bookInWishlist: false
@@ -244,7 +245,7 @@ export default class Book extends React.Component {
       //console.log('Readers number increased');
     }).catch(error => console.warn(error));
 
-    userRef(local_uid).update({
+    userRef(uid).update({
       'stats.shelf_num': this.props.user.stats.shelf_num + 1,
       'stats.wishlist_num': userWishlist_num
     }).then(() => {
@@ -281,7 +282,7 @@ export default class Book extends React.Component {
       userBookReview = '';
     }
 
-    userBookRef(local_uid, bid).set({
+    userBookRef(uid, bid).set({
       ...this.state.userBook,
       rating_num: userBookRating_num,
       review: userBookReview,
@@ -300,7 +301,7 @@ export default class Book extends React.Component {
       //console.log('Book added to user wishlist');
     }).catch(error => console.warn(error));
 
-    userRef(local_uid).update({
+    userRef(uid).update({
       'stats.shelf_num': userShelf_num,
       'stats.wishlist_num': userWishlist_num,
       'stats.ratings_num': userRatings_num,
@@ -382,7 +383,7 @@ export default class Book extends React.Component {
       });
     };
 
-    userBookRef(local_uid, bid).update({
+    userBookRef(uid, bid).update({
       rating_num: rate
     }).then(() => {
       this.setState({ 
@@ -394,16 +395,16 @@ export default class Book extends React.Component {
       //console.log('User book rated with ' + rate + ' stars');
     }).catch(error => console.warn(error));
 
-    userRef(local_uid).update({
+    userRef(uid).update({
       'stats.ratings_num': userRatings_num
     }).then(() => {
       //console.log('User ratings number increased');
     }).catch(error => console.warn(error));
 	}
 
-	isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+  isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
 	
-	render() {
+	render(props) {
     const { book, isEditing, userBook } = this.state;
 
     if (!book) return null;
@@ -411,11 +412,17 @@ export default class Book extends React.Component {
 		return (
 			<div ref="BookComponent">
         {isEditing ?
-          <BookForm 
-            isEditing={this.isEditing} 
-            book={book} 
-            user={this.props.user}
-          />
+          <React.Fragment>
+            {isAuthenticated() ? 
+              <BookForm 
+                isEditing={this.isEditing} 
+                book={book} 
+                user={this.props.user}
+              />
+            : 
+              <div>Registrati</div>
+            }
+          </React.Fragment>
         :
           <BookProfile 
             addBookToShelf={this.addBookToShelf} 

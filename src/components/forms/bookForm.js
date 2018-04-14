@@ -3,7 +3,7 @@ import { bookType, funcType, userType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input'
 import { formats, genres, languages, validateImg } from '../../config/shared';
-import { bookRef, booksRef, collectionsRef, local_uid, storageRef } from '../../config/firebase';
+import { bookRef, booksRef, collectionsRef, uid, storageRef } from '../../config/firebase';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
@@ -149,7 +149,7 @@ export default class BookForm extends React.Component {
             ...noEDIT, 
             'EDIT.lastEdit_num': (new Date()).getTime(),
             'EDIT.lastEditBy': (this.props.user && this.props.user.displayName) || '',
-            'EDIT.lastEditByUid': local_uid || ''
+            'EDIT.lastEditByUid': uid || ''
           }).then(() => {
             this.setState({ 
               //redirectToReferrer: true,
@@ -171,7 +171,7 @@ export default class BookForm extends React.Component {
             EDIT: {
               created_num: (new Date()).getTime(),
               createdBy: (this.props.user && this.props.user.displayName) || '',
-              createdByUid: local_uid || ''
+              createdByUid: uid || ''
             }
           }).then(() => {
             this.setState({
@@ -336,7 +336,7 @@ export default class BookForm extends React.Component {
         <div className="container top">
           <form onSubmit={this.onSubmit} className="card">
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
-            <div className="container-md">
+            <div className="container md">
               <div className="edit-book-cover">
                 <Cover book={book} />
                 {!book.covers[0] && 

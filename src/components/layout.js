@@ -1,17 +1,17 @@
 import React from 'react';
-import { userType } from '../config/types';
-import { appName } from '../config/shared';
 import { AppBar, Avatar, CircularProgress, Dialog, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
-import { NavigationMenu, NavigationClose } from 'material-ui/svg-icons';
+import { NavigationClose, NavigationMenu } from 'material-ui/svg-icons';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import { NavLink, Link } from 'react-router-dom';
-import { auth, local_uid } from '../config/firebase';
+import { Link, NavLink } from 'react-router-dom';
+import { auth, uid } from '../config/firebase';
+import { appName } from '../config/shared';
+import { userType } from '../config/types';
 
 export default class Layout extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            uid: local_uid,
+            uid: uid,
             drawer: false,
             dialog: false
         }

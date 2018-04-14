@@ -25,6 +25,7 @@
     --ContrastedTextClr: #fff;
     --mainTextClr: rgba(230,250,255,.7);
     --ligthTextClr: rgba(230,250,255,.5);
+    --ligtherTextClr: rgba(230,250,255,.3);
     --linkClr: var(--primaryLigthClr);
     --linkClrHover: var(--primaryLigtherClr);
     --linkClrActive: var(--primaryClr);
@@ -66,7 +67,7 @@ p:last-child { margin-bottom: 0; }
     cursor: pointer;
 }
 
-a, .link { color: var(--linkClr); text-decoration: none; font-weight: 400; outline: none; transition: all .2s ease-in-out; }
+a, .link { color: var(--linkClr); text-decoration: none; font-size: inherit; font-weight: 400; outline: none; transition: all .2s ease-in-out; }
 a:hover, .link:hover { color: var(--linkClrHover); }
 a:active, .link:active { color: var(--linkClrActive); }
 a.active, .link.active { color: var(--accentClr); }
@@ -88,6 +89,7 @@ hr.line {
     --ContrastedTextClr: #000;
     --mainTextClr: #212529;
     --ligthTextClr: #aaa;
+    --ligthTextClr: #ddd;
     --linkClr: var(--primaryClr);
     --linkClrHover: var(--primaryLigthClr);
     --linkClrActive: var(--primaryDarkClr);
@@ -99,7 +101,7 @@ hr.line {
     color: var(--mainTextClr);
     padding: var(--cardPad);
     margin: 15px auto;
-    border-radius: 2px;
+    border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
     will-change: opacity;
     animation: fadeIn .4s ease-out backwards;
@@ -180,6 +182,7 @@ hr.line {
     --ContrastedTextClr: #fff;
     --mainTextClr: rgba(230,250,255,.7);
     --ligthTextClr: rgba(230,250,255,.5);
+    --ligtherTextClr: rgba(230,250,255,.3);
     --linkClr: var(--primaryLigthClr);
     --linkClrHover: var(--primaryLigtherClr);
     --linkClrActive: var(--primaryClr);
@@ -196,6 +199,7 @@ hr.line {
     --ContrastedTextClr: #fff;
     --mainTextClr: rgba(230,250,255,.7);
     --ligthTextClr: rgba(230,250,255,.5);
+    --ligtherTextClr: rgba(230,250,255,.3);
     --linkClr: rgba(255, 255, 255, .9);
     --linkClrHover: rgba(255, 255, 255, 1);
     --linkClrActive: rgba(255, 255, 255, .8);
@@ -288,9 +292,11 @@ hr.line {
     border-color: transparent;
     color: rgba(0,0,0,.15); 
     box-shadow: none; 
-    cursor: not-allowed; 
+    cursor: unset; 
     user-select: none; 
     transform: none;
+    transition: none;
+    will-change: none;
 }
 .btn.success, btn.success:hover, btn.success:active, .btn.success:disabled { background-color: var(--successClr); color: #fff; }
 .btn.error, btn.error:hover, btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: var(--errorClr); color: #fff; }
@@ -302,10 +308,10 @@ hr.line {
 /* CONTAINER */
 /* .container { transition: all .2s ease-in-out; } */
 .container .container { position: relative; padding-left: 0; padding-right: 0; }
-.container-xs, .container-sm, .container-md { margin-left: auto; margin-right: auto; float: none; max-width: 100%; }
-.container-xs { width: 320px; }
-.container-sm { width: 420px; }
-.container-md { width: 520px; }
+.container.xs, .container.sm, .container.md { margin-left: auto; margin-right: auto; float: none; width: 100%; }
+.container.xs { max-width: 320px; }
+.container.sm { max-width: 420px; }
+.container.md { max-width: 520px; }
 
 /* PENDING */
 .append {
@@ -895,14 +901,14 @@ hr.line {
 .review .head { line-height: 40px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
 .review .title { color: var(--ContrastedTextClr); }
-.review .foot { color: var(--ligthTextClr); }
+.review .foot { color: var(--ligthTextClr); font-size: .85rem; }
 .edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
 
 .review .foot .thumb { margin-right: 4px; }
-.thumb.false, .thumb.true:hover, .thumb:disabled { color: var(--ligthTextClr); }
+.thumb.false, .thumb.true:hover { color: var(--ligthTextClr); }
 .thumb.up.true, .thumb.up.false:hover { color: var(--linkClr); }
 .thumb.down.true, .thumb.down.false:hover { color: var(--errorClr); }
-.thumb:disabled { opacity: .4; cursor: not-allowed; }
+.thumb.up.link:disabled, .thumb.down.link:disabled { color: var(--ligthTextClr); cursor: unset; opacity: 1; }
 
 /* SKELETONS */
 .skltn.shelf-row {
