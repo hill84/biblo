@@ -16,7 +16,7 @@ export default class Book extends React.Component {
         publisher: (this.props.book && this.props.book.publisher) || '',
         title: (this.props.book && this.props.book.title) || '',
         subtitle: (this.props.book && this.props.book.subtitle) || '',
-        review: '',
+        review: {},
         readingState: '',
         rating_num: 0,
         bookInShelf: false,
@@ -174,7 +174,7 @@ export default class Book extends React.Component {
                 publisher: '',
                 title: '',
                 subtitle: '',
-                review: '',
+                review: {},
                 readingState: '',
                 rating_num: 0,
                 bookInShelf: false,
@@ -191,10 +191,11 @@ export default class Book extends React.Component {
     if (isAuthenticated() && (this.props.bid || this.state.book.bid)) {
       userBookRef(uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
         if (snap.exists) {
-          //console.log(`Update userBook ${this.state.book.bid}`);
+          console.log(`Update userBook ${this.props.bid || this.state.book.bid}`);
           this.setState({
             userBook: snap.data()
           });
+          console.log(this.state.userBook);
         } 
       });
     }
@@ -282,10 +283,10 @@ export default class Book extends React.Component {
       userRatings_num -= 1;
     }
 
-    if (this.state.userBook.review !== '') {
+    if (this.state.userBook.review !== {}) {
       userReviews_num -= 1;
       bookReviews_num -= 1;
-      userBookReview = '';
+      userBookReview = {};
     }
 
     userBookRef(uid, bid).set({
@@ -415,7 +416,7 @@ export default class Book extends React.Component {
 
     if (!book) {
       if (loading) {
-        return <div className="container"><div className="card dark empty text-align-center">caricamento in corso...</div></div>
+        return null;
       } else {
         return <NoMatch title="Libro non trovato" location={this.props.location} />
       }

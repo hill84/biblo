@@ -1,10 +1,11 @@
-import React from 'react';
 import { TextField } from 'material-ui';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import React from 'react';
 import Rater from 'react-rater';
-import { uid } from '../config/firebase';
-import { muiThemePrimary } from '../config/shared';
-import { userBookType } from '../config/types';
+import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
+import { icon } from '../config/icons';
+import { muiThemePrimary, timeSince } from '../config/shared';
+import { stringType, userBookType, userType } from '../config/types';
 import Avatar from './avatar';
  
 export default class UserReview extends React.Component {
@@ -14,12 +15,12 @@ export default class UserReview extends React.Component {
       bid: this.props.bid || '',
       user: this.props.user || {},
       userBook: this.props.userBook || {},
-      review: {},
+      review: this.props.userBook.review || null,
       changes: false,
       text_maxChars: 1500,
       title_maxChars: 255,
       loading: false,
-      authError: '',
+      serverError: '',
       errors: {},
       isEditing: false
     }
@@ -35,38 +36,47 @@ export default class UserReview extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    console.log('submitting');
-
     if (this.state.changes) {
       const errors = this.validate(this.state.review);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
-        // DO SOMETHING
-        if (this.props.bid) {
-          /* bookRef(this.props.bid).set({
-            // DO SOMETHING
+        if (this.state.bid) {
+          
+          reviewRef(this.state.bid, uid).set({
+            // POST BOOK REVIEW
           }).then(() => {
-            this.setState({
-              changes: false,
-              errors: {},
-              isEditing: false,
-              loading: false
-            });
-          }).catch(error => {
-            this.setState({
-              authError: error.message,
-              loading: false
-            });
-          }); */
-        } else {
-          // DO SOMETHING ELSE
-        }
+            // DO SOMETHING
+          }).catch(error => this.setState({ serverError: error.message }));
 
+          userBookRef(this.state.bid, uid).set({
+            // POST USER REVIEW
+          }).then(() => {
+            // DO SOMETHING
+          }).catch(error => this.setState({ serverError: error.message }));
+
+          bookRef(this.state.bid).set({
+            // INCREMENT BOOK REVIEWS
+          }).then(() => {
+            // DO SOMETHING
+          }).catch(error => this.setState({ serverError: error.message }));
+
+          userRef(this.state.bid).set({
+            // INCREMENT BOOK REVIEWS
+          }).then(() => {
+            // DO SOMETHING
+          }).catch(error => this.setState({ serverError: error.message }));
+
+          this.setState({ 
+            changes: false,
+            serverError: '',
+            isEditing: false, 
+            loading: false 
+          });
+
+        } else console.warn('no bid');
       }
-    } else {
-      this.setState({ isEditing: false });
-    }
+    } else this.setState({ isEditing: false });
   }
 
   onChangeMaxChars = e => {
@@ -99,38 +109,41 @@ export default class UserReview extends React.Component {
   render() {
     const { errors, isEditing, review, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
 
-    if (!user || !userBook.bookInShelf) return null;
+    if (!user || !userBook) return null;
 
     return (
       <div className="card primary user-review">
-        {userBook.review && !isEditing ?
-          <div className="review">
-            <div className="row">
-              <div className="col-auto left">
-                <Avatar src={user.photoURL} alt={user.displayName} />
-              </div>
-              <div className="col right">
-                <div className="head row">
-                  <div className="col-auto author">
-                    <h3>{user.displayName}</h3>
-                  </div>
-                  <div className="col text-align-right rating">
-                    <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
-                  </div>
+        {!isEditing ? (
+          review ? 
+            <div className="review">
+              <div className="row">
+                <div className="col-auto left">
+                  <Avatar src={user.photoURL} alt={user.displayName} />
                 </div>
-                <h4 className="title">Titolo</h4>
-                <p className="text">Testo della recensione</p>
-                <div className="foot row">
-                  <div className="col-auto likes">Like</div>
-                  <div className="col text-align-right">Date</div>
+                <div className="col right">
+                  <div className="head row">
+                    <div className="col-auto author">
+                      <h3>{user.displayName}</h3>
+                    </div>
+                    <div className="col text-align-right rating">
+                      <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
+                    </div>
+                  </div>
+                  <h4 className="title">{review.title}</h4>
+                  <p className="text">{review.text}</p>
+                  <div className="foot row">
+                    <div className="col-auto likes">
+                      <button className="link thumb up" title="mi piace">{icon.thumbUp()}</button> {review.likes_num}
+                    </div>
+                    <div className="col text-align-right date">{timeSince(review.created_num)}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        : !isEditing &&
-          <button className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
-        }
-        {isEditing &&
+          :
+            <button className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
+          )
+        :
           <MuiThemeProvider muiTheme={muiThemePrimary}>
             <form className="edit-review" onSubmit={this.onSubmit}>
               <div className="form-group">
@@ -177,6 +190,7 @@ export default class UserReview extends React.Component {
 }
 
 UserReview.propTypes = {
-  //user: userType.isRequired,
+  bid: stringType.isRequired,
+  //user: userType.isRequired, TODO
   userBook: userBookType
 }

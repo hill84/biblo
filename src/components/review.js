@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { reviewType } from '../config/types';
-import { timeSince } from '../config/shared';
 import { isAuthenticated } from '../config/firebase';
-import Rating from './rating';
-import Avatar from './avatar';
 import { icon } from '../config/icons';
+import { timeSince } from '../config/shared';
+import { reviewType } from '../config/types';
+import Avatar from './avatar';
+import Rating from './rating';
   
 const Review = props => (
   <div className="review">

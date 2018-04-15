@@ -91,7 +91,7 @@ hr.line {
     --ContrastedTextClr: #000;
     --mainTextClr: #212529;
     --ligthTextClr: #aaa;
-    --ligthTextClr: #ddd;
+    --ligtherTextClr: #ccc;
     --linkClr: var(--primaryClr);
     --linkClrHover: var(--primaryLigthClr);
     --linkClrActive: var(--primaryDarkClr);

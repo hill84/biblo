@@ -79,7 +79,11 @@ export const coverType = shape({
 });
 
 export const userBookType = shape({
-  review: string.isRequired,
+  review: shape({
+    created_num: numberType,
+    text: stringType,
+    title: stringType
+  }).isRequired,
   readingState: string.isRequired,
   rating_num: number.isRequired,
   bookInShelf: bool.isRequired,
