@@ -1,17 +1,15 @@
 import React from 'react';
-import { userType } from '../../config/types';
 import Book from '../book';
+import { UserContext } from '../../app';
 
 const BookContainer = props => {
   return (
     <div id="BookContainerComponent">
-      <Book bid={props.match.params.bid} user={props.user}/>
+      <UserContext.Consumer>
+        {user => <Book bid={props.match.params.bid} user={user}/>}
+      </UserContext.Consumer>
     </div>
   );
 };
 
 export default BookContainer;
-
-BookContainer.propTypes = {
-	user: userType
-}

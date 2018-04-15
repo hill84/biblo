@@ -37,7 +37,7 @@ export default class Rating extends React.Component {
   }
 }
 
-Rating.PropTypes = {
+Rating.propTypes = {
   ratings: ratingsType.isRequired,
   labels: boolType
 }

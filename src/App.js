@@ -16,10 +16,12 @@ import Signup from './components/pages/signup';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { muiTheme } from './config/shared';
 
+export const UserContext = React.createContext();
+
 export default class App extends React.Component {
-	constructor() {
-		super();
-		this.state = {
+	constructor(props){
+    super(props);
+    this.state = {
 			user: null
 		}
 	}
@@ -45,22 +47,24 @@ export default class App extends React.Component {
 
 		return (
 			<MuiThemeProvider muiTheme={muiTheme}>
-				<Layout user={user}>
-					<Switch>
-						<Route path="/" exact component={Home} />
-						<Route path="/login" component={Login} />
-						<Route path="/password-reset" component={PasswordResetForm} />
-						<Route path="/signup" component={Signup} />
-						<Route path="/collection/:cid" component={Collection} />
-						<Route path="/book/:bid" component={BookContainer} user={user} />
-						<Route path="/dashboard/:uid" component={Dashboard} user={user} />
-						<PrivateRoute path="/books/add" component={AddBook} user={user} />
-						<PrivateRoute path="/new-book" component={NewBook} user={user} />
-						<PrivateRoute path="/profile" exact component={Profile} />
-						<Redirect from="/home" to="/" />
-						<Route component={NoMatchPage} />
-					</Switch>
-				</Layout>
+				<UserContext.Provider value={user}>
+					<Layout user={user}>
+						<Switch>
+							<Route path="/" exact component={Home} />
+							<Route path="/login" component={Login} />
+							<Route path="/password-reset" component={PasswordResetForm} />
+							<Route path="/signup" component={Signup} />
+							<Route path="/collection/:cid" component={Collection} />
+							<Route path="/dashboard/:uid" component={Dashboard} user={user} />
+							<Route path="/book/:bid" component={BookContainer} />
+							<PrivateRoute path="/books/add" component={AddBook} user={user} />
+							<PrivateRoute path="/new-book" component={NewBook} user={user} />
+							<PrivateRoute path="/profile" exact component={Profile} />
+							<Redirect from="/home" to="/" />
+							<Route component={NoMatchPage} />
+						</Switch>
+					</Layout>
+				</UserContext.Provider>
 			</MuiThemeProvider>
 		);
 	}

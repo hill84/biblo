@@ -583,7 +583,7 @@ hr.line {
     content: '|';
     display: inline-block;
     margin: 0 10px;
-    color: rgba(195,200,205,.8);
+    color: var(--ligtherTextClr);
     font-weight: 200;
 }
 .counter:last-child:after { content: none; }
@@ -917,6 +917,8 @@ hr.line {
 .review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
 .review .title { color: var(--ContrastedTextClr); }
 .review .foot { color: var(--ligthTextClr); font-size: .85rem; }
+.review .foot .counter { display: inline-block; }
+.review .foot .btn { margin-top: 0; margin-bottom: 0; }
 .edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
 
 .review .foot .thumb { margin-right: 4px; }

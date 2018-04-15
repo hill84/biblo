@@ -1,5 +1,5 @@
-import React from 'react';
 import { CircularProgress } from 'material-ui';
+import React from 'react';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
@@ -116,7 +116,7 @@ export default class BookProfile extends React.Component {
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter">editore: {book.publisher}</span>}
-                  {user && user.roles && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
+                  {isAuthenticated() && user && user.roles && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
                 </div>
                 <div className="info-row">
                   <span className="counter">ISBN-13: {book.ISBN_13}</span>
@@ -193,7 +193,9 @@ export default class BookProfile extends React.Component {
             </div>
           </div>
 
-          {isAuthenticated() && <UserReview bid={book.bid} user={user} userBook={userBook} />}
+          {isAuthenticated() && userBook.bookInShelf && 
+            <UserReview bid={book.bid} bookReviewsNum={book.reviews_num} user={user} userBook={userBook} /> 
+          }
 
           <Reviews bid={book.bid} />
 

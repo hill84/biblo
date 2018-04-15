@@ -1,5 +1,5 @@
 import React from 'react';
-import { reviewsRef } from '../config/firebase';
+import { reviewsRef/* , uid */ } from '../config/firebase';
 import { stringType } from '../config/types';
 import Review from './review';
 
@@ -68,19 +68,22 @@ export default class Reviews extends React.Component {
 
 		return (
       <div className="card dark reviews">
-        {reviews.map(review => 
-          <Review key={review.createdByUid} review={{
-            photoURL: review.photoURL || '',
-            displayName: review.displayName || '',
-            createdByUid: review.createdByUid || '',
-            created_num: review.created_num || 0,
-            like: false, // TODO
-            likes_num: review.likes_num || 0,
-            rating_num: review.rating_num || 0,
-            text: review.text || '',
-            title: review.title || '',
-          }} />)
-        }
+        {reviews/* .filter(review => review.createdByUid !== uid) */.map(review => 
+          <Review 
+            key={review.createdByUid} 
+            review={{
+              photoURL: review.photoURL || '',
+              displayName: review.displayName || '',
+              createdByUid: review.createdByUid || '',
+              created_num: review.created_num || 0,
+              like: false, // TODO
+              likes_num: review.likes_num || 0,
+              rating_num: review.rating_num || 0,
+              text: review.text || '',
+              title: review.title || '',
+            }} 
+          />
+        )}
       </div>
 		);
 	}

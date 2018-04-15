@@ -1,21 +1,25 @@
 import { TextField } from 'material-ui';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import React from 'react';
-import Rater from 'react-rater';
 import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { muiThemePrimary, timeSince } from '../config/shared';
 import { stringType, userBookType, userType } from '../config/types';
 import Avatar from './avatar';
- 
+import Rating from './rating';
+
 export default class UserReview extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
       bid: this.props.bid || '',
+      bookReviews_num: this.props.bookReviews_num || 0,
       user: this.props.user || {},
       userBook: this.props.userBook || {},
-      review: this.props.userBook.review || null,
+      review: this.props.userBook.review && {
+        ...this.props.userBook.review,
+        created_num: this.props.userBook.review.created_num || 0
+      },
       changes: false,
       text_maxChars: 1500,
       title_maxChars: 255,
@@ -26,10 +30,43 @@ export default class UserReview extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps, prevState) {
-    if (nextProps.userBook !== prevState.userBook) {
-      this.setState({ userBook: nextProps.userBook });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps !== this.props) {
+      if (nextProps.user) {
+        this.setState({ 
+          bid: nextProps.bid,
+          user: nextProps.user,
+          userBook: nextProps.userBook,
+          review: {
+            ...this.state.review,
+            photoURL: nextProps.user.photoURL,
+            displayName: nextProps.user.displayName,
+            createdByUid: nextProps.user.uid,
+            rating_num: nextProps.userBook.rating_num
+          }
+        });
+      }
     }
+  }
+
+  componentDidMount () {
+    reviewRef(this.state.bid, uid).onSnapshot(snap => {
+      this.setState({ loading: true });
+      if (snap.exists) {
+        //console.log(snap.data());
+        this.setState({ review: snap.data() });
+      } else {
+        this.setState({ review: {
+          ...this.state.review,
+          created_num: 0,
+          likes_num: 0,
+          rating_num: 0,
+          text: '',
+          title: ''
+        }});
+      };
+      this.setState({ loading: false });
+    });
   }
 
   onEditing = () => this.setState({ isEditing: true });
@@ -44,27 +81,40 @@ export default class UserReview extends React.Component {
         if (this.state.bid) {
           
           reviewRef(this.state.bid, uid).set({
-            // POST BOOK REVIEW
+            ...this.state.review,
+            created_num: (new Date()).getTime()
           }).then(() => {
-            // DO SOMETHING
+            console.log(`Book review posted`);
           }).catch(error => this.setState({ serverError: error.message }));
 
-          userBookRef(this.state.bid, uid).set({
-            // POST USER REVIEW
+          userBookRef(uid, this.state.bid).update({
+            ...this.state.userBook,
+            review: {
+              ...this.state.review,
+              created_num: (new Date()).getTime()
+            }
           }).then(() => {
-            // DO SOMETHING
+            console.log(`User review posted`);
           }).catch(error => this.setState({ serverError: error.message }));
 
-          bookRef(this.state.bid).set({
-            // INCREMENT BOOK REVIEWS
+          let bookReviews_num = this.state.bookReviews_num;
+          let userReviews_num = this.state.user.reviews_num;
+
+          if (this.state.review.created_num === 0) {
+            bookReviews_num += 1;
+            userReviews_num += 1;
+          }
+
+          bookRef(this.state.bid).update({
+            reviews_num: bookReviews_num
           }).then(() => {
-            // DO SOMETHING
+            console.log(`Book reviews number increased`);
           }).catch(error => this.setState({ serverError: error.message }));
 
-          userRef(this.state.bid).set({
-            // INCREMENT BOOK REVIEWS
+          userRef(uid).update({
+            reviews_num: userReviews_num
           }).then(() => {
-            // DO SOMETHING
+            console.log(`User reviews number increased`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           this.setState({ 
@@ -74,7 +124,7 @@ export default class UserReview extends React.Component {
             loading: false 
           });
 
-        } else console.warn('no bid');
+        } else console.warn(`No bid`);
       }
     } else this.setState({ isEditing: false });
   }
@@ -114,7 +164,9 @@ export default class UserReview extends React.Component {
     return (
       <div className="card primary user-review">
         {!isEditing ? (
-          review ? 
+          review.created_num === 0 ? 
+            <button className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
+          :
             <div className="review">
               <div className="row">
                 <div className="col-auto left">
@@ -126,22 +178,25 @@ export default class UserReview extends React.Component {
                       <h3>{user.displayName}</h3>
                     </div>
                     <div className="col text-align-right rating">
-                      <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
+                      <Rating ratings={{rating_num: userBook.rating_num || 0}} />
                     </div>
                   </div>
                   <h4 className="title">{review.title}</h4>
                   <p className="text">{review.text}</p>
                   <div className="foot row">
                     <div className="col-auto likes">
-                      <button className="link thumb up" title="mi piace">{icon.thumbUp()}</button> {review.likes_num}
+                      <div className="counter">
+                        <button className="link thumb up" disabled title="mi piace">{icon.thumbUp()}</button> {review.likes_num || 0}
+                      </div>
+                      <div className="counter">
+                        <button className="btn sm flat" onClick={this.onEditing}>Modifica</button>
+                      </div>
                     </div>
                     <div className="col text-align-right date">{timeSince(review.created_num)}</div>
                   </div>
                 </div>
               </div>
             </div>
-          :
-            <button className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
           )
         :
           <MuiThemeProvider muiTheme={muiThemePrimary}>
@@ -179,7 +234,7 @@ export default class UserReview extends React.Component {
                 }
               </div>
               <div className="form-group">
-                <button className="btn flat centered">Pubblica</button>
+                <button className="btn flat centered" disabled={!this.state.changes}>Pubblica</button>
               </div>
             </form>
           </MuiThemeProvider>
@@ -191,6 +246,5 @@ export default class UserReview extends React.Component {
 
 UserReview.propTypes = {
   bid: stringType.isRequired,
-  //user: userType.isRequired, TODO
   userBook: userBookType
 }
