@@ -27,11 +27,12 @@ export default class Reviews extends React.Component {
     this.fetchReviews(this.state.bid);
   }
 
-  fetchReviews = bid => {
-    let reviews = [];
+  fetchReviews = bid => { 
     this.setState({ loading: true });
-    reviewsRef(bid).orderBy('created_num').orderBy('likes_num').limit(10).get().then(snap => {
+    reviewsRef(bid).orderBy('created_num').orderBy('likes_num').limit(10).onSnapshot(snap => {
+      //console.log(snap);
       if (!snap.empty) {
+        let reviews = [];
         snap.forEach(review => (review.data().createdByUid !== uid) && reviews.push(review.data()));
         this.setState({ 
           reviews: reviews,
@@ -48,7 +49,7 @@ export default class Reviews extends React.Component {
           //lastVisible: null
         });
       }
-    }).catch(error => console.warn("Error fetching reviews:", error));
+    });
   }
 	
 	render() {
