@@ -316,7 +316,7 @@ export default class BookForm extends React.Component {
 		}
 	};
 
-  exitEditing = () => this.props.isEditing();
+  onExitEditing = () => this.props.isEditing();
 	
 	render() {
     const { authError, book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
@@ -527,10 +527,10 @@ export default class BookForm extends React.Component {
                       onChange={this.onChangeMaxChars}
                       fullWidth={true}
                       multiLine={true}
-                      rows={4}
+                      //rows={4}
                     />
                     {(description_leftChars !== undefined) && 
-                      <p className={`message ${(description_leftChars < 0) && 'alert'}`}>Caratteri rimanenti: {description_leftChars}</p>
+                      <p className={`message ${(description_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {description_leftChars}</p>
                     }
                   </div>
                 :
@@ -553,10 +553,10 @@ export default class BookForm extends React.Component {
                       onChange={this.onChangeMaxChars}
                       fullWidth={true}
                       multiLine={true}
-                      rows={4}
+                      //rows={4}
                     />
                     {(incipit_leftChars !== undefined) && 
-                      <p className={`message ${(incipit_leftChars < 0) && 'alert'}`}>Caratteri rimanenti: {incipit_leftChars}</p>
+                      <p className={`message ${(incipit_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {incipit_leftChars}</p>
                     }
                   </div>
                 :
@@ -576,7 +576,7 @@ export default class BookForm extends React.Component {
             </div>
           </form>
           <div className="form-group">
-            <button onClick={this.exitEditing} className="btn flat centered">Annulla</button>
+            <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
           </div>
         </div>
       </div>

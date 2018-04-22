@@ -132,9 +132,8 @@ export default class Profile extends React.Component {
 
 		return (
 			<div className="container" ref="profileComponent">
-				{loading && <div className="loader"><CircularProgress /></div>}
 				<div className="card">
-					
+					{loading && <div className="loader"><CircularProgress /></div>}
 					<div className="container sm">
 						<div className="row basic-profile">
 							

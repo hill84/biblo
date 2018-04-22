@@ -1,9 +1,9 @@
-import React from 'react';
 import { AppBar, Avatar, CircularProgress, Dialog, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
 import { NavigationClose, NavigationMenu } from 'material-ui/svg-icons';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { auth, uid, isAuthenticated } from '../config/firebase';
+import { auth, uid } from '../config/firebase';
 import { appName } from '../config/shared';
 import { userType } from '../config/types';
 
@@ -16,7 +16,7 @@ export default class Layout extends React.Component {
     }
   }
   
-  toggleDrawer = () => this.setState({drawer: !this.state.drawer});
+  toggleDrawer = prevState => this.setState({drawer: !prevState.drawer});
   closeDrawer = () => this.setState({drawer: false});
 
   openDialog = () => this.setState({dialog: true});

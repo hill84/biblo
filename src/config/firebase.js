@@ -23,6 +23,7 @@ export const auth = firebase.auth();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
+//if (isAuthenticated()) console.log('Autenticato'); else console.log('Non autenticato');
 export const uid = auth.currentUser || localStorage.getItem(storageKey_uid);
 
 export const userRef = uid => db.collection('users').doc(uid);

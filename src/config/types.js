@@ -100,8 +100,7 @@ export const reviewType = shape({
   displayName: stringType.isRequired,
   createdByUid: stringType.isRequired,
   created_num: numberType.isRequired,
-  like: boolType.isRequired,
-  likes_num: numberType.isRequired,
+  likes: arrayOf(string).isRequired,
   rating_num: numberType.isRequired,
   text: stringType.isRequired,
   title: stringType

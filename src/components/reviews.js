@@ -1,5 +1,5 @@
 import React from 'react';
-import { reviewsRef/* , uid */ } from '../config/firebase';
+import { reviewsRef, uid } from '../config/firebase';
 import { stringType } from '../config/types';
 import Review from './review';
 
@@ -32,14 +32,14 @@ export default class Reviews extends React.Component {
     this.setState({ loading: true });
     reviewsRef(bid).orderBy('created_num').orderBy('likes_num').limit(10).get().then(snap => {
       if (!snap.empty) {
-        snap.forEach(review => reviews.push(review.data()));
+        snap.forEach(review => (review.data().createdByUid !== uid) && reviews.push(review.data()));
         this.setState({ 
           reviews: reviews,
           loading: false,
           page: 1,
           //lastVisible: snap.docs[snap.docs.length-1]
         });
-        //console.log(reviews);
+        //console.log(reviews.length);
       } else {
         this.setState({ 
           reviews: null,
@@ -52,9 +52,9 @@ export default class Reviews extends React.Component {
   }
 	
 	render() {
-    const { loading, reviews } = this.state;
+    const { bid, loading, reviews } = this.state;
 
-    if (!reviews) {
+    if (!reviews || reviews.length === 0) {
       if (loading) { 
         return null; 
       } else { 
@@ -71,12 +71,14 @@ export default class Reviews extends React.Component {
         {reviews/* .filter(review => review.createdByUid !== uid) */.map(review => 
           <Review 
             key={review.createdByUid} 
+            bid={bid}
+            like={review.likes.indexOf(uid) > -1 ? true : false}
             review={{
               photoURL: review.photoURL || '',
               displayName: review.displayName || '',
               createdByUid: review.createdByUid || '',
               created_num: review.created_num || 0,
-              like: false, // TODO
+              likes: review.likes || {},
               likes_num: review.likes_num || 0,
               rating_num: review.rating_num || 0,
               text: review.text || '',

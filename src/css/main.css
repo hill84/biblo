@@ -8,10 +8,10 @@
     --successClr: rgb(67, 160, 71);         /* green600 */
     --errorClr: rgb(244, 67, 54);           /* red500 */
     --alertClr: rgb(251, 140, 0);           /* orange600 */
-    --blueGrey900: rgb(38, 50, 56);         /* blueGrey900 canvas */
-    --blueGray801: rgb(50, 67, 78);         /* blueGray801 dark paper */
-    --blueGrey701: rgb(64, 86, 99);         /* blueGrey701 */
-    --mainBg: var(--blueGrey900);
+    --canvasClr: rgb(38, 50, 56);         /* blueGrey900 canvas */
+    --canvasLigthClr: rgb(50, 67, 78);         /* blueGray801 canvasligth */
+    --canvasLigtherClr: rgb(64, 86, 99);         /* blueGrey701 canvaslighter */
+    --mainBg: var(--canvasClr);
     --cardBg: var(--mainBg);
     --btnHeight: 36px;
     --btnPad: .8rem;
@@ -152,6 +152,7 @@ hr.line {
 }
 .card .edit-info:hover .show-on-hover { transform: scaleX(1); opacity: .98; }
 .card .edit-info:active { transform: none; }
+.card .empty { color: var(--ligthTextClr); }
 
 /* DIALOG */
 .dialog {
@@ -188,8 +189,8 @@ hr.line {
     --linkClr: var(--primaryLigthClr);
     --linkClrHover: var(--primaryLigtherClr);
     --linkClrActive: var(--primaryClr);
-    --btnDisabledBg: var(--blueGrey701);
-    --cardBg: var(--blueGray801);
+    --btnDisabledBg: var(--canvasLigtherClr);
+    --cardBg: var(--canvasLigthClr);
 }
 .card.dark, .dark .card,
 .card.primary, .primary .card { 
@@ -305,6 +306,7 @@ hr.line {
 .btn.success, btn.success:hover, btn.success:active, .btn.success:disabled { background-color: var(--successClr); color: #fff; }
 .btn.error, btn.error:hover, btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: var(--errorClr); color: #fff; }
 /* .btn.error-on-hover { min-width: 175px; } */
+.btn.flat:disabled { --btnDisabledBg: transparent; }
 
 .btn svg { width: 18px; height: 18px; }
 .btn.sm svg { width: 14px !important; height: 14px !important; }
@@ -911,6 +913,7 @@ hr.line {
 
 /* REVIEWS */
 .card.user-review, .card.reviews { padding-top: 14px; padding-bottom: 14px; }
+.card.user-review .footer { margin-bottom: -14px; }
 .review + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
 .review .left { padding-right: 0; }
 .review .head { line-height: 40px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
@@ -918,14 +921,17 @@ hr.line {
 .review .title { color: var(--ContrastedTextClr); }
 .review .foot { color: var(--ligthTextClr); font-size: .85rem; }
 .review .foot .counter { display: inline-block; }
-.review .foot .btn { margin-top: 0; margin-bottom: 0; }
+.review .foot .counter + .counter { margin-left: 3px; }
+.review .foot .counter:after { content: none; }
+.review .foot .btn { --btnFontSize: .75rem; --btnHeight: 26px; --btnPad: .5rem; margin-top: 0; margin-bottom: 0; }
 .edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
-
-.review .foot .thumb { margin-right: 4px; }
-.thumb.false, .thumb.true:hover { color: var(--ligthTextClr); }
-.thumb.up.true, .thumb.up.false:hover { color: var(--linkClr); }
-.thumb.down.true, .thumb.down.false:hover { color: var(--errorClr); }
-.thumb.up.link:disabled, .thumb.down.link:disabled { color: var(--ligthTextClr); cursor: unset; opacity: 1; }
+.review .foot .thumb { margin-left: calc(-1 * var(--btnPad)); }
+.review .foot .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
+.thumb.false:not(:hover), .thumb.true:hover { color: var(--ligthTextClr); }
+.thumb.up.true:not(:hover), .thumb.up.false:hover { color: var(--linkClr); }
+.thumb.down.true:not(:hover), .thumb.down.false:hover { color: var(--errorClr); }
+.thumb.true:hover:not(:disabled) svg { transform: rotateX(180deg); }
+.thumb.up:disabled, .thumb.down:disabled { color: var(--ligthTextClr); cursor: unset; opacity: 1; }
 
 /* SKELETONS */
 .skltn.shelf-row {

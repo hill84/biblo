@@ -4,7 +4,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { calcReadingTime, join, joinToLowerCase, timeSince } from '../../config/shared';
+import { calcReadingTime, join, timeSince } from '../../config/shared';
 import { funcType, userBookType } from '../../config/types';
 import Cover from '../cover';
 import Rating from '../rating';
@@ -125,7 +125,7 @@ export default class BookProfile extends React.Component {
                   {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
                   {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
                   {/* book.format && <span className="counter">Formato: {book.format}</span> */}
-                  {book.genres && book.genres[0] && <span className="counter">Gener{book.genres[1] ? 'i' : 'e'}: {joinToLowerCase(book.genres)}</span>}
+                  {book.genres && book.genres[0] && <span className="counter">Gener{book.genres[1] ? 'i' : 'e'}: {book.genres.join(", ")}</span>}
                 </div>
 
                 <div className="info-row">
@@ -194,7 +194,7 @@ export default class BookProfile extends React.Component {
           </div>
 
           {isAuthenticated() && userBook.bookInShelf && 
-            <UserReview bid={book.bid} bookReviewsNum={book.reviews_num} user={user} userBook={userBook} /> 
+            <UserReview bid={book.bid} bookReviews_num={book.reviews_num} user={user} userBook={userBook} /> 
           }
 
           <Reviews bid={book.bid} />

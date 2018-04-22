@@ -110,7 +110,7 @@ export default class Book extends React.Component {
             //console.log('Book and rating removed from user shelf stats');
           }).catch(error => console.warn(error));
 
-          if (this.state.userBook.review.created_num) {
+          if (!!this.state.userBook.review.created_num) {
             reviewRef(bid, uid).delete().then(() => {
               this.setState({ 
                 userBook: { 
@@ -247,9 +247,9 @@ export default class Book extends React.Component {
     if (isAuthenticated() && (this.props.bid || this.state.book.bid)) {
       userBookRef(uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
         if (snap.exists) {
-          console.log(`Update userBook ${this.props.bid || this.state.book.bid}`);
+          //console.log(`Update userBook ${this.props.bid || this.state.book.bid}`);
           this.setState({ userBook: snap.data() });
-          console.log(this.state.userBook);
+          //console.log(this.state.userBook);
         } 
       });
     }
@@ -270,25 +270,25 @@ export default class Book extends React.Component {
         bookInShelf: true,
         bookInWishlist: false
       }).then(() => {
-        this.setState({ 
+        /* this.setState({ 
           userBook: { 
             ...this.state.userBook, 
             bookInShelf: true, 
             bookInWishlist: false 
           }
-        });
+        }); */
         //console.log('Book added to user shelf');
       }).catch(error => console.warn(error));
 
       bookRef(bid).update({
         readers_num: bookReaders_num
       }).then(() => {
-        this.setState({ 
+        /* this.setState({ 
           book: { 
             ...this.state.book, 
             readers_num: bookReaders_num 
           }
-        });
+        }); */
         //console.log('Readers number increased');
       }).catch(error => console.warn(error));
 
@@ -334,19 +334,19 @@ export default class Book extends React.Component {
       userBookRef(uid, bid).set({
         ...this.state.userBook,
         /* rating_num: userBookRating_num,
-        review: userBookReview,
-        bookInShelf: false, */
+        review: userBookReview, */
+        bookInShelf: false,
         bookInWishlist: true
       }).then(() => {
-        this.setState({ 
+        /* this.setState({ 
           userBook: { 
             ...this.state.userBook, 
-            /* rating_num: userBookRating_num,
+            rating_num: userBookRating_num,
             review: userBookReview,
-            bookInShelf: false,  */
+            bookInShelf: false,
             bookInWishlist: true 
           }
-        });
+        }); */
         //console.log('Book added to user wishlist');
       }).catch(error => console.warn(error));
 
