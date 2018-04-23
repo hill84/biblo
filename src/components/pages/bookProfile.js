@@ -85,9 +85,11 @@ export default class BookProfile extends React.Component {
   }
 
   onEditing = () => this.props.isEditing();
-	
+  
 	render() {
     const { book, isIncipitOpen, isMinified, user, userBook } = this.state;
+    //const isAdmin = () => user && user.roles && user.roles.admin === true;
+    const isEditor = () => user && user.roles && user.roles.editor === true;
 
 		return (
       <div ref="BookProfileComponent">
@@ -116,7 +118,7 @@ export default class BookProfile extends React.Component {
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter">editore: {book.publisher}</span>}
-                  {isAuthenticated() && user && user.roles && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
+                  {isAuthenticated() && isEditor() && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
                 </div>
                 <div className="info-row">
                   <span className="counter">ISBN-13: {book.ISBN_13}</span>
@@ -193,7 +195,7 @@ export default class BookProfile extends React.Component {
             </div>
           </div>
 
-          {isAuthenticated() && userBook.bookInShelf && 
+          {isAuthenticated() && isEditor() && userBook.bookInShelf && 
             <UserReview bid={book.bid} bookReviews_num={book.reviews_num} user={user} userBook={userBook} /> 
           }
 

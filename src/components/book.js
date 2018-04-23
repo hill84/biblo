@@ -244,7 +244,7 @@ export default class Book extends React.Component {
       });
     }
 
-    if (isAuthenticated() && (this.props.bid || this.state.book.bid)) {
+    if (isAuthenticated() && uid && (this.props.bid || this.state.book.bid)) {
       userBookRef(uid, (this.props.bid || this.state.book.bid)).onSnapshot(snap => {
         if (snap.exists) {
           //console.log(`Update userBook ${this.props.bid || this.state.book.bid}`);

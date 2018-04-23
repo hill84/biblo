@@ -2,7 +2,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { blueGrey900, cyan700, cyan900, orange600, orange800 } from 'material-ui/styles/colors';
 //import { emphasize } from 'material-ui/utils/colorManipulator';
 
-export const appName = 'deLibris';
+export const appName = 'Biblo';
 
 /* https://github.com/mui-org/material-ui/blob/master/src/styles/getMuiTheme.js */
 export const muiTheme = getMuiTheme({

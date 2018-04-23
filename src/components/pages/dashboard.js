@@ -56,44 +56,46 @@ export default class Dashboard extends React.Component {
 	}
 
 	onFollowUser = (luid, uid) => {
-		luid = this.state.luid;
-		uid = this.state.uid;
-
-		let visitedFollowers_num = this.state.user.stats.followers_num;
-		let visitedFollowers = this.state.user.stats.followers || [];
-		let visitedFollowersIndex = visitedFollowers.indexOf(luid);
-
-		let visitorFollowed_num = this.props.user.stats.followed_num;
-		let visitorFollowed = this.props.user.stats.followed || [];
-		let visitorFollowedIndex = visitorFollowed.indexOf(uid);
-
-		if (this.state.follow/*  || visitedFollowersIndex > -1 */) {
-			visitedFollowers_num -= 1;
-			visitorFollowed_num -= 1;
-			visitedFollowers.splice(visitedFollowersIndex, 1);
-			visitorFollowed.splice(visitorFollowedIndex, 1);
-		} else {
-			visitedFollowers_num += 1;
-			visitorFollowed_num += 1;
-			visitedFollowers.push(luid);
-			visitorFollowed.push(uid);
+		if (isAuthenticated()) {
+			luid = this.state.luid;
+			uid = this.state.uid;
+	
+			let visitedFollowers_num = this.state.user.stats.followers_num;
+			let visitedFollowers = this.state.user.stats.followers || [];
+			const visitedFollowersIndex = visitedFollowers.indexOf(luid);
+	
+			let visitorFollowed_num = this.props.user.stats.followed_num;
+			let visitorFollowed = this.props.user.stats.followed || [];
+			const visitorFollowedIndex = visitorFollowed.indexOf(uid);
+	
+			if (this.state.follow/* || visitedFollowersIndex > -1 */) {
+				visitedFollowers_num -= 1;
+				visitorFollowed_num -= 1;
+				visitedFollowers.splice(visitedFollowersIndex, 1);
+				visitorFollowed.splice(visitorFollowedIndex, 1);
+			} else {
+				visitedFollowers_num += 1;
+				visitorFollowed_num += 1;
+				visitedFollowers.push(luid);
+				visitorFollowed.push(uid);
+			}
+	
+			// VISITED
+			userRef(uid).update({
+				'stats.followers_num': visitedFollowers_num,
+				'stats.followers': visitedFollowers
+			}).then(() => {
+				//console.log(`follow ${uid}`);
+			});
+	
+			// VISITOR
+			userRef(luid).update({
+				'stats.followed_num': visitorFollowed_num,
+				'stats.followed': visitorFollowed
+			}).then(() => {
+				//console.log(`Unfollow ${uid}`);
+			});
 		}
-
-		// VISITED
-		userRef(uid).update({
-			'stats.followers_num': visitedFollowers_num,
-			'stats.followers': visitedFollowers
-		}).then(() => {
-			//console.log('follow');
-		});
-
-		// VISITOR
-		userRef(luid).update({
-			'stats.followed_num': visitorFollowed_num,
-			'stats.followed': visitorFollowed
-		}).then(() => {
-			//console.log('unfollow');
-		});
 	}
 
 	render(props) {

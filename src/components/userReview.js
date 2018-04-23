@@ -242,7 +242,7 @@ export default class UserReview extends React.Component {
                       <div className="foot row">
                         <div className="col-auto likes">
                           <div className="counter">
-                            <button className="btn flat thumb up" disabled title="mi piace">{icon.thumbUp()} {review.likes.length || 0}</button>
+                            <button className="btn flat thumb up" disabled title={`Piace a ${review.likes.length}`}>{icon.thumbUp()} {review.likes.length}</button>
                           </div>
                           <div className="counter">
                             <button className="btn flat" onClick={this.onEditing}>Modifica</button>
