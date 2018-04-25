@@ -11,32 +11,44 @@ export default class Layout extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      drawer: false,
-      dialog: false
+      drawerIsOpen: false,
+      dialogIsOpen: false,
     }
   }
   
-  toggleDrawer = prevState => this.setState({drawer: !prevState.drawer});
-  closeDrawer = () => this.setState({drawer: false});
+  onToggleDrawer = prevState => this.setState({drawerIsOpen: !prevState.drawerIsOpen});
+  onCloseDrawer = () => this.setState({drawerIsOpen: false});
 
-  openDialog = () => this.setState({dialog: true});
-  closeDialog = () => this.setState({dialog: false});
-
-  //logout = () => auth.signOut();
+  onOpenDialog = () => this.setState({dialogIsOpen: true});
+  onCloseDialog = () => this.setState({dialogIsOpen: false});
 
   render(props) {
-    const { dialog, drawer } = this.state;
+    const { dialogIsOpen, drawerIsOpen } = this.state;
     const { user } = this.props;
+
+    const actions = [
+      <FlatButton
+        label="Annulla"
+        primary={true}
+        onClick={this.onCloseDialog}
+      />,
+      <FlatButton
+        label="Prosegui"
+        primary={true}
+        disabled={true}
+        onClick={this.onCloseDialog}
+      />,
+    ];
 
     return (
       <div id="layoutComponent">
         <AppBar 
           id="appBarComponent"
           position="static"
-          title={appName}
+          title={<Link to="/">{appName}</Link>}
           iconElementLeft={
-            <IconButton onClick={this.toggleDrawer}> 
-              {drawer ? <NavigationClose /> : <NavigationMenu />}
+            <IconButton onClick={this.onToggleDrawer}> 
+              {drawerIsOpen ? <NavigationClose /> : <NavigationMenu />}
             </IconButton>
           }
           iconElementRight={ 
@@ -46,11 +58,11 @@ export default class Layout extends React.Component {
         
         <Drawer
           docked={false}
-          open={drawer}
-          onRequestChange={drawer => this.setState({drawer})}>
-          <nav onClick={this.closeDrawer}>
+          open={drawerIsOpen}
+          onRequestChange={drawerIsOpen => this.setState({drawerIsOpen})}>
+          <nav onClick={this.onCloseDrawer}>
             {user && uid ? 
-              <div>
+              <React.Fragment>
                 <NavLink to="/profile" className="auth-header">
                   <div className="background" style={{backgroundImage: `url(${user.photoURL})`}} />
                   <div className="user">
@@ -62,7 +74,7 @@ export default class Layout extends React.Component {
                   </div>
                 </NavLink>
                 <NavLink to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></NavLink>
-              </div>
+              </React.Fragment>
             :
               <div className="auth-header-buttons">
                 <NavLink to="/login"><MenuItem>Login</MenuItem></NavLink>
@@ -76,12 +88,16 @@ export default class Layout extends React.Component {
         {this.props.children}
         
         <Dialog
-          contentClassName="dialog"
-          title="Dialog title"
-          open={dialog}
-          contentStyle={{width: '340px', maxWidth: '94%', textAlign: 'center'}}>
-          Some text
-          {this.props.loading && <div className="loader"><CircularProgress /></div>}
+          contentClassName="dialog-container"
+          paperClassName="schiribizzo"
+          open={dialogIsOpen}
+          actions={actions}
+          modal={false}
+          onRequestClose={this.onCloseDialog}
+          autoScrollBodyContent={true}
+          title="Title"
+        >
+          Some content
         </Dialog>
       </div> 
     )
@@ -98,7 +114,7 @@ const Logged = props => (
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
   >
     <Link to="/profile"><MenuItem primaryText="Profilo" /></Link>
-    {/* <Link to="/dashboard"><MenuItem primaryText="Dashboard" /></Link> */}
+    <Link to={`/dashboard/${uid}`}><MenuItem primaryText="Dashboard" /></Link>
     <MenuItem primaryText="Logout" onClick={logout} />
   </IconMenu>
 );

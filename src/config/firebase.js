@@ -20,6 +20,7 @@ export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
 export const auth = firebase.auth();
+//export const logOut = () => auth.signOut();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);

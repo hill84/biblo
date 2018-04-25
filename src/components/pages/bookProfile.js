@@ -23,6 +23,8 @@ export default class BookProfile extends React.Component {
       userBook: this.props.userBook,
       loading: false,
       errors: {},
+      isIncipitBig: false,
+      isIncipitDark: false,
       isIncipitOpen: false,
       isMinified: false
     }
@@ -78,43 +80,70 @@ export default class BookProfile extends React.Component {
     })); 
   }
 
-  onOpenIncipit = () => {
+  onToggleIncipit = () => {
     this.setState(prevState => ({
       isIncipitOpen: !prevState.isIncipitOpen
+    })); 
+  }
+
+  onToggleIncipitDarkTheme = () => {
+    this.setState(prevState => ({
+      isIncipitDark: !prevState.isIncipitDark
+    })); 
+  }
+
+  onToggleIncipitSize = () => {
+    this.setState(prevState => ({
+      isIncipitBig: !prevState.isIncipitBig
     })); 
   }
 
   onEditing = () => this.props.isEditing();
   
 	render() {
-    const { book, isIncipitOpen, isMinified, user, userBook } = this.state;
+    const { book, isIncipitBig, isIncipitDark, isIncipitOpen, isMinified, user, userBook } = this.state;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
 
 		return (
       <div ref="BookProfileComponent">
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
+
+        {isIncipitOpen && 
+          <React.Fragment>
+            <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${isIncipitDark ? 'dark' : 'light'}`}>
+              <div class="content">
+                <div role="navigation" className="head nav row">
+                  <strong className="col title">{book.title}</strong>
+                  <div className="col-auto btn-row">
+                    <button className="btn icon clear" onClick={this.onToggleIncipitSize} title="Formato">{icon.formatSize()}</button> 
+                    <button className="btn icon clear" onClick={this.onToggleIncipitDarkTheme} title="Tema">{icon.lightbulb()}</button> 
+                    <button className="btn icon clear" onClick={this.onToggleIncipit} title="Chiudi">{icon.close()}</button>
+                  </div>
+                </div>
+                <p id="incipit" class={isIncipitBig ? 'big' : 'regular'}>{book.incipit}</p>
+              </div>
+            </div>
+            <div className="overlay" onClick={this.onToggleIncipit}></div>
+          </React.Fragment>
+        }
+
         <div className="container top">
           <div className="card main text-align-center-sm">
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
             <div className="row">
               <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
                 {book.incipit ? 
-                  <div role="button" className="hoverable-items" onClick={this.onOpenIncipit}>
+                  <div role="button" className="hoverable-items" onClick={this.onToggleIncipit}>
                     <Cover book={book} rating={false} info={false} />
-                    {isIncipitOpen && 
-                      <div role="dialog" aria-describedby="incipit" className="dialog book-incipit">
-                        <p id="incipit">{book.incipit}</p>
-                      </div>
-                    }
                   </div>
                 :
                   <Cover book={book} rating={false} info={false} />
                 }
               </div>
               <div className="col book-profile">
-                <h2 className="title">{book.title || ''}</h2>
-                {book.subtitle && <h3 className="subtitle">{book.subtitle || ''}</h3>}
+                <h2 className="title">{book.title}</h2>
+                {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter">editore: {book.publisher}</span>}
