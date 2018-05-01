@@ -359,10 +359,13 @@ export default class BookForm extends React.Component {
             <div className="container md">
               <div className="edit-book-cover">
                 <Cover book={book} />
-                {!book.covers[0] && 
-                  <button className="btn sm neutral centered overlay">
+                {isAdmin() && !book.covers[0] && 
+                  <button className="btn sm flat centered">
+                    <span>Carica un'immagine</span>
                     <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
-                    <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+                    {(imgProgress > 0) && 
+                      <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+                    }
                   </button>
                 }
               </div>
@@ -522,19 +525,21 @@ export default class BookForm extends React.Component {
                     {menuItemsMap(genres, book.genres)}
                   </SelectField>
                 </div>
-                <div className="form-group">
-                  <ChipInput
-                    name="collections"
-                    hintText="es: Sherlock Holmes"
-                    errorText={errors.collections}
-                    floatingLabelText="Collezione (max 5)"
-                    value={book.collections}
-                    onRequestAdd={chip => this.onAddChip("collections", chip)}
-                    onRequestDelete={chip => this.onDeleteChip("collections", chip)}
-                    disabled={isAdmin()}
-                    fullWidth={true}
-                  />
-                </div>
+                {isAdmin() &&
+                  <div className="form-group">
+                    <ChipInput
+                      name="collections"
+                      hintText="es: Sherlock Holmes"
+                      errorText={errors.collections}
+                      floatingLabelText="Collezione (max 5)"
+                      value={book.collections}
+                      onRequestAdd={chip => this.onAddChip("collections", chip)}
+                      onRequestDelete={chip => this.onDeleteChip("collections", chip)}
+                      disabled={!isAdmin()}
+                      fullWidth={true}
+                    />
+                  </div>
+                }
                 {isEditingDescription /* || book.description */ ?
                   <div className="form-group">
                     <TextField

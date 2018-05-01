@@ -48,31 +48,29 @@ export default class UserReview extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(this.state.bid !== prevState.bid || this.state.user !== prevState.user){
-      this.fetchReviews(this.state.bid);
+      this.fetchUserReview();
     }
   }
 
   fetchUserReview = () => {
-    if (this.state.bookReviews_num > 0) {
-      reviewRef(this.state.bid, uid).onSnapshot(snap => {
-        this.setState({ loading: true });
-        if (snap.exists) {
-          //console.log(snap.data());
-          this.setState({ review: snap.data() });
-        } else {
-          this.setState({ review: {
-            ...this.state.review,
-            created_num: 0,
-            likes: [],
-            likes_num: 0,
-            rating_num: 0,
-            text: '',
-            title: ''
-          }});
-        };
-        this.setState({ loading: false });
-      });
-    } //else console.log(`BookReviews_num: 0`);
+    reviewRef(this.state.bid, uid).onSnapshot(snap => {
+      this.setState({ loading: true });
+      if (snap.exists) {
+        //console.log(snap.data());
+        this.setState({ review: snap.data() });
+      } else {
+        this.setState({ review: {
+          ...this.state.review,
+          created_num: 0,
+          likes: [],
+          likes_num: 0,
+          rating_num: 0,
+          text: '',
+          title: ''
+        }});
+      };
+      this.setState({ loading: false });
+    });
   }
 
   onEditing = () => this.setState({ isEditing: true });
