@@ -1,4 +1,4 @@
-import { TextField } from 'material-ui';
+import TextField from 'material-ui/TextField';
 import React from 'react';
 import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
@@ -35,48 +35,44 @@ export default class UserReview extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.bid !== prevState.bid) {
-      return { bid: nextProps.bid };
-    }
-    if (nextProps.bookReviews_num !== prevState.bookReviews_num) {
-      return { bookReviews_num: nextProps.bookReviews_num };
-    }
-    if (nextProps.user !== prevState.user) {
-      return { 
-        user: nextProps.user
-      };
-    }
-    if (nextProps.userBook !== prevState.userBook) {
-      return { 
-        userBook: nextProps.userBook
-      };
-    }
+    if (nextProps.bid !== prevState.bid) { return { bid: nextProps.bid }}
+    if (nextProps.bookReviews_num !== prevState.bookReviews_num) { return { bookReviews_num: nextProps.bookReviews_num }}
+    if (nextProps.user !== prevState.user) { return { user: nextProps.user }}
+    if (nextProps.userBook !== prevState.userBook) { return { userBook: nextProps.userBook }}
     return null;
   }
 
-  componentDidMount () {
+  componentDidMount(prevState) {
     this.fetchUserReview();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.bid !== prevState.bid || this.state.user !== prevState.user){
+      this.fetchReviews(this.state.bid);
+    }
+  }
+
   fetchUserReview = () => {
-    reviewRef(this.state.bid, uid).onSnapshot(snap => {
-      this.setState({ loading: true });
-      if (snap.exists) {
-        //console.log(snap.data());
-        this.setState({ review: snap.data() });
-      } else {
-        this.setState({ review: {
-          ...this.state.review,
-          created_num: 0,
-          likes: [],
-          likes_num: 0,
-          rating_num: 0,
-          text: '',
-          title: ''
-        }});
-      };
-      this.setState({ loading: false });
-    });
+    if (this.state.bookReviews_num > 0) {
+      reviewRef(this.state.bid, uid).onSnapshot(snap => {
+        this.setState({ loading: true });
+        if (snap.exists) {
+          //console.log(snap.data());
+          this.setState({ review: snap.data() });
+        } else {
+          this.setState({ review: {
+            ...this.state.review,
+            created_num: 0,
+            likes: [],
+            likes_num: 0,
+            rating_num: 0,
+            text: '',
+            title: ''
+          }});
+        };
+        this.setState({ loading: false });
+      });
+    } //else console.log(`BookReviews_num: 0`);
   }
 
   onEditing = () => this.setState({ isEditing: true });
@@ -92,12 +88,12 @@ export default class UserReview extends React.Component {
           reviewRef(this.state.bid, uid).set({
             ...this.state.review,
             createdByUid: this.state.user.uid,
-            created_num: (new Date()).getTime(),
+            created_num: Number((new Date()).getTime()),
             displayName: this.state.user.displayName,
             photoURL: this.state.user.photoURL,
             rating_num: this.state.userBook.rating_num
           }).then(() => {
-            console.log(`Book review created`);
+            //console.log(`Book review created`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           userBookRef(uid, this.state.bid).update({
@@ -107,7 +103,7 @@ export default class UserReview extends React.Component {
               created_num: (new Date()).getTime()
             }
           }).then(() => {
-            console.log(`User review posted`);
+            //console.log(`User review posted`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           let bookReviews_num = this.state.bookReviews_num;
@@ -122,13 +118,13 @@ export default class UserReview extends React.Component {
             reviews_num: bookReviews_num
           }).then(() => {
             this.setState({ bookReviews_num: bookReviews_num });
-            console.log(`Book reviews increased to ${bookReviews_num}`);
+            //console.log(`Book reviews increased to ${bookReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           userRef(uid).update({
             'stats.reviews_num': userReviews_num
           }).then(() => {
-            console.log(`User reviews increased to ${userReviews_num}`);
+            //console.log(`User reviews increased to ${userReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           this.setState({ 

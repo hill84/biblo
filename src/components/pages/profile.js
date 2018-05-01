@@ -102,7 +102,7 @@ export default class Profile extends React.Component {
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
 				});
 			}, error => {
-				console.warn('upload error: ' + error);
+				console.warn(`Upload error: ${error}`);
 				errors.upload = true;
 			}, () => {
 				//console.log('upload completed');

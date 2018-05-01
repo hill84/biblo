@@ -7,32 +7,47 @@ import { skltn_shelfRow } from './skeletons';
 import Cover from './cover';
 
 export default class BookCollection extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-      cid: this.props.cid || 'top',
-      bcid: this.props.bcid || 'bcid',
-      limit: this.props.limit || (this.props.pagination || this.props.scrollable) ? 7 : 98,
-      scrollable: this.props.scrollable || false,
-      pagination: this.props.pagination || false,
-      stacked: this.props.stacked || false,
-      collection: null,
-      collectionCount: 0,
-      loading: true,
-      page: null,
-			lastVisible: null
-    }
-  }
-  
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.cid !== this.props.cid || nextProps.bcid !== this.props.bcid || nextProps.limit !== this.props.limit) {
-      this.setState({ cid: nextProps.cid });
-      this.fetchCollection(nextProps.cid, nextProps.bcid, nextProps.limit);
-    }
+	state = {
+    cid: this.props.cid || 'top',
+    bcid: this.props.bcid || 'bcid',
+    limit: this.props.limit || (this.props.pagination || this.props.scrollable) ? 7 : 98,
+    scrollable: this.props.scrollable || false,
+    pagination: this.props.pagination || false,
+    stacked: this.props.stacked || false,
+    collection: null,
+    collectionCount: 0,
+    loading: true,
+    page: null,
+    lastVisible: null
   }
 
-	componentDidMount(props) {
+  static propTypes = {
+    cid: stringType.isRequired,
+    bcid: stringType,
+    limit: numberType,
+    pagination: boolType,
+    scrollable: boolType,
+    stacked: boolType
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.cid !== prevState.cid) { return { cid: nextProps.cid || 'top' }; }
+    if (nextProps.bcid !== prevState.bcid) { return { bcid: nextProps.bcid || 'bcid' }; }
+    if (nextProps.limit !== prevState.limit) { return { limit: nextProps.limit || (this.state.pagination || this.state.scrollable) ? 7 : 98 }; }
+    if (nextProps.scrollable !== prevState.scrollable) { return { scrollable: nextProps.scrollable || false }; }
+    if (nextProps.pagination !== prevState.pagination) { return { pagination: nextProps.pagination || false }; }
+    if (nextProps.stacked !== prevState.stacked) { return { stacked: nextProps.stacked || false }; }
+    return null;
+  }
+
+  componentDidMount() {
     this.fetchCollection(this.state.cid, this.state.bcid, this.state.limit);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.cid !== prevState.cid || this.state.bcid !== prevState.bcid || this.state.limit !== prevState.limit){
+      this.fetchCollection(this.state.cid, this.state.bcid, this.state.limit);
+    }
   }
 
   fetchCollection = (cid, bcid, limit) => {
@@ -150,13 +165,4 @@ export default class BookCollection extends React.Component {
       </div>	
 		)
 	}
-}
-
-BookCollection.propTypes = {
-  cid: stringType.isRequired,
-  bcid: stringType,
-  limit: numberType,
-  pagination: boolType,
-  scrollable: boolType,
-  stacked: boolType
 }

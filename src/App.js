@@ -33,7 +33,7 @@ export default class App extends React.Component {
 				userRef(user.uid).onSnapshot(snap => {
 					if (snap.exists) {
 						this.setState({ user: snap.data() });
-					} 
+					} else console.warn(`User not found in database`);
         });
 			} else {
 				window.localStorage.removeItem(storageKey_uid);

@@ -23,7 +23,7 @@ export default class Book extends React.Component {
         bookInShelf: false,
         bookInWishlist: false 
       },
-      isEditing: false,
+      isEditing: this.props.isEditing || false,
       loading: false
     }
     
@@ -146,6 +146,12 @@ export default class Book extends React.Component {
         } else console.warn(`no bookshelf named "${bookshelf}"`);
       } else console.warn(`Cannot perform action because user is not authenticated`);
     }
+  }
+
+  static propTypes = {
+    bid: stringType,
+    book: bookType,
+    user: userType
   }
 
   componentWillReceiveProps(nextProps) {
@@ -491,10 +497,4 @@ export default class Book extends React.Component {
 			</div>
 		);
 	}
-}
-
-Book.propTypes = {
-  bid: stringType,
-  book: bookType,
-  user: userType
 }

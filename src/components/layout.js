@@ -1,9 +1,18 @@
-import { AppBar, Avatar, CircularProgress, Dialog, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
-import { NavigationClose, NavigationMenu } from 'material-ui/svg-icons';
+import AppBar from 'material-ui/AppBar';
+import Avatar from 'material-ui/Avatar';
+import Dialog from 'material-ui/Dialog';
+import Drawer from 'material-ui/Drawer';
+import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { auth, uid } from '../config/firebase';
+import Link from 'react-router-dom/Link';
+import NavLink from 'react-router-dom/NavLink';
+import { signOut, uid } from '../config/firebase';
 import { appName } from '../config/shared';
 import { userType } from '../config/types';
 
@@ -104,8 +113,6 @@ export default class Layout extends React.Component {
   }
 }
 
-const logout = () => auth.signOut();
-
 const Logged = props => (
   <IconMenu
     {...props}
@@ -115,7 +122,7 @@ const Logged = props => (
   >
     <Link to="/profile"><MenuItem primaryText="Profilo" /></Link>
     <Link to={`/dashboard/${uid}`}><MenuItem primaryText="Dashboard" /></Link>
-    <MenuItem primaryText="Logout" onClick={logout} />
+    <MenuItem primaryText="Logout" onClick={() => signOut()} />
   </IconMenu>
 );
 Logged.muiName = 'IconMenu';

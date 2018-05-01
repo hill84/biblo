@@ -1,8 +1,8 @@
-import { CircularProgress } from 'material-ui';
+import CircularProgress from 'material-ui/CircularProgress';
 import { Tab, Tabs } from 'material-ui/Tabs';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { isAuthenticated, uid, userRef } from '../../config/firebase';
+import Link from 'react-router-dom/Link';
+import { isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { appName, calcAge, joinToLowerCase } from '../../config/shared';
 import { userType } from '../../config/types';
@@ -14,7 +14,7 @@ export default class Dashboard extends React.Component {
  	constructor(props) {
 		super(props);
 		this.state = {
-			luid: uid,
+			luid: this.props.user && this.props.user.uid,
 			uid: null,
 			user: null,
 			follow: false,
@@ -23,34 +23,32 @@ export default class Dashboard extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
-		const { user, match } = nextProps;
-		if (nextProps !== this.props) {
-			if (match.params.uid) {
-				userRef(match.params.uid).onSnapshot(snap => {
-					this.setState({ loading: false });
-					if (snap.exists) {
-						this.setState({
-							user: snap.data(),
-							uid: match.params.uid,
-							follow: (user && user.stats.followed) && user.stats.followed.indexOf(match.params.uid) > -1
-						});
-					} else this.setState({ user: null });
-				});
-			} else this.setState({ user: user });
-		}
-	}
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if ((nextProps.user && nextProps.user.uid) !== prevState.luid) { return { luid: nextProps.user && nextProps.user.uid }; }
+    if (nextProps.match.params.uid !== prevState.uid) { return { uid: nextProps.match.params.uid }; }
+    return null;
+  }
 
-	componentDidMount(props) {
-		const { user, match } = this.props;
+  componentDidMount() {
+  	this.fetchUser();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.uid !== prevState.uid || this.state.luid !== prevState.luid){
+      this.fetchUser();
+    }
+	}
+	
+	fetchUser = () => {
+		const { match } = this.props;
+		const { luid, user } = this.state;
 		if (match.params.uid) {
 			userRef(match.params.uid).onSnapshot(snap => {
 				this.setState({ loading: false });
 				if (snap.exists) {
 					this.setState({
 						user: snap.data(),
-						uid: match.params.uid,
-						follow: (user && user.stats.followed) && user.stats.followed.indexOf(match.params.uid) > -1
+						follow: (user && user.stats.followers) && user.stats.followers.indexOf(luid) > -1
 					});
 				} else this.setState({ user: null });
 			});
@@ -124,7 +122,7 @@ export default class Dashboard extends React.Component {
 									{user.roles.admin && <div className="badge admin">Admin</div>}
 									{user.roles.editor && <div className="badge editor">Editor</div>}
 								</div>
-								<div className="row text-align-center-sm">
+								<div className="row text-align-center-md">
 									<div className="col-md-auto col-sm-12">
 										<Avatar size={70} src={user.photoURL} alt={user.displayName} />
 									</div>
@@ -133,19 +131,14 @@ export default class Dashboard extends React.Component {
 										<div className="info-row">
 											{user.sex && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : 'Altro'}</span>}
 											{user.birth_date && <span className="counter">{calcAge(user.birth_date)} anni</span>}
-											<span className="counter comma">
+											<span className="counter hide-xs comma">
 												{user.city && <span className="counter">{user.city}</span>}
 												{user.country && <span className="counter">{user.country}</span>}
 												{user.continent && <span className="counter">{user.continent}</span>}
 											</span>
-											{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
+											{user.languages && <span className="counter hide-sm">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 											{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 											{isOwner && progress === 100 && <Link to="/profile"><button className="btn sm flat counter">{icon.pencil()} Modifica profilo</button></Link>}
-										</div>
-										<div className="info-row">
-											<span className="counter last">Ti piace:</span> 
-											<span className="badge">Abc</span> 
-											<span className="badge">Def</span>
 										</div>
 										<div className="info-row">
 											{!isOwner && 

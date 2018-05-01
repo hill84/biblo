@@ -1,17 +1,25 @@
+import AutoComplete from 'material-ui/AutoComplete';
+import MenuItem from 'material-ui/MenuItem';
 import React from 'react';
-import { AutoComplete/* , CircularProgress */, MenuItem } from 'material-ui';
-import { booksRef } from '../../config/firebase';
 import { booksAPIRef } from '../../config/API';
+import { booksRef } from '../../config/firebase';
 import { join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      searchText: '',
-      loading: false,
-      options: []
-    }
+  state = {
+    searchText: '',
+    loading: false,
+    maxSearchResults: 8,
+    options: []
+  }
+
+  static propTypes = {
+    user: userType
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
   }
 
   onUpdateInput = searchText => {
@@ -30,10 +38,13 @@ export default class SearchBookForm extends React.Component {
         let options = [];
         if (json.items && json.items.length > 0) {
           json.items.forEach(item => {
-            let b = item.volumeInfo;
+            const b = item.volumeInfo;
+            const iis = b.industryIdentifiers;
+            const ISBN_13 = (iis && iis.filter(ii => ii.type === 'ISBN_13')) || [];
+            const ISBN_10 = (iis && iis.filter(ii => ii.type === 'ISBN_10')) || [];
             options.push({
-              ISBN_13: (b.industryIdentifiers && b.industryIdentifiers[0] && Number(b.industryIdentifiers[0].identifier)) || 0,
-              ISBN_10: (b.industryIdentifiers && b.industryIdentifiers[1] && Number(b.industryIdentifiers[1].identifier)) || 0,
+              ISBN_13: (!!ISBN_13[0] && Number(ISBN_13[0].identifier)) || 0,
+              ISBN_10: (!!ISBN_10[0] && Number(ISBN_10[0].identifier)) || 0,
               EDIT: {
                 createdBy: this.props.user.displayName || '',
                 createdByUid: this.props.user.uid || '',
@@ -42,7 +53,7 @@ export default class SearchBookForm extends React.Component {
               authors: b.authors || [],
               bid: '',
               collections: [],
-              covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || '',
+              covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],
               description: b.description || '',
               edition_num: 1,
               format: b.printType === 'BOOK' ? 'Libro' : 'Rivista' || '',
@@ -79,11 +90,9 @@ export default class SearchBookForm extends React.Component {
             options: options
           });
         }
-
       });
-
     } else {
-      booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(5).onSnapshot(snap => {
+      booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(this.state.maxSearchResults).onSnapshot(snap => {
         let options = [];
         snap.forEach(doc => {
           options.push({
@@ -139,7 +148,7 @@ export default class SearchBookForm extends React.Component {
             onClose={this.onClose}
             fullWidth={true}
             filter={AutoComplete.fuzzyFilter}
-            maxSearchResults={10}
+            maxSearchResults={this.state.maxSearchResults}
             dataSource={this.state.options}
             //dataSourceConfig={{text: 'bid', value: 'bid'}}
           />

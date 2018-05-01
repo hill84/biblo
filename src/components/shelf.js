@@ -6,29 +6,35 @@ import Cover from './cover';
 import { skltn_shelfRow } from './skeletons';
 
 export default class Shelf extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            luid: uid,
-            uid: this.props.uid,
-            shelfBooks: [],
-            wishlistBooks: [],
-            userBooks: [],
-            loading: true,
-            errors: {},
-            authError: ''
-        }
+    state = {
+        luid: uid,
+        uid: this.props.uid,
+        shelfBooks: [],
+        wishlistBooks: [],
+        userBooks: [],
+        loading: true,
+        errors: {},
+        authError: ''
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.uid !== this.props.uid) {
-            this.setState({ uid: nextProps.uid });
-            this.getBooks(nextProps.uid);
-        }
+    static propTypes = {
+        uid: stringType.isRequired
     }
 
-    componentDidMount(props) {
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (uid !== prevState.luid) { return { luid: uid }; }
+        if (nextProps.uid !== prevState.uid) { return { uid: nextProps.uid }; }
+        return null;
+    }
+    
+    componentDidMount() {
         this.getBooks(this.props.uid);
+    }
+    
+    componentDidUpdate(prevProps, prevState) {
+        if(this.state.uid !== prevState.uid){
+            this.getBooks(this.state.uid);
+        }
     }
 
     getBooks = uid => {
@@ -84,7 +90,7 @@ export default class Shelf extends React.Component {
                     
                     <div className="collection hoverable-items">
                         {loading ? skltn_shelfRow :
-                            <div className="shelf-row" /* style={shelfBooks.length === 0 ? {gridTemplateColumns: 1 + 'fr'} : {}} */>
+                            <div className="shelf-row">
                                 { isOwner &&
                                     <Link to="/books/add">
                                         <div className="book empty">
@@ -113,8 +119,4 @@ export default class Shelf extends React.Component {
             </div>
         );
     }
-}
-
-Shelf.propTypes = {
-    uid: stringType.isRequired
 }

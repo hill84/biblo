@@ -1,7 +1,7 @@
-import { CircularProgress } from 'material-ui';
+import CircularProgress from 'material-ui/CircularProgress';
 import React from 'react';
 import Rater from 'react-rater';
-import { Link } from 'react-router-dom';
+import Link from 'react-router-dom/Link';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { calcReadingTime, join, timeSince } from '../../config/shared';
@@ -12,38 +12,51 @@ import Reviews from '../reviews';
 import UserReview from '../userReview';
 
 export default class BookProfile extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-      book: {
-        ...this.props.book,
-        bid: this.props.book.bid || ''
-      },
-      user: this.props.user || {},
-      userBook: this.props.userBook,
-      loading: false,
-      errors: {},
-      isIncipitBig: false,
-      isIncipitDark: false,
-      isIncipitOpen: false,
-      isMinified: false
+	state = {
+    book: {
+      ...this.props.book,
+      bid: this.props.book.bid || ''
+    },
+    user: this.props.user || {},
+    userBook: this.props.userBook,
+    loading: false,
+    errors: {},
+    isReadingDialogOpen: false,
+    isIncipitBig: false,
+    isIncipitDark: false,
+    isIncipitOpen: false,
+    isDescMinified: false
+  }
+
+  static propTypes = {
+    addBookToShelf: funcType.isRequired,
+    addBookToWishlist: funcType.isRequired,
+    removeBookFromShelf: funcType.isRequired,
+    removeBookFromWishlist: funcType.isRequired,
+    rateBook: funcType.isRequired,
+    isEditing: funcType.isRequired,
+    userBook: userBookType.isRequired
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.book !== prevState.book) { return { book: nextProps.book }}
+    if (nextProps.user !== prevState.user) { return { user: nextProps.user }}
+    if (nextProps.userBook !== prevState.userBook) { return { userBook: nextProps.userBook }}
+    return null;
+  }
+
+  componentDidMount() {
+    this.minifyDescription();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.book.description.length !== prevState.book.description.length){
+      this.minifyDescription();
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props) {
-      this.setState({
-        book: nextProps.book,
-        userBook: nextProps.userBook,
-        user: nextProps.user
-      });
-    }
-  }
-
-  componentWillMount(props) {
-    if (this.props.book.description.length > 700) {
-      this.setState({ isMinified: true });
-    }
+  minifyDescription = () => {
+    this.setState({ isDescMinified: this.state.book.description.length > 700 ? true : false });
   }
 
   onAddBookToShelf = () => {
@@ -75,33 +88,29 @@ export default class BookProfile extends React.Component {
   }
 
   onMinify = () => {
-    this.setState(prevState => ({
-      isMinified: !prevState.isMinified
-    })); 
+    this.setState(prevState => ({ isDescMinified: !prevState.isDescMinified })); 
   }
 
   onToggleIncipit = () => {
-    this.setState(prevState => ({
-      isIncipitOpen: !prevState.isIncipitOpen
-    })); 
+    this.setState(prevState => ({ isIncipitOpen: !prevState.isIncipitOpen })); 
   }
 
   onToggleIncipitDarkTheme = () => {
-    this.setState(prevState => ({
-      isIncipitDark: !prevState.isIncipitDark
-    })); 
+    this.setState(prevState => ({ isIncipitDark: !prevState.isIncipitDark })); 
   }
 
   onToggleIncipitSize = () => {
-    this.setState(prevState => ({
-      isIncipitBig: !prevState.isIncipitBig
-    })); 
+    this.setState(prevState => ({ isIncipitBig: !prevState.isIncipitBig })); 
   }
 
   onEditing = () => this.props.isEditing();
+
+  onToggleReadingDialog = () => {
+    this.setState(prevState => ({ isReadingDialogOpen: !prevState.isReadingDialogOpen })); 
+  }
   
 	render() {
-    const { book, isIncipitBig, isIncipitDark, isIncipitOpen, isMinified, user, userBook } = this.state;
+    const { book, isIncipitBig, isIncipitDark, isIncipitOpen, isDescMinified, isReadingDialogOpen, user, userBook } = this.state;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
 
@@ -112,7 +121,7 @@ export default class BookProfile extends React.Component {
         {isIncipitOpen && 
           <React.Fragment>
             <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${isIncipitDark ? 'dark' : 'light'}`}>
-              <div class="content">
+              <div className="content">
                 <div role="navigation" className="head nav row">
                   <strong className="col title">{book.title}</strong>
                   <div className="col-auto btn-row">
@@ -121,15 +130,34 @@ export default class BookProfile extends React.Component {
                     <button className="btn icon clear" onClick={this.onToggleIncipit} title="Chiudi">{icon.close()}</button>
                   </div>
                 </div>
-                <p id="incipit" class={isIncipitBig ? 'big' : 'regular'}>{book.incipit}</p>
+                <p id="incipit" className={isIncipitBig ? 'big' : 'regular'}>{book.incipit}</p>
               </div>
             </div>
             <div className="overlay" onClick={this.onToggleIncipit}></div>
           </React.Fragment>
         }
 
+        {isReadingDialogOpen && 
+          <React.Fragment>
+            <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
+              <div className="content">
+                <select className="select">
+                  <option selected value="Non iniziato">Non iniziato</option> 
+                  <option value="Iniziato">Iniziato</option> 
+                  <option value="Finito">Finito</option>
+                  <option value="Abbandonato">Abbandonato</option>
+                </select>
+              </div>
+              <div className="footer no-gutter">
+                <button className="btn btn-footer primary">Salva le modifiche</button>
+              </div>
+            </div>
+            <div className="overlay" onClick={this.onToggleReadingDialog}></div>
+          </React.Fragment>
+        }
+
         <div className="container top">
-          <div className="card main text-align-center-sm">
+          <div className="card main text-align-center-md">
             {this.state.loading && <div className="loader"><CircularProgress /></div>}
             <div className="row">
               <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
@@ -146,10 +174,10 @@ export default class BookProfile extends React.Component {
                 {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
-                  {book.publisher && <span className="counter">editore: {book.publisher}</span>}
+                  {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                   {isAuthenticated() && isEditor() && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
                 </div>
-                <div className="info-row">
+                <div className="info-row hide-sm">
                   <span className="counter">ISBN-13: {book.ISBN_13}</span>
                   {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: {book.ISBN_10}</span>}
                   {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
@@ -164,13 +192,16 @@ export default class BookProfile extends React.Component {
                 </div>
 
                 {isAuthenticated() &&
-                  <div>
+                  <React.Fragment>
                     <div className="info-row">
                       {userBook.bookInShelf ? 
-                        <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
-                          <span className="hide-on-hover">Aggiunto a libreria</span>
-                          <span className="show-on-hover">Rimuovi da libreria</span>
-                        </button>
+                        <React.Fragment>
+                          <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
+                            <span className="hide-on-hover">Aggiunto a libreria</span>
+                            <span className="show-on-hover">Rimuovi da libreria</span>
+                          </button>
+                          <button className="btn" onClick={this.onToggleReadingDialog}>Stato lettura</button>
+                        </React.Fragment>
                       :
                         <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
                       }
@@ -193,13 +224,13 @@ export default class BookProfile extends React.Component {
                         </div>
                       }
                     </div>
-                  </div>
+                  </React.Fragment>
                 }
 
                 {book.description && 
                   <div className="info-row">
-                    <p className={`description ${isMinified ? 'minified' : 'expanded'}`}>{book.description || ''}</p>
-                    {isMinified && <p><button className="link" onClick={this.onMinify}>Mostra tutto</button></p>}
+                    <p className={`description ${isDescMinified ? 'minified' : 'expanded'}`}>{book.description || ''}</p>
+                    {isDescMinified && <p><button className="link" onClick={this.onMinify}>Mostra tutto</button></p>}
                   </div>
                 }
                 <div>&nbsp;</div>
@@ -224,24 +255,18 @@ export default class BookProfile extends React.Component {
             </div>
           </div>
 
-          {isAuthenticated() && isEditor() && userBook.bookInShelf && 
-            <UserReview bid={book.bid} bookReviews_num={book.reviews_num} user={user} userBook={userBook} /> 
-          }
+          {book.bid &&
+            <React.Fragment>
+              {isAuthenticated() && isEditor() && userBook.bookInShelf &&
+                <UserReview bid={book.bid} bookReviews_num={book.reviews_num} user={user} userBook={userBook} /> 
+              }
 
-          <Reviews bid={book.bid} />
+              <Reviews bid={book.bid} />
+            </React.Fragment>
+          }
 
         </div>
       </div>
 		);
 	}
-}
-
-BookProfile.propTypes = {
-  addBookToShelf: funcType.isRequired,
-  addBookToWishlist: funcType.isRequired,
-  removeBookFromShelf: funcType.isRequired,
-  removeBookFromWishlist: funcType.isRequired,
-  rateBook: funcType.isRequired,
-  isEditing: funcType.isRequired,
-  userBook: userBookType.isRequired
 }

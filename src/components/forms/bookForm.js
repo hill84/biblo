@@ -1,68 +1,66 @@
-import React from 'react';
-import { bookType, funcType, userType } from '../../config/types';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
-import ChipInput from 'material-ui-chip-input'
+import ChipInput from 'material-ui-chip-input';
+import React from 'react';
+import { bookRef, booksRef, collectionsRef, storageRef, uid } from '../../config/firebase';
 import { formats, genres, languages, validateImg } from '../../config/shared';
-import { bookRef, booksRef, collectionsRef, uid, storageRef } from '../../config/firebase';
+import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-      book: {
-        ISBN_10: this.props.book.ISBN_10 || 0,
-        ISBN_13: this.props.book.ISBN_13 || 0, 
-        EDIT: {
-          createdBy: this.props.book.createdBy || '',
-          createdByUid: this.props.book.createdByUid || '',
-          created_num: this.props.book.created || 0,
-          lastEditBy: this.props.book.lastEditBy || '',
-          lastEditByUid: this.props.book.lastEditByUid || '',
-          lastEdit_num: this.props.book.lastEdit || 0,
-        },
-        authors: this.props.book.authors || [], 
-        bid: this.props.book.bid || '', 
-        collections: this.props.book.collections || [],
-        covers: this.props.book.covers || [], 
-        description: this.props.book.description || '', 
-        edition_num: this.props.book.edition_num || 0, 
-        format: this.props.book.format || '', 
-        genres: this.props.book.genres || [], 
-        incipit: this.props.book.incipit || '',
-        languages: this.props.book.languages, 
-        pages_num: this.props.book.pages_num || 0, 
-        publisher: this.props.book.publisher || '', 
-        publication: this.props.book.publication || '', 
-        readers_num: this.props.book.readers_num || 0,
-        rating_num: this.props.book.rating_num || 0,
-        ratings_num: this.props.book.ratings_num || 0,
-        reviews_num: this.props.book.reviews_num || 0,
-        subtitle: this.props.book.subtitle || '', 
-        title: this.props.book.title || '', 
-        title_sort: this.props.book.title_sort || '', 
+	state = {
+    book: {
+      ISBN_10: this.props.book.ISBN_10 || 0,
+      ISBN_13: this.props.book.ISBN_13 || 0, 
+      EDIT: this.props.book.EDIT || {
+        createdBy: this.props.book.createdBy || '',
+        createdByUid: this.props.book.createdByUid || '',
+        created_num: this.props.book.created || 0,
+        lastEditBy: this.props.book.lastEditBy || '',
+        lastEditByUid: this.props.book.lastEditByUid || '',
+        lastEdit_num: this.props.book.lastEdit || 0
       },
-      imgPreview: null,
-      imgProgress: 0,
-      isEditingDescription: false,
-      isEditingIncipit: false,
-      description_maxChars: 2000,
-      incipit_maxChars: 2500,
-      loading: false,
-      errors: {},
-      authError: '',
-      changes: false
-    }
+      authors: this.props.book.authors || [], 
+      bid: this.props.book.bid || '', 
+      collections: this.props.book.collections || [],
+      covers: this.props.book.covers || [], 
+      description: this.props.book.description || '', 
+      edition_num: this.props.book.edition_num || 0, 
+      format: this.props.book.format || '', 
+      genres: this.props.book.genres || [], 
+      incipit: this.props.book.incipit || '',
+      languages: this.props.book.languages || [], 
+      pages_num: this.props.book.pages_num || 0, 
+      publisher: this.props.book.publisher || '', 
+      publication: this.props.book.publication || '', 
+      readers_num: this.props.book.readers_num || 0,
+      rating_num: this.props.book.rating_num || 0,
+      ratings_num: this.props.book.ratings_num || 0,
+      reviews_num: this.props.book.reviews_num || 0,
+      subtitle: this.props.book.subtitle || '', 
+      title: this.props.book.title || '', 
+      title_sort: this.props.book.title_sort || ''
+    },
+    imgPreview: null,
+    imgProgress: 0,
+    isEditingDescription: false,
+    isEditingIncipit: false,
+    description_maxChars: 2000,
+    incipit_maxChars: 2500,
+    loading: false,
+    errors: {},
+    authError: '',
+    changes: false
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props) {
-      if (nextProps.book) {
-        this.setState({
-          book: nextProps.book
-        });
-      }
-    }
+  static propTypes = {
+    book: bookType.isRequired,
+    isEditing: funcType.isRequired,
+    user: userType.isRequired
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.book !== prevState.book) { return { book: nextProps.book }}
+    return null;
   }
 
   /* componentDidMount(props) {
@@ -137,17 +135,17 @@ export default class BookForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    if (this.state.changes) {
-      const errors = this.validate(this.state.book);
+    const { book} = this.state;
+    if (this.state.changes || !this.state.book.bid) {
+      const errors = this.validate(book);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.props.book.bid) {
-          const fullBook = this.state.book;
-          const { EDIT, ...noEDIT } = fullBook; // Exclude EDIT from fullBook
+          const { EDIT, ...restBook } = book; // Exclude EDIT from fullBook
           bookRef(this.props.book.bid).update({
-            ...noEDIT, 
-            'EDIT.lastEdit_num': (new Date()).getTime(),
+            ...restBook, 
+            'EDIT.lastEdit_num': Number((new Date()).getTime()),
             'EDIT.lastEditBy': (this.props.user && this.props.user.displayName) || '',
             'EDIT.lastEditByUid': uid || ''
           }).then(() => {
@@ -164,21 +162,43 @@ export default class BookForm extends React.Component {
             });
           });
         } else {
+          //const { EDIT, ...restBook } = book; // Exclude EDIT from fullBook
           let newBookRef = booksRef.doc();
           newBookRef.set({
-            ...this.state.book,
+            ISBN_10: book.ISBN_10,
+            ISBN_13: book.ISBN_13, 
+            authors: book.authors, 
             bid: newBookRef.id,
+            collections: book.collections,
+            covers: book.covers, 
+            description: book.description, 
             EDIT: {
-              created_num: (new Date()).getTime(),
+              created_num: Number((new Date()).getTime()),
               createdBy: (this.props.user && this.props.user.displayName) || '',
-              createdByUid: uid || ''
-            }
+              createdByUid: uid || '',
+            },
+            edition_num: book.edition_num, 
+            format: book.format, 
+            genres: book.genres, 
+            incipit: book.incipit,
+            languages: book.languages, 
+            pages_num: book.pages_num, 
+            publisher: book.publisher, 
+            publication: book.publication, 
+            readers_num: book.readers_num,
+            rating_num: book.rating_num,
+            ratings_num: book.ratings_num,
+            reviews_num: book.reviews_num,
+            subtitle: book.subtitle, 
+            title: book.title, 
+            title_sort: book.title_sort
           }).then(() => {
             this.setState({
               loading: false,
               changes: false
             });
             this.props.isEditing();
+            console.log(`New book created with bid ${newBookRef.id}`);
           }).catch(error => {
             this.setState({
               authError: error.message,
@@ -186,22 +206,22 @@ export default class BookForm extends React.Component {
             });
           });
         }
-        if (this.state.book.collections) {
-          this.state.book.collections.forEach(cid => {
+        if (book.collections) {
+          book.collections.forEach(cid => {
             let bcid = 0;
-            collectionsRef(cid).doc(this.state.book.bid).get().then(book => {
+            collectionsRef(cid).doc(book.bid).get().then(book => {
               if (book.exists) bcid = book.data().bcid;
-              collectionsRef(cid).doc(this.state.book.bid).set({
-                bid: this.state.book.bid, 
+              collectionsRef(cid).doc(book.bid).set({
+                bid: book.bid, 
                 bcid: bcid,
-                covers: [this.state.book.covers[0]] || [],
-                title: this.state.book.title,  
-                subtitle: this.state.book.subtitle, 
-                authors: this.state.book.authors, 
-                publisher: this.state.book.publisher,
-                publication: this.state.book.publication,
-                rating_num: this.state.book.rating_num,
-                ratings_num: this.state.book.ratings_num
+                covers: [book.covers[0]] || [],
+                title: book.title,  
+                subtitle: book.subtitle, 
+                authors: book.authors, 
+                publisher: book.publisher,
+                publication: book.publication,
+                rating_num: book.rating_num,
+                ratings_num: book.ratings_num
               }).then(() => {
                 //console.log(`Book added to ${cid} collection`)
               }).catch(error => console.warn(error));
@@ -209,9 +229,7 @@ export default class BookForm extends React.Component {
           });
         }
       }
-    } else {
-      this.props.isEditing();
-    }
+    } else this.props.isEditing();
   };
 
   validate = book => {
@@ -320,6 +338,8 @@ export default class BookForm extends React.Component {
 	
 	render() {
     const { authError, book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
+    const { user } = this.props;
+    const isAdmin = () => user && user.roles && user.roles.admin === true;
     const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
@@ -511,6 +531,7 @@ export default class BookForm extends React.Component {
                     value={book.collections}
                     onRequestAdd={chip => this.onAddChip("collections", chip)}
                     onRequestDelete={chip => this.onDeleteChip("collections", chip)}
+                    disabled={isAdmin()}
                     fullWidth={true}
                   />
                 </div>
@@ -582,10 +603,4 @@ export default class BookForm extends React.Component {
       </div>
 		);
 	}
-}
-
-BookForm.propTypes = {
-  book: bookType.isRequired,
-  isEditing: funcType.isRequired,
-  user: userType
 }

@@ -5,12 +5,12 @@ const Collection = props => {
   return (
     <div id="CollectionComponent" className="container">
       <div className="row">
-        <div className="col-lg-6">
+        <div className="col-md-6">
           <div className="card">
             <BookCollection cid={props.match.params.cid} pagination={false} stacked={true} />
           </div>
         </div>
-        <div className="col-lg-6">
+        <div className="col">
           <div className="card primary">...</div>
           <div className="card dark">...</div>
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { reviewsRef, uid } from '../config/firebase';
+import { auth, reviewsRef, uid } from '../config/firebase';
 import { stringType } from '../config/types';
 import Review from './review';
 
@@ -8,6 +8,7 @@ export default class Reviews extends React.Component {
 		super(props);
 		this.state = {
       bid: this.props.bid,
+      uid: uid,
       reviews: null,
       loading: false,
       page: 1, // TODO PAGINATION
@@ -16,15 +17,31 @@ export default class Reviews extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.bid !== this.props.bid) {
-      this.setState({ bid: nextProps.bid });
-      this.fetchReviews(nextProps.bid);
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.bid !== prevState.bid) { return { bid: nextProps.bid }}
+    return null;
+  }
+
+  componentDidMount(prevState) {
+    this.fetchReviews(this.state.bid);
+    this.unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        this.setState({ uid: user.uid });
+      } else {
+        this.setState({ uid: null });
+      }
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.bid !== prevState.bid || this.state.uid !== prevState.uid){
+      this.fetchReviews(this.state.bid);
+      //console.log('Fetched updated reviews');
     }
   }
 
-  componentDidMount(props) {
-    this.fetchReviews(this.state.bid);
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   fetchReviews = bid => { 
@@ -32,8 +49,9 @@ export default class Reviews extends React.Component {
     reviewsRef(bid).orderBy('created_num').orderBy('likes_num').limit(10).onSnapshot(snap => {
       //console.log(snap);
       if (!snap.empty) {
+        //console.log(this.state.uid);
         let reviews = [];
-        snap.forEach(review => (review.data().createdByUid !== uid) && reviews.push(review.data()));
+        snap.forEach(review => review.data().createdByUid !== (this.state.uid) && reviews.push(review.data()));
         this.setState({ 
           reviews: reviews,
           loading: false,

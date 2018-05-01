@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'react-router-dom/Link';
 import { userType } from '../../config/types';
 import SearchBookForm from '../forms/searchBookForm';
 import Book from '../book';

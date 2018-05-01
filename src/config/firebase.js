@@ -20,12 +20,13 @@ export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
 export const auth = firebase.auth();
-//export const logOut = () => auth.signOut();
+export const signOut = () => auth.signOut();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
-//if (isAuthenticated()) console.log('Autenticato'); else console.log('Non autenticato');
-export const uid = auth.currentUser || localStorage.getItem(storageKey_uid);
+export let uid = (auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid);
+auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
+//auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');

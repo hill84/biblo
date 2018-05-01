@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'react-router-dom/Link';
 import { isAuthenticated, reviewRef, uid, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { timeSince } from '../config/shared';
@@ -23,29 +23,29 @@ export default class Review extends React.Component {
     if (this.state.like) {
       likes = likes.filter(e => e !== uid);
       this.setState({ like: false, likes_num: likes.length });
-      console.log(`User ${uid} remove like on review ${bid}/${review.createdByUid}`);
-      console.log(`User likes decreased to ${likes.length}`);
+      //console.log(`User ${uid} remove like on review ${bid}/${review.createdByUid}`);
+      //console.log(`User likes decreased to ${likes.length}`);
     } else {
       likes.push(uid);
       this.setState({ like: true, likes_num: likes.length });
-      console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
-      console.log(`User likes increased to ${likes.length}`);
+      //console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
+      //console.log(`User likes increased to ${likes.length}`);
     }
-    console.log(likes);
+    //console.log(likes);
   
     if (bid && review.createdByUid) {
       reviewRef(bid, review.createdByUid).update({
         likes: likes,
         likes_num: likes.length
       }).then(() => {
-        console.log(`Book review likes updated`);
+        //console.log(`Book review likes updated`);
       }).catch(error => console.warn(error.message));
 
       userBookRef(review.createdByUid, bid).update({
         likes: likes,
         likes_num: likes.length
       }).then(() => {
-        console.log(`User book review likes updated`);
+        //console.log(`User book review likes updated`);
       }).catch(error => console.warn(error.message));
 
     } else console.warn('No bid or ruid');
@@ -56,7 +56,7 @@ export default class Review extends React.Component {
     const { review } = this.props;
 
     return (
-      <div className={review.createdByUid === uid ? 'own-review' : 'review'}>
+      <div className={`review ${review.createdByUid === uid ? 'own' : null}`}>
         <div className="row">
           <Link to={`/dashboard/${review.createdByUid}`} className="col-auto left">
             <Avatar src={review.photoURL} alt={review.displayName} />
