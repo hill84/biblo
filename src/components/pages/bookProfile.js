@@ -7,7 +7,9 @@ import { icon } from '../../config/icons';
 import { calcReadingTime, join, timeSince } from '../../config/shared';
 import { funcType, userBookType } from '../../config/types';
 import Cover from '../cover';
+import Incipit from '../incipit';
 import Rating from '../rating';
+import ReadingState from '../readingState';
 import Reviews from '../reviews';
 import UserReview from '../userReview';
 
@@ -21,9 +23,7 @@ export default class BookProfile extends React.Component {
     userBook: this.props.userBook,
     loading: false,
     errors: {},
-    isReadingDialogOpen: false,
-    isIncipitBig: false,
-    isIncipitDark: false,
+    isReadingStateOpen: false,
     isIncipitOpen: false,
     isDescMinified: false
   }
@@ -95,65 +95,27 @@ export default class BookProfile extends React.Component {
     this.setState(prevState => ({ isIncipitOpen: !prevState.isIncipitOpen })); 
   }
 
-  onToggleIncipitDarkTheme = () => {
-    this.setState(prevState => ({ isIncipitDark: !prevState.isIncipitDark })); 
-  }
-
-  onToggleIncipitSize = () => {
-    this.setState(prevState => ({ isIncipitBig: !prevState.isIncipitBig })); 
-  }
-
   onEditing = () => this.props.isEditing();
 
-  onToggleReadingDialog = () => {
-    this.setState(prevState => ({ isReadingDialogOpen: !prevState.isReadingDialogOpen })); 
+  onToggleReadingState = () => {
+    this.setState(prevState => ({ isReadingStateOpen: !prevState.isReadingStateOpen })); 
   }
   
 	render() {
-    const { book, isIncipitBig, isIncipitDark, isIncipitOpen, isDescMinified, isReadingDialogOpen, user, userBook } = this.state;
+    const { book, isIncipitOpen, isDescMinified, isReadingStateOpen, user, userBook } = this.state;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
 
 		return (
       <div ref="BookProfileComponent">
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
-
+        
         {isIncipitOpen && 
-          <React.Fragment>
-            <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${isIncipitDark ? 'dark' : 'light'}`}>
-              <div className="content">
-                <div role="navigation" className="head nav row">
-                  <strong className="col title">{book.title}</strong>
-                  <div className="col-auto btn-row">
-                    <button className="btn icon clear" onClick={this.onToggleIncipitSize} title="Formato">{icon.formatSize()}</button> 
-                    <button className="btn icon clear" onClick={this.onToggleIncipitDarkTheme} title="Tema">{icon.lightbulb()}</button> 
-                    <button className="btn icon clear" onClick={this.onToggleIncipit} title="Chiudi">{icon.close()}</button>
-                  </div>
-                </div>
-                <p id="incipit" className={isIncipitBig ? 'big' : 'regular'}>{book.incipit}</p>
-              </div>
-            </div>
-            <div className="overlay" onClick={this.onToggleIncipit}></div>
-          </React.Fragment>
+          <Incipit title={book.title} incipit={book.incipit} onToggle={this.onToggleIncipit} />
         }
 
-        {isReadingDialogOpen && 
-          <React.Fragment>
-            <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
-              <div className="content">
-                <select className="select">
-                  <option selected value="Non iniziato">Non iniziato</option> 
-                  <option value="Iniziato">Iniziato</option> 
-                  <option value="Finito">Finito</option>
-                  <option value="Abbandonato">Abbandonato</option>
-                </select>
-              </div>
-              <div className="footer no-gutter">
-                <button className="btn btn-footer primary">Salva le modifiche</button>
-              </div>
-            </div>
-            <div className="overlay" onClick={this.onToggleReadingDialog}></div>
-          </React.Fragment>
+        {isReadingStateOpen && 
+          <ReadingState onToggle={this.onToggleReadingState} />
         }
 
         <div className="container top">
@@ -200,7 +162,7 @@ export default class BookProfile extends React.Component {
                             <span className="hide-on-hover">Aggiunto a libreria</span>
                             <span className="show-on-hover">Rimuovi da libreria</span>
                           </button>
-                          <button className="btn" onClick={this.onToggleReadingDialog}>Stato lettura</button>
+                          <button className="btn" onClick={this.onToggleReadingState}>Stato lettura</button>
                         </React.Fragment>
                       :
                         <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
