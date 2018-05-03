@@ -9,7 +9,7 @@ import { funcType, userBookType } from '../../config/types';
 import Cover from '../cover';
 import Incipit from '../incipit';
 import Rating from '../rating';
-import ReadingState from '../readingState';
+import ReadingStateForm from '../forms/readingStateForm';
 import Reviews from '../reviews';
 import UserReview from '../userReview';
 
@@ -115,7 +115,7 @@ export default class BookProfile extends React.Component {
         }
 
         {isReadingStateOpen && 
-          <ReadingState onToggle={this.onToggleReadingState} />
+          <ReadingStateForm onToggle={this.onToggleReadingState} />
         }
 
         <div className="container top">
