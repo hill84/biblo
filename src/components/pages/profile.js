@@ -1,6 +1,7 @@
-import React from 'react';
 import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import React from 'react';
 import { storageRef, uid, userRef } from '../../config/firebase';
+import { DateTimeFormat } from '../../config/locales';
 import { calcAge, continents, europeanCountries, italianProvinces, languages, northAmericanCountries, validateImg } from '../../config/shared';
 import Avatar from '../avatar';
 
@@ -187,8 +188,10 @@ export default class Profile extends React.Component {
 								<div className="col-6 form-group">
 									<DatePicker 
 										name="birth_date"
-										hintText="1998-01-01" 
+										hintText="01-01-1998" 
 										cancelLabel="Annulla"
+										DateTimeFormat={DateTimeFormat}
+                    locale="it"
 										openToYearSelection={true} 
 										errorText={errors.birth_date}
 										floatingLabelText="Data di nascita"

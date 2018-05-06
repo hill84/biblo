@@ -2,6 +2,7 @@ import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from '
 import ChipInput from 'material-ui-chip-input';
 import React from 'react';
 import { bookRef, booksRef, collectionsRef, storageRef, uid } from '../../config/firebase';
+import { DateTimeFormat } from '../../config/locales';
 import { checkBadWords, formats, genres, languages, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
@@ -246,13 +247,13 @@ export default class BookForm extends React.Component {
       errors.authors = "Inserisci l'autore";
     } else if (book.authors.length > 5) {
       errors.authors = "Massimo 5 autori";
-    } else if (book.authors[0].length > 35) {
-      errors.authors = "Lunghezza massima 35 caratteri";
-    } 
+    } else if (book.authors.some(author => author.length > 50)) {
+      errors.authors = "Lunghezza massima 50 caratteri";
+    }
     if (!book.publisher) {
       errors.publisher = "Inserisci l'editore";
-    } else if (book.publisher.length > 150) {
-      errors.publisher = "Lunghezza massima 150 caratteri";
+    } else if (book.publisher.length > 100) {
+      errors.publisher = "Lunghezza massima 100 caratteri";
     }
     if (!book.pages_num) {
       errors.pages_num = "Inserisci il numero di pagine";
@@ -271,7 +272,7 @@ export default class BookForm extends React.Component {
     if (book.ISBN_10 && (book.ISBN_10.toString().length !== 10)) {
       errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
     }
-    if (Number(new Date(book.publication).getTime()) > Number(new Date().getTime())) { // DOESN'T WORK?
+    if (Number(new Date(book.publication).getTime()) > Number(new Date().getTime())) {
       errors.publication = "Data di pubblicazione non valida";
     }
     if (book.edition_num && book.edition_num < 1) {
@@ -285,14 +286,16 @@ export default class BookForm extends React.Component {
     if (book.genres && (book.genres.length > 3)) {
       errors.genres = "Massimo 3 generi";
     }
-    if (book.collections && (book.collections.length > 5)) {
-      errors.collections = "Massimo 5 collezioni";
+    if (book.collections) {
+      if (book.collections.length > 5) {
+        errors.collections = "Massimo 5 collezioni";
+      }
+      if (book.collections.some(collection => collection.length > 50)) {
+        errors.collections = "Lunghezza massima 50 caratteri";
+      }
     }
-    if (book.collections && book.collections.length > 255) {
-      errors.collections = "Lunghezza massima 255 caratteri";
-    } // BROKEN
-    if (book.description && book.description.length < 150) {
-      errors.description = `Lunghezza minima 150 caratteri`;
+    if (book.description && book.description.length < 100) {
+      errors.description = `Lunghezza minima 100 caratteri`;
       this.setState({ isEditingDescription: true });
     }
     if (book.description && book.description.length > this.state.description_maxChars) {
@@ -307,8 +310,8 @@ export default class BookForm extends React.Component {
       errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
       this.setState({ isEditingIncipit: true });
     }
-    ['description', 'publisher', 'subtitle', 'title'].map(text => {
-      if (checkBadWords(book[text])) return errors[text] = "Niente volgarità";
+    ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
+      if (checkBadWords(book[text])) errors[text] = "Niente volgarità"
     });
     return errors;
   }
@@ -467,8 +470,10 @@ export default class BookForm extends React.Component {
                   <div className="form-group col-8">
                     <DatePicker 
                       name="publication"
-                      hintText="2013-05-01" 
+                      hintText="01-05-2013" 
                       cancelLabel="Annulla"
+                      DateTimeFormat={DateTimeFormat}
+                      locale="it"
                       openToYearSelection={true} 
                       errorText={errors.publication}
                       floatingLabelText="Data di pubblicazione"

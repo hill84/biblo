@@ -19,6 +19,7 @@ export default class Shelf extends React.Component {
         isOpenOrderMenu: false,
         orderBy: {type: 'added_num', label: 'Data aggiunta'},
         desc: true,
+        view: 'coverview',
         loading: true,
         errors: {},
         authError: ''
@@ -82,43 +83,62 @@ export default class Shelf extends React.Component {
 
     onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
+    onToggleView = value => this.setState({ view: value });
+
     onToggleOrderMenu = event => {
         this.setState({ anchorEl: event.currentTarget });
         this.setState(prevState => ({ isOpenOrderMenu: !prevState.isOpenOrderMenu }));
     }
 
     render(props) {
-        const { desc, isOpenOrderMenu, luid, loading, orderBy, shelf, uid, userBooks } = this.state;
+        const { desc, isOpenOrderMenu, luid, loading, orderBy, shelf, uid, userBooks, view } = this.state;
         const isOwner = () => luid === uid;
-        let covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
+        const covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
 
         return (
             <div className="shelf-container" ref="shelfComponent">
                 <div className="head nav">
-                    <div className="info-row pull-right">
-                        <span className="counter last">Ordina per</span>
-                        <button className="btn sm flat counter" onClick={this.onToggleOrderMenu}>{orderBy.label}</button>
-                        <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Discendente' : 'Ascendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
-                        <Popover 
-                            open={isOpenOrderMenu} 
-                            onRequestClose={this.onToggleOrderMenu} 
-                            anchorEl={this.state.anchorEl} 
-                            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                            targetOrigin={{horizontal: 'left', vertical: 'top'}}>
-                            <Menu onChange={this.onChangeOrder}>
-                                <MenuItem value={{type: 'added_num', label: 'Data aggiunta'}} primaryText="Data aggiunta" />
-                                <MenuItem value={{type: 'title', label: 'Titolo'}} primaryText="Titolo" />
-                                {shelf === 'bookInShelf' && <MenuItem value={{type: 'rating_num', label: 'Valutazione'}} primaryText="Valutazione" />}
-                                <MenuItem value={{type: 'authors', label: 'Autore'}} primaryText="Autore" />
-                            </Menu>
-                        </Popover>
+                    <div className="row">
+                        <div className="col info-row">
+                            <button 
+                                className={`btn sm flat counter ${view === 'coverview' ? 'active' : null}`} 
+                                title="Cover view" 
+                                onClick={() => this.onToggleView('coverview')}>
+                                {icon.viewGrid()}
+                            </button>
+                            <button 
+                                className={`btn sm flat counter ${view === 'stacked' ? 'active' : null}`} 
+                                title="Stack view" 
+                                onClick={() => this.onToggleView('stacked')}>
+                                {icon.viewSequential()}
+                            </button>
+                            <span className="counter">{userBooks.length} libri</span>
+                        </div>
+                        <div className="col-auto info-row">
+                            <span className="counter last hide-xs">Ordina per</span>
+                            <button className="btn sm flat counter" onClick={this.onToggleOrderMenu}>{orderBy.label}</button>
+                            <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Discendente' : 'Ascendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                            <Popover 
+                                open={isOpenOrderMenu} 
+                                onRequestClose={this.onToggleOrderMenu} 
+                                anchorEl={this.state.anchorEl} 
+                                anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+                                targetOrigin={{horizontal: 'right', vertical: 'top'}}>
+                                <Menu onChange={this.onChangeOrder}>
+                                    <MenuItem value={{type: 'added_num', label: 'Data aggiunta'}} primaryText="Data aggiunta" />
+                                    <MenuItem value={{type: 'title', label: 'Titolo'}} primaryText="Titolo" />
+                                    {shelf === 'bookInShelf' && <MenuItem value={{type: 'rating_num', label: 'Valutazione'}} primaryText="Valutazione" />}
+                                    <MenuItem value={{type: 'authors', label: 'Autore'}} primaryText="Autore" />
+                                </Menu>
+                            </Popover>
+                        </div>
                     </div>
                 </div>
 
                 <div className="shelf">
                     <div className="collection hoverable-items">
                         {loading ? skltn_shelfRow :
-                            <div className="shelf-row">
+                            <div className={`shelf-row ${view}`}>
                                 {isOwner() &&
                                     <Link to="/books/add">
                                         <div className="book empty">

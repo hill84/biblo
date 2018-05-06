@@ -307,8 +307,9 @@ hr.line {
 
 .btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; }
 .btn.flat { color: var(--linkClr); }
-.btn.flat:hover { background-color: rgba(0,0,0,.07); }
-.btn.flat:active, .btn.flat.active { color: rgba(0,0,0,.3); }
+.btn.flat:hover { background-color: rgba(0,0,0,.05); }
+.btn.flat:active, .btn.flat.active { background-color: rgba(0,0,0,.03); color: rgba(0,0,0,.3); }
+.btn.flat:active { background-color: rgba(0,0,0,.07); }
 
 .btn.icon { padding-left: 0; padding-right: 0; min-width: var(--btnHeight); }
 
@@ -862,17 +863,18 @@ hr.line {
     left: 0;
     right: 0;
     padding: 7px 14px;
+    line-height: 26px;
+    font-weight: 300;
+    font-size: .75rem;
+    text-transform: uppercase;
     color: var(--ligthTextClr);
     background-color: var(--cardBg);
     box-shadow: 0 1px 3px rgba(0,0,0,.15);
     transform-origin: top center;
-    /* transform: scaleY(0);
-    opacity: 0; */
-    will-change: transform opacity;
-    transition: all .2s ease-in-out;
     z-index: 3;
 }
-.shelf-container:hover .head.nav { opacity: .96; transform: scaleY(1); }
+.shelf-container .head.nav .info-row { margin-bottom: 0; }
+.shelf-container .head.nav .counter { line-height: inherit; }
 .btn.asc svg { transition: all .2s ease-in-out; will-change: transform; transform: rotate(180deg); }
 
 /* BOOK COVER */
@@ -1179,7 +1181,7 @@ hr.line {
     .hide-md { display: none; }
 }
 @media (max-width: 576px) {
-    :root { 
+    .shelf-row:not(.stacked) { 
         --bookWidth: 100px;
         --coverWidth: 80px;
         --coverHeight: 120px;
@@ -1192,7 +1194,7 @@ hr.line {
     .hide-sm { display: none; }
 }
 @media (max-width: 420px) {
-    :root { 
+    .shelf-row:not(.stacked) { 
         --bookWidth: 88px;
         --coverWidth: 76px;
         --coverHeight: 120px;
