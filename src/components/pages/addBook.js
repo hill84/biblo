@@ -1,15 +1,16 @@
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { userType } from '../../config/types';
-import SearchBookForm from '../forms/searchBookForm';
 import Book from '../book';
+import SearchBookForm from '../forms/searchBookForm';
 
 export default class AddBook extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			book: null
-		}
+	state = {
+		book: null
+	}
+
+	static propTypes = {
+		user: userType
 	}
 
 	onBookSelect = book => this.setState({ book });
@@ -36,8 +37,4 @@ export default class AddBook extends React.Component {
 			</div>
 		);
 	}
-}
-
-AddBook.propTypes = {
-	user: userType
 }

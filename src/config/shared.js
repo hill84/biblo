@@ -108,6 +108,16 @@ export const timeSince = date => {
     return 'pochi secondi fa'; //`${Math.floor(seconds)} secondi fa`;
 };
 
+export const checkBadWords = text => {
+    var result = false;
+    text && text.split(' ').map(word => badWords.map(badWord => result = (word.toLowerCase() === badWord) ? true : result ));
+    return result;
+}
+
+const badWords = [
+    'cagare', 'cagata', 'cazzaro', 'cazzata', 'cazzi', 'cazzo', 'cazzone', 'coglionando', 'coglionare', 'coglionata', 'coglione', 'culattone', 'culo', 'fanculizzati', 'fanculo', 'ficcatelo', 'fottere', 'fottiti', 'fottuta', 'fottuto', 'frocio', 'fuck', 'michiata', 'minchione', 'puttana', 'puttaniere', 'rottinculo', 'sfanculare', 'stronzata', 'stronzate', 'stronzo', 'stronzi', 'suca', 'sucare', 'sucamelo', 'succhiamelo', 'troiaio', 'troie', 'vaffanculo'
+];
+
 export const ratingLabels = { 0: "Nessun voto", 1: "Pessimo", 2: "Scarso", 3: "Sufficiente", 4: "Buono", 5: "Ottimo" };
 
 export const formats = [

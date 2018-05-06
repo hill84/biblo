@@ -4,17 +4,18 @@ import { stringType } from '../config/types';
 import Review from './review';
 
 export default class Reviews extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-      bid: this.props.bid,
-      uid: uid,
-      reviews: null,
-      loading: false,
-      page: 1, // TODO PAGINATION
-      lastVisible: null,
-      errors: {}
-    }
+	state = {
+    bid: this.props.bid,
+    uid: uid,
+    reviews: null,
+    loading: false,
+    page: 1, // TODO PAGINATION
+    lastVisible: null,
+    errors: {}
+  }
+
+  static propTypes = {
+    bid: stringType.isRequired
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -108,8 +109,4 @@ export default class Reviews extends React.Component {
       </div>
 		);
 	}
-}
-
-Reviews.propTypes = {
-  bid: stringType.isRequired
 }

@@ -163,7 +163,8 @@ hr.line {
     right: 0;
     margin: auto;
     width: 480px;
-    height: 150px;
+    min-height: 150px;
+    height: fit-content;
     max-width: calc(100% - 28px);
     max-height: calc(100% - 28px);
     background-color: var(--cardBg);
@@ -175,7 +176,8 @@ hr.line {
     box-shadow: 0 10px 50px 10px rgba(0,0,0,.15);
     will-change: opacity transform;
     transition: all .4s ease-in-out;
-    animation: fadeIn .4s ease-in-out;
+    transform-origin: top center;
+    animation: flipInX .4s ease-in-out;
     z-index: 1500;
 }
 
@@ -664,7 +666,6 @@ hr.line {
     color: var(--ligtherTextClr);
     font-weight: 200;
 }
-.counter:last-child:after { content: none; }
 .counter:empty { display: none; }
 .dark .counter:after { color: rgba(240,250,255,.3); }
 
@@ -675,7 +676,8 @@ hr.line {
     color: currentColor;
     white-space: nowrap;
 }
-.counter.comma .counter:last-child:after, .counter.last:after { content: none; }
+.counter:last-child:after, .counter.comma .counter:last-child:after, .counter.last:after, .counter.btn:after { content: none; }
+.counter.last + .counter { margin-left: 6px; }
 .counter.btn, .btn-row .btn { margin-top: 0; margin-bottom: 0; }
 
 .book-incipit {
@@ -684,6 +686,7 @@ hr.line {
     height: 680px;
     padding: 0;
     transform-origin: top left;
+    will-change: opacity transform;
     animation: flipInY .4s ease-in-out;
 }
 .book-incipit::-webkit-scrollbar {
@@ -852,6 +855,25 @@ hr.line {
 }
 .card .scrollable .shelf-row a:first-child, .card .scrollable .shelf-row .skltn:first-child { margin-left: var(--cardPad); }
 .card .scrollable .shelf-row a:last-child, .card .scrollable .shelf-row .skltn:last-child { margin-right: var(--cardPad); }
+.shelf-container { padding-top: 46px; }
+.shelf-container .head.nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 7px 14px;
+    color: var(--ligthTextClr);
+    background-color: var(--cardBg);
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+    transform-origin: top center;
+    /* transform: scaleY(0);
+    opacity: 0; */
+    will-change: transform opacity;
+    transition: all .2s ease-in-out;
+    z-index: 3;
+}
+.shelf-container:hover .head.nav { opacity: .96; transform: scaleY(1); }
+.btn.asc svg { transition: all .2s ease-in-out; will-change: transform; transform: rotate(180deg); }
 
 /* BOOK COVER */
 .book {
@@ -1127,12 +1149,12 @@ hr.line {
 @keyframes fadeIn { from { opacity: 0; } }
 @keyframes fadeOut { to { opacity: 0; } }
 @keyframes flipInY {
-    from { opacity: 0; transform: perspective(1000) scale(.12) rotateY(90deg); } 
-    to { opacity: 1; transform: perspective(1000) scale(1) rotateY(0deg); }
+    from { opacity: 0; transform: perspective(950) scale(.12) rotateY(90deg); } 
+    to { opacity: 1; transform: perspective(950) scale(1) rotateY(0deg); }
 }
 @keyframes flipInX {
-    from { opacity: 0; transform: perspective(1000) scale(.12) rotateX(90deg); } 
-    to { opacity: 1; transform: perspective(1000) scale(1) rotateX(0deg); }
+    from { opacity: 0; transform: perspective(950) scale(.12) rotateX(90deg); } 
+    to { opacity: 1; transform: perspective(950) scale(1) rotateX(0deg); }
 }
 @keyframes skltn_shelfRow { to { background-position: 120% 0; } }
 
@@ -1157,7 +1179,11 @@ hr.line {
     .hide-md { display: none; }
 }
 @media (max-width: 576px) {
-    :root { --booksPerRow-lg: 2; }
+    :root { 
+        --bookWidth: 100px;
+        --coverWidth: 80px;
+        --coverHeight: 120px;
+    }
     .text-align-center-sm { text-align: center; }
     .book-profile .title { font-size: 1.2rem; }
     .book-profile .description { max-height: 1300px; }
@@ -1166,12 +1192,21 @@ hr.line {
     .hide-sm { display: none; }
 }
 @media (max-width: 420px) {
+    :root { 
+        --bookWidth: 88px;
+        --coverWidth: 76px;
+        --coverHeight: 120px;
+    }
     .text-align-center-xs { text-align: center; }
     .book-incipit p { font-size: .8rem; }
     .user.rating { height: 40px; }
     .user.rating .react-rater { font-size: 40px; line-height: inherit; }
     .user.rating .label { display: none; }
+    .react-rater { font-size: 20px; }
     .hide-xs { display: none; }
+}
+@media (max-width: 359px) {
+    :root { --booksPerRow-lg: 2; } 
 }
 @media (max-width: 320px) {
     .book-incipit p { text-align: left; }

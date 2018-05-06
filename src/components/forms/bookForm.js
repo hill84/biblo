@@ -2,7 +2,7 @@ import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from '
 import ChipInput from 'material-ui-chip-input';
 import React from 'react';
 import { bookRef, booksRef, collectionsRef, storageRef, uid } from '../../config/firebase';
-import { formats, genres, languages, validateImg } from '../../config/shared';
+import { checkBadWords, formats, genres, languages, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 
@@ -135,7 +135,7 @@ export default class BookForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { book} = this.state;
+    const { book } = this.state;
     if (this.state.changes || !this.state.book.bid) {
       const errors = this.validate(book);
       this.setState({ errors });
@@ -209,12 +209,12 @@ export default class BookForm extends React.Component {
         if (book.collections) {
           book.collections.forEach(cid => {
             let bcid = 0;
-            collectionsRef(cid).doc(book.bid).get().then(book => {
-              if (book.exists) bcid = book.data().bcid;
+            collectionsRef(cid).doc(book.bid).get().then(collectionBook => {
+              if (collectionBook.exists) { bcid = collectionBook.data().bcid; }
               collectionsRef(cid).doc(book.bid).set({
                 bid: book.bid, 
                 bcid: bcid,
-                covers: [book.covers[0]] || [],
+                covers: (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
                 authors: book.authors, 
@@ -244,9 +244,11 @@ export default class BookForm extends React.Component {
     }
     if (!book.authors) {
       errors.authors = "Inserisci l'autore";
-    } else if (book.authors.length > 255) {
-      errors.authors = "Lunghezza massima 255 caratteri";
-    }
+    } else if (book.authors.length > 5) {
+      errors.authors = "Massimo 5 autori";
+    } else if (book.authors[0].length > 35) {
+      errors.authors = "Lunghezza massima 35 caratteri";
+    } 
     if (!book.publisher) {
       errors.publisher = "Inserisci l'editore";
     } else if (book.publisher.length > 150) {
@@ -269,11 +271,11 @@ export default class BookForm extends React.Component {
     if (book.ISBN_10 && (book.ISBN_10.toString().length !== 10)) {
       errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
     }
-    if (Date(book.publication) > new Date()) { // DOESN'T WORK
+    if (Number(new Date(book.publication).getTime()) > Number(new Date().getTime())) { // DOESN'T WORK?
       errors.publication = "Data di pubblicazione non valida";
     }
     if (book.edition_num && book.edition_num < 1) {
-      errors.edition_num = "Numero di edizione non valido";
+      errors.edition_num = "Numero non valido";
     } else if (book.edition_num && book.edition_num.toString().length > 2) {
       errors.edition_num = "Max 2 cifre";
     }
@@ -288,7 +290,7 @@ export default class BookForm extends React.Component {
     }
     if (book.collections && book.collections.length > 255) {
       errors.collections = "Lunghezza massima 255 caratteri";
-    }
+    } // BROKEN
     if (book.description && book.description.length < 150) {
       errors.description = `Lunghezza minima 150 caratteri`;
       this.setState({ isEditingDescription: true });
@@ -305,6 +307,9 @@ export default class BookForm extends React.Component {
       errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
       this.setState({ isEditingIncipit: true });
     }
+    ['description', 'publisher', 'subtitle', 'title'].map(text => {
+      if (checkBadWords(book[text])) return errors[text] = "Niente volgarità";
+    });
     return errors;
   }
 
@@ -364,7 +369,7 @@ export default class BookForm extends React.Component {
                     <span>Carica un'immagine</span>
                     <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
                     {(imgProgress > 0) && 
-                      <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+                      <progress type="progress" value={imgProgress} max="100" className="progress"></progress>
                     }
                   </button>
                 }

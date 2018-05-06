@@ -19,14 +19,12 @@ import { muiTheme } from './config/shared';
 export const UserContext = React.createContext();
 
 export default class App extends React.Component {
-	constructor(props){
-    super(props);
-    this.state = {
-			user: null
-		}
+	state = {
+		user: null
 	}
 
 	componentDidMount() {
+		this._isMounted = true;
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				window.localStorage.setItem(storageKey_uid, user.uid);

@@ -35,7 +35,7 @@ export default class BookProfile extends React.Component {
     removeBookFromWishlist: funcType.isRequired,
     rateBook: funcType.isRequired,
     isEditing: funcType.isRequired,
-    userBook: userBookType.isRequired
+    userBook: userBookType
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -115,7 +115,7 @@ export default class BookProfile extends React.Component {
         }
 
         {isReadingStateOpen && 
-          <ReadingStateForm onToggle={this.onToggleReadingState} />
+          <ReadingStateForm bid={book.bid} readingState={userBook.readingState} onToggle={this.onToggleReadingState} />
         }
 
         <div className="container top">

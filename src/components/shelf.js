@@ -1,6 +1,10 @@
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import Popover from 'material-ui/Popover';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { bookRef, uid, userBooksRef } from '../config/firebase';
+import { uid, userBooksRef } from '../config/firebase';
+import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow } from './skeletons';
@@ -9,9 +13,12 @@ export default class Shelf extends React.Component {
     state = {
         luid: uid,
         uid: this.props.uid,
-        shelfBooks: [],
-        wishlistBooks: [],
+        shelf: this.props.shelf || 'bookInShelf',
         userBooks: [],
+        anchorEl: null,
+        isOpenOrderMenu: false,
+        orderBy: {type: 'added_num', label: 'Data aggiunta'},
+        desc: true,
         loading: true,
         errors: {},
         authError: ''
@@ -26,51 +33,44 @@ export default class Shelf extends React.Component {
         if (nextProps.uid !== prevState.uid) { return { uid: nextProps.uid }; }
         return null;
     }
-    
+
     componentDidMount() {
-        this.getBooks(this.props.uid);
+        this._isMounted = true;
+        this.fetchUserBooks(this.props.uid);
     }
-    
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
     componentDidUpdate(prevProps, prevState) {
-        if(this.state.uid !== prevState.uid){
-            this.getBooks(this.state.uid);
+        if (this._isMounted) {
+            if (this.state.uid !== prevState.uid || this.state.orderBy !== prevState.orderBy || this.state.desc !== prevState.desc) {
+                this.fetchUserBooks(this.state.uid);
+            }
         }
     }
 
-    getBooks = uid => {
-        userBooksRef(uid).onSnapshot(snap => { 
-            this.setState({ loading: true });  
+    fetchUserBooks = uid => {
+        userBooksRef(uid).where(this.state.shelf, '==', true).orderBy(this.state.orderBy.type, this.state.desc ? 'desc' : 'asc').limit(14).onSnapshot(snap => {
+            this.setState({ loading: true });
             if (!snap.empty) {
                 //console.log(snap);
                 let snapUserBooks = [];
-                let snapShelfBooks = [];
-                let snapWishlistBooks = [];
                 snap.forEach(userBook => {
                     //console.log(userBook.id);
-                    snapUserBooks.push(userBook.data());
-                    this.setState({ userBooks: snapUserBooks });
-                    bookRef(userBook.id).get().then(book => {
-                        if (book.exists) {
-                            if (userBook.data().bookInShelf) {
-                                //console.log('book in shelf');
-                                snapShelfBooks.push(book.data());
-                            } else {
-                                //console.log('book in wishlist');
-                                snapWishlistBooks.push(book.data());
-                            }
-                        } else { console.warn("book doesn't exist"); }
-                        this.setState({ 
-                            shelfBooks: snapShelfBooks, 
-                            wishlistBooks: snapWishlistBooks, 
-                            loading: false 
-                        });
+                    snapUserBooks.push({
+                        ...userBook.data(),
+                        bid: userBook.id
+                    });
+                    this.setState({
+                        userBooks: snapUserBooks,
+                        loading: false
                     });
                 });
             } else {
-                //console.log('no books');
+                //console.log('No books');
                 this.setState({
-                    shelfBooks: [],
-                    wishlistBooks: [],
                     userBooks: [],
                     loading: false
                 });
@@ -78,20 +78,48 @@ export default class Shelf extends React.Component {
         });
     }
 
+    onChangeOrder = (event, value) => this.setState({ orderBy: value, isOpenOrderMenu: false });
+
+    onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
+
+    onToggleOrderMenu = event => {
+        this.setState({ anchorEl: event.currentTarget });
+        this.setState(prevState => ({ isOpenOrderMenu: !prevState.isOpenOrderMenu }));
+    }
+
     render(props) {
-        const { luid, loading, shelfBooks, uid, wishlistBooks } = this.state;
-        const isOwner = luid === uid;
-        let shelfCovers = shelfBooks && shelfBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} /></Link> );
-        let wishlistCovers = wishlistBooks && wishlistBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={false} /></Link> );
+        const { desc, isOpenOrderMenu, luid, loading, orderBy, shelf, uid, userBooks } = this.state;
+        const isOwner = () => luid === uid;
+        let covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
 
         return (
-            <div ref="shelfComponent">
+            <div className="shelf-container" ref="shelfComponent">
+                <div className="head nav">
+                    <div className="info-row pull-right">
+                        <span className="counter last">Ordina per</span>
+                        <button className="btn sm flat counter" onClick={this.onToggleOrderMenu}>{orderBy.label}</button>
+                        <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Discendente' : 'Ascendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                        <Popover 
+                            open={isOpenOrderMenu} 
+                            onRequestClose={this.onToggleOrderMenu} 
+                            anchorEl={this.state.anchorEl} 
+                            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                            targetOrigin={{horizontal: 'left', vertical: 'top'}}>
+                            <Menu onChange={this.onChangeOrder}>
+                                <MenuItem value={{type: 'added_num', label: 'Data aggiunta'}} primaryText="Data aggiunta" />
+                                <MenuItem value={{type: 'title', label: 'Titolo'}} primaryText="Titolo" />
+                                {shelf === 'bookInShelf' && <MenuItem value={{type: 'rating_num', label: 'Valutazione'}} primaryText="Valutazione" />}
+                                <MenuItem value={{type: 'authors', label: 'Autore'}} primaryText="Autore" />
+                            </Menu>
+                        </Popover>
+                    </div>
+                </div>
+
                 <div className="shelf">
-                    
                     <div className="collection hoverable-items">
                         {loading ? skltn_shelfRow :
                             <div className="shelf-row">
-                                { isOwner &&
+                                {isOwner() &&
                                     <Link to="/books/add">
                                         <div className="book empty">
                                             <div className="cover">+</div>
@@ -99,23 +127,11 @@ export default class Shelf extends React.Component {
                                         </div>
                                     </Link>
                                 }
-                                {shelfCovers}
+                                {covers}
                             </div>
                         }
                     </div>
-                    
-                    {wishlistCovers[0] && 
-                        <div className="collection hoverable-items">
-                            <hr className="line" />
-                            <h2 className="info-row centered">Lista desideri</h2>
-                            <div className="shelf-row">{wishlistCovers}</div>
-                        </div>
-                    }
                 </div>
-                {/* <div className="row justify-content-center">
-                    {!shelfCovers[0] && !wishlistCovers[0] && <div className="placeholder">Empy state</div>}
-                    <Link to="/books/add" className="btn primary">Aggiungi libro</Link>
-                </div> */}
             </div>
         );
     }

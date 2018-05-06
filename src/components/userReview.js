@@ -8,30 +8,32 @@ import Avatar from './avatar';
 import Rating from './rating';
 
 export default class UserReview extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-      bid: this.props.bid || '',
-      bookReviews_num: this.props.bookReviews_num || 0,
-      user: this.props.user || {},
-      userBook: this.props.userBook || {},
-      review: {
-        createdByUid: '',
-        created_num: 0,
-        displayName: '',
-        likes: [],
-        likes_num: 0,
-        photoURL: '',
-        rating_num: 0
-      },
-      changes: false,
-      text_maxChars: 1500,
-      title_maxChars: 255,
-      loading: false,
-      serverError: '',
-      errors: {},
-      isEditing: false
-    }
+	state = {
+    bid: this.props.bid || '',
+    bookReviews_num: this.props.bookReviews_num || 0,
+    user: this.props.user || {},
+    userBook: this.props.userBook || {},
+    review: {
+      createdByUid: '',
+      created_num: 0,
+      displayName: '',
+      likes: [],
+      likes_num: 0,
+      photoURL: '',
+      rating_num: 0
+    },
+    changes: false,
+    text_maxChars: 1500,
+    title_maxChars: 255,
+    loading: false,
+    serverError: '',
+    errors: {},
+    isEditing: false
+  }
+
+  static propTypes = {
+    bid: stringType.isRequired,
+    userBook: userBookType
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -309,9 +311,4 @@ export default class UserReview extends React.Component {
       </React.Fragment>
     );
   }
-}
-
-UserReview.propTypes = {
-  bid: stringType.isRequired,
-  userBook: userBookType
 }

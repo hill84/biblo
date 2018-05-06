@@ -11,32 +11,45 @@ import NoMatch from '../noMatch';
 import Shelf from '../shelf';
 
 export default class Dashboard extends React.Component {
- 	constructor(props) {
-		super(props);
-		this.state = {
-			luid: this.props.user && this.props.user.uid,
-			uid: null,
-			user: null,
-			follow: false,
-			loading: true,
-			progress: 60
-		}
+ 	state = {
+		luid: this.props.user && this.props.user.uid,
+		uid: null,
+		user: null,
+		follow: false,
+		loading: true,
+		progress: 60
+	}
+
+	static propTypes = {
+		user: userType
 	}
 
 	static getDerivedStateFromProps(nextProps, prevState) {
-		if ((nextProps.user && nextProps.user.uid) !== prevState.luid) { return { luid: nextProps.user && nextProps.user.uid }; }
+		if ((nextProps.user && nextProps.user.uid) !== prevState.luid) { return { luid: nextProps.user.uid }; }
     if (nextProps.match.params.uid !== prevState.uid) { return { uid: nextProps.match.params.uid }; }
     return null;
   }
 
-  componentDidMount() {
-  	this.fetchUser();
-  }
+	componentDidMount() {
+		this._isMounted = true;
+		this.fetchUser();
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.uid !== prevState.uid || this.state.luid !== prevState.luid){
-      this.fetchUser();
-    }
+		if (this._isMounted) {
+			if(this.state.uid !== prevState.uid){
+				this.fetchUser();
+			}
+			if(this.state.luid !== prevState.luid){
+				if (prevState.luid !== null) {
+					this.fetchUser();
+				}
+			}
+		}
 	}
 	
 	fetchUser = () => {
@@ -110,7 +123,17 @@ export default class Dashboard extends React.Component {
 		}
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
-		const isOwner = luid === uid;
+		const isOwner = () => luid === uid;
+		const ShelfDetails = () => {
+			return (
+				<div className="info-row footer centered">
+					<span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>
+					<span className="counter">Desideri: <b>{user.stats.wishlist_num}</b></span>
+					<span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
+					<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
+				</div>
+			)
+		}
 
 		return (
 			<div className="container" id="dashboardComponent">
@@ -136,12 +159,12 @@ export default class Dashboard extends React.Component {
 												{user.country && <span className="counter">{user.country}</span>}
 												{user.continent && <span className="counter">{user.continent}</span>}
 											</span>
-											{user.languages && <span className="counter hide-sm">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
+											{user.languages && <span className="counter hide-sm">Parl{isOwner() ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 											{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 											{isOwner && progress === 100 && <Link to="/profile"><button className="btn sm flat counter">{icon.pencil()} Modifica profilo</button></Link>}
 										</div>
 										<div className="info-row">
-											{!isOwner && 
+											{!isOwner() && 
 												<button 
 													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
 													disabled={!isAuthenticated()}
@@ -155,7 +178,7 @@ export default class Dashboard extends React.Component {
 												</button>
 											}
 											<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
-											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{user.stats.followed_num || 0}</b></span>
+											<span className="counter">Segu{isOwner() ? 'i' : 'e'}: <b>{user.stats.followed_num || 0}</b></span>
 										</div>
 									</div>
 								</div>
@@ -179,13 +202,14 @@ export default class Dashboard extends React.Component {
 				<Tabs tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
 					<Tab label="Libreria">
 						<div className="card bottompend">
-							<Shelf uid={uid} />
-							<div className="info-row footer centered">
-								<span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>
-								<span className="counter">Desideri: <b>{user.stats.wishlist_num}</b></span>
-								<span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
-								<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
-							</div>
+							<Shelf uid={uid} shelf="bookInShelf"/>
+							<ShelfDetails />
+						</div>
+					</Tab>
+					<Tab label="Desideri">
+						<div className="card bottompend">
+							<Shelf uid={uid} shelf="bookInWishlist" />
+							<ShelfDetails />
 						</div>
 					</Tab>
 					<Tab label="Attività">
@@ -202,8 +226,4 @@ export default class Dashboard extends React.Component {
 			</div>
 		);
 	}
-}
-
-Dashboard.propTypes = {
-	user: userType
 }

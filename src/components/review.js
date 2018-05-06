@@ -8,17 +8,17 @@ import Avatar from './avatar';
 import Rating from './rating';
 
 export default class Review extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      like: this.props.like || false,
-      likes_num: this.props.review.likes.length || 0
-    }
+  state = {
+    like: this.props.like || false,
+    likes_num: this.props.review.likes.length || 0
+  }
+
+  static propTypes = {
+    review: reviewType.isRequired
   }
 
   onThumbUp = () => {
     const { bid, review } = this.props;
-    
     let likes = review.likes;
     if (this.state.like) {
       likes = likes.filter(e => e !== uid);
@@ -32,7 +32,6 @@ export default class Review extends React.Component {
       //console.log(`User likes increased to ${likes.length}`);
     }
     //console.log(likes);
-  
     if (bid && review.createdByUid) {
       reviewRef(bid, review.createdByUid).update({
         likes: likes,
@@ -47,7 +46,6 @@ export default class Review extends React.Component {
       }).then(() => {
         //console.log(`User book review likes updated`);
       }).catch(error => console.warn(error.message));
-
     } else console.warn('No bid or ruid');
   }
 
@@ -80,7 +78,7 @@ export default class Review extends React.Component {
                     disabled={!isAuthenticated() || (review.createdByUid === uid)} 
                     onClick={this.onThumbUp}
                     title={like ? 'Non mi piace più' : 'Mi piace'}>
-                      {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? likes_num : 'Mi piace'}
+                    {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? likes_num : 'Mi piace'}
                   </button>
                 </div>
               </div>
@@ -91,8 +89,4 @@ export default class Review extends React.Component {
       </div>
     );
   }
-}
-
-Review.propTypes = {
-  review: reviewType.isRequired
 }

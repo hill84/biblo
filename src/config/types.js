@@ -84,7 +84,11 @@ export const userBookType = shape({
     text: stringType,
     title: stringType
   }).isRequired,
-  readingState: string.isRequired,
+  readingState: shape({
+    state_num: numberType.isRequired,
+    start_num: numberType,
+    end_num: numberType
+  }).isRequired,
   rating_num: number.isRequired,
   bookInShelf: bool.isRequired,
   bookInWishlist: bool.isRequired 

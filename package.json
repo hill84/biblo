@@ -5,6 +5,8 @@
   "dependencies": {
     "bootstrap-4-grid": "^2.1.0",
     "firebase": "^4.8.0",
+    "intl": "^1.2.5",
+    "intl-locales-supported": "^1.0.0",
     "material-ui": "^0.20.0",
     "material-ui-chip-input": "^0.18.7",
     "prop-types": "^15.6.1",
