@@ -1,16 +1,17 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { blueGrey900, cyan700, cyan900, orange600, orange800 } from 'material-ui/styles/colors';
+import { blueGrey900, cyan700, cyan900, purpleA200, purpleA400 } from 'material-ui/styles/colors';
 //import { emphasize } from 'material-ui/utils/colorManipulator';
 
 export const appName = 'Biblo';
 
-/* https://github.com/mui-org/material-ui/blob/master/src/styles/getMuiTheme.js */
+// THEME
+// https://github.com/mui-org/material-ui/blob/master/src/styles/getMuiTheme.js
 export const muiTheme = getMuiTheme({
     palette: {
         primary1Color: cyan700,
         primary2Color: cyan900,
-        accent1Color: orange600,
-        accent2Color: orange800,
+        accent1Color: purpleA200,
+        accent2Color: purpleA400,
         pickerHeaderColor: cyan700
     },
     appBar: { height: 60 },
@@ -47,21 +48,23 @@ export const muiThemePrimary = getMuiTheme({
     }
 });
 
+// JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
-
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
-
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
-export const normalizeCover = str => str && str.replace('&edge=curl', '');
+// UTILITY
+export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {
+  //console.log('Async: Copying to clipboard was successful!');
+}, error => console.warn('Async: Could not copy text: ', error));
 
+// VALIDATION
 export const validateImg = (file, maxSize) => {
     const errors = {};
     const fileExtension = file.name.split('.').pop();
     const ext = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'svg', 'SVG', 'gif', 'GIF', 'webp', 'WEBP'];
-
     if (ext.indexOf(fileExtension) === -1) {
-        console.warn(`File extension not supperted: ${fileExtension}`);
+        console.warn(`Image file extension not supperted: ${fileExtension}`);
         errors.upload = 'Tipo file non valido';
     } else if (file.size > maxSize) {
         console.warn('File size too big');
@@ -70,6 +73,13 @@ export const validateImg = (file, maxSize) => {
     return errors;
 }
 
+export const checkBadWords = text => {
+    let result = false;
+    text && text.split(' ').map(word => badWords.map(badWord => result = (word.toLowerCase() === badWord) ? true : false ));
+    return result;
+}
+
+// NORMALIZATION
 export const normalizeString = str => str.toString().toLowerCase()
     .replace(/\s+/g,'-')        // Replace spaces with -
     .replace(/--+/g,'-')        // Replace multiple - with single -
@@ -85,17 +95,18 @@ export const normalizeString = str => str.toString().toLowerCase()
     .replace(/ñ/g,"n")
     .replace(/^-+/, '')         // Trim - from start of text
     .replace(/-+$/, '');        // Trim - from end of text
+export const normalizeCover = str => str && str.replace('&edge=curl', '');
+
+// CALCULATION
+const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) && `${Math.floor(minutes%60)} minuti`}`;
+
+export const calcReadingTime = pages => calcMinutesToTime(pages * .85);
 
 export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
-
-export const calcReadingTime = pages => minutesToTime(pages * .85);
-
-const minutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) && `${Math.floor(minutes%60)} minuti`}`;
 
 export const timeSince = date => {
     const seconds = Math.floor((new Date() - date) / 1000);
     let interval = Math.floor(seconds / 31536000);
-  
     if (interval > 1) { return `${interval} anni fa`; }
     interval = Math.floor(seconds / 2592000);
     if (interval > 1) { return `${interval} mesi fa`; }
@@ -108,16 +119,60 @@ export const timeSince = date => {
     return 'pochi secondi fa'; //`${Math.floor(seconds)} secondi fa`;
 };
 
-export const checkBadWords = text => {
-    var result = false;
-    text && text.split(' ').map(word => badWords.map(badWord => result = (word.toLowerCase() === badWord) ? true : result ));
-    return result;
-}
+// MAP
+export const switchGenres = array => array.map(string => {
+    let g;
+    switch (string) {
+        case "Architecture":                g = "Architettura"; break;
+        case "Art":                         
+        case "Performing Arts":             g = "Arte"; break;
+        case "Bibles":
+        case "Religion":                    g = "Religione e spiritualità"; break;
+        case "Biography & Autobiography":   g = "Biografie e autobiografie"; break;
+        case "Business & Economics":        g = "Economia e finanza"; break;
+        case "Comics & Graphic Novels":     g = "Fumetti e Graphic novel"; break;
+        case "Cooking":                     g = "Cucina"; break;
+        case "Family & Relationships":      g = "Famigliae relazioni"; break;
+        case "Fiction":                     g = "Narrativa"; break;
+        case "History":                     g = "Storico"; break;
+        case "Humor":                       g = "Umoristico"; break;
+        case "Juvenile Fiction":            g = "Per ragazzi"; break;
+        case "Literary Criticism":          g = "Saggistica"; break;
+        case "Medical":                     g = "Medicina e salute"; break;
+        case "Mistery":                     g = "Mistero"; break;
+        case "Music":                       g = "Musica"; break;
+        case "Philosophy":                  g = "Filosofia"; break;
+        case "Poetry":                      g = "Poesia"; break;
+        case "Science":                     g = "Scienza"; break; 
+        case "Science fiction":             g = "Fantascienza"; break; 
+        case "Social Science":              g = "Scienze sociali"; break;
+        case "Travel":                      g = "Viaggi"; break;
+        default:                            g = ""; break;
+    }
+    return g;
+});
 
-const badWords = [
-    'cagare', 'cagata', 'cazzaro', 'cazzata', 'cazzi', 'cazzo', 'cazzone', 'coglionando', 'coglionare', 'coglionata', 'coglione', 'culattone', 'culo', 'fanculizzati', 'fanculo', 'ficcatelo', 'fottere', 'fottiti', 'fottuta', 'fottuto', 'frocio', 'fuck', 'michiata', 'minchione', 'puttana', 'puttaniere', 'rottinculo', 'sfanculare', 'stronzata', 'stronzate', 'stronzo', 'stronzi', 'suca', 'sucare', 'sucamelo', 'succhiamelo', 'troiaio', 'troie', 'vaffanculo'
-];
+export const switchLanguages = string => {
+    let l;
+    switch (string) {
+        case "ar": l = "Arabo"; break;
+        case "zh": l = "Cinese"; break;
+        case "ko": l = "Coreano"; break;
+        case "fr": l = "Francese"; break;
+        case "ja": l = "Giapponese"; break;
+        case "el": l = "Greco"; break;
+        case "en": l = "Inglese"; break;
+        case "it": l = "Italiano"; break;
+        case "pt": l = "Portoghese"; break;
+        case "ru": l = "Russo"; break;
+        case "es": l = "Spagnolo"; break;
+        case "de": l = "Tedesco"; break; 
+        default: l = ""; break;
+    }
+    return l;
+};
 
+// LIST
 export const ratingLabels = { 0: "Nessun voto", 1: "Pessimo", 2: "Scarso", 3: "Sufficiente", 4: "Buono", 5: "Ottimo" };
 
 export const formats = [
@@ -157,58 +212,6 @@ export const genres = [
     { id: "um", name: "Umoristico" },
     { id: "vi", name: "Viaggi" }
 ];
-
-export const switchGenres = array => array.map(string => {
-    let g;
-    switch (string) {
-        case "Architecture":                g = "Architettura"; break;
-        case "Art":                         
-        case "Performing Arts":             g = "Arte"; break;
-        case "Bibles":
-        case "Religion":                    g = "Religione e spiritualità"; break;
-        case "Biography & Autobiography":   g = "Biografie e autobiografie"; break;
-        case "Business & Economics":        g = "Economia e finanza"; break;
-        case "Comics & Graphic Novels":     g = "Fumetti e Graphic novel"; break;
-        case "Cooking":                     g = "Cucina"; break;
-        case "Family & Relationships":      g = "Famigliae relazioni"; break;
-        case "Fiction":                     g = "Narrativa"; break;
-        case "History":                     g = "Storico"; break;
-        case "Humor":                       g = "Umoritistico"; break;
-        case "Juvenile Fiction":            g = "Per ragazzi"; break;
-        case "Literary Criticism":          g = "Saggistica"; break;
-        case "Medical":                     g = "Medicina e salute"; break;
-        case "Mistery":                     g = "Mistero"; break;
-        case "Music":                       g = "Musica"; break;
-        case "Philosophy":                  g = "Filosofia"; break;
-        case "Poetry":                      g = "Poesia"; break;
-        case "Science":                     g = "Scienza"; break; 
-        case "Science fiction":             g = "Fantascienza"; break; 
-        case "Social Science":              g = "Scienze sociali"; break;
-        case "Travel":                      g = "Viaggi"; break;
-        default:                            g = ""; break;
-    }
-    return g;
-});
-
-export const switchLanguages = string => {
-    let l;
-    switch (string) {
-        case "ar": l = "Arabo"; break;
-        case "zh": l = "Cinese"; break;
-        case "ko": l = "Coreano"; break;
-        case "fr": l = "Francese"; break;
-        case "ja": l = "Giapponese"; break;
-        case "el": l = "Greco"; break;
-        case "en": l = "Inglese"; break;
-        case "it": l = "Italiano"; break;
-        case "pt": l = "Portoghese"; break;
-        case "ru": l = "Russo"; break;
-        case "es": l = "Spagnolo"; break;
-        case "de": l = "Tedesco"; break; 
-        default: l = ""; break;
-    }
-    return l;
-};
 
 export const languages = [
     { id: "ar", name: "Arabo", nativeName: "العربية" },
@@ -681,4 +684,55 @@ export const italianProvinces = [
     { id: "VV", name: "Vibo Valentia" },
     { id: "VI", name: "Vicenza" },
     { id: "VT", name: "Viterbo" }
+];
+
+const badWords = [
+    'cagare', 
+    'cagata', 
+    'cagate',
+    'cazzaro', 
+    'cazzata', 
+    'cazzate',
+    'cazzi', 
+    'cazzo', 
+    'cazzone', 
+    'cazzoni',
+    'coglionando', 
+    'coglionare', 
+    'coglionata', 
+    'coglione', 
+    'coglioni',
+    'culattone', 
+    'culattoni',
+    'fanculizzati', 
+    'fanculo', 
+    'ficcatelo', 
+    'fottere', 
+    'fottiti', 
+    'fottuta', 
+    'fottuto', 
+    'froci',
+    'frocio', 
+    'fuck', 
+    'minchiata', 
+    'minchiate',
+    'minchione', 
+    'minchioni',
+    'puttana', 
+    'puttane',
+    'puttaniere', 
+    'puttanieri',
+    'rottinculo', 
+    'sfanculare', 
+    'stronzata', 
+    'stronzate', 
+    'stronzo', 
+    'stronzi', 
+    'suca', 
+    'sucare', 
+    'sucamelo', 
+    'succhiamelo', 
+    'troiaio', 
+    'troie', 
+    'vaffanculo'
 ];

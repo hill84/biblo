@@ -4,7 +4,7 @@
     --primaryLigthClr: rgb(0, 172, 193);    /* cyan600 */
     --primaryClr: rgb(0, 151, 167);         /* cyan700 */
     --primaryDarkClr: rgb(0, 131, 143);     /* cyan800 */
-    --accentClr: rgb(251, 104, 148);        /* pink */
+    --accentClr: rgb(224, 64, 251);         /* purpleA200 */
     --successClr: rgb(67, 160, 71);         /* green600 */
     --errorClr: rgb(244, 67, 54);           /* red500 */
     --alertClr: rgb(251, 140, 0);           /* orange600 */
@@ -62,7 +62,7 @@ p:last-child { margin-bottom: 0; }
 
 .link {
     display: inline;
-    -webkit-appearance: none;
+    appearance: none;
     border: 0;
     padding: 0;
     background-color: transparent;
@@ -380,10 +380,6 @@ hr.line {
     will-change: transform;
     cursor: pointer;
 } 
-.select:hover {
-}
-.select:active, .select.active {
-}
 
 /* CONTAINER */
 /* .container { padding-top: 7px; padding-bottom: 7px; transition: all .2s ease-in-out; } */
@@ -537,7 +533,7 @@ hr.line {
     transform: rotate(45deg);
 }
 .upload { 
-    -webkit-appearance: none;
+    appearance: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -546,7 +542,7 @@ hr.line {
     height: 100%;
     cursor: pointer;
 }
-.progress { -webkit-appearance: none; }
+.progress { appearance: none; }
 .upload-avatar .progress { 
     position: absolute;
     bottom: 0;
@@ -875,7 +871,9 @@ hr.line {
 }
 .shelf-container .head.nav .info-row { margin-bottom: 0; }
 .shelf-container .head.nav .counter { line-height: inherit; }
-.btn.asc svg { transition: all .2s ease-in-out; will-change: transform; transform: rotate(180deg); }
+.btn.desc svg, .btn.asc svg { transition: all .2s ease-in-out; will-change: transform; }
+.btn.desc svg, .asc:hover svg { transform: rotate(0deg); }
+.btn.desc:hover svg, .asc svg { transform: rotate(180deg); }
 
 /* BOOK COVER */
 .book {
@@ -1063,7 +1061,7 @@ hr.line {
     height: 60px;
     width: 60px;
     border-radius: 60px;
-    border: 7px solid rgba(0,0,0,.1);
+    border: 5px solid rgba(0,0,0,.1);
     margin: auto;
 }
 .progress-container .progress-base, .progress-container .progress-value {
@@ -1161,6 +1159,55 @@ hr.line {
 @keyframes skltn_shelfRow { to { background-position: 120% 0; } }
 
 /* MEDIA QUERIES */
+@media (pointer: fine) {
+    .copy { 
+        padding: 2px 4px;
+        margin-left: -4px;
+        margin-right: -4px;
+        cursor: copy;
+        transition: all .2s ease-in-out; 
+        user-select: none;
+    }
+    .copy:hover {
+        background-color: rgba(0,151,167,.03);
+        border-radius: 2px;
+    }
+    .copy:active {
+        background-color: rgba(67,160,71,.2);
+    }
+    
+    .tt { position: relative; }
+    .tt .tip {
+        position: absolute;
+        padding: 4px 8px; 
+        margin: auto;
+        bottom: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        height: fit-content;
+        width: fit-content;
+        display: block;
+        text-align: center;
+        line-height: 140%;
+        font-size: .7rem;
+        font-weight: 200;
+        color: #fff;
+        background-color: rgba(20,35,40,.9);
+        border-radius: 3px;
+        user-select: none;
+        opacity: 0;
+        transform-origin: bottom center;
+        transform: perspective(150) scale(.8) rotateX(-90deg);
+        will-change: opacity transform;
+        transition: all .2s ease-in-out;
+        z-index: 1;
+    }
+    .tt:hover .tip {
+        opacity: .95;
+        transform: perspective(150) scale(1) rotateX(0deg);
+        box-shadow: 0 1px 4px rgba(0,10,15,.15);
+    }
+}
 @media (max-width: 1200px) {
     :root { --booksPerRow-lg: 6; }
     .text-align-center-xl { text-align: center; }

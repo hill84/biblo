@@ -4,13 +4,15 @@ import { ratingLabels } from '../config/shared';
 import Rater from 'react-rater';
 
 export default class Rating extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      ratings_num: this.props.ratings.ratings_num || 0,
-      rating_num: this.props.ratings.rating_num || 0,
-      averageRating_num: Math.round(this.props.ratings.rating_num / this.props.ratings.ratings_num * 10) / 10 || 0
-    }
+  state = {
+    ratings_num: this.props.ratings.ratings_num || 0,
+    rating_num: this.props.ratings.rating_num || 0,
+    averageRating_num: Math.round(this.props.ratings.rating_num / this.props.ratings.ratings_num * 10) / 10 || 0
+  }
+
+  static propTypes = {
+    ratings: ratingsType.isRequired,
+    labels: boolType
   }
 
   componentWillReceiveProps(nextProps) {
@@ -35,9 +37,4 @@ export default class Rating extends React.Component {
       </div>
     )
   }
-}
-
-Rating.propTypes = {
-  ratings: ratingsType.isRequired,
-  labels: boolType
 }

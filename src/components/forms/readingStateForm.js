@@ -36,7 +36,7 @@ export default class readingStateForm extends React.Component {
   onToggle = () => this.props.onToggle();
 
   onChange = (event, index, value) => {
-    this.setState({ state_num: value });
+    this.setState({ state_num: value, changes: true });
     if (value !== 2 || value !== 3) {
       this.setState({ start_num: null });
     }
@@ -73,19 +73,21 @@ export default class readingStateForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { state_num } = this.state;
-    const errors = this.validate(this.state.start_num, this.state.end_num);
-    this.setState({ errors });
-    if (Object.keys(errors).length === 0) {
-      userBookRef(uid, this.props.bid).update({
-        'readingState.state_num': state_num,
-        'readingState.start_num': this.state.start_num || null,
-        'readingState.end_num': this.state.end_num || null
-      }).then(() => {
-        console.log(`UserBook readingState updated`);
-      }).catch(error => console.warn(error));
-      this.props.onToggle();
-    }
+    const { changes, state_num } = this.state;
+    if (changes) {
+      const errors = this.validate(this.state.start_num, this.state.end_num);
+      this.setState({ errors });
+      if (Object.keys(errors).length === 0) {
+        userBookRef(uid, this.props.bid).update({
+          'readingState.state_num': state_num,
+          'readingState.start_num': this.state.start_num || null,
+          'readingState.end_num': this.state.end_num || null
+        }).then(() => {
+          //console.log(`UserBook readingState updated`);
+          this.props.onToggle();
+        }).catch(error => console.warn(error));
+      }
+    } else this.props.onToggle();
   }
 
   render() {
@@ -101,8 +103,7 @@ export default class readingStateForm extends React.Component {
                   floatingLabelText="Stato lettura"
                   value={state_num}
                   onChange={this.onChange}
-                  fullWidth={true}
-                >
+                  fullWidth={true}>
                   <MenuItem value={1} primaryText="Non iniziato" />
                   <MenuItem value={2} primaryText="In lettura" />
                   <MenuItem value={3} primaryText="Finito" />

@@ -117,7 +117,7 @@ export default class Shelf extends React.Component {
                         <div className="col-auto info-row">
                             <span className="counter last hide-xs">Ordina per</span>
                             <button className="btn sm flat counter" onClick={this.onToggleOrderMenu}>{orderBy.label}</button>
-                            <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Discendente' : 'Ascendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                            <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
                             <Popover 
                                 open={isOpenOrderMenu} 
                                 onRequestClose={this.onToggleOrderMenu} 

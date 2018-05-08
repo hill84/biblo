@@ -17,7 +17,7 @@ export default class Dashboard extends React.Component {
 		user: null,
 		follow: false,
 		loading: true,
-		progress: 60
+		progress: 0
 	}
 
 	static propTypes = {
@@ -59,9 +59,13 @@ export default class Dashboard extends React.Component {
 			userRef(match.params.uid).onSnapshot(snap => {
 				this.setState({ loading: false });
 				if (snap.exists) {
+					/* let count = -4;
+					let tot = Object.keys(snap.data()).length - 4;
+					Object.keys(snap.data()).forEach(i => { if (typeof i !== 'undefined') count++ }); */
 					this.setState({
 						user: snap.data(),
-						follow: (user && user.stats.followers) && user.stats.followers.indexOf(luid) > -1
+						follow: snap.data().stats.followers.indexOf(luid) > -1,
+						progress: 100 // / tot * count
 					});
 				} else this.setState({ user: null });
 			});
@@ -116,7 +120,13 @@ export default class Dashboard extends React.Component {
 
 		if (!user) {
 			if (loading) {
-				return <div className="container"><div className="card dark empty text-align-center">caricamento in corso...</div></div>
+				return (
+					<div className="container">
+						<div className="card dark empty text-align-center">
+							<CircularProgress />
+						</div>
+					</div>
+				)
 			} else {
 				return <NoMatch title="Dashboard utente non trovata" location={this.props.location} />
 			}
@@ -190,7 +200,7 @@ export default class Dashboard extends React.Component {
 							<div className="card dark text-align-center">
 								<div className="progress-container">
 									<div className="progress-base"></div>
-									<CircularProgress mode="determinate" value={progress} size={60} max={100} thickness={7} />
+									<CircularProgress mode="determinate" value={progress} size={60} max={100} thickness={5} />
 									<div className="progress-value">{progress}%</div>
 								</div>
 								<div className="info-row"><Link to="/profile"><button className="btn primary centered">Completa profilo</button></Link></div>

@@ -12,6 +12,7 @@ import Rating from '../rating';
 import ReadingStateForm from '../forms/readingStateForm';
 import Reviews from '../reviews';
 import UserReview from '../userReview';
+import CopyToClipboard from '../copyToClipboard';
 
 export default class BookProfile extends React.Component {
 	state = {
@@ -137,11 +138,11 @@ export default class BookProfile extends React.Component {
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
-                  {isAuthenticated() && isEditor() && <button className="btn sm flat counter" onClick={this.onEditing}>Modifica</button>}
+                  {isAuthenticated() && isEditor() && <button className="btn sm flat counter" onClick={this.onEditing}>{icon.pencil()} Modifica</button>}
                 </div>
                 <div className="info-row hide-sm">
-                  <span className="counter">ISBN-13: {book.ISBN_13}</span>
-                  {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: {book.ISBN_10}</span>}
+                  <span className="counter">ISBN-13: <CopyToClipboard text={book.ISBN_13}/></span>
+                  {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: <CopyToClipboard text={book.ISBN_10}/></span>}
                   {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
                   {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
                   {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
@@ -169,12 +170,12 @@ export default class BookProfile extends React.Component {
                       }
                       {userBook.bookInWishlist && 
                         <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
-                          <span className="hide-on-hover">Aggiunto a lista desideri</span>
-                          <span className="show-on-hover">Rimuovi da lista desideri</span>
+                          <span className="hide-on-hover">Aggiunto a desideri</span>
+                          <span className="show-on-hover">Rimuovi da desideri</span>
                         </button>
                       }
                       {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                        <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a lista desideri</button>
+                        <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a desideri</button>
                       }
                     </div>
                     <div className="info-row">
