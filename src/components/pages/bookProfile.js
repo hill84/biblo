@@ -108,7 +108,7 @@ export default class BookProfile extends React.Component {
     const isEditor = () => user && user.roles && user.roles.editor === true;
 
 		return (
-      <div ref="BookProfileComponent">
+      <div id="BookProfileComponent">
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
         
         {isIncipitOpen && 

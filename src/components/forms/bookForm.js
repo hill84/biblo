@@ -496,7 +496,7 @@ export default class BookForm extends React.Component {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="form-group col-6">
+                  <div className="form-group col-sm-6">
                     <SelectField
                       errorText={errors.languages}
                       floatingLabelText="Lingua"
@@ -509,7 +509,7 @@ export default class BookForm extends React.Component {
                       {menuItemsMap(languages, book.languages)}
                     </SelectField>
                   </div>
-                  <div className="form-group col-6">
+                  <div className="form-group col-sm-6">
                     <SelectField
                       errorText={errors.format}
                       floatingLabelText="Formato"

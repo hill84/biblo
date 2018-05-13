@@ -1,5 +1,5 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { blueGrey900, cyan700, cyan900, purpleA200, purpleA400 } from 'material-ui/styles/colors';
+import { amber300, amber500, blueGrey900, cyan700, cyan900 } from 'material-ui/styles/colors';
 //import { emphasize } from 'material-ui/utils/colorManipulator';
 
 export const appName = 'Biblo';
@@ -10,8 +10,8 @@ export const muiTheme = getMuiTheme({
     palette: {
         primary1Color: cyan700,
         primary2Color: cyan900,
-        accent1Color: purpleA200,
-        accent2Color: purpleA400,
+        accent1Color: amber300,
+        accent2Color: amber500,
         pickerHeaderColor: cyan700
     },
     appBar: { height: 60 },
@@ -54,6 +54,7 @@ export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase(
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
 // UTILITY
+export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {
   //console.log('Async: Copying to clipboard was successful!');
 }, error => console.warn('Async: Could not copy text: ', error));

@@ -31,7 +31,7 @@ export default class Incipit extends React.Component {
 		return (
       <React.Fragment>
         <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${isDark ? 'dark' : 'light'}`}>
-          <div className="content">
+          <div className="absolute-content">
             <div role="navigation" className="head nav row">
               <strong className="col title">{title}</strong>
               <div className="col-auto btn-row">

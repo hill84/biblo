@@ -1,3 +1,4 @@
+import CircularProgress from 'material-ui/CircularProgress';
 import DatePicker from 'material-ui/DatePicker';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
@@ -13,6 +14,7 @@ export default class readingStateForm extends React.Component {
     start_num: this.props.readingState.start_num || null,
     end_num: this.props.readingState.end_num || null,
     changes: false,
+    loading: false,
     errors: {}
   }
 
@@ -60,10 +62,10 @@ export default class readingStateForm extends React.Component {
     const errors = {};
     const today = Number(new Date().getTime());
     if (start > today) {
-      errors.start_num = "Data non valida";
+      errors.start_num = "Data futura non valida";
     }
     if (end > today) {
-      errors.end_num = "Data non valida";
+      errors.end_num = "Data futura non valida";
     }
     if (!!end && start > end) {
       errors.end_num = "Data non valida";
@@ -75,6 +77,7 @@ export default class readingStateForm extends React.Component {
     e.preventDefault();
     const { changes, state_num } = this.state;
     if (changes) {
+      this.setState({ loading: true });
       const errors = this.validate(this.state.start_num, this.state.end_num);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
@@ -84,6 +87,7 @@ export default class readingStateForm extends React.Component {
           'readingState.end_num': this.state.end_num || null
         }).then(() => {
           //console.log(`UserBook readingState updated`);
+          this.setState({ loading: false });
           this.props.onToggle();
         }).catch(error => console.warn(error));
       }
@@ -91,11 +95,12 @@ export default class readingStateForm extends React.Component {
   }
 
   render() {
-    const { end_num, errors, start_num, state_num } = this.state;
+    const { end_num, errors, loading, start_num, state_num } = this.state;
 
 		return (
       <React.Fragment>
         <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
+          {loading && <div className="loader"><CircularProgress /></div>}
           <div className="content">
             <div className="row">
               <div className="form-group col">

@@ -1,21 +1,23 @@
 import React from 'react';
+import Link from 'react-router-dom/Link';
 import { collectionsRef } from '../config/firebase';
-import { boolType, numberType, stringType } from '../config/types';
 import { icon } from '../config/icons';
-import { Link } from 'react-router-dom';
-import { skltn_shelfRow } from './skeletons';
+/* import { isTouchDevice } from '../config/shared'; */
+import { boolType, numberType, stringType } from '../config/types';
 import Cover from './cover';
+import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 export default class BookCollection extends React.Component {
 	state = {
     cid: this.props.cid || 'top',
     bcid: this.props.bcid || 'bcid',
     limit: this.props.limit || (this.props.pagination || this.props.scrollable) ? 7 : 98,
-    scrollable: this.props.scrollable || false,
-    pagination: this.props.pagination || false,
+    scrollable: /* isTouchDevice() ? ( */this.props.scrollable || false/* ) : false */,
+    pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
     stacked: this.props.stacked || false,
     collection: null,
     collectionCount: 0,
+    desc: false,
     loading: true,
     page: null,
     lastVisible: null
@@ -34,8 +36,8 @@ export default class BookCollection extends React.Component {
     if (nextProps.cid !== prevState.cid) { return { cid: nextProps.cid || 'top' }; }
     if (nextProps.bcid !== prevState.bcid) { return { bcid: nextProps.bcid || 'bcid' }; }
     if (nextProps.limit !== prevState.limit) { return { limit: nextProps.limit || (this.state.pagination || this.state.scrollable) ? 7 : 98 }; }
-    if (nextProps.scrollable !== prevState.scrollable) { return { scrollable: nextProps.scrollable || false }; }
     if (nextProps.pagination !== prevState.pagination) { return { pagination: nextProps.pagination || false }; }
+    if (nextProps.scrollable !== prevState.scrollable) { return { scrollable: nextProps.scrollable || false }; }
     if (nextProps.stacked !== prevState.stacked) { return { stacked: nextProps.stacked || false }; }
     return null;
   }
@@ -45,7 +47,8 @@ export default class BookCollection extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.cid !== prevState.cid || this.state.bcid !== prevState.bcid || this.state.limit !== prevState.limit){
+    if (this.state.cid !== prevState.cid || this.state.bcid !== prevState.bcid || this.state.limit !== prevState.limit || this.state.desc !== prevState.desc) {
+      console.log('Fetching collection');
       this.fetchCollection(this.state.cid, this.state.bcid, this.state.limit);
     }
   }
@@ -59,7 +62,7 @@ export default class BookCollection extends React.Component {
         this.setState({ collectionCount: 0 });
       }
     });
-    collectionsRef(cid).orderBy(String(bcid)).orderBy('publication').orderBy('title').limit(Number(limit)).get().then(snap => {
+    collectionsRef(cid).orderBy(String(bcid), this.state.desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(Number(limit)).get().then(snap => {
       if (!snap.empty) {
         snap.forEach(book => books.push(book.data()));
         this.setState({ 
@@ -88,7 +91,7 @@ export default class BookCollection extends React.Component {
     this.setState({ loading: true });
     
     let nextBooks = [];
-		collectionsRef(this.state.cid).orderBy(String(this.state.bcid)).orderBy('publication').orderBy('title').startAfter(startAfter).limit(this.state.limit).get().then(nextSnap => {
+		collectionsRef(this.state.cid).orderBy(String(this.state.bcid), this.state.desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(this.state.limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(book => nextBooks.push(book.data()));
         this.setState(prevState => ({ 
@@ -110,8 +113,13 @@ export default class BookCollection extends React.Component {
 		}).catch(error => console.warn("Error fetching next collection:", error));
   }
 
+  onToggleDesc = () => {
+    console.log('Toggle desc');
+    this.setState(prevState => ({ desc: !prevState.desc }));
+  }
+
 	render() {
-		const { cid, collection, collectionCount, limit, loading, page, pagination, scrollable, stacked } = this.state;
+		const { cid, collection, collectionCount, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;
     const covers = (collection && (collection.length > 0) ?
       <div className={`shelf-row ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, index) => 
@@ -125,44 +133,52 @@ export default class BookCollection extends React.Component {
     );
 
 		return (
-      <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>    
-        <div className="info-row">
-          <strong className="collection-title">{cid}</strong> <span className="collection-count">({collectionCount} libri)</span>
-          <span className="pull-right">
-            {pagination && collectionCount > limit ?
-              <span role="navigation">
+      <React.Fragment>
+        <div className="head nav" role="navigation">
+          <span className="counter last collection-title">{cid}</span> {collectionCount !== 0 && <span className="collection-count hide-xs">({collectionCount} libri)</span>}
+          <div className="pull-right">
+            {(pagination && collectionCount > limit) || scrollable ?
+              <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
+            :
+              <React.Fragment>
+                <span className="counter last hide-xs">Ordina per</span>
+                <button 
+                  className="btn sm flat counter"
+                  onClick={() => this.orderBy('rating')}
+                  title="Ordina per valutazione">
+                  {icon.star()}
+                </button>
+                <button 
+                  className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} 
+                  title={desc ? 'Ascendente' : 'Discendente'} 
+                  onClick={this.onToggleDesc}>
+                  {icon.arrowDown()}
+                </button>
+              </React.Fragment>
+            }
+            {pagination && collectionCount > limit &&
+              <React.Fragment>
                 <button 
                   disabled={page < 2 && 'disabled'} 
                   className="btn sm clear prepend" 
-                  onClick={() => this.fetch('prev')} title="precedente">{icon.chevronLeft()}</button>
+                  onClick={() => this.fetch('prev')} title="precedente">
+                  {icon.chevronLeft()}
+                </button>
                 <button 
                   disabled={page > (collectionCount / limit) && 'disabled'} 
                   className="btn sm clear append" 
-                  onClick={() => this.fetch('next')} title="successivo">{icon.chevronRight()}</button>
-              </span>
-            :
-              scrollable ? 
-                <Link to={`/collection/${cid}`} className="btn sm flat">Vedi tutti</Link> 
-              : 
-                <div className="btns">
-                  <button 
-                    className="btn sm clear prepend"
-                    onClick={() => this.orderBy('rating')}
-                    title="Ordina per voto">{icon.star()}</button>
-                  <button 
-                    className="btn sm clear pend"
-                    onClick={() => this.orderBy('ascending')}
-                    title="Ordina ascendente">{icon.sortAscending()}</button>
-                  <button 
-                    className="btn sm clear append"
-                    onClick={() => this.orderBy('descending')}
-                    title="Ordina discendente">{icon.sortDescending()}</button>
-                </div>
+                  onClick={() => this.fetch('next')} title="successivo">
+                  {icon.chevronRight()}
+                </button>
+              </React.Fragment>
             }
-          </span>
+          </div>
         </div>
-        {loading ? skltn_shelfRow : covers}
-      </div>	
+
+        <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>
+          {loading ? stacked ? skltn_shelfStack : skltn_shelfRow : covers}
+        </div>
+      </React.Fragment>
 		)
 	}
 }

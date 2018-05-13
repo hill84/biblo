@@ -20,9 +20,12 @@ export default class UserReview extends React.Component {
       likes: [],
       likes_num: 0,
       photoURL: '',
-      rating_num: 0
+      rating_num: 0,
+      text: '',
+      title: ''
     },
     changes: false,
+    text_minChars: 150,
     text_maxChars: 1500,
     title_maxChars: 255,
     loading: false,
@@ -49,12 +52,14 @@ export default class UserReview extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.bid !== prevState.bid || this.state.user !== prevState.user){
+    const { bid, changes, isEditing, user } = this.state;
+    if(bid !== prevState.bid || user !== prevState.user || (changes && !isEditing && isEditing !== prevState.isEditing)){
       this.fetchUserReview();
     }
   }
 
   fetchUserReview = () => {
+    //console.log('Fetching user review');
     reviewRef(this.state.bid, uid).onSnapshot(snap => {
       this.setState({ loading: true });
       if (snap.exists) {
@@ -71,7 +76,7 @@ export default class UserReview extends React.Component {
           title: ''
         }});
       };
-      this.setState({ loading: false });
+      this.setState({ loading: false, changes: false });
     });
   }
 
@@ -176,6 +181,19 @@ export default class UserReview extends React.Component {
   }
 
   onExitEditing = () => {
+    if (!this.state.review.created_num) {
+      this.setState({ 
+        review: {
+          ...this.state.review,
+          created_num: 0,
+          likes: [],
+          likes_num: 0,
+          rating_num: 0,
+          text: '',
+          title: ''
+        } 
+      });
+    }
     this.setState({ isEditing: false });
   }
 
@@ -202,6 +220,8 @@ export default class UserReview extends React.Component {
       errors.text = "Aggiungi una recensione";
     } else if (review.text.length > this.state.text_maxChars) {
       errors.text = `Lunghezza massima ${this.state.text_maxChars} caratteri`;
+    } else if (review.text.length < this.state.text_minChars) {
+      errors.text = `Lunghezza minima ${this.state.text_minChars} caratteri`;
     }
     return errors;
   }

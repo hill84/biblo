@@ -1,5 +1,7 @@
 import AutoComplete from 'material-ui/AutoComplete';
+import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import Popover from 'material-ui/Popover';
 import React from 'react';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
@@ -8,6 +10,14 @@ import { userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
   state = {
+    anchorEl: null,
+    isOpenSearchByMenu: false,
+    searchBy: {
+      type: 'intitle',
+      label: 'titolo',
+      hint: 'Sherlock Holmes',
+      where: 'title_sort'
+    },
     searchText: '',
     loading: false,
     maxSearchResults: 8,
@@ -22,6 +32,13 @@ export default class SearchBookForm extends React.Component {
     clearTimeout(this.timer);
   }
 
+  onChangeSearchBy = (event, value) => this.setState({ searchBy: value, isOpenSearchByMenu: false });
+
+  onToggleSearchByMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+    this.setState(prevState => ({ isOpenSearchByMenu: !prevState.isOpenSearchByMenu }));
+  }
+
   onUpdateInput = searchText => {
     clearTimeout(this.timer);
     this.setState({ searchText: searchText.normalize().toLowerCase() });
@@ -29,11 +46,17 @@ export default class SearchBookForm extends React.Component {
   }
 
   fetchOptions = () => {
-    const { searchText } = this.state;
+    const { maxSearchResults, searchBy, searchText } = this.state;
     if (!searchText) return;
     this.setState({ loading: true });
     if (this.props.new) {
-      fetch(new Request(booksAPIRef({q: searchText, inTitle: searchText}), { method: 'GET' })).then(res => res.json()).then(json => {
+      const searchTextType = searchBy.where === 'ISBN_13' ? isNaN(searchText) ? 0 : Number(searchText) : searchText;
+      const searchParams = {
+        q: searchText, 
+        [searchBy.type]: searchTextType
+      };
+      //console.log(searchParams);
+      fetch(new Request(booksAPIRef(searchParams), { method: 'GET' })).then(res => res.json()).then(json => {
         //console.log(json.items);   
         let options = [];
         if (json.items && json.items.length > 0) {
@@ -80,7 +103,8 @@ export default class SearchBookForm extends React.Component {
                       <span className="title">{b.title}</span>
                     </div>
                   }
-                  secondaryText={b.authors && <div className="secondaryText">di {join(b.authors)}</div>}
+                  //secondaryText={b.authors && <div className="secondaryText">di {join(b.authors)}</div>}
+                  secondaryText={<div className="secondaryText">{searchBy.where === 'ISBN_13' ? Number(ISBN_13[0].identifier) : `di ${join(b.authors)}`}</div>}
                 />
               )
             })
@@ -89,10 +113,13 @@ export default class SearchBookForm extends React.Component {
             loading: false,
             options: options
           });
+          console.log(options);
         }
       });
     } else {
-      booksRef.where('title_sort', '>=', searchText).orderBy('title_sort').limit(this.state.maxSearchResults).onSnapshot(snap => {
+      const searchTextType = searchBy.where === 'ISBN_13' ? isNaN(searchText) ? 0 : Number(searchText) : searchText;
+      booksRef.where(searchBy.where, '>=', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
+        console.log(snap);
         let options = [];
         snap.forEach(doc => {
           options.push({
@@ -112,7 +139,6 @@ export default class SearchBookForm extends React.Component {
             )
           })
         });
-
         this.setState({
           loading: false,
           options: options
@@ -121,10 +147,12 @@ export default class SearchBookForm extends React.Component {
     }
   }
 
-  onNewRequest = chosenRequest => {
-    this.setState({ loading: false });
-    //console.log({'chosenRequest': chosenRequest});
-    this.props.onBookSelect(chosenRequest);
+  onNewRequest = (chosenRequest, index) => {
+    if (index !== -1) {
+      this.setState({ loading: false });
+      //console.log({'chosenRequest': chosenRequest});
+      this.props.onBookSelect(chosenRequest); 
+    } //else console.log(`Clicked enter`);
   }
 
   onClose = () => {
@@ -133,27 +161,43 @@ export default class SearchBookForm extends React.Component {
   }
 
   render() {
+    const { anchorEl, isOpenSearchByMenu, maxSearchResults, options, searchBy, searchText } = this.state;
+
     return (
-      <form className="container sm" ref="SearchBookFormComponent">
+      <div className="container sm search-book-container" ref="SearchBookFormComponent">
         <div className="form-group">
           {/* this.state.loading && <div className="loader"><CircularProgress /></div> */}
           <AutoComplete
             name="search"
-            floatingLabelText="Cerca un libro inserendo il titolo"
-            hintText="Es: Sherlock Holmes"
-            searchText={this.state.searchText}
+            floatingLabelText={`Cerca un libro per ${searchBy.label}`}
+            hintText={`Es: ${searchBy.hint}`}
+            searchText={searchText}
             //filter={(searchText, key) => searchText !== '' && key.indexOf(searchText) !== -1}
             onUpdateInput={this.onUpdateInput}
             onNewRequest={this.onNewRequest}
             onClose={this.onClose}
             fullWidth={true}
             filter={AutoComplete.fuzzyFilter}
-            maxSearchResults={this.state.maxSearchResults}
-            dataSource={this.state.options}
+            maxSearchResults={maxSearchResults}
+            dataSource={options}
             //dataSourceConfig={{text: 'bid', value: 'bid'}}
           />
+          <button className="btn sm flat search-by" onClick={this.onToggleSearchByMenu}>{searchBy.label}</button>
+          <Popover 
+            open={isOpenSearchByMenu} 
+            onRequestClose={this.onToggleSearchByMenu} 
+            anchorEl={anchorEl} 
+            anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+            targetOrigin={{horizontal: 'right', vertical: 'top'}}>
+            <Menu onChange={this.onChangeSearchBy}>
+              <MenuItem value={{type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13'}} primaryText="ISBN" />
+              <MenuItem value={{type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors'}} primaryText="Autore" />
+              {/* <MenuItem value={{type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher'}} primaryText="Editore" /> */}
+              <MenuItem value={{type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort'}} primaryText="Titolo" />
+            </Menu>
+          </Popover>
         </div>
-      </form>
+      </div>
     )
   }
 }

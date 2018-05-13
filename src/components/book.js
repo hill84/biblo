@@ -11,7 +11,7 @@ export default class Book extends React.Component {
     user: this.props.user,
     userBook: {
       authors: (this.props.book && this.props.book.authors) || [],
-      covers: (this.props.book && !!this.props.book.covers[0] && Array(this.props.book.covers[0])) || [],
+      covers: (this.props.book && this.props.book.covers[0] && Array(this.props.book.covers[0])) || [],
       publisher: (this.props.book && this.props.book.publisher) || '',
       title: (this.props.book && this.props.book.title) || '',
       subtitle: (this.props.book && this.props.book.subtitle) || '',
@@ -119,14 +119,16 @@ export default class Book extends React.Component {
   }
   
   fetchUserBook = bid => {
-    if (isAuthenticated()) {
-      userBookRef(uid, bid).onSnapshot(snap => {
-        if (snap.exists) {
-          this.setState({ userBook: snap.data() });
-          //console.log(`Update userBook ${bid}`);
-        }
-      });
-    } else console.warn(`Cannot fetchUserBook. User not authenticated`);
+    if (bid) {
+      if (isAuthenticated()) {
+        userBookRef(uid, bid).onSnapshot(snap => {
+          if (snap.exists) {
+            this.setState({ userBook: snap.data() });
+            //console.log(`Update userBook ${bid}`);
+          }
+        });
+      } else console.warn(`Cannot fetchUserBook. User not authenticated`);
+    }
   }
   
   addBookToShelf = bid => {
