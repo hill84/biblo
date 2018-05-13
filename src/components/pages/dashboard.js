@@ -64,7 +64,7 @@ export default class Dashboard extends React.Component {
 					Object.keys(snap.data()).forEach(i => { if (typeof i !== 'undefined') count++ }); */
 					this.setState({
 						user: snap.data(),
-						follow: snap.data().stats.followers.indexOf(luid) > -1,
+						follow: (user && user.stats.followers) && user.stats.followers.indexOf(luid) > -1,
 						progress: 100 // / tot * count
 					});
 				} else this.setState({ user: null });
@@ -131,6 +131,9 @@ export default class Dashboard extends React.Component {
 				return <NoMatch title="Dashboard utente non trovata" location={this.props.location} />
 			}
 		}
+
+		const followers = user.stats.followers.map(f => <div className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+		const followed = user.stats.followed.map(f => <div className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const isOwner = () => luid === uid;
@@ -230,6 +233,16 @@ export default class Dashboard extends React.Component {
 					<Tab label="Contatti">
 						<div className="card bottompend">
 							<p>Contatti</p>
+							<div className="row">
+								<div className="col">
+									<h4>Seguito da:</h4>
+									{followers}
+								</div>
+								<div className="col">
+									<h4>Segue:</h4>
+									{followed}
+								</div>
+							</div>
 						</div>
 					</Tab>
 				</Tabs>

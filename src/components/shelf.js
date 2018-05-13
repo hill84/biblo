@@ -97,8 +97,6 @@ export default class Shelf extends React.Component {
 
         return (
             <div ref="shelfComponent">
-                
-
                 <div className="shelf">
                     <div className="collection hoverable-items">
                         <div className="head nav">
