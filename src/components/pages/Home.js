@@ -6,7 +6,7 @@ import BookCollection from '../bookCollection';
 
 const Home = props => (
 	<div id="homeComponent">
-		<div className="hero">
+		<header className="hero pad-v">
 			<div className="container">
 				<h1>Scopriamo nuovi libri, insieme</h1>
 				<p>Lorem ipsum dolor sit amet</p>
@@ -16,7 +16,7 @@ const Home = props => (
 					<Link to="/signup" className="btn primary lg">Registrati</Link>
 				}
 			</div>
-		</div>
+		</header>
 
 		<div className="container">
 			<div className="card dark">

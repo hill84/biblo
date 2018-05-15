@@ -138,7 +138,7 @@ export default class BookCollection extends React.Component {
           <span className="counter last collection-title">{cid}</span> {collectionCount !== 0 && <span className="collection-count hide-xs">({collectionCount} libri)</span>}
           <div className="pull-right">
             {(pagination && collectionCount > limit) || scrollable ?
-              <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
+              <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti {icon.chevronRight()}</Link>
             :
               <React.Fragment>
                 <span className="counter last hide-xs">Ordina per</span>

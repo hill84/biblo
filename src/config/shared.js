@@ -1,5 +1,5 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { amber300, amber500, blueGrey900, cyan700, cyan900 } from 'material-ui/styles/colors';
+import { amber400, amber500, blueGrey900, cyan700, cyan900 } from 'material-ui/styles/colors';
 //import { emphasize } from 'material-ui/utils/colorManipulator';
 
 export const appName = 'Biblo';
@@ -10,7 +10,7 @@ export const muiTheme = getMuiTheme({
     palette: {
         primary1Color: cyan700,
         primary2Color: cyan900,
-        accent1Color: amber300,
+        accent1Color: amber400,
         accent2Color: amber500,
         pickerHeaderColor: cyan700
     },
@@ -174,7 +174,19 @@ export const switchLanguages = string => {
 };
 
 // LIST
-export const ratingLabels = { 0: "Nessun voto", 1: "Pessimo", 2: "Scarso", 3: "Sufficiente", 4: "Buono", 5: "Ottimo" };
+export const ratingLabels = { 
+    0: "Nessun voto", 
+    '0.5': "Orrendo", 
+    1: "Pessimo", 
+    '1.5': "Scarso",
+    2: "Insufficiente", 
+    '2.5': "Mediocre",
+    3: "Sufficiente", 
+    '3.5': "Discreto", 
+    4: "Buono", 
+    '4.5': "Molto Buono",
+    5: "Ottimo" 
+};
 
 export const formats = [
     { id: "0", name: "Libro" },

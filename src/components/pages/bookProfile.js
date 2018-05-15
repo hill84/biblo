@@ -106,6 +106,7 @@ export default class BookProfile extends React.Component {
     const { book, isIncipitOpen, isDescMinified, isReadingStateOpen, user, userBook } = this.state;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
+    const hasBid = () => book && book.bid;
 
 		return (
       <div id="BookProfileComponent">
@@ -166,7 +167,7 @@ export default class BookProfile extends React.Component {
                           <button className="btn" onClick={this.onToggleReadingState}>Stato lettura</button>
                         </React.Fragment>
                       :
-                        <button className="btn primary" onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
+                        <button className="btn primary" disabled={!hasBid()} onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
                       }
                       {userBook.bookInWishlist && 
                         <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
@@ -175,7 +176,7 @@ export default class BookProfile extends React.Component {
                         </button>
                       }
                       {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                        <button className="btn flat" onClick={this.onAddBookToWishlist}>Aggiungi a desideri</button>
+                        <button className="btn flat" disabled={!hasBid()} onClick={this.onAddBookToWishlist}>Aggiungi a desideri</button>
                       }
                     </div>
                     <div className="info-row">

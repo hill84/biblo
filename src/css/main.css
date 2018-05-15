@@ -4,7 +4,9 @@
     --primaryLigthClr: rgb(0, 172, 193);    /* cyan600 */
     --primaryClr: rgb(0, 151, 167);         /* cyan700 */
     --primaryDarkClr: rgb(0, 131, 143);     /* cyan800 */
-    --accentClr: rgb(255, 213, 79);         /* amber300 */
+    --accentLigthClr: rgb(255, 213, 79);    /* amber300 */
+    --accentClr: rgb(255, 202, 40);         /* amber400 */
+    --accentDarkClr: rgb(255, 193, 7);      /* amber500 */
     --successClr: rgb(67, 160, 71);         /* green600 */
     --errorClr: rgb(244, 67, 54);           /* red500 */
     --alertClr: rgb(251, 140, 0);           /* orange600 */
@@ -17,7 +19,7 @@
     --btnPad: .8rem;
     --btnFontSize: .9rem;
     --btnDisabledBg: rgba(0, 0, 0, .07);
-    --cardPad: 24px;
+    --pad: 24px;
     --booksPerRow-lg: 7;
     --shelf-rowHeight: 224px;
     --bookWidth: 140px;
@@ -105,7 +107,7 @@ hr.line {
     position: relative;
     background-color: var(--cardBg);
     color: var(--mainTextClr);
-    padding: var(--cardPad);
+    padding: var(--pad);
     margin: 14px auto;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
@@ -119,10 +121,10 @@ hr.line {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-right: calc(-1 * var(--cardPad));
-    margin-left: calc(-1 * var(--cardPad));
-    margin-bottom: calc(-1 * var(--cardPad));
-    padding: var(--cardPad);
+    margin-right: calc(-1 * var(--pad));
+    margin-left: calc(-1 * var(--pad));
+    margin-bottom: calc(-1 * var(--pad));
+    padding: var(--pad);
 }
 .card .footer.no-gutter, .dialog .footer.no-gutter { padding: 0; }
 .card-container { margin: auto; text-align: center; }
@@ -131,8 +133,8 @@ hr.line {
 .card-container .sub-footer { font-size: .8rem; }
 .card .edit-info { 
     position: absolute; 
-    top: var(--cardPad); 
-    right: var(--cardPad); 
+    top: var(--pad); 
+    right: var(--pad); 
     height: var(--btnHeight);
     line-height: var(--btnHeight);
     width: var(--btnHeight); 
@@ -172,7 +174,7 @@ hr.line {
     max-width: calc(100% - 28px);
     max-height: calc(100% - 28px);
     background-color: var(--cardBg);
-    padding: var(--cardPad);
+    padding: var(--pad);
     border-radius: 3px;
     overflow: hidden;
     overflow-y: auto;
@@ -325,6 +327,10 @@ hr.line {
 .btn.primary:hover { background-color: var(--primaryLigthClr); }
 .btn.primary:active { background-color: var(--primaryDarkClr); }
 
+.btn.secondary { background-color: var(--accentClr); }
+.btn.secondary:hover { background-color: var(--accentLigthClr); }
+.btn.secondary:active { background-color: var(--accentDarkClr); }
+
 .btn.neutral { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.4); }
 
 .btn.clear { 
@@ -358,8 +364,8 @@ hr.line {
 /* .btn.error-on-hover { min-width: 175px; } */
 .btn.flat:disabled { --btnDisabledBg: transparent; }
 
-.btn svg { width: 18px; height: 18px; }
-.btn.sm svg { width: 14px !important; height: 14px !important; }
+/* .btn svg { width: 18px; height: 18px; } */
+.btn.sm svg { width: 15px !important; height: 15px !important; }
 
 /* SELECT */
 .select {
@@ -658,7 +664,7 @@ hr.line {
     float: left; 
 }
 
-.counter { line-height: 2; }
+.counter:not(.btn) { line-height: 2; }
 .counter b { font-weight: 500; }
 .counter:after {
     content: '|';
@@ -805,7 +811,7 @@ hr.line {
 }
 .shelf.scrollable:before {
     left: 0;
-    width: var(--cardPad);
+    width: var(--pad);
     background: -moz-linear-gradient(right,transparent 0,var(--cardBg) 90%);
     background: -webkit-gradient(right top,left top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
     background: -webkit-linear-gradient(right,transparent 0,var(--cardBg) 90%);
@@ -848,15 +854,15 @@ hr.line {
 .scrollable .shelf-row a:first-child, .scrollable .shelf-row .skltn:first-child { margin-left: 0; }
 .scrollable .shelf-row a:last-child, .scrollable .shelf-row .skltn:last-child { margin-right: 0; }
 .card .shelf.scrollable { 
-    margin-right: calc(-1 * var(--cardPad));
-    margin-left: calc(-1 * var(--cardPad));
+    margin-right: calc(-1 * var(--pad));
+    margin-left: calc(-1 * var(--pad));
 }
 .card .shelf.scrollable .info-row {
-    margin-right: var(--cardPad);
-    margin-left: var(--cardPad);
+    margin-right: var(--pad);
+    margin-left: var(--pad);
 }
-.card .scrollable .shelf-row a:first-child, .card .scrollable .shelf-row .skltn:first-child { margin-left: var(--cardPad); }
-.card .scrollable .shelf-row a:last-child, .card .scrollable .shelf-row .skltn:last-child { margin-right: var(--cardPad); }
+.card .scrollable .shelf-row a:first-child, .card .scrollable .shelf-row .skltn:first-child { margin-left: var(--pad); }
+.card .scrollable .shelf-row a:last-child, .card .scrollable .shelf-row .skltn:last-child { margin-right: var(--pad); }
 
 .shelf-container .head.nav .info-row { margin-bottom: 0; }
 .shelf-container .head.nav .counter { line-height: inherit; }
@@ -893,7 +899,7 @@ hr.line {
     min-width: var(--bookWidth);
 }
 .cover {
-    --gutter: 14px;
+    --pad: 14px;
     position: relative;
     width: var(--coverWidth);
     height: var(--coverHeight);
@@ -906,7 +912,7 @@ hr.line {
     color: rgba(0,0,0,.6);
     font-size: 9px;
     line-height: 1.35;
-    padding: var(--gutter);
+    padding: var(--pad);
     margin: auto;
     transition: all .2s ease-in-out; 
     will-change: transform, opacity;
@@ -947,9 +953,9 @@ hr.line {
 }
 .dark .cover .overlay { opacity: .2; }
 .cover .title, .cover .subtitle { white-space: normal; max-height: 65px; margin: 0 0 2px 0; font-weight: 500; font-size: 120%; }
-.cover .title { color: #fff; font-size: .8rem; font-weight: 400; }
+.cover .title { color: #fff; font-size: 142%; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
-.cover .publisher { position: absolute; width: auto; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); }
+.cover .publisher { position: absolute; width: auto; left: var(--pad); right: var(--pad); bottom: var(--pad); }
 .book .info { text-align: center; font-size: .8rem; width: var(--bookWidth); }
 .book .info .title, .book .info .author { display: block; margin: auto; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .book .info .title { margin-top: 8px; font-weight: 400; color: var(--mainTextClr); transition: color .3s ease-in-out; }
@@ -1116,9 +1122,9 @@ hr.line {
 }
 .skltn.book {
     min-width: var(--bookWidth);
-    margin: auto;
+    margin: 0 auto;
     width: 100%;
-    height: var(--coverHeight);
+    height: var(--shelf-rowHeight);
     background: 
         linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnCoverX) top, 
         linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnTitleX) var(--skltnTitleY),
@@ -1166,6 +1172,12 @@ hr.line {
 .pull-left { float: left; }
 .pull-right { float: right; }
 .flex { display: flex; }
+.pad { padding: var(--pad); }
+.pad-v { padding-top: var(--pad); padding-bottom: var(--pad); }
+.pad-sm { padding: calc(var(--pad) / 2); }
+.pad-v-sm { padding-top: calc(var(--pad) / 2); padding-bottom: calc(var(--pad) / 2); }
+.pad-lg { padding: calc(var(--pad) * 2); }
+.pad-v-lg { padding-top: calc(var(--pad) * 2); padding-bottom: calc(var(--pad) * 2); }
 
 /* ANIMATIONS */
 @keyframes slideDown {
@@ -1275,6 +1287,9 @@ hr.line {
         --skltnTitleY: 130px;
         --skltnAuthorY: 148px;
     }
+    .cover { --pad: 10px; font-size: 7px; }
+    .cover .title { font-weight: 300; }
+    .cover .subtitle { display: none; }
     .text-align-center-sm { text-align: center; }
     .book-profile .title { font-size: 1.2rem; }
     .book-profile .description { max-height: 1300px; }

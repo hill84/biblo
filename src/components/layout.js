@@ -94,18 +94,19 @@ export default class Layout extends React.Component {
           </nav>
         </Drawer>
         
-        {this.props.children}
+        <main>
+          {this.props.children}
+        </main>
         
         <Dialog
           contentClassName="dialog-container"
-          paperClassName="schiribizzo"
+          paperClassName="layout-dialog"
           open={dialogIsOpen}
           actions={actions}
           modal={false}
           onRequestClose={this.onCloseDialog}
           autoScrollBodyContent={true}
-          title="Title"
-        >
+          title="Dialog title">
           Some content
         </Dialog>
       </div> 
