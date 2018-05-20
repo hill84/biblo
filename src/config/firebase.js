@@ -14,7 +14,7 @@ if (!firebase.apps.length) firebase.initializeApp(config);
 
 const db = firebase.firestore();
 const storage = firebase.storage();
-export const timestamp = firebase.database.ServerValue.TIMESTAMP;
+export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();

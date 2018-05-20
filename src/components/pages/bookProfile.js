@@ -139,7 +139,7 @@ export default class BookProfile extends React.Component {
                 <div className="info-row">
                   {book.authors && <span className="counter">di {join(book.authors)}</span>}
                   {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
-                  {isAuthenticated() && isEditor() && <button className="btn sm flat counter" onClick={this.onEditing}>{icon.pencil()} Modifica</button>}
+                  {isAuthenticated() && isEditor() && book.bid && <button className="btn sm flat counter" onClick={this.onEditing}>{icon.pencil()} Modifica</button>}
                 </div>
                 <div className="info-row hide-sm">
                   <span className="counter">ISBN-13: <CopyToClipboard text={book.ISBN_13}/></span>

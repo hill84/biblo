@@ -43,55 +43,54 @@ export default class BookCollection extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchCollection(this.state.cid, this.state.bcid, this.state.limit);
+    const { bcid, cid, limit } = this.state;
+    this.fetchCollection(cid, bcid, limit);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.cid !== prevState.cid || this.state.bcid !== prevState.bcid || this.state.limit !== prevState.limit || this.state.desc !== prevState.desc) {
-      console.log('Fetching collection');
-      this.fetchCollection(this.state.cid, this.state.bcid, this.state.limit);
+    const { bcid, cid, desc, limit } = this.state;
+    if (cid !== prevState.cid || bcid !== prevState.bcid || limit !== prevState.limit || desc !== prevState.desc) {
+      //console.log('Fetching collection');
+      this.fetchCollection(cid, bcid, limit);
     }
   }
 
   fetchCollection = (cid, bcid, limit) => {
-    let books = [];
     collectionsRef(cid).get().then(snap => {
       if (!snap.empty) { 
         this.setState({ collectionCount: snap.docs.length });
-      } else {
-        this.setState({ collectionCount: 0 });
-      }
-    });
-    collectionsRef(cid).orderBy(String(bcid), this.state.desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(Number(limit)).get().then(snap => {
-      if (!snap.empty) {
-        snap.forEach(book => books.push(book.data()));
-        this.setState({ 
-          collection: books,
-          loading: false,
-          page: 1,
-          //lastVisible: snap.docs[snap.docs.length-1]
-        });
-        //console.log(books);
+        let books = [];
+        collectionsRef(cid).orderBy(String(bcid), this.state.desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(Number(limit)).get().then(snap => {
+          snap.forEach(book => books.push(book.data()));
+          this.setState({ 
+            collection: books,
+            loading: false,
+            page: 1,
+            //lastVisible: snap.docs[snap.docs.length-1]
+          });
+        }).catch(error => console.warn("Error fetching collection:", error));
       } else {
         this.setState({ 
+          collectionCount: 0, 
           collection: null,
           loading: false,
           page: null,
-          //lastVisible: null
+          //lastVisible: null 
         });
       }
-    }).catch(error => console.warn("Error fetching collection:", error));
+    });
   }
   
 	fetch = direction => {
-    //console.log({'direction': direction, 'firstVisible': this.state.firstVisible, 'lastVisible': this.state.lastVisible.id});
-    //const startAfter = (direction === 'prev') ? this.state.firstVisible : this.state.lastVisible;
-    const startAfter = (direction === 'prev') ? (this.state.page > 1) ? ((this.state.page - 1) * this.state.limit) - this.state.limit : 0 : ((this.state.page * this.state.limit) > this.state.collectionCount) ? ((this.state.page - 1) * this.state.limit) : this.state.page * this.state.limit;
+    const { bcid, cid, collectionCount, desc, /* firstVisible, lastVisible,  */limit, page } = this.state;
+    //console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
+    //const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
+    const startAfter = (direction === 'prev') ? (page > 1) ? ((page - 1) * limit) - limit : 0 : ((page * limit) > collectionCount) ? ((page - 1) * limit) : page * limit;
 
     this.setState({ loading: true });
     
     let nextBooks = [];
-		collectionsRef(this.state.cid).orderBy(String(this.state.bcid), this.state.desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(this.state.limit).get().then(nextSnap => {
+		collectionsRef(cid).orderBy(String(bcid), desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(book => nextBooks.push(book.data()));
         this.setState(prevState => ({ 
@@ -101,7 +100,7 @@ export default class BookCollection extends React.Component {
           //lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
         }));
         //console.log(nextBooks);
-        //console.log({'direction': direction, 'page': this.state.page});
+        //console.log({'direction': direction, 'page': page});
       } else {
         this.setState({ 
           collection: null,
@@ -135,44 +134,46 @@ export default class BookCollection extends React.Component {
 		return (
       <React.Fragment>
         <div className="head nav" role="navigation">
-          <span className="counter last collection-title">{cid}</span> {collectionCount !== 0 && <span className="collection-count hide-xs">({collectionCount} libri)</span>}
-          <div className="pull-right">
-            {(pagination && collectionCount > limit) || scrollable ?
-              <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti {icon.chevronRight()}</Link>
-            :
-              <React.Fragment>
-                <span className="counter last hide-xs">Ordina per</span>
-                <button 
-                  className="btn sm flat counter"
-                  onClick={() => this.orderBy('rating')}
-                  title="Ordina per valutazione">
-                  {icon.star()}
-                </button>
-                <button 
-                  className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} 
-                  title={desc ? 'Ascendente' : 'Discendente'} 
-                  onClick={this.onToggleDesc}>
-                  {icon.arrowDown()}
-                </button>
-              </React.Fragment>
-            }
-            {pagination && collectionCount > limit &&
-              <React.Fragment>
-                <button 
-                  disabled={page < 2 && 'disabled'} 
-                  className="btn sm clear prepend" 
-                  onClick={() => this.fetch('prev')} title="precedente">
-                  {icon.chevronLeft()}
-                </button>
-                <button 
-                  disabled={page > (collectionCount / limit) && 'disabled'} 
-                  className="btn sm clear append" 
-                  onClick={() => this.fetch('next')} title="successivo">
-                  {icon.chevronRight()}
-                </button>
-              </React.Fragment>
-            }
-          </div>
+          <span className="counter last title">{cid}</span> {collectionCount !== 0 && <span className="count hide-xs">({collectionCount} libri)</span>} 
+          {!loading && collectionCount > 0 &&
+            <div className="pull-right">
+              {(pagination && collectionCount > limit) || scrollable ?
+                <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
+              :
+                <React.Fragment>
+                  <span className="counter last hide-xs">Ordina per</span>
+                  <button 
+                    className="btn sm flat counter"
+                    onClick={() => this.orderBy('rating')}
+                    title="Ordina per valutazione">
+                    {icon.star()}
+                  </button>
+                  <button 
+                    className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} 
+                    title={desc ? 'Ascendente' : 'Discendente'} 
+                    onClick={this.onToggleDesc}>
+                    {icon.arrowDown()}
+                  </button>
+                </React.Fragment>
+              }
+              {pagination && collectionCount > limit &&
+                <React.Fragment>
+                  <button 
+                    disabled={page < 2 && 'disabled'} 
+                    className="btn sm clear prepend" 
+                    onClick={() => this.fetch('prev')} title="precedente">
+                    {icon.chevronLeft()}
+                  </button>
+                  <button 
+                    disabled={page > (collectionCount / limit) && 'disabled'} 
+                    className="btn sm clear append" 
+                    onClick={() => this.fetch('next')} title="successivo">
+                    {icon.chevronRight()}
+                  </button>
+                </React.Fragment>
+              }
+            </div>
+          }
         </div>
 
         <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>

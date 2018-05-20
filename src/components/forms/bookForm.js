@@ -1,7 +1,11 @@
-import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
 import ChipInput from 'material-ui-chip-input';
+import CircularProgress from 'material-ui/CircularProgress';
+import DatePicker from 'material-ui/DatePicker';
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
+import TextField from 'material-ui/TextField';
 import React from 'react';
-import { bookRef, booksRef, collectionsRef, storageRef, uid } from '../../config/firebase';
+import { bookRef, booksRef, collectionsRef, storageRef/* , timestamp */, uid } from '../../config/firebase';
 import { DateTimeFormat } from '../../config/locales';
 import { checkBadWords, formats, genres, languages, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
@@ -16,6 +20,7 @@ export default class BookForm extends React.Component {
         createdBy: this.props.book.createdBy || '',
         createdByUid: this.props.book.createdByUid || '',
         created_num: this.props.book.created || 0,
+        edit: true,
         lastEditBy: this.props.book.lastEditBy || '',
         lastEditByUid: this.props.book.lastEditByUid || '',
         lastEdit_num: this.props.book.lastEdit || 0
@@ -136,19 +141,22 @@ export default class BookForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { book } = this.state;
-    if (this.state.changes || !this.state.book.bid) {
+    const { book, changes } = this.state;
+    if (changes || !book.bid) {
       const errors = this.validate(book);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.props.book.bid) {
           const { EDIT, ...restBook } = book; // Exclude EDIT from fullBook
-          bookRef(this.props.book.bid).update({
-            ...restBook, 
-            'EDIT.lastEdit_num': Number((new Date()).getTime()),
-            'EDIT.lastEditBy': (this.props.user && this.props.user.displayName) || '',
-            'EDIT.lastEditByUid': uid || ''
+          bookRef(this.props.book.bid).set({
+            ...restBook,
+            EDIT: {
+              ...EDIT,
+              lastEdit_num: Number((new Date()).getTime()),
+              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditByUid: uid || ''
+            }
           }).then(() => {
             this.setState({ 
               //redirectToReferrer: true,
@@ -177,6 +185,10 @@ export default class BookForm extends React.Component {
               created_num: Number((new Date()).getTime()),
               createdBy: (this.props.user && this.props.user.displayName) || '',
               createdByUid: uid || '',
+              edit: true,
+              lastEdit_num: Number((new Date()).getTime()),
+              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditByUid: uid || ''
             },
             edition_num: book.edition_num, 
             format: book.format, 
@@ -367,7 +379,7 @@ export default class BookForm extends React.Component {
             <div className="container md">
               <div className="edit-book-cover">
                 <Cover book={book} />
-                {isAdmin() && !book.covers[0] && 
+                {isAdmin() && book.bid && !book.covers[0] && 
                   <button className="btn sm flat centered">
                     <span>Carica un'immagine</span>
                     <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
@@ -608,12 +620,14 @@ export default class BookForm extends React.Component {
               </div>
             </div>
             <div className="footer no-gutter">
-              <button className="btn btn-footer primary">Salva le modifiche</button>
+              <button className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
             </div>
           </form>
-          <div className="form-group">
-            <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
-          </div>
+          {book.bid && 
+            <div className="form-group">
+              <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
+            </div>
+          }
         </div>
       </div>
 		);

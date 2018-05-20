@@ -258,13 +258,16 @@ export default class UserReview extends React.Component {
                       <div className="foot row">
                         <div className="col-auto likes">
                           <div className="counter">
-                            <button className="btn flat thumb up" disabled title={`Piace a ${review.likes.length}`}>{icon.thumbUp()} {review.likes.length}</button>
+                            <button className="btn sm flat thumb up" disabled title={`Piace a ${review.likes.length}`}>{icon.thumbUp()} {review.likes.length}</button>
                           </div>
                           <div className="counter">
-                            <button className="btn flat" onClick={this.onEditing}>Modifica</button>
+                            <button className="btn sm flat" disabled>{icon.comment()} 0</button>
                           </div>
                           <div className="counter">
-                            <button className="btn flat" onClick={this.onDelete}>Elimina</button>
+                            <button className="btn sm flat" onClick={this.onEditing}>{icon.pencil()} <span className="hide-sm">Modifica</span></button>
+                          </div>
+                          <div className="counter">
+                            <button className="btn sm flat" onClick={this.onDelete}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
                           </div>
                         </div>
                         <div className="col text-align-right date">{timeSince(review.created_num)}</div>

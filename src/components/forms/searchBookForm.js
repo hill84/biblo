@@ -1,4 +1,5 @@
 import AutoComplete from 'material-ui/AutoComplete';
+import CircularProgress from 'material-ui/CircularProgress';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover';
@@ -7,6 +8,7 @@ import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
 import { join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 import { userType } from '../../config/types';
+//import { isAuthenticated } from '../../config/firebase';
 
 export default class SearchBookForm extends React.Component {
   state = {
@@ -32,7 +34,7 @@ export default class SearchBookForm extends React.Component {
     clearTimeout(this.timer);
   }
 
-  onChangeSearchBy = (event, value) => this.setState({ searchBy: value, isOpenSearchByMenu: false });
+  onChangeSearchBy = (event, value) => this.setState({ searchBy: value, maxSearchResults: value.type === 'isbn' ? 1 : 8, isOpenSearchByMenu: false });
 
   onToggleSearchByMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -47,7 +49,49 @@ export default class SearchBookForm extends React.Component {
 
   fetchOptions = () => {
     const { maxSearchResults, searchBy, searchText } = this.state;
-    if (!searchText) return;
+    const { user } = this.props;
+    if (!searchText) return 
+    const emptyBook = {
+      ISBN_13: searchBy.where === 'ISBN_13' ? Number(searchText) : 0,
+      ISBN_10: 0,
+      EDIT: {
+        createdBy: (user && user.displayName) || '',
+        createdByUid: (user && user.uid) || '',
+        created_num: (new Date()).getTime() || 0
+      },
+      authors: searchBy.where === 'authors[0]' ? [searchText] : [],
+      bid: '',
+      collections: [],
+      covers: [],
+      description: '',
+      edition_num: 1,
+      format: 'Libro',
+      genres: [],
+      incipit: '',
+      languages: ['Italiano'],
+      pages_num: 0,
+      publication: '',
+      publisher: searchBy.where === 'publisher' ? searchText : '',
+      rating_num: 0,
+      ratings_num: 0,
+      readers_num: 0,
+      reviews_num: 0,
+      subtitle: '',
+      text: searchText, // OPTION TEXT
+      title: searchBy.where === 'title_sort' ? searchText : '',
+      title_sort: searchBy.where === 'title_sort' ? normalizeString(searchText) : '',
+      value: (
+        <MenuItem
+          className="menuitem-book empty"
+          primaryText={
+            <div className="primaryText">
+              <span className="title">Libro non trovato...</span>
+            </div>
+          }
+          secondaryText={<button className="btn primary">Crea nuovo</button>}
+        />
+      )
+    }
     this.setState({ loading: true });
     if (this.props.new) {
       const searchTextType = searchBy.where === 'ISBN_13' ? isNaN(searchText) ? 0 : Number(searchText) : searchText;
@@ -57,9 +101,9 @@ export default class SearchBookForm extends React.Component {
       };
       //console.log(searchParams);
       fetch(new Request(booksAPIRef(searchParams), { method: 'GET' })).then(res => res.json()).then(json => {
-        //console.log(json.items);   
         let options = [];
         if (json.items && json.items.length > 0) {
+          //console.log(json.items);
           json.items.forEach(item => {
             const b = item.volumeInfo;
             const iis = b.industryIdentifiers;
@@ -103,46 +147,53 @@ export default class SearchBookForm extends React.Component {
                       <span className="title">{b.title}</span>
                     </div>
                   }
-                  //secondaryText={b.authors && <div className="secondaryText">di {join(b.authors)}</div>}
-                  secondaryText={<div className="secondaryText">{searchBy.where === 'ISBN_13' ? Number(ISBN_13[0].identifier) : `di ${join(b.authors)}`}</div>}
+                  secondaryText={
+                    <div className="secondaryText">{searchBy.where === 'ISBN_13' ? Number(!!ISBN_13[0] && ISBN_13[0].identifier) : `di ${join(b.authors)}`}</div>
+                  }
                 />
               )
             })
           });
-          this.setState({
-            loading: false,
-            options: options
-          });
-          console.log(options);
+        } else {
+          //console.log('Snap empty');
+          options.push(emptyBook);
         }
+        this.setState({ loading: false, options: options });
       });
     } else {
       const searchTextType = searchBy.where === 'ISBN_13' ? isNaN(searchText) ? 0 : Number(searchText) : searchText;
       booksRef.where(searchBy.where, '>=', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
-        console.log(snap);
         let options = [];
-        snap.forEach(doc => {
-          options.push({
-            ...doc.data(),
-            text: doc.data().title,
-            value: (
-              <MenuItem
-                className="menuitem-book"
-                primaryText={(
-                  <div className="primaryText">
-                    {doc.data().covers.length > 0 && <img className="thumbnail" src={doc.data().covers[0]} alt={doc.data().title} />}
-                    <span className="title">{doc.data().title}</span>
-                  </div>
-                )}
-                secondaryText={<div className="secondaryText">di {doc.data().authors}</div>}
-              />
-            )
-          })
-        });
-        this.setState({
-          loading: false,
-          options: options
-        });
+        if (!snap.empty) {
+          //console.log(snap);
+          snap.forEach(doc => {
+            //console.log(doc.data());
+            options.push({
+              ...doc.data(),
+              text: doc.data().title,
+              value: (
+                <MenuItem
+                  className="menuitem-book"
+                  primaryText={
+                    <div className="primaryText">
+                      {doc.data().covers.length > 0 && <img className="thumbnail" src={doc.data().covers[0]} alt={doc.data().title} />}
+                      <span className="title">{doc.data().title}</span>
+                    </div>
+                  }
+                  secondaryText={
+                    <div className="secondaryText">{searchBy.where === 'ISBN_13' ? doc.data().ISBN_13 : `di ${doc.data().authors}`}</div>
+                  }
+                />
+              )
+            });
+          });
+          //options.push(emptyBook);
+        } else {
+          //console.log('Snap empty');
+          options.push(emptyBook);
+        }
+        //console.log(options);
+        this.setState({ loading: false, options: options });
       });
     }
   }
@@ -151,7 +202,7 @@ export default class SearchBookForm extends React.Component {
     if (index !== -1) {
       this.setState({ loading: false });
       //console.log({'chosenRequest': chosenRequest});
-      this.props.onBookSelect(chosenRequest); 
+      this.props.onBookSelect(chosenRequest);
     } //else console.log(`Clicked enter`);
   }
 
@@ -166,10 +217,10 @@ export default class SearchBookForm extends React.Component {
     return (
       <div className="container sm search-book-container" ref="SearchBookFormComponent">
         <div className="form-group">
-          {/* this.state.loading && <div className="loader"><CircularProgress /></div> */}
+          { this.state.loading && <div className="loader"><CircularProgress /></div> }
           <AutoComplete
             name="search"
-            floatingLabelText={`Cerca un libro per ${searchBy.label}`}
+            floatingLabelText={`${this.props.new ? 'Inserisci' : 'Cerca un libro per'} ${searchBy.label}`}
             hintText={`Es: ${searchBy.hint}`}
             searchText={searchText}
             //filter={(searchText, key) => searchText !== '' && key.indexOf(searchText) !== -1}
@@ -191,7 +242,7 @@ export default class SearchBookForm extends React.Component {
             targetOrigin={{horizontal: 'right', vertical: 'top'}}>
             <Menu onChange={this.onChangeSearchBy}>
               <MenuItem value={{type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13'}} primaryText="ISBN" />
-              <MenuItem value={{type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors'}} primaryText="Autore" />
+              <MenuItem value={{type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors[0]'}} primaryText="Autore" />
               {/* <MenuItem value={{type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher'}} primaryText="Editore" /> */}
               <MenuItem value={{type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort'}} primaryText="Titolo" />
             </Menu>

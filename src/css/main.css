@@ -262,8 +262,10 @@ hr.line {
 
 /* BUTTONS */
 .btn {
+    position: relative;
     display: inline-block;
     appearance: none;
+    overflow: hidden;
     outline: none !important;
     padding: 0 var(--btnPad);
     margin: 3px auto;
@@ -292,6 +294,26 @@ hr.line {
     color: rgba(0,0,0,.3);
     box-shadow: 0 0 0 rgba(0,0,0,.1);
 }
+.btn:before, .ripple:before {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 240px;
+	height: 240px;
+	margin-left: -120px;
+	margin-top: -120px;
+	background: rgba(0,0,0,.2);
+	border-radius: 100%;
+	opacity: .6;
+	will-change: transform, opacity;
+	-webkit-transform: scale(0);
+	transform: scale(0);
+	visibility: hidden;
+}
+.btn:not(:active):before, .ripple:before { animation: ripple .4s ease-out; }
+.btn:focus:before { visibility: visible; }
 .btn:not(.centered) + .btn:not(.centered) { margin-left: 6px; }
 .btn + .counter { margin-left: 14px; }
 .btn.centered, .link.centered { display: block; }
@@ -794,7 +816,7 @@ hr.line {
     padding-top: 4px;
 }
 .shelf.collection .info-row { line-height: 26px; margin-bottom: .5rem; }
-.shelf.collection .collection-title { font-weight: 400; }
+.shelf.collection .info-row.empty { margin-bottom: 0; text-align: center; }
 .shelf.scrollable {
     position: relative;
     overflow: hidden;
@@ -864,8 +886,6 @@ hr.line {
 .card .scrollable .shelf-row a:first-child, .card .scrollable .shelf-row .skltn:first-child { margin-left: var(--pad); }
 .card .scrollable .shelf-row a:last-child, .card .scrollable .shelf-row .skltn:last-child { margin-right: var(--pad); }
 
-.shelf-container .head.nav .info-row { margin-bottom: 0; }
-.shelf-container .head.nav .counter { line-height: inherit; }
 .btn.desc svg, .btn.asc svg { transition: all .2s ease-in-out; will-change: transform; }
 .btn.desc svg, .asc:hover svg { transform: rotate(0deg); }
 .btn.desc:hover svg, .asc svg { transform: rotate(180deg); }
@@ -891,6 +911,11 @@ hr.line {
     border-top-right-radius: 3px;
 }
 .head.nav + .shelf-row, .head.nav + .shelf { margin-top: 40px; }
+.head.nav .info-row { margin-bottom: 0; }
+.head.nav .counter { line-height: inherit; }
+.head.nav .title { font-weight: 400; }
+.head.nav .count { color: var(--ligtherTextClr); }
+.head.nav .pull-right { height: 0; }
 
 /* BOOK COVER */
 .book {
@@ -1046,6 +1071,10 @@ hr.line {
     transition: all .2s ease-in-out;
 }
 /* .menuitem-book:hover .secondaryText { max-width: 0; } */
+.menuitem-book .btn { 
+    margin-top: calc((50px - var(--btnHeight)) / 2);
+    margin-bottom: calc((50px - var(--btnHeight)) / 2);
+}
 
 .search-book-container .search-by { position: absolute; bottom: 6px; right: 0; }
 
@@ -1062,6 +1091,7 @@ hr.line {
 .review .foot .counter + .counter { margin-left: 3px; }
 .review .foot .counter:after { content: none; }
 .review .foot .btn { --btnFontSize: .75rem; --btnHeight: 26px; --btnPad: .5rem; margin-top: 0; margin-bottom: 0; }
+.review .foot .btn:disabled { color: var(--ligthTextClr); cursor: unset; opacity: 1; }
 .edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
 .review .foot .thumb { margin-left: calc(-1 * var(--btnPad)); }
 .review .foot .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
@@ -1069,7 +1099,6 @@ hr.line {
 .thumb.up.true:not(:hover), .thumb.up.false:hover { color: var(--linkClr); }
 .thumb.down.true:not(:hover), .thumb.down.false:hover { color: var(--errorClr); }
 .thumb.true:hover:not(:disabled) svg { transform: rotateX(180deg); }
-.thumb.up:disabled, .thumb.down:disabled { color: var(--ligthTextClr); cursor: unset; opacity: 1; }
 
 /* CIRCULAR PROGRESS BAR */
 .progress-container {
@@ -1180,6 +1209,10 @@ hr.line {
 .pad-v-lg { padding-top: calc(var(--pad) * 2); padding-bottom: calc(var(--pad) * 2); }
 
 /* ANIMATIONS */
+@keyframes ripple { 
+	from { transform: scale(0); } 
+	to { opacity: 0; transform: scale(1); } 
+}
 @keyframes slideDown {
     from { opacity: 0; max-height: 36px; } to { opacity: 1; }
 }

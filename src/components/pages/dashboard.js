@@ -132,8 +132,8 @@ export default class Dashboard extends React.Component {
 			}
 		}
 
-		const followers = user.stats.followers.map(f => <div className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
-		const followed = user.stats.followed.map(f => <div className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+		const followers = user.stats.followers.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+		const followed = user.stats.followed.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const isOwner = () => luid === uid;
