@@ -10,6 +10,7 @@ export default class Book extends React.Component {
     book: this.props.book,
     user: this.props.user,
     userBook: {
+      bid: (this.props.book && this.props.book.bid) || '',
       authors: (this.props.book && this.props.book.authors) || [],
       covers: (this.props.book && this.props.book.covers[0] && Array(this.props.book.covers[0])) || [],
       publisher: (this.props.book && this.props.book.publisher) || '',
@@ -41,6 +42,7 @@ export default class Book extends React.Component {
         book: nextProps.book,
         userBook: {
           ...prevState.userBook,
+          bid: nextProps.book.bid || '',
           authors: nextProps.book.authors || [],
           covers: (!!nextProps.book.covers[0] && Array(nextProps.book.covers[0])) || [],
           publisher: nextProps.book.publisher || '',
@@ -66,6 +68,7 @@ export default class Book extends React.Component {
               },
               userBook: {
                 ...this.state.userBook,
+                bid: snap.data().bid || '',
                 authors: snap.data().authors || [],
                 covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
                 publisher: snap.data().publisher || '',
@@ -98,6 +101,7 @@ export default class Book extends React.Component {
             },
             userBook: {
               ...this.state.userBook,
+              bid: snap.data().bid || '',
               authors: snap.data().authors,
               covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
               publisher: snap.data().publisher,

@@ -916,6 +916,7 @@ hr.line {
 .head.nav .title { font-weight: 400; }
 .head.nav .count { color: var(--ligtherTextClr); }
 .head.nav .pull-right { height: 0; }
+.head.nav .btn { display: inline; }
 
 /* BOOK COVER */
 .book {
@@ -1344,7 +1345,7 @@ hr.line {
     .user.rating { height: 40px; }
     .user.rating .react-rater { font-size: 40px; line-height: inherit; }
     .user.rating .label { display: none; }
-    .react-rater { font-size: 20px; }
+    .react-rater { font-size: 18px; }
     .hide-xs { display: none; }
 }
 @media (max-width: 359px) {

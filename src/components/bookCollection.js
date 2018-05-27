@@ -15,7 +15,7 @@ export default class BookCollection extends React.Component {
     scrollable: /* isTouchDevice() ? ( */this.props.scrollable || false/* ) : false */,
     pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
     stacked: this.props.stacked || false,
-    collection: null,
+    collection: [],
     collectionCount: 0,
     desc: false,
     loading: true,
@@ -50,7 +50,6 @@ export default class BookCollection extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const { bcid, cid, desc, limit } = this.state;
     if (cid !== prevState.cid || bcid !== prevState.bcid || limit !== prevState.limit || desc !== prevState.desc) {
-      //console.log('Fetching collection');
       this.fetchCollection(cid, bcid, limit);
     }
   }
@@ -90,7 +89,7 @@ export default class BookCollection extends React.Component {
     this.setState({ loading: true });
     
     let nextBooks = [];
-		collectionsRef(cid).orderBy(String(bcid), desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(limit).get().then(nextSnap => {
+		collectionsRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(book => nextBooks.push(book.data()));
         this.setState(prevState => ({ 
@@ -103,19 +102,16 @@ export default class BookCollection extends React.Component {
         //console.log({'direction': direction, 'page': page});
       } else {
         this.setState({ 
-          collection: null,
+          collection: [],
           loading: false,
           page: null,
           //lastVisible: null
         });
       }
-		}).catch(error => console.warn("Error fetching next collection:", error));
+		}).catch(error => console.warn("Error fetching next page:", error));
   }
 
-  onToggleDesc = () => {
-    console.log('Toggle desc');
-    this.setState(prevState => ({ desc: !prevState.desc }));
-  }
+  onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
 	render() {
 		const { cid, collection, collectionCount, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;

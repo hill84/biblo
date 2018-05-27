@@ -4,24 +4,28 @@ import { join } from '../config/shared';
 import Rating from './rating';
 
 export default class Cover extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-      book: this.props.book,
-      cover: (this.props.book.covers && this.props.book.covers[0]) || '',
-      //index: 0,
-      //loading: false
-    }
+  state = {
+    book: this.props.book,
+    cover: (this.props.book.covers && this.props.book.covers[0]) || '',
+    //index: 0
   }
-  
-  componentWillReceiveProps(nextProps) { // NO getDerivedStateFromProps
-    if (nextProps.book !== this.props.book) {
-      this.setState({
-        book: nextProps.book,
-        cover: nextProps.book && nextProps.book.covers[0],
-        //index: 0,
-      });
+
+  static propTypes = {
+    book: coverType.isRequired,
+    info: boolType,
+    rating: boolType,
+    full: boolType
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.book !== prevState.book) { 
+      return { 
+        book: nextProps.book, 
+        cover: (nextProps.book && nextProps.book.covers[0]) || '', 
+        //index: 0
+      }; 
     }
+    return null;
   }
 
   /* changeCover = () => {
@@ -36,7 +40,7 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
-    const { full, index } = this.props;
+    const { full, index, info, rating } = this.props;
 
     if (!book) return null;
 
@@ -58,12 +62,12 @@ export default class Cover extends React.Component {
             <span className="publisher">{book.publisher}</span>
           </div>
         }
-        {(this.props.info !== false) && 
+        {(info !== false) && 
           <div className="info">
             <strong className="title">{book.title}</strong>
             <span className="author">di {join(book.authors)}</span>
             {full && <span className="publisher">{book.publisher}</span>}
-            {(book.rating_num > 0) && (this.props.rating !== false) && 
+            {(book.rating_num > 0) && (rating !== false) && 
               <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
             }
           </div>
@@ -71,11 +75,4 @@ export default class Cover extends React.Component {
       </div>
     );
   }
-}
-
-Cover.propTypes = {
-  book: coverType.isRequired,
-  info: boolType,
-  rating: boolType,
-  full: boolType,
 }
