@@ -1,6 +1,8 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "lang": "it",
+  "short_name": "Biblo",
+  "name": "Biblo",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,6 +12,6 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0097a7",
+  "background_color": "#263238"
 }

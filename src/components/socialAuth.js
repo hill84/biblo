@@ -1,28 +1,26 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { CircularProgress } from 'material-ui';
+import CircularProgress from 'material-ui/CircularProgress';
 import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 
 export default class SocialAuth extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			roles: {
-				admin: false,
-				editor: true
-			},
-			stats: {
-				followed_num: 0,
-				followers_num: 0,
-				ratings_num: 0,
-				reviews_num: 0,
-				shelf_num: 0,
-				wishlist_num: 0
-			},
-            loading: false,
-            redirectToReferrer: false
-		}
-	}
+	state = {
+    roles: {
+      admin: false,
+      editor: true,
+      premium: false
+    },
+    stats: {
+      followed_num: 0,
+      followers_num: 0,
+      ratings_num: 0,
+      reviews_num: 0,
+      shelf_num: 0,
+      wishlist_num: 0
+    },
+    loading: false,
+    redirectToReferrer: false
+  }
 
 	socialAuth = provider => {
 		auth.signInWithPopup(provider).then(result => {
@@ -54,24 +52,24 @@ export default class SocialAuth extends React.Component {
 	twitterAuth = () => this.socialAuth(TwitterAuthProvider);
 
 	render(props) {
-        const { redirectToReferrer } = this.state;
+    const { loading, redirectToReferrer } = this.state;
 		const { from } = /* this.props.location.state || */ { from: { pathname: '/' } };
 
 		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
-			<div className="row socialButtons" id="socialAuthComponent">
-                <div className="col-4">
-                    <button className="btn btnGoogle" onClick={this.googleAuth}>Google</button>
-                </div>
-                <div className="col-4">
-                    <button className="btn btnFacebook" onClick={this.facebookAuth}>Facebook</button>
-                </div>
-                <div className="col-4">
-                    <button className="btn btnTwitter" onClick={this.twitterAuth}>Twitter</button>
-                </div>
-                {this.state.loading && <div className="loader"><CircularProgress /></div>}
-            </div>
+			<div className="row" id="socialAuthComponent">
+        <div className="col-4">
+          <button className="btn google" onClick={this.googleAuth}>Google</button>
+        </div>
+        <div className="col-4">
+          <button className="btn facebook" onClick={this.facebookAuth}>Facebook</button>
+        </div>
+        <div className="col-4">
+          <button className="btn twitter" onClick={this.twitterAuth}>Twitter</button>
+        </div>
+        {loading && <div className="loader"><CircularProgress /></div>}
+      </div>
 		);
 	}
 }
