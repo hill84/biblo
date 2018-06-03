@@ -1343,7 +1343,7 @@ to { opacity: 0; transform: scale(1); }
   .user.rating { height: 40px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
-  .react-rater { font-size: 18px; }
+  .react-rater { font-size: 14px; }
   .hide-xs { display: none; }
 }
 @media (max-width: 359px) {

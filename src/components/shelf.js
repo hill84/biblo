@@ -17,7 +17,7 @@ export default class Shelf extends React.Component {
     shelf: this.props.shelf || 'bookInShelf',
     anchorEl: null,
     isOpenOrderMenu: false,
-    limit: booksPerRow() - 1,
+    limit: booksPerRow() * 2 - 1,
     orderBy: { type: 'added_num', label: 'Data aggiunta' },
     coverview: true,
     desc: true,
@@ -95,7 +95,7 @@ export default class Shelf extends React.Component {
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
-  onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() - 1 : 10 */ }));
+  onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
 
   onToggleOrderMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
