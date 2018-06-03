@@ -77,7 +77,7 @@ export default class SearchBookForm extends React.Component {
       readers_num: 0,
       reviews_num: 0,
       subtitle: '',
-      text: searchText, // OPTION TEXT
+      text: searchText, // AutoComplete OPTION TEXT
       title: searchBy.where === 'title_sort' ? searchText : '',
       title_sort: searchBy.where === 'title_sort' ? normalizeString(searchText) : '',
       value: (

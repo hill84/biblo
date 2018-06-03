@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import { collectionsRef } from '../config/firebase';
 import { icon } from '../config/icons';
-/* import { isTouchDevice } from '../config/shared'; */
+import { booksPerRow/* , isTouchDevice */ } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -11,7 +11,7 @@ export default class BookCollection extends React.Component {
 	state = {
     cid: this.props.cid || 'top',
     bcid: this.props.bcid || 'bcid',
-    limit: this.props.limit || (this.props.pagination || this.props.scrollable) ? 7 : 98,
+    limit: this.props.limit || (this.props.pagination || this.props.scrollable) ? booksPerRow() : 98,
     scrollable: /* isTouchDevice() ? ( */this.props.scrollable || false/* ) : false */,
     pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
     stacked: this.props.stacked || false,
@@ -32,34 +32,41 @@ export default class BookCollection extends React.Component {
     stacked: boolType
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.cid !== prevState.cid) { return { cid: nextProps.cid || 'top' }; }
-    if (nextProps.bcid !== prevState.bcid) { return { bcid: nextProps.bcid || 'bcid' }; }
-    if (nextProps.limit !== prevState.limit) { return { limit: nextProps.limit || (this.state.pagination || this.state.scrollable) ? 7 : 98 }; }
-    if (nextProps.pagination !== prevState.pagination) { return { pagination: nextProps.pagination || false }; }
-    if (nextProps.scrollable !== prevState.scrollable) { return { scrollable: nextProps.scrollable || false }; }
-    if (nextProps.stacked !== prevState.stacked) { return { stacked: nextProps.stacked || false }; }
+  static getDerivedStateFromProps(props, state) {
+    if (props.cid !== state.cid) { return { cid: props.cid || 'top' }; }
+    if (props.bcid !== state.bcid) { return { bcid: props.bcid || 'bcid' }; }
+    if (props.limit !== state.limit) { return { limit: props.limit || (this.props.pagination || this.props.scrollable) ? booksPerRow() : 98 }; }
+    if (props.pagination !== state.pagination) { return { pagination: props.pagination || false }; }
+    if (props.scrollable !== state.scrollable) { return { scrollable: props.scrollable || false }; }
+    if (props.stacked !== state.stacked) { return { stacked: props.stacked || false }; }
     return null;
   }
 
   componentDidMount() {
-    const { bcid, cid, limit } = this.state;
-    this.fetchCollection(cid, bcid, limit);
+    this._isMounted = true;
+    this.fetchCollection();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { bcid, cid, desc, limit } = this.state;
-    if (cid !== prevState.cid || bcid !== prevState.bcid || limit !== prevState.limit || desc !== prevState.desc) {
-      this.fetchCollection(cid, bcid, limit);
+    const { bcid, cid, desc } = this.state;
+    if (this._isMounted) {
+      if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
+        this.fetchCollection();
+      }
     }
   }
 
-  fetchCollection = (cid, bcid, limit) => {
+  fetchCollection = () => {
+    const { bcid, cid, desc, limit } = this.state;
     collectionsRef(cid).get().then(snap => {
       if (!snap.empty) { 
         this.setState({ collectionCount: snap.docs.length });
         let books = [];
-        collectionsRef(cid).orderBy(String(bcid), this.state.desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(Number(limit)).get().then(snap => {
+        collectionsRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit).get().then(snap => {
           snap.forEach(book => books.push(book.data()));
           this.setState({ 
             collection: books,

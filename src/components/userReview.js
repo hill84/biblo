@@ -39,11 +39,11 @@ export default class UserReview extends React.Component {
     userBook: userBookType
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.bid !== prevState.bid) { return { bid: nextProps.bid }}
-    if (nextProps.bookReviews_num !== prevState.bookReviews_num) { return { bookReviews_num: nextProps.bookReviews_num }}
-    if (nextProps.user !== prevState.user) { return { user: nextProps.user }}
-    if (nextProps.userBook !== prevState.userBook) { return { userBook: nextProps.userBook }}
+  static getDerivedStateFromProps(props, state) {
+    if (props.bid !== state.bid) { return { bid: props.bid }}
+    if (props.bookReviews_num !== state.bookReviews_num) { return { bookReviews_num: props.bookReviews_num }}
+    if (props.user !== state.user) { return { user: props.user }}
+    if (props.userBook !== state.userBook) { return { userBook: props.userBook }}
     return null;
   }
 

@@ -912,10 +912,8 @@ margin-top: 0;
 }
 .head.nav + .shelf-row, .head.nav + .shelf { margin-top: 40px; }
 .head.nav .info-row { margin-bottom: 0; }
-.head.nav .counter { line-height: inherit; }
-.head.nav .title { font-weight: 400; }
+.head.nav .counter, .head.nav .count { line-height: inherit; vertical-align: middle; }
 .head.nav .count { color: var(--ligtherTextClr); }
-.head.nav .pull-right { height: 0; }
 .head.nav button.btn { display: inline; }
 
 /* BOOK COVER */
@@ -1343,7 +1341,7 @@ to { opacity: 0; transform: scale(1); }
   .text-align-center-xs { text-align: center; }
   .book-incipit p { font-size: .8rem; }
   .user.rating { height: 40px; }
-  .user.rating .react-rater { font-size: 40px; line-height: inherit; }
+  .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
   .react-rater { font-size: 18px; }
   .hide-xs { display: none; }
@@ -1355,6 +1353,6 @@ to { opacity: 0; transform: scale(1); }
   .book-incipit p { text-align: left; }
 }
 @media (pointer: coarse) {
-  .user.rating .react-rater { font-size: 40px; }
+  .user.rating .react-rater { font-size: 36px; }
   .user.rating .label { display: none; }
 }

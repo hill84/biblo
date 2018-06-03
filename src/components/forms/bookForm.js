@@ -64,8 +64,10 @@ export default class BookForm extends React.Component {
     user: userType.isRequired
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.book !== prevState.book) { return { book: nextProps.book }}
+  static getDerivedStateFromProps(props, state) {
+    if (state.prevProps !== props) {
+      if (props.book !== state.book) { return { prevProps: props, book: props.book }}
+    }
     return null;
   }
 
@@ -148,7 +150,7 @@ export default class BookForm extends React.Component {
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.props.book.bid) {
-          const { EDIT, ...restBook } = book; // Exclude EDIT from fullBook
+          const { EDIT, ...restBook } = book;
           bookRef(this.props.book.bid).set({
             ...restBook,
             EDIT: {
@@ -171,7 +173,6 @@ export default class BookForm extends React.Component {
             });
           });
         } else {
-          //const { EDIT, ...restBook } = book; // Exclude EDIT from fullBook
           let newBookRef = booksRef.doc();
           newBookRef.set({
             ISBN_10: book.ISBN_10,

@@ -25,6 +25,7 @@ export const userType = shape({
   sex: string,
   roles: shape({
     admin: bool.isRequired,
+    //premium: bool.isRequired,
     editor: bool.isRequired
   }).isRequired,
   stats: shape({

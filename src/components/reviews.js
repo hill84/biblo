@@ -22,8 +22,8 @@ export default class Reviews extends React.Component {
     bid: stringType.isRequired
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.bid !== prevState.bid) { return { bid: nextProps.bid }}
+  static getDerivedStateFromProps(props, state) {
+    if (props.bid !== state.bid) { return { bid: props.bid }}
     return null;
   }
 

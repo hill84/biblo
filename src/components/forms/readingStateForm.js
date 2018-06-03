@@ -28,10 +28,10 @@ export default class readingStateForm extends React.Component {
     }).isRequired
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.readingState.state_num !== prevState.state_num) { return { state_num: nextProps.readingState.state_num }}
-    if (nextProps.readingState.start_num !== prevState.start_num) { return { start_num: nextProps.readingState.start_num }}
-    if (nextProps.readingState.end_num !== prevState.end_num) { return { end_num: nextProps.readingState.end_num }}
+  static getDerivedStateFromProps(props, state) {
+    if (props.readingState.state_num !== state.state_num) { return { state_num: props.readingState.state_num }}
+    if (props.readingState.start_num !== state.start_num) { return { start_num: props.readingState.start_num }}
+    if (props.readingState.end_num !== state.end_num) { return { end_num: props.readingState.end_num }}
     return null;
   }
 

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { uid, userBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { numberType, stringType } from '../config/types';
+import { booksPerRow } from '../config/shared';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
@@ -16,7 +17,7 @@ export default class Shelf extends React.Component {
     shelf: this.props.shelf || 'bookInShelf',
     anchorEl: null,
     isOpenOrderMenu: false,
-    limit: this.props.limit || 13, //TODO RESPONSIVE LIMIT
+    limit: booksPerRow() - 1,
     orderBy: { type: 'added_num', label: 'Data aggiunta' },
     coverview: true,
     desc: true,
@@ -37,13 +38,12 @@ export default class Shelf extends React.Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     if (uid !== prevState.luid) { return { luid: uid }; }
     if (nextProps.uid !== prevState.uid) { return { uid: nextProps.uid }; }
-    //if (nextProps.limit !== prevState.limit) { return { limit: nextProps.limit }; }
     return null;
   }
 
   componentDidMount() {
     this._isMounted = true;
-    this.fetchUserBooks(this.props.uid);
+    this.fetchUserBooks();
   }
 
   componentWillUnmount() {
@@ -51,74 +51,43 @@ export default class Shelf extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { desc, orderBy, uid } = this.state;
+    const { coverview, desc, orderBy, uid } = this.state;
     if (this._isMounted) {
-      if (uid !== prevState.uid || orderBy !== prevState.orderBy || desc !== prevState.desc) {
-        this.fetchUserBooks(uid);
+      if (coverview !== prevState.coverview || desc !== prevState.desc || orderBy !== prevState.orderBy || uid !== prevState.uid) {
+        this.fetchUserBooks();
       }
     }
   }
 
-  fetchUserBooks = uid => {
-    const { desc, limit, orderBy, shelf } = this.state;
-    const shelfRef = userBooksRef(uid).where(shelf, '==', true);
-    shelfRef.onSnapshot(snap => {
-      if (!snap.empty) { 
-        this.setState({ userBooksCount: snap.docs.length });
-        shelfRef.orderBy(orderBy.type, desc ? 'desc' : 'asc').limit(limit).onSnapshot(snap => {
+  fetchUserBooks = direction => {
+    const { desc, limit, orderBy, page, shelf } = this.state;
+    const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
+    const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy.type, desc ? 'desc' : 'asc');
+    const empty = { 
+      userBooksCount: 0, 
+      userBooks: [],
+      loading: false,
+      page: 1
+    };
+
+    shelfRef.onSnapshot(fullSnap => {
+      if (!fullSnap.empty) { 
+        this.setState({ userBooksCount: fullSnap.docs.length });
+        let lastVisible = fullSnap.docs[startAt];
+        const ref = direction ? shelfRef.startAt(lastVisible) : shelfRef;
+        ref.limit(limit).onSnapshot(snap => {
           this.setState({ loading: true });
           if (!snap.empty) {
-            //console.log(snap);
-            const snapUserBooks = [];
-            snap.forEach(userBook => {
-              //console.log(userBook.id);
-              snapUserBooks.push({
-                ...userBook.data(),
-                bid: userBook.id
-              });
-              this.setState({
-                userBooks: snapUserBooks,
-                loading: false
-              });
-            });
-          } else this.setState({ userBooks: [], loading: false });
+            const userBooks = [];
+            snap.forEach(userBook => userBooks.push({ ...userBook.data(), bid: userBook.id }));
+            this.setState(prevState => ({ 
+              userBooks,
+              loading: false,
+              page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.userBooksCount) ? prevState.page : prevState.page + 1 : 1
+            }));
+          } else this.setState(empty);
         });
-      } else {
-        this.setState({ 
-          userBooksCount: 0, 
-          userBooks: [],
-          loading: false,
-          page: 1
-        });
-      }
-    });
-  }
-
-  fetch = direction => {
-    const { desc, limit, orderBy, page, shelf } = this.state;
-    const startAt = (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit;
-    const first = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy.type, desc ? 'desc' : 'asc');
-
-    first.get().then(snap => {
-      let lastVisible = snap.docs[startAt];
-      first.startAt(lastVisible).limit(limit).onSnapshot(nextSnap => {
-        this.setState({ loading: true });
-        if (!nextSnap.empty) {
-          const nextBooks = [];
-          nextSnap.forEach(userBook => nextBooks.push(userBook.data()));
-          this.setState(prevState => ({ 
-            userBooks: nextBooks,
-            loading: false,
-            page: (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.userBooksCount) ? prevState.page : prevState.page + 1
-          }));
-        } else {
-          this.setState({ 
-            userBooks: [],
-            loading: false,
-            page: 1
-          });
-        }
-      });
+      } else this.setState(empty);
     });
   }
 
@@ -126,7 +95,7 @@ export default class Shelf extends React.Component {
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
-  onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));
+  onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() - 1 : 10 */ }));
 
   onToggleOrderMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -191,14 +160,14 @@ export default class Shelf extends React.Component {
                 <button 
                   disabled={page === 1 && 'disabled'} 
                   className="btn sm clear prepend" 
-                  onClick={() => this.fetch('prev')} title="precedente">
+                  onClick={() => this.fetchUserBooks('prev')} title="precedente">
                   {icon.chevronLeft()}
                 </button>
 
                 <button 
                   disabled={page > (userBooksCount / limit) && 'disabled'} 
                   className="btn sm clear append" 
-                  onClick={() => this.fetch('next')} title="successivo">
+                  onClick={() => this.fetchUserBooks('next')} title="successivo">
                   {icon.chevronRight()}
                 </button>
               </div>

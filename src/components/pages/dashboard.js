@@ -24,9 +24,9 @@ export default class Dashboard extends React.Component {
 		user: userType
 	}
 
-	static getDerivedStateFromProps(nextProps, prevState) {
-		if ((nextProps.user && nextProps.user.uid) !== prevState.luid) { return { luid: nextProps.user.uid }; }
-    if (nextProps.match.params.uid !== prevState.uid) { return { uid: nextProps.match.params.uid }; }
+	static getDerivedStateFromProps(props, state) {
+		if ((props.user && props.user.uid) !== state.luid) { return { luid: props.user.uid }; }
+    if ((props.match.params && props.match.params.uid) !== state.uid) { return { uid: props.match.params.uid }; }
     return null;
   }
 
@@ -54,7 +54,7 @@ export default class Dashboard extends React.Component {
 	
 	fetchUser = () => {
 		const { match } = this.props;
-		const { luid, user } = this.state;
+    const { luid, user } = this.state;
 		if (match.params.uid) {
 			userRef(match.params.uid).onSnapshot(snap => {
 				this.setState({ loading: false });
@@ -66,10 +66,10 @@ export default class Dashboard extends React.Component {
 						user: snap.data(),
 						follow: (user && user.stats.followers) && user.stats.followers.indexOf(luid) > -1,
 						progress: 100 // / tot * count
-					});
+          });
 				} else this.setState({ user: null });
 			});
-		} else this.setState({ user: user });
+    } else this.setState({ user: user });
 	}
 
 	onFollowUser = (luid, uid) => {
@@ -133,7 +133,8 @@ export default class Dashboard extends React.Component {
 		}
 
 		const followers = user.stats.followers.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
-		const followed = user.stats.followed.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+    const followed = user.stats.followed.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+    const roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={i+'_'+r} className={`badge ${r}`}>{r}</div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const isOwner = () => luid === uid;
@@ -155,8 +156,7 @@ export default class Dashboard extends React.Component {
 						<div className="card dark">
 							<div className="basic-profile">
 								<div className="role-badges">
-									{user.roles.admin && <div className="badge admin">Admin</div>}
-									{user.roles.editor && <div className="badge editor">Editor</div>}
+									{roles}
 								</div>
 								<div className="row text-align-center-md">
 									<div className="col-md-auto col-sm-12">

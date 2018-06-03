@@ -39,10 +39,10 @@ export default class BookProfile extends React.Component {
     userBook: userBookType
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.book !== prevState.book) { return { book: nextProps.book }}
-    if (nextProps.user !== prevState.user) { return { user: nextProps.user }}
-    if (nextProps.userBook !== prevState.userBook) { return { userBook: nextProps.userBook }}
+  static getDerivedStateFromProps(props, state) {
+    if (props.book !== state.book) { return { book: props.book }}
+    if (props.user !== state.user) { return { user: props.user }}
+    if (props.userBook !== state.userBook) { return { userBook: props.userBook }}
     return null;
   }
 

@@ -10,16 +10,14 @@ export default class Book extends React.Component {
     book: this.props.book,
     user: this.props.user,
     userBook: {
-      bid: (this.props.book && this.props.book.bid) || '',
-      authors: (this.props.book && this.props.book.authors) || [],
-      covers: (this.props.book && this.props.book.covers[0] && Array(this.props.book.covers[0])) || [],
-      publisher: (this.props.book && this.props.book.publisher) || '',
-      title: (this.props.book && this.props.book.title) || '',
-      subtitle: (this.props.book && this.props.book.subtitle) || '',
+      bid: '',
+      authors: [],
+      covers: [],
+      publisher: '',
+      title: '',
+      subtitle: '',
       review: {},
-      readingState: {
-        state_num: 1
-      },
+      readingState: { state_num: 1 },
       rating_num: 0,
       bookInShelf: false,
       bookInWishlist: false 
@@ -35,19 +33,19 @@ export default class Book extends React.Component {
     userBook: userBookType
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.user !== prevState.user) { return { user: nextProps.user }; }
-    if (nextProps.book !== prevState.book) { 
+  static getDerivedStateFromProps(props, state) {
+    if (props.user !== state.user) { return { user: props.user }; }
+    if (props.book && (props.book !== state.book)) { 
       return { 
-        book: nextProps.book,
+        book: props.book,
         userBook: {
-          ...prevState.userBook,
-          bid: nextProps.book.bid || '',
-          authors: nextProps.book.authors || [],
-          covers: (!!nextProps.book.covers[0] && Array(nextProps.book.covers[0])) || [],
-          publisher: nextProps.book.publisher || '',
-          title: nextProps.book.title || '',
-          subtitle: nextProps.book.subtitle || ''
+          ...state.userBook,
+          bid: props.book.bid,
+          authors: props.book.authors,
+          covers: !!props.book.covers[0] && Array(props.book.covers[0]),
+          publisher: props.book.publisher,
+          title: props.book.title,
+          subtitle: props.book.subtitle
         }
       }; 
     }

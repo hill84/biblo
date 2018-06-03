@@ -17,11 +17,11 @@ export default class Cover extends React.Component {
     full: boolType
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.book !== prevState.book) { 
+  static getDerivedStateFromProps(props, state) {
+    if (props.book !== state.book) { 
       return { 
-        book: nextProps.book, 
-        cover: (nextProps.book && nextProps.book.covers[0]) || '', 
+        book: props.book, 
+        cover: (props.book && props.book.covers[0]) || '', 
         //index: 0
       }; 
     }

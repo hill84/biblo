@@ -20,7 +20,7 @@ const Home = props => (
 
 		<div className="container">
 			<div className="card dark">
-				<BookCollection cid="Harry Potter" pagination={true} limit={7} scrollable={true} />
+				<BookCollection cid="Harry Potter" pagination={true} limit={7} scrollable={false} />
 			</div>
 
 			<div className="card">
