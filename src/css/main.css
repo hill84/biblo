@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 :root {
   /* http://www.material-ui.com/#/customization/colors */
   --primaryLigtherClr: rgb(0, 188, 212);  /* cyan500 */
@@ -1343,7 +1344,7 @@ to { opacity: 0; transform: scale(1); }
   .user.rating { height: 40px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
-  .react-rater { font-size: 14px; }
+  .shelf-row .book .react-rater { font-size: 14px; }
   .hide-xs { display: none; }
 }
 @media (max-width: 359px) {

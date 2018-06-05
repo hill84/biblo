@@ -18,15 +18,15 @@ export default class BookProfile extends React.Component {
 	state = {
     book: {
       ...this.props.book,
-      bid: this.props.book.bid || ''
+      bid: this.props.book && this.props.book.bid || ''
     },
     user: this.props.user || {},
     userBook: this.props.userBook,
-    loading: false,
     errors: {},
     isReadingStateOpen: false,
     isIncipitOpen: false,
-    isDescMinified: false
+    isDescMinified: false,
+    prevProps: this.props
   }
 
   static propTypes = {
@@ -42,16 +42,20 @@ export default class BookProfile extends React.Component {
   static getDerivedStateFromProps(props, state) {
     if (props.book !== state.book) { return { book: props.book }}
     if (props.user !== state.user) { return { user: props.user }}
-    if (props.userBook !== state.userBook) { return { userBook: props.userBook }}
+    if (state.prevProps !== props) {
+      if (props.userBook !== state.userBook) { return { prevProps: props, userBook: props.userBook }}
+    }
     return null;
   }
 
   componentDidMount() {
-    this.minifyDescription();
+    if (!this.props.loading) {
+      this.minifyDescription();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.book.description.length !== prevState.book.description.length){
+    if(!this.props.loading && this.state.book.description.length !== prevState.book.description.length){
       this.minifyDescription();
     }
   }
@@ -104,9 +108,12 @@ export default class BookProfile extends React.Component {
   
 	render() {
     const { book, isIncipitOpen, isDescMinified, isReadingStateOpen, user, userBook } = this.state;
+    const { loading } = this.props;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
     const hasBid = () => book && book.bid;
+
+    if (loading) return <div className="loader"><CircularProgress /></div>
 
 		return (
       <div id="BookProfileComponent">
@@ -122,7 +129,6 @@ export default class BookProfile extends React.Component {
 
         <div className="container top">
           <div className="card main text-align-center-md">
-            {this.state.loading && <div className="loader"><CircularProgress /></div>}
             <div className="row">
               <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
                 {book.incipit ? 

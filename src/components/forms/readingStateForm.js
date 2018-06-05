@@ -15,7 +15,8 @@ export default class readingStateForm extends React.Component {
     end_num: this.props.readingState.end_num || null,
     changes: false,
     loading: false,
-    errors: {}
+    errors: {},
+    prevProps: this.props
   }
 
   static propTypes = {
@@ -29,9 +30,11 @@ export default class readingStateForm extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.readingState.state_num !== state.state_num) { return { state_num: props.readingState.state_num }}
-    if (props.readingState.start_num !== state.start_num) { return { start_num: props.readingState.start_num }}
-    if (props.readingState.end_num !== state.end_num) { return { end_num: props.readingState.end_num }}
+    if (state.prevProps !== props) {
+      if (props.readingState.state_num !== state.state_num) { return { prevProps: props, state_num: props.readingState.state_num }}
+      if (props.readingState.start_num !== state.start_num) { return { prevProps: props, start_num: props.readingState.start_num }}
+      if (props.readingState.end_num !== state.end_num) { return { prevProps: props, end_num: props.readingState.end_num }}
+    }
     return null;
   }
 

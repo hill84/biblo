@@ -11,7 +11,7 @@ const Home = props => (
 				<h1>Scopriamo nuovi libri, insieme</h1>
 				<p>Lorem ipsum dolor sit amet</p>
 				{isAuthenticated() ? 
-					<Link to={`/dashboard/${uid}`} className="btn primary lg">La tua dashboard</Link> 
+					<Link to={`/dashboard/${uid}`} className="btn primary lg">La tua libreria</Link> 
 				: 
 					<Link to="/signup" className="btn primary lg">Registrati</Link>
 				}

@@ -35,9 +35,9 @@ export default class Shelf extends React.Component {
     uid: stringType.isRequired
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (uid !== prevState.luid) { return { luid: uid }; }
-    if (nextProps.uid !== prevState.uid) { return { uid: nextProps.uid }; }
+  static getDerivedStateFromProps(props, state) {
+    if (uid !== state.luid) { return { luid: uid }; }
+    if (props.uid !== state.uid) { return { uid: props.uid }; }
     return null;
   }
 

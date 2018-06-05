@@ -458,13 +458,7 @@ export default class Book extends React.Component {
 	render(props) {
     const { book, isEditing, loading, user, userBook } = this.state;
 
-    if (!book) {
-      if (loading) {
-        return null;
-      } else {
-        return <NoMatch title="Libro non trovato" location={this.props.location} />
-      }
-    }
+    if (!loading && !book) return <NoMatch title="Libro non trovato" location={this.props.location} />
 
 		return (
 			<div ref="BookComponent">
@@ -482,6 +476,7 @@ export default class Book extends React.Component {
             removeBookFromWishlist={this.removeBookFromWishlist} 
             rateBook={this.rateBook}
             isEditing={this.isEditing}
+            loading={loading}
             book={book}
             userBook={userBook}
             user={user}

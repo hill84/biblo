@@ -55,7 +55,8 @@ export default class BookForm extends React.Component {
     loading: false,
     errors: {},
     authError: '',
-    changes: false
+    changes: false,
+    prevProps: this.props
   }
 
   static propTypes = {

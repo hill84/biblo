@@ -31,36 +31,16 @@ node_modules
 
 \.firebaserc
 
-build/asset-manifest\.json
-
-build/favicon\.ico
-
-build/index\.html
-
-build/manifest\.json
-
-build/service-worker\.js
-
-build/static/css/main\.6f61aca0\.css
-
-build/static/css/main\.6f61aca0\.css\.map
-
-build/static/js/main\.25f1de1e\.js
-
-build/static/js/main\.25f1de1e\.js\.map
-
-database\.rules\.json
+/Build/*
+/database/*
+/firebase/*
+/firestore/*
+/functions/*
+/storage/*
 
 firebase\.json
-
 firestore\.indexes\.json
-
 firestore\.rules
-
-functions/index\.js
-
-functions/package-lock\.json
-
-functions/package\.json
+database\.rules\.json
 
 storage\.rules
