@@ -18,7 +18,7 @@ export default class BookProfile extends React.Component {
 	state = {
     book: {
       ...this.props.book,
-      bid: this.props.book && this.props.book.bid || ''
+      bid: (this.props.book && this.props.book.bid) || ''
     },
     user: this.props.user || {},
     userBook: this.props.userBook,
