@@ -5,7 +5,7 @@ import Link from 'react-router-dom/Link';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { calcReadingTime, join, timeSince } from '../../config/shared';
-import { funcType, userBookType } from '../../config/types';
+import { funcType, userBookType, userType } from '../../config/types';
 import Cover from '../cover';
 import Incipit from '../incipit';
 import Rating from '../rating';
@@ -36,6 +36,7 @@ export default class BookProfile extends React.Component {
     removeBookFromWishlist: funcType.isRequired,
     rateBook: funcType.isRequired,
     isEditing: funcType.isRequired,
+    user: userType,
     userBook: userBookType
   }
 

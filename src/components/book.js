@@ -129,7 +129,7 @@ export default class Book extends React.Component {
             //console.log(`Update userBook ${bid}`);
           }
         });
-      } else console.warn(`Cannot fetchUserBook. User not authenticated`);
+      }
     }
   }
   

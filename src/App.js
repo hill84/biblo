@@ -46,22 +46,22 @@ export default class App extends React.Component {
 		return (
 			<MuiThemeProvider muiTheme={muiTheme}>
 				<UserContext.Provider value={user}>
-					<Layout user={user}>
-						<Switch>
-							<Route path="/" exact component={Home} />
-							<Route path="/login" component={Login} />
-							<Route path="/password-reset" component={PasswordResetForm} />
-							<Route path="/signup" component={Signup} />
-							<Route path="/book/:bid" component={BookContainer} />
-							<Route path="/collection/:cid" component={Collection} />
-							<RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} />
-							<PrivateRoute path="/books/add" component={AddBook} user={user} />
-							<PrivateRoute path="/new-book" component={NewBook} user={user} />
-							<PrivateRoute path="/profile" exact component={Profile} />
-							<Redirect from="/home" to="/" />
-							<Route component={NoMatchPage} />
-						</Switch>
-					</Layout>
+          <Layout user={user}>
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="/login" component={Login} />
+              <Route path="/password-reset" component={PasswordResetForm} />
+              <Route path="/signup" component={Signup} />
+              <Route path="/book/:bid" component={BookContainer} />
+              <Route path="/collection/:cid" component={Collection} />
+              <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} />
+              <PrivateRoute path="/books/add" component={AddBook} user={user} />
+              <PrivateRoute path="/new-book" component={NewBook} user={user} />
+              <PrivateRoute path="/profile" exact component={Profile} />
+              <Redirect from="/home" to="/" />
+              <Route component={NoMatchPage} />
+            </Switch>
+          </Layout>
 				</UserContext.Provider>
 			</MuiThemeProvider>
 		);

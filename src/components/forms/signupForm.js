@@ -1,38 +1,35 @@
+import TextField from 'material-ui/TextField';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import Redirect from 'react-router-dom/Redirect';
 import isEmail from 'validator/lib/isEmail';
-import { TextField } from 'material-ui';
 import { auth, userRef } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
 
 export default class SignupForm extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			data: {
-				uid: '',
-				displayName: '',
-				email: '',
-				password: '',
-				roles: {
-					admin: false,
-					editor: true
-				},
-				stats: {
-					followed_num: 0,
-					followers_num: 0,
-					ratings_num: 0,
-					reviews_num: 0,
-					shelf_num: 0,
-					wishlist_num: 0
-				}
-			},
-			loading: false,
-			errors: {},
-			authError: '',
-			redirectToReferrer: false
-		};
-	}
+	state = {
+    data: {
+      uid: '',
+      displayName: '',
+      email: '',
+      password: '',
+      roles: {
+        admin: false,
+        editor: true
+      },
+      stats: {
+        followed_num: 0,
+        followers_num: 0,
+        ratings_num: 0,
+        reviews_num: 0,
+        shelf_num: 0,
+        wishlist_num: 0
+      }
+    },
+    loading: false,
+    errors: {},
+    authError: '',
+    redirectToReferrer: false
+  };
 
 	onChange = e => {
 		this.setState({ 
@@ -82,7 +79,7 @@ export default class SignupForm extends React.Component {
 
 	render(props) {
     const { authError, data, errors, redirectToReferrer } = this.state;
-		const { from } = /*this.props.location.state ||*/ { from: { pathname: '/' } };
+		const { from } = {from: { pathname: '/profile' }};
 
 		if (redirectToReferrer) return <Redirect to={from} />
 

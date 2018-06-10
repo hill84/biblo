@@ -12,8 +12,9 @@ import Shelf from '../shelf';
 
 export default class Dashboard extends React.Component {
  	state = {
+    isOwner: this.props.user ? this.props.user.uid === this.props.match.params.uid : false,
 		luid: this.props.user && this.props.user.uid,
-		uid: null,
+		uid: this.props.match.params.uid,
 		user: null,
 		follow: false,
 		loading: true,
@@ -25,8 +26,10 @@ export default class Dashboard extends React.Component {
 	}
 
 	static getDerivedStateFromProps(props, state) {
-		if ((props.user && props.user.uid) !== state.luid) { return { luid: props.user.uid }; }
-    if ((props.match.params && props.match.params.uid) !== state.uid) { return { uid: props.match.params.uid }; }
+    if (props.user) {
+      if (props.user.uid !== state.luid) { return { luid: props.user.uid }; }
+    } else { return { luid: null }; }
+    if (props.match.params.uid !== state.uid) { return { uid: props.match.params.uid }; }
     return null;
   }
 
@@ -41,33 +44,28 @@ export default class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
 		if (this._isMounted) {
-			if(this.state.uid !== prevState.uid){
+			if ((this.state.uid !== prevState.uid) || (this.state.luid !== prevState.luid)) {
 				this.fetchUser();
 			}
-			if(this.state.luid !== prevState.luid){
-				if (prevState.luid !== null) {
-					this.fetchUser();
-				}
-			}
 		}
-	}
+  }
 	
 	fetchUser = () => {
-		const { match } = this.props;
-    const { luid, user } = this.state;
-		if (match.params.uid) {
-			userRef(match.params.uid).onSnapshot(snap => {
+    const { luid, uid, user } = this.state;
+		if (uid) {
+			userRef(uid).onSnapshot(snap => {
 				this.setState({ loading: false });
 				if (snap.exists) {
 					/* let count = -4;
 					let tot = Object.keys(snap.data()).length - 4;
 					Object.keys(snap.data()).forEach(i => { if (typeof i !== 'undefined') count++ }); */
 					this.setState({
+            isOwner: luid === uid,
 						user: snap.data(),
 						follow: (user && user.stats.followers) && user.stats.followers.indexOf(luid) > -1,
 						progress: 100 // / tot * count
           });
-				} else this.setState({ user: null });
+				} else this.setState({ isOwner: false, user: null });
 			});
     } else this.setState({ user: user });
 	}
@@ -115,8 +113,8 @@ export default class Dashboard extends React.Component {
 		}
 	}
 
-	render(props) {
-		const { follow, loading, luid, progress, uid, user } = this.state;
+	render() {
+		const { follow, isOwner, loading, luid, progress, uid, user } = this.state;
 
 		if (!user) {
 			if (loading) {
@@ -128,7 +126,7 @@ export default class Dashboard extends React.Component {
 					</div>
 				)
 			} else {
-				return <NoMatch title="Dashboard utente non trovata" location={this.props.location} />
+				return <NoMatch title="Dashboard utente non trovata" location={this.props.location} history={this.props.history} />
 			}
 		}
 
@@ -137,7 +135,6 @@ export default class Dashboard extends React.Component {
     const roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={i+'_'+r} className={`badge ${r}`}>{r}</div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
-		const isOwner = () => luid === uid;
 		const ShelfDetails = () => {
 			return (
 				<div className="info-row footer centered">
@@ -172,12 +169,12 @@ export default class Dashboard extends React.Component {
 												{user.country && <span className="counter">{user.country}</span>}
 												{user.continent && <span className="counter">{user.continent}</span>}
 											</span>
-											{user.languages && <span className="counter hide-sm">Parl{isOwner() ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
+											{user.languages && <span className="counter hide-sm">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 											{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 											{isOwner && progress === 100 && <Link to="/profile"><button className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">
-											{!isOwner() && 
+											{!isOwner && 
 												<button 
 													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
 													disabled={!isAuthenticated()}
@@ -191,7 +188,7 @@ export default class Dashboard extends React.Component {
 												</button>
 											}
 											<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
-											<span className="counter">Segu{isOwner() ? 'i' : 'e'}: <b>{user.stats.followed_num || 0}</b></span>
+											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{user.stats.followed_num || 0}</b></span>
 										</div>
 									</div>
 								</div>
@@ -215,13 +212,13 @@ export default class Dashboard extends React.Component {
 				<Tabs tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
 					<Tab label="Libreria">
 						<div className="card bottompend">
-							<Shelf uid={uid} shelf="bookInShelf"/>
+							<Shelf luid={luid} uid={uid} shelf="bookInShelf"/>
 							<ShelfDetails />
 						</div>
 					</Tab>
 					<Tab label="Desideri">
 						<div className="card bottompend">
-							<Shelf uid={uid} shelf="bookInWishlist" />
+							<Shelf luid={luid} uid={uid} shelf="bookInWishlist" />
 							<ShelfDetails />
 						</div>
 					</Tab>

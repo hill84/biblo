@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'react-router-dom/Link';
 import { isAuthenticated, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import BookCollection from '../bookCollection';
@@ -11,7 +11,7 @@ const Home = props => (
 				<h1>Scopriamo nuovi libri, insieme</h1>
 				<p>Lorem ipsum dolor sit amet</p>
 				{isAuthenticated() ? 
-					<Link to={`/dashboard/${uid}`} className="btn primary lg">La tua libreria</Link> 
+					<Link to={`/dashboard/${uid}`} className="btn primary lg">La mia libreria</Link> 
 				: 
 					<Link to="/signup" className="btn primary lg">Registrati</Link>
 				}
@@ -19,7 +19,7 @@ const Home = props => (
 		</header>
 
 		<div className="container">
-			<div className="card dark">
+			<div className="card dark card-fullwidth-sm">
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
 			</div>
 

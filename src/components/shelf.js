@@ -3,7 +3,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { uid, userBooksRef } from '../config/firebase';
+import { userBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { numberType, stringType } from '../config/types';
 import { booksPerRow } from '../config/shared';
@@ -12,8 +12,9 @@ import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 export default class Shelf extends React.Component {
   state = {
-    luid: uid,
+    luid: this.props.luid,
     uid: this.props.uid,
+    isOwner: this.props.luid === this.props.uid,
     shelf: this.props.shelf || 'bookInShelf',
     anchorEl: null,
     isOpenOrderMenu: false,
@@ -32,12 +33,13 @@ export default class Shelf extends React.Component {
   static propTypes = {
     limit: numberType,
     shelf: stringType,
+    luid: stringType,
     uid: stringType.isRequired
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (uid !== state.luid) { return { luid: uid }; }
     if (props.uid !== state.uid) { return { uid: props.uid }; }
+    if (props.luid !== state.luid) { return { luid: props.luid }; }
     return null;
   }
 
@@ -51,44 +53,50 @@ export default class Shelf extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { coverview, desc, orderBy, uid } = this.state;
+    const { coverview, desc, luid, orderBy, uid } = this.state;
     if (this._isMounted) {
-      if (coverview !== prevState.coverview || desc !== prevState.desc || orderBy !== prevState.orderBy || uid !== prevState.uid) {
+      if (coverview !== prevState.coverview || desc !== prevState.desc || orderBy !== prevState.orderBy || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
         this.fetchUserBooks();
+      } else if (!luid && (luid !== prevState.luid)) {
+        this.setState({ isOwner: false });
       }
     }
   }
 
   fetchUserBooks = direction => {
-    const { desc, limit, orderBy, page, shelf } = this.state;
-    const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy.type, desc ? 'desc' : 'asc');
-    const empty = { 
-      userBooksCount: 0, 
-      userBooks: [],
-      loading: false,
-      page: 1
-    };
-
-    shelfRef.onSnapshot(fullSnap => {
-      if (!fullSnap.empty) { 
-        this.setState({ userBooksCount: fullSnap.docs.length });
-        let lastVisible = fullSnap.docs[startAt];
-        const ref = direction ? shelfRef.startAt(lastVisible) : shelfRef;
-        ref.limit(limit).onSnapshot(snap => {
-          this.setState({ loading: true });
-          if (!snap.empty) {
-            const userBooks = [];
-            snap.forEach(userBook => userBooks.push({ ...userBook.data(), bid: userBook.id }));
-            this.setState(prevState => ({ 
-              userBooks,
-              loading: false,
-              page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.userBooksCount) ? prevState.page : prevState.page + 1 : 1
-            }));
-          } else this.setState(empty);
-        });
-      } else this.setState(empty);
-    });
+    const { desc, limit, luid, orderBy, page, shelf, uid } = this.state;
+    if (uid) {
+      const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
+      const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy.type, desc ? 'desc' : 'asc');
+      const empty = { 
+        isOwner: luid === uid,
+        userBooksCount: 0, 
+        userBooks: [],
+        loading: false,
+        page: 1
+      };
+  
+      shelfRef.onSnapshot(fullSnap => {
+        if (!fullSnap.empty) { 
+          this.setState({ userBooksCount: fullSnap.docs.length });
+          let lastVisible = fullSnap.docs[startAt];
+          const ref = direction ? shelfRef.startAt(lastVisible) : shelfRef;
+          ref.limit(limit).onSnapshot(snap => {
+            this.setState({ loading: true });
+            if (!snap.empty) {
+              const userBooks = [];
+              snap.forEach(userBook => userBooks.push({ ...userBook.data(), bid: userBook.id }));
+              this.setState(prevState => ({ 
+                isOwner: luid === uid,
+                userBooks,
+                loading: false,
+                page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.userBooksCount) ? prevState.page : prevState.page + 1 : 1
+              }));
+            } else this.setState(empty);
+          });
+        } else this.setState(empty);
+      });
+    } else console.warn(`No uid: ${uid}`);
   }
 
   onChangeOrder = (event, value) => this.setState({ orderBy: value, isOpenOrderMenu: false, page: 1 });
@@ -102,9 +110,8 @@ export default class Shelf extends React.Component {
     this.setState(prevState => ({ isOpenOrderMenu: !prevState.isOpenOrderMenu }));
   }
 
-  render(props) {
-    const { coverview, desc, isOpenOrderMenu, limit, luid, loading, orderBy, page, pagination, shelf, uid, userBooks, userBooksCount } = this.state;
-    const isOwner = () => luid === uid;
+  render() {
+    const { coverview, desc, isOpenOrderMenu, isOwner, limit, loading, orderBy, page, pagination, shelf, userBooks, userBooksCount } = this.state;
     const covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
 
     return (
@@ -144,7 +151,7 @@ export default class Shelf extends React.Component {
             </div>
             {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
               <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`}>
-                {isOwner() &&
+                {isOwner &&
                   <Link to="/books/add">
                     <div className="book empty">
                       <div className="cover"><div className="add">+</div></div>

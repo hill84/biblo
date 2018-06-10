@@ -18,14 +18,13 @@ export default class UserReview extends React.Component {
       created_num: 0,
       displayName: '',
       likes: [],
-      likes_num: 0,
       photoURL: '',
       rating_num: 0,
       text: '',
       title: ''
     },
     changes: false,
-    text_minChars: 150,
+    text_minChars: 50,
     text_maxChars: 1500,
     title_maxChars: 255,
     loading: false,
@@ -70,7 +69,6 @@ export default class UserReview extends React.Component {
           ...this.state.review,
           created_num: 0,
           likes: [],
-          likes_num: 0,
           rating_num: 0,
           text: '',
           title: ''
@@ -187,7 +185,6 @@ export default class UserReview extends React.Component {
           ...this.state.review,
           created_num: 0,
           likes: [],
-          likes_num: 0,
           rating_num: 0,
           text: '',
           title: ''
@@ -250,7 +247,7 @@ export default class UserReview extends React.Component {
                           <h3>{user.displayName}</h3>
                         </div>
                         <div className="col text-align-right rating">
-                          <Rating ratings={{rating_num: userBook.rating_num || 0}} />
+                          <Rating ratings={{rating_num: userBook.rating_num}} labels={true} />
                         </div>
                       </div>
                       <h4 className="title">{review.title}</h4>

@@ -618,7 +618,7 @@ margin-top: 0;
   left: 0; 
   width: 100%; 
   height: var(--stickyBgHeight); 
-  margin-bottom: -250px;
+  margin-bottom: calc(var(--stickyBgHeight) * -1);
   overflow: hidden;
   background: var(--mainBg);
 }
@@ -1009,7 +1009,7 @@ margin-top: 0;
 
 /* RATING */
 .rating { 
-  font-size: var(--btnFontSize); 
+  font-size: 17px; 
   line-height: 1.6; 
   color: var(--ligthTextClr); 
   text-transform: uppercase;
@@ -1018,6 +1018,7 @@ margin-top: 0;
 }
 .book .rating { text-align: center; }
 .rating-labels { display: inline; }
+.rating-labels .rating-num { color: var(--accentClr); }
 .react-rater {
   display: inline-block;
   line-height: 1;
@@ -1030,7 +1031,7 @@ margin-top: 0;
   position: relative; 
   transition: color .2s ease-in-out;
 }
-.react-rater-star.will-be-active { color: #ffdd99; }
+.react-rater-star.will-be-active { color: var(--accentLigthClr); }
 .react-rater-star.is-active { color: var(--accentClr); }
 .react-rater-star.is-active-half:before {
   color: var(--accentClr);
@@ -1041,7 +1042,7 @@ margin-top: 0;
   overflow: hidden; 
 }
 .rating .rating-num { /* color: var(--accentClr); */ margin-left: 5px; }
-.rating .label { margin-left: 14px; }
+.rating .label { margin-left: 10px; }
 /* .user.rating .rating-num { color: var(--primaryClr); } */
 .react-rater-star.is-disabled { cursor: default; }
 .user.rating .react-rater-star.will-be-active { color: var(--primaryLigthClr); }
@@ -1092,6 +1093,9 @@ margin-top: 0;
 .review .head { line-height: 40px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
 .review .title { color: var(--ContrastedTextClr); }
+.review .rating { line-height: inherit; }
+.review .rating .rating-num { margin-left: 7px; }
+.review .rating .ratings-num { display: none; }
 .review .foot { color: var(--ligthTextClr); font-size: .85rem; }
 .review .foot .counter { display: inline-block; }
 .review .foot .counter + .counter { margin-left: 3px; }
@@ -1330,6 +1334,9 @@ to { opacity: 0; transform: scale(1); }
   .cover .title { font-weight: 300; }
   .cover .subtitle { display: none; }
   .text-align-center-sm { text-align: center; }
+  .card-fullwidth-sm { --pad: 14px; --cardBg: var(--canvasClr); margin-left: calc(var(--pad) * -1); margin-right: calc(var(--pad) * -1); box-shadow: none; }
+  .card-fullwidth-sm .head.nav { box-shadow: none; }
+  .shelf-row:not(.stacked) .book .react-rater { font-size: 14px; }
   .book-profile .title { font-size: 1.2rem; }
   .book-profile .description { max-height: 1300px; }
   .book-incipit p { font-size: .9rem; }
@@ -1350,7 +1357,7 @@ to { opacity: 0; transform: scale(1); }
   .user.rating { height: 40px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
-  .shelf-row .book .react-rater { font-size: 14px; }
+  .review .react-rater div:not(:first-child) { display: none; }
   .hide-xs { display: none; }
 }
 @media (max-width: 359px) {

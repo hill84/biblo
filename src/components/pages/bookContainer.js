@@ -6,7 +6,7 @@ const BookContainer = props => {
   return (
     <div id="BookContainerComponent">
       <UserContext.Consumer>
-        {user => <Book bid={props.match.params.bid} user={user}/>}
+        {userValue => <Book bid={props.match.params.bid} user={userValue}/>}
       </UserContext.Consumer>
     </div>
   );

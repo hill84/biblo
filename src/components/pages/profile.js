@@ -1,24 +1,26 @@
-import { CircularProgress, DatePicker, MenuItem, SelectField, TextField } from 'material-ui';
+import CircularProgress from 'material-ui/CircularProgress';
+import DatePicker from 'material-ui/DatePicker';
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
+import TextField from 'material-ui/TextField';
 import React from 'react';
 import { storageRef, uid, userRef } from '../../config/firebase';
+import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { DateTimeFormat } from '../../config/locales';
-import { calcAge, continents, europeanCountries, italianProvinces, languages, northAmericanCountries, validateImg } from '../../config/shared';
+import { calcAge, validateImg } from '../../config/shared';
 import Avatar from '../avatar';
 
 export default class Profile extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			user: null,
-			imgPreview: null,
-			imgProgress: 0,
-			loading: true,
-			changes: false,
-			success: false,
-			errors: {},
-			authError: ''
-		}
-	}
+	state = {
+    user: null,
+    imgPreview: null,
+    imgProgress: 0,
+    loading: true,
+    changes: false,
+    success: false,
+    errors: {},
+    authError: ''
+  }
 
 	componentDidMount() {
 		userRef(uid).onSnapshot(snap => {

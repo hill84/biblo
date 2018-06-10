@@ -1,24 +1,21 @@
+import TextField from 'material-ui/TextField';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import Redirect from 'react-router-dom/Redirect';
 import isEmail from 'validator/lib/isEmail';
-import { TextField } from 'material-ui';
 import { auth } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
 
 export default class LoginForm extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			data: {
-				email: '',
-				password: ''
-			},
-			loading: false,
-			errors: {},
-			authError: '',
-			redirectToReferrer: false
-		};
-	}
+	state = {
+    data: {
+      email: '',
+      password: ''
+    },
+    loading: false,
+    errors: {},
+    authError: '',
+    redirectToReferrer: false
+  }
 
 	handleChange = e => {
 		this.setState({ 
@@ -54,9 +51,9 @@ export default class LoginForm extends React.Component {
 		return errors;
 	};
 
-	render(props) {
+	render() {
 		const { authError, data, errors, redirectToReferrer } = this.state;
-		const { from } = /* this.props.location.state || */ { from: { pathname: '/profile' } };
+    const { from } = {from: { pathname: '/' }};
 
 		if (redirectToReferrer) return <Redirect to={from} />
 

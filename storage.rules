@@ -1,0 +1,90 @@
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    /// RULES ///
+    //match /{allPaths=**} {
+      //allow read;
+      //allow write: if isSignedIn();
+    //}
+
+    match /users/{uid} {
+    	allow read;
+      allow write: if userHasRole('admin') == true || isOwner(uid);
+    }
+
+    match /books/{bid} {
+    	allow read;
+      allow create, update: if userHasRole('editor') == true;
+      allow delete: if userHasAllRoles('admin', 'editor') == true;
+    }
+
+    match /authors/{aid} {
+    	allow read;
+      allow create, update: if userHasRole('editor') == true;
+      allow delete: if userHasAllRoles('admin', 'editor') == true;
+    }
+
+    match /collections/{cid} {
+    	allow read;
+      allow create, update: if userHasRole('editor') == true;
+      allow delete: if userHasAllRoles('admin', 'editor') == true;
+    }
+
+    match /admin/{allPaths=**} {
+    	allow read: if userHasRole('admin') == true;
+      allow write: if userHasAllRoles('admin', 'editor') == true;
+    }
+  }
+}
+
+/// FUNCTIONS ///
+function isSignedIn() {
+  return request.auth != null;
+}
+
+function getUserData() {
+  return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+}
+
+function userHasRole(role) {
+  return getUserData().roles[role] == true;
+}
+
+function userHasAnyRole(roles) {
+  return getUserData().roles.keys().hasAny(roles);
+}
+
+function userHasAllRoles(roles) {
+  return getUserData().roles.keys().hasAll(roles);
+}
+
+function isOwner(uid) {
+  return request.auth.uid == uid;
+}
+
+function emailVerified() {
+  return request.auth.token.email_verified;
+}
+
+function existingData() {
+  return resource.data;
+}
+
+function incomingData() {
+  return request.resource.data;
+}
+
+function currentUser() {
+  return request.auth;
+}
+
+function isValidUser() {
+  return incomingData().keys().hasAll([
+    'creationTime', 
+    'uid', 
+    'displayName', 
+    'email', 
+    'roles', 
+    'stats'
+  ]);
+}

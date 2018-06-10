@@ -5,9 +5,10 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import React from 'react';
-import { bookRef, booksRef, collectionsRef, storageRef/* , timestamp */, uid } from '../../config/firebase';
+import { bookRef, booksRef, collectionsRef, storageRef /* , timestamp */, uid } from '../../config/firebase';
+import { formats, genres, languages } from '../../config/lists';
 import { DateTimeFormat } from '../../config/locales';
-import { checkBadWords, formats, genres, languages, validateImg } from '../../config/shared';
+import { checkBadWords, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 
@@ -257,7 +258,7 @@ export default class BookForm extends React.Component {
     if (book.subtitle && book.subtitle.length > 255) {
       errors.subtitle = "Lunghezza massima 255 caratteri";
     }
-    if (!book.authors) {
+    if (!book.authors.length) {
       errors.authors = "Inserisci l'autore";
     } else if (book.authors.length > 5) {
       errors.authors = "Massimo 5 autori";

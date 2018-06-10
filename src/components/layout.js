@@ -1,6 +1,5 @@
 import AppBar from 'material-ui/AppBar';
 import Avatar from 'material-ui/Avatar';
-import Dialog from 'material-ui/Dialog';
 import Drawer from 'material-ui/Drawer';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
@@ -17,12 +16,12 @@ import { appName } from '../config/shared';
 import { userType } from '../config/types';
 
 export default class Layout extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      drawerIsOpen: false,
-      dialogIsOpen: false,
-    }
+  state = {
+    drawerIsOpen: false
+  }
+
+  static propTypes = {
+    user: userType
   }
   
   onToggleDrawer = prevState => this.setState({drawerIsOpen: !prevState.drawerIsOpen});
@@ -31,23 +30,9 @@ export default class Layout extends React.Component {
   onOpenDialog = () => this.setState({dialogIsOpen: true});
   onCloseDialog = () => this.setState({dialogIsOpen: false});
 
-  render(props) {
-    const { dialogIsOpen, drawerIsOpen } = this.state;
-    const { user } = this.props;
-
-    const actions = [
-      <FlatButton
-        label="Annulla"
-        primary={true}
-        onClick={this.onCloseDialog}
-      />,
-      <FlatButton
-        label="Prosegui"
-        primary={true}
-        disabled={true}
-        onClick={this.onCloseDialog}
-      />,
-    ];
+  render() {
+    const { drawerIsOpen } = this.state;
+    const { children, user } = this.props;
 
     return (
       <div id="layoutComponent">
@@ -95,20 +80,8 @@ export default class Layout extends React.Component {
         </Drawer>
         
         <main>
-          {this.props.children}
+          {children}
         </main>
-        
-        <Dialog
-          contentClassName="dialog-container"
-          paperClassName="layout-dialog"
-          open={dialogIsOpen}
-          actions={actions}
-          modal={false}
-          onRequestClose={this.onCloseDialog}
-          autoScrollBodyContent={true}
-          title="Dialog title">
-          Some content
-        </Dialog>
       </div> 
     )
   }
@@ -127,7 +100,3 @@ const Logged = props => (
   </IconMenu>
 );
 Logged.muiName = 'IconMenu';
-
-Layout.propTypes = {
-  user: userType
-}

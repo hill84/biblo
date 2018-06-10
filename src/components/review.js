@@ -9,7 +9,7 @@ import Rating from './rating';
 
 export default class Review extends React.Component {
   state = {
-    like: this.props.like || false,
+    like: this.props.review.likes.length && this.props.review.likes.indexOf(uid) > -1 ? true : false || false,
     likes_num: this.props.review.likes.length || 0
   }
 
@@ -17,32 +17,37 @@ export default class Review extends React.Component {
     review: reviewType.isRequired
   }
 
-  onThumbUp = () => {
+  static getDerivedStateFromProps(props, state) {
+    if (props.review.likes.length !== state.likes_num) { return { likes_num: props.review.likes.length }}
+    return null;
+  }
+
+  onThumbChange = () => {
+    const { like } = this.state;
     const { bid, review } = this.props;
     let likes = review.likes;
-    if (this.state.like) {
+
+    if (like) {
       likes = likes.filter(e => e !== uid);
       this.setState({ like: false, likes_num: likes.length });
       //console.log(`User ${uid} remove like on review ${bid}/${review.createdByUid}`);
       //console.log(`User likes decreased to ${likes.length}`);
     } else {
-      likes.push(uid);
+      likes = [...likes, uid];
       this.setState({ like: true, likes_num: likes.length });
       //console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
       //console.log(`User likes increased to ${likes.length}`);
     }
-    //console.log(likes);
+    console.log({likes, 'likes_num': likes.length});
     if (bid && review.createdByUid) {
       reviewRef(bid, review.createdByUid).update({
-        likes: likes,
-        likes_num: likes.length
+        likes: likes
       }).then(() => {
         //console.log(`Book review likes updated`);
       }).catch(error => console.warn(error.message));
 
       userBookRef(review.createdByUid, bid).update({
-        likes: likes,
-        likes_num: likes.length
+        likes: likes
       }).then(() => {
         //console.log(`User book review likes updated`);
       }).catch(error => console.warn(error.message));
@@ -65,7 +70,7 @@ export default class Review extends React.Component {
                 <h3>{review.displayName}</h3>
               </Link>
               <div className="col text-align-right rating">
-                <Rating ratings={{rating_num: review.rating_num}} />
+                <Rating ratings={{rating_num: review.rating_num}} labels={true} />
               </div>
             </div>
             {review.title && <h4 className="title">{review.title}</h4>}
@@ -76,13 +81,13 @@ export default class Review extends React.Component {
                   <button 
                     className={`btn flat thumb up ${like}`} 
                     disabled={!isAuthenticated() || (review.createdByUid === uid)} 
-                    onClick={this.onThumbUp}
+                    onClick={this.onThumbChange}
                     title={like ? 'Non mi piace più' : 'Mi piace'}>
                     {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? likes_num : 'Mi piace'}
                   </button>
                 </div>
               </div>
-              <div className="col text-align-right date">{timeSince(review.created_num)}</div>
+              <div className="col counter text-align-right date">{timeSince(review.created_num)}</div>
             </div>
           </div>
         </div>

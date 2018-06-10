@@ -51,7 +51,7 @@ export default class Reviews extends React.Component {
 
   fetchReviews = bid => { 
     const { desc, limit, uid } = this.state;
-    reviewsRef(bid).get().then(snap => {
+    reviewsRef(bid).onSnapshot(snap => {
       if (!snap.empty) {
         this.setState({ reviewsCount: snap.docs.length });
         reviewsRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
@@ -129,14 +129,12 @@ export default class Reviews extends React.Component {
             <Review 
               key={review.createdByUid} 
               bid={bid}
-              like={review.likes.indexOf(uid) > -1 ? true : false}
               review={{
                 photoURL: review.photoURL || '',
                 displayName: review.displayName || '',
                 createdByUid: review.createdByUid || '',
                 created_num: review.created_num || 0,
                 likes: review.likes || {},
-                likes_num: review.likes_num || 0,
                 rating_num: review.rating_num || 0,
                 text: review.text || '',
                 title: review.title || '',

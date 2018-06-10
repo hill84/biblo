@@ -11,7 +11,7 @@ export default class BookCollection extends React.Component {
 	state = {
     cid: this.props.cid || 'top',
     bcid: this.props.bcid || 'bcid',
-    limit:  this.props.limit || (this.props.pagination || !this.props.scrollable) ? booksPerRow() : 98, //TODO FIX
+    limit:  this.props.limit || (this.props.pagination ? booksPerRow() : 98),
     scrollable: /* isTouchDevice() ? ( */this.props.scrollable || false/* ) : false */,
     pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
     stacked: this.props.stacked || false,
@@ -35,7 +35,7 @@ export default class BookCollection extends React.Component {
   static getDerivedStateFromProps(props, state) {
     if (props.cid !== state.cid) { return { cid: props.cid || 'top' }; }
     if (props.bcid !== state.bcid) { return { bcid: props.bcid || 'bcid' }; }
-    if (props.limit !== state.limit) { return { limit: props.limit || (props.pagination || !props.scrollable) ? booksPerRow() : 98 }; } //TODO FIX
+    if (props.limit !== state.limit) { return { limit: props.limit || (props.pagination ? booksPerRow() : 98) }; }
     if (props.pagination !== state.pagination) { return { pagination: props.pagination || false }; }
     if (props.scrollable !== state.scrollable) { return { scrollable: props.scrollable || false }; }
     if (props.stacked !== state.stacked) { return { stacked: props.stacked || false }; }

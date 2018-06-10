@@ -1,7 +1,7 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
 import CircularProgress from 'material-ui/CircularProgress';
-import { auth, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
+import React from 'react';
+import Redirect from 'react-router-dom/Redirect';
+import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 
 export default class SocialAuth extends React.Component {
 	state = {
@@ -51,9 +51,9 @@ export default class SocialAuth extends React.Component {
 	facebookAuth = () => this.socialAuth(FacebookAuthProvider);
 	twitterAuth = () => this.socialAuth(TwitterAuthProvider);
 
-	render(props) {
+	render() {
     const { loading, redirectToReferrer } = this.state;
-		const { from } = /* this.props.location.state || */ { from: { pathname: '/' } };
+    const { from } = {from: { pathname: '/' }};
 
 		if (redirectToReferrer) return <Redirect to={from} />
 

@@ -29,18 +29,4 @@ node_modules
 
 \.vscode/settings\.json
 
-\.firebaserc
-
 /Build/*
-/database/*
-/firebase/*
-/firestore/*
-/functions/*
-/storage/*
-
-firebase\.json
-firestore\.indexes\.json
-firestore\.rules
-database\.rules\.json
-
-storage\.rules
