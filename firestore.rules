@@ -10,7 +10,7 @@ service cloud.firestore {
     
     match /books/{bid} {
     	allow read;
-      allow create, update: if userHasRole('editor') == true; //&& isValidBook();
+      allow create, update: if userHasRole('editor') == true && isValidBook();
       allow delete: if userHasAllRoles('admin', 'editor') == true;
     }
     
@@ -49,79 +49,79 @@ service cloud.firestore {
     	allow read: if userHasRole('admin') == true;
       allow write: if userHasAllRoles('admin', 'editor') == true;
     }
+
+    /// FUNCTIONS ///
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function userHasRole(role) {
+      return getUserData().roles[role] == true;
+    }
+
+    function userHasAnyRole(roles) {
+      return getUserData().roles.keys().hasAny(roles);
+    }
+
+    function userHasAllRoles(roles) {
+      return getUserData().roles.keys().hasAll(roles);
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function emailVerified() {
+      return request.auth.token.email_verified;
+    }
+
+    function existingData() {
+      return resource.data;
+    }
+
+    function incomingData() {
+      return request.resource.data;
+    }
+
+    function currentUser() {
+      return request.auth;
+    }
+
+    function isValidUser() {
+      return incomingData().keys().hasAll([
+        'creationTime', 
+        'uid', 
+        'displayName', 
+        'email', 
+        'roles', 
+        'stats'
+      ]);
+    }
+
+    function isValidBook() {
+      return incomingData().keys().hasAll([
+        'ISBN_13', 
+        'authors', 
+        'bid',
+        'EDIT',
+        'pages_num', 
+        'publisher', 
+        'title', 
+        'title_sort',
+        'readers_num',
+        'reviews_num',
+        'ratings_num',
+        'rating_num'
+      ])
+      && incomingData().pages_num is int
+      && incomingData().readers_num is int
+      && incomingData().reviews_num is int
+      && incomingData().ratings_num is int
+      && incomingData().rating_num is int
+    }
   }  
-}
-
-/// FUNCTIONS ///
-function isSignedIn() {
-  return request.auth != null;
-}
-
-function getUserData() {
-  return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-}
-
-function userHasRole(role) {
-  return getUserData().roles[role] == true;
-}
-
-function userHasAnyRole(roles) {
-  return getUserData().roles.keys().hasAny(roles);
-}
-
-function userHasAllRoles(roles) {
-  return getUserData().roles.keys().hasAll(roles);
-}
-
-function isOwner(uid) {
-  return request.auth.uid == uid;
-}
-
-function emailVerified() {
-  return request.auth.token.email_verified;
-}
-
-function existingData() {
-  return resource.data;
-}
-
-function incomingData() {
-  return request.resource.data;
-}
-
-function currentUser() {
-  return request.auth;
-}
-
-function isValidUser() {
-  return incomingData().keys().hasAll([
-    'creationTime', 
-    'uid', 
-    'displayName', 
-    'email', 
-    'roles', 
-    'stats'
-  ]);
-}
-
-function isValidBook() {
-  return incomingData().keys().hasAll([
-    'ISBN_13', 
-    'authors', 
-    'bid',
-    'EDIT',
-    'pages_num', 
-    'publisher', 
-    'title', 
-    'title_sort',
-    'readers_num',
-    'reviews_num',
-    'ratings_num',
-    'rating_num'
-  ])
-  && incomingData().pages_num is int
-  && incomingData().readers_num is int
-  && incomingData().reviews_num is int
-  && incomingData().ratings_num is int
-  && incomingData().rating_num is int
 }
