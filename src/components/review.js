@@ -38,7 +38,7 @@ export default class Review extends React.Component {
       //console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
       //console.log(`User likes increased to ${likes.length}`);
     }
-    console.log({likes, 'likes_num': likes.length});
+    //console.log({likes, 'likes_num': likes.length});
     if (bid && review.createdByUid) {
       reviewRef(bid, review.createdByUid).update({
         likes: likes

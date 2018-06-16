@@ -1357,6 +1357,8 @@ to { opacity: 0; transform: scale(1); }
   .user.rating { height: 40px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
+  .review .rating { font-size: inherit; font-weight: inherit; }
+  .review .react-rater { font-size: 16px; }
   .review .react-rater div:not(:first-child) { display: none; }
   .hide-xs { display: none; }
 }
