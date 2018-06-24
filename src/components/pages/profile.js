@@ -211,7 +211,6 @@ export default class Profile extends React.Component {
                     <DatePicker 
                       className="date-picker"
                       name="birth_date"
-                      emptyLabel="01-01-1998" 
                       cancelLabel="Annulla"
                       leftArrowIcon={icon.chevronLeft()}
                       rightArrowIcon={icon.chevronRight()}

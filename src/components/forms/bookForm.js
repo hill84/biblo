@@ -17,6 +17,7 @@ import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { checkBadWords, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
+import isISBN from 'validator/lib/isISBN';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
@@ -268,20 +269,26 @@ export default class BookForm extends React.Component {
     }
     if (!book.pages_num) {
       errors.pages_num = "Inserisci il numero di pagine";
-    } else if (book.pages_num.toString().length > 5) {
+    } else if (String(book.pages_num).length > 5) {
       errors.pages_num = "Lunghezza massima 5 cifre";
     } else if (book.pages_num < 20) {
       errors.pages_num = "Minimo 20 pagine";
     }
     if (!book.ISBN_13) {
       errors.ISBN_13 = "Inserisci il codice ISBN";
-    } else if (book.ISBN_13.toString().length !== 13) {
-      errors.ISBN_13 = "Il codice deve essere composto da 13 cifre";
-    } else if (book.ISBN_13.toString().substring(0,3) !== "978") {
-      errors.ISBN_13 = "Il codice deve iniziare per 978";
+    } else if (String(book.ISBN_13).length !== 13) {
+      errors.ISBN_13 = "Il codice deve contenere 13 cifre";
+    } else if (String(book.ISBN_13).substring(0,3) !== "978") {
+      if (String(book.ISBN_13).substring(0,3) !== "979") {
+        errors.ISBN_13 = "Il codice deve iniziare per 978 o 979";
+      }
+    } else if (!isISBN(String(book.ISBN_13), 13)) {
+      errors.ISBN_13 = "Codice non valido";
     }
-    if (book.ISBN_10 && (book.ISBN_10.toString().length !== 10)) {
+    if (book.ISBN_10 && (String(book.ISBN_10).length !== 10)) {
       errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
+    } else if (book.ISBN_10 && !isISBN(String(book.ISBN_10), 10)) {
+      errors.ISBN_10 = "Codice non valido";
     }
     if (Number(new Date(book.publication).getTime()) > Number(new Date().getTime())) {
       errors.publication = "Data di pubblicazione non valida";
@@ -504,7 +511,6 @@ export default class BookForm extends React.Component {
                       <DatePicker 
                         className="date-picker"
                         name="publication"
-                        emptyLabel="01-05-2013" 
                         cancelLabel="Annulla"
                         leftArrowIcon={icon.chevronLeft()}
                         rightArrowIcon={icon.chevronRight()}

@@ -130,7 +130,6 @@ export default class readingStateForm extends React.Component {
                       cancelLabel="Annulla"
                       leftArrowIcon={icon.chevronLeft()}
                       rightArrowIcon={icon.chevronRight()}
-                      emptyLabel="01-01-2018" 
                       format="D MMMM YYYY"
                       minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
                       minDateMessage="Praticamente nel Jurassico.."
@@ -156,7 +155,6 @@ export default class readingStateForm extends React.Component {
                         cancelLabel="Annulla"
                         leftArrowIcon={icon.chevronLeft()}
                         rightArrowIcon={icon.chevronRight()}
-                        emptyLabel="01-01-2018" 
                         format="D MMMM YYYY"
                         minDate={start_num}
                         minDateMessage="Data non valida"

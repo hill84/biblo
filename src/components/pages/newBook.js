@@ -1,5 +1,5 @@
 import React from 'react';
-import { bookType, userType } from '../../config/types';
+import { userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
@@ -9,7 +9,6 @@ export default class NewBook extends React.Component {
 	}
 
 	static propTypes = {
-		book: bookType,
 		user: userType
 	}
 
