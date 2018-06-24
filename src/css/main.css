@@ -1105,6 +1105,8 @@ visibility: hidden;
 .form-group ul, .react-autosuggest__suggestions-list {
   list-style: none;
   padding: 10px 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .menuitem-book { 
   --mainTextClr: #666;
@@ -1149,8 +1151,6 @@ visibility: hidden;
   margin-top: calc((50px - var(--btnHeight)) / 2);
   margin-bottom: calc((50px - var(--btnHeight)) / 2);
 }
-
-.search-book-container .search-by { position: absolute; bottom: 6px; right: 0; }
 
 /* REVIEWS */
 .card.user-review, .card.reviews { padding-top: 14px; padding-bottom: 14px; }
@@ -1371,6 +1371,7 @@ to { opacity: 0; transform: scale(1); }
   }
 }
 
+.relative { position: relative; }
 .hide { display: none; }
 .hide-always { display: none !important; }
 

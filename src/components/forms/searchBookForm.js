@@ -1,4 +1,5 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
@@ -10,19 +11,21 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { capitalizeFirstLetter, join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 import { userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
   state = {
     searchAnchorEl: null,
     searchByAnchorEl: null,
-    searchBy: {
-      type: 'intitle',
-      label: 'titolo',
-      hint: 'Sherlock Holmes',
-      where: 'title_sort'
-    },
+    searchBy: 
+      { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
+    searchByOptions: [
+      { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
+      { key: 'ISBN_13', type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13' },
+      { key: 'author', type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors' },
+      { key: 'publisher', type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher' }
+    ],
     searchText: '',
     value: '',
     loading: false,
@@ -42,7 +45,7 @@ export default class SearchBookForm extends React.Component {
   onCloseSearchMenu = () => this.setState({ searchAnchorEl: null });
   onOpenSearchMenu = e => this.setState({ searchAnchorEl: e.currentTarget });
 
-  onClickSearchBy = option => this.setState({ searchBy: option, maxSearchResults: option.type === 'isbn' ? 1 : 8, searchByAnchorEl: null });
+  onClickSearchBy = option => this.setState({ searchBy: option, maxSearchResults: option.key === 'ISBN_13' ? 1 : 8, searchByAnchorEl: null });
   onCloseSearchByMenu = () => this.setState({ searchByAnchorEl: null });
   onOpenSearchByMenu = e => this.setState({ searchByAnchorEl: e.currentTarget });
 
@@ -58,17 +61,15 @@ export default class SearchBookForm extends React.Component {
     const { containerProps, children } = options;
   
     return (
-      <Paper {...containerProps}>
-        {children}
-      </Paper>
+      <Paper {...containerProps}>{children}</Paper>
     );
   }
 
-  handleChange = (e, { newValue }) => this.setState({ value: newValue });
+  onChange = (e, { newValue }) => this.setState({ value: String(newValue) });
 
-  shouldRenderSuggestions = value => value && value.trim().length > 1;
+  shouldRenderSuggestions = value => value && this.state.searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
 
-  handleSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); //this.setState({ suggestions: this.getSuggestions(value) });
+  onSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); //this.setState({ suggestions: this.getSuggestions(value) });
 /* 
   getSuggestions = value => {
     const inputValue = value.normalize();
@@ -82,49 +83,55 @@ export default class SearchBookForm extends React.Component {
     });
   }
 */
-  renderSuggestion = (suggestion, { query, isHighlighted }) => {
-    const matches = match(suggestion.label, query);
-    const parts = parse(suggestion.label, matches);
+  renderSuggestion = (b, { query, isHighlighted }) => {
+    const { searchBy } = this.state;
+
+    if (b.value) return b.value;
+    
+    const matches = match(b.label, query);
+    const parts = parse(b.label, matches);
+    const searchTextHighlighted = parts.map((part, index) => part.highlight ? 
+      <strong key={String(index)}>{part.text}</strong>
+    :
+      <span key={String(index)}>{part.text}</span>
+    );
   
     return (
-      <MenuItem key={suggestion.bid} className="menuitem-book" selected={isHighlighted} component="div">
+      <MenuItem key={b.bid} className={`menuitem-book ${match(b.label, query)}`} selected={isHighlighted} component="div">
         <div className="primaryText">
-          {suggestion.covers[0] && <img className="thumbnail" src={suggestion.covers[0]} alt={suggestion.title} />}
+          {b.covers[0] && <img className="thumbnail" src={b.covers[0]} alt={b.title} />}
           <span className="title">
-            {parts.map((part, index) => {
-              return part.highlight ? (
-                <strong key={String(index)}>{part.text}</strong>
-              ) : (
-                <span key={String(index)}>{part.text}</span>
-              );
-            })}
+            {searchBy.key === 'title' ? searchTextHighlighted : b.title}
           </span>
         </div>
         <div className="secondaryText">
-          {this.state.searchBy.where === 'ISBN_13' ? Number(!!suggestion.ISBN_13[0] && suggestion.ISBN_13[0].identifier) : `di ${join(suggestion.authors)}`}
+          {searchBy.key === 'title' ? `di ${join(b.authors)}` : searchTextHighlighted}
         </div>
       </MenuItem>
     );
   }
 
-  getSuggestionValue = suggestion => suggestion.label;
+  getSuggestionValue = b => b.label;
 
-  handleSuggestionsClearRequested = () => this.setState({ suggestions: [] });
+  onSuggestionsClearRequested = () => {
+    clearTimeout(this.timer);
+    this.setState({ suggestions: [] });
+  }
 
   fetchOptions = value => {
     const { maxSearchResults, searchBy } = this.state;
     const { user } = this.props;
     const searchText = value.normalize();
-    const searchTextType = String(searchText);
+    const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : String(searchText);
     const emptyBook = {
-      ISBN_13: searchBy.where === 'ISBN_13' ? Number(searchText) : 0,
+      ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
       EDIT: {
         createdBy: (user && user.displayName) || '',
         createdByUid: (user && user.uid) || '',
         created_num: (new Date()).getTime() || 0
       },
-      authors: searchBy.where === 'authors.0' ? [searchText] : [],
+      authors: searchBy.key === 'author' ? [searchText] : [],
       bid: '',
       collections: [],
       covers: [],
@@ -136,21 +143,23 @@ export default class SearchBookForm extends React.Component {
       languages: ['Italiano'],
       pages_num: 0,
       publication: '',
-      publisher: searchBy.where === 'publisher' ? searchText : '',
+      publisher: searchBy.key === 'publisher' ? searchText : '',
       rating_num: 0,
       ratings_num: 0,
       readers_num: 0,
       reviews_num: 0,
       subtitle: '',
       label: searchText, // Autosuggest OPTION LABEL
-      title: searchBy.where === 'title_sort' ? searchText : '',
-      title_sort: searchBy.where === 'title_sort' ? normalizeString(searchText) : '',
+      title: searchBy.key === 'title' ? searchText : '',
+      title_sort: searchBy.key === 'title' ? normalizeString(searchText) : '',
       value: (
-        <MenuItem className="menuitem-book empty">
+        <MenuItem className="menuitem-book empty" component="div">
           <div className="primaryText">
             <span className="title">Libro non trovato...</span>
           </div>
-          <button className="btn primary">Crea nuovo</button>
+          <div className="secondaryText">
+            <button className="btn primary">Crea nuovo</button>
+          </div>
         </MenuItem>
       )
     }
@@ -204,53 +213,44 @@ export default class SearchBookForm extends React.Component {
                 subtitle: b.subtitle || '',
                 label: b.title || '', // Autosuggest OPTION LABEL
                 title: b.title || '',
-                title_sort: normalizeString(b.title) || '',
-                value: (
-                  <MenuItem className="menuitem-book">
-                    <div className="primaryText">
-                      {b.imageLinks && <img className="thumbnail" src={[b.imageLinks.smallThumbnail || b.imageLinks.small || b.imageLinks.thumbnail]} alt={b.title} />} 
-                      <span className="title">{b.title}</span>
-                    </div>
-                    <div className="secondaryText">
-                      {searchBy.where === 'ISBN_13' ? (ISBN_13.length && ISBN_13[0].identifier) : searchBy.where === 'authors.0' ? b.title : `di ${join(b.authors)}`}
-                    </div>
-                  </MenuItem>
-                )
+                title_sort: normalizeString(b.title) || ''
               })
             });
           } else options.push(emptyBook);
           this.setState({ loading: false, suggestions: options });
         });
       } else {
-        //console.log(searchBy.where);
-        booksRef.where(searchBy.where, '>=', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
+        //console.log(searchBy.key);
+        let query;
+        let optionLabel = searchBy.key;
+        switch (searchBy.key) {
+          case 'ISBN_13':
+            query = booksRef.where(searchBy.where, '==', searchTextType); break;
+          case 'author':
+            query = booksRef.where(searchBy.where.searchTextType, '==', true); 
+            optionLabel = String(searchBy.where); break;
+          case 'publisher':
+            query = booksRef.where(searchBy.where, '>=', capitalizeFirstLetter(searchTextType)); break;
+          default:
+            query = booksRef.where(searchBy.where, '>=', searchTextType); break;
+        };
+
+        query.limit(maxSearchResults).onSnapshot(snap => {
           let options = [];
           if (!snap.empty) {
             //console.log(snap);
             snap.forEach(doc => {
-              //console.log(doc.data());
+              console.log(doc.data());
               options.push({
                 ...doc.data(),
-                label: doc.data().title, // Autosuggest OPTION LABEL
-                value: (
-                  <MenuItem className="menuitem-book">
-                    <div className="primaryText">
-                      {doc.data().covers.length > 0 && <img className="thumbnail" src={doc.data().covers[0]} alt={doc.data().title} />}
-                      <span className="title">{doc.data().title}</span>
-                    </div>
-                    <div className="secondaryText">{searchBy.where === 'ISBN_13' ? doc.data().ISBN_13 : `di ${doc.data().authors}`}</div>
-                  </MenuItem>
-                )
+                label: doc.data()[optionLabel] //Autosuggest OPTION LABEL
               });
             });
-          } else {
-            options.push(emptyBook);
-            console.log(options);
-          }
+          } else options.push(emptyBook);
           this.setState({ loading: false, suggestions: options });
         });
       }
-    }, 1000);
+    }, searchBy.key === 'ISBN_13' ? 500 : 1000);
   }
 
   onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
@@ -258,17 +258,12 @@ export default class SearchBookForm extends React.Component {
       this.setState({ loading: false });
       clearTimeout(this.timer);
       this.props.onBookSelect(suggestion);
-    }
+    } else console.warn('Suggestion not found');
   }
 
   render() {
-    const { loading, searchByAnchorEl, searchBy, suggestions } = this.state;
-    const searchByOptions = [
-      {type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13'},
-      {type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors[0]'},
-      {type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher'},
-      {type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort'}
-    ].map(option => (
+    const { loading, searchBy, searchByAnchorEl, searchByOptions, suggestions, value } = this.state;
+    const options = searchByOptions.map(option => (
       <MenuItem 
         key={option.type} 
         value={option}
@@ -284,29 +279,35 @@ export default class SearchBookForm extends React.Component {
           {loading && <div className="loader"><CircularProgress /></div>}
 
           <Autosuggest
-            alwaysRenderSuggestions={true}
+            //alwaysRenderSuggestions={true}
             renderInputComponent={this.renderInput}
             suggestions={suggestions}
             shouldRenderSuggestions={this.shouldRenderSuggestions}
-            onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
+            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
             renderSuggestionsContainer={this.renderSuggestionsContainer}
             getSuggestionValue={this.getSuggestionValue}
             renderSuggestion={this.renderSuggestion}
             onSuggestionSelected={this.onSuggestionSelected}
             inputProps={{
               className: `input-field`,
-              label: `${this.props.new ? 'Inserisci' : 'Cerca un libro per'} ${searchBy.label}`,
+              type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
+              label: this.props.new ? 'Inserisci' : `Cerca un libro per ${searchBy.label}`,
               placeholder: `Es: ${searchBy.hint}`,
-              value: this.state.value,
-              onChange: this.handleChange,
+              value: value,
+              onChange: this.onChange,
+              endAdornment: <button className="btn sm flat search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
             }}
           />
-
-          <button className="btn sm flat search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
+          {/* searchBy.key === 'ISBN_13' && isNaN(value) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
+          {searchBy.key === 'ISBN_13' && !isNaN(value) &&
+            <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
+              {value.length} di 13 cifre
+            </FormHelperText>
+          }
 
           <Menu anchorEl={searchByAnchorEl} open={Boolean(searchByAnchorEl)} onClose={this.onCloseSearchByMenu}>
-            {searchByOptions}
+            {options}
           </Menu>
         </div>
       </div>
