@@ -1,10 +1,10 @@
+import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { isAuthenticated, reviewRef, uid, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { timeSince } from '../config/shared';
+import { getInitials, timeSince } from '../config/shared';
 import { reviewType } from '../config/types';
-import Avatar from './avatar';
 import Rating from './rating';
 
 export default class Review extends React.Component {
@@ -62,7 +62,7 @@ export default class Review extends React.Component {
       <div className={`review ${review.createdByUid === uid ? 'own' : null}`}>
         <div className="row">
           <Link to={`/dashboard/${review.createdByUid}`} className="col-auto left">
-            <Avatar src={review.photoURL} alt={review.displayName} />
+            <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
           </Link>
           <div className="col right">
             <div className="head row">

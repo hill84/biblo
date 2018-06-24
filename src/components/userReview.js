@@ -1,10 +1,13 @@
-import TextField from 'material-ui/TextField';
+import Avatar from '@material-ui/core/Avatar';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { timeSince } from '../config/shared';
+import { getInitials, timeSince } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
-import Avatar from './avatar';
 import Rating from './rating';
 
 export default class UserReview extends React.Component {
@@ -199,10 +202,8 @@ export default class UserReview extends React.Component {
     let maxChars = `${e.target.name}_maxChars`;
     this.setState({
       ...this.state, 
-      review: { 
-        ...this.state.review, 
-        [e.target.name]: e.target.value 
-      }, 
+      review: { ...this.state.review, [e.target.name]: e.target.value },
+      errors: { ...this.state.errors, [e.target.name]: null } , 
       [leftChars]: this.state[maxChars] - e.target.value.length, 
       changes: true
     });
@@ -239,7 +240,7 @@ export default class UserReview extends React.Component {
                 <div className="review">
                   <div className="row">
                     <div className="col-auto left">
-                      <Avatar src={user.photoURL} alt={user.displayName} />
+                      <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
                     </div>
                     <div className="col right">
                       <div className="head row">
@@ -276,36 +277,38 @@ export default class UserReview extends React.Component {
             : (
               <form onSubmit={this.onSubmit}>
                 <div className="form-group">
-                  <TextField
-                    name="text"
-                    type="text"
-                    hintText={`Scrivi una recensione (max ${text_maxChars} caratteri)...`}
-                    errorText={errors.text}
-                    floatingLabelText="Recensione"
-                    value={review.text || ''}
-                    onChange={this.onChangeMaxChars}
-                    fullWidth={true}
-                    multiLine={true}
-                    //rows={3}
-                  />
-                  {(text_leftChars !== undefined) && 
-                    <p className={`message ${(text_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {text_leftChars}</p>
-                  }
+
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.text)} htmlFor="text">Recensione</InputLabel>
+                    <Input
+                      id="text"
+                      name="text"
+                      type="text"
+                      placeholder={`Scrivi una recensione (max ${text_maxChars} caratteri)...`}
+                      value={review.text || ''}
+                      onChange={this.onChangeMaxChars}
+                      error={Boolean(errors.text)}
+                      multiline
+                    />
+                    {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
+                    {text_leftChars && <FormHelperText className={`message ${(text_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {text_leftChars}</FormHelperText>}
+                  </FormControl>
                 </div>
                 <div className="form-group">
-                  <TextField
-                    name="title"
-                    type="text"
-                    hintText={`Aggiungi un titolo (max ${title_maxChars} caratteri)...`}
-                    errorText={errors.title}
-                    floatingLabelText="Titolo (opzionale)"
-                    value={review.title || ''}
-                    onChange={this.onChangeMaxChars}
-                    fullWidth={true}
-                  />
-                  {(title_leftChars !== undefined) && 
-                    <p className={`message ${(title_leftChars) < 0 ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {title_leftChars}</p>
-                  }
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo (opzionale)</InputLabel>
+                    <Input
+                      id="title"
+                      name="title"
+                      type="text"
+                      placeholder={`Aggiungi un titolo (max ${title_maxChars} caratteri)...`}
+                      value={review.title || ''}
+                      onChange={this.onChangeMaxChars}
+                      error={Boolean(errors.title)}
+                    />
+                    {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
+                    {title_leftChars && <FormHelperText className={`message ${(title_leftChars) < 0 ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {title_leftChars}</FormHelperText>}
+                  </FormControl>
                 </div>
 
                 {serverError && 

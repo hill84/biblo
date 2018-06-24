@@ -1,12 +1,15 @@
-import CircularProgress from 'material-ui/CircularProgress';
-import { Tab, Tabs } from 'material-ui/Tabs';
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import Link from 'react-router-dom/Link';
+import SwipeableViews from 'react-swipeable-views';
 import { isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { appName, calcAge, joinToLowerCase } from '../../config/shared';
+import { appName, calcAge, getInitials, joinToLowerCase } from '../../config/shared';
 import { userType } from '../../config/types';
-import Avatar from '../avatar';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
 
@@ -18,7 +21,8 @@ export default class Dashboard extends React.Component {
 		user: null,
 		follow: false,
 		loading: true,
-		progress: 0
+    progress: 0,
+    tabSelected: 0
 	}
 
 	static propTypes = {
@@ -111,10 +115,14 @@ export default class Dashboard extends React.Component {
 				//console.log(`Unfollow ${uid}`);
 			});
 		}
-	}
+  }
+  
+  handleChange = (event, value) => this.setState({ tabSelected: value });
+
+  handleChangeIndex = index => this.setState({ tabSelected: index });
 
 	render() {
-		const { follow, isOwner, loading, luid, progress, uid, user } = this.state;
+		const { follow, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
 
 		if (!user) {
 			if (loading) {
@@ -150,14 +158,14 @@ export default class Dashboard extends React.Component {
 			<div className="container" id="dashboardComponent">
 				<div className="row">
 					<div className="col-md col-12">
-						<div className="card dark">
+						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
 								<div className="role-badges">
 									{roles}
 								</div>
 								<div className="row text-align-center-md">
 									<div className="col-md-auto col-sm-12">
-										<Avatar size={70} src={user.photoURL} alt={user.displayName} />
+										<Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
 									</div>
 									<div className="col">
 										<h2 className="username">{user.displayName}</h2>
@@ -209,40 +217,50 @@ export default class Dashboard extends React.Component {
 					}
 				</div>
 
-				<Tabs tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
-					<Tab label="Libreria">
-						<div className="card bottompend">
-							<Shelf luid={luid} uid={uid} shelf="bookInShelf"/>
-							<ShelfDetails />
-						</div>
-					</Tab>
-					<Tab label="Desideri">
-						<div className="card bottompend">
-							<Shelf luid={luid} uid={uid} shelf="bookInWishlist" />
-							<ShelfDetails />
-						</div>
-					</Tab>
-					<Tab label="Attività">
-						<div className="card bottompend">
-							<p>Attività</p>
-						</div>
-					</Tab>
-					<Tab label="Contatti">
-						<div className="card bottompend">
-							<p>Contatti</p>
-							<div className="row">
-								<div className="col">
-									<h4>Seguito da:</h4>
-									{followers}
-								</div>
-								<div className="col">
-									<h4>Segue:</h4>
-									{followed}
-								</div>
-							</div>
-						</div>
-					</Tab>
-				</Tabs>
+        <AppBar position="static" className="toppend">
+          <Tabs 
+            //tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
+            value={tabSelected}
+            onChange={this.handleChange}
+            fullWidth
+            scrollable
+            scrollButtons="auto">
+            <Tab label="Libreria" />
+            <Tab label="Desideri" />
+            <Tab label="Attività" />
+            <Tab label="Contatti" />
+          </Tabs>
+        </AppBar>
+        <SwipeableViews
+          className="card bottompend tabs-container"
+          axis="x"
+          index={tabSelected}
+          onChangeIndex={this.handleChangeIndex}>
+          <div className="card tab" dir={tabDir}>
+            <Shelf luid={luid} uid={uid} shelf="bookInShelf"/>
+            <ShelfDetails />
+          </div>
+          <div className="card tab" dir={tabDir}>
+            <Shelf luid={luid} uid={uid} shelf="bookInWishlist" />
+            <ShelfDetails />
+          </div>
+          <div className="card tab" dir={tabDir}>
+            <p>Attività</p>
+          </div>
+          <div className="card tab" dir={tabDir}>
+            <p>Contatti</p>
+            <div className="row">
+              <div className="col">
+                <h4>Seguito da:</h4>
+                {followers}
+              </div>
+              <div className="col">
+                <h4>Segue:</h4>
+                {followed}
+              </div>
+            </div>
+          </div>
+        </SwipeableViews>
 			</div>
 		);
 	}

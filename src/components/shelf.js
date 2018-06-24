@@ -1,12 +1,12 @@
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import Popover from 'material-ui/Popover';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { numberType, stringType } from '../config/types';
 import { booksPerRow } from '../config/shared';
+import { numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
@@ -16,10 +16,15 @@ export default class Shelf extends React.Component {
     uid: this.props.uid,
     isOwner: this.props.luid === this.props.uid,
     shelf: this.props.shelf || 'bookInShelf',
-    anchorEl: null,
-    isOpenOrderMenu: false,
+    orderMenuAnchorEl: null,
     limit: booksPerRow() * 2 - 1,
-    orderBy: { type: 'added_num', label: 'Data aggiunta' },
+    orderBy: [ 
+      { type: 'added_num', label: 'Data aggiunta'}, 
+      { type: 'title', label: 'Titolo'}, 
+      { type: 'rating_num', label: 'Valutazione'}, 
+      { type: 'authors', label: 'Autore'}
+    ],
+    orderByIndex: 0,
     coverview: true,
     desc: true,
     loading: true,
@@ -53,9 +58,9 @@ export default class Shelf extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { coverview, desc, luid, orderBy, uid } = this.state;
+    const { coverview, desc, luid, orderByIndex, uid } = this.state;
     if (this._isMounted) {
-      if (coverview !== prevState.coverview || desc !== prevState.desc || orderBy !== prevState.orderBy || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
+      if (coverview !== prevState.coverview || desc !== prevState.desc || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
         this.fetchUserBooks();
       } else if (!luid && (luid !== prevState.luid)) {
         this.setState({ isOwner: false });
@@ -64,10 +69,10 @@ export default class Shelf extends React.Component {
   }
 
   fetchUserBooks = direction => {
-    const { desc, limit, luid, orderBy, page, shelf, uid } = this.state;
+    const { desc, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
     if (uid) {
       const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-      const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy.type, desc ? 'desc' : 'asc');
+      const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
       const empty = { 
         isOwner: luid === uid,
         userBooksCount: 0, 
@@ -99,23 +104,42 @@ export default class Shelf extends React.Component {
     } else console.warn(`No uid: ${uid}`);
   }
 
-  onChangeOrder = (event, value) => this.setState({ orderBy: value, isOpenOrderMenu: false, page: 1 });
+  onChangeOrderBy = (e, i) => {
+    this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
+  }
+
+  onChangeSelect = key => e => {
+		this.setState({ 
+      success: false, changes: true, 
+      user: { ...this.state.user, [key]: e.target.value },
+      errors: { ...this.state.errors, [key]: null } 
+    });
+	};
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
 
-  onToggleOrderMenu = event => {
-    this.setState({ anchorEl: event.currentTarget });
-    this.setState(prevState => ({ isOpenOrderMenu: !prevState.isOpenOrderMenu }));
-  }
+  onOpenOrderMenu = e => this.setState({ orderMenuAnchorEl: e.currentTarget });
+
+  onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
   render() {
-    const { coverview, desc, isOpenOrderMenu, isOwner, limit, loading, orderBy, page, pagination, shelf, userBooks, userBooksCount } = this.state;
+    const { coverview, desc, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
     const covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
+    const orderByOptions = orderBy.map((option, index) => (
+      <MenuItem
+        key={option.type}
+        className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : null}
+        disabled={index === -1}
+        selected={index === orderByIndex}
+        onClick={event => this.onChangeOrderBy(event, index)}>
+        {option.label}
+      </MenuItem>
+    ));
 
     return (
-      <div ref="shelfComponent">
+      <React.Fragment>
         <div className="shelf">
           <div className="collection hoverable-items">
             <div className="head nav">
@@ -131,19 +155,19 @@ export default class Shelf extends React.Component {
                 </div>
                 <div className="col-auto">
                   <span className="counter last hide-xs">Ordina per</span>
-                  <button className="btn sm flat counter" onClick={this.onToggleOrderMenu}>{orderBy.label}</button>
+                  <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}>{orderBy[orderByIndex].label}</button>
                   <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
                   <Popover 
-                    open={isOpenOrderMenu} 
-                    onRequestClose={this.onToggleOrderMenu} 
-                    anchorEl={this.state.anchorEl} 
+                    open={Boolean(orderMenuAnchorEl)}
+                    onClose={this.onCloseOrderMenu} 
+                    anchorEl={orderMenuAnchorEl} 
                     anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                    targetOrigin={{horizontal: 'right', vertical: 'top'}}>
-                    <Menu onChange={this.onChangeOrder}>
-                      <MenuItem value={{type: 'added_num', label: 'Data aggiunta'}} primaryText="Data aggiunta" />
-                      <MenuItem value={{type: 'title', label: 'Titolo'}} primaryText="Titolo" />
-                      {shelf === 'bookInShelf' && <MenuItem value={{type: 'rating_num', label: 'Valutazione'}} primaryText="Valutazione" />}
-                      <MenuItem value={{type: 'authors', label: 'Autore'}} primaryText="Autore" />
+                    transformOrigin={{horizontal: 'right', vertical: 'top'}}>
+                    <Menu 
+                      anchorEl={orderMenuAnchorEl} 
+                      open={Boolean(orderMenuAnchorEl)} 
+                      onClose={this.onCloseOrderMenu}>
+                      {orderByOptions}
                     </Menu>
                   </Popover>
                 </div>
@@ -181,7 +205,7 @@ export default class Shelf extends React.Component {
             }
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

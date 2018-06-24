@@ -16,16 +16,17 @@ export default class AddBook extends React.Component {
 	onBookSelect = book => this.setState({ book });
 	
 	render() {
-		const { book } = this.state;
+    const { book } = this.state;
+    const { user } = this.props;
 
 		return (
 			<div className="container" ref="AddBookComponent">
 				<h2>Aggiungi un libro</h2>
 				<div className="card">
-					<SearchBookForm onBookSelect={this.onBookSelect} />
+					<SearchBookForm onBookSelect={this.onBookSelect} user={user} />
 				</div>
 				{book ?
-					<Book book={book} user={this.props.user} />
+					<Book book={book} user={user} />
 				:
 					<div className="text-align-center">
 						<div>&nbsp;</div>

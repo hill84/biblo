@@ -1,53 +1,5 @@
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { amber400, amber500, blueGrey900, cyan700, cyan900 } from 'material-ui/styles/colors';
 import { badWords } from './lists';
-//import { emphasize } from 'material-ui/utils/colorManipulator';
-
 export const appName = 'Biblo';
-
-// THEME
-// https://github.com/mui-org/material-ui/blob/master/src/styles/getMuiTheme.js
-export const muiTheme = getMuiTheme({
-  palette: {
-    primary1Color: cyan700,
-    primary2Color: cyan900,
-    accent1Color: amber400,
-    accent2Color: amber500,
-    pickerHeaderColor: cyan700
-  },
-  appBar: { height: 60 },
-  drawer: { color: blueGrey900 },
-  datePicker: { selectColor: cyan700 },
-  menuItem: { hoverColor: 'rgba(0, 151, 167, 0.1)' }
-});
-
-export const muiThemeDark = getMuiTheme({
-  palette: {
-    textColor: '#fff',
-    secondaryTextColor: 'rgba(255,255,255,.7)',
-    alternateTextColor: '#303030',
-    canvasColor: '#303030',
-    borderColor: 'rgba(255,255,255,.3)',
-    disabledColor: 'rgba(255,255,255,.3)',
-    pickerHeaderColor: 'rgba(255,255,255,.12)',
-    clockCircleColor: 'rgba(255,255,255,.12)',
-  }
-});
-
-export const muiThemePrimary = getMuiTheme({
-  palette: {
-    primary1Color: 'rgba(255,255,255,.7)',
-    primary2Color: '#fff',
-    textColor: '#fff',
-    secondaryTextColor: 'rgba(255,255,255,.7)',
-    alternateTextColor: '#303030',
-    canvasColor: '#303030',
-    borderColor: 'rgba(255,255,255,.3)',
-    disabledColor: 'rgba(255,255,255,.3)',
-    pickerHeaderColor: 'rgba(255,255,255,.12)',
-    clockCircleColor: 'rgba(255,255,255,.12)',
-  }
-});
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
@@ -60,6 +12,7 @@ export const copyToClipboard = text => navigator.clipboard.writeText(text).then(
   //console.log('Async: Copying to clipboard was successful!');
 }, error => console.warn('Async: Could not copy text: ', error));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
+export const getInitials = text => text && join(text.split(" ").map(w => w.charAt(0)));
 
 // VALIDATION
 export const validateImg = (file, maxSize) => {

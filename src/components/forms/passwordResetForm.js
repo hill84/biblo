@@ -1,6 +1,10 @@
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import isEmail from 'validator/lib/isEmail';
-import { TextField, CircularProgress } from 'material-ui';
 import { auth } from '../../config/firebase';
 
 export default class PasswordResetForm extends React.Component {
@@ -15,7 +19,7 @@ export default class PasswordResetForm extends React.Component {
 	}
 
 	onChange = e => {
-		this.setState({ email: e.target.value });
+		this.setState({ email: e.target.value, errors: { ...this.state.errors, [e.target.name]: null } });
 	};
 
 	onSubmit = e => {
@@ -53,28 +57,31 @@ export default class PasswordResetForm extends React.Component {
 				<h2>Recupero password</h2>
 				<div className="card">
 					<p>Per favore, inserisci la tua email per recuperare la password.</p>
-                    <form onSubmit={this.onSubmit} noValidate>
-                        <div className="form-group">
-                            <TextField
-                                name="email"
-                                type="email"
-                                hintText="esempio@esempio.com"
-                                errorText={errors.email}
-                                floatingLabelText="Email"
-								value={email}
-								onChange={this.onChange}
-                                fullWidth={true}
-                            />
-                        </div>
+          <form onSubmit={this.onSubmit} noValidate>
+            <div className="form-group">
+              <FormControl className="input-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="esempio@esempio.com"
+                  value={email}
+                  onChange={this.onChange}
+                  error={Boolean(errors.email)}
+                />
+                {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
+              </FormControl>
+            </div>
+            
+            {authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
-						{authError && <div className="row"><div className="col message error">{authError}</div></div>}
-
-                        <div className="footer no-gutter">
-                            <button className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
-                        </div>
-                    </form>
-					{this.props.loading && <div className="loader"><CircularProgress /></div>}
-                </div>
+            <div className="footer no-gutter">
+              <button className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
+            </div>
+          </form>
+          {this.props.loading && <div className="loader"><CircularProgress /></div>}
+        </div>
 			</div>
 		);
 	}

@@ -1,13 +1,20 @@
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import ChipInput from 'material-ui-chip-input';
-import CircularProgress from 'material-ui/CircularProgress';
-import DatePicker from 'material-ui/DatePicker';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui-pickers/DatePicker';
+import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import moment from 'moment';
+import 'moment/locale/it';
 import React from 'react';
 import { bookRef, booksRef, collectionsRef, storageRef /* , timestamp */, uid } from '../../config/firebase';
+import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { DateTimeFormat } from '../../config/locales';
 import { checkBadWords, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
@@ -83,14 +90,14 @@ export default class BookForm extends React.Component {
     }
   } */
 
-  onEditDescription = e => {
+  onToggleDescription = e => {
     e.preventDefault();
     this.setState(prevState => ({
       isEditingDescription: !prevState.isEditingDescription
     }));
   }
 
-  onEditIncipit = e => {
+  onToggleIncipit = e => {
     e.preventDefault();
     this.setState(prevState => ({
       isEditingIncipit: !prevState.isEditingIncipit
@@ -109,13 +116,13 @@ export default class BookForm extends React.Component {
     });
   };
 
-  onChangeSelect = key => (e, i, val) => {
+  onChangeSelect = key => e => {
 		this.setState({ 
-      book: { ...this.state.book, [key]: val }, changes: true
+      book: { ...this.state.book, [key]: e.target.value }, changes: true
     });
   };
 
-  onChangeDate = key => (e, date) => {
+  onChangeDate = key => date => {
 		this.setState({ 
       book: { ...this.state.book, [key]: String(date) }, changes: true
     });
@@ -148,9 +155,8 @@ export default class BookForm extends React.Component {
     const { book, changes } = this.state;
     if (changes || !book.bid) {
       const errors = this.validate(book);
-      this.setState({ errors });
+      this.setState({ errors, loading: true });
       if (Object.keys(errors).length === 0) {
-        this.setState({ loading: true });
         if (this.props.book.bid) {
           const { EDIT, ...restBook } = book;
           bookRef(this.props.book.bid).set({
@@ -162,17 +168,10 @@ export default class BookForm extends React.Component {
               lastEditByUid: uid || ''
             }
           }).then(() => {
-            this.setState({ 
-              //redirectToReferrer: true,
-              loading: false,
-              changes: false
-            });
+            this.setState({ loading: false, changes: false });
             this.props.isEditing();
           }).catch(error => {
-            this.setState({
-              authError: error.message,
-              loading: false
-            });
+            this.setState({ authError: error.message, loading: false });
           });
         } else {
           let newBookRef = booksRef.doc();
@@ -209,10 +208,7 @@ export default class BookForm extends React.Component {
             title: book.title, 
             title_sort: book.title_sort
           }).then(() => {
-            this.setState({
-              loading: false,
-              changes: false
-            });
+            this.setState({ loading: false, changes: false });
             this.props.isEditing();
             console.log(`New book created with bid ${newBookRef.id}`);
           }).catch(error => {
@@ -244,7 +240,7 @@ export default class BookForm extends React.Component {
             }).catch(error => console.warn(error));
           });
         }
-      }
+      } else this.setState({ loading: false, isEditingDescription: true, isEditingIncipit: true});
     } else this.props.isEditing();
   };
 
@@ -360,7 +356,7 @@ export default class BookForm extends React.Component {
   onExitEditing = () => this.props.isEditing();
 	
 	render() {
-    const { authError, book, description_leftChars, description_maxChars, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, errors } = this.state;
+    const { authError, book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading } = this.state;
     const { user } = this.props;
     const isAdmin = () => user && user.roles && user.roles.admin === true;
     const menuItemsMap = (arr, values) => arr.map(item => 
@@ -368,17 +364,17 @@ export default class BookForm extends React.Component {
 				value={item.name} 
 				key={item.id} 
 				insetChildren={values ? true : false} 
-				checked={values ? values.includes(item.name) : false} 
-				primaryText={item.name} 
-			/>
+				checked={values ? values.includes(item.name) : false}>
+				{item.name}
+      </MenuItem>
 		);
 
 		return (
-      <div ref="BookFormComponent">
+      <React.Fragment>
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
         <div className="container top">
           <form onSubmit={this.onSubmit} className="card">
-            {this.state.loading && <div className="loader"><CircularProgress /></div>}
+            {loading && <div className="loader"><CircularProgress /></div>}
             <div className="container md">
               <div className="edit-book-cover">
                 <Cover book={book} />
@@ -394,225 +390,271 @@ export default class BookForm extends React.Component {
               </div>
               <div className="edit-book-info">
                 <div className="form-group">
-                  <TextField
-                    name="title"
-                    type="text"
-                    hintText="es: Sherlock Holmes"
-                    errorText={errors.title}
-                    floatingLabelText="Titolo"
-                    value={book.title || ''}
-                    onChange={this.onChange}
-                    fullWidth={true}
-                  />
-                </div>
-                <div className="form-group">
-                  <TextField
-                    name="subtitle"
-                    type="text"
-                    hintText="es: Uno studio in rosso"
-                    errorText={errors.subtitle}
-                    floatingLabelText="Sottotitolo"
-                    value={book.subtitle || ''}
-                    onChange={this.onChange}
-                    fullWidth={true}
-                  />
-                </div>
-                <div className="form-group">
-                  <ChipInput
-                    name="authors"
-                    hintText="es: Arthur Conan Doyle"
-                    errorText={errors.authors}
-                    floatingLabelText="Autore"
-                    value={book.authors}
-                    onRequestAdd={chip => this.onAddChip("authors", chip)}
-                    onRequestDelete={chip => this.onDeleteChip("authors", chip)}
-                    fullWidth={true}
-                  />
-                </div>
-                <div className="row">
-                  <div className="form-group col-sm-6">
-                    <TextField
-                      name="ISBN_13"
-                      type="number"
-                      hintText="es: 9788854152601"
-                      errorText={errors.ISBN_13}
-                      floatingLabelText="ISBN-13"
-                      value={book.ISBN_13}
-                      onChange={this.onChangeNumber}
-                      fullWidth={true}
-                    />
-                  </div>
-                  <div className="form-group col-sm-6">
-                    <TextField
-                      name="ISBN_10"
-                      type="number"
-                      hintText="es: 8854152609"
-                      errorText={errors.ISBN_10}
-                      floatingLabelText="ISBN-10"
-                      value={book.ISBN_10}
-                      onChange={this.onChangeNumber}
-                      fullWidth={true}
-                    />
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="form-group col-8">
-                    <TextField
-                      name="publisher"
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo</InputLabel>
+                    <Input
+                      id="title"
+                      name="title"
                       type="text"
-                      hintText="es: Newton Compton (Live)"
-                      errorText={errors.publisher}
-                      floatingLabelText="Editore"
-                      value={book.publisher}
+                      placeholder="es: Sherlock Holmes"
+                      error={Boolean(errors.title)}
+                      value={book.title || ''}
                       onChange={this.onChange}
-                      fullWidth={true}
                     />
+                    {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
+                  </FormControl>
+                </div>
+                <div className="form-group">
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.subtitle)} htmlFor="subtitle">Sottotitolo</InputLabel>
+                    <Input
+                      id="subtitle"
+                      name="subtitle"
+                      type="text"
+                      placeholder="es: Uno studio in rosso"
+                      error={Boolean(errors.subtitle)}
+                      value={book.subtitle || ''}
+                      onChange={this.onChange}
+                    />
+                    {errors.subtitle && <FormHelperText className="message error">{errors.subtitle}</FormHelperText>}
+                  </FormControl>
+                </div>
+                <div className="form-group">
+                  <FormControl className="chip-input" margin="normal" fullWidth>
+                    <ChipInput
+                      id="authors"
+                      name="authors"
+                      placeholder="es: Arthur Conan Doyle"
+                      error={Boolean(errors.authors)}
+                      label="Autore"
+                      value={book.authors}
+                      onAdd={chip => this.onAddChip("authors", chip)}
+                      onDelete={chip => this.onDeleteChip("authors", chip)}
+                    />
+                    {errors.authors && <FormHelperText className="message error">{errors.authors}</FormHelperText>}
+                  </FormControl>
+                </div>
+                <div className="row">
+                  <div className="form-group col-sm-6">
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.ISBN_13)} htmlFor="ISBN_13">ISBN-13</InputLabel>
+                      <Input
+                        id="ISBN_13"
+                        name="ISBN_13"
+                        type="number"
+                        placeholder="es: 9788854152601"
+                        error={Boolean(errors.ISBN_13)}
+                        value={book.ISBN_13}
+                        onChange={this.onChangeNumber}
+                      />
+                      {errors.ISBN_13 && <FormHelperText className="message error">{errors.ISBN_13}</FormHelperText>}
+                    </FormControl>
                   </div>
-                  <div className="form-group col-4">
-                    <TextField
-                      name="pages_num"
-                      type="number"
-                      hintText="es: 128"
-                      errorText={errors.pages_num}
-                      floatingLabelText="Pagine"
-                      value={book.pages_num}
-                      onChange={this.onChangeNumber}
-                      fullWidth={true}
-                    />
+                  <div className="form-group col-sm-6">
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.ISBN_10)} htmlFor="ISBN_10">ISBN-10</InputLabel>
+                      <Input
+                        id="ISBN_10"
+                        name="ISBN_10"
+                        type="number"
+                        placeholder="es: 8854152609"
+                        error={Boolean(errors.ISBN_10)}
+                        value={book.ISBN_10}
+                        onChange={this.onChangeNumber}
+                      />
+                      {errors.ISBN_10 && <FormHelperText className="message error">{errors.ISBN_10}</FormHelperText>}
+                    </FormControl>
                   </div>
                 </div>
                 <div className="row">
                   <div className="form-group col-8">
-                    <DatePicker 
-                      name="publication"
-                      hintText="01-05-2013" 
-                      cancelLabel="Annulla"
-                      DateTimeFormat={DateTimeFormat}
-                      locale="it"
-                      openToYearSelection={true} 
-                      errorText={errors.publication}
-                      floatingLabelText="Data di pubblicazione"
-                      value={book.publication ? new Date(book.publication) : null}
-                      onChange={this.onChangeDate("publication")}
-                      fullWidth={true}
-                    />
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.publisher)} htmlFor="publisher">Editore</InputLabel>
+                      <Input
+                        id="publisher"
+                        name="publisher"
+                        type="text"
+                        placeholder="es: Newton Compton (Live)"
+                        error={Boolean(errors.publisher)}
+                        value={book.publisher}
+                        onChange={this.onChange}
+                      />
+                      {errors.publisher && <FormHelperText className="message error">{errors.publisher}</FormHelperText>}
+                    </FormControl>
                   </div>
                   <div className="form-group col-4">
-                    <TextField
-                      name="edition_num"
-                      type="number"
-                      hintText="es: 1"
-                      errorText={errors.edition_num}
-                      floatingLabelText="Edizione"
-                      value={book.edition_num}
-                      onChange={this.onChangeNumber}
-                      fullWidth={true}
-                    />
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.pages_num)} htmlFor="pages_num">Pagine</InputLabel>
+                      <Input
+                        id="pages_num"
+                        name="pages_num"
+                        type="number"
+                        placeholder="es: 128"
+                        error={Boolean(errors.pages_num)}
+                        value={book.pages_num}
+                        onChange={this.onChangeNumber}
+                      />
+                      {errors.pages_num && <FormHelperText className="message error">{errors.pages_num}</FormHelperText>}
+                    </FormControl>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group col-8">
+                    <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                      <DatePicker 
+                        className="date-picker"
+                        name="publication"
+                        emptyLabel="01-05-2013" 
+                        cancelLabel="Annulla"
+                        leftArrowIcon={icon.chevronLeft()}
+                        rightArrowIcon={icon.chevronRight()}
+                        format="D MMMM YYYY"
+                        maxDate={new Date()}
+                        maxDateMessage="Data non valida"
+                        error={Boolean(errors.publication)}
+                        label="Data di pubblicazione"
+                        value={book.publication ? new Date(book.publication) : null}
+                        onChange={this.onChangeDate("publication")}
+                        margin="normal"
+                        animateYearScrolling={true}
+                        openToYearSelection={true}
+                        fullWidth
+                      />
+                    </MuiPickersUtilsProvider>
+                  </div>
+                  <div className="form-group col-4">
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.edition_num)} htmlFor="edition_num">Edizione</InputLabel>
+                      <Input
+                        id="edition_num"
+                        name="edition_num"
+                        type="number"
+                        placeholder="es: 1"
+                        error={Boolean(errors.edition_num)}
+                        value={book.edition_num}
+                        onChange={this.onChangeNumber}
+                      />
+                      {errors.edition_num && <FormHelperText className="message error">{errors.edition_num}</FormHelperText>}
+                    </FormControl>
                   </div>
                 </div>
                 <div className="row">
                   <div className="form-group col-sm-6">
-                    <SelectField
-                      errorText={errors.languages}
-                      floatingLabelText="Lingua"
-                      value={book.languages}
-                      onChange={this.onChangeSelect("languages")}
-                      fullWidth={true}
-                      multiple={true}
-                      maxHeight={300}
-                    >
-                      {menuItemsMap(languages, book.languages)}
-                    </SelectField>
+                    <FormControl className="select-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.languages)} htmlFor="languages">Lingua</InputLabel>
+                      <Select
+                        id="languages"
+                        error={Boolean(errors.languages)}
+                        value={book.languages}
+                        onChange={this.onChangeSelect("languages")}
+                        multiple>
+                        {menuItemsMap(languages, book.languages)}
+                      </Select>
+                      {errors.languages && <FormHelperText className="message error">{errors.languages}</FormHelperText>}
+                    </FormControl>
                   </div>
                   <div className="form-group col-sm-6">
-                    <SelectField
-                      errorText={errors.format}
-                      floatingLabelText="Formato"
-                      value={book.format}
-                      onChange={this.onChangeSelect("format")}
-                      fullWidth={true}
-                      maxHeight={200}
-                    >
-                      {menuItemsMap(formats, book.format)}
-                    </SelectField>
+                    <FormControl className="select-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.format)} htmlFor="format">Formato</InputLabel>
+                      <Select
+                        id="format"
+                        error={Boolean(errors.format)}
+                        value={book.format}
+                        onChange={this.onChangeSelect("format")}>
+                        {menuItemsMap(formats, book.format)}
+                      </Select>
+                      {errors.format && <FormHelperText className="message error">{errors.format}</FormHelperText>}
+                    </FormControl>
                   </div>
                 </div>
                 <div className="form-group">
-                  <SelectField
-                    errorText={errors.genres}
-                    floatingLabelText="Genere (max 3)"
-                    value={book.genres}
-                    onChange={this.onChangeSelect("genres")}
-                    fullWidth={true}
-                    multiple={true}
-                    maxHeight={200}
-                  >
-                    {menuItemsMap(genres, book.genres)}
-                  </SelectField>
+                  <FormControl className="select-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max 3)</InputLabel>
+                    <Select
+                      id="genres"
+                      placeholder="es: Giallo, Thriller"
+                      error={Boolean(errors.genres)}
+                      value={book.genres}
+                      onChange={this.onChangeSelect("genres")}
+                      multiple>
+                      {menuItemsMap(genres, book.genres)}
+                    </Select>
+                    {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+                  </FormControl>
                 </div>
                 {isAdmin() &&
                   <div className="form-group">
-                    <ChipInput
-                      name="collections"
-                      hintText="es: Sherlock Holmes"
-                      errorText={errors.collections}
-                      floatingLabelText="Collezione (max 5)"
-                      value={book.collections}
-                      onRequestAdd={chip => this.onAddChip("collections", chip)}
-                      onRequestDelete={chip => this.onDeleteChip("collections", chip)}
-                      disabled={!isAdmin()}
-                      fullWidth={true}
-                    />
+                    <FormControl className="chip-input" margin="normal" fullWidth>
+                      <ChipInput
+                        name="collections"
+                        placeholder="es: Sherlock Holmes"
+                        error={Boolean(errors.collections)}
+                        label="Collezione (max 5)"
+                        value={book.collections}
+                        onAdd={chip => this.onAddChip("collections", chip)}
+                        onDelete={chip => this.onDeleteChip("collections", chip)}
+                        disabled={!isAdmin()}
+                      />
+                      {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}
+                    </FormControl>
                   </div>
                 }
                 {isEditingDescription /* || book.description */ ?
                   <div className="form-group">
-                    <TextField
-                      name="description"
-                      id="description"
-                      type="text"
-                      hintText={`Inserisci una descrizione del libro (max ${description_maxChars} caratteri)...`}
-                      errorText={errors.description}
-                      floatingLabelText="Descrizione"
-                      value={book.description}
-                      onChange={this.onChangeMaxChars}
-                      fullWidth={true}
-                      multiLine={true}
-                      //rows={4}
-                    />
-                    {(description_leftChars !== undefined) && 
-                      <p className={`message ${(description_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {description_leftChars}</p>
-                    }
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.description)} htmlFor="description">Descrizione</InputLabel>
+                      <Input
+                        id="description"
+                        name="description"
+                        type="text"
+                        placeholder={`Inserisci una descrizione del libro (max ${description_maxChars} caratteri)...`}
+                        error={Boolean(errors.description)}
+                        value={book.description}
+                        onChange={this.onChangeMaxChars}
+                        rowsMax={30}
+                        multiline={true}
+                      />
+                      {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
+                      {(description_leftChars !== undefined) && 
+                        <FormHelperText className={`message ${(description_leftChars < 0) ? 'alert' : 'neutral'}`}>
+                          Caratteri rimanenti: {description_leftChars}
+                        </FormHelperText>
+                      }
+                    </FormControl>
                   </div>
                 :
                   <div className="info-row">
-                    <button className="btn flat centered" onClick={this.onEditDescription}>
+                    <button className="btn flat centered" onClick={this.onToggleDescription}>
                       {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
                     </button>
                   </div>
                 }
                 {isEditingIncipit /* || book.incipit */ ? 
                   <div className="form-group">
-                    <TextField
-                      name="incipit"
-                      id="incipit"
-                      type="text"
-                      hintText={`Inserisci i primi paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
-                      errorText={errors.incipit}
-                      floatingLabelText="Incipit"
-                      value={book.incipit || ''}
-                      onChange={this.onChangeMaxChars}
-                      fullWidth={true}
-                      multiLine={true}
-                      //rows={4}
-                    />
-                    {(incipit_leftChars !== undefined) && 
-                      <p className={`message ${(incipit_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {incipit_leftChars}</p>
-                    }
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.incipit)} htmlFor="incipit">Incipit</InputLabel>
+                      <Input
+                        id="incipit"
+                        name="incipit"
+                        type="text"
+                        placeholder={`Inserisci i primi paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
+                        error={Boolean(errors.incipit)}
+                        value={book.incipit || ''}
+                        onChange={this.onChangeMaxChars}
+                        rowsMax={30}
+                        multiline={true}
+                      />
+                      {errors.incipit && <FormHelperText className="message error">{errors.incipit}</FormHelperText>}
+                      {(incipit_leftChars !== undefined) && 
+                        <FormHelperText className={`message ${(incipit_leftChars < 0) ? 'alert' : 'neutral'}`}>
+                          Caratteri rimanenti: {incipit_leftChars}
+                        </FormHelperText>
+                      }
+                    </FormControl>
                   </div>
                 :
                   <div className="info-row">
-                    <button className="btn flat centered" onClick={this.onEditIncipit}>
+                    <button className="btn flat centered" onClick={this.onToggleIncipit}>
                       {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
                     </button>
                   </div>
@@ -632,7 +674,7 @@ export default class BookForm extends React.Component {
             </div>
           }
         </div>
-      </div>
+      </React.Fragment>
 		);
 	}
 }

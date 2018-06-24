@@ -1,4 +1,4 @@
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import PasswordResetForm from './components/forms/passwordResetForm';
@@ -14,7 +14,7 @@ import NoMatchPage from './components/pages/noMatchPage';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
-import { muiTheme } from './config/shared';
+import { defaultTheme } from './config/themes';
 
 export const UserContext = React.createContext();
 
@@ -44,7 +44,7 @@ export default class App extends React.Component {
 		const { user } = this.state;
 
 		return (
-			<MuiThemeProvider muiTheme={muiTheme}>
+			<MuiThemeProvider theme={defaultTheme}>
 				<UserContext.Provider value={user}>
           <Layout user={user}>
             <Switch>

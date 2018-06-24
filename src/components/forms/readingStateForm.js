@@ -1,12 +1,17 @@
-import CircularProgress from 'material-ui/CircularProgress';
-import DatePicker from 'material-ui/DatePicker';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import DatePicker from 'material-ui-pickers/DatePicker';
+import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import moment from 'moment';
+import 'moment/locale/it';
 import React from 'react';
 import { uid, userBookRef } from '../../config/firebase';
-import { DateTimeFormat } from '../../config/locales';
+import { icon } from '../../config/icons';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
-// import { icon } from '../../config/icons';
 
 export default class readingStateForm extends React.Component {
 	state = {
@@ -40,24 +45,16 @@ export default class readingStateForm extends React.Component {
 
   onToggle = () => this.props.onToggle();
 
-  onChange = (event, index, value) => {
-    this.setState({ state_num: value, changes: true });
-    if (value !== 2 || value !== 3) {
-      this.setState({ start_num: null });
-    }
-    if (value !== 3) {
-      this.setState({ end_num: null });
-    }
-  }
+  onChangeSelect = key => e => {
+    this.setState({ [key]: e.target.value, changes: true });
+	};
 
-  onChangeDate = key => (event, date) => {
+  onChangeDate = key => date => {
+    console.log(date);
 		this.setState({ 
-      [key]: Number(date.getTime()), 
+      [key]: Number(new Date(date).getTime()), 
       changes: true,
-      errors: { 
-        ...this.state.errors, 
-        [key]: null 
-      }
+      errors: { ...this.state.errors, [key]: null }
     });
   };
 
@@ -80,10 +77,10 @@ export default class readingStateForm extends React.Component {
     e.preventDefault();
     const { changes, state_num } = this.state;
     if (changes) {
-      this.setState({ loading: true });
       const errors = this.validate(this.state.start_num, this.state.end_num);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
+        this.setState({ loading: true });
         userBookRef(uid, this.props.bid).update({
           'readingState.state_num': state_num,
           'readingState.start_num': this.state.start_num || null,
@@ -98,57 +95,86 @@ export default class readingStateForm extends React.Component {
   }
 
   render() {
-    const { end_num, errors, loading, start_num, state_num } = this.state;
+    const { end_num, loading, start_num, state_num } = this.state;
 
 		return (
       <React.Fragment>
+        <div className="overlay" onClick={this.onToggle}></div>
         <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
           {loading && <div className="loader"><CircularProgress /></div>}
           <div className="content">
             <div className="row">
               <div className="form-group col">
-                <SelectField
-                  floatingLabelText="Stato lettura"
-                  value={state_num}
-                  onChange={this.onChange}
-                  fullWidth={true}>
-                  <MenuItem value={1} primaryText="Non iniziato" />
-                  <MenuItem value={2} primaryText="In lettura" />
-                  <MenuItem value={3} primaryText="Finito" />
-                  <MenuItem value={4} primaryText="Abbandonato" />
-                  <MenuItem value={5} primaryText="Da consultazione" />
-                </SelectField>
+                <FormControl className="select-field" margin="normal" fullWidth={true}>
+                  <InputLabel htmlFor="state_num">Stato lettura</InputLabel>
+                  <Select
+                    id="state_num"
+                    value={state_num}
+                    onChange={this.onChangeSelect("state_num")}>
+                    <MenuItem key="rs1" value={1}>Non iniziato</MenuItem>
+                    <MenuItem key="rs2" value={2}>In lettura</MenuItem>
+                    <MenuItem key="rs3" value={3}>Finito</MenuItem>
+                    <MenuItem key="rs4" value={4}>Abbandonato</MenuItem>
+                    <MenuItem key="rs5" value={5}>Da consultazione</MenuItem>
+                  </Select>
+                </FormControl>
               </div>
             </div>
             {(state_num === 2 || state_num === 3) &&
               <div className="row">
-                <div className="form-group col-6">
-                  <DatePicker 
-                    name="start_num"
-                    cancelLabel="Annulla"
-                    DateTimeFormat={DateTimeFormat}
-                    locale="it"
-                    errorText={errors.start_num}
-                    floatingLabelText="Data di inizio"
-                    value={start_num ? new Date(start_num) : null}
-                    onChange={this.onChangeDate("start_num")}
-                    fullWidth={true}
-                  />
+                <div className={`form-group ${state_num === 3 ? `col-6` : `col-12`}`}>
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                    <DatePicker 
+                      className="date-picker"
+                      name="start_num"
+                      cancelLabel="Annulla"
+                      leftArrowIcon={icon.chevronLeft()}
+                      rightArrowIcon={icon.chevronRight()}
+                      emptyLabel="01-01-2018" 
+                      format="D MMMM YYYY"
+                      minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
+                      minDateMessage="Praticamente nel Jurassico.."
+                      maxDate={state_num === 3 ? end_num : new Date()}
+                      maxDateMessage="Data non valida"
+                      label="Data di inizio"
+                      value={start_num ? new Date(start_num) : null}
+                      onChange={this.onChangeDate("start_num")}
+                      margin="normal"
+                      animateYearScrolling={true}
+                      todayLabel="Oggi"
+                      showTodayButton
+                      fullWidth
+                    />
+                  </MuiPickersUtilsProvider>
                 </div>
-                <div className="form-group col-6">
-                  <DatePicker 
-                    name="end_num"
-                    cancelLabel="Annulla"
-                    DateTimeFormat={DateTimeFormat}
-                    locale="it"
-                    errorText={errors.end_num}
-                    floatingLabelText="Data di fine"
-                    value={end_num ? new Date(end_num) : null}
-                    onChange={this.onChangeDate("end_num")}
-                    fullWidth={true}
-                    disabled={state_num !== 3}
-                  />
-                </div>
+                {state_num === 3 &&
+                  <div className="form-group col-6">
+                    <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                      <DatePicker 
+                        className="date-picker"
+                        name="end_num"
+                        cancelLabel="Annulla"
+                        leftArrowIcon={icon.chevronLeft()}
+                        rightArrowIcon={icon.chevronRight()}
+                        emptyLabel="01-01-2018" 
+                        format="D MMMM YYYY"
+                        minDate={start_num}
+                        minDateMessage="Data non valida"
+                        maxDate={new Date()}
+                        maxDateMessage="Data futura non valida"
+                        label="Data di fine"
+                        value={state_num === 3 && end_num ? new Date(end_num) : null}
+                        onChange={this.onChangeDate("end_num")}
+                        margin="normal"
+                        animateYearScrolling={true}
+                        todayLabel="Oggi"
+                        showTodayButton
+                        fullWidth
+                        disabled={state_num !== 3}
+                      />
+                    </MuiPickersUtilsProvider>
+                  </div>
+                }
               </div>
             }
           </div>
@@ -156,7 +182,6 @@ export default class readingStateForm extends React.Component {
             <button className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
           </div>
         </div>
-        <div className="overlay" onClick={this.onToggle}></div>
       </React.Fragment>
 		);
 	}

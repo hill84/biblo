@@ -455,13 +455,13 @@ export default class Book extends React.Component {
 
   isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
 	
-	render(props) {
+	render() {
     const { book, isEditing, loading, user, userBook } = this.state;
 
     if (!loading && !book) return <NoMatch title="Libro non trovato" location={this.props.location} />
 
 		return (
-			<div ref="BookComponent">
+			<React.Fragment>
         {isEditing && isAuthenticated() ?
           <BookForm 
             isEditing={this.isEditing} 
@@ -482,7 +482,7 @@ export default class Book extends React.Component {
             user={user}
           />
         }
-			</div>
+			</React.Fragment>
 		);
 	}
 }

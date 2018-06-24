@@ -4,7 +4,7 @@ import { isAuthenticated, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import BookCollection from '../bookCollection';
 
-const Home = props => (
+const Home = () => (
 	<div id="homeComponent">
 		<header className="hero pad-v">
 			<div className="container">

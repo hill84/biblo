@@ -1,4 +1,7 @@
-import TextField from 'material-ui/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import Redirect from 'react-router-dom/Redirect';
 import isEmail from 'validator/lib/isEmail';
@@ -33,7 +36,7 @@ export default class SignupForm extends React.Component {
 
 	onChange = e => {
 		this.setState({ 
-			data: { ...this.state.data, [e.target.name]: e.target.value }
+			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
 		});
 	};
 
@@ -77,7 +80,7 @@ export default class SignupForm extends React.Component {
 		return errors;
 	};
 
-	render(props) {
+	render() {
     const { authError, data, errors, redirectToReferrer } = this.state;
 		const { from } = {from: { pathname: '/profile' }};
 
@@ -89,42 +92,52 @@ export default class SignupForm extends React.Component {
 
 				<form onSubmit={this.onSubmit} noValidate>
 					<div className="form-group">
-						<TextField
-							name="displayName"
-							type="text"
-							hintText="Mario Rossi"
-							errorText={errors.displayName}
-							floatingLabelText="Nome"
-							value={data.displayName}
-							onChange={this.onChange}
-							fullWidth={true}
-						/>
+            <FormControl className="input-field" margin="normal" fullWidth={true}>
+              <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome</InputLabel>
+              <Input
+                id="displayName"
+                name="displayName"
+                type="text"
+                autoFocus={true}
+                placeholder="Mario Rossi"
+                value={data.displayName}
+                onChange={this.onChange}
+                error={Boolean(errors.displayName)}
+              />
+              {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+            </FormControl>
 					</div>
 
 					<div className="form-group">
-						<TextField
-							name="email"
-							type="email"
-							hintText="esempio@esempio.com"
-							errorText={errors.email}
-							floatingLabelText="Email"
-							value={data.email}
-							onChange={this.onChange}
-							fullWidth={true}
-						/>
+            <FormControl className="input-field" margin="normal" fullWidth={true}>
+              <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="esempio@esempio.com"
+                value={data.email}
+                onChange={this.onChange}
+                error={Boolean(errors.email)}
+              />
+              {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
+            </FormControl>
 					</div>
 
 					<div className="form-group">
-						<TextField
-							name="password"
-							type="password"
-							hintText="Almeno 8 caratteri"
-							errorText={errors.password}
-							floatingLabelText="Password"
-							value={data.password}
-							onChange={this.onChange}
-							fullWidth={true}
-						/>
+            <FormControl className="input-field" margin="normal" fullWidth={true}>
+              <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Almeno 8 caratteri"
+                value={data.password}
+                onChange={this.onChange}
+                error={Boolean(errors.password)}
+              />
+              {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
+            </FormControl>
 					</div>
 
 					{authError && <div className="row"><div className="col message error">{authError}</div></div>}

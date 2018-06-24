@@ -1,14 +1,21 @@
-import CircularProgress from 'material-ui/CircularProgress';
-import DatePicker from 'material-ui/DatePicker';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
+import Avatar from '@material-ui/core/Avatar';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import DatePicker from 'material-ui-pickers/DatePicker';
+import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import moment from 'moment';
+import 'moment/locale/it';
 import React from 'react';
 import { storageRef, uid, userRef } from '../../config/firebase';
+import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
-import { DateTimeFormat } from '../../config/locales';
-import { calcAge, validateImg } from '../../config/shared';
-import Avatar from '../avatar';
+import { getInitials, validateImg } from '../../config/shared';
 
 export default class Profile extends React.Component {
 	state = {
@@ -39,15 +46,27 @@ export default class Profile extends React.Component {
 	}
 
 	onChange = e => {
-		this.setState({ success: false, changes: true, user: { ...this.state.user, [e.target.name]: e.target.value } });
+		this.setState({ 
+      success: false, changes: true, 
+      user: { ...this.state.user, [e.target.name]: e.target.value }, 
+      errors: { ...this.state.errors, [e.target.name]: null } 
+    });
 	};
 
-	onChangeDate = key => (e, date) => {
-		this.setState({ success: false, changes: true, user: { ...this.state.user, [key]: String(date) } });
-	};
+	onChangeDate = key => date => {
+		this.setState({ 
+      success: false, changes: true, 
+      user: { ...this.state.user, [key]: String(date) }, 
+      errors: { ...this.state.errors, [key]: null } 
+    });
+  };
 
-	onChangeSelect = key => (e, i, val) => {
-		this.setState({ success: false, changes: true, user: { ...this.state.user, [key]: val } });
+	onChangeSelect = key => e => {
+		this.setState({ 
+      success: false, changes: true, 
+      user: { ...this.state.user, [key]: e.target.value },
+      errors: { ...this.state.errors, [key]: null } 
+    });
 	};
 
 	onSubmit = e => {
@@ -83,11 +102,6 @@ export default class Profile extends React.Component {
 	validate = user => {
 		const errors = {};
 		if (!user.displayName) errors.displayName = "Inserisci un nome utente";
-		if (Date(user.birth_date) > new Date()) {
-			errors.birth_date = "Data di nascita non valida"
-		} else if (calcAge(user.birth_date) < 13) {
-			errors.birth_date = "Età minima 14 anni";
-		}
 		if (user.city && user.city.length > 150) errors.city = "Lunghezza massima 150 caratteri";
 		return errors;
 	};
@@ -118,17 +132,16 @@ export default class Profile extends React.Component {
 		}
 	};
 
-	render(props) {
+	render() {
 		const { authError, changes, errors, imgPreview, loading, imgProgress, success, user } = this.state;
 		//const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
 		const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
 				key={item.id} 
-				insetChildren={values ? true : false} 
-				checked={values ? values.includes(item.name) : false} 
-				primaryText={item.name} 
-			/>
+        checked={values ? values.includes(item.name) : false}>
+        {item.name}
+      </MenuItem>
 		);
 		
 		if (!user) return null;
@@ -142,7 +155,7 @@ export default class Profile extends React.Component {
 							
 							<div className="col-auto">
 								<div className={`upload-avatar ${errors.upload ? 'error' : ''}`}>
-									<Avatar size={80} src={imgPreview} alt={user.displayName} />
+                  <Avatar className="avatar" src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
 									<div className="overlay">
 										<span title="Carica un'immagine">+</span>
 										<input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)}/>
@@ -151,7 +164,7 @@ export default class Profile extends React.Component {
 								</div>
 							</div>
 							<div className="col">
-								<div className="username">{user.displayName}</div>
+								<div className="username">{user.displayName || 'Innominato'}</div>
 								<div className="email">{user.email}</div>
 							</div>
 						</div>
@@ -160,110 +173,134 @@ export default class Profile extends React.Component {
 
 						<form onSubmit={this.onSubmit} noValidate>
 							<div className="form-group">
-								<TextField
-									name="displayName"
-									type="text"
-									hintText="Mario Rossi"
-									errorText={errors.displayName}
-									floatingLabelText="Nome e cognome"
-									value={user.displayName || ''}
-									onChange={this.onChange}
-									fullWidth={true}
-								/>
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome e cognome</InputLabel>
+                  <Input
+                    id="displayName"
+                    name="displayName"
+                    type="text"
+                    placeholder="es: Mario Rossi"
+                    value={user.displayName || ''}
+                    onChange={this.onChange}
+                    error={Boolean(errors.displayName)}
+                  />
+                  {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+                </FormControl>
 							</div>
 
 							<div className="row">
 								<div className="col-6 form-group">
-									<SelectField
-										errorText={errors.sex}
-										floatingLabelText="Sesso"
-										value={user.sex || null}
-										onChange={this.onChangeSelect("sex")}
-										fullWidth={true}
-									>
-										<MenuItem value={'m'} primaryText="Uomo" />
-										<MenuItem value={'f'} primaryText="Donna" />
-										<MenuItem value={'x'} primaryText="Altro" />
-									</SelectField>
+                  <FormControl className="select-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
+                    <Select
+                      id="sex"
+                      placeholder="es: Femmina"
+                      value={user.sex || null}
+                      onChange={this.onChangeSelect("sex")}
+                      error={Boolean(errors.sex)}>
+                      <MenuItem key="m" value="m">Uomo</MenuItem>
+                      <MenuItem key="f" value="f">Donna</MenuItem>
+                      <MenuItem key="x" value="x">Altro</MenuItem>
+                    </Select>
+                    {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+                  </FormControl>
 								</div>
 
 								<div className="col-6 form-group">
-									<DatePicker 
-										name="birth_date"
-										hintText="01-01-1998" 
-										cancelLabel="Annulla"
-										DateTimeFormat={DateTimeFormat}
-                    locale="it"
-										openToYearSelection={true} 
-										errorText={errors.birth_date}
-										floatingLabelText="Data di nascita"
-										value={user.birth_date ? new Date(user.birth_date) : null}
-										onChange={this.onChangeDate("birth_date")}
-										fullWidth={true}
-									/>
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                    <DatePicker 
+                      className="date-picker"
+                      name="birth_date"
+                      emptyLabel="01-01-1998" 
+                      cancelLabel="Annulla"
+                      leftArrowIcon={icon.chevronLeft()}
+                      rightArrowIcon={icon.chevronRight()}
+                      format="D MMMM YYYY"
+                      minDate={new Date().setFullYear(new Date().getFullYear() - 110)}
+                      minDateMessage="E chi sei.. Matusalemme?"
+                      maxDate={new Date().setFullYear(new Date().getFullYear() - 14)}
+                      maxDateMessage="Età minima 14 anni"
+                      label="Data di nascita"
+                      value={user.birth_date ? new Date(user.birth_date) : null}
+                      onChange={this.onChangeDate("birth_date")}
+                      margin="normal"
+                      animateYearScrolling={true}
+                      openToYearSelection={true}
+                      fullWidth
+                    />
+                  </MuiPickersUtilsProvider>
 								</div>
 							</div>
 
 							<div className="form-group">
-								<SelectField
-									floatingLabelText={`Lingue conosciute ${user.languages && this.state.user.languages.length > 1 ? ` (${this.state.user.languages.length})` : ""}`}
-									value={user.languages || null}
-									onChange={this.onChangeSelect("languages")}
-									fullWidth={true}
-									multiple={true}
-								>
-									{menuItemsMap(languages, user.languages)}
-								</SelectField>
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel htmlFor="languages">{`Lingue conosciute ${user.languages && this.state.user.languages.length > 1 ? ` (${this.state.user.languages.length})` : ""}`}</InputLabel>
+                  <Select
+                    id="languages"
+                    placeholder="es: Italiano, Spagnolo"
+                    value={user.languages || null}
+                    onChange={this.onChangeSelect("languages")}
+                    multiple>
+                    {menuItemsMap(languages, user.languages)}
+                  </Select>
+                </FormControl>
 							</div>
 
 							<div className="form-group">
-								<SelectField
-									floatingLabelText="Continente"
-									value={user.continent || null}
-									onChange={this.onChangeSelect("continent")}
-									fullWidth={true}
-								>
-									{menuItemsMap(continents)}
-								</SelectField>
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel htmlFor="continent">Continente</InputLabel>
+                  <Select
+                    id="continent"
+                    placeholder="es: Europa"
+                    value={user.continent || null}
+                    onChange={this.onChangeSelect("continent")}>
+                    {menuItemsMap(continents)}
+                  </Select>
+                </FormControl>
 							</div>
 
 							{(user.continent === 'Europa' || user.continent === 'Nordamerica') && 
 								<div className="form-group">
-									<SelectField
-										floatingLabelText="Nazione"
-										value={user.country || null}
-										onChange={this.onChangeSelect("country")}
-										fullWidth={true}
-										maxHeight={350}
-									>
-										{(user.continent === 'Europa') && menuItemsMap(europeanCountries)}
-										{(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
-									</SelectField>
+                  <FormControl className="select-field" margin="normal" fullWidth>
+                    <InputLabel htmlFor="nation">Nazione</InputLabel>
+                    <Select
+                      id="nation"
+                      placeholder="es: Italia"
+                      value={user.country || null}
+                      onChange={this.onChangeSelect("country")}>
+                      {(user.continent === 'Europa') && menuItemsMap(europeanCountries)}
+                      {(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
+                    </Select>
+                  </FormControl>
 								</div>
 							}
 
 							<div className="form-group">
 								{(user.country) && (user.country === "Italia‎") ?
-									<SelectField
-										floatingLabelText="Provincia"
-										value={user.city || null}
-										onChange={this.onChangeSelect("city")}
-										fullWidth={true}
-										maxHeight={300}
-									>
-										{menuItemsMap(italianProvinces)}
-									</SelectField>
-								:
-									<TextField
-										name="city"
-										type="text"
-										hintText="es: New York"
-										errorText={errors.city}
-										floatingLabelText="Città"
-										value={user.city || ''}
-										onChange={this.onChange}
-										fullWidth={true}
-									/>
+                  <FormControl className="select-field" margin="normal" fullWidth>
+                    <InputLabel htmlFor="city">Provincia</InputLabel>
+                    <Select
+                      id="city"
+                      placeholder="es: Torino"
+                      value={user.city || null}
+                      onChange={this.onChangeSelect("city")}>
+                      {menuItemsMap(italianProvinces)}
+                    </Select>
+                  </FormControl>
+                :
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.city)} htmlFor="city">Città</InputLabel>
+                    <Input
+                      id="city"
+                      name="city"
+                      type="text"
+                      placeholder="es: New York"
+                      value={user.city || ''}
+                      onChange={this.onChange}
+                      error={Boolean(errors.city)}
+                    />
+                    {errors.city && <FormHelperText className="message error">{errors.city}</FormHelperText>}
+                  </FormControl>
 								}
 							</div>
 
