@@ -50,9 +50,9 @@ export default class readingStateForm extends React.Component {
 	};
 
   onChangeDate = key => date => {
-    console.log(date);
+    //console.log(date);
 		this.setState({ 
-      [key]: Number(new Date(date).getTime()), 
+      [key]: new Date(date).getTime(), 
       changes: true,
       errors: { ...this.state.errors, [key]: null }
     });
@@ -60,14 +60,14 @@ export default class readingStateForm extends React.Component {
 
   validate = (start, end) => {
     const errors = {};
-    const today = Number(new Date().getTime());
+    const today = new Date().getTime();
     if (start > today) {
       errors.start_num = "Data futura non valida";
     }
     if (end > today) {
       errors.end_num = "Data futura non valida";
     }
-    if (!!end && start > end) {
+    if (end && start > end) {
       errors.end_num = "Data non valida";
     }
     return errors;
@@ -133,7 +133,7 @@ export default class readingStateForm extends React.Component {
                       format="D MMMM YYYY"
                       minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
                       minDateMessage="Praticamente nel Jurassico.."
-                      maxDate={state_num === 3 ? end_num : new Date()}
+                      maxDate={state_num === 3 ? end_num ? new Date(end_num) : new Date() : new Date()}
                       maxDateMessage="Data non valida"
                       label="Data di inizio"
                       value={start_num ? new Date(start_num) : null}
@@ -156,12 +156,12 @@ export default class readingStateForm extends React.Component {
                         leftArrowIcon={icon.chevronLeft()}
                         rightArrowIcon={icon.chevronRight()}
                         format="D MMMM YYYY"
-                        minDate={start_num}
+                        minDate={new Date(start_num)}
                         minDateMessage="Data non valida"
                         maxDate={new Date()}
                         maxDateMessage="Data futura non valida"
                         label="Data di fine"
-                        value={state_num === 3 && end_num ? new Date(end_num) : null}
+                        value={end_num ? new Date(end_num) : null}
                         onChange={this.onChangeDate("end_num")}
                         margin="normal"
                         animateYearScrolling={true}

@@ -290,7 +290,7 @@ export default class BookForm extends React.Component {
     } else if (book.ISBN_10 && !isISBN(String(book.ISBN_10), 10)) {
       errors.ISBN_10 = "Codice non valido";
     }
-    if (Number(new Date(book.publication).getTime()) > Number(new Date().getTime())) {
+    if (new Date(book.publication).getTime() > new Date().getTime()) {
       errors.publication = "Data di pubblicazione non valida";
     }
     if (book.edition_num && book.edition_num < 1) {

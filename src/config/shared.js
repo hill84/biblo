@@ -48,7 +48,7 @@ export const normalizeString = str => str.toString().toLowerCase()
   .replace(/ñ/g,"n")
   .replace(/^-+/, '')         // Trim - from start of text
   .replace(/-+$/, '');        // Trim - from end of text
-export const normalizeCover = str => str && str.replace('&edge=curl', '');
+export const normalizeCover = str => str && str.replace('http:', '').replace('&edge=curl', '');
 export const capitalizeFirstLetter = str => str && str.charAt(0).toUpperCase() + str.slice(1);
 
 // CALCULATION
