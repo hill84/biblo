@@ -1253,10 +1253,18 @@ visibility: hidden;
 
 /* MESSAGE */
 .message { font-size: 12px; line-height: 12px; color: var(--ligthTextClr); }
-.message.alert { color: var(--accentClr); }
 .message.error { color: var(--errorClr); }
+.message.info { color: var(--primaryClr); }
 .message.success { color: var(--successClr); }
+.message.warning { color: var(--accentClr); }
 .form-group .message { margin-top: .3rem; }
+
+/* SNACKBAR */
+.snackbar-content { background-color: var(--cardBg); }
+.snackbar-content.error { background-color: var(--errorClr); }
+.snackbar-content.info { background-color: var(--primaryClr); }
+.snackbar-content.success { background-color: var(--successClr); }
+.snackbar-content.warning { background-color: var(--accentClr); }
 
 /* HELPERS */
 .text-align-right { text-align: right; }

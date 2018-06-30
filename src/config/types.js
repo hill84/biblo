@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const { arrayOf, bool, func, shape, number, object, /* oneOf, */ oneOfType, string } = PropTypes;
+const { arrayOf, bool, func, shape, number, object, oneOf, oneOfType, string } = PropTypes;
 
 export const funcType = func;
 export const stringType = string;
@@ -8,7 +8,7 @@ export const boolType = bool;
 export const numberType = number;
 export const objectType = object;
 export const shapeType = props => shape(props);
-// export const oneOfType = props => oneOf(props);
+export const _oneOf = props => oneOf(props);
 export const _oneOfType = props => oneOfType(props);
 
 export const userType = shape({

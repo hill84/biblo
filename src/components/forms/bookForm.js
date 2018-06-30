@@ -154,6 +154,7 @@ export default class BookForm extends React.Component {
   onSubmit = e => {
     e.preventDefault();
     const { book, changes } = this.state;
+    const { openSnackbar } = this.props;
     if (changes || !book.bid) {
       const errors = this.validate(book);
       this.setState({ errors, loading: true });
@@ -171,8 +172,10 @@ export default class BookForm extends React.Component {
           }).then(() => {
             this.setState({ loading: false, changes: false });
             this.props.isEditing();
+            openSnackbar('Modifiche salvate', 'success');
           }).catch(error => {
             this.setState({ authError: error.message, loading: false });
+            openSnackbar(error.message, 'error');
           });
         } else {
           let newBookRef = booksRef.doc();
@@ -211,12 +214,14 @@ export default class BookForm extends React.Component {
           }).then(() => {
             this.setState({ loading: false, changes: false });
             this.props.isEditing();
-            console.log(`New book created with bid ${newBookRef.id}`);
+            openSnackbar('Modifiche salvate', 'success');
+            //console.log(`New book created with bid ${newBookRef.id}`);
           }).catch(error => {
             this.setState({
               authError: error.message,
               loading: false
             });
+            openSnackbar(error.message, 'error');
           });
         }
         if (book.collections) {
@@ -241,7 +246,10 @@ export default class BookForm extends React.Component {
             }).catch(error => console.warn(error));
           });
         }
-      } else this.setState({ loading: false, isEditingDescription: true, isEditingIncipit: true});
+      } else {
+        this.setState({ loading: false, isEditingDescription: true, isEditingIncipit: true });
+        openSnackbar('Ricontrolla i dati inseriti', 'error');
+      }
     } else this.props.isEditing();
   };
 
@@ -335,10 +343,11 @@ export default class BookForm extends React.Component {
   }
 
 	onImageChange = e => {
-		e.preventDefault();
+    e.preventDefault();
+    const { openSnackbar } = this.props;
 		const file = e.target.files[0];
 		//console.log(file);
-		const errors = validateImg(file, 1048576);
+		const errors = validateImg(file, 1);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
@@ -347,17 +356,19 @@ export default class BookForm extends React.Component {
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
 				});
 			}, error => {
-				console.warn(`upload error: ${error}`);
-				errors.upload = true;
+				console.warn(`upload error: ${error.message}`);
+        this.setState({ errors: { ...errors, upload: error.message } });
+        openSnackbar(error.message, 'error');
 			}, () => {
 				//console.log('upload completed');
 				this.setState({
 					imgPreview: uploadTask.snapshot.downloadURL,
 					changes: true,
 					success: false
-				});
+        });
+        openSnackbar('Immagine caricata', 'success');
 			});
-		}
+		} else openSnackbar(errors.upload, 'error');
 	};
 
   onExitEditing = () => this.props.isEditing();
@@ -383,7 +394,7 @@ export default class BookForm extends React.Component {
           <form onSubmit={this.onSubmit} className="card">
             {loading && <div className="loader"><CircularProgress /></div>}
             <div className="container md">
-              <div className="edit-book-cover">
+              <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
                 <Cover book={book} />
                 {isAdmin() && book.bid && !book.covers[0] && 
                   <button className="btn sm flat centered">

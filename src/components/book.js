@@ -1,8 +1,9 @@
 import React from 'react';
 import { bookRef, collectionsRef, isAuthenticated, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { bookType, stringType, userBookType, userType } from '../config/types';
-import NoMatch from './noMatch';
+import { SharedSnackbarConsumer } from '../context/sharedSnackbar';
 import BookForm from './forms/bookForm';
+import NoMatch from './noMatch';
 import BookProfile from './pages/bookProfile';
 
 export default class Book extends React.Component {
@@ -461,28 +462,33 @@ export default class Book extends React.Component {
     if (!loading && !book) return <NoMatch title="Libro non trovato" location={this.props.location} />
 
 		return (
-			<React.Fragment>
-        {isEditing && isAuthenticated() ?
-          <BookForm 
-            isEditing={this.isEditing} 
-            book={book} 
-            user={user}
-          />
-        :
-          <BookProfile 
-            addBookToShelf={this.addBookToShelf} 
-            addBookToWishlist={this.addBookToWishlist} 
-            removeBookFromShelf={this.removeBookFromShelf} 
-            removeBookFromWishlist={this.removeBookFromWishlist} 
-            rateBook={this.rateBook}
-            isEditing={this.isEditing}
-            loading={loading}
-            book={book}
-            userBook={userBook}
-            user={user}
-          />
-        }
-			</React.Fragment>
+			<SharedSnackbarConsumer>
+        {({ openSnackbar }) => (
+          <React.Fragment>
+            {isEditing && isAuthenticated() ?
+              <BookForm 
+                openSnackbar={openSnackbar}
+                isEditing={this.isEditing} 
+                book={book} 
+                user={user}
+              />
+            :
+              <BookProfile 
+                addBookToShelf={this.addBookToShelf} 
+                addBookToWishlist={this.addBookToWishlist} 
+                removeBookFromShelf={this.removeBookFromShelf} 
+                removeBookFromWishlist={this.removeBookFromWishlist} 
+                rateBook={this.rateBook}
+                isEditing={this.isEditing}
+                loading={loading}
+                book={book}
+                userBook={userBook}
+                user={user}
+              />
+            }
+          </React.Fragment>
+        )}
+			</SharedSnackbarConsumer>
 		);
 	}
 }

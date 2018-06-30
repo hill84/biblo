@@ -29,14 +29,14 @@ export default class Layout extends React.Component {
     user: userType
   }
   
-  onToggleDrawer = () => this.setState(prevState => ({drawerIsOpen: !prevState.drawerIsOpen}));
-  onCloseDrawer = () => this.setState({drawerIsOpen: false});
+  onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
+  onCloseDrawer = () => this.setState({ drawerIsOpen: false });
 
   onOpenMore = e => this.setState({ moreAnchorEl: e.currentTarget });
   onCloseMore = () => this.setState({ moreAnchorEl: null });
 
-  onOpenDialog = () => this.setState({dialogIsOpen: true});
-  onCloseDialog = () => this.setState({dialogIsOpen: false});
+  onOpenDialog = () => this.setState({ dialogIsOpen: true });
+  onCloseDialog = () => this.setState({ dialogIsOpen: false });
 
   render() {
     const { drawerIsOpen, moreAnchorEl } = this.state;

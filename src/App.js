@@ -15,6 +15,7 @@ import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { defaultTheme } from './config/themes';
+import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/sharedSnackbar';
 
 export const UserContext = React.createContext();
 
@@ -46,22 +47,28 @@ export default class App extends React.Component {
 		return (
 			<MuiThemeProvider theme={defaultTheme}>
 				<UserContext.Provider value={user}>
-          <Layout user={user}>
-            <Switch>
-              <Route path="/" exact component={Home} />
-              <Route path="/login" component={Login} />
-              <Route path="/password-reset" component={PasswordResetForm} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/book/:bid" component={BookContainer} />
-              <Route path="/collection/:cid" component={Collection} />
-              <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} />
-              <PrivateRoute path="/books/add" component={AddBook} user={user} />
-              <PrivateRoute path="/new-book" component={NewBook} user={user} />
-              <PrivateRoute path="/profile" exact component={Profile} />
-              <Redirect from="/home" to="/" />
-              <Route component={NoMatchPage} />
-            </Switch>
-          </Layout>
+          <SharedSnackbarProvider>
+            <SharedSnackbarConsumer>
+              {({ openSnackbar }) => (
+                <Layout user={user}>
+                  <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/password-reset" component={PasswordResetForm} />
+                    <Route path="/signup" component={Signup} />
+                    <Route path="/book/:bid" component={BookContainer} />
+                    <Route path="/collection/:cid" component={Collection} />
+                    <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} />
+                    <PrivateRoute path="/books/add" component={AddBook} user={user} />
+                    <PrivateRoute path="/new-book" component={NewBook} user={user} />
+                    <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
+                    <Redirect from="/home" to="/" />
+                    <Route component={NoMatchPage} />
+                  </Switch>
+                </Layout>
+              )}
+            </SharedSnackbarConsumer>
+          </SharedSnackbarProvider>
 				</UserContext.Provider>
 			</MuiThemeProvider>
 		);

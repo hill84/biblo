@@ -15,7 +15,7 @@ import React from 'react';
 import { storageRef, uid, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
-import { getInitials, validateImg } from '../../config/shared';
+import { calcAge, getInitials, validateImg } from '../../config/shared';
 
 export default class Profile extends React.Component {
 	state = {
@@ -74,7 +74,7 @@ export default class Profile extends React.Component {
 		const errors = this.validate(this.state.user);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
-			this.setState({ loading: true });
+      this.setState({ loading: true });
 			userRef(uid).set({
 				...this.state.user,
 				photoURL: this.state.imgPreview || '',
@@ -88,30 +88,40 @@ export default class Profile extends React.Component {
 					loading: false,
 					changes: false,
 					success: true
-				});
+        });
+        this.props.openSnackbar('Modifiche salvate', 'success');
 				//this.setState({ redirectToReferrer: true });
 			}).catch(error => {
 				this.setState({
 					authError: error.message,
 					loading: false
-				});
+        });
+        this.props.openSnackbar(error.message);
 			});
-		}
+		} else this.props.openSnackbar('Ricontrolla i dati inseriti', 'error');
 	};
 
 	validate = user => {
 		const errors = {};
-		if (!user.displayName) errors.displayName = "Inserisci un nome utente";
+    if (!user.displayName) errors.displayName = "Inserisci un nome utente";
+    if (Date(user.birth_date) > new Date()) { 
+      errors.birth_date = "Data di nascita non valida" 
+    } else if (calcAge(user.birth_date) < 13) { 
+      errors.birth_date = "Età minima 14 anni"; 
+    } else if (calcAge(user.birth_date) > 119) {
+      errors.birth_date = "E chi sei.. Matusalemme?"; 
+    }
 		if (user.city && user.city.length > 150) errors.city = "Lunghezza massima 150 caratteri";
 		return errors;
 	};
 
 	onImageChange = e => {
-		e.preventDefault();
+    e.preventDefault();
+    const { openSnackbar } = this.props;
 		const file = e.target.files[0];
 		//console.log(file);
-		const errors = validateImg(file, 1048576);
-		this.setState({ errors });
+    const errors = validateImg(file, 1);
+    this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			const uploadTask = storageRef(`users/${uid}`, 'avatar').put(file);
 			uploadTask.on('state_changed', snap => {
@@ -119,21 +129,23 @@ export default class Profile extends React.Component {
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
 				});
 			}, error => {
-				console.warn(`Upload error: ${error}`);
-				errors.upload = true;
+        console.warn(`Upload error: ${error.message}`);
+        this.setState({ errors: { ...errors, upload: error.message } });
+        openSnackbar(error.message, 'error');
 			}, () => {
 				//console.log('upload completed');
 				this.setState({
 					imgPreview: uploadTask.snapshot.downloadURL,
 					changes: true,
 					success: false
-				});
+        });
+        openSnackbar('Immagine caricata', 'success');
 			});
-		}
+		} else openSnackbar(errors.upload, 'error');
 	};
 
 	render() {
-		const { authError, changes, errors, imgPreview, loading, imgProgress, success, user } = this.state;
+		const { changes, errors, imgPreview, loading, imgProgress, success, user } = this.state;
 		//const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
 		const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
@@ -147,32 +159,32 @@ export default class Profile extends React.Component {
 		if (!user) return null;
 
 		return (
-			<div className="container" ref="profileComponent">
-				<div className="card">
-					{loading && <div className="loader"><CircularProgress /></div>}
-					<div className="container sm">
-						<div className="row basic-profile">
-							
-							<div className="col-auto">
-								<div className={`upload-avatar ${errors.upload ? 'error' : ''}`}>
+      <div className="container" id="profileComponent">
+        <div className="card">
+          {loading && <div className="loader"><CircularProgress /></div>}
+          <div className="container sm">
+            <div className="row basic-profile">
+              
+              <div className="col-auto">
+                <div className={`upload-avatar ${errors.upload ? 'error' : ''}`}>
                   <Avatar className="avatar" src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
-									<div className="overlay">
-										<span title="Carica un'immagine">+</span>
-										<input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)}/>
-									</div>
-									<progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
-								</div>
-							</div>
-							<div className="col">
-								<div className="username">{user.displayName || 'Innominato'}</div>
-								<div className="email">{user.email}</div>
-							</div>
-						</div>
+                  <div className="overlay">
+                    <span title="Carica un'immagine">+</span>
+                    <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)}/>
+                  </div>
+                  <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+                </div>
+              </div>
+              <div className="col">
+                <div className="username">{user.displayName || 'Innominato'}</div>
+                <div className="email">{user.email}</div>
+              </div>
+            </div>
 
-						<div>&nbsp;</div>
+            <div>&nbsp;</div>
 
-						<form onSubmit={this.onSubmit} noValidate>
-							<div className="form-group">
+            <form onSubmit={this.onSubmit} noValidate>
+              <div className="form-group">
                 <FormControl className="input-field" margin="normal" fullWidth>
                   <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome e cognome</InputLabel>
                   <Input
@@ -186,10 +198,10 @@ export default class Profile extends React.Component {
                   />
                   {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
                 </FormControl>
-							</div>
+              </div>
 
-							<div className="row">
-								<div className="col-6 form-group">
+              <div className="row">
+                <div className="col-6 form-group">
                   <FormControl className="select-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
                     <Select
@@ -204,9 +216,9 @@ export default class Profile extends React.Component {
                     </Select>
                     {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
                   </FormControl>
-								</div>
+                </div>
 
-								<div className="col-6 form-group">
+                <div className="col-6 form-group">
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
                     <DatePicker 
                       className="date-picker"
@@ -215,7 +227,7 @@ export default class Profile extends React.Component {
                       leftArrowIcon={icon.chevronLeft()}
                       rightArrowIcon={icon.chevronRight()}
                       format="D MMMM YYYY"
-                      minDate={new Date().setFullYear(new Date().getFullYear() - 110)}
+                      minDate={new Date().setFullYear(new Date().getFullYear() - 120)}
                       minDateMessage="E chi sei.. Matusalemme?"
                       maxDate={new Date().setFullYear(new Date().getFullYear() - 14)}
                       maxDateMessage="Età minima 14 anni"
@@ -228,10 +240,10 @@ export default class Profile extends React.Component {
                       fullWidth
                     />
                   </MuiPickersUtilsProvider>
-								</div>
-							</div>
+                </div>
+              </div>
 
-							<div className="form-group">
+              <div className="form-group">
                 <FormControl className="select-field" margin="normal" fullWidth>
                   <InputLabel htmlFor="languages">{`Lingue conosciute ${user.languages && this.state.user.languages.length > 1 ? ` (${this.state.user.languages.length})` : ""}`}</InputLabel>
                   <Select
@@ -243,9 +255,9 @@ export default class Profile extends React.Component {
                     {menuItemsMap(languages, user.languages)}
                   </Select>
                 </FormControl>
-							</div>
+              </div>
 
-							<div className="form-group">
+              <div className="form-group">
                 <FormControl className="select-field" margin="normal" fullWidth>
                   <InputLabel htmlFor="continent">Continente</InputLabel>
                   <Select
@@ -256,10 +268,10 @@ export default class Profile extends React.Component {
                     {menuItemsMap(continents)}
                   </Select>
                 </FormControl>
-							</div>
+              </div>
 
-							{(user.continent === 'Europa' || user.continent === 'Nordamerica') && 
-								<div className="form-group">
+              {(user.continent === 'Europa' || user.continent === 'Nordamerica') && 
+                <div className="form-group">
                   <FormControl className="select-field" margin="normal" fullWidth>
                     <InputLabel htmlFor="nation">Nazione</InputLabel>
                     <Select
@@ -271,11 +283,11 @@ export default class Profile extends React.Component {
                       {(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
                     </Select>
                   </FormControl>
-								</div>
-							}
+                </div>
+              }
 
-							<div className="form-group">
-								{(user.country) && (user.country === "Italia‎") ?
+              <div className="form-group">
+                {(user.country) && (user.country === "Italia‎") ?
                   <FormControl className="select-field" margin="normal" fullWidth>
                     <InputLabel htmlFor="city">Provincia</InputLabel>
                     <Select
@@ -300,20 +312,18 @@ export default class Profile extends React.Component {
                     />
                     {errors.city && <FormHelperText className="message error">{errors.city}</FormHelperText>}
                   </FormControl>
-								}
-							</div>
+                }
+              </div>
 
-							{authError && <div className="info-row"><div className="message error">{authError}</div></div>}
+              <div>&nbsp;</div>
 
-							<div>&nbsp;</div>
-
-						</form>
-					</div>
-					<div className="footer no-gutter">
-						<button className={`btn btn-footer primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
-					</div>
-				</div>
-			</div>
+            </form>
+          </div>
+          <div className="footer no-gutter">
+            <button className={`btn btn-footer primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
+          </div>
+        </div>
+      </div>
 		);
 	}
 }
