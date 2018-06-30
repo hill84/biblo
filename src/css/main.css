@@ -1393,6 +1393,19 @@ to { opacity: 0; transform: scale(1); }
   .book-incipit { transform-origin: top center; animation-name: flipInX; }
   #dashboardComponent .basic-profile-card { margin-top: 60px; }
   #dashboardComponent .basic-profile .avatar { margin-top: -60px; }
+  .basic-profile .badge { 
+    border-radius: 9px;
+    height: 10px;
+    width: 10px;
+    text-indent: -300px;
+    font-size: 0;
+    overflow: hidden;
+    padding: 0;
+    /* border: 2px solid var(--canvasClr); */ 
+    background-color: var(--primaryClr);
+  }
+  .basic-profile .badge.admin { background-color: var(--ligthTextClr); }
+  .basic-profile .badge.premium { background-color: var(--accentClr); }
   .hide-md { display: none; }
 }
 @media (max-width: 576px) {

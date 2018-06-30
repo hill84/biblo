@@ -25,11 +25,13 @@ export const userType = shape({
   sex: string,
   roles: shape({
     admin: bool.isRequired,
-    //premium: bool.isRequired,
-    editor: bool.isRequired
+    editor: bool.isRequired,
+    premium: bool
   }).isRequired,
   stats: shape({
-    //followed_num: number.isRequired,
+    followed: arrayOf(string),
+    followed_num: number.isRequired,
+    followers: arrayOf(string),
     followers_num: number.isRequired,
     ratings_num: number.isRequired,
     reviews_num: number.isRequired,
@@ -119,4 +121,17 @@ export const userReviewType = shape({
   likes_num: numberType.isRequired,
   text: stringType.isRequired,
   title: stringType
+});
+
+export const authorType = shape({ //TODO
+  aid: string.isRequired,
+  bio: stringType,
+  created_num: numberType.isRequired,
+  languages: arrayOf(string),
+  followers: arrayOf(string),
+  followers_num: numberType.isRequired,
+  name: stringType.isRequired,
+  name_sort: stringType.isRequired,
+  photoURL: string,
+  sex: string.isRequired
 });
