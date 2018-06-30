@@ -11,6 +11,7 @@ export default class BookCollection extends React.Component {
 	state = {
     cid: this.props.cid || 'top',
     bcid: this.props.bcid || 'bcid',
+    booksPerRow: this.props.booksPerRow || 1,
     limit:  this.props.limit || (this.props.pagination ? booksPerRow() : 98),
     scrollable: /* isTouchDevice() ? ( */this.props.scrollable || false/* ) : false */,
     pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
@@ -26,6 +27,7 @@ export default class BookCollection extends React.Component {
   static propTypes = {
     cid: stringType.isRequired,
     bcid: stringType,
+    booksPerRow: numberType,
     limit: numberType,
     pagination: boolType,
     scrollable: boolType,
@@ -35,6 +37,7 @@ export default class BookCollection extends React.Component {
   static getDerivedStateFromProps(props, state) {
     if (props.cid !== state.cid) { return { cid: props.cid || 'top' }; }
     if (props.bcid !== state.bcid) { return { bcid: props.bcid || 'bcid' }; }
+    if (props.booksPerRow !== state.booksPerRow) { return { booksPerRow: props.booksPerRow || 1 }; }
     if (props.limit !== state.limit) { return { limit: props.limit || (props.pagination ? booksPerRow() : 98) }; }
     if (props.pagination !== state.pagination) { return { pagination: props.pagination || false }; }
     if (props.scrollable !== state.scrollable) { return { scrollable: props.scrollable || false }; }
@@ -122,9 +125,9 @@ export default class BookCollection extends React.Component {
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
 	render() {
-		const { cid, collection, collectionCount, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;
+		const { booksPerRow, cid, collection, collectionCount, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;
     const covers = (collection && (collection.length > 0) ?
-      <div className={`shelf-row ${stacked ? 'stacked' : 'abreast'}`}>
+      <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, index) => 
           <Link key={book.bid} to={`/book/${book.bid}`}>
             <Cover book={book} rating={true} full={stacked} index={index} />

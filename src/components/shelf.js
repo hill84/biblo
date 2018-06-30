@@ -17,6 +17,7 @@ export default class Shelf extends React.Component {
     isOwner: this.props.luid === this.props.uid,
     shelf: this.props.shelf || 'bookInShelf',
     orderMenuAnchorEl: null,
+    booksPerRow: this.props.booksPerRow || 4,
     limit: booksPerRow() * 2 - 1,
     orderBy: [ 
       { type: 'added_num', label: 'Data aggiunta'}, 
@@ -36,6 +37,7 @@ export default class Shelf extends React.Component {
   }
 
   static propTypes = {
+    booksPerRow: numberType,
     limit: numberType,
     shelf: stringType,
     luid: stringType,
@@ -125,7 +127,7 @@ export default class Shelf extends React.Component {
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
   render() {
-    const { coverview, desc, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
+    const { booksPerRow, coverview, desc, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
     const covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
     const orderByOptions = orderBy.map((option, index) => (
       <MenuItem
@@ -174,7 +176,7 @@ export default class Shelf extends React.Component {
               </div>
             </div>
             {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
-              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`}>
+              <div className={`shelf-row books-per-row-${booksPerRow} ${coverview ? 'coverview' : 'stacked'}`}>
                 {isOwner &&
                   <Link to="/books/add">
                     <div className="book empty">

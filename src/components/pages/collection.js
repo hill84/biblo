@@ -7,7 +7,7 @@ const Collection = props => {
       <div className="row">
         <div className="col-md-6">
           <div className="card">
-            <BookCollection cid={props.match.params.cid} pagination={false} stacked={true} />
+            <BookCollection cid={props.match.params.cid} pagination={false} booksPerRow={1} stacked={true} />
           </div>
         </div>
         <div className="col">

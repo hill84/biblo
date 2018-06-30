@@ -17,14 +17,15 @@ export const getInitials = text => text && join(text.split(" ").map(w => w.charA
 // VALIDATION
 export const validateImg = (file, maxSize) => {
   const errors = {};
+  const maxBytes = maxSize * 1048576;
   const fileExtension = file.name.split('.').pop();
   const ext = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'svg', 'SVG', 'gif', 'GIF', 'webp', 'WEBP'];
   if (ext.indexOf(fileExtension) === -1) {
-    console.warn(`Image file extension not supperted: ${fileExtension}`);
-    errors.upload = 'Tipo file non valido';
-  } else if (file.size > maxSize) {
-    console.warn('File size too big');
-    errors.upload = 'Dimensione file eccessiva';
+    //console.warn(`Image file extension not supperted: ${fileExtension}`);
+    errors.upload = `Tipo file non valido: ${fileExtension}`;
+  } else if (file.size > maxBytes) {
+    //console.warn('File size too big');
+    errors.upload = `File troppo pesante. Max ${maxSize}MB.`;
   }
   return errors;
 }

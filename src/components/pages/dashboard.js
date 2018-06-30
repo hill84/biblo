@@ -57,7 +57,7 @@ export default class Dashboard extends React.Component {
 	fetchUser = () => {
     const { luid, uid, user } = this.state;
 		if (uid) {
-			const unsubUser = userRef(uid).onSnapshot(snap => {
+			userRef(uid).onSnapshot(snap => {
 				this.setState({ loading: false });
 				if (snap.exists) {
 					/* let count = -4;
