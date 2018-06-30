@@ -25,11 +25,11 @@ service cloud.firestore {
     
     match /reviews/{bid} {
     	allow read;
-      allow write: if isEditor();
+      allow write: if isEditor() || isOwner(uid);
       
       match /reviewers/{uid} {
       	allow read;
-        allow write: if isEditor() && (isOwner(uid) || (userHasAllRoles('admin', 'editor') == true));
+        allow write: if isEditor() || isOwner(uid);
       }
     }
     
