@@ -52,7 +52,7 @@ export const bookType = shape({
     lastEditByUid: string.isRequired,
     lastEdit_num: number.isRequired
   }),
-  authors: arrayOf(string).isRequired,
+  authors: shape().isRequired,
   bid: string.isRequired,
   covers: arrayOf(string),
   description: string,
@@ -77,7 +77,7 @@ export const coverType = shape({
   bid: string.isRequired,
   title: string.isRequired,
   subtitle: string,
-  authors: arrayOf(string).isRequired,
+  authors: shape().isRequired,
   format: string,
   covers: arrayOf(string),
   publisher: string.isRequired,

@@ -11,7 +11,7 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { capitalizeFirstLetter, join, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { capitalizeFirstLetter, joinObj, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 import { userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
@@ -84,12 +84,12 @@ export default class SearchBookForm extends React.Component {
   }
 */
   renderSuggestion = (b, { query, isHighlighted }) => {
-    const { searchBy } = this.state;
-
+    const { searchBy } = this.state; 
     if (b.value) return b.value;
-    
-    const matches = match(b.label, query);
-    const parts = parse(b.label, matches);
+    const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label
+    //console.log(b.label);
+    const matches = match(label, query);
+    const parts = parse(label, matches);
     const searchTextHighlighted = parts.map((part, index) => part.highlight ? 
       <strong key={String(index)}>{part.text}</strong>
     :
@@ -105,7 +105,7 @@ export default class SearchBookForm extends React.Component {
           </span>
         </div>
         <div className="secondaryText">
-          {searchBy.key === 'title' ? `di ${join(b.authors)}` : searchTextHighlighted}
+          {searchBy.key === 'title' ? `di ${joinObj(b.authors)}` : searchTextHighlighted}
         </div>
       </MenuItem>
     );
@@ -122,7 +122,7 @@ export default class SearchBookForm extends React.Component {
     const { maxSearchResults, searchBy } = this.state;
     const { user } = this.props;
     const searchText = value.normalize();
-    const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : String(searchText);
+    const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : typeof searchText === 'object' ? String(Object.keys(searchText)[0]) : String(searchText);
     const emptyBook = {
       ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
@@ -131,7 +131,7 @@ export default class SearchBookForm extends React.Component {
         createdByUid: (user && user.uid) || '',
         created_num: (new Date()).getTime() || 0
       },
-      authors: searchBy.key === 'author' ? [searchText] : [],
+      authors: searchBy.key === 'author' ? { searchText: true } : {},
       bid: '',
       collections: [],
       covers: [],
@@ -149,7 +149,7 @@ export default class SearchBookForm extends React.Component {
       readers_num: 0,
       reviews_num: 0,
       subtitle: '',
-      label: searchText, // Autosuggest OPTION LABEL
+      label: searchTextType, // Autosuggest OPTION LABEL
       title: searchBy.key === 'title' ? searchText : '',
       title_sort: searchBy.key === 'title' ? normalizeString(searchText) : '',
       value: (
@@ -193,7 +193,7 @@ export default class SearchBookForm extends React.Component {
                   createdByUid: this.props.user.uid || '',
                   created_num: (new Date()).getTime() || 0
                 },
-                authors: b.authors || [],
+                authors: b.authors || {}, // TODO
                 bid: '',
                 collections: [],
                 covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],
@@ -223,11 +223,12 @@ export default class SearchBookForm extends React.Component {
         //console.log(searchBy.key);
         let query;
         let optionLabel = searchBy.key;
+        const capitalizedSearchTextType = capitalizeFirstLetter(searchTextType);
         switch (searchBy.key) {
           case 'ISBN_13':
             query = booksRef.where(searchBy.where, '==', searchTextType); break;
           case 'author':
-            query = booksRef.where(searchBy.where.searchTextType, '==', true); 
+            query = booksRef.where(`${searchBy.where}.${capitalizedSearchTextType}`, '==', true); 
             optionLabel = String(searchBy.where); break;
           case 'publisher':
             query = booksRef.where(searchBy.where, '>=', capitalizeFirstLetter(searchTextType)); break;
@@ -240,10 +241,10 @@ export default class SearchBookForm extends React.Component {
           if (!snap.empty) {
             //console.log(snap);
             snap.forEach(doc => {
-              console.log(doc.data());
+              //console.log(doc.data());
               options.push({
                 ...doc.data(),
-                label: doc.data()[optionLabel] //Autosuggest OPTION LABEL
+                label: typeof doc.data()[optionLabel] === 'object' ? String(Object.keys(doc.data()[optionLabel])[0]) : doc.data()[optionLabel] //Autosuggest OPTION LABEL
               });
             });
           } else options.push(emptyBook);

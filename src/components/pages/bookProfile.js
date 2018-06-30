@@ -4,7 +4,7 @@ import Rater from 'react-rater';
 import Link from 'react-router-dom/Link';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { calcReadingTime, join, timeSince } from '../../config/shared';
+import { calcReadingTime, joinObj, timeSince } from '../../config/shared';
 import { funcType, userBookType, userType } from '../../config/types';
 import Cover from '../cover';
 import Incipit from '../incipit';
@@ -141,7 +141,7 @@ export default class BookProfile extends React.Component {
                   <h2 className="title">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
-                    {book.authors && <span className="counter">di {join(book.authors)}</span>}
+                    {book.authors && <span className="counter">di {joinObj(book.authors)}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && isEditor() && book.bid && <button className="btn sm flat counter" onClick={this.onEditing}>{icon.pencil()} Modifica</button>}
                   </div>

@@ -68,7 +68,7 @@ export default class Book extends React.Component {
               userBook: {
                 ...this.state.userBook,
                 bid: snap.data().bid || '',
-                authors: snap.data().authors || [],
+                authors: snap.data().authors || {},
                 covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
                 publisher: snap.data().publisher || '',
                 title: snap.data().title || '',

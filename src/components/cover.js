@@ -1,6 +1,6 @@
 import React from 'react';
 import { boolType, coverType } from '../config/types';
-import { join } from '../config/shared';
+import { joinObj } from '../config/shared';
 import Rating from './rating';
 
 export default class Cover extends React.Component {
@@ -58,14 +58,14 @@ export default class Cover extends React.Component {
             <div className="overlay"></div>
             <h2 className="title">{book.title}</h2>
             {book.subtitle && book.subtitle.length > 0 && <h3 className="subtitle">{book.subtitle}</h3>}
-            <span className="author">{join(book.authors)}</span>
+            <span className="author">{joinObj(book.authors)}</span>
             <span className="publisher">{book.publisher}</span>
           </div>
         }
         {(info !== false) && 
           <div className="info">
             <strong className="title">{book.title}</strong>
-            <span className="author">di {join(book.authors)}</span>
+            <span className="author">di {joinObj(book.authors)}</span>
             {full && <span className="publisher">{book.publisher}</span>}
             {(book.rating_num > 0) && (rating !== false) && 
               <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />

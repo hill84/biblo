@@ -3,6 +3,10 @@ export const appName = 'Biblo';
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
+export const joinObj = obj => {
+  const arr = Object.keys(obj).map(arr => arr);
+  return obj && (Object.keys(obj).length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : Object.keys(obj)[0]
+};
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
@@ -13,6 +17,23 @@ export const copyToClipboard = text => navigator.clipboard.writeText(text).then(
 }, error => console.warn('Async: Could not copy text: ', error));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
 export const getInitials = text => text && join(text.split(" ").map(w => w.charAt(0)));
+export const objToArr = obj => Object.keys(obj).map(arr => arr);
+export const arrayToObj = (arr, fn) => {
+  const obj = {};
+  const len = arr.length;
+  for (let i = 0; i < len; i++) {
+    const item = fn(arr[i], i, arr);
+    obj[item.key] = item.value;
+  }
+  return obj;
+};
+// example: const obj = arrayToObj(arr, function(item) { return { key: item, value: 'author' }});
+
+/* export const arrayToObj = array => { 
+  const obj = {}; 
+  array.forEach(item => obj[item] = 'author'); 
+  return obj;
+}; */
 
 // VALIDATION
 export const validateImg = (file, maxSize) => {

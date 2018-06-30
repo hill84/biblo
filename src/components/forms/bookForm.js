@@ -15,7 +15,7 @@ import React from 'react';
 import { bookRef, booksRef, collectionsRef, storageRef /* , timestamp */, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { checkBadWords, validateImg } from '../../config/shared';
+import { arrayToObj, checkBadWords, objToArr, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import isISBN from 'validator/lib/isISBN';
 import Cover from '../cover';
@@ -34,7 +34,7 @@ export default class BookForm extends React.Component {
         lastEditByUid: this.props.book.lastEditByUid || '',
         lastEdit_num: this.props.book.lastEdit || 0
       },
-      authors: this.props.book.authors || [], 
+      authors: this.props.book.authors || {}, 
       bid: this.props.book.bid || '', 
       collections: this.props.book.collections || [],
       covers: this.props.book.covers || [], 
@@ -131,14 +131,25 @@ export default class BookForm extends React.Component {
   
   onAddChip = (key, chip) => {
     this.setState({
-      book: { ...this.state.book, [key]: [...this.state.book[key], chip] }, changes: true
+      book: { 
+        ...this.state.book, 
+        [key]: { 
+          ...this.state.book[key], 
+          [chip]: true
+        }
+      }, changes: true
     });
   };
 
   onDeleteChip = (key, chip) => {
     this.setState({
       //chips: this.state.chips.filter((c) => c !== chip)
-      book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true
+      book: { 
+        ...this.state.book, 
+        [key]: arrayToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip), function(item) { 
+          return { key: item, value: true }
+        })
+      }, changes: true
     });
   };
   
@@ -182,7 +193,7 @@ export default class BookForm extends React.Component {
           newBookRef.set({
             ISBN_10: book.ISBN_10,
             ISBN_13: book.ISBN_13, 
-            authors: book.authors, 
+            authors: arrayToObj(book.authors, function(item) { return { key: item, value: true }}), 
             bid: newBookRef.id,
             collections: book.collections,
             covers: book.covers, 
@@ -235,7 +246,7 @@ export default class BookForm extends React.Component {
                 covers: (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
-                authors: book.authors, 
+                authors: arrayToObj(book.authors, function(item) { return { key: item, value: true }}), 
                 publisher: book.publisher,
                 publication: book.publication,
                 rating_num: book.rating_num,
@@ -263,11 +274,11 @@ export default class BookForm extends React.Component {
     if (book.subtitle && book.subtitle.length > 255) {
       errors.subtitle = "Lunghezza massima 255 caratteri";
     }
-    if (!book.authors.length) {
+    if (!Object.keys(book.authors).length) {
       errors.authors = "Inserisci l'autore";
-    } else if (book.authors.length > 5) {
+    } else if (Object.keys(book.authors).length > 5) {
       errors.authors = "Massimo 5 autori";
-    } else if (book.authors.some(author => author.length > 50)) {
+    } else if (Object.keys(book.authors).some(author => author.length > 50)) {
       errors.authors = "Lunghezza massima 50 caratteri";
     }
     if (!book.publisher) {
@@ -374,7 +385,7 @@ export default class BookForm extends React.Component {
   onExitEditing = () => this.props.isEditing();
 	
 	render() {
-    const { authError, book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading } = this.state;
+    const { book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading } = this.state;
     const { user } = this.props;
     const isAdmin = () => user && user.roles && user.roles.admin === true;
     const menuItemsMap = (arr, values) => arr.map(item => 
@@ -445,9 +456,10 @@ export default class BookForm extends React.Component {
                       placeholder="es: Arthur Conan Doyle"
                       error={Boolean(errors.authors)}
                       label="Autore"
-                      value={book.authors}
+                      value={objToArr(book.authors)}
                       onAdd={chip => this.onAddChip("authors", chip)}
                       onDelete={chip => this.onDeleteChip("authors", chip)}
+                      onKeyPress={e => { if (e.key === 'Enter') e.preventDefault(); }}
                     />
                     {errors.authors && <FormHelperText className="message error">{errors.authors}</FormHelperText>}
                   </FormControl>
