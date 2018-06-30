@@ -9,29 +9,29 @@ service firebase.storage {
 
     match /users/{uid} {
     	allow read;
-      allow write: if userHasAllRoles('admin', 'editor') == true || isOwner(uid);
+      allow write: if isEditor() && (isAdmin() || isOwner(uid);
     }
 
     match /books/{bid} {
     	allow read;
-      allow create, update: if userHasRole('editor') == true;
+      allow create, update: if isEditor();
       allow delete: if userHasAllRoles('admin', 'editor') == true;
     }
 
     match /authors/{aid} {
     	allow read;
-      allow create, update: if userHasRole('editor') == true;
+      allow create, update: if isEditor();
       allow delete: if userHasAllRoles('admin', 'editor') == true;
     }
 
     match /collections/{cid} {
     	allow read;
-      allow create, update: if userHasRole('editor') == true;
+      allow create, update: if isEditor();
       allow delete: if userHasAllRoles('admin', 'editor') == true;
     }
 
     match /admin/{allPaths=**} {
-    	allow read: if userHasRole('admin') == true;
+    	allow read: if isAdmin();
       allow write: if userHasAllRoles('admin', 'editor') == true;
     }
 
@@ -46,6 +46,18 @@ service firebase.storage {
 
     function userHasRole(role) {
       return getUserData().roles[role] == true;
+    }
+
+    function isAdmin() {
+      return getUserData().roles['admin'] == true;
+    }
+
+    function isEditor() {
+      return getUserData().roles['editor'] == true;
+    }
+
+    function isPremium() {
+      return getUserData().roles['premium'] == true;
     }
 
     function userHasAnyRole(roles) {
