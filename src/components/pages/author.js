@@ -1,9 +1,10 @@
+import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { authorsRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { normalizeString } from '../../config/shared';
+import { getInitials, normalizeString } from '../../config/shared';
 import { authorType } from '../../config/types';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
@@ -46,8 +47,8 @@ export default class Author extends React.Component {
       if (!snap.empty) {
         const books = [];
         snap.forEach(book => books.push(book.data()));
+        //console.log(books);
         this.setState({ books, loading: false });
-        console.log(books);
       } else {
         this.setState({ books: null, loading: false });
       }
@@ -70,8 +71,15 @@ export default class Author extends React.Component {
     return (
       <div id="AuthorComponent" className="container">
         <div className="card" id="authorCard">
-          <h2 className="title">{author.name}</h2>
-          <p className="bio">{author.bio}</p>
+          <div className="row text-align-center-md">
+            <div className="col-md-auto col-sm-12">
+              <Avatar className="avatar centered" src={author.photoURL} alt={author.name}>{!author.photoURL && getInitials(author.name)}</Avatar>
+            </div>
+            <div className="col">
+              <h2 className="title">{author.name}</h2>
+              <p className="bio">{author.bio}</p>
+            </div>
+          </div>
         </div>
         <div className="card">
           <div className="shelf">

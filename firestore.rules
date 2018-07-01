@@ -13,7 +13,7 @@ service cloud.firestore {
     	allow read;
       allow create: if isEditor() && isValidBook();
       allow update: if isEditor() && isValidBook() && (incomingData().bid == existingData().bid);
-      allow delete: if if userHasAllRoles('admin', 'editor') == true;
+      allow delete: if userHasAllRoles('admin', 'editor') == true;
     }
     
     match /shelves/{uid} {

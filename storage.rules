@@ -9,7 +9,7 @@ service firebase.storage {
 
     match /users/{uid} {
     	allow read;
-      allow write: if isEditor() && (isAdmin() || isOwner(uid);
+      allow write: if isEditor() && (isAdmin() || isOwner(uid));
     }
 
     match /books/{bid} {

@@ -16,7 +16,7 @@ export const copyToClipboard = text => navigator.clipboard.writeText(text).then(
   //console.log('Async: Copying to clipboard was successful!');
 }, error => console.warn('Async: Could not copy text: ', error));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
-export const getInitials = text => text && join(text.split(" ").map(w => w.charAt(0)));
+export const getInitials = text => text && text.split(" ").map(w => w.charAt(0)).join('');
 export const objToArr = obj => Object.keys(obj).map(arr => arr);
 export const arrayToObj = (arr, fn) => {
   const obj = {};

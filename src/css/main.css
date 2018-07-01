@@ -725,6 +725,8 @@ hr.line {
   box-shadow: inset 0 0 0 50px var(--cardBg), 0 0 0 10px var(--cardBg);
 }
 
+#authorCard .avatar { --size: 48px; width: var(--size); height: var(--size); line-height: var(--size); }
+
 .placeholder { margin: auto; }
 
 .auth-header { 

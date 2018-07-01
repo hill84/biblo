@@ -4,7 +4,7 @@ import Rater from 'react-rater';
 import Link from 'react-router-dom/Link';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { calcReadingTime, joinObj, timeSince } from '../../config/shared';
+import { calcReadingTime/* , joinObj */, timeSince } from '../../config/shared';
 import { funcType, userBookType, userType } from '../../config/types';
 import Cover from '../cover';
 import Incipit from '../incipit';
@@ -113,6 +113,7 @@ export default class BookProfile extends React.Component {
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
     const hasBid = () => book && book.bid;
+    const authors = book && <Link to={`/author/${Object.keys(book.authors)[0]}`}>{Object.keys(book.authors)[0]}</Link>;
 
     if (loading) return <div className="loader"><CircularProgress /></div>
 
@@ -142,7 +143,7 @@ export default class BookProfile extends React.Component {
                   <h2 className="title">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
-                    {book.authors && <span className="counter">di {joinObj(book.authors)}</span>}
+                    {book.authors && <span className="counter">di {authors}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && isEditor() && book.bid && <button className="btn sm flat counter" onClick={this.onEditing}>{icon.pencil()} Modifica</button>}
                   </div>
