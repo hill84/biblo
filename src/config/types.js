@@ -131,7 +131,6 @@ export const authorType = shape({ //TODO
   followers: arrayOf(string),
   followers_num: numberType.isRequired,
   name: stringType.isRequired,
-  name_sort: stringType.isRequired,
   photoURL: string,
   sex: string.isRequired
 });

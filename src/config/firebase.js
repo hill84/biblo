@@ -44,6 +44,8 @@ export const collectionsRef = cid => db.collection('collections').doc(cid).colle
 export const reviewsRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
 export const reviewRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);
 
+export const authorsRef = aid => db.collection('authors').doc(aid);
+
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 
 export default firebase;

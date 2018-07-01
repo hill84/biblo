@@ -31,16 +31,14 @@ export default class Profile extends React.Component {
 
 	componentDidMount() {
 		userRef(uid).onSnapshot(snap => {
-			this.setState({ loading: false });
 			if (snap.exists) {
 				this.setState({ 
 					user: snap.data(),
-					imgPreview: snap.data().photoURL || ''
+          imgPreview: snap.data().photoURL || '',
+          loading: false
 				});
 			} else {
-				this.setState({
-					loading: false 
-				});
+				this.setState({ loading: false });
 			}
 		});
 	}
