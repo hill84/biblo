@@ -5,8 +5,8 @@ service cloud.firestore {
     match /users/{uid} {
     	allow read;
       allow create: if isValidUser();
-      allow update: if isEditor() && (isOwner(uid) || isAdmin()) && isValidUser();
-    	allow delete: if isEditor() && (isOwner(uid) || isAdmin());
+      allow update: if isValidUser() && (userHasAllRoles('admin', 'editor') == true || (isOwner(uid) && isEditor()));
+    	allow delete: if userHasAllRoles('admin', 'editor') == true || isOwner(uid);
     }
     
     match /books/{bid} {
@@ -18,11 +18,13 @@ service cloud.firestore {
     
     match /shelves/{uid} {
       allow read;
-      allow write: if isEditor() && (isAdmin() || isOwner(uid));
+      allow write: if userHasAllRoles('admin', 'editor') == true || (isEditor() && isOwner(uid));
 
     	match /books/{bid} {
         allow read;
-        allow create, update: if incomingData().bid == existingData().bid;
+        allow create: if isEditor();
+        allow update: if isEditor() && incomingData().bid == existingData().bid;
+        allow delete: if isEditor();
       }
     }
     
@@ -32,7 +34,7 @@ service cloud.firestore {
       
       match /reviewers/{uid} {
       	allow read;
-        allow write: if isAdmin() || isOwner(uid);
+        allow write: if userHasAllRoles('admin', 'editor') == true || (isEditor() && isOwner(uid));
       }
     }
     
