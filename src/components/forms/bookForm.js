@@ -76,7 +76,7 @@ export default class BookForm extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (state.prevProps !== props) {
-      if (props.book !== state.book) { return { prevProps: props, book: props.book }}
+      if (props.book.bid !== state.book.bid) { return { prevProps: props, book: props.book }}
     }
     return null;
   }
@@ -128,25 +128,32 @@ export default class BookForm extends React.Component {
       book: { ...this.state.book, [key]: String(date) }, changes: true
     });
   };
+
+  onAddChip = (key, chip) => { 
+    this.setState({ 
+      book: { ...this.state.book, [key]: [...this.state.book[key], chip] }, changes: true 
+    }); 
+  }; 
+
+  onDeleteChip = (key, chip) => { 
+    this.setState({ 
+      //chips: this.state.chips.filter((c) => c !== chip) 
+      book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true 
+    }); 
+  }; 
   
-  onAddChip = (key, chip) => {
+  onAddChipToObj = (key, chip) => {
     this.setState({
-      book: { 
-        ...this.state.book, 
-        [key]: { 
-          ...this.state.book[key], 
-          [chip]: true
-        }
-      }, changes: true
+      book: { ...this.state.book, [key]: { ...this.state.book[key], [chip.split('.').join('')]: true }}, changes: true
     });
   };
 
-  onDeleteChip = (key, chip) => {
+  onDeleteChipFromObj = (key, chip) => {
     this.setState({
       //chips: this.state.chips.filter((c) => c !== chip)
       book: { 
         ...this.state.book, 
-        [key]: arrayToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip), function(item) { 
+        [key]: arrayToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), function(item) { 
           return { key: item, value: true }
         })
       }, changes: true
@@ -161,6 +168,10 @@ export default class BookForm extends React.Component {
       book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
     });
   };
+
+  onPreventDefault = e => { 
+    if (e.key === 'Enter') e.preventDefault(); 
+  }
 
   onSubmit = e => {
     e.preventDefault();
@@ -457,9 +468,9 @@ export default class BookForm extends React.Component {
                       error={Boolean(errors.authors)}
                       label="Autore"
                       value={objToArr(book.authors)}
-                      onAdd={chip => this.onAddChip("authors", chip)}
-                      onDelete={chip => this.onDeleteChip("authors", chip)}
-                      onKeyPress={e => { if (e.key === 'Enter') e.preventDefault(); }}
+                      onAdd={chip => this.onAddChipToObj("authors", chip)}
+                      onDelete={chip => this.onDeleteChipFromObj("authors", chip)}
+                      onKeyPress={e => this.onPreventDefault(e)}
                     />
                     {errors.authors && <FormHelperText className="message error">{errors.authors}</FormHelperText>}
                   </FormControl>
@@ -623,6 +634,7 @@ export default class BookForm extends React.Component {
                         onAdd={chip => this.onAddChip("collections", chip)}
                         onDelete={chip => this.onDeleteChip("collections", chip)}
                         disabled={!isAdmin()}
+                        onKeyPress={e => this.onPreventDefault(e)}
                       />
                       {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}
                     </FormControl>
@@ -688,8 +700,6 @@ export default class BookForm extends React.Component {
                     </button>
                   </div>
                 }
-
-                {authError && <div className="info-row"><div className="message error">{authError}</div></div>}
 
               </div>
             </div>
