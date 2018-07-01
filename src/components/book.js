@@ -474,6 +474,7 @@ export default class Book extends React.Component {
               />
             :
               <BookProfile 
+                openSnackbar={openSnackbar}
                 addBookToShelf={this.addBookToShelf} 
                 addBookToWishlist={this.addBookToWishlist} 
                 removeBookFromShelf={this.removeBookFromShelf} 

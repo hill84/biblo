@@ -109,7 +109,7 @@ export default class BookProfile extends React.Component {
   
 	render() {
     const { book, isIncipitOpen, isDescMinified, isReadingStateOpen, user, userBook } = this.state;
-    const { loading } = this.props;
+    const { loading, openSnackbar } = this.props;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
     const hasBid = () => book && book.bid;
@@ -147,8 +147,8 @@ export default class BookProfile extends React.Component {
                     {isAuthenticated() && isEditor() && book.bid && <button className="btn sm flat counter" onClick={this.onEditing}>{icon.pencil()} Modifica</button>}
                   </div>
                   <div className="info-row hide-sm">
-                    <span className="counter">ISBN-13: <CopyToClipboard text={book.ISBN_13}/></span>
-                    {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: <CopyToClipboard text={book.ISBN_10}/></span>}
+                    <span className="counter">ISBN-13: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/></span>
+                    {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></span>}
                     {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
                     {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
                     {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
