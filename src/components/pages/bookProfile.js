@@ -132,6 +132,7 @@ export default class BookProfile extends React.Component {
                   {book.incipit ? 
                     <div role="button" className="hoverable-items" onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
+                      <button className="btn xs centered flat" style={{'marginTop': '10px'}}>Leggi incipit</button>
                     </div>
                   :
                     <Cover book={book} rating={false} info={false} />
@@ -165,22 +166,22 @@ export default class BookProfile extends React.Component {
                         {userBook.bookInShelf ? 
                           <React.Fragment>
                             <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelf}>
-                              <span className="hide-on-hover">Aggiunto a libreria</span>
-                              <span className="show-on-hover">Rimuovi da libreria</span>
+                              <span className="hide-on-hover">{icon.check()} libreria</span>
+                              <span className="show-on-hover">{icon.close()} libreria</span>
                             </button>
-                            <button className="btn" onClick={this.onToggleReadingState}>Stato lettura</button>
+                            <button className="btn" onClick={this.onToggleReadingState}><span className="hide-xs">Stato</span> lettura</button>
                           </React.Fragment>
                         :
-                          <button className="btn primary" disabled={!hasBid()} onClick={this.onAddBookToShelf}>Aggiungi a libreria</button>
+                          <button className="btn primary" disabled={!hasBid()} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
                         }
                         {userBook.bookInWishlist && 
                           <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
-                            <span className="hide-on-hover">Aggiunto a desideri</span>
-                            <span className="show-on-hover">Rimuovi da desideri</span>
+                            <span className="hide-on-hover">{icon.check()} desideri</span>
+                            <span className="show-on-hover">{icon.close()} desideri</span>
                           </button>
                         }
                         {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                          <button className="btn flat" disabled={!hasBid()} onClick={this.onAddBookToWishlist}>Aggiungi a desideri</button>
+                          <button className="btn flat" disabled={!hasBid()} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
                         }
                       </div>
                       <div className="info-row">

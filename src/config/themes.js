@@ -63,6 +63,7 @@ export const darkTheme = createMuiTheme({
 
 export const primaryTheme = createMuiTheme({
   palette: {
+    type: "dark",
     primary: {
       light: 'rgba(255,255,255,.5)',
       main: 'rgba(255,255,255,.7)',
@@ -76,7 +77,7 @@ export const primaryTheme = createMuiTheme({
       contrastText: '#FFF',
     },
     background: {
-      paper: cyan[700],
+      paper: '#32434E',
       default: blueGrey[900]
     }
   }

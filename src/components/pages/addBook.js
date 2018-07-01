@@ -1,4 +1,6 @@
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
+import { primaryTheme } from '../../config/themes';
 import Link from 'react-router-dom/Link';
 import { userType } from '../../config/types';
 import Book from '../book';
@@ -20,11 +22,13 @@ export default class AddBook extends React.Component {
     const { user } = this.props;
 
 		return (
-			<div className="container" ref="AddBookComponent">
-				<h2>Aggiungi un libro</h2>
-				<div className="card">
-					<SearchBookForm onBookSelect={this.onBookSelect} user={user} />
-				</div>
+			<div className="container" id="addBookComponent">
+        {/* <h2>Aggiungi un libro</h2> */}
+        <MuiThemeProvider theme={primaryTheme}>
+          <div className="card sm primary" id="search-book">
+            <SearchBookForm onBookSelect={this.onBookSelect} user={user} />
+          </div>
+        </MuiThemeProvider>
 				{book ?
 					<Book book={book} user={user} />
 				:

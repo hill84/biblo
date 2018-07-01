@@ -121,6 +121,8 @@ hr.line {
 }
 .card.main { z-index: 10; }
 .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); }
+.card.sm { --pad: 14px; }
+.card.xs { --pad: 7px; }
 .card .footer, .dialog .footer, .tab .footer { 
   display: -ms-flexbox;
   display: flex;
@@ -274,10 +276,16 @@ hr.line {
   --linkClrActive: rgba(255, 255, 255, .8);
   --btnDisabledBg: var(--primaryLigthClr);
   --cardBg: var(--primaryClr);
+  --successClr: rgb(87, 206, 92);
+  --errorClr: rgb(171, 55, 46);
 }
+
+.dark .react-autosuggest__suggestions-container, 
+.primary .react-autosuggest__suggestions-container { background-color: #fff; }
 
 /* BUTTONS */
 .btn {
+  --radius: 3px;
   position: relative;
   display: inline-block;
   appearance: none;
@@ -288,7 +296,7 @@ hr.line {
   height: var(--btnHeight);
   line-height: var(--btnHeight);
   border: 0;
-  border-radius: 3px;
+  border-radius: var(--radius);
   background-color: var(--primaryClr);
   box-shadow: 0 1px 2px rgba(0,0,0,.1);
   font-family: Roboto, sans-serif;
@@ -360,6 +368,12 @@ hr.line {
   --btnPad: .6rem;
   --btnHeight: 26px;
   --btnFontSize: .75rem;
+}
+.btn.xs { 
+  --btnPad: .4rem;
+  --btnHeight: 20px;
+  --btnFontSize: .65rem;
+  --radius: 2px;
 }
 
 .btn.primary { background-color: var(--primaryClr); }
@@ -633,6 +647,30 @@ hr.line {
 .drawer .list { width: 256px; }
 
 /* CUSTOM */
+.form-group label + div:before {
+  border-color: rgba(0,0,0,.15);
+}
+#search-book .form-group .loader { border-radius: 3px; }
+#search-book label + div:before, 
+#search-book label + div:after {
+  border-color: transparent !important;
+}
+#search-book .react-autosuggest__container {
+  background-color: rgba(10,15,20,.15);
+  border-radius: 3px;
+  padding-top: 5px;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.07);
+}
+#search-book .form-group input {
+  padding: 5px 3px 5px 10px;
+}
+#search-book .form-group label {
+  left: 10px;
+}
+#search-book .search-by {
+  margin: 0 5px 5px 0;
+}
+
 #BookContainerComponent .content-background { z-index: -1; }
 #BookContainerComponent .content-background:before {
   content: "";
@@ -902,7 +940,7 @@ hr.line {
 }
 .shelf.scrollable:after {
   right: 0;
-  width: var(--coverWidth);
+  width: calc(var(--bookWidth) / 2);
   background: -moz-linear-gradient(left,transparent 0,var(--cardBg) 90%);
   background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
   background: -webkit-linear-gradient(left,transparent 0,var(--cardBg) 90%);

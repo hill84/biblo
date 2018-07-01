@@ -11,7 +11,7 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { capitalizeFirstLetter, joinObj, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { arrayToObj, capitalizeFirstLetter, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 import { userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
@@ -105,7 +105,7 @@ export default class SearchBookForm extends React.Component {
           </span>
         </div>
         <div className="secondaryText">
-          {searchBy.key === 'title' ? `di ${joinObj(b.authors)}` : searchTextHighlighted}
+          {searchBy.key === 'title' || searchBy.key === 'author' ? `di ${Object.keys(b.authors)[0]}` : searchTextHighlighted}
         </div>
       </MenuItem>
     );
@@ -122,7 +122,9 @@ export default class SearchBookForm extends React.Component {
     const { maxSearchResults, searchBy } = this.state;
     const { user } = this.props;
     const searchText = value.normalize();
-    const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : typeof searchText === 'object' ? String(Object.keys(searchText)[0]) : String(searchText);
+    const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : 
+      typeof searchText === 'object' ? String(Object.keys(searchText.split('.').join(''))[0]) : 
+      String(searchText);
     const emptyBook = {
       ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
@@ -131,7 +133,7 @@ export default class SearchBookForm extends React.Component {
         createdByUid: (user && user.uid) || '',
         created_num: (new Date()).getTime() || 0
       },
-      authors: searchBy.key === 'author' ? { searchText: true } : {},
+      authors: searchBy.key === 'author' ? { searchTextType: true } : {},
       bid: '',
       collections: [],
       covers: [],
@@ -193,7 +195,7 @@ export default class SearchBookForm extends React.Component {
                   createdByUid: this.props.user.uid || '',
                   created_num: (new Date()).getTime() || 0
                 },
-                authors: b.authors || {}, // TODO
+                authors: (b.authors && arrayToObj(b.authors.map(author => author.split('.').join('')), function(item) { return { key: item, value: 'author' }})) || {},
                 bid: '',
                 collections: [],
                 covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],
@@ -293,11 +295,11 @@ export default class SearchBookForm extends React.Component {
             inputProps={{
               className: `input-field`,
               type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
-              label: this.props.new ? 'Inserisci' : `Cerca un libro per ${searchBy.label}`,
+              label: `${this.props.new ? 'Crea un libro' : 'Cerca un libro'} per ${searchBy.label}`,
               placeholder: `Es: ${searchBy.hint}`,
               value: value,
               onChange: this.onChange,
-              endAdornment: <button className="btn sm flat search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
+              endAdornment: <button className="btn sm primary search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
             }}
           />
           {/* searchBy.key === 'ISBN_13' && isNaN(value) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}

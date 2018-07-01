@@ -47,10 +47,10 @@ export const bookType = shape({
     createdBy: string.isRequired,
     createdByUid: string.isRequired,
     created_num: number.isRequired,
-    edit: bool.isRequired,
-    lastEditBy: string.isRequired,
-    lastEditByUid: string.isRequired,
-    lastEdit_num: number.isRequired
+    edit: bool,
+    lastEditBy: string,
+    lastEditByUid: string,
+    lastEdit_num: number
   }),
   authors: shape().isRequired,
   bid: string.isRequired,

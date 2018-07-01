@@ -55,7 +55,7 @@ export const checkBadWords = text => splitWords(text).some(word => badWords.some
 export const calcVulgarity = text => splitWords(text).filter(word => badWords.some(badWord => word.toLowerCase() === badWord)).length; // NUMBER
 
 // NORMALIZATION
-export const normalizeString = str => str.toString().toLowerCase()
+export const normalizeString = str => String(str).toLowerCase()
   .replace(/\s+/g,'-')        // Replace spaces with -
   .replace(/--+/g,'-')        // Replace multiple - with single -
   .replace(/[àáâãäå]/g,"a")
@@ -70,8 +70,8 @@ export const normalizeString = str => str.toString().toLowerCase()
   .replace(/ñ/g,"n")
   .replace(/^-+/, '')         // Trim - from start of text
   .replace(/-+$/, '');        // Trim - from end of text
-export const normalizeCover = str => str && str.replace('http:', '').replace('&edge=curl', '');
-export const capitalizeFirstLetter = str => str && str.charAt(0).toUpperCase() + str.slice(1);
+export const normalizeCover = str => str && String(str).replace('http:', '').replace('&edge=curl', '');
+export const capitalizeFirstLetter = str => str && String(str).charAt(0).toUpperCase() + String(str).slice(1);
 
 // CALCULATION
 const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) && `${Math.floor(minutes%60)} minuti`}`;
