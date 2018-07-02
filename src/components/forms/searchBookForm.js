@@ -195,7 +195,7 @@ export default class SearchBookForm extends React.Component {
                   createdByUid: this.props.user.uid || '',
                   created_num: (new Date()).getTime() || 0
                 },
-                authors: (b.authors && arrayToObj(b.authors.map(author => author.split('.').join('')), function(item) { return { key: item, value: 'author' }})) || {},
+                authors: (b.authors && arrayToObj(b.authors.map(author => author.split('.').join('')), function(item) { return { key: item, value: true }})) || {},
                 bid: '',
                 collections: [],
                 covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],

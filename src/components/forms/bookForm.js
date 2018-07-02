@@ -76,7 +76,10 @@ export default class BookForm extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (state.prevProps !== props) {
-      if ((props.book.bid !== state.book.bid) || (!props.book.bid && props.book !== state.book)) { return { prevProps: props, book: props.book }}
+      if ((props.book.bid !== state.book.bid) || (!state.book.bid && props.book !== state.prevProps.book)) { 
+        return { prevProps: props, book: props.book, errors: {} }
+      }
+      if (props.isEditing !== state.isEditing) { return { isEditing: props.isEditing } }
     }
     return null;
   }
@@ -269,7 +272,9 @@ export default class BookForm extends React.Component {
           });
         }
       } else {
-        this.setState({ loading: false, isEditingDescription: true, isEditingIncipit: true });
+        this.setState({ loading: false });
+        if (errors.description) { this.setState({ isEditingDescription: true })}
+        if (errors.incipit) { this.setState({ isEditingIncipit: true })}
         openSnackbar('Ricontrolla i dati inseriti', 'error');
       }
     } else this.props.isEditing();
