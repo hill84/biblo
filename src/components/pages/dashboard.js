@@ -31,9 +31,19 @@ export default class Dashboard extends React.Component {
 
 	static getDerivedStateFromProps(props, state) {
     if (props.user) {
-      if (props.user.uid !== state.luid) { return { luid: props.user.uid }; }
+      if (props.user.uid !== state.luid) { 
+				return { 
+					luid: props.user.uid, 
+					isOwner: props.user.uid === state.uid
+				}; 
+			}
     } else { return { luid: null }; }
-    if (props.match.params.uid !== state.uid) { return { uid: props.match.params.uid }; }
+    if (props.match.params.uid !== state.uid) { 
+			return { 
+				uid: props.match.params.uid, 
+				isOwner: state.luid === props.match.params.uid 
+			}; 
+		}
     return null;
   }
 
@@ -66,7 +76,7 @@ export default class Dashboard extends React.Component {
 					this.setState({
             isOwner: luid === uid,
 						user: snap.data(),
-						follow: (user && user.stats.followers) && user.stats.followers.indexOf(luid) > -1,
+						follow: (snap.data().stats.followers) && snap.data().stats.followers.indexOf(luid) > -1,
 						progress: 100 // / tot * count
           });
 				} else this.setState({ isOwner: false, user: null });
