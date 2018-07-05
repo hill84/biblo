@@ -8,6 +8,16 @@ service cloud.firestore {
       allow update: if isValidUser() && (userHasAllRoles('admin', 'editor') == true || (isOwner(uid) && isEditor()));
     	allow delete: if userHasAllRoles('admin', 'editor') == true || isOwner(uid);
     }
+
+    match /followers/{uid} {
+    	allow read;
+      allow write: if isEditor();
+    }
+
+    match /followings/{uid} {
+    	allow read;
+      allow write: if isEditor();
+    }
     
     match /books/{bid} {
     	allow read;

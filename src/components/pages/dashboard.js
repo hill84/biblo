@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import SwipeableViews from 'react-swipeable-views';
-import { isAuthenticated, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, isAuthenticated, userRef, timestamp } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { appName, calcAge, getInitials, joinToLowerCase } from '../../config/shared';
 import { userType } from '../../config/types';
@@ -19,6 +19,10 @@ export default class Dashboard extends React.Component {
 		luid: this.props.user && this.props.user.uid,
 		uid: this.props.match.params.uid,
 		user: null,
+		followers: [],
+		followers_num: 0,
+		followings: [],
+		followings_num: 0,
 		follow: false,
 		loading: true,
     progress: 0,
@@ -50,6 +54,8 @@ export default class Dashboard extends React.Component {
 	componentDidMount() {
 		this._isMounted = true;
 		this.fetchUser();
+		this.fetchFollowers();
+		this.fetchFollowings();
 	}
 
 	componentWillUnmount() {
@@ -60,12 +66,48 @@ export default class Dashboard extends React.Component {
 		if (this._isMounted) {
 			if ((this.state.uid !== prevState.uid) || (this.state.luid !== prevState.luid)) {
 				this.fetchUser();
+				this.fetchFollowers();
+				this.fetchFollowings();
 			}
 		}
-  }
+	}
+	
+	fetchFollowers = () => {
+		const { luid, uid } = this.state;
+		console.log('fetching followers');
+		if (uid) {
+			followersRef(uid).onSnapshot(snap => {
+				if (snap.exists) {
+					console.log(snap.data());
+					this.setState({
+						followers: Object.keys(snap.data()),
+						followers_num: Object.keys(snap.data()).length,
+						follow: Object.keys(snap.data()).indexOf(luid) > -1
+					});
+				} else this.setState({ followers: [], follow: false });
+			});
+		} else this.setState({ followers: [], followers_num: 0 });
+	}
+
+	fetchFollowings = () => {
+		const { uid } = this.state;
+		console.log('fetching followings');
+		if (uid) {
+			followingsRef(uid).onSnapshot(snap => {
+				if (snap.exists) {
+					console.log(snap.data());
+					this.setState({
+						followings: Object.keys(snap.data()),
+						followings_num: Object.keys(snap.data()).length
+					});
+				} else this.setState({ followings: [] });
+			});
+		} else this.setState({ followings: [], followings_num: 0 });
+	}
 	
 	fetchUser = () => {
-    const { luid, uid, user } = this.state;
+		const { luid, uid, user } = this.state;
+		console.log('fetching user');
 		if (uid) {
 			userRef(uid).onSnapshot(snap => {
 				this.setState({ loading: false });
@@ -76,7 +118,6 @@ export default class Dashboard extends React.Component {
 					this.setState({
             isOwner: luid === uid,
 						user: snap.data(),
-						follow: (snap.data().stats.followers) && snap.data().stats.followers.indexOf(luid) > -1,
 						progress: 100 // / tot * count
           });
 				} else this.setState({ isOwner: false, user: null });
@@ -89,8 +130,8 @@ export default class Dashboard extends React.Component {
 			luid = this.state.luid;
 			uid = this.state.uid;
 	
-			let visitedFollowers_num = this.state.user.stats.followers_num;
-			let visitedFollowers = this.state.user.stats.followers || [];
+			let visitedFollowers_num = this.state.followers_num;
+			let visitedFollowers = this.state.followers || {};
 			const visitedFollowersIndex = visitedFollowers.indexOf(luid);
 	
 			let visitorFollowed_num = this.props.user.stats.followed_num;
@@ -127,12 +168,12 @@ export default class Dashboard extends React.Component {
 		}
   }
   
-  handleChange = (event, value) => this.setState({ tabSelected: value });
+  handleChange = (e, value) => this.setState({ tabSelected: value });
 
   handleChangeIndex = index => this.setState({ tabSelected: index });
 
 	render() {
-		const { follow, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
+		const { follow, followers, followers_num, followings, followings_num, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
 
 		if (!user) {
 			if (loading) {
@@ -148,9 +189,9 @@ export default class Dashboard extends React.Component {
 			}
 		}
 
-		const followers = user.stats.followers.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
-    const followed = user.stats.followed.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
-    const roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={i+'_'+r} className={`badge ${r}`}>{r}</div>);
+		const Followers = followers.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+    const Followings = followings.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+    const Roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={i+'_'+r} className={`badge ${r}`}>{r}</div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const ShelfDetails = () => {
@@ -171,7 +212,7 @@ export default class Dashboard extends React.Component {
 						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
 								<div className="role-badges">
-									{roles}
+									{Roles}
 								</div>
 								<div className="row text-align-center-md">
 									<div className="col-md-auto col-sm-12">
@@ -205,8 +246,8 @@ export default class Dashboard extends React.Component {
 													: <span>{icon.plus()} Segui</span> }
 												</button>
 											}
-											<span className="counter">Seguito da: <b>{user.stats.followers_num || 0}</b></span>
-											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{user.stats.followed_num || 0}</b></span>
+											<span className="counter">Seguito da: <b>{followers_num || 0}</b></span>
+											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{followings_num || 0}</b></span>
 										</div>
 									</div>
 								</div>
@@ -262,11 +303,11 @@ export default class Dashboard extends React.Component {
             <div className="row">
               <div className="col">
                 <h4>Seguito da:</h4>
-                {followers}
+                {Followers}
               </div>
               <div className="col">
                 <h4>Segue:</h4>
-                {followed}
+                {Followings}
               </div>
             </div>
           </div>

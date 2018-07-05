@@ -15,7 +15,7 @@ import React from 'react';
 import { bookRef, booksRef, collectionsRef, storageRef /* , timestamp */, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { arrayToObj, checkBadWords, objToArr, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import isISBN from 'validator/lib/isISBN';
 import Cover from '../cover';
@@ -156,7 +156,7 @@ export default class BookForm extends React.Component {
       //chips: this.state.chips.filter((c) => c !== chip)
       book: { 
         ...this.state.book, 
-        [key]: arrayToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), function(item) { 
+        [key]: arrToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), function(item) { 
           return { key: item, value: true }
         })
       }, changes: true
@@ -207,7 +207,7 @@ export default class BookForm extends React.Component {
           newBookRef.set({
             ISBN_10: book.ISBN_10,
             ISBN_13: book.ISBN_13, 
-            authors: arrayToObj(book.authors, function(item) { return { key: item, value: true }}), 
+            authors: arrToObj(book.authors, function(item) { return { key: item, value: true }}), 
             bid: newBookRef.id,
             collections: book.collections,
             covers: book.covers, 
@@ -260,7 +260,7 @@ export default class BookForm extends React.Component {
                 covers: (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
-                authors: arrayToObj(book.authors, function(item) { return { key: item, value: true }}), 
+                authors: arrToObj(book.authors, function(item) { return { key: item, value: true }}), 
                 publisher: book.publisher,
                 publication: book.publication,
                 rating_num: book.rating_num,
@@ -472,7 +472,7 @@ export default class BookForm extends React.Component {
                       placeholder="es: Arthur Conan Doyle"
                       error={Boolean(errors.authors)}
                       label="Autore"
-                      value={objToArr(book.authors)}
+                      value={Object.keys(book.authors)}
                       onAdd={chip => this.onAddChipToObj("authors", chip)}
                       onDelete={chip => this.onDeleteChipFromObj("authors", chip)}
                       onKeyPress={e => this.onPreventDefault(e)}

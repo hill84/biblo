@@ -4,8 +4,8 @@ export const appName = 'Biblo';
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
 export const joinObj = obj => {
-  const arr = Object.keys(obj).map(arr => arr);
-  return obj && (Object.keys(obj).length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : Object.keys(obj)[0]
+  const arr = Object.keys(obj);
+  return obj && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0]
 };
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
@@ -17,8 +17,8 @@ export const copyToClipboard = text => navigator.clipboard.writeText(text).then(
 }, error => console.warn('Async: Could not copy text: ', error));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
 export const getInitials = text => text && text.split(" ").map(w => w.charAt(0)).join('');
-export const objToArr = obj => Object.keys(obj).map(arr => arr);
-export const arrayToObj = (arr, fn) => {
+export const objToArr = obj => Object.keys(obj);
+export const arrToObj = (arr, fn) => {
   const obj = {};
   const len = arr.length;
   for (let i = 0; i < len; i++) {

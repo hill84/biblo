@@ -11,7 +11,7 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { arrayToObj, capitalizeFirstLetter, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { arrToObj, capitalizeFirstLetter, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 import { userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
@@ -195,7 +195,7 @@ export default class SearchBookForm extends React.Component {
                   createdByUid: this.props.user.uid || '',
                   created_num: (new Date()).getTime() || 0
                 },
-                authors: (b.authors && arrayToObj(b.authors.map(author => author.split('.').join('')), function(item) { return { key: item, value: true }})) || {},
+                authors: (b.authors && arrToObj(b.authors.map(author => author.split('.').join('')), function(item) { return { key: item, value: true }})) || {},
                 bid: '',
                 collections: [],
                 covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],

@@ -17,6 +17,7 @@ if (!firebase.apps.length) firebase.initializeApp(config);
 const db = firebase.firestore();
 db.settings({/* my settings... */ timestampsInSnapshots: true});
 //export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+export const timestamp = firebase.ServerValue;
 
 const storage = firebase.storage();
 
@@ -35,6 +36,8 @@ auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentU
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
 export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
+export const followersRef = uid => db.collection('followers').doc(uid);
+export const followingsRef = uid => db.collection('followings').doc(uid);
 
 export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');
