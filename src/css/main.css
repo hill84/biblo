@@ -46,15 +46,21 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
+  height: 100%;
 }
 *, *:before, *:after { box-sizing: inherit; }
 body {
+  position: relative;
+  min-height: 100%;
   margin: 0;
   font-family: 'Roboto', sans-serif;
   font-size: .9rem;
   font-weight: 400;
   line-height: 1.5;
   text-align: left;
+  padding-bottom: 10rem;
+  display: flex; 
+  flex-direction: column;
 }
 
 h1, h2, h3, h4, h5, h6 { margin-top: .5rem; margin-bottom: .5rem; font-weight: 400; color: var(--primaryLigthClr); }
@@ -93,6 +99,12 @@ hr.line {
   border: 0;
   height: 2px;
   background-color: rgba(0,0,0,.07);
+}
+
+.divider {
+  height: 0;
+  border: 0;
+  border-top: 2px solid rgba(0,5,10,.1);
 }
 
 /* CARDS */
@@ -650,6 +662,8 @@ hr.line {
 .form-group label + div:before {
   border-color: rgba(0,0,0,.15);
 }
+
+/* searchBookForm */
 #search-book .form-group .loader { border-radius: 3px; }
 #search-book label + div:before, 
 #search-book label + div:after {
@@ -671,6 +685,7 @@ hr.line {
   margin: 0 5px 5px 0;
 }
 
+/* bookContainer */
 #BookContainerComponent .content-background { z-index: -1; }
 #BookContainerComponent .content-background:before {
   content: "";
@@ -702,7 +717,6 @@ hr.line {
   width: 100%; 
   height: var(--stickyBgHeight);
 }
-
 #BookContainerComponent .content-background .bg {
   background-size: cover;
   background-position: center;
@@ -714,8 +728,10 @@ hr.line {
 #BookContainerComponent .container.top { margin-top: 60px; }
 #BookContainerComponent .container.top .book { margin-top: -60px; }
 
+/* bookProfile */
 #BookProfileComponent { position: relative; z-index: 1; }
 
+/* dashboard */
 #dashboardComponent .basic-profile .avatar { 
   margin-left: auto; 
   margin-right: auto; 
@@ -725,7 +741,23 @@ hr.line {
   box-shadow: inset 0 0 0 50px var(--cardBg), 0 0 0 10px var(--cardBg);
 }
 
+/* author */
 #authorCard .avatar { --size: 48px; width: var(--size); height: var(--size); line-height: var(--size); }
+#AuthorComponent .coverview .book .info .author { display: none; }
+
+/* FooterComponent */
+#FooterComponent { 
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--canvasLigthClr);
+  border-radius: 0; 
+  margin-bottom: 0; 
+  margin-top: 48px; 
+  box-shadow: 0 -1px 3px rgba(0,0,0,.2);
+}
+#FooterComponent .divider { margin: 0 auto; }
 
 .placeholder { margin: auto; }
 

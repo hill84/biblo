@@ -18,6 +18,7 @@ import { signOut, uid } from '../config/firebase';
 import { appName, getInitials } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
+import Footer from './footer';
 
 export default class Layout extends React.Component {
   state = {
@@ -113,6 +114,8 @@ export default class Layout extends React.Component {
         <main>
           {children}
         </main>
+
+        <Footer />
       </div> 
     )
   }
