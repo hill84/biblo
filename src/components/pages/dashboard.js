@@ -19,9 +19,9 @@ export default class Dashboard extends React.Component {
 		luid: this.props.user && this.props.user.uid,
 		uid: this.props.match.params.uid,
 		user: null,
-		followers: [],
+		followers: {},
 		followers_num: 0,
-		followings: [],
+		followings: {},
 		followings_num: 0,
 		follow: false,
 		loading: true,
@@ -80,7 +80,7 @@ export default class Dashboard extends React.Component {
 				if (snap.exists) {
 					console.log(snap.data());
 					this.setState({
-						followers: Object.keys(snap.data()),
+						followers: snap.data(),
 						followers_num: Object.keys(snap.data()).length,
 						follow: Object.keys(snap.data()).indexOf(luid) > -1
 					});
@@ -97,7 +97,7 @@ export default class Dashboard extends React.Component {
 				if (snap.exists) {
 					console.log(snap.data());
 					this.setState({
-						followings: Object.keys(snap.data()),
+						followings: snap.data(),
 						followings_num: Object.keys(snap.data()).length
 					});
 				} else this.setState({ followings: [] });
@@ -127,45 +127,39 @@ export default class Dashboard extends React.Component {
 
 	onFollowUser = (luid, uid) => {
 		if (isAuthenticated()) {
-			luid = this.state.luid;
-			uid = this.state.uid;
+			const { follow, followers, followings, luid, uid } = this.state;
+			let computedFollowers = {};
+			let computedFollowings = {};
 	
-			let visitedFollowers_num = this.state.followers_num;
-			let visitedFollowers = this.state.followers || {};
-			const visitedFollowersIndex = visitedFollowers.indexOf(luid);
-	
-			let visitorFollowed_num = this.props.user.stats.followed_num;
-			let visitorFollowed = this.props.user.stats.followed || [];
-			const visitorFollowedIndex = visitorFollowed.indexOf(uid);
-	
-			if (this.state.follow/* || visitedFollowersIndex > -1 */) {
-				visitedFollowers_num -= 1;
-				visitorFollowed_num -= 1;
-				visitedFollowers.splice(visitedFollowersIndex, 1);
-				visitorFollowed.splice(visitorFollowedIndex, 1);
+			if (follow/* || visitedFollowersIndex > -1 */) {
+				const { luid, ...restFollowers } = followers;
+				const { uid, ...restFollowings } = followings;
+				computedFollowers = restFollowers || {};
+				computedFollowings = restFollowings || {};
 			} else {
-				visitedFollowers_num += 1;
-				visitorFollowed_num += 1;
-				visitedFollowers.push(luid);
-				visitorFollowed.push(uid);
+				computedFollowers = { ...followers };
+				computedFollowings = { ...followings };
+				computedFollowers[luid] = 0;
+				computedFollowings[uid] = 0;
 			}
+
+			console.log('computedFollowers: ' +  computedFollowers);
+			console.log('computedFollowings: ' +  computedFollowings);
 	
 			// VISITED
-			userRef(uid).update({
-				'stats.followers_num': visitedFollowers_num,
-				'stats.followers': visitedFollowers
-			}).then(() => {
-				//console.log(`follow ${uid}`);
-			});
+			if (uid) {
+				followersRef(uid).set(computedFollowers).then(() => {
+					//console.log(`follow ${uid}`);
+				});
+			} 
 	
 			// VISITOR
-			userRef(luid).update({
-				'stats.followed_num': visitorFollowed_num,
-				'stats.followed': visitorFollowed
-			}).then(() => {
-				//console.log(`Unfollow ${uid}`);
-			});
-		}
+			if (luid) {
+				followingsRef(luid).set(computedFollowings).then(() => {
+					//console.log(`Unfollow ${uid}`);
+				});
+			}
+		} else console.warn('User is not authenticated');
   }
   
   handleChange = (e, value) => this.setState({ tabSelected: value });
@@ -189,8 +183,8 @@ export default class Dashboard extends React.Component {
 			}
 		}
 
-		const Followers = followers.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
-    const Followings = followings.map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+		const Followers = Object.keys(followers).map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+    const Followings = Object.keys(followings).map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
     const Roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={i+'_'+r} className={`badge ${r}`}>{r}</div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
@@ -233,10 +227,10 @@ export default class Dashboard extends React.Component {
 											{isOwner && progress === 100 && <Link to="/profile"><button className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">
-											{!isOwner && 
+											{!isOwner && isAuthenticated() &&
 												<button 
 													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
-													disabled={!isAuthenticated()}
+													//disabled={!isAuthenticated()}
 													onClick={this.onFollowUser}>
 													{follow ? 
 														<span>

@@ -27,7 +27,7 @@ export const arrToObj = (arr, fn) => {
   }
   return obj;
 };
-// example: const obj = arrayToObj(arr, function(item) { return { key: item, value: 'author' }});
+// example: const obj = arrToObj(arr, function(item) { return { key: item, value: 'author' }});
 
 /* export const arrayToObj = array => { 
   const obj = {}; 
