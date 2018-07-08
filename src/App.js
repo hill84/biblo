@@ -60,7 +60,7 @@ export default class App extends React.Component {
                     <Route path="/book/:bid" component={BookContainer} />
                     <Route path="/collection/:cid" component={Collection} />
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
-                    <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} />
+                    <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/books/add" component={AddBook} user={user} />
                     <PrivateRoute path="/new-book" component={NewBook} user={user} />
                     <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>

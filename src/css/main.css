@@ -73,6 +73,46 @@ p:last-child { margin-bottom: 0; }
 .card .info-row.footer { display: block; }
 /* .info-row .btn { margin-top: 0; margin-bottom: 0; } */
 
+.avatar-row { 
+  --avatarSize: 40px;
+  height: var(--avatarSize);
+  line-height: var(--avatarSize);
+  margin-bottom: .8rem; 
+}
+.avatar-row a { 
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 3px; 
+  transition: all .2s ease-in-out; 
+}
+.avatar-row a:hover { background-color: rgba(0,151,167,.07); }
+.avatar-row a:active { background-color: rgba(0,151,167,.1); }
+.avatar-row .col {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.avatar-row .col-auto { min-width: 105px; text-align: right; }
+.avatar-row .timestamp { 
+  position: absolute; 
+  right: 14px; 
+  color: var(--ligthTextClr);
+  font-size: 85%;
+}
+.avatar-row .btn { position: relative; margin: 0 2px; }
+.avatar-row .ripple:before { left: 10%; }
+.avatar-row .avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  width: var(--avatarSize);
+  height: var(--avatarSize);
+  margin-right: 14px;
+  user-select: none;
+}
+
 .link {
   display: inline;
   appearance: none;
@@ -349,8 +389,8 @@ hr.line {
   transform: scale(0);
   visibility: hidden;
 }
-.btn:not(:active):before, .ripple:before { animation: ripple .4s ease-out; }
-.btn:focus:before { visibility: visible; }
+.btn:not(:active):before, .ripple:not(:active):before { animation: ripple .4s ease-out; }
+.btn:focus:before, .ripple:focus:before { visibility: visible; }
 .btn:not(.centered) + .btn:not(.centered) { margin-left: 6px; }
 .btn + .counter { margin-left: 14px; }
 .btn.centered, .link.centered { display: block; }
@@ -1348,18 +1388,25 @@ hr.line {
 .text-align-right { text-align: right; }
 .text-align-center { text-align: center; }
 .centered { float: none; margin-left: auto; margin-right: auto; }
-.show-on-hover, .hide-on-hover { will-change: opacity, transform; transition: all .2s ease-in-out; }
-.show-on-hover, .btn:hover .hide-on-hover { opacity: 0; transform: scaleY(0); /* display: none; */ }
-.btn:hover .show-on-hover, .hide-on-hover { opacity: 1; transform: scaleY(1); display: block; }
-.show-on-hover { 
+
+.btn .show-on-hover { 
   position: absolute; 
-  top: 0; bottom: 0; left: 0; right: 0; 
+  top: 0; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
   margin: auto; 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: calc(100% - var(--btnPad)); 
 }
+.btn .show-on-hover, .btn:hover .hide-on-hover { transform: scaleY(0); }
+.btn .hide-on-hover, .btn:hover .show-on-hover { transform: scaleY(1); display: block; }
+.show-on-hover, .hide-on-hover { will-change: opacity, transform; transition: all .2s ease-in-out; }
+.show-on-hover, .btn:hover .hide-on-hover, .avatar-row:hover .hide-on-hover { opacity: 0; }
+.hide-on-hover, .btn:hover .show-on-hover, .avatar-row:hover .show-on-hover { opacity: 1; }
+
 .rounded { border-radius: 99px; }
 .pull-left { float: left; }
 .pull-right { float: right; }

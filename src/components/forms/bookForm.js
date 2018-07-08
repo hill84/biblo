@@ -71,6 +71,7 @@ export default class BookForm extends React.Component {
   static propTypes = {
     book: bookType.isRequired,
     isEditing: funcType.isRequired,
+    openSnackbar: funcType.isRequired,
     user: userType.isRequired
   }
 

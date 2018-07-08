@@ -32,6 +32,7 @@ export default class BookProfile extends React.Component {
   static propTypes = {
     addBookToShelf: funcType.isRequired,
     addBookToWishlist: funcType.isRequired,
+    openSnackbar: funcType.isRequired,
     removeBookFromShelf: funcType.isRequired,
     removeBookFromWishlist: funcType.isRequired,
     rateBook: funcType.isRequired,

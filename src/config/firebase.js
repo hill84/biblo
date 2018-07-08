@@ -16,8 +16,8 @@ if (!firebase.apps.length) firebase.initializeApp(config);
 
 const db = firebase.firestore();
 db.settings({/* my settings... */ timestampsInSnapshots: true});
-//export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-export const timestamp = firebase.ServerValue;
+export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+//export const timestamp = firebase.ServerValue;
 
 const storage = firebase.storage();
 

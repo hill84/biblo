@@ -29,10 +29,6 @@ export const userType = shape({
     premium: bool
   }).isRequired,
   stats: shape({
-    followed: arrayOf(string),
-    followed_num: number.isRequired,
-    followers: arrayOf(string),
-    followers_num: number.isRequired,
     ratings_num: number.isRequired,
     reviews_num: number.isRequired,
     shelf_num: number.isRequired,

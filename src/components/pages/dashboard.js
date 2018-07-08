@@ -6,10 +6,10 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import SwipeableViews from 'react-swipeable-views';
-import { followersRef, followingsRef, isAuthenticated, userRef, timestamp } from '../../config/firebase';
+import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { appName, calcAge, getInitials, joinToLowerCase } from '../../config/shared';
-import { userType } from '../../config/types';
+import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../config/shared';
+import { funcType, userType } from '../../config/types';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
 
@@ -18,19 +18,22 @@ export default class Dashboard extends React.Component {
     isOwner: this.props.user ? this.props.user.uid === this.props.match.params.uid : false,
 		luid: this.props.user && this.props.user.uid,
 		uid: this.props.match.params.uid,
-		user: null,
+    user: null,
 		followers: {},
 		followers_num: 0,
 		followings: {},
 		followings_num: 0,
-		follow: false,
+    follow: false,
+    lfollowers: {},
+    lfollowings: {},
 		loading: true,
     progress: 0,
     tabSelected: 0
 	}
 
 	static propTypes = {
-		user: userType
+    openSnackbar: funcType.isRequired,
+    user: userType
 	}
 
 	static getDerivedStateFromProps(props, state) {
@@ -40,7 +43,7 @@ export default class Dashboard extends React.Component {
 					luid: props.user.uid, 
 					isOwner: props.user.uid === state.uid
 				}; 
-			}
+      }
     } else { return { luid: null }; }
     if (props.match.params.uid !== state.uid) { 
 			return { 
@@ -54,8 +57,6 @@ export default class Dashboard extends React.Component {
 	componentDidMount() {
 		this._isMounted = true;
 		this.fetchUser();
-		this.fetchFollowers();
-		this.fetchFollowings();
 	}
 
 	componentWillUnmount() {
@@ -64,50 +65,64 @@ export default class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
 		if (this._isMounted) {
-			if ((this.state.uid !== prevState.uid) || (this.state.luid !== prevState.luid)) {
-				this.fetchUser();
-				this.fetchFollowers();
-				this.fetchFollowings();
-			}
+			if ((prevState.uid && this.state.uid !== prevState.uid) || (prevState.luid && this.state.luid !== prevState.luid)) {
+        this.fetchUser();
+      }
+      if (this.state.uid !== prevState.uid || this.state.luid !== prevState.luid) {
+        this.fetchFollowers();
+        this.fetchFollowings();
+      }
 		}
 	}
 	
 	fetchFollowers = () => {
 		const { luid, uid } = this.state;
-		console.log('fetching followers');
-		if (uid) {
-			followersRef(uid).onSnapshot(snap => {
-				if (snap.exists) {
-					console.log(snap.data());
-					this.setState({
-						followers: snap.data(),
-						followers_num: Object.keys(snap.data()).length,
-						follow: Object.keys(snap.data()).indexOf(luid) > -1
-					});
-				} else this.setState({ followers: [], follow: false });
-			});
-		} else this.setState({ followers: [], followers_num: 0 });
+		//console.log('fetching followers');
+    followersRef(uid).onSnapshot(snap => {
+      if (snap.exists) {
+        //console.log(snap.data());
+        this.setState({
+          followers: snap.data(),
+          followers_num: Object.keys(snap.data()).length,
+          follow: Object.keys(snap.data()).indexOf(luid) > -1
+        });
+      } else this.setState({ followers: {}, followers_num: 0, follow: false });
+    });
+    if (luid !== uid) {
+      followersRef(luid).onSnapshot(snap => {
+        if (snap.exists) {
+          //console.log(snap.data());
+          this.setState({ lfollowers: snap.data() });
+        } else this.setState({ lfollowers: {} });
+      });
+    }
 	}
 
 	fetchFollowings = () => {
-		const { uid } = this.state;
-		console.log('fetching followings');
-		if (uid) {
-			followingsRef(uid).onSnapshot(snap => {
-				if (snap.exists) {
-					console.log(snap.data());
-					this.setState({
-						followings: snap.data(),
-						followings_num: Object.keys(snap.data()).length
-					});
-				} else this.setState({ followings: [] });
-			});
-		} else this.setState({ followings: [], followings_num: 0 });
+		const { luid, uid } = this.state;
+		//console.log('fetching followings');
+    followingsRef(uid).onSnapshot(snap => {
+      if (snap.exists) {
+        //console.log(snap.data());
+        this.setState({
+          followings: snap.data(),
+          followings_num: Object.keys(snap.data()).length
+        });
+      } else this.setState({ followings: {} });
+    });
+    if (luid !== uid) {
+      followingsRef(luid).onSnapshot(snap => {
+        if (snap.exists) {
+          //console.log(snap.data());
+          this.setState({ lfollowings: snap.data() });
+        } else this.setState({ lfollowings: {} });
+      });
+    }
 	}
 	
 	fetchUser = () => {
 		const { luid, uid, user } = this.state;
-		console.log('fetching user');
+		//console.log('fetching user');
 		if (uid) {
 			userRef(uid).onSnapshot(snap => {
 				this.setState({ loading: false });
@@ -125,41 +140,49 @@ export default class Dashboard extends React.Component {
     } else this.setState({ user: user });
 	}
 
-	onFollowUser = (luid, uid) => {
+	onFollowUser = (e, fuid = this.state.user.uid, fuser = this.state.user) => {
+    e.preventDefault();
+    const { openSnackbar } = this.props;
 		if (isAuthenticated()) {
-			const { follow, followers, followings, luid, uid } = this.state;
+			const { followers, followings, lfollowers, lfollowings, luid } = this.state;
 			let computedFollowers = {};
-			let computedFollowings = {};
-	
-			if (follow/* || visitedFollowersIndex > -1 */) {
-				const { luid, ...restFollowers } = followers;
-				const { uid, ...restFollowings } = followings;
-				computedFollowers = restFollowers || {};
-				computedFollowings = restFollowings || {};
-			} else {
-				computedFollowers = { ...followers };
-				computedFollowings = { ...followings };
-				computedFollowers[luid] = 0;
-				computedFollowings[uid] = 0;
-			}
+      let computedFollowings = {};
+      let snackbarMsg = '';
+      const lindex = Object.keys(followers).indexOf(luid);
+      const findex = Object.keys(followings).indexOf(fuid);
 
-			console.log('computedFollowers: ' +  computedFollowers);
-			console.log('computedFollowings: ' +  computedFollowings);
+      if (lindex > -1 || findex > -1) {
+        if (lindex > -1) delete followers[luid];
+        if (findex > -1) delete followings[fuid];
+        computedFollowers = followers;
+        computedFollowings = followings;
+        snackbarMsg = `Non segui più ${fuser.displayName}`;
+      } else {
+				computedFollowers = lfollowers || followers;
+        computedFollowings = lfollowings || followings;
+				computedFollowers[luid] = {
+          displayName: this.props.user.displayName,
+          photoURL: this.props.user.photoURL,
+          timestamp: (new Date()).getTime() || 0
+        };
+				computedFollowings[fuid] = {
+          displayName: fuser.displayName,
+          photoURL: fuser.photoURL,
+          timestamp: (new Date()).getTime() || 0
+        };
+        snackbarMsg = `Segui ${fuser.displayName}`;
+			}
 	
 			// VISITED
-			if (uid) {
-				followersRef(uid).set(computedFollowers).then(() => {
-					//console.log(`follow ${uid}`);
-				});
+			if (fuser) {
+				followersRef(fuid).set(computedFollowers).then(() => openSnackbar(snackbarMsg, 'success'));
 			} 
 	
 			// VISITOR
 			if (luid) {
-				followingsRef(luid).set(computedFollowings).then(() => {
-					//console.log(`Unfollow ${uid}`);
-				});
+				followingsRef(luid).set(computedFollowings).then(() => openSnackbar(snackbarMsg, 'success'));
 			}
-		} else console.warn('User is not authenticated');
+    } else console.warn('User is not authenticated');
   }
   
   handleChange = (e, value) => this.setState({ tabSelected: value });
@@ -171,20 +194,31 @@ export default class Dashboard extends React.Component {
 
 		if (!user) {
 			if (loading) {
-				return (
-					<div className="container">
-						<div className="card dark empty text-align-center">
-							<CircularProgress />
-						</div>
-					</div>
-				)
+				return <div className="loader"><CircularProgress /></div>
 			} else {
 				return <NoMatch title="Dashboard utente non trovata" location={this.props.location} history={this.props.history} />
 			}
 		}
 
-		const Followers = Object.keys(followers).map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
-    const Followings = Object.keys(followings).map(f => <div key={f} className="info-row"><Link to={`/dashboard/${f}`}>{f}</Link></div>);
+		const usersList = obj => Object.keys(obj).map(f => {
+      return (
+        <div key={f} className="avatar-row">
+          <Link to={`/dashboard/${f}`} className="row ripple">
+            <div className="col">
+              <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>{obj[f].displayName}
+            </div>
+            <div className="col-auto">
+              <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
+              {isOwner && f !== luid && <button className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
+                {obj === followings ? 'Non seguire' : 'Segui'}
+              </button>}
+            </div>
+          </Link>
+        </div> 
+      )
+    });
+    const Followers = usersList(followers);
+    const Followings = usersList(followings);
     const Roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={i+'_'+r} className={`badge ${r}`}>{r}</div>);
 
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
@@ -231,17 +265,17 @@ export default class Dashboard extends React.Component {
 												<button 
 													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
 													//disabled={!isAuthenticated()}
-													onClick={this.onFollowUser}>
+													onClick={e => this.onFollowUser(e)}>
 													{follow ? 
-														<span>
+														<React.Fragment>
 															<span className="hide-on-hover">{icon.check()} Segui</span>
 															<span className="show-on-hover">Smetti</span>
-														</span> 
+														</React.Fragment> 
 													: <span>{icon.plus()} Segui</span> }
 												</button>
 											}
-											<span className="counter">Seguito da: <b>{followers_num || 0}</b></span>
-											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{followings_num || 0}</b></span>
+											<span className="counter">Seguito da: <b>{followers_num}</b></span>
+											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{followings_num}</b></span>
 										</div>
 									</div>
 								</div>
@@ -293,15 +327,14 @@ export default class Dashboard extends React.Component {
             <p>Attività</p>
           </div>
           <div className="card tab" dir={tabDir}>
-            <p>Contatti</p>
             <div className="row">
-              <div className="col">
+              <div className="col-md-6 cols-12">
                 <h4>Seguito da:</h4>
-                {Followers}
+                {Object.keys(followers).length ? Followers : <div className="avatar-row empty">Nessuno</div>}
               </div>
-              <div className="col">
+              <div className="col-md-6 col-12">
                 <h4>Segue:</h4>
-                {Followings}
+                {Object.keys(followings).length ? Followings : <div className="avatar-row empty">Nessuno</div>}
               </div>
             </div>
           </div>
