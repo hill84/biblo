@@ -125,6 +125,16 @@ export default class SearchBookForm extends React.Component {
     const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : 
       typeof searchText === 'object' ? String(Object.keys(searchText.split('.').join(''))[0]) : 
       String(searchText);
+    const emptyBookCTA = (
+      <MenuItem className="menuitem-book empty" component="div">
+        <div className="primaryText">
+          <span className="title">Libro non trovato...</span>
+        </div>
+        <div className="secondaryText">
+          <button className="btn primary">Crea nuovo</button>
+        </div>
+      </MenuItem>
+    );
     const emptyBook = {
       ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
@@ -154,16 +164,7 @@ export default class SearchBookForm extends React.Component {
       label: searchTextType, // Autosuggest OPTION LABEL
       title: searchBy.key === 'title' ? searchText : '',
       title_sort: searchBy.key === 'title' ? normalizeString(searchText) : '',
-      value: (
-        <MenuItem className="menuitem-book empty" component="div">
-          <div className="primaryText">
-            <span className="title">Libro non trovato...</span>
-          </div>
-          <div className="secondaryText">
-            <button className="btn primary">Crea nuovo</button>
-          </div>
-        </MenuItem>
-      )
+      value: emptyBookCTA
     }
 
     if (!value) return;
