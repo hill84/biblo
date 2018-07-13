@@ -74,15 +74,15 @@ p:last-child { margin-bottom: 0; }
 /* .info-row .btn { margin-top: 0; margin-bottom: 0; } */
 
 .avatar-row { 
+  --pad: 7px;
   --avatarSize: 40px;
-  height: var(--avatarSize);
   line-height: var(--avatarSize);
   margin-bottom: .8rem; 
 }
 .avatar-row a { 
   position: relative;
   overflow: hidden;
-  padding: 0;
+  padding: var(--pad) 0;
   border-radius: 3px; 
   transition: all .2s ease-in-out; 
 }

@@ -61,7 +61,7 @@ export default class Layout extends React.Component {
                   aria-owns={moreAnchorEl ? 'more-menu' : null}
                   aria-haspopup="true"
                   onClick={this.onOpenMore}>
-                  <MoreVertIcon />
+                  <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
                 </IconButton>
                 <Menu
                   id="more-menu"
@@ -71,7 +71,7 @@ export default class Layout extends React.Component {
                   onClose={this.onCloseMore}>
                   <Link to="/profile"><MenuItem>Profilo</MenuItem></Link>
                   <Link to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></Link>
-                  <MenuItem onClick={() => signOut()}>Logout</MenuItem>
+                  <MenuItem onClick={() => signOut()}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>
             : 
