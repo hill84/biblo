@@ -79,13 +79,13 @@ p:last-child { margin-bottom: 0; }
   line-height: var(--avatarSize);
   margin-bottom: .8rem; 
 }
-.avatar-row a { 
+.avatar-row .row { 
   position: relative;
   overflow: hidden;
   padding: var(--pad) 0;
-  border-radius: 3px; 
-  transition: all .2s ease-in-out; 
+  border-radius: 3px;  
 }
+.avatar-row a:hover { transition: all .2s ease-in-out; }
 .avatar-row a:hover { background-color: rgba(0,151,167,.07); }
 .avatar-row a:active { background-color: rgba(0,151,167,.1); }
 .avatar-row .col {

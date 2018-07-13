@@ -69,6 +69,10 @@ export default class Dashboard extends React.Component {
         this.fetchUser();
       }
       if (this.state.uid !== prevState.uid || this.state.luid !== prevState.luid) {
+				this.setState({
+					followers: {},
+					followings: {}
+				});
         this.fetchFollowers();
         this.fetchFollowings();
       }
@@ -87,15 +91,17 @@ export default class Dashboard extends React.Component {
           follow: Object.keys(snap.data()).indexOf(luid) > -1
         });
       } else this.setState({ followers: {}, followers_num: 0, follow: false });
-    });
-    if (luid !== uid) {
-      followersRef(luid).onSnapshot(snap => {
-        if (snap.exists) {
-          //console.log(snap.data());
-          this.setState({ lfollowers: snap.data() });
-        } else this.setState({ lfollowers: {} });
-      });
-    }
+		});
+		if (isAuthenticated()) {
+			if (luid !== uid) {
+				followersRef(luid).onSnapshot(snap => {
+					if (snap.exists) {
+						console.log({ lfollowers: snap.data() });
+						this.setState({ lfollowers: snap.data() });
+					} else this.setState({ lfollowers: {} });
+				});
+			}
+		}
 	}
 
 	fetchFollowings = () => {
@@ -113,7 +119,7 @@ export default class Dashboard extends React.Component {
     if (luid !== uid) {
       followingsRef(luid).onSnapshot(snap => {
         if (snap.exists) {
-          //console.log(snap.data());
+          console.log({ lfollowings: snap.data() });
           this.setState({ lfollowings: snap.data() });
         } else this.setState({ lfollowings: {} });
       });
@@ -144,44 +150,42 @@ export default class Dashboard extends React.Component {
     e.preventDefault();
     const { openSnackbar } = this.props;
 		if (isAuthenticated()) {
-			const { followers, followings, lfollowers, lfollowings, luid } = this.state;
-			let computedFollowers = {};
-      let computedFollowings = {};
+			const { followers, followings, lfollowers, lfollowings, luid, uid } = this.state;
+			let computedFollowers = luid !== uid ? { ...lfollowers } : { ...followers };
+			let computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
+			console.log({ luid, fuid, computedFollowers, computedFollowings, followers, followings, lfollowers, lfollowings });
       let snackbarMsg = '';
-      const lindex = Object.keys(followers).indexOf(luid);
-      const findex = Object.keys(followings).indexOf(fuid);
+      const lindex = Object.keys(computedFollowers).indexOf(luid);
+			const findex = Object.keys(computedFollowings).indexOf(fuid);
+			
+			console.log({ lindex, findex });
 
       if (lindex > -1 || findex > -1) {
-        if (lindex > -1) delete followers[luid];
-        if (findex > -1) delete followings[fuid];
-        computedFollowers = followers;
-        computedFollowings = followings;
+        if (lindex > -1) delete computedFollowers[luid];
+				if (findex > -1) delete computedFollowings[fuid];
         snackbarMsg = `Non segui più ${fuser.displayName}`;
       } else {
-				computedFollowers = lfollowers || followers;
-        computedFollowings = lfollowings || followings;
 				computedFollowers[luid] = {
           displayName: this.props.user.displayName,
           photoURL: this.props.user.photoURL,
-          timestamp: (new Date()).getTime() || 0
+          timestamp: (new Date()).getTime()
         };
 				computedFollowings[fuid] = {
           displayName: fuser.displayName,
           photoURL: fuser.photoURL,
-          timestamp: (new Date()).getTime() || 0
+          timestamp: (new Date()).getTime()
         };
-        snackbarMsg = `Segui ${fuser.displayName}`;
+				snackbarMsg = `Segui ${fuser.displayName}`;
 			}
+
+			console.log({ computedFollowers, computedFollowings });
 	
 			// VISITED
-			if (fuser) {
-				followersRef(fuid).set(computedFollowers).then(() => openSnackbar(snackbarMsg, 'success'));
-			} 
+			followersRef(fuid).set(computedFollowers).then(() => openSnackbar(snackbarMsg, 'success')); 
 	
 			// VISITOR
-			if (luid) {
-				followingsRef(luid).set(computedFollowings).then(() => openSnackbar(snackbarMsg, 'success'));
-			}
+			followingsRef(luid).set(computedFollowings).then(() => openSnackbar(snackbarMsg, 'success'));
+			
     } else console.warn('User is not authenticated');
   }
   
@@ -229,6 +233,15 @@ export default class Dashboard extends React.Component {
 					<span className="counter">Desideri: <b>{user.stats.wishlist_num}</b></span>
 					<span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
 					<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
+				</div>
+			)
+		}
+		const EmptyRow = () => {
+			return (
+				<div className="avatar-row empty">
+					<div className="row">
+						<div className="col">Nessuno</div>
+					</div>
 				</div>
 			)
 		}
@@ -330,11 +343,11 @@ export default class Dashboard extends React.Component {
             <div className="row">
               <div className="col-md-6 cols-12">
                 <h4>Seguito da:</h4>
-                {Object.keys(followers).length ? Followers : <div className="avatar-row empty">Nessuno</div>}
+                {Object.keys(followers).length ? Followers : <EmptyRow/>}
               </div>
               <div className="col-md-6 col-12">
                 <h4>Segue:</h4>
-                {Object.keys(followings).length ? Followings : <div className="avatar-row empty">Nessuno</div>}
+                {Object.keys(followings).length ? Followings : <EmptyRow/>}
               </div>
             </div>
           </div>
