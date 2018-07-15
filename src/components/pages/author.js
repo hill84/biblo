@@ -5,20 +5,18 @@ import Link from 'react-router-dom/Link';
 import { authorsRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { getInitials, normalizeString } from '../../config/shared';
-import { authorType } from '../../config/types';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
+import MinifiableText from '../minifiableText';
 
 export default class Author extends React.Component {
   state = {
     author: {
-      aid: normalizeString(this.props.match.params.aid) || '',
       bio: '',
       created_num: 0,
       languages: [],
-      followers: [],
-      followers_num: 0,
-      name: this.props.match.params.aid || '',
+      followers: {},
+      displayName: this.props.match.params.aid || '',
       photoURL: '',
       sex: ''
     },
@@ -27,13 +25,9 @@ export default class Author extends React.Component {
     loading: true
   }
 
-  static propTypes = {
-    author: authorType
-  }
-
   componentDidMount() {
     const { author } = this.state;
-		authorsRef(author.aid).onSnapshot(snap => {
+		authorsRef(`${normalizeString(author.displayName)}`).onSnapshot(snap => {
 			if (snap.exists) {
 				this.setState({ 
 					author: snap.data(),
@@ -43,7 +37,7 @@ export default class Author extends React.Component {
 				this.setState({ loading: false });
 			}
     });
-    booksRef.where(`authors.${author.name}`, '==', true).get().then(snap => {
+    booksRef.where(`authors.${author.displayName}`, '==', true).get().then(snap => {
       if (!snap.empty) {
         const books = [];
         snap.forEach(book => books.push(book.data()));
@@ -70,14 +64,16 @@ export default class Author extends React.Component {
 
     return (
       <div id="AuthorComponent" className="container">
-        <div className="card" id="authorCard">
+        <div className="card dark" id="authorCard">
           <div className="row text-align-center-md">
             <div className="col-md-auto col-sm-12">
-              <Avatar className="avatar centered" src={author.photoURL} alt={author.name}>{!author.photoURL && getInitials(author.name)}</Avatar>
+              <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
             </div>
             <div className="col">
-              <h2 className="title">{author.name}</h2>
-              <p className="bio">{author.bio}</p>
+              <h2 className="title">{author.displayName}</h2>
+              <p className="info-row bio">
+                <MinifiableText text={author.bio} maxChars={500} />
+              </p>
             </div>
           </div>
         </div>

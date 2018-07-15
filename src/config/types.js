@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 
-const { arrayOf, bool, func, shape, number, object, oneOf, oneOfType, string } = PropTypes;
+const { arrayOf, bool, func, shape, number, object, objectOf, oneOf, oneOfType, string } = PropTypes;
 
 export const funcType = func;
 export const stringType = string;
 export const boolType = bool;
 export const numberType = number;
 export const objectType = object;
+export const objectOfType = objectOf;
 export const shapeType = props => shape(props);
 export const _oneOf = props => oneOf(props);
 export const _oneOfType = props => oneOfType(props);
@@ -47,8 +48,8 @@ export const bookType = shape({
     lastEditBy: string,
     lastEditByUid: string,
     lastEdit_num: number
-  }),
-  authors: shape().isRequired,
+  }).isRequired,
+  authors: objectOf(bool.isRequired).isRequired,
   bid: string.isRequired,
   covers: arrayOf(string),
   description: string,
@@ -123,10 +124,8 @@ export const authorType = shape({ //TODO
   aid: string.isRequired,
   bio: stringType,
   created_num: numberType.isRequired,
-  languages: arrayOf(string),
-  followers: arrayOf(string),
-  followers_num: numberType.isRequired,
-  name: stringType.isRequired,
+  followers: objectOf(bool).isRequired,
+  displayName: stringType.isRequired,
   photoURL: string,
   sex: string.isRequired
 });

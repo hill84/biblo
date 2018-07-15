@@ -13,6 +13,7 @@ import ReadingStateForm from '../forms/readingStateForm';
 import Reviews from '../reviews';
 import UserReview from '../userReview';
 import CopyToClipboard from '../copyToClipboard';
+import MinifiableText from '../minifiableText';
 
 export default class BookProfile extends React.Component {
 	state = {
@@ -25,7 +26,6 @@ export default class BookProfile extends React.Component {
     errors: {},
     isReadingStateOpen: false,
     isIncipitOpen: false,
-    isDescMinified: false,
     prevProps: this.props
   }
 
@@ -48,22 +48,6 @@ export default class BookProfile extends React.Component {
       if (props.userBook !== state.userBook) { return { prevProps: props, userBook: props.userBook }}
     }
     return null;
-  }
-
-  componentDidMount() {
-    if (!this.props.loading) {
-      this.minifyDescription();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if(!this.props.loading && this.state.book.description.length !== prevState.book.description.length){
-      this.minifyDescription();
-    }
-  }
-
-  minifyDescription = () => {
-    this.setState({ isDescMinified: this.state.book.description.length > 700 ? true : false });
   }
 
   onAddBookToShelf = () => {
@@ -94,10 +78,6 @@ export default class BookProfile extends React.Component {
     }
   }
 
-  onMinify = () => {
-    this.setState(prevState => ({ isDescMinified: !prevState.isDescMinified })); 
-  }
-
   onToggleIncipit = () => {
     this.setState(prevState => ({ isIncipitOpen: !prevState.isIncipitOpen })); 
   }
@@ -109,7 +89,7 @@ export default class BookProfile extends React.Component {
   }
   
 	render() {
-    const { book, isIncipitOpen, isDescMinified, isReadingStateOpen, user, userBook } = this.state;
+    const { book, isIncipitOpen, isReadingStateOpen, user, userBook } = this.state;
     const { loading, openSnackbar } = this.props;
     //const isAdmin = () => user && user.roles && user.roles.admin === true;
     const isEditor = () => user && user.roles && user.roles.editor === true;
@@ -199,9 +179,8 @@ export default class BookProfile extends React.Component {
                   }
 
                   {book.description && 
-                    <div className="info-row">
-                      <p className={`description ${isDescMinified ? 'minified' : 'expanded'}`}>{book.description || ''}</p>
-                      {isDescMinified && <p><button className="link" onClick={this.onMinify}>Mostra tutto</button></p>}
+                    <div className="info-row description">
+                      <MinifiableText text={book.description} maxChars={700} />
                     </div>
                   }
                   <div>&nbsp;</div>

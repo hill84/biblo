@@ -16,10 +16,6 @@ export const user = {
     editor: true
   },
   stats: {
-    followed_num: 42,
-    followed: ['followed1', 'followed2'],
-    followers_num: 13,
-    followers: ['follower1', 'follower2'],
     ratings_num: 13,
     reviews_num: 4,
     shelf_num: 3,

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400|Roboto+Slab:300,400');
 :root {
   /* http://www.material-ui.com/#/customization/colors */
   --primaryLigtherClr: rgb(0, 188, 212);  /* cyan500 */
@@ -72,6 +72,8 @@ p:last-child { margin-bottom: 0; }
 .info-row.centered { text-align: center; }
 .card .info-row.footer { display: block; }
 /* .info-row .btn { margin-top: 0; margin-bottom: 0; } */
+
+.card .avatar { color: rgba(0,0,0,.5); }
 
 .avatar-row { 
   --pad: 7px;
@@ -202,6 +204,10 @@ hr.line {
   cursor: pointer;
 }
 .card .edit-info .show-on-hover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  white-space: nowrap;
   max-width: none;
   overflow: visible;
   left: initial;
@@ -218,6 +224,15 @@ hr.line {
 .card .edit-info:hover .show-on-hover { transform: scaleX(1); opacity: .98; }
 .card .edit-info:active { transform: none; }
 .card .empty { color: var(--ligthTextClr); }
+.card.flat {
+  --mainTextClr: rgba(255,255,255,.7);
+  background-color: transparent;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+.card.flat .title { color: var(--primaryClr); }
+.card.flat .avatar { background-color: #bdbdbd; box-shadow: none; }
 
 /* TABS */
 .tabs-container {
@@ -443,7 +458,13 @@ hr.line {
   color: var(--linkClr); 
   border: 1px solid rgba(0,0,0,.1);
 }
+.btn.clear:hover { background-color: rgba(0,151,167,.07); }
 .btn.clear:active, .btn.clear.active { background-color: rgba(0,0,0,.05); color: rgba(0,0,0,.3); }
+
+::selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
+::-moz-selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
+.primary ::selection { background: rgba(255, 202, 40, .3); }
+.primary ::-moz-selection { background: rgba(255, 202, 40, .3); }
 
 #socialAuthComponent > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
 #socialAuthComponent > [class*="col-"]:first-child { padding-left: 7px; }
@@ -782,7 +803,13 @@ hr.line {
 }
 
 /* author */
-#authorCard .avatar { --size: 48px; width: var(--size); height: var(--size); line-height: var(--size); }
+#authorCard .avatar { 
+  --size: 48px; 
+  width: var(--size); 
+  height: var(--size); 
+  line-height: var(--size); 
+  box-shadow: inset 1px 1px 1px rgba(0,0,0,.05);
+}
 #AuthorComponent .coverview .book .info .author { display: none; }
 
 /* FooterComponent */
@@ -795,7 +822,7 @@ hr.line {
   border-radius: 0; 
   margin-bottom: 0; 
   margin-top: 48px; 
-  box-shadow: 0 -1px 3px rgba(0,0,0,.2);
+  box-shadow: 0 -1px 1px rgba(0,0,0,.1);
 }
 #FooterComponent .divider { margin: 0 auto; }
 
@@ -903,6 +930,7 @@ hr.line {
   width: 100%;
   height: var(--faderHeight);
   transition: all 4s ease-in-out;
+  pointer-events: none;
   z-index: 1;
 }
 .book-incipit:after {
@@ -943,7 +971,8 @@ hr.line {
 .book-profile .title { font-size: 2.2rem; }
 .book-profile .subtitle { font-size: 1.35rem; color: var(--ligthTextClr); }
 .book-profile .rating { height: var(--btnHeight); line-height: var(--btnHeight); }
-.book-profile .description { 
+
+.minifiable {
   position: relative; 
   overflow: hidden; 
   max-height: 400px; 
@@ -952,8 +981,8 @@ hr.line {
   word-wrap: break-word;
   transition: all .4s ease-in-out;
 }
-.book-profile .description.minified { position: relative; max-height: 108px; overflow: hidden; }
-.book-profile .description:after {
+.minifiable.minified { position: relative; max-height: 70px; overflow: hidden; }
+.minifiable:after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -966,9 +995,10 @@ hr.line {
   opacity: 0;
   will-change: opacity;
   transition: all .4s ease-in-out;
+  pointer-events: none;
   z-index: 1;
 }
-.book-profile .description.minified:after { opacity: 1; }
+.minifiable.minified:after { opacity: 1; }
 
 .hoverable-items .book { cursor: pointer; }
 .hoverable-items .book:hover .cover { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-3px); }
@@ -1193,6 +1223,7 @@ hr.line {
   display: inline-block;
   line-height: 1;
   font-size: 23px;
+  user-select: none;
 }
 .react-rater > * { display: inline-block; }
 .react-rater-star {
@@ -1503,6 +1534,7 @@ to { opacity: 0; transform: scale(1); }
     border-style: solid;
     border-color: rgba(20,35,40,.9) transparent transparent transparent;
     border-top-color: rgba(20,35,40,.9);
+    pointer-events: none;
   }
   .tt:hover .tip {
     opacity: .95;

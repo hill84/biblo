@@ -6,6 +6,7 @@ import { icon } from '../config/icons';
 import { getInitials, timeSince } from '../config/shared';
 import { reviewType } from '../config/types';
 import Rating from './rating';
+import MinifiableText from './minifiableText';
 
 export default class Review extends React.Component {
   state = {
@@ -74,7 +75,7 @@ export default class Review extends React.Component {
               </div>
             </div>
             {review.title && <h4 className="title">{review.title}</h4>}
-            <p className="text">{review.text}</p>
+            <div className="info-row text"><MinifiableText text={review.text} maxChars={500} /></div>
             <div className="foot row">
               <div className="col-auto likes">
                 <div className="counter">

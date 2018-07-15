@@ -44,7 +44,7 @@ export default class Dashboard extends React.Component {
 					isOwner: props.user.uid === state.uid
 				}; 
       }
-    } else { return { luid: null }; }
+    }
     if (props.match.params.uid !== state.uid) { 
 			return { 
 				uid: props.match.params.uid, 
@@ -55,8 +55,12 @@ export default class Dashboard extends React.Component {
   }
 
 	componentDidMount() {
-		this._isMounted = true;
-		this.fetchUser();
+    this._isMounted = true;
+    if (this.state.uid) {
+      this.fetchUser();
+      this.fetchFollowers();
+      this.fetchFollowings();
+    }
 	}
 
 	componentWillUnmount() {
@@ -65,48 +69,61 @@ export default class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
 		if (this._isMounted) {
-			if ((prevState.uid && this.state.uid !== prevState.uid) || (prevState.luid && this.state.luid !== prevState.luid)) {
-        this.fetchUser();
-      }
       if (this.state.uid !== prevState.uid || this.state.luid !== prevState.luid) {
-				this.setState({
-					followers: {},
-					followings: {}
-				});
+        this.fetchUser();
         this.fetchFollowers();
         this.fetchFollowings();
       }
 		}
 	}
-	
+    
+  fetchUser = () => {
+		const { luid, uid } = this.state;
+    console.log('fetching user');
+    userRef(uid).onSnapshot(snap => {
+      if (snap.exists) {
+        /* let count = -4;
+        let tot = Object.keys(snap.data()).length - 4;
+        Object.keys(snap.data()).forEach(i => { if (typeof i !== 'undefined') count++ }); */
+        this.setState({
+          isOwner: luid ? luid === uid : false,
+          user: snap.data(),
+          progress: 100 // / tot * count
+        });
+        this.setState({ loading: false });
+      } else this.setState({ isOwner: false, user: null, loading: false });
+    });
+  }
+  
 	fetchFollowers = () => {
 		const { luid, uid } = this.state;
-		//console.log('fetching followers');
+    console.log('fetching followers');
     followersRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         //console.log(snap.data());
         this.setState({
           followers: snap.data(),
           followers_num: Object.keys(snap.data()).length,
-          follow: Object.keys(snap.data()).indexOf(luid) > -1
+          follow: luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false
         });
       } else this.setState({ followers: {}, followers_num: 0, follow: false });
-		});
-		if (isAuthenticated()) {
-			if (luid !== uid) {
-				followersRef(luid).onSnapshot(snap => {
-					if (snap.exists) {
-						console.log({ lfollowers: snap.data() });
-						this.setState({ lfollowers: snap.data() });
-					} else this.setState({ lfollowers: {} });
-				});
-			}
-		}
+    });
+    if (isAuthenticated()) {
+      if (luid && luid !== uid) {
+        console.log('fetching lfollowers');
+        followersRef(luid).onSnapshot(snap => {
+          if (snap.exists) {
+            //console.log({ lfollowers: snap.data() });
+            this.setState({ lfollowers: snap.data() });
+          } else this.setState({ lfollowers: {} });
+        });
+      }
+    }
 	}
 
 	fetchFollowings = () => {
 		const { luid, uid } = this.state;
-		//console.log('fetching followings');
+    console.log('fetching followings');
     followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         //console.log(snap.data());
@@ -114,36 +131,17 @@ export default class Dashboard extends React.Component {
           followings: snap.data(),
           followings_num: Object.keys(snap.data()).length
         });
-      } else this.setState({ followings: {} });
+      } else this.setState({ followings: {}, followings_num: 0 });
     });
-    if (luid !== uid) {
+    if (luid && luid !== uid) {
+      console.log('fetching lfollowings');
       followingsRef(luid).onSnapshot(snap => {
         if (snap.exists) {
-          console.log({ lfollowings: snap.data() });
+          //console.log({ lfollowings: snap.data() });
           this.setState({ lfollowings: snap.data() });
         } else this.setState({ lfollowings: {} });
       });
     }
-	}
-	
-	fetchUser = () => {
-		const { luid, uid, user } = this.state;
-		//console.log('fetching user');
-		if (uid) {
-			userRef(uid).onSnapshot(snap => {
-				this.setState({ loading: false });
-				if (snap.exists) {
-					/* let count = -4;
-					let tot = Object.keys(snap.data()).length - 4;
-					Object.keys(snap.data()).forEach(i => { if (typeof i !== 'undefined') count++ }); */
-					this.setState({
-            isOwner: luid === uid,
-						user: snap.data(),
-						progress: 100 // / tot * count
-          });
-				} else this.setState({ isOwner: false, user: null });
-			});
-    } else this.setState({ user: user });
 	}
 
 	onFollowUser = (e, fuid = this.state.user.uid, fuser = this.state.user) => {
