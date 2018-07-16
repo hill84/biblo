@@ -3,10 +3,15 @@ import Link from 'react-router-dom/Link';
 import { isAuthenticated, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import BookCollection from '../bookCollection';
+import { Parallax, Background } from 'react-parallax';
+import heroImage from '../../images/covers-dark.jpg';
 
 const Home = () => (
 	<div id="homeComponent">
-		<header className="hero pad-v">
+		<Parallax
+      className="hero"
+      strength={400}>
+      
 			<div className="container">
 				<h1>Scopriamo nuovi libri, insieme</h1>
 				<p>Lorem ipsum dolor sit amet</p>
@@ -16,9 +21,13 @@ const Home = () => (
 					<Link to="/signup" className="btn primary lg">Registrati</Link>
 				}
 			</div>
-		</header>
+      <Background className="bg">
+        <div className="overlay"></div>
+        <img src={heroImage} alt="forrest" />
+      </Background>
+		</Parallax>
 
-		<div className="container">
+		<div className="container" style={{ marginTop: '-56px' }}>
 			<div className="card dark card-fullwidth-sm">
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
 			</div>

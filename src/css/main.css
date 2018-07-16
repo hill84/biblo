@@ -58,14 +58,15 @@ body {
   font-weight: 400;
   line-height: 1.5;
   text-align: left;
-  padding-bottom: 10rem;
+  padding-bottom: 6rem;
   display: flex; 
   flex-direction: column;
 }
 
 h1, h2, h3, h4, h5, h6 { margin-top: .5rem; margin-bottom: .5rem; font-weight: 400; color: var(--primaryLigthClr); }
-p { margin-top: 0; margin-bottom: .5rem; font-weight: 300; color: var(--mainTextClr); }
+p { margin-top: 0; margin-bottom: .5rem; }
 p:last-child { margin-bottom: 0; }
+p, ul, ol { color: var(--mainTextClr); font-weight: 300; }
 
 .info-row { margin-bottom: .2rem; }
 .info-row:last-child { margin-bottom: 0; }
@@ -304,7 +305,7 @@ hr.line {
   width: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.54);
+  background-color: rgba(38, 50, 56, 0.8); /*rgba(0, 0, 0, 0.54);*/
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   opacity: 1;
   will-change: opacity;
@@ -715,11 +716,19 @@ hr.line {
 #appBarComponent .drawer-btn { margin-left: -12px; margin-right: 20px; color: inherit; }
 #appBarComponent a { color: white; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
+#appBarComponent .avatar { --size: 36px; width: var(--size); width: var(--size); }
 
 /* DRAWER */
 .drawer .list { width: 256px; }
 
 /* CUSTOM */
+.hero .container { padding-top: 200px; padding-bottom: 100px; }
+.hero .overlay {
+  background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
+  background: -webkit-linear-gradient(top, transparent 0%,var(--mainBg) 75%);
+  background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 75%);
+}
+
 .form-group label + div:before {
   border-color: rgba(0,0,0,.15);
 }
@@ -822,6 +831,7 @@ hr.line {
   border-radius: 0; 
   margin-bottom: 0; 
   margin-top: 48px; 
+  line-height: 200%;
   box-shadow: 0 -1px 1px rgba(0,0,0,.1);
 }
 #FooterComponent .divider { margin: 0 auto; }
@@ -1438,6 +1448,13 @@ hr.line {
 .show-on-hover, .btn:hover .hide-on-hover, .avatar-row:hover .hide-on-hover { opacity: 0; }
 .hide-on-hover, .btn:hover .show-on-hover, .avatar-row:hover .show-on-hover { opacity: 1; }
 
+.nolist {
+  list-style: none;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.inline, ul.inline-items li { display: inline; }
 .rounded { border-radius: 99px; }
 .pull-left { float: left; }
 .pull-right { float: right; }
