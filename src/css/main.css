@@ -716,13 +716,21 @@ hr.line {
 #appBarComponent .drawer-btn { margin-left: -12px; margin-right: 20px; color: inherit; }
 #appBarComponent a { color: white; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
-#appBarComponent .avatar { --size: 36px; width: var(--size); width: var(--size); }
+#appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); }
 
 /* DRAWER */
 .drawer .list { width: 256px; }
 
 /* CUSTOM */
 .hero .container { padding-top: 200px; padding-bottom: 100px; }
+.hero h1 {
+  margin: 0;
+  color: var(--accentClr);
+  font-family: 'Roboto Slab';
+  font-size: 2.4em;
+  text-shadow: 0 0 50px rgba(38, 50, 56, 1), 0 0 5px rgba(38, 50, 56, .5);
+}
+.hero p { font-size: 1.1em; margin-bottom: 1.2rem; text-shadow: 0 0 10px rgba(38, 50, 56, 1); }
 .hero .overlay {
   background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
   background: -webkit-linear-gradient(top, transparent 0%,var(--mainBg) 75%);
