@@ -65,7 +65,7 @@ export default class Author extends React.Component {
     return (
       <div id="AuthorComponent" className="container">
         <div className="card dark" id="authorCard">
-          <div className="row text-align-center-md">
+          <div className="row text-center-md">
             <div className="col-md-auto col-sm-12">
               <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
             </div>

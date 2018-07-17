@@ -253,7 +253,7 @@ export default class Dashboard extends React.Component {
 								<div className="role-badges">
 									{Roles}
 								</div>
-								<div className="row text-align-center-md">
+								<div className="row text-center-md">
 									<div className="col-md-auto col-sm-12">
 										<Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
 									</div>
@@ -295,7 +295,7 @@ export default class Dashboard extends React.Component {
 					</div>
 					{isOwner && progress < 100 && 
 						<div className="col-md-auto col-12 hide-md flex">
-							<div className="card dark text-align-center">
+							<div className="card dark text-center">
 								<div className="progress-container">
 									<div className="progress-base"></div>
 									<CircularProgress mode="determinate" value={progress} size={60} max={100} thickness={5} />

@@ -8,7 +8,7 @@ const Footer = () => (
       <div className="container pad-v-sm">
         <div className="row">
           <div className="col hide-md"><p>© {appName} 2018</p></div>
-          <div className="col-md-auto col-12 text-align-center-md text-align-right">
+          <div className="col-md-auto col-12 text-center-md text-right">
             <ul className="nolist inline-items info-row">
               <li className="counter"><Link to="/chi-siamo">Chi siamo</Link></li>
               <li className="counter"><Link to="/termini">Termini <span className="hide-md">e condizioni</span></Link></li>

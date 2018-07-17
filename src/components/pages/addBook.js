@@ -32,7 +32,7 @@ export default class AddBook extends React.Component {
 				{book ?
 					<Book book={book} user={user} />
 				:
-					<div className="text-align-center">
+					<div className="text-center">
 						<div>&nbsp;</div>
 						<p>Non hai trovato il libro che cercavi?</p>
 						<p><Link to="/new-book" className="btn primary">Crea la tua scheda libro</Link></p>

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import { collectionsRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { booksPerRow/* , isTouchDevice */ } from '../config/shared';
+import { booksPerRow /* , isTouchDevice */ } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';

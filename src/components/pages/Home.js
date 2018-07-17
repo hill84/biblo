@@ -1,17 +1,18 @@
 import React from 'react';
+import { Background, Parallax } from 'react-parallax';
 import Link from 'react-router-dom/Link';
 import { isAuthenticated, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import BookCollection from '../bookCollection';
-import { Parallax, Background } from 'react-parallax';
+import { isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
+import BookCollection from '../bookCollection';
 
 const Home = () => (
 	<div id="homeComponent">
 		<Parallax
-      className="hero"
+			className="hero"
+			disabled={(isTouchDevice() || window.innerWidth < 768) ? true : false}
       strength={400}>
-      
 			<div className="container">
 				<h1>Scopriamo nuovi libri, insieme</h1>
 				<p>Lorem ipsum dolor sit amet</p>
@@ -23,7 +24,7 @@ const Home = () => (
 			</div>
       <Background className="bg">
         <div className="overlay"></div>
-        <img src={heroImage} alt="forrest" />
+        <img src={heroImage} alt="bookwall" />
       </Background>
 		</Parallax>
 

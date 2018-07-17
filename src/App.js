@@ -14,6 +14,11 @@ import NewBook from './components/pages/newBook';
 import NoMatchPage from './components/pages/noMatchPage';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
+import AboutPage from './components/pages/aboutPage';
+import CookiePage from './components/pages/cookiePage';
+import HelpPage from './components/pages/helpPage';
+import PrivacyPage from './components/pages/privacyPage';
+import TermsPage from './components/pages/termsPage';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { defaultTheme } from './config/themes';
 import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/sharedSnackbar';
@@ -59,6 +64,11 @@ export default class App extends React.Component {
                     <Route path="/signup" component={Signup} />
                     <Route path="/book/:bid" component={BookContainer} />
                     <Route path="/collection/:cid" component={Collection} />
+										<Route path="/chi-siamo" component={AboutPage} />
+										<Route path="/cookie" component={CookiePage} />
+										<Route path="/aiuto" component={HelpPage} />
+										<Route path="/privacy" component={PrivacyPage} />
+										<Route path="/termini" component={TermsPage} />
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
                     <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/books/add" component={AddBook} user={user} />

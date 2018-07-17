@@ -116,7 +116,7 @@ export default class Reviews extends React.Component {
       } else { 
         return (
           <div className="card dark reviews">
-            <div className="info-row empty text-align-center">Non ci sono ancora recensioni<span className="hide-xs"> per questo libro</span>.</div>
+            <div className="info-row empty text-center">Non ci sono ancora recensioni<span className="hide-xs"> per questo libro</span>.</div>
           </div>
         );
       }

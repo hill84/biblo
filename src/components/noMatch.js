@@ -17,7 +17,7 @@ export default class NoMatch extends React.Component {
     return (
       <div className="container empty" id="noMatchComponent">
         <div className="card dark empty">
-          <div className="text-align-center">
+          <div className="text-center">
             <h1>{title || 'Pagina non trovata'}</h1>
             <p>Controlla di aver digitato correttamente l'indirizzo{location && <span className="hide-sm">: <big><code>{location.pathname}</code></big></span>}.</p>
             {imgUrl && <img src={imgUrl} alt="Pagina non trovata" />}

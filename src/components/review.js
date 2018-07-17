@@ -70,7 +70,7 @@ export default class Review extends React.Component {
               <Link to={`/dashboard/${review.createdByUid}`} className="col-auto author">
                 <h3>{review.displayName}</h3>
               </Link>
-              <div className="col text-align-right rating">
+              <div className="col text-right rating">
                 <Rating ratings={{rating_num: review.rating_num}} labels={true} />
               </div>
             </div>
@@ -90,7 +90,7 @@ export default class Review extends React.Component {
                   </button>
                 </div>
               </div>
-              <div className="col counter text-align-right date">{timeSince(review.created_num)}</div>
+              <div className="col counter text-right date">{timeSince(review.created_num)}</div>
             </div>
           </div>
         </div>

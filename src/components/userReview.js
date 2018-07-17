@@ -247,7 +247,7 @@ export default class UserReview extends React.Component {
                         <div className="col-auto author">
                           <h3>{user.displayName}</h3>
                         </div>
-                        <div className="col text-align-right rating">
+                        <div className="col text-right rating">
                           <Rating ratings={{rating_num: userBook.rating_num}} labels={true} />
                         </div>
                       </div>
@@ -268,7 +268,7 @@ export default class UserReview extends React.Component {
                             <button className="btn sm flat" onClick={this.onDelete}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
                           </div>
                         </div>
-                        <div className="col text-align-right date">{timeSince(review.created_num)}</div>
+                        <div className="col text-right date">{timeSince(review.created_num)}</div>
                       </div>
                     </div>
                   </div>
@@ -314,7 +314,7 @@ export default class UserReview extends React.Component {
                 {serverError && 
                   <React.Fragment>
                     <div>&nbsp;</div>
-                    <div className="info-row text-align-center"><div className="message error">{serverError}</div></div>
+                    <div className="info-row text-center"><div className="message error">{serverError}</div></div>
                   </React.Fragment>
                 }
 
