@@ -3,7 +3,7 @@ import { Background, Parallax } from 'react-parallax';
 import Link from 'react-router-dom/Link';
 import { isAuthenticated, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { isTouchDevice } from '../../config/shared';
+import { appName, isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
 import BookCollection from '../bookCollection';
 
@@ -15,11 +15,14 @@ const Home = () => (
       strength={400}>
 			<div className="container">
 				<h1>Scopriamo nuovi libri, insieme</h1>
-				<p>Lorem ipsum dolor sit amet</p>
+				<p><big>Crea la tua libreria, scrivi una recensione, scopri cosa leggono i tuoi amici<br />Su {appName} condividi la tua passione per la letteratura</big></p>
 				{isAuthenticated() ? 
 					<Link to={`/dashboard/${uid}`} className="btn primary lg">La mia libreria</Link> 
 				: 
-					<Link to="/signup" className="btn primary lg">Registrati</Link>
+					<React.Fragment>
+						<Link to="/signup" className="btn primary lg">Registrati</Link>
+						<p><small>Sei già registrato? <Link to="/login">Accedi</Link></small></p>
+					</React.Fragment>
 				}
 			</div>
       <Background className="bg">

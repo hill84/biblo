@@ -432,6 +432,18 @@ hr.line {
 
 .btn.icon { padding-left: 0; padding-right: 0; min-width: var(--btnHeight); }
 
+.btn.xl { 
+  --btnPad: 1.3rem;
+  --btnHeight: 52px;
+  --btnFontSize: 1.3rem;
+  --radius: 5px;
+}
+.btn.lg { 
+  --btnPad: 1.1rem;
+  --btnHeight: 44px;
+  --btnFontSize: 1.1rem;
+  --radius: 4px;
+}
 .btn.sm { 
   --btnPad: .6rem;
   --btnHeight: 26px;
