@@ -2,7 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import { authorsRef, booksRef } from '../../config/firebase';
+import { authorRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { getInitials, normalizeString } from '../../config/shared';
 import Cover from '../cover';
@@ -27,7 +27,7 @@ export default class Author extends React.Component {
 
   componentDidMount() {
     const { author } = this.state;
-		authorsRef(`${normalizeString(author.displayName)}`).onSnapshot(snap => {
+		authorRef(`${normalizeString(author.displayName)}`).onSnapshot(snap => {
 			if (snap.exists) {
 				this.setState({ 
 					author: snap.data(),
