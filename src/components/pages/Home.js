@@ -6,6 +6,7 @@ import { icon } from '../../config/icons';
 import { appName, isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
 import BookCollection from '../bookCollection';
+import RandomQuote from '../randomQuote';
 
 const Home = () => (
 	<div id="homeComponent">
@@ -36,7 +37,11 @@ const Home = () => (
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
 			</div>
 
-			<div className="card">
+      <div className="card dark quote-container">
+        <RandomQuote />
+      </div>
+
+			<div className="card dark">
 				<ul>
 					<li><Link to="/login">{icon.loginVariant()} Login</Link></li>
 					<li><Link to="/signup">{icon.accountPlus()} Signup</Link></li>

@@ -71,9 +71,9 @@ export default class Author extends React.Component {
             </div>
             <div className="col">
               <h2 className="title">{author.displayName}</h2>
-              <p className="info-row bio">
+              <div className="info-row bio">
                 <MinifiableText text={author.bio} maxChars={500} />
-              </p>
+              </div>
             </div>
           </div>
         </div>

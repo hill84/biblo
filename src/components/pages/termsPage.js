@@ -5,7 +5,7 @@ import { appName } from '../../config/shared';
 const TermsPage = props => {
   return (
     <div id="TermsPageComponent">
-      <div className="container">
+      <div className="container pad-v">
         <h2>Termini e condizioni d'uso</h2>
         <div className="text-justify text-left-sm">
           <ol>

@@ -61,6 +61,11 @@ service cloud.firestore {
         allow delete: if userHasAllRoles('admin', 'editor') == true;
       }
     }
+
+    match /quotes/{qid} {
+    	allow read;
+      allow write: if isEditor();
+    }
     
     match /admin/{document=**} {
     	allow read: if isAdmin();

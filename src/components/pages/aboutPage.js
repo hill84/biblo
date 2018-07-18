@@ -4,7 +4,7 @@ import { appName } from '../../config/shared';
 const AboutPage = props => {
   return (
     <div id="AboutPageComponent">
-      <div className="container">
+      <div className="container pad-v">
         <h2>Chi siamo</h2>
         <div className="text-justify text-left-sm">
           <p><big>{appName} è un social network dedicato a chi ama i libri e la lettura.</big></p>
