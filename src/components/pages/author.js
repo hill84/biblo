@@ -89,7 +89,7 @@ export default class Author extends React.Component {
                       onClick={this.onToggleView}>
                       {coverview ? icon.viewSequential() : icon.viewGrid()}
                     </button>
-                    <span className="counter hide-sm">{(books && books.length) || 0} libri</span>
+                    {books && <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>}
                   </div>
                 </div>
               </div>

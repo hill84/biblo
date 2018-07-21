@@ -6,9 +6,16 @@ import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { getInitials, timeSince } from '../config/shared';
+import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
 import Rating from './rating';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 
 export default class UserReview extends React.Component {
 	state = {
@@ -26,10 +33,11 @@ export default class UserReview extends React.Component {
       text: '',
       title: ''
     },
-    changes: false,
     text_minChars: 50,
     text_maxChars: 1500,
     title_maxChars: 255,
+    isOpenDeleteDialog: false,
+    changes: false,
     loading: false,
     serverError: '',
     errors: {},
@@ -145,7 +153,12 @@ export default class UserReview extends React.Component {
     } else this.setState({ isEditing: false });
   }
 
+  onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
+
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
+
   onDelete = () => {
+    this.setState({ isOpenDeleteDialog: false });
     //DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (this.state.bid) {
           
@@ -256,7 +269,7 @@ export default class UserReview extends React.Component {
                       <div className="foot row">
                         <div className="col-auto likes">
                           <div className="counter">
-                            <button className="btn sm flat thumb up" disabled title={`Piace a ${review.likes.length}`}>{icon.thumbUp()} {review.likes.length}</button>
+                            <button className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp()} {abbrNum(review.likes.length)}</button>
                           </div>
                           <div className="counter">
                             <button className="btn sm flat" disabled>{icon.comment()} 0</button>
@@ -265,7 +278,7 @@ export default class UserReview extends React.Component {
                             <button className="btn sm flat" onClick={this.onEditing}>{icon.pencil()} <span className="hide-sm">Modifica</span></button>
                           </div>
                           <div className="counter">
-                            <button className="btn sm flat" onClick={this.onDelete}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
+                            <button className="btn sm flat" onClick={this.onDeleteRequest}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
                           </div>
                         </div>
                         <div className="col text-right date">{timeSince(review.created_num)}</div>
@@ -331,7 +344,30 @@ export default class UserReview extends React.Component {
             <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
           </div>
         }
+
+        <Dialog
+          open={this.state.isOpenDeleteDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={this.onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">
+            Procedere con l'eliminazione?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          </DialogActions>
+        </Dialog>
       </React.Fragment>
     );
   }
 }
+
+const Transition = props => <Slide direction="up" {...props} />;

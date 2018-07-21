@@ -1,7 +1,6 @@
 import React from 'react';
 import { bookRef, collectionsRef, isAuthenticated, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
-import { bookType, stringType, userBookType, userType } from '../config/types';
-import { SharedSnackbarConsumer } from '../context/sharedSnackbar';
+import { bookType, funcType, stringType, userBookType, userType } from '../config/types';
 import BookForm from './forms/bookForm';
 import NoMatch from './noMatch';
 import BookProfile from './pages/bookProfile';
@@ -30,6 +29,7 @@ export default class Book extends React.Component {
   static propTypes = {
     bid: stringType,
     book: bookType,
+    openSnackbar: funcType.isRequired,
     user: userType,
     userBook: userBookType
   }
@@ -122,19 +122,18 @@ export default class Book extends React.Component {
   }
   
   fetchUserBook = bid => {
-    if (bid) {
-      if (isAuthenticated()) {
-        userBookRef(uid, bid).onSnapshot(snap => {
-          if (snap.exists) {
-            this.setState({ userBook: snap.data() });
-            //console.log(`Update userBook ${bid}`);
-          }
-        });
-      }
+    if (isAuthenticated() && bid) {
+      userBookRef(uid, bid).onSnapshot(snap => {
+        if (snap.exists) {
+          this.setState({ userBook: snap.data() });
+          //console.log(`Update userBook ${bid}`);
+        }
+      });
     }
   }
   
   addBookToShelf = bid => {
+    const { openSnackbar } = this.props;
     if (isAuthenticated()) {
       let userWishlist_num = this.props.user.stats.wishlist_num;
       const bookReaders_num = this.state.book.readers_num + 1;
@@ -157,6 +156,7 @@ export default class Book extends React.Component {
           }
         }); */
         //console.log('Book added to user shelf');
+        openSnackbar('Libro aggiunto in libreria', 'success');
       }).catch(error => console.warn(error));
 
       bookRef(bid).update({
@@ -181,6 +181,7 @@ export default class Book extends React.Component {
 	}
 
 	addBookToWishlist = bid => {
+    const { openSnackbar } = this.props;
     if (isAuthenticated()) {
       const userWishlist_num = this.props.user.stats.wishlist_num + 1;
       /* let userShelf_num = this.props.user.stats.shelf_num;
@@ -227,6 +228,7 @@ export default class Book extends React.Component {
           }
         }); */
         //console.log('Book added to user wishlist');
+        openSnackbar('Libro aggiunto in lista desideri', 'success');
       }).catch(error => console.warn(error));
 
       userRef(uid).update({
@@ -462,34 +464,30 @@ export default class Book extends React.Component {
     if (!loading && !book) return <NoMatch title="Libro non trovato" location={this.props.location} />
 
 		return (
-			<SharedSnackbarConsumer>
-        {({ openSnackbar }) => (
-          <React.Fragment>
-            {isEditing && isAuthenticated() ?
-              <BookForm 
-                openSnackbar={openSnackbar}
-                isEditing={this.isEditing} 
-                book={book} 
-                user={user}
-              />
-            :
-              <BookProfile 
-                openSnackbar={openSnackbar}
-                addBookToShelf={this.addBookToShelf} 
-                addBookToWishlist={this.addBookToWishlist} 
-                removeBookFromShelf={this.removeBookFromShelf} 
-                removeBookFromWishlist={this.removeBookFromWishlist} 
-                rateBook={this.rateBook}
-                isEditing={this.isEditing}
-                loading={loading}
-                book={book}
-                userBook={userBook}
-                user={user}
-              />
-            }
-          </React.Fragment>
-        )}
-			</SharedSnackbarConsumer>
+      <React.Fragment>
+        {isEditing && isAuthenticated() ?
+          <BookForm 
+            openSnackbar={this.props.openSnackbar}
+            isEditing={this.isEditing} 
+            book={book} 
+            user={user}
+          />
+        :
+          <BookProfile 
+            openSnackbar={this.props.openSnackbar}
+            addBookToShelf={this.addBookToShelf} 
+            addBookToWishlist={this.addBookToWishlist} 
+            removeBookFromShelf={this.removeBookFromShelf} 
+            removeBookFromWishlist={this.removeBookFromWishlist} 
+            rateBook={this.rateBook}
+            isEditing={this.isEditing}
+            loading={loading}
+            book={book}
+            userBook={userBook}
+            user={user}
+          />
+        }
+      </React.Fragment>
 		);
 	}
 }

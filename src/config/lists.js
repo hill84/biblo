@@ -14,7 +14,9 @@ export const ratingLabels = {
 
 export const formats = [
   { id: "0", name: "Libro" },
-  { id: "1", name: "Rivista" }
+  { id: "1", name: "Rivista" },
+  { id: "3", name: "Ebook" },
+  { id: "4", name: "Audiolibro" }
 ];
 
 export const genres = [

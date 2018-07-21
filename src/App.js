@@ -62,7 +62,6 @@ export default class App extends React.Component {
                     <Route path="/login" component={Login} />
                     <Route path="/password-reset" component={PasswordResetForm} />
                     <Route path="/signup" component={Signup} />
-                    <Route path="/book/:bid" component={BookContainer} />
                     <Route path="/collection/:cid" component={Collection} />
 										<Route path="/chi-siamo" component={AboutPage} />
 										<Route path="/cookie" component={CookiePage} />
@@ -70,6 +69,7 @@ export default class App extends React.Component {
 										<Route path="/privacy" component={PrivacyPage} />
 										<Route path="/termini" component={TermsPage} />
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
+                    <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/books/add" component={AddBook} user={user} />
                     <PrivateRoute path="/new-book" component={NewBook} user={user} />

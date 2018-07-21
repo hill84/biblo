@@ -446,12 +446,12 @@ hr.line {
 .btn.xl { 
   --btnPad: 1.3rem;
   --btnHeight: 52px;
-  --btnFontSize: 1.3rem;
+  --btnFontSize: 1.2rem;
 }
 .btn.lg { 
   --btnPad: 1.1rem;
   --btnHeight: 44px;
-  --btnFontSize: 1.1rem;
+  --btnFontSize: 1rem;
 }
 .btn.sm { 
   --btnPad: .6rem;
@@ -744,16 +744,27 @@ hr.line {
 .drawer .list { width: 256px; }
 
 /* CUSTOM */
-.hero .container { padding-top: 200px; padding-bottom: 100px; }
-.hero h1 {
+.hero .container { padding-top: 140px; padding-bottom: 95px; }
+.hero .bg img { animation: fadeIn .4s ease-in-out 0; }
+.hero .title {
   margin: 0;
+  margin-bottom: .3rem;
   color: var(--accentClr);
   font-family: 'Roboto Slab', serif;
   font-size: 2.4em;
-  text-shadow: 0 0 50px rgba(38, 50, 56, 1), 0 0 5px rgba(38, 50, 56, .5);
+  line-height: 125%;
+  text-shadow: 0 0 50px rgba(38, 50, 56, 1), 0 0 5px rgba(38, 50, 56, .3);
+  animation-delay: .4s;
 }
-.hero p { font-size: 1.1em; margin-bottom: 1.2rem; text-shadow: 0 0 10px rgba(38, 50, 56, 1); }
-.hero .bg img { animation: fadeIn .4s ease-in-out; }
+.hero .subtitle { 
+  font-size: 1.1em; 
+  margin-bottom: 1.2rem; 
+  text-shadow: 0 0 10px rgba(38, 50, 56, 1); 
+  animation-delay: .6s; 
+}
+.hero .btns {
+  animation-delay: .8s;
+}
 .hero .overlay {
   background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
   background: -webkit-linear-gradient(top, transparent 0%,var(--mainBg) 75%);
@@ -853,6 +864,13 @@ hr.line {
 }
 #AuthorComponent .coverview .book .info .author { display: none; }
 
+/* randomquote */
+.randomquote {
+  --bookWidth: 60px;
+  --coverWidth: 60px;
+  --coverHeight: 92px;
+}
+
 /* FooterComponent */
 #FooterComponent { 
   position: absolute;
@@ -864,6 +882,7 @@ hr.line {
   margin-bottom: 0; 
   margin-top: 48px; 
   line-height: 200%;
+  font-size: .84rem;
   box-shadow: 0 -1px 1px rgba(0,0,0,.1);
 }
 #FooterComponent .divider { margin: 0 auto; }
@@ -1501,16 +1520,26 @@ hr.line {
 .pad-v-lg { padding-top: calc(var(--pad) * 2); padding-bottom: calc(var(--pad) * 2); }
 
 /* ANIMATIONS */
+.reveal {   
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  animation-fill-mode: both; 
+}
+.fadeIn, .fadeOut { will-change: opacity; }
+.slideUp, .slideDown { will-change: transform; }
+.fadeIn.slideUp, .fadeIn.slideDown { will-change: opacity, transform; }
+.fadeIn.slideUp { animation-name: fadeInSlideUp; }
+.fadeIn.slideDown { animation-name: fadeInSlideDown; }
+
+@keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInSlideDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }
+
 @keyframes ripple { 
-from { transform: scale(0); } 
-to { opacity: 0; transform: scale(1); } 
+  from { transform: scale(0); } 
+  to { opacity: 0; transform: scale(1); } 
 }
-@keyframes slideDown {
-  from { opacity: 0; max-height: 36px; } to { opacity: 1; }
-}
-@keyframes showIn {
-  from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); }
-}
+@keyframes slideDown { from { opacity: 0; max-height: 36px; } to { opacity: 1; }}
+@keyframes showIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); }}
 @keyframes fadeIn { from { opacity: 0; } }
 @keyframes fadeOut { to { opacity: 0; } }
 @keyframes flipInY {

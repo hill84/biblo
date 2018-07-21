@@ -1,7 +1,8 @@
 import React from 'react';
-import { boolType, ratingsType } from '../config/types';
-import { ratingLabels } from '../config/lists';
 import Rater from 'react-rater';
+import { ratingLabels } from '../config/lists';
+import { abbrNum } from '../config/shared';
+import { boolType, ratingsType } from '../config/types';
 
 export default class Rating extends React.Component {
   state = {
@@ -16,12 +17,14 @@ export default class Rating extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.ratings.ratings_num !== state.ratings_num || props.ratings.rating_num !== state.rating_num) { 
-      return { 
-        ratings_num: props.ratings.ratings_num || state.ratings_num, 
-        rating_num: props.ratings.rating_num || state.rating_num, 
-        averageRating_num: Math.round((props.ratings.rating_num || state.rating_num) / (props.ratings.ratings_num || state.ratings_num) * 10) / 10 || 0 
-      }; 
+    if (props.ratings) {
+      if (props.ratings.ratings_num !== state.ratings_num || props.ratings.rating_num !== state.rating_num) { 
+        return { 
+          ratings_num: props.ratings.ratings_num || state.ratings_num, 
+          rating_num: props.ratings.rating_num || state.rating_num, 
+          averageRating_num: Math.round((props.ratings.rating_num || state.rating_num) / (props.ratings.ratings_num || state.ratings_num) * 10) / 10 || 0 
+        }; 
+      }
     }
     return null;
   }
@@ -36,7 +39,7 @@ export default class Rating extends React.Component {
         {labels && 
           <div className="rating-labels">
             <span className="label rating-num">{ratings_num ? averageRating_num : rating_num}</span>
-            <span className="label ratings-num">{ratings_num} {ratings_num !== 1 ? 'voti' : 'voto'}</span>
+            <span className="label ratings-num">{abbrNum(ratings_num, 1)} {ratings_num !== 1 ? 'voti' : 'voto'}</span>
           </div>
         }
       </div>

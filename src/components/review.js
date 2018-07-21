@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import { isAuthenticated, reviewRef, uid, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { getInitials, timeSince } from '../config/shared';
+import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { reviewType } from '../config/types';
 import Rating from './rating';
 import MinifiableText from './minifiableText';
@@ -86,7 +86,7 @@ export default class Review extends React.Component {
                     disabled={!isAuthenticated() || (review.createdByUid === uid)} 
                     onClick={this.onThumbChange}
                     title={like ? 'Non mi piace più' : 'Mi piace'}>
-                    {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? likes_num : 'Mi piace'}
+                    {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? abbrNum(likes_num) : 'Mi piace'}
                   </button>
                 </div>
               </div>

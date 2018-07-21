@@ -1,4 +1,3 @@
-import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
@@ -11,7 +10,7 @@ export default class RandomQuote extends React.Component {
     author: this.props.author || '',
     bid: '',
     bookTitle: '',
-    photoURL: '',
+    coverURL: '',
     quote: '',
     auto: false
   }
@@ -40,7 +39,7 @@ export default class RandomQuote extends React.Component {
           author: quote.author,
           bid: quote.bid,
           bookTitle: quote.bookTitle,
-          photoURL: quote.photoURL,
+          coverURL: quote.coverURL,
           quote: quote.quote
         });
       } else {
@@ -48,7 +47,7 @@ export default class RandomQuote extends React.Component {
           author: '',
           bid: '',
           bookTitle: '',
-          photoURL: '',
+          coverURL: '',
           quote: ''
         });
       }
@@ -56,18 +55,30 @@ export default class RandomQuote extends React.Component {
   }
 
   render() {
-    const { author, bid, bookTitle, photoURL, quote } = this.state;
+    const { author, bid, bookTitle, coverURL, quote } = this.state;
 
     if (!quote) return <div className="loader"><CircularProgress /></div>
 
     return (
-      <blockquote className="blockquote">
-        <div className="q"><MinifiableText text={quote} limit={500} /></div>
-        <p> 
-          {photoURL ? <Avatar className="avatar" src={photoURL} alt={author} /> : '– '}
-          <Link to={`/author/${author}`}>{author}</Link>{bookTitle && <em>, {bid ? <Link to={`/book/${bid}`}>{bookTitle}</Link> : bookTitle}</em>}
-        </p>
-      </blockquote>
+      <div className="row randomquote">
+        {coverURL && 
+          <div className="col-auto">
+            <Link to={`/book/${bid}`} className="hoverable-items">
+              <div className="book">
+                <div className="cover" style={{backgroundImage: `url(${coverURL})`}} title={bookTitle}>
+                  <div className="overlay"></div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        }
+        <div className="col">
+          <blockquote className="blockquote">
+            <div className="q"><MinifiableText text={quote} limit={500} /></div>
+            <p>– <Link to={`/author/${author}`}>{author}</Link>{bookTitle && <em>, {bid ? <Link to={`/book/${bid}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
+          </blockquote>
+        </div>
+      </div>
     )
   }
 }

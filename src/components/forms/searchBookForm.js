@@ -202,7 +202,7 @@ export default class SearchBookForm extends React.Component {
                 covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],
                 description: b.description || '',
                 edition_num: 1,
-                format: b.printType === 'BOOK' ? 'Libro' : 'Rivista' || '',
+                format: b.printType === 'BOOK' ? 'Libro' : b.printType === 'MAGAZINE' ? 'Rivista' : b.isEbook ? 'Ebook' : '',
                 genres: (b.categories && switchGenres(b.categories)) || [],
                 incipit: '',
                 languages: [(b.language && switchLanguages(b.language))] || [],

@@ -97,7 +97,7 @@ export default class Dashboard extends React.Component {
   
 	fetchFollowers = () => {
 		const { luid, uid } = this.state;
-    console.log('fetching followers');
+    //console.log('fetching followers');
     followersRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         //console.log(snap.data());
@@ -110,7 +110,7 @@ export default class Dashboard extends React.Component {
     });
     if (isAuthenticated()) {
       if (luid && luid !== uid) {
-        console.log('fetching lfollowers');
+        //console.log('fetching lfollowers');
         followersRef(luid).onSnapshot(snap => {
           if (snap.exists) {
             //console.log({ lfollowers: snap.data() });
@@ -123,7 +123,7 @@ export default class Dashboard extends React.Component {
 
 	fetchFollowings = () => {
 		const { luid, uid } = this.state;
-    console.log('fetching followings');
+    //console.log('fetching followings');
     followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         //console.log(snap.data());
@@ -134,7 +134,7 @@ export default class Dashboard extends React.Component {
       } else this.setState({ followings: {}, followings_num: 0 });
     });
     if (luid && luid !== uid) {
-      console.log('fetching lfollowings');
+      //console.log('fetching lfollowings');
       followingsRef(luid).onSnapshot(snap => {
         if (snap.exists) {
           //console.log({ lfollowings: snap.data() });
@@ -151,12 +151,12 @@ export default class Dashboard extends React.Component {
 			const { followers, followings, lfollowers, lfollowings, luid, uid } = this.state;
 			let computedFollowers = luid !== uid ? { ...lfollowers } : { ...followers };
 			let computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
-			console.log({ luid, fuid, computedFollowers, computedFollowings, followers, followings, lfollowers, lfollowings });
+			//console.log({ luid, fuid, computedFollowers, computedFollowings, followers, followings, lfollowers, lfollowings });
       let snackbarMsg = '';
       const lindex = Object.keys(computedFollowers).indexOf(luid);
 			const findex = Object.keys(computedFollowings).indexOf(fuid);
 			
-			console.log({ lindex, findex });
+			//console.log({ lindex, findex });
 
       if (lindex > -1 || findex > -1) {
         if (lindex > -1) delete computedFollowers[luid];
@@ -176,7 +176,7 @@ export default class Dashboard extends React.Component {
 				snackbarMsg = `Segui ${fuser.displayName}`;
 			}
 
-			console.log({ computedFollowers, computedFollowings });
+			//console.log({ computedFollowers, computedFollowings });
 	
 			// VISITED
 			followersRef(fuid).set(computedFollowers).then(() => openSnackbar(snackbarMsg, 'success')); 
