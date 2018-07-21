@@ -54,7 +54,7 @@ const Home = () => (
 					<li><Link to="/books/add">{icon.plusCircle()} Add book</Link></li>
 					<li><Link to="/new-book">{icon.newBox()} New book</Link></li>
 					<li><Link to="/profile">{icon.accountCircle()} Profile</Link></li>
-					<li><Link to="/error404">No match</Link></li>
+					<li><Link to="/error404">{icon.reader()} No match</Link></li>
 				</ul>
 			</div>
 		</div>

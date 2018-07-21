@@ -226,11 +226,11 @@ export default class Dashboard extends React.Component {
 		const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const ShelfDetails = () => {
 			return (
-				<div className="info-row footer centered">
-					<span className="counter">Libri: <b>{user.stats.shelf_num}</b></span>
-					<span className="counter">Desideri: <b>{user.stats.wishlist_num}</b></span>
-					<span className="counter">Valutazioni: <b>{user.stats.ratings_num}</b></span>
-					<span className="counter">Recensioni: <b>{user.stats.reviews_num}</b></span>
+				<div className="info-row footer centered shelfdetails">
+					<span className="counter">{icon.book()} <span className="hide-sm">Libri:</span> <b>{user.stats.shelf_num}</b></span>
+					<span className="counter">{icon.heart()} <span className="hide-sm">Desideri:</span> <b>{user.stats.wishlist_num}</b></span>
+					<span className="counter">{icon.star()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
+					<span className="counter">{icon.review()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
 				</div>
 			)
 		}
