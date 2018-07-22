@@ -2,22 +2,27 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { quotesRef } from '../config/firebase';
-import { boolType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
 
 export default class RandomQuote extends React.Component {
   state = {
+    className: this.props.className || '',
     author: this.props.author || '',
     bid: '',
     bookTitle: '',
     coverURL: '',
     quote: '',
+    limit: this.props.limit || 1,
+    loading: true,
     auto: false
   }
 
   static propTypes = {
     author: stringType,
-    auto: boolType
+    auto: boolType,
+    className: stringType,
+    limit: numberType
   }
 
   componentDidMount() {
@@ -25,9 +30,11 @@ export default class RandomQuote extends React.Component {
   }
   
   fetchRandomQuote = () => {
+    const { limit } = this.state;
+    const { author } = this.props;
     let ref = quotesRef();
 
-    if (this.props.author) { ref = quotesRef().where('author', '==', this.props.author).limit(30); }
+    if (author) { ref = quotesRef().where('author', '==', author).limit(limit); }
     ref.get().then(snap => {
       if (!snap.empty) {
         //console.log(snap);
@@ -40,7 +47,8 @@ export default class RandomQuote extends React.Component {
           bid: quote.bid,
           bookTitle: quote.bookTitle,
           coverURL: quote.coverURL,
-          quote: quote.quote
+          quote: quote.quote,
+          loading: false
         });
       } else {
         this.setState({
@@ -48,35 +56,42 @@ export default class RandomQuote extends React.Component {
           bid: '',
           bookTitle: '',
           coverURL: '',
-          quote: ''
+          quote: '',
+          loading: false
         });
       }
     }).catch(error => console.warn(`Error fetching quotes: ${error}`));
   }
 
   render() {
-    const { author, bid, bookTitle, coverURL, quote } = this.state;
+    const { author, bid, bookTitle, className, coverURL, loading, quote } = this.state;
 
-    if (!quote) return <div className="loader"><CircularProgress /></div>
+    if (loading) {
+      return <div className="loader"><CircularProgress /></div>
+    } else if (!quote) { 
+      return null 
+    }
 
     return (
-      <div className="row randomquote">
-        {coverURL && 
-          <div className="col-auto">
-            <Link to={`/book/${bid}`} className="hoverable-items">
-              <div className="book">
-                <div className="cover" style={{backgroundImage: `url(${coverURL})`}} title={bookTitle}>
-                  <div className="overlay"></div>
+      <div className={`randomquote ${className}`}>
+        <div className="row">
+          {coverURL && !this.props.author &&
+            <div className="col-auto">
+              <Link to={`/book/${bid}`} className="hoverable-items">
+                <div className="book">
+                  <div className="cover" style={{backgroundImage: `url(${coverURL})`}} title={bookTitle}>
+                    <div className="overlay"></div>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
+          }
+          <div className="col">
+            <blockquote className="blockquote">
+              <div className="q"><MinifiableText text={quote} limit={500} /></div>
+                <p>– {this.props.author ? author : <Link to={`/author/${author}`}>{author}</Link>}{bookTitle && <em>, {bid ? <Link to={`/book/${bid}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
+            </blockquote>
           </div>
-        }
-        <div className="col">
-          <blockquote className="blockquote">
-            <div className="q"><MinifiableText text={quote} limit={500} /></div>
-            <p>– <Link to={`/author/${author}`}>{author}</Link>{bookTitle && <em>, {bid ? <Link to={`/book/${bid}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
-          </blockquote>
         </div>
       </div>
     )

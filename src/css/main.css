@@ -157,7 +157,7 @@ hr.line {
 
 .quote-container { min-height: 97px; }
 .blockquote { margin: 0; }
-.blockquote .q { font-family: 'Roboto Slab', serif; }
+.blockquote .q { font-family: 'Roboto Slab', serif; color: var(--ligthTextClr); }
 .blockquote .avatar {
   width: 28px;
   height: 28px;
@@ -737,7 +737,7 @@ hr.line {
 /* APPBAR */
 #layoutComponent { padding-top: 60px; flex-grow: 1; }
 #appBarComponent { position: fixed !important; top: 0; }
-#appBarComponent .toolbar {min-height: 60px; }
+#appBarComponent .toolbar { min-height: 60px; }
 #appBarComponent .title { flex: 1; }
 #appBarComponent .more-btn { margin-right: -12px; margin-left: 20px; color: inherit; }
 #appBarComponent .drawer-btn { margin-left: -12px; margin-right: 20px; color: inherit; }
@@ -867,7 +867,16 @@ hr.line {
   line-height: var(--size); 
   box-shadow: inset 1px 1px 1px rgba(0,0,0,.05);
 }
-#AuthorComponent .coverview .book .info .author { display: none; }
+#authorCard .blockquote { 
+  margin-top: 10px; 
+  overflow: hidden; 
+  max-height: 0; 
+  animation-name: maxheightIn;
+  animation-duration: 1.2s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: both;
+}
+#authorCard .loader, #authorComponent .coverview .book .info .author { display: none; }
 
 /* randomquote */
 .randomquote {
@@ -1556,6 +1565,7 @@ hr.line {
   to { opacity: 1; transform: perspective(950) scale(1) rotateX(0deg); }
 }
 @keyframes skltn_shelfRow { to { background-position: 120% 0; } }
+@keyframes maxheightIn { to { max-height: 600px; } }
 
 /* MEDIA QUERIES */
 @media (pointer: fine) {

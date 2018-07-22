@@ -8,6 +8,7 @@ import { getInitials, normalizeString } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
+import RandomQuote from '../randomQuote';
 
 export default class Author extends React.Component {
   state = {
@@ -63,7 +64,7 @@ export default class Author extends React.Component {
     }
 
     return (
-      <div id="AuthorComponent" className="container">
+      <div className="container" id="authorComponent">
         <div className="card dark" id="authorCard">
           <div className="row text-center-md">
             <div className="col-md-auto col-sm-12">
@@ -74,31 +75,43 @@ export default class Author extends React.Component {
               <div className="info-row bio">
                 <MinifiableText text={author.bio} maxChars={500} />
               </div>
+              <RandomQuote author={author.displayName} className="fadeIn slideUp reveal" />
             </div>
           </div>
         </div>
-        <div className="card">
-          <div className="shelf">
-            <div className="collection hoverable-items">
-              <div className="head nav">
-                <div className="row">
-                  <div className="col">
-                    <button 
-                      className="btn sm flat counter"
-                      title={coverview ? 'Stack view' : 'Cover view'} 
-                      onClick={this.onToggleView}>
-                      {coverview ? icon.viewSequential() : icon.viewGrid()}
-                    </button>
-                    {books && <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>}
+        
+        {books ? 
+          <div className="card">
+            <div className="shelf">
+              <div className="collection hoverable-items">
+                <div className="head nav">
+                  <div className="row">
+                    <div className="col">
+                      <button 
+                        className="btn sm flat counter"
+                        title={coverview ? 'Stack view' : 'Cover view'} 
+                        onClick={this.onToggleView}>
+                        {coverview ? icon.viewSequential() : icon.viewGrid()}
+                      </button>
+                      <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`}>
-                {covers}
+                <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`}>
+                  {covers}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        :
+          <div className="card dark pad-sm">
+            <div className="info-row empty text-center">
+              <p>Non ci sono ancora libri di {author.displayName}</p>
+              <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
+            </div>
+          </div>
+        }
+
       </div>
     );
   }
