@@ -137,7 +137,7 @@ export default class BookProfile extends React.Component {
                     {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
                     {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
                     {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
-                    {/* book.format && <span className="counter">Formato: {book.format}</span> */}
+                    {book.format !== 'Libro' && <span className="counter">Formato: {book.format}</span>}
                     {book.genres && book.genres[0] && <span className="counter">Gener{book.genres[1] ? 'i' : 'e'}: {book.genres.join(", ")}</span>}
                   </div>
 

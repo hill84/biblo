@@ -12,12 +12,13 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
+import Redirect from 'react-router-dom/Redirect';
+import isISBN from 'validator/lib/isISBN';
 import { bookRef, booksRef, collectionsRef, storageRef /* , timestamp */, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
-import isISBN from 'validator/lib/isISBN';
 import Cover from '../cover';
 
 export default class BookForm extends React.Component {
@@ -65,7 +66,8 @@ export default class BookForm extends React.Component {
     errors: {},
     authError: '',
     changes: false,
-    prevProps: this.props
+    prevProps: this.props,
+    redirectToBook: null
   }
 
   static propTypes = {
@@ -208,7 +210,7 @@ export default class BookForm extends React.Component {
           newBookRef.set({
             ISBN_10: book.ISBN_10,
             ISBN_13: book.ISBN_13, 
-            authors: arrToObj(book.authors, function(item) { return { key: item, value: true }}), 
+            authors: book.authors, 
             bid: newBookRef.id,
             collections: book.collections,
             covers: book.covers, 
@@ -238,9 +240,10 @@ export default class BookForm extends React.Component {
             title: book.title, 
             title_sort: book.title_sort
           }).then(() => {
-            this.setState({ loading: false, changes: false });
-            this.props.isEditing();
-            openSnackbar('Modifiche salvate', 'success');
+            this.setState({ redirectToBook: newBookRef.id });
+            /* this.setState({ loading: false, changes: false });
+            this.props.isEditing(); */
+            openSnackbar('Nuovo libro creato', 'success');
             //console.log(`New book created with bid ${newBookRef.id}`);
           }).catch(error => {
             this.setState({
@@ -402,7 +405,7 @@ export default class BookForm extends React.Component {
   onExitEditing = () => this.props.isEditing();
 	
 	render() {
-    const { book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading } = this.state;
+    const { book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading, redirectToBook } = this.state;
     const { user } = this.props;
     const isAdmin = () => user && user.roles && user.roles.admin === true;
     const menuItemsMap = (arr, values) => arr.map(item => 
@@ -413,7 +416,9 @@ export default class BookForm extends React.Component {
 				checked={values ? values.includes(item.name) : false}>
 				{item.name}
       </MenuItem>
-		);
+    );
+    
+    if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
 
 		return (
       <React.Fragment>
