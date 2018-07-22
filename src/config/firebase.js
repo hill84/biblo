@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import 'firebase/auth/dist/index.cjs';
 import 'firebase/firestore/dist/index.cjs';
 import 'firebase/storage/dist/index.cjs';

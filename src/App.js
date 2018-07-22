@@ -71,8 +71,8 @@ export default class App extends React.Component {
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/books/add" component={AddBook} user={user} />
-                    <PrivateRoute path="/new-book" component={NewBook} user={user} />
+                    <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
+                    <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
                     <Redirect from="/home" to="/" />
                     <Route component={NoMatchPage} />

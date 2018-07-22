@@ -2,7 +2,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { primaryTheme } from '../../config/themes';
 import Link from 'react-router-dom/Link';
-import { userType } from '../../config/types';
+import { funcType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
@@ -12,6 +12,7 @@ export default class AddBook extends React.Component {
 	}
 
 	static propTypes = {
+    openSnackbar: funcType,
 		user: userType
 	}
 
@@ -19,7 +20,7 @@ export default class AddBook extends React.Component {
 	
 	render() {
     const { book } = this.state;
-    const { user } = this.props;
+    const { openSnackbar, user } = this.props;
 
 		return (
 			<div className="container" id="addBookComponent">
@@ -30,7 +31,7 @@ export default class AddBook extends React.Component {
           </div>
         </MuiThemeProvider>
 				{book ?
-					<Book book={book} user={user} />
+					<Book book={book} user={user} openSnackbar={openSnackbar} />
 				:
 					<div className="text-center">
 						<div>&nbsp;</div>

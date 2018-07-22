@@ -20,9 +20,9 @@ export default class Rating extends React.Component {
     if (props.ratings) {
       if (props.ratings.ratings_num !== state.ratings_num || props.ratings.rating_num !== state.rating_num) { 
         return { 
-          ratings_num: props.ratings.ratings_num || state.ratings_num, 
-          rating_num: props.ratings.rating_num || state.rating_num, 
-          averageRating_num: Math.round((props.ratings.rating_num || state.rating_num) / (props.ratings.ratings_num || state.ratings_num) * 10) / 10 || 0 
+          ratings_num: props.ratings.ratings_num, 
+          rating_num: props.ratings.rating_num, 
+          averageRating_num: Math.round(props.ratings.rating_num / props.ratings.ratings_num * 10) / 10 
         }; 
       }
     }
