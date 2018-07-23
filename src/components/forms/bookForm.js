@@ -20,11 +20,12 @@ import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
+import isbn from 'isbn-utils';
 
 export default class BookForm extends React.Component {
 	state = {
     book: {
-      ISBN_10: this.props.book.ISBN_10 || 0,
+      ISBN_10: this.props.book.ISBN_10 ? this.props.book.ISBN_10 : this.props.book.ISBN_13 ? isbn.parse(this.props.book.ISBN_13).asIsbn10() : 0, 
       ISBN_13: this.props.book.ISBN_13 || 0, 
       EDIT: this.props.book.EDIT || {
         createdBy: this.props.book.createdBy || '',
@@ -264,7 +265,7 @@ export default class BookForm extends React.Component {
                 covers: (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
-                authors: arrToObj(book.authors, function(item) { return { key: item, value: true }}), 
+                authors: book.authors, 
                 publisher: book.publisher,
                 publication: book.publication,
                 rating_num: book.rating_num,

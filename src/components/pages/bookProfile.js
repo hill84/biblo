@@ -1,26 +1,25 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React from 'react';
-import Rater from 'react-rater';
-import Link from 'react-router-dom/Link';
-import { isAuthenticated } from '../../config/firebase';
-import { icon } from '../../config/icons';
-import { abbrNum, calcReadingTime/* , joinObj */, timeSince } from '../../config/shared';
-import { funcType, userBookType, userType } from '../../config/types';
-import Cover from '../cover';
-import Incipit from '../incipit';
-import Rating from '../rating';
-import ReadingStateForm from '../forms/readingStateForm';
-import Reviews from '../reviews';
-import UserReview from '../userReview';
-import CopyToClipboard from '../copyToClipboard';
-import MinifiableText from '../minifiableText';
-
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import React from 'react';
+import Rater from 'react-rater';
+import Link from 'react-router-dom/Link';
+import { isAuthenticated } from '../../config/firebase';
+import { icon } from '../../config/icons';
+import { abbrNum, calcReadingTime /* , joinObj */, timeSince } from '../../config/shared';
+import { funcType, userBookType, userType } from '../../config/types';
+import CopyToClipboard from '../copyToClipboard';
+import Cover from '../cover';
+import ReadingStateForm from '../forms/readingStateForm';
+import Incipit from '../incipit';
+import MinifiableText from '../minifiableText';
+import Rating from '../rating';
+import Reviews from '../reviews';
+import UserReview from '../userReview';
 
 export default class BookProfile extends React.Component {
 	state = {

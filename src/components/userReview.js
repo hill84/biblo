@@ -33,7 +33,7 @@ export default class UserReview extends React.Component {
       text: '',
       title: ''
     },
-    text_minChars: 50,
+    text_minChars: 20,
     text_maxChars: 1500,
     title_maxChars: 255,
     isOpenDeleteDialog: false,
