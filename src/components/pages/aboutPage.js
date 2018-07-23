@@ -3,7 +3,7 @@ import { appName } from '../../config/shared';
 
 const AboutPage = props => {
   return (
-    <div id="AboutPageComponent">
+    <div id="AboutPageComponent" class="reveal fadeIn slideUp">
       <div className="container pad-v">
         <h2>Chi siamo</h2>
         <div className="text-justify text-left-sm">

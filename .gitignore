@@ -30,3 +30,4 @@ node_modules
 \.vscode/settings\.json
 
 /Build/*
+\.vscode/launch\.json

@@ -1,6 +1,7 @@
 import React from 'react';
+import Link from 'react-router-dom/Link';
+import { auth, isAuthenticated, reviewsRef, uid } from '../config/firebase';
 import { icon } from '../config/icons';
-import { auth, reviewsRef, uid } from '../config/firebase';
 import { stringType } from '../config/types';
 import Review from './review';
 
@@ -116,7 +117,9 @@ export default class Reviews extends React.Component {
       } else { 
         return (
           <div className="card dark reviews">
-            <div className="info-row empty text-center">Non ci sono ancora recensioni<span className="hide-xs"> per questo libro</span>.</div>
+            <div className="info-row empty text-center">
+              Non ci sono ancora recensioni<span className="hide-xs"> per questo libro</span>. {!isAuthenticated() && <span><Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
+            </div>
           </div>
         );
       }
