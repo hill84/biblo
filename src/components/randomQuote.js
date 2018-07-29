@@ -32,9 +32,7 @@ export default class RandomQuote extends React.Component {
   fetchRandomQuote = () => {
     const { limit } = this.state;
     const { author } = this.props;
-    let ref = quotesRef();
-
-    if (author) { ref = quotesRef().where('author', '==', author).limit(limit); }
+    const ref = author ? quotesRef.where('author', '==', author).limit(limit) : quotesRef;
     ref.get().then(snap => {
       if (!snap.empty) {
         //console.log(snap);

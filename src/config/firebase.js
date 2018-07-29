@@ -33,6 +33,7 @@ export let uid = (auth.currentUser && auth.currentUser.uid) || localStorage.getI
 auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
 //auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
+export const usersRef = db.collection('users');
 export const userRef = uid => db.collection('users').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
 export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
@@ -49,7 +50,7 @@ export const reviewRef = (bid, uid) => db.collection('reviews').doc(bid).collect
 
 export const authorRef = aid => db.collection('authors').doc(aid);
 
-export const quotesRef = () => db.collection('quotes');
+export const quotesRef = db.collection('quotes');
 
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 

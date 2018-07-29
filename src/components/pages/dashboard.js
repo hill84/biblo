@@ -250,9 +250,7 @@ export default class Dashboard extends React.Component {
 					<div className="col-md col-12">
 						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
-								<div className="role-badges">
-									{Roles}
-								</div>
+								<div className="role-badges">{Roles}</div>
 								<div className="row text-center-md">
 									<div className="col-md-auto col-sm-12">
 										<Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
@@ -337,7 +335,7 @@ export default class Dashboard extends React.Component {
           <div className="card tab" dir={tabDir}>
             <p>Attività</p>
           </div>
-          <div className="card tab" dir={tabDir}>
+          <div className="card tab contacts-tab" dir={tabDir}>
             <div className="row">
               <div className="col-md-6 cols-12">
                 <h4>Seguito da:</h4>

@@ -1,20 +1,21 @@
 import AppBar from '@material-ui/core/AppBar';
-import Avatar from '@material-ui/core/Avatar';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import SwipeableViews from 'react-swipeable-views';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import { isAuthenticated, userRef } from '../../../config/firebase';
+import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 //import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
+import Users from './users';
 
 export default class Admin extends React.Component {
  	state = {
     isAdmin: false,
-		aid: this.props.user && this.props.user.uid,
+    aid: this.props.user && this.props.user.uid,
+    openSnackbar: this.props.openSnackbar,
     user: null,
     loadingUser: true,
     tabSelected: 0
@@ -68,7 +69,7 @@ export default class Admin extends React.Component {
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
 	render() {
-		const { isAdmin, loadingUser, tabDir, tabSelected, user } = this.state;
+		const { isAdmin, loadingUser, openSnackbar, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
       return <div className="loader"><CircularProgress /></div>
@@ -87,11 +88,11 @@ export default class Admin extends React.Component {
 			<div className="container" id="adminComponent">
 				
         <div className="actions text-center pad-v">
-          <Link to="/new-book" className="btn primary">{icon.plus()} libro</Link>
-          <Link to="/new-author" className="btn primary">{icon.plus()} autore</Link>
-          <Link to="/new-collection" className="btn primary">{icon.plus()} collezione</Link>
-          <Link to="/new-quote" className="btn primary">{icon.plus()} citazione</Link>
-          <Link to="/new-notification" className="btn primary">{icon.plus()} Notifica</Link>
+          <Link to="/new-book" title="Crea libro" className="btn primary">{icon.plus()} libro</Link>
+          <Link to="/new-author" title="Crea autore" className="btn primary disabled">{icon.plus()} autore</Link>
+          <Link to="/new-collection" title="Crea collezione" className="btn primary disabled">{icon.plus()} collezione</Link>
+          <Link to="/new-quote" title="Crea citazione" className="btn primary disabled">{icon.plus()} citazione</Link>
+          <Link to="/new-notification" title="Crea notifica" className="btn primary disabled">{icon.plus()} Notifica</Link>
         </div>
 
         <AppBar position="static" className="appbar flat">
@@ -114,8 +115,8 @@ export default class Admin extends React.Component {
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
-          <div className="tab card dark" dir={tabDir}>
-            Utenti
+          <div className="tab" dir={tabDir}>
+            <Users user={user} openSnackbar={openSnackbar} />
           </div>
           <div className="card tab dark" dir={tabDir}>
             Libri
