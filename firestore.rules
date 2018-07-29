@@ -9,6 +9,11 @@ service cloud.firestore {
     	allow delete: if userHasAllRoles('admin', 'editor') == true || isOwner(uid);
     }
 
+    match /notifications/{uid} {
+    	allow read;
+      allow write: if isOwner(uid);
+    }
+
     match /followers/{uid} {
     	allow read;
       allow write: if isEditor();

@@ -52,6 +52,9 @@ export const authorRef = aid => db.collection('authors').doc(aid);
 
 export const quotesRef = db.collection('quotes');
 
+export const pubNotifsRef = collection => db.collection('notifications').doc('__' + collection);
+export const priNotifsRef = uid => db.collection('notifications').doc(uid);
+
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 
 export default firebase;
