@@ -1,3 +1,4 @@
+import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { auth, isAuthenticated, reviewsRef, uid } from '../config/firebase';
@@ -113,7 +114,7 @@ export default class Reviews extends React.Component {
 
     if (!reviews || reviews.length === 0) {
       if (loading) { 
-        return null; 
+        return <div className="loader relative"><CircularProgress /></div>; 
       } else { 
         return (
           <div className="card dark reviews">

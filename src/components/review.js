@@ -60,7 +60,7 @@ export default class Review extends React.Component {
     const { review } = this.props;
 
     return (
-      <div className={`review ${review.createdByUid === uid ? 'own' : null}`}>
+      <div className={`review ${review.createdByUid === uid ? 'own' : ''}`}>
         <div className="row">
           <Link to={`/dashboard/${review.createdByUid}`} className="col-auto left">
             <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
@@ -88,6 +88,9 @@ export default class Review extends React.Component {
                     title={like ? 'Non mi piace più' : 'Mi piace'}>
                     {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? abbrNum(likes_num) : 'Mi piace'}
                   </button>
+                </div>
+                <div className="counter">
+                  <button disabled className="btn sm flat" onClick={this.onAddResponse}>{icon.pencil()} <span className="hide-sm">Rispondi</span></button>
                 </div>
               </div>
               <div className="col counter text-right date">{timeSince(review.created_num)}</div>

@@ -168,15 +168,15 @@ export default class BookProfile extends React.Component {
                           <button className="btn flat" disabled={!hasBid()} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
                         }
                       </div>
-                      <div className="info-row">
-                        {userBook.bookInShelf &&
+                      {userBook.bookInShelf &&
+                        <div className="info-row">
                           <div className="user rating">
                             <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
                             {/* <span className="rating-num">{userBook.rating_num || 0}</span> */}
                             <span className="label">Il tuo voto</span>
                           </div>
-                        }
-                      </div>
+                        </div>
+                      }
                     </React.Fragment>
                   }
 
@@ -185,11 +185,11 @@ export default class BookProfile extends React.Component {
                       <MinifiableText text={book.description} maxChars={700} />
                     </div>
                   }
-                  <div>&nbsp;</div>
-                  <div className="info-row">
-                    <span className="counter">Lettori: {abbrNum(book.readers_num)}</span>
-                    {book.pages_num && <span className="counter">Lettura: {calcReadingTime(book.pages_num)}</span>}
-                    <span className="counter">Recensioni: {abbrNum(book.reviews_num)}</span>
+
+                  <div className="info-row bookdetails">
+                    <span className="counter">{icon.reader()} <span className="hide-sm">Lettori:</span> {abbrNum(book.readers_num)}</span>
+                    <span className="counter">{icon.messageTextOutline()} <span className="hide-sm">Recensioni:</span> {abbrNum(book.reviews_num)}</span>
+                    {book.pages_num && <span className="counter">{icon.timer()} <span className="hide-sm">Lettura:</span>  {calcReadingTime(book.pages_num)}</span>}
                   </div>
                 </div>
                 {book.EDIT &&

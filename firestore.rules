@@ -44,7 +44,8 @@ service cloud.firestore {
       
       match /reviewers/{uid} {
       	allow read;
-        allow write: if userHasAllRoles('admin', 'editor') == true || (isEditor() && isOwner(uid));
+        allow create, update: if isEditor();
+        allow delete: if userHasAllRoles('admin', 'editor') == true || (isEditor() && isOwner(uid));
       }
     }
     

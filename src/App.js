@@ -3,21 +3,22 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import Layout from './components/layout';
+import AboutPage from './components/pages/aboutPage';
 import AddBook from './components/pages/addBook';
+import Admin from './components/pages/admin/admin';
 import Author from './components/pages/author';
 import BookContainer from './components/pages/bookContainer';
 import Collection from './components/pages/collection';
+import CookiePage from './components/pages/cookiePage';
 import Dashboard from './components/pages/dashboard';
+import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
 import NewBook from './components/pages/newBook';
 import NoMatchPage from './components/pages/noMatchPage';
+import PrivacyPage from './components/pages/privacyPage';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
-import AboutPage from './components/pages/aboutPage';
-import CookiePage from './components/pages/cookiePage';
-import HelpPage from './components/pages/helpPage';
-import PrivacyPage from './components/pages/privacyPage';
 import TermsPage from './components/pages/termsPage';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { defaultTheme } from './config/themes';
@@ -74,6 +75,7 @@ export default class App extends React.Component {
                     <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
+                    <PrivateRoute path="/admin" component={Admin} user={user} openSnackbar={openSnackbar} />
                     <Redirect from="/home" to="/" />
                     <Route component={NoMatchPage} />
                   </Switch>

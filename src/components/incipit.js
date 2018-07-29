@@ -35,9 +35,9 @@ export default class Incipit extends React.Component {
             <div role="navigation" className="head nav row">
               <strong className="col title">{title}</strong>
               <div className="col-auto btn-row">
-                <button className="btn icon clear" onClick={this.onToggleSize} title="Formato">{icon.formatSize()}</button> 
-                <button className="btn icon clear" onClick={this.onToggleDarkTheme} title="Tema">{icon.lightbulb()}</button> 
-                <button className="btn icon clear" onClick={this.onToggle} title="Chiudi">{icon.close()}</button>
+                <button className="btn icon flat" onClick={this.onToggleSize} title="Formato">{icon.formatSize()}</button> 
+                <button className="btn icon flat" onClick={this.onToggleDarkTheme} title="Tema">{icon.lamp()}</button> 
+                <button className="btn icon flat" onClick={this.onToggle} title="Chiudi">{icon.close()}</button>
               </div>
             </div>
             <p id="incipit" className={isBig ? 'big' : 'regular'}>{incipit}</p>

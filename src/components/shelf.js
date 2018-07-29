@@ -192,14 +192,14 @@ export default class Shelf extends React.Component {
               <div className="info-row footer centered pagination">
                 <button 
                   disabled={page === 1 && 'disabled'} 
-                  className="btn sm clear prepend" 
+                  className="btn flat" 
                   onClick={() => this.fetchUserBooks('prev')} title="precedente">
                   {icon.chevronLeft()}
                 </button>
 
                 <button 
                   disabled={page > (userBooksCount / limit) && 'disabled'} 
-                  className="btn sm clear append" 
+                  className="btn flat" 
                   onClick={() => this.fetchUserBooks('next')} title="successivo">
                   {icon.chevronRight()}
                 </button>

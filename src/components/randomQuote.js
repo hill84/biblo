@@ -67,7 +67,7 @@ export default class RandomQuote extends React.Component {
     const { author, bid, bookTitle, className, coverURL, loading, quote } = this.state;
 
     if (loading) {
-      return <div className="loader"><CircularProgress /></div>
+      return <div className="relative loader"><CircularProgress /></div>
     } else if (!quote) { 
       return null 
     }

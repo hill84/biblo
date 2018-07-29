@@ -41,12 +41,11 @@ const Home = () => (
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
 			</div>
 
-      <div className="card dark quote-container">
-        <RandomQuote />
-      </div>
+      <RandomQuote className="card dark quote-container" />
 
 			<div className="card dark">
 				<ul>
+          <li><Link to="/admin">Admin</Link></li>
 					<li><Link to="/login">{icon.loginVariant()} Login</Link></li>
 					<li><Link to="/signup">{icon.accountPlus()} Signup</Link></li>
 					<li><Link to="/password-reset">{icon.lockReset()} Reset password</Link></li>

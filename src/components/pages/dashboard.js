@@ -187,9 +187,9 @@ export default class Dashboard extends React.Component {
     } else console.warn('User is not authenticated');
   }
   
-  handleChange = (e, value) => this.setState({ tabSelected: value });
+  onTabSelect = (e, value) => this.setState({ tabSelected: value });
 
-  handleChangeIndex = index => this.setState({ tabSelected: index });
+  onTabSelectIndex = index => this.setState({ tabSelected: index });
 
 	render() {
 		const { follow, followers, followers_num, followings, followings_num, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
@@ -228,9 +228,9 @@ export default class Dashboard extends React.Component {
 			return (
 				<div className="info-row footer centered shelfdetails">
 					<span className="counter">{icon.book()} <span className="hide-sm">Libri:</span> <b>{user.stats.shelf_num}</b></span>
-					<span className="counter">{icon.heart()} <span className="hide-sm">Desideri:</span> <b>{user.stats.wishlist_num}</b></span>
-					<span className="counter">{icon.star()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
-					<span className="counter">{icon.review()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
+					<span className="counter">{icon.heartOutline()} <span className="hide-sm">Desideri:</span> <b>{user.stats.wishlist_num}</b></span>
+					<span className="counter">{icon.starOutline()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
+					<span className="counter">{icon.messageTextOutline()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
 				</div>
 			)
 		}
@@ -311,7 +311,7 @@ export default class Dashboard extends React.Component {
           <Tabs 
             //tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
             value={tabSelected}
-            onChange={this.handleChange}
+            onChange={this.onTabSelect}
             fullWidth
             scrollable
             scrollButtons="auto">
@@ -325,7 +325,7 @@ export default class Dashboard extends React.Component {
           className="card bottompend tabs-container"
           axis="x"
           index={tabSelected}
-          onChangeIndex={this.handleChangeIndex}>
+          onChangeIndex={this.onTabSelectIndex}>
           <div className="card tab" dir={tabDir}>
             <Shelf luid={luid} uid={uid} shelf="bookInShelf"/>
             <ShelfDetails />
