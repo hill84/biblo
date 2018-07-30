@@ -5,6 +5,7 @@ import { auth, isAuthenticated, reviewsRef, uid } from '../config/firebase';
 import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Review from './review';
+import InfiniteScroll from 'react-infinite-scroller';
 
 export default class Reviews extends React.Component {
 	state = {
@@ -94,10 +95,11 @@ export default class Reviews extends React.Component {
           reviews: nextReviews,
           loading: false,
           page: (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.reviewsCount) ? prevState.page : prevState.page + 1,
+          prevPage: prevState.page,
           //lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
         }));
         //console.log(nextReviews);
-        //console.log({'direction': direction, 'page': page});
+        console.log({'direction': direction, 'prevPage': this.state.prevPage, 'page': page});
       } else {
         this.setState({ 
           reviews: null,

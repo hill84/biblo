@@ -16,6 +16,7 @@
     "react-autosuggest": "^9.3.4",
     "react-dom": "^16.4.1",
     "react-event-listener": "^0.6.1",
+    "react-infinite-scroller": "^1.2.0",
     "react-parallax": "^1.8.0",
     "react-rater": "^0.4.8",
     "react-router": "^4.3.1",
