@@ -11,7 +11,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 
-export default class Users extends React.Component {
+export default class UsersDash extends React.Component {
  	state = {
     user: this.props.user,
     users: null,
@@ -59,7 +59,7 @@ export default class Users extends React.Component {
     const { desc, limit, orderBy, orderByIndex, page } = this.state;
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const uRef = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching user');
+    //console.log('fetching users');
     this.setState({ loadingUsers: true });
     
     usersRef.get().then(fullSnap => {
@@ -93,6 +93,16 @@ export default class Users extends React.Component {
 
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
+  onEdit = () => {
+    console.log('Editing..');
+    this.props.openSnackbar('Modifiche salvate', 'success');
+  }
+
+  onDelete = () => {
+    console.log('Deleting..');
+    this.props.openSnackbar('Utente cancellato', 'success');
+  }
+
 	render() {
     const { desc, limit, loadingUsers, orderBy, orderByIndex, orderMenuAnchorEl, page, users, usersCount } = this.state;
     const { openSnackbar } = this.props;
@@ -113,7 +123,8 @@ export default class Users extends React.Component {
               <div className={`btn append ${user.roles.admin ? 'selected' : 'clear'}`} title="admin">A</div>
             </div>
             <div className="col-1 btns xs">
-              <div className="btn error" title="cancella">✕</div>
+              <div className="btn icon primary" title="modifica" onClick={this.onEdit}>{icon.pencil()}</div>
+              <div className="btn icon error" title="cancella" onClick={this.onDelete}>{icon.close()}</div>
             </div>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{new Date(user.creationTime).toLocaleDateString()}</div>
@@ -134,7 +145,7 @@ export default class Users extends React.Component {
     ));
 
 		return (
-			<div className="container" id="usersComponent">
+			<div className="container" id="usersDashComponent">
         <div className="card dark" style={{ minHeight: 200 }}>
           <div className="head nav">
             <div className="row">

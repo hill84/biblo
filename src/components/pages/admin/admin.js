@@ -9,7 +9,8 @@ import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 //import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
-import Users from './users';
+import AuthorsDash from './authorsDash';
+import UsersDash from './usersDash';
 
 export default class Admin extends React.Component {
  	state = {
@@ -115,24 +116,36 @@ export default class Admin extends React.Component {
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
-          <div className="tab" dir={tabDir}>
-            <Users user={user} openSnackbar={openSnackbar} />
-          </div>
-          <div className="card tab dark" dir={tabDir}>
-            Libri
-          </div>
-          <div className="card tab dark" dir={tabDir}>
-            Autori
-          </div>
-          <div className="card tab dark" dir={tabDir}>
-            Collezioni
-          </div>
-          <div className="card tab dark" dir={tabDir}>
-            Citazioni
-          </div>
-          <div className="card tab dark" dir={tabDir}>
-            Notifiche
-          </div>
+          <React.Fragment>
+            {tabSelected === 0 && <div className="tab" dir={tabDir}>
+              <UsersDash user={user} openSnackbar={openSnackbar} />
+            </div>}
+          </React.Fragment>
+          <React.Fragment>
+            {tabSelected === 1 && <div className="card tab dark" dir={tabDir}>
+              Libri
+            </div>}
+          </React.Fragment>
+          <React.Fragment>
+            {tabSelected === 2 && <div className="tab" dir={tabDir}>
+              <AuthorsDash user={user} openSnackbar={openSnackbar} />
+            </div>}
+          </React.Fragment>
+          <React.Fragment>
+            {tabSelected === 3 && <div className="card tab dark" dir={tabDir}>
+              Collezioni
+            </div>}
+          </React.Fragment>
+          <React.Fragment>
+            {tabSelected === 4 && <div className="card tab dark" dir={tabDir}>
+              Citazioni
+            </div>}
+          </React.Fragment>
+          <React.Fragment>
+            {tabSelected === 5 && <div className="card tab dark" dir={tabDir}>
+              Notifiche
+            </div>}
+          </React.Fragment>
         </SwipeableViews>
 
 			</div>

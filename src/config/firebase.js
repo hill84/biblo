@@ -49,6 +49,7 @@ export const reviewsRef = bid => db.collection('reviews').doc(bid).collection('r
 export const reviewRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);
 
 export const authorRef = aid => db.collection('authors').doc(aid);
+export const authorsRef = db.collection('authors');
 
 export const quotesRef = db.collection('quotes');
 

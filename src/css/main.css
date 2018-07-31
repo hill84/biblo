@@ -98,6 +98,7 @@ ul.nolist li { display: block; }
   --avatarSize: 20px;
   --marginBottom: .4rem;
 }
+.dense .avatar-row .avatar { font-size: .55rem; }
 .table .avatar-row:not(:last-child) { --marginBottom: 0; }
 .table .avatar-row:not(:last-child) .row { border-bottom: 1px solid var(--lightestTextClr); }
 .table .labels {
@@ -152,8 +153,8 @@ a.active, .link.active { color: var(--accentClr); }
 
 svg { vertical-align: middle; color: currentColor; }
 .counter svg, .btn svg { vertical-align: text-bottom; }
-.material-icons svg.svg-icon { height: 24px; width: 24px; vertical-align: text-top; }
-svg.svg-icon { height: 18px; width: 18px; transition: all .2s ease-in-out; }
+.material-icons svg.svg-icon { --iconSize: 24px; vertical-align: text-top; }
+svg.svg-icon, .btn svg { --iconSize: 18px; height: var(--iconSize); width: var(--iconSize); transition: all .2s ease-in-out; }
 
 a [role="menuitem"] { color: inherit !important; }
 
@@ -536,7 +537,8 @@ hr.line {
 /* .btn.error-on-hover { min-width: 175px; } */
 .btn.flat:disabled { --btnDisabledBg: transparent; }
 
-.btn.sm .svg-icon { width: 15px; height: 15px; }
+.btn.sm svg, .btns.sm .btn svg { --iconSize: 15px; }
+.btn.xs svg, .btns.xs .btn svg { --iconSize: 14px; }
 
 /* FORM GROUP */
 .form-group label + div:before { border-color: rgba(0,0,0,.15); }
