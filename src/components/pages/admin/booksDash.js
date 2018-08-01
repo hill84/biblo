@@ -23,8 +23,7 @@ export default class BooksDash extends React.Component {
       { type: 'EDIT.lastEditByUid', label: 'Modificato da'},
       { type: 'EDIT.created_num', label: 'Data creazione'}, 
       { type: 'EDIT.createdByUid', label: 'Creato da'},  
-      { type: 'title', label: 'Titolo'}, 
-      { type: 'author', label: 'Autore'}
+      { type: 'title', label: 'Titolo'}
     ],
     orderByIndex: 0,
     page: 1,
@@ -118,19 +117,19 @@ export default class BooksDash extends React.Component {
             <Link to={`/author/${Object.keys(book.authors)[0]}`} className="col">
               {Object.keys(book.authors)[0]}
             </Link>
-            <div className="col">
-              {book.ISBN_13}
+            <div className="col monotype">
+              <small><CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/></small>
             </div>
-            <div className="col">
-              {book.ISBN_10}
+            <div className="col monotype">
+              <small><CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></small>
             </div>
-            <Link to={`/dashboard/${book.EDIT.createdByUid}`} className="col">
+            <Link to={`/dashboard/${book.EDIT.createdByUid}`} title={book.EDIT.createdByUid} className="col">
               {book.EDIT.createdBy}
             </Link>
             <div className="col col-sm-2 col-lg-1">
               <div className="timestamp">{new Date(book.EDIT.created_num).toLocaleDateString()}</div>
             </div>
-            <Link to={`/dashboard/${book.EDIT.lastEditByUid}`} className="col">
+            <Link to={`/dashboard/${book.EDIT.lastEditByUid}`} title={book.EDIT.lastEditByUid} className="col">
               {book.EDIT.lastEditBy}
             </Link>
             <div className="col col-sm-2 col-lg-1 text-right">
