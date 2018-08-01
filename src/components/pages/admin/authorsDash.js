@@ -114,10 +114,8 @@ export default class AuthorsDash extends React.Component {
               <Avatar className="avatar" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
             </Link>
             <div className="col-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
-            <div className="col-1 btns xs">
-              <div className="btn flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</div>
-            </div>
-            <div className="col hide-sm" title={author.bio}><small>{author.bio}</small></div>
+            <div className="col-1 btns xs"><div className="btn flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</div></div>
+            <div className="col hide-sm" title={author.bio}>{author.bio}</div>
             <div className="col-1 btns xs">
               <div className="btn icon primary" title="modifica" onClick={this.onEdit}>{icon.pencil()}</div>
               <div className="btn icon error" title="cancella" onClick={this.onDelete}>{icon.close()}</div>
@@ -173,15 +171,15 @@ export default class AuthorsDash extends React.Component {
           : !authors ? 
             <div className="empty text-center">Nessun autore</div>
           :
-            <ul className="table dense nolist">
+            <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
                 <div className="row">
                   <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
-                  <div className="col-2">displayName</div>
-                  <div className="col-1">sesso</div>
-                  <div className="col hide-sm">bio</div>
-                  <div className="col-1">azioni</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">created_num</div>
+                  <div className="col-2">Nominativo</div>
+                  <div className="col-1">Sesso</div>
+                  <div className="col hide-sm">Bio</div>
+                  <div className="col-1">Azioni</div>
+                  <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
               {authorsList}

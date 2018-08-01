@@ -115,8 +115,8 @@ export default class UsersDash extends React.Component {
               <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
             </Link>
             <div className="col hide-sm" title={user.displayName}>{user.displayName}</div>
-            <div className="col monotype" title={user.uid}><small><CopyToClipboard openSnackbar={openSnackbar} text={user.uid}/></small></div>
-            <div className="col monotype hide-sm" title={user.email}><small><CopyToClipboard openSnackbar={openSnackbar} text={user.email}/></small></div>
+            <div className="col monotype" title={user.uid}><CopyToClipboard openSnackbar={openSnackbar} text={user.uid}/></div>
+            <div className="col monotype hide-sm" title={user.email}><CopyToClipboard openSnackbar={openSnackbar} text={user.email}/></div>
             <div className="col col-sm-2 col-lg-1 btns xs">
               <div className={`btn prepend ${user.roles.editor ? 'selected' : 'clear'}`} title="editor">E</div>
               <div className={`btn pend ${user.roles.premium ? 'selected' : 'clear'}`} title="premium">P</div>
@@ -177,16 +177,16 @@ export default class UsersDash extends React.Component {
           : !users ? 
             <div className="empty text-center">Nessun utente</div>
           :
-            <ul className="table dense nolist">
+            <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
                 <div className="row">
                   <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
-                  <div className="col hide-sm">displayName</div>
-                  <div className="col">uid</div>
-                  <div className="col hide-sm">email</div>
-                  <div className="col col-sm-2 col-lg-1">ruoli</div>
-                  <div className="col-1">actions</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">creationTime</div>
+                  <div className="col hide-sm">Nominativo</div>
+                  <div className="col">Uid</div>
+                  <div className="col hide-sm">Email</div>
+                  <div className="col col-sm-2 col-lg-1">Ruoli</div>
+                  <div className="col-1">Azioni</div>
+                  <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
               {usersList}

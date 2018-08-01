@@ -111,17 +111,20 @@ export default class BooksDash extends React.Component {
       books.map((book) => 
         <li key={book.bid} className="avatar-row">
           <div className="row">
+            <div className="col-auto">
+              <div className="mock-cover xs" style={{backgroundImage: `url(${book.covers[0]})`}}></div>
+            </div>
             <Link to={`/book/${book.bid}`} className="col">
               {book.title}
             </Link>
             <Link to={`/author/${Object.keys(book.authors)[0]}`} className="col">
               {Object.keys(book.authors)[0]}
             </Link>
-            <div className="col monotype">
-              <small><CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/></small>
+            <div className="col hide-md monotype">
+              <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/>
             </div>
-            <div className="col monotype">
-              <small><CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></small>
+            <div className="col hide-md monotype">
+              <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/>
             </div>
             <Link to={`/dashboard/${book.EDIT.createdByUid}`} title={book.EDIT.createdByUid} className="col">
               {book.EDIT.createdBy}
@@ -183,13 +186,14 @@ export default class BooksDash extends React.Component {
           : !books ? 
             <div className="empty text-center">Nessun libro</div>
           :
-            <ul className="table dense nolist">
+            <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
                 <div className="row">
+                  <div className="col-auto"><div className="mock-cover xs hidden"></div></div>
                   <div className="col">Titolo</div>
                   <div className="col">Autore</div>
-                  <div className="col">ISBN-13</div>
-                  <div className="col">ISBN-10</div>
+                  <div className="col hide-md">ISBN-13</div>
+                  <div className="col hide-md">ISBN-10</div>
                   <div className="col">Creato da</div>
                   <div className="col col-sm-2 col-lg-1">Creato</div>
                   <div className="col">Modificato da</div>
