@@ -122,7 +122,7 @@ export default class BookProfile extends React.Component {
                     <Cover book={book} rating={false} info={false} />
                   }
                 </div>
-                <div className="col book-profile">
+                <div className={`col book-profile ${book.format === 'Audiolibro' ? 'audio' : ''}`}>
                   <h2 className="title">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">

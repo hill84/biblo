@@ -110,7 +110,7 @@ export default class UsersDash extends React.Component {
     const usersList = (users && (users.length > 0) &&
       users.map((user) => 
         <li key={user.uid} className="avatar-row">
-          <div className="row ripple">
+          <div className="row">
             <Link to={`/dashboard/${user.uid}`} className="col-auto hide-xs">
               <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
             </Link>

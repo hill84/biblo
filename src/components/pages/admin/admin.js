@@ -10,6 +10,7 @@ import { icon } from '../../../config/icons';
 //import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import AuthorsDash from './authorsDash';
+import BooksDash from './booksDash';
 import UsersDash from './usersDash';
 
 export default class Admin extends React.Component {
@@ -122,8 +123,8 @@ export default class Admin extends React.Component {
             </div>}
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 1 && <div className="card tab dark" dir={tabDir}>
-              Libri
+            {tabSelected === 1 && <div className="tab" dir={tabDir}>
+              <BooksDash user={user} openSnackbar={openSnackbar} />
             </div>}
           </React.Fragment>
           <React.Fragment>

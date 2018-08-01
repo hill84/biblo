@@ -1,32 +1,34 @@
-import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import { authorsRef } from '../../../config/firebase';
+import { booksRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
+import { timeSince } from '../../../config/shared';
 
-export default class AuthorsDash extends React.Component {
+export default class BooksDash extends React.Component {
  	state = {
     user: this.props.user,
-    authors: null,
-    authorsCount: 0,
+    books: null,
+    booksCount: 0,
     desc: true,
     limit: 50,
     orderMenuAnchorEl: null,
     orderBy: [ 
-      { type: 'created_num', label: 'Data'}, 
-      { type: 'displayName', label: 'Nome'}, 
-      { type: 'sex', label: 'Sesso'}
+      { type: 'EDIT.lastEdit_num', label: 'Data ultima modifica'}, 
+      { type: 'EDIT.lastEditByUid', label: 'Modificato da'},
+      { type: 'EDIT.created_num', label: 'Data creazione'}, 
+      { type: 'EDIT.createdByUid', label: 'Creato da'},  
+      { type: 'title', label: 'Titolo'}, 
+      { type: 'author', label: 'Autore'}
     ],
     orderByIndex: 0,
     page: 1,
-    loadingAuthors: true
+    loadingBooks: true
 	}
 
 	static propTypes = {
@@ -40,7 +42,7 @@ export default class AuthorsDash extends React.Component {
 
 	componentDidMount() { 
     this._isMounted = true; 
-    this.fetchAuthors();
+    this.fetchBooks();
   }
 
 	componentWillUnmount() { this._isMounted = false; }
@@ -49,38 +51,38 @@ export default class AuthorsDash extends React.Component {
     const { desc, limit, orderByIndex } = this.state;
     if (this._isMounted) {
       if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
-        this.fetchAuthors();
+        this.fetchBooks();
       }
     }
   }
     
-  fetchAuthors = direction => {
+  fetchBooks = direction => {
     const { desc, limit, orderBy, orderByIndex, page } = this.state;
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const aRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching authors');
-    this.setState({ loadingAuthors: true });
+    const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    //console.log('fetching books');
+    this.setState({ loadingBooks: true });
     
-    authorsRef.get().then(fullSnap => {
+    booksRef.get().then(fullSnap => {
       //console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ authorsCount: fullSnap.docs.length });
+        this.setState({ booksCount: fullSnap.docs.length });
         let lastVisible = fullSnap.docs[startAt];
         //console.log({lastVisible, limit, direction, page});
-        const ref = direction ? aRef.startAt(lastVisible) : aRef;
+        const ref = direction ? bRef.startAt(lastVisible) : bRef;
         ref.get().then(snap => {
           //console.log(snap);
           if (!snap.empty) {
-            const authors = [];
-            snap.forEach(author => authors.push({ ...author.data() }));
+            const books = [];
+            snap.forEach(book => books.push({ ...book.data() }));
             this.setState(prevState => ({
-              authors: authors,
-              loadingAuthors: false,
+              books: books,
+              loadingBooks: false,
               page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ authors: null, loadingAuthors: false });
+          } else this.setState({ books: null, loadingBooks: false });
         });
-      } else this.setState({ authorsCount: 0 });
+      } else this.setState({ booksCount: 0 });
     });
   }
 
@@ -99,31 +101,40 @@ export default class AuthorsDash extends React.Component {
 
   onDelete = () => {
     console.log('Deleting..');
-    this.props.openSnackbar('Autore cancellato', 'success');
+    this.props.openSnackbar('Libro cancellato', 'success');
   }
 
 	render() {
-    const { desc, limit, loadingAuthors, orderBy, orderByIndex, orderMenuAnchorEl, page, authors, authorsCount } = this.state;
+    const { books, booksCount, desc, limit, loadingBooks, orderBy, orderByIndex, orderMenuAnchorEl, page } = this.state;
     const { openSnackbar } = this.props;
 
-    const authorsList = (authors && (authors.length > 0) &&
-      authors.map((author) => 
-        <li key={author.displayName} className="avatar-row">
+    const booksList = (books && (books.length > 0) &&
+      books.map((book) => 
+        <li key={book.bid} className="avatar-row">
           <div className="row">
-            <Link to={`/author/${author.displayName}`} className="col-auto hide-xs">
-              <Avatar className="avatar" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
+            <Link to={`/book/${book.bid}`} className="col">
+              {book.title}
             </Link>
-            <div className="col-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
-            <div className="col-1 btns xs">
-              <div className="btn flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</div>
+            <Link to={`/author/${Object.keys(book.authors)[0]}`} className="col">
+              {Object.keys(book.authors)[0]}
+            </Link>
+            <div className="col">
+              {book.ISBN_13}
             </div>
-            <div className="col hide-sm" title={author.bio}><small>{author.bio}</small></div>
-            <div className="col-1 btns xs">
-              <div className="btn icon primary" title="modifica" onClick={this.onEdit}>{icon.pencil()}</div>
-              <div className="btn icon error" title="cancella" onClick={this.onDelete}>{icon.close()}</div>
+            <div className="col">
+              {book.ISBN_10}
             </div>
+            <Link to={`/dashboard/${book.EDIT.createdByUid}`} className="col">
+              {book.EDIT.createdBy}
+            </Link>
+            <div className="col col-sm-2 col-lg-1">
+              <div className="timestamp">{new Date(book.EDIT.created_num).toLocaleDateString()}</div>
+            </div>
+            <Link to={`/dashboard/${book.EDIT.lastEditByUid}`} className="col">
+              {book.EDIT.lastEditBy}
+            </Link>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{new Date(author.created_num).toLocaleDateString()}</div>
+              <div className="timestamp">{timeSince(book.EDIT.lastEdit_num)}</div>
             </div>
           </div>
         </li>
@@ -141,12 +152,12 @@ export default class AuthorsDash extends React.Component {
     ));
 
 		return (
-			<div className="container" id="authorsDashComponent">
+			<div className="container" id="booksDashComponent">
         <div className="card dark" style={{ minHeight: 200 }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${authors ? authors.length : 0} di ${authorsCount || 0} autori`}</span>
+                <span className="counter hide-md">{`${books ? books.length : 0} di ${booksCount || 0} libri`}</span>
               </div>
               <div className="col-auto">
                 <span className="counter last hide-xs">Ordina per</span>
@@ -168,38 +179,40 @@ export default class AuthorsDash extends React.Component {
               </div>
             </div>
           </div>
-          {loadingAuthors ? 
+          {loadingBooks ? 
             <div className="loader"><CircularProgress /></div> 
-          : !authors ? 
-            <div className="empty text-center">Nessun autore</div>
+          : !books ? 
+            <div className="empty text-center">Nessun libro</div>
           :
             <ul className="table dense nolist">
               <li className="avatar-row labels">
                 <div className="row">
-                  <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
-                  <div className="col-2">displayName</div>
-                  <div className="col-1">sesso</div>
-                  <div className="col hide-sm">bio</div>
-                  <div className="col-1">azioni</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">created_num</div>
+                  <div className="col">Titolo</div>
+                  <div className="col">Autore</div>
+                  <div className="col">ISBN-13</div>
+                  <div className="col">ISBN-10</div>
+                  <div className="col">Creato da</div>
+                  <div className="col col-sm-2 col-lg-1">Creato</div>
+                  <div className="col">Modificato da</div>
+                  <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>
               </li>
-              {authorsList}
+              {booksList}
             </ul>
           }
-          {authorsCount > limit &&
+          {booksCount > limit &&
             <div className="info-row footer centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
                 className="btn flat" 
-                onClick={() => this.fetchAuthors('prev')} title="precedente">
+                onClick={() => this.fetchBooks('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
 
               <button 
-                disabled={page > (authorsCount / limit) && 'disabled'} 
+                disabled={page > (booksCount / limit) && 'disabled'} 
                 className="btn flat" 
-                onClick={() => this.fetchAuthors('next')} title="successivo">
+                onClick={() => this.fetchBooks('next')} title="successivo">
                 {icon.chevronRight()}
               </button>
             </div>
