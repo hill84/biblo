@@ -88,6 +88,7 @@ export default class Book extends React.Component {
 
   componentDidMount(props) {
     this._isMounted = true;
+    console.log(this.props.search);
     if (this.props.bid) {
       this.setState({ loading: true });
       bookRef(this.props.bid).onSnapshot(snap => {

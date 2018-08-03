@@ -134,6 +134,9 @@ ul.nolist li { display: block; }
   font-size: 85%;
 }
 .avatar-row .tip { display: none !important; }
+.absolute-row { opacity: 0; background-color: var(--cardBg); position: absolute; padding-left: var(--pad); padding-right: var(--pad); transition: all .2s ease-in-out; }
+.row:hover .absolute-row { opacity: 1; }
+.absolute-row.right { right: 0; }
 
 .link {
   display: inline;

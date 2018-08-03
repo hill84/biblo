@@ -1,6 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
+import Redirect from 'react-router-dom/Redirect';
 import { booksRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';
@@ -93,18 +94,18 @@ export default class BooksDash extends React.Component {
 
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
-  onEdit = () => {
-    console.log('Editing..');
-    this.props.openSnackbar('Modifiche salvate', 'success');
+  onEdit = bid => {
+    console.log(`Editing ${bid}`);
+    this.setState({ redirectToBook: bid });
   }
 
-  onDelete = () => {
-    console.log('Deleting..');
+  onDelete = bid => {
+    console.log(`Deleting ${bid}`);
     this.props.openSnackbar('Libro cancellato', 'success');
   }
 
 	render() {
-    const { books, booksCount, desc, limit, loadingBooks, orderBy, orderByIndex, orderMenuAnchorEl, page } = this.state;
+    const { books, booksCount, desc, limit, loadingBooks, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectToBook } = this.state;
     const { openSnackbar } = this.props;
 
     const booksList = (books && (books.length > 0) &&
@@ -138,6 +139,11 @@ export default class BooksDash extends React.Component {
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{timeSince(book.EDIT.lastEdit_num)}</div>
             </div>
+
+            <div className="absolute-row right btns xs">
+              <button className="btn icon primary" onClick={e => this.onEdit(book.bid)}>{icon.pencil()}</button>
+              <button className="btn icon error" onClick={e => this.onDelete(book.bid)}>{icon.close()}</button>
+            </div>
           </div>
         </li>
       )
@@ -152,6 +158,8 @@ export default class BooksDash extends React.Component {
         {option.label}
       </MenuItem>
     ));
+
+    if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
 
 		return (
 			<div className="container" id="booksDashComponent">
