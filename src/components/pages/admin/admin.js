@@ -100,7 +100,7 @@ export default class Admin extends React.Component {
 		return (
 			<div className="container" id="adminComponent">
 				
-        <div className="actions text-center pad-v">
+        <div className="actions text-center pad-v-sm">
           <Link to="/new-book" title="Crea libro" className="btn primary">{icon.plus()} libro</Link>
           <Link to="/new-author" title="Crea autore" className="btn primary disabled">{icon.plus()} autore</Link>
           <Link to="/new-collection" title="Crea collezione" className="btn primary disabled">{icon.plus()} collezione</Link>

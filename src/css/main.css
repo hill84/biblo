@@ -59,7 +59,7 @@ body {
   font-weight: 400;
   line-height: 1.5;
   text-align: left;
-  padding-bottom: 6rem;
+  padding-bottom: 4rem;
   display: flex; 
   flex-direction: column;
 }
@@ -1590,7 +1590,9 @@ hr.line {
 .pad { padding: var(--pad); }
 .pad-v { padding-top: var(--pad); padding-bottom: var(--pad); }
 .pad-sm { padding: calc(var(--pad) / 2); }
+.pad-xs { padding: calc(var(--pad) / 4); }
 .pad-v-sm { padding-top: calc(var(--pad) / 2); padding-bottom: calc(var(--pad) / 2); }
+.pad-v-xs { padding-top: calc(var(--pad) / 4); padding-bottom: calc(var(--pad) / 4); }
 .pad-lg { padding: calc(var(--pad) * 2); }
 .pad-v-lg { padding-top: calc(var(--pad) * 2); padding-bottom: calc(var(--pad) * 2); }
 

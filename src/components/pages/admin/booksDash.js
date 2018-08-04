@@ -17,7 +17,9 @@ export default class BooksDash extends React.Component {
     books: null,
     count: 0,
     desc: true,
-    limit: 15,
+    limitMenuAnchorEl: null,
+    limitBy: [ 15, 25, 50, 100, 250, 500],
+    limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
       { type: 'EDIT.lastEdit_num', label: 'Data ultima modifica'}, 
@@ -48,16 +50,17 @@ export default class BooksDash extends React.Component {
 	componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
-    const { desc, limit, orderByIndex } = this.state;
+    const { desc, limitByIndex, orderByIndex } = this.state;
     if (this._isMounted) {
-      if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
+      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
         this.fetch();
       }
     }
   }
     
   fetch = direction => {
-    const { desc, limit, orderBy, orderByIndex, page } = this.state;
+    const { desc, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     //console.log('fetching books');
@@ -86,13 +89,15 @@ export default class BooksDash extends React.Component {
     });
   }
 
-  onChangeOrderBy = (e, i) => this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
-
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
-
+  
   onOpenOrderMenu = e => this.setState({ orderMenuAnchorEl: e.currentTarget });
-
+  onChangeOrderBy = (e, i) => this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
+
+  onOpenLimitMenu = e => this.setState({ limitMenuAnchorEl: e.currentTarget });
+  onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
+  onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
   onView = id => this.setState({ redirectTo: id });
   
@@ -112,7 +117,7 @@ export default class BooksDash extends React.Component {
   }
 
 	render() {
-    const { books, count, desc, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { books, count, desc,  limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
     const booksList = (books && (books.length > 0) &&
@@ -170,6 +175,16 @@ export default class BooksDash extends React.Component {
       </MenuItem>
     ));
 
+    const limitByOptions = limitBy.map((option, index) => (
+      <MenuItem
+        key={option}
+        disabled={index === -1}
+        selected={index === limitByIndex}
+        onClick={event => this.onChangeLimitBy(event, index)}>
+        {option}
+      </MenuItem>
+    ));
+
     if (redirectTo) return <Redirect to={`/book/${redirectTo}`} />
 
 		return (
@@ -179,11 +194,23 @@ export default class BooksDash extends React.Component {
             <div className="row">
               <div className="col">
                 <span className="counter hide-md">{`${books ? books.length : 0} di ${count || 0} libri`}</span>
+                <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
+                <Popover 
+                  open={Boolean(limitMenuAnchorEl)}
+                  onClose={this.onCloseLimitMenu} 
+                  anchorEl={limitMenuAnchorEl} 
+                  anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                  transformOrigin={{horizontal: 'left', vertical: 'top'}}>
+                  <Menu 
+                    anchorEl={limitMenuAnchorEl} 
+                    open={Boolean(limitMenuAnchorEl)} 
+                    onClose={this.onCloseLimitMenu}>
+                    {limitByOptions}
+                  </Menu>
+                </Popover>
               </div>
               <div className="col-auto">
-                <span className="counter last hide-xs">Ordina per</span>
-                <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}>{orderBy[orderByIndex].label}</button>
-                <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                 <Popover 
                   open={Boolean(orderMenuAnchorEl)}
                   onClose={this.onCloseOrderMenu} 
@@ -197,6 +224,7 @@ export default class BooksDash extends React.Component {
                     {orderByOptions}
                   </Menu>
                 </Popover>
+                <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
               </div>
             </div>
           </div>
@@ -223,7 +251,7 @@ export default class BooksDash extends React.Component {
               {booksList}
             </ul>
           }
-          {count > limit &&
+          {count > limitBy[limitByIndex] &&
             <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
@@ -233,7 +261,7 @@ export default class BooksDash extends React.Component {
               </button>
 
               <button 
-                disabled={page > (count / limit) && 'disabled'} 
+                disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
                 className="btn flat" 
                 onClick={() => this.fetch('next')} title="successivo">
                 {icon.chevronRight()}

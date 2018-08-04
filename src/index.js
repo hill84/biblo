@@ -1,11 +1,11 @@
+import createBrowserHistory from 'history/createBrowserHistory';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
 import App from './app';
-import registerServiceWorker from './registerServiceWorker';
 import './css/grid.min.css';
 import './css/main.css';
-import createBrowserHistory from 'history/createBrowserHistory';
+import registerServiceWorker from './registerServiceWorker';
 
 const history = createBrowserHistory();
 
