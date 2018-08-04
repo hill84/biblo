@@ -103,13 +103,17 @@ ul.nolist li { display: block; }
 .table .avatar-row:not(:last-child) { --marginBottom: 0; }
 .table .avatar-row:not(:last-child) .row { border-bottom: 1px solid var(--lightestTextClr); }
 .table .labels { color: var(--lighterTextClr); font-size: .76rem; }
+.table .row, .table .avatar-row .row { border-radius: 0; transition: all .1s ease-in; }
+.table .row:hover { background-color: rgba(0,0,0,.04); }
+.table .row .row, .table .labels .row { background-color: transparent; }
+.table .row .row { padding: 0; }
 .avatar-row .row { 
   position: relative;
   overflow: hidden;
   padding: var(--pad) 0;
   border-radius: 3px;  
 }
-.avatar-row a { border-radius: 3px; transition: all .2s ease-in-out; }
+.avatar-row a { border-radius: 3px; transition: all .2s ease-in; }
 .avatar-row a:hover { background-color: rgba(0,151,167,.07); }
 .avatar-row a:active { background-color: rgba(0,151,167,.1); }
 .avatar-row .col { height: var(--avatarSize); line-height: var(--avatarSize); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
@@ -134,9 +138,18 @@ ul.nolist li { display: block; }
   font-size: 85%;
 }
 .avatar-row .tip { display: none !important; }
-.absolute-row { opacity: 0; background-color: var(--cardBg); position: absolute; padding-left: var(--pad); padding-right: var(--pad); transition: all .2s ease-in-out; }
+.absolute-row { 
+  background-color: var(--cardBg); 
+  position: absolute; 
+  padding-left: var(--pad); 
+  padding-right: var(--pad); 
+  opacity: 0; 
+  will-change: opacity;
+  transition: all .16s ease-in; 
+}
 .row:hover .absolute-row { opacity: 1; }
-.absolute-row.right { right: 0; }
+.absolute-row.left { left: 0; transform-origin: left; }
+.absolute-row.right { right: 0; transform-origin: right; }
 
 .link {
   display: inline;
@@ -1535,7 +1548,7 @@ hr.line {
 
 /* MOCKS */
 .mock-cover { background-color: var(--primaryClr); background-size: cover; }
-.mock-cover.xs { width: 17px; height: 24px; border-radius: 1px; }
+.mock-cover.xs { width: 14px; height: 20px; border-radius: 1px; }
 
 /* HELPERS */
 .text-right { text-align: right; }

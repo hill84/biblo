@@ -1,23 +1,23 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
 import { booksRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
+import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Popover from '@material-ui/core/Popover';
-import { timeSince } from '../../../config/shared';
 
 export default class BooksDash extends React.Component {
  	state = {
     user: this.props.user,
     books: null,
-    booksCount: 0,
+    count: 0,
     desc: true,
-    limit: 50,
+    limit: 15,
     orderMenuAnchorEl: null,
     orderBy: [ 
       { type: 'EDIT.lastEdit_num', label: 'Data ultima modifica'}, 
@@ -28,7 +28,7 @@ export default class BooksDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
-    loadingBooks: true
+    loading: true
 	}
 
 	static propTypes = {
@@ -36,13 +36,13 @@ export default class BooksDash extends React.Component {
     user: userType
 	}
 
- static getDerivedStateFromProps(props, state) {
+  /* static getDerivedStateFromProps(props, state) {
     return null;
-  } 
+  } */ 
 
 	componentDidMount() { 
     this._isMounted = true; 
-    this.fetchBooks();
+    this.fetch();
   }
 
 	componentWillUnmount() { this._isMounted = false; }
@@ -51,22 +51,22 @@ export default class BooksDash extends React.Component {
     const { desc, limit, orderByIndex } = this.state;
     if (this._isMounted) {
       if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
-        this.fetchBooks();
+        this.fetch();
       }
     }
   }
     
-  fetchBooks = direction => {
+  fetch = direction => {
     const { desc, limit, orderBy, orderByIndex, page } = this.state;
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     //console.log('fetching books');
-    this.setState({ loadingBooks: true });
+    this.setState({ loading: true });
     
     booksRef.get().then(fullSnap => {
       //console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ booksCount: fullSnap.docs.length });
+        this.setState({ count: fullSnap.docs.length });
         let lastVisible = fullSnap.docs[startAt];
         //console.log({lastVisible, limit, direction, page});
         const ref = direction ? bRef.startAt(lastVisible) : bRef;
@@ -77,12 +77,12 @@ export default class BooksDash extends React.Component {
             snap.forEach(book => books.push({ ...book.data() }));
             this.setState(prevState => ({
               books: books,
-              loadingBooks: false,
+              loading: false,
               page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ books: null, loadingBooks: false });
+          } else this.setState({ books: null, loading: false });
         });
-      } else this.setState({ booksCount: 0 });
+      } else this.setState({ count: 0 });
     });
   }
 
@@ -94,18 +94,25 @@ export default class BooksDash extends React.Component {
 
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
-  onEdit = bid => {
-    console.log(`Editing ${bid}`);
-    this.setState({ redirectToBook: bid });
+  onView = id => this.setState({ redirectTo: id });
+  
+  onEdit = id => {
+    console.log(`Editing ${id}`);
+    this.setState({ redirectTo: id });
   }
 
-  onDelete = bid => {
-    console.log(`Deleting ${bid}`);
+  onLock = id => {
+    console.log(`Locking ${id}`);
+    this.props.openSnackbar('Libro bloccato', 'success');
+  }
+
+  onDelete = id => {
+    console.log(`Deleting ${id}`);
     this.props.openSnackbar('Libro cancellato', 'success');
   }
 
 	render() {
-    const { books, booksCount, desc, limit, loadingBooks, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectToBook } = this.state;
+    const { books, count, desc, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
     const booksList = (books && (books.length > 0) &&
@@ -121,16 +128,19 @@ export default class BooksDash extends React.Component {
             <Link to={`/author/${Object.keys(book.authors)[0]}`} className="col">
               {Object.keys(book.authors)[0]}
             </Link>
-            <div className="col hide-md monotype">
+            <div className="col hide-md monotype" title={book.bid}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={book.bid}/>
+            </div>
+            <div className="col hide-md monotype" title={book.ISBN_13}>
               <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/>
             </div>
-            <div className="col hide-md monotype">
-              <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/>
+            <div className="col hide-md monotype" title={book.ISBN_10}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10} />
             </div>
-            <Link to={`/dashboard/${book.EDIT.createdByUid}`} title={book.EDIT.createdByUid} className="col">
+            <Link to={`/dashboard/${book.EDIT.createdByUid}`} title={book.EDIT.createdByUid} className="col hide-sm">
               {book.EDIT.createdBy}
             </Link>
-            <div className="col col-sm-2 col-lg-1">
+            <div className="col hide-sm col-lg-1">
               <div className="timestamp">{new Date(book.EDIT.created_num).toLocaleDateString()}</div>
             </div>
             <Link to={`/dashboard/${book.EDIT.lastEditByUid}`} title={book.EDIT.lastEditByUid} className="col">
@@ -139,9 +149,10 @@ export default class BooksDash extends React.Component {
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{timeSince(book.EDIT.lastEdit_num)}</div>
             </div>
-
             <div className="absolute-row right btns xs">
+              <button className="btn icon success" onClick={e => this.onView(book.bid)}>{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(book.bid)}>{icon.pencil()}</button>
+              <button className="btn icon secondary" onClick={e => this.onLock(book.bid)}>{icon.lock()}</button>
               <button className="btn icon error" onClick={e => this.onDelete(book.bid)}>{icon.close()}</button>
             </div>
           </div>
@@ -159,7 +170,7 @@ export default class BooksDash extends React.Component {
       </MenuItem>
     ));
 
-    if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
+    if (redirectTo) return <Redirect to={`/book/${redirectTo}`} />
 
 		return (
 			<div className="container" id="booksDashComponent">
@@ -167,7 +178,7 @@ export default class BooksDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${books ? books.length : 0} di ${booksCount || 0} libri`}</span>
+                <span className="counter hide-md">{`${books ? books.length : 0} di ${count || 0} libri`}</span>
               </div>
               <div className="col-auto">
                 <span className="counter last hide-xs">Ordina per</span>
@@ -189,7 +200,7 @@ export default class BooksDash extends React.Component {
               </div>
             </div>
           </div>
-          {loadingBooks ? 
+          {loading ? 
             <div className="loader"><CircularProgress /></div> 
           : !books ? 
             <div className="empty text-center">Nessun libro</div>
@@ -200,10 +211,11 @@ export default class BooksDash extends React.Component {
                   <div className="col-auto"><div className="mock-cover xs hidden"></div></div>
                   <div className="col">Titolo</div>
                   <div className="col">Autore</div>
+                  <div className="col hide-md">Bid</div>
                   <div className="col hide-md">ISBN-13</div>
                   <div className="col hide-md">ISBN-10</div>
-                  <div className="col">Creato da</div>
-                  <div className="col col-sm-2 col-lg-1">Creato</div>
+                  <div className="col hide-sm">Creato da</div>
+                  <div className="col hide-sm col-lg-1">Creato</div>
                   <div className="col">Modificato da</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>
@@ -211,19 +223,19 @@ export default class BooksDash extends React.Component {
               {booksList}
             </ul>
           }
-          {booksCount > limit &&
-            <div className="info-row footer centered pagination">
+          {count > limit &&
+            <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
                 className="btn flat" 
-                onClick={() => this.fetchBooks('prev')} title="precedente">
+                onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
 
               <button 
-                disabled={page > (booksCount / limit) && 'disabled'} 
+                disabled={page > (count / limit) && 'disabled'} 
                 className="btn flat" 
-                onClick={() => this.fetchBooks('next')} title="successivo">
+                onClick={() => this.fetch('next')} title="successivo">
                 {icon.chevronRight()}
               </button>
             </div>

@@ -1,23 +1,24 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React from 'react';
-import Link from 'react-router-dom/Link';
-import { authorsRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
-import { getInitials } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
-import CopyToClipboard from '../../copyToClipboard';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
+import React from 'react';
+import Link from 'react-router-dom/Link';
+import Redirect from 'react-router-dom/Redirect';
+import { authorsRef } from '../../../config/firebase';
+import { icon } from '../../../config/icons';
+import { getInitials, normalizeString } from '../../../config/shared';
+import { funcType, userType } from '../../../config/types';
+import CopyToClipboard from '../../copyToClipboard';
 
 export default class AuthorsDash extends React.Component {
  	state = {
     user: this.props.user,
     authors: null,
-    authorsCount: 0,
+    count: 0,
     desc: true,
-    limit: 50,
+    limit: 15,
     orderMenuAnchorEl: null,
     orderBy: [ 
       { type: 'created_num', label: 'Data'}, 
@@ -26,7 +27,7 @@ export default class AuthorsDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
-    loadingAuthors: true
+    loading: true
 	}
 
 	static propTypes = {
@@ -34,13 +35,13 @@ export default class AuthorsDash extends React.Component {
     user: userType
 	}
 
- static getDerivedStateFromProps(props, state) {
+  /* static getDerivedStateFromProps(props, state) {
     return null;
-  } 
+  }  */
 
 	componentDidMount() { 
     this._isMounted = true; 
-    this.fetchAuthors();
+    this.fetch();
   }
 
 	componentWillUnmount() { this._isMounted = false; }
@@ -49,22 +50,22 @@ export default class AuthorsDash extends React.Component {
     const { desc, limit, orderByIndex } = this.state;
     if (this._isMounted) {
       if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
-        this.fetchAuthors();
+        this.fetch();
       }
     }
   }
     
-  fetchAuthors = direction => {
+  fetch = direction => {
     const { desc, limit, orderBy, orderByIndex, page } = this.state;
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const aRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     //console.log('fetching authors');
-    this.setState({ loadingAuthors: true });
+    this.setState({ loading: true });
     
     authorsRef.get().then(fullSnap => {
       //console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ authorsCount: fullSnap.docs.length });
+        this.setState({ count: fullSnap.docs.length });
         let lastVisible = fullSnap.docs[startAt];
         //console.log({lastVisible, limit, direction, page});
         const ref = direction ? aRef.startAt(lastVisible) : aRef;
@@ -75,12 +76,12 @@ export default class AuthorsDash extends React.Component {
             snap.forEach(author => authors.push({ ...author.data() }));
             this.setState(prevState => ({
               authors: authors,
-              loadingAuthors: false,
+              loading: false,
               page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ authors: null, loadingAuthors: false });
+          } else this.setState({ authors: null, loading: false });
         });
-      } else this.setState({ authorsCount: 0 });
+      } else this.setState({ count: 0 });
     });
   }
 
@@ -92,18 +93,20 @@ export default class AuthorsDash extends React.Component {
 
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
-  onEdit = () => {
-    console.log('Editing..');
+  onView = id => this.setState({ redirectTo: id });
+
+  onEdit = aid => {
+    console.log(`Editing ${aid}`);
     this.props.openSnackbar('Modifiche salvate', 'success');
   }
 
-  onDelete = () => {
-    console.log('Deleting..');
+  onDelete = aid => {
+    console.log(`Deleting ${aid}`);
     this.props.openSnackbar('Autore cancellato', 'success');
   }
 
 	render() {
-    const { desc, limit, loadingAuthors, orderBy, orderByIndex, orderMenuAnchorEl, page, authors, authorsCount } = this.state;
+    const { authors, count, desc, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
     const authorsList = (authors && (authors.length > 0) &&
@@ -114,14 +117,16 @@ export default class AuthorsDash extends React.Component {
               <Avatar className="avatar" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
             </Link>
             <div className="col-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
-            <div className="col-1 btns xs"><div className="btn flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</div></div>
-            <div className="col hide-sm" title={author.bio}>{author.bio}</div>
-            <div className="col-1 btns xs">
-              <div className="btn icon primary" title="modifica" onClick={this.onEdit}>{icon.pencil()}</div>
-              <div className="btn icon error" title="cancella" onClick={this.onDelete}>{icon.close()}</div>
-            </div>
+            <div className="col-1"><button className="btn xs flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</button></div>
+            <div className="col hide-sm">{author.bio}</div>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{new Date(author.created_num).toLocaleDateString()}</div>
+            </div>
+            <div className="absolute-row right btns xs">
+              <button className="btn icon success" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
+              <button className="btn icon primary" onClick={e => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
+              <button className="btn icon secondary" onClick={e => this.onLock(normalizeString(author.displayName))}>{icon.lock()}</button>
+              <button className="btn icon error" onClick={e => this.onDelete(normalizeString(author.displayName))}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -138,13 +143,15 @@ export default class AuthorsDash extends React.Component {
       </MenuItem>
     ));
 
+    if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
+
 		return (
 			<div className="container" id="authorsDashComponent">
         <div className="card dark" style={{ minHeight: 200 }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${authors ? authors.length : 0} di ${authorsCount || 0} autori`}</span>
+                <span className="counter hide-md">{`${authors ? authors.length : 0} di ${count || 0} autori`}</span>
               </div>
               <div className="col-auto">
                 <span className="counter last hide-xs">Ordina per</span>
@@ -166,7 +173,7 @@ export default class AuthorsDash extends React.Component {
               </div>
             </div>
           </div>
-          {loadingAuthors ? 
+          {loading ? 
             <div className="loader"><CircularProgress /></div> 
           : !authors ? 
             <div className="empty text-center">Nessun autore</div>
@@ -178,26 +185,25 @@ export default class AuthorsDash extends React.Component {
                   <div className="col-2">Nominativo</div>
                   <div className="col-1">Sesso</div>
                   <div className="col hide-sm">Bio</div>
-                  <div className="col-1">Azioni</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
               {authorsList}
             </ul>
           }
-          {authorsCount > limit &&
-            <div className="info-row footer centered pagination">
+          {count > limit &&
+            <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
                 className="btn flat" 
-                onClick={() => this.fetchAuthors('prev')} title="precedente">
+                onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
 
               <button 
-                disabled={page > (authorsCount / limit) && 'disabled'} 
+                disabled={page > (count / limit) && 'disabled'} 
                 className="btn flat" 
-                onClick={() => this.fetchAuthors('next')} title="successivo">
+                onClick={() => this.fetch('next')} title="successivo">
                 {icon.chevronRight()}
               </button>
             </div>

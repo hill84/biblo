@@ -13,6 +13,8 @@ import AuthorsDash from './authorsDash';
 import BooksDash from './booksDash';
 import UsersDash from './usersDash';
 
+const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
+
 export default class Admin extends React.Component {
  	state = {
     isAdmin: false,
@@ -20,7 +22,7 @@ export default class Admin extends React.Component {
     openSnackbar: this.props.openSnackbar,
     user: null,
     loadingUser: true,
-    tabSelected: 0
+    tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0
 	}
 
 	static propTypes = {
@@ -29,6 +31,11 @@ export default class Admin extends React.Component {
 	}
 
  static getDerivedStateFromProps(props, state) {
+    if (tabs.indexOf(props.match.params.tab) !== -1) {
+      if (tabs.indexOf(props.match.params.tab) !== state.tabSelected) {
+        return { tabSelected: tabs.indexOf(props.match.params.tab) };
+      }
+    }
     if (props.user) {
       if (props.user.uid !== state.aid) { 
         return { aid: props.user.uid }; 
@@ -40,6 +47,7 @@ export default class Admin extends React.Component {
 	componentDidMount() { 
     this._isMounted = true; 
     if (this.state.aid) this.fetchUser();
+    if (this.state.tabSelected === 0) this.props.history.push(`/admin/${tabs[0]}`, null);
   }
 
 	componentWillUnmount() { this._isMounted = false; }
@@ -66,7 +74,10 @@ export default class Admin extends React.Component {
     });
   }
   
-  onTabSelect = (e, value) => this.setState({ tabSelected: value });
+  onTabSelect = (e, value) => {
+    if (value !== -1) this.props.history.push(`/admin/${tabs[value]}`, null);
+    this.setState({ tabSelected: value });
+  }
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
