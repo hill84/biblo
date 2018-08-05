@@ -1,6 +1,5 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Popover from '@material-ui/core/Popover';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef } from '../config/firebase';
@@ -156,22 +155,14 @@ export default class Shelf extends React.Component {
                   <span className="counter hide-sm">{userBooksCount !== userBooks.length ? `${userBooks.length} di ` : ''}{userBooksCount} libri</span>
                 </div>
                 <div className="col-auto">
-                  <span className="counter last hide-xs">Ordina per</span>
-                  <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}>{orderBy[orderByIndex].label}</button>
-                  <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
-                  <Popover 
-                    open={Boolean(orderMenuAnchorEl)}
-                    onClose={this.onCloseOrderMenu} 
+                  <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+                  <button className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                  <Menu 
                     anchorEl={orderMenuAnchorEl} 
-                    anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                    transformOrigin={{horizontal: 'right', vertical: 'top'}}>
-                    <Menu 
-                      anchorEl={orderMenuAnchorEl} 
-                      open={Boolean(orderMenuAnchorEl)} 
-                      onClose={this.onCloseOrderMenu}>
-                      {orderByOptions}
-                    </Menu>
-                  </Popover>
+                    open={Boolean(orderMenuAnchorEl)} 
+                    onClose={this.onCloseOrderMenu}>
+                    {orderByOptions}
+                  </Menu>
                 </div>
               </div>
             </div>

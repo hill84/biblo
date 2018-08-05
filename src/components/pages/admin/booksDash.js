@@ -1,11 +1,10 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Popover from '@material-ui/core/Popover';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { booksRef } from '../../../config/firebase';
+import { bookRef, booksRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -17,6 +16,7 @@ export default class BooksDash extends React.Component {
     books: null,
     count: 0,
     desc: true,
+    lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
@@ -59,7 +59,7 @@ export default class BooksDash extends React.Component {
   }
     
   fetch = direction => {
-    const { desc, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
@@ -69,24 +69,24 @@ export default class BooksDash extends React.Component {
     booksRef.get().then(fullSnap => {
       //console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length });
-        let lastVisible = fullSnap.docs[startAt];
-        //console.log({lastVisible, limit, direction, page});
-        const ref = direction ? bRef.startAt(lastVisible) : bRef;
-        ref.get().then(snap => {
-          //console.log(snap);
+        this.setState({ count: fullSnap.docs.length, lastVisible: fullSnap.docs[startAt] });
+        console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
+        const ref = direction ? bRef.startAt(lastVisible || fullSnap.docs[startAt]) : bRef;
+        ref.onSnapshot(snap => {
+          console.log(snap);
           if (!snap.empty) {
             const books = [];
             snap.forEach(book => books.push({ ...book.data() }));
             this.setState(prevState => ({
               books: books,
+              lastVisible: snap.docs[startAt],
               loading: false,
-              page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
+              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ books: null, loading: false });
+          } else this.setState({ books: null, lastVisible: null, loading: false });
         });
       } else this.setState({ count: 0 });
-    });
+    }).catch(error => console.warn(error));
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -102,18 +102,35 @@ export default class BooksDash extends React.Component {
   onView = id => this.setState({ redirectTo: id });
   
   onEdit = id => {
-    console.log(`Editing ${id}`);
-    this.setState({ redirectTo: id });
+    if (id) {
+      //console.log(`Editing ${id}`);
+      //TODO
+      this.setState({ redirectTo: id }); 
+    }
   }
 
-  onLock = id => {
-    console.log(`Locking ${id}`);
-    this.props.openSnackbar('Libro bloccato', 'success');
+  onLock = (id, state) => {
+    if (id) {
+      if (state) {
+        //console.log(`Locking ${id}`);
+        bookRef(id).update({ 'EDIT.edit': false }).then(() => {
+          this.props.openSnackbar('Libro bloccato', 'success');
+        }).catch(error => console.warn(error));
+      } else {
+        //console.log(`Unlocking ${id}`);
+        bookRef(id).update({ 'EDIT.edit': true }).then(() => {
+          this.props.openSnackbar('Libro sbloccato', 'success');
+        }).catch(error => console.warn(error));
+      }
+    }
   }
 
   onDelete = id => {
-    console.log(`Deleting ${id}`);
-    this.props.openSnackbar('Libro cancellato', 'success');
+    if (id) {
+      //console.log(`Deleting ${id}`);
+      //TODO
+      this.props.openSnackbar('Libro cancellato', 'success');
+    }
   }
 
 	render() {
@@ -155,10 +172,10 @@ export default class BooksDash extends React.Component {
               <div className="timestamp">{timeSince(book.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon success" onClick={e => this.onView(book.bid)}>{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(book.bid)}>{icon.pencil()}</button>
-              <button className="btn icon secondary" onClick={e => this.onLock(book.bid)}>{icon.lock()}</button>
-              <button className="btn icon error" onClick={e => this.onDelete(book.bid)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={e => this.onView(book.bid)} title="Anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={e => this.onEdit(book.bid)} title="Modifica">{icon.pencil()}</button>
+              <button className={`btn icon ${book.EDIT.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(book.bid, book.EDIT.edit)} title={book.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={e => this.onDelete(book.bid)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -195,35 +212,21 @@ export default class BooksDash extends React.Component {
               <div className="col">
                 <span className="counter hide-md">{`${books ? books.length : 0} di ${count || 0} libri`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
-                <Popover 
-                  open={Boolean(limitMenuAnchorEl)}
-                  onClose={this.onCloseLimitMenu} 
+                <Menu 
                   anchorEl={limitMenuAnchorEl} 
-                  anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                  transformOrigin={{horizontal: 'left', vertical: 'top'}}>
-                  <Menu 
-                    anchorEl={limitMenuAnchorEl} 
-                    open={Boolean(limitMenuAnchorEl)} 
-                    onClose={this.onCloseLimitMenu}>
-                    {limitByOptions}
-                  </Menu>
-                </Popover>
+                  open={Boolean(limitMenuAnchorEl)} 
+                  onClose={this.onCloseLimitMenu}>
+                  {limitByOptions}
+                </Menu>
               </div>
               <div className="col-auto">
                 <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                <Popover 
-                  open={Boolean(orderMenuAnchorEl)}
-                  onClose={this.onCloseOrderMenu} 
+                <Menu 
                   anchorEl={orderMenuAnchorEl} 
-                  anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                  transformOrigin={{horizontal: 'right', vertical: 'top'}}>
-                  <Menu 
-                    anchorEl={orderMenuAnchorEl} 
-                    open={Boolean(orderMenuAnchorEl)} 
-                    onClose={this.onCloseOrderMenu}>
-                    {orderByOptions}
-                  </Menu>
-                </Popover>
+                  open={Boolean(orderMenuAnchorEl)} 
+                  onClose={this.onCloseOrderMenu}>
+                  {orderByOptions}
+                </Menu>
                 <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
               </div>
             </div>

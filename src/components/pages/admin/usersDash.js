@@ -2,11 +2,9 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Popover from '@material-ui/core/Popover';
 import React from 'react';
-import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { usersRef } from '../../../config/firebase';
+import { userRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { getInitials } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -77,7 +75,7 @@ export default class UsersDash extends React.Component {
         let lastVisible = fullSnap.docs[startAt];
         //console.log({lastVisible, limit, direction, page});
         const ref = direction ? uRef.startAt(lastVisible) : uRef;
-        ref.get().then(snap => {
+        ref.onSnapshot(snap => {
           //console.log(snap);
           if (!snap.empty) {
             const users = [];
@@ -85,12 +83,12 @@ export default class UsersDash extends React.Component {
             this.setState(prevState => ({
               users: users,
               loading: false,
-              page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
             }));
           } else this.setState({ users: null, loading: false });
         });
       } else this.setState({ count: 0 });
-    });
+    }).catch(error => console.warn(error));
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -107,16 +105,29 @@ export default class UsersDash extends React.Component {
 
   onEdit = id => {
     console.log(`Editing ${id}`);
+    //TODO
     this.props.openSnackbar('Modifiche salvate', 'success');
   }
 
-  onLock = id => {
+  onLock = (id, state) => {
     console.log(`Locking ${id}`);
+    if (state) {
+      //console.log(`Locking ${id}`);
+      userRef(id).update({ 'roles.editor': false }).then(() => {
+        this.props.openSnackbar('Libro bloccato', 'success');
+      }).catch(error => console.warn(error));
+    } else {
+      //console.log(`Unlocking ${id}`);
+      userRef(id).update({ 'roles.editor': true }).then(() => {
+        this.props.openSnackbar('Libro sbloccato', 'success');
+      }).catch(error => console.warn(error));
+    }
     this.props.openSnackbar('Utente bloccato', 'success');
   }
 
   onDelete = id => {
     console.log(`Deleting ${id}`);
+    //TODO
     this.props.openSnackbar('Utente cancellato', 'success');
   }
 
@@ -155,10 +166,10 @@ export default class UsersDash extends React.Component {
               <div className="timestamp">{new Date(user.creationTime).toLocaleDateString()}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon success" onClick={e => this.onView(user.uid)} title="anteprima">{icon.eye()}</button>
+              <button className="btn icon green" onClick={e => this.onView(user.uid)} title="anteprima">{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(user.uid)} title="modifica">{icon.pencil()}</button>
-              <button className="btn icon secondary" onClick={e => this.onLock(user.uid)} title="blocca">{icon.lock()}</button>
-              <button className="btn icon error" onClick={e => this.onDelete(user.uid)} title="elimina">{icon.close()}</button>
+              <button className={`btn icon ${user.roles.editor ? 'secondary' : 'flat' }`} onClick={e => this.onLock(user.uid, user.roles.editor)} title={user.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={e => this.onDelete(user.uid)} title="elimina">{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -195,36 +206,22 @@ export default class UsersDash extends React.Component {
               <div className="col">
                 <span className="counter hide-md">{`${users ? users.length : 0} di ${count || 0} utenti`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
-                <Popover 
-                  open={Boolean(limitMenuAnchorEl)}
-                  onClose={this.onCloseLimitMenu} 
+                <Menu 
                   anchorEl={limitMenuAnchorEl} 
-                  anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                  transformOrigin={{horizontal: 'left', vertical: 'top'}}>
-                  <Menu 
-                    anchorEl={limitMenuAnchorEl} 
-                    open={Boolean(limitMenuAnchorEl)} 
-                    onClose={this.onCloseLimitMenu}>
-                    {limitByOptions}
-                  </Menu>
-                </Popover>
+                  open={Boolean(limitMenuAnchorEl)} 
+                  onClose={this.onCloseLimitMenu}>
+                  {limitByOptions}
+                </Menu>
               </div>
               <div className="col-auto">
                 <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                 <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
-                <Popover 
-                  open={Boolean(orderMenuAnchorEl)}
-                  onClose={this.onCloseOrderMenu} 
+                <Menu 
                   anchorEl={orderMenuAnchorEl} 
-                  anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                  transformOrigin={{horizontal: 'right', vertical: 'top'}}>
-                  <Menu 
-                    anchorEl={orderMenuAnchorEl} 
-                    open={Boolean(orderMenuAnchorEl)} 
-                    onClose={this.onCloseOrderMenu}>
-                    {orderByOptions}
-                  </Menu>
-                </Popover>
+                  open={Boolean(orderMenuAnchorEl)} 
+                  onClose={this.onCloseOrderMenu}>
+                  {orderByOptions}
+                </Menu>
               </div>
             </div>
           </div>

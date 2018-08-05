@@ -457,7 +457,11 @@ export default class Book extends React.Component {
     } else console.warn(`Cannot rateBook. User not authenticated`);
 	}
 
-  isEditing = () => this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+  isEditing = () => {
+    if (this.state.book.EDIT.edit || this.state.user.roles.admin) {
+      this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+    } else console.warn('Cannot edit book. Book locked');
+  };
 	
 	render() {
     const { book, isEditing, loading, user, userBook } = this.state;

@@ -2,7 +2,6 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Popover from '@material-ui/core/Popover';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
@@ -80,12 +79,12 @@ export default class AuthorsDash extends React.Component {
             this.setState(prevState => ({
               authors: authors,
               loading: false,
-              page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
+              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
           } else this.setState({ authors: null, loading: false });
         });
       } else this.setState({ count: 0 });
-    });
+    }).catch(error => console.warn(error));
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -128,10 +127,10 @@ export default class AuthorsDash extends React.Component {
               <div className="timestamp">{new Date(author.created_num).toLocaleDateString()}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon success" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
+              <button className="btn icon green" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
               <button className="btn icon secondary" onClick={e => this.onLock(normalizeString(author.displayName))}>{icon.lock()}</button>
-              <button className="btn icon error" onClick={e => this.onDelete(normalizeString(author.displayName))}>{icon.close()}</button>
+              <button className="btn icon red" onClick={e => this.onDelete(normalizeString(author.displayName))}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -168,36 +167,22 @@ export default class AuthorsDash extends React.Component {
               <div className="col">
                 <span className="counter hide-sm">{`${authors ? authors.length : 0} di ${count || 0} autori`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
-                <Popover 
-                  open={Boolean(limitMenuAnchorEl)}
-                  onClose={this.onCloseLimitMenu} 
+                <Menu 
                   anchorEl={limitMenuAnchorEl} 
-                  anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                  transformOrigin={{horizontal: 'left', vertical: 'top'}}>
-                  <Menu 
-                    anchorEl={limitMenuAnchorEl} 
-                    open={Boolean(limitMenuAnchorEl)} 
-                    onClose={this.onCloseLimitMenu}>
-                    {limitByOptions}
-                  </Menu>
-                </Popover>
+                  open={Boolean(limitMenuAnchorEl)} 
+                  onClose={this.onCloseLimitMenu}>
+                  {limitByOptions}
+                </Menu>
               </div>
               <div className="col-auto">
                 <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                 <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
-                <Popover 
-                  open={Boolean(orderMenuAnchorEl)}
-                  onClose={this.onCloseOrderMenu} 
+                <Menu 
                   anchorEl={orderMenuAnchorEl} 
-                  anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                  transformOrigin={{horizontal: 'right', vertical: 'top'}}>
-                  <Menu 
-                    anchorEl={orderMenuAnchorEl} 
-                    open={Boolean(orderMenuAnchorEl)} 
-                    onClose={this.onCloseOrderMenu}>
-                    {orderByOptions}
-                  </Menu>
-                </Popover>
+                  open={Boolean(orderMenuAnchorEl)} 
+                  onClose={this.onCloseOrderMenu}>
+                  {orderByOptions}
+                </Menu>
               </div>
             </div>
           </div>

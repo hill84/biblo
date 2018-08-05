@@ -25,7 +25,7 @@ import isbn from 'isbn-utils';
 export default class BookForm extends React.Component {
 	state = {
     book: {
-      ISBN_10: this.props.book.ISBN_10 ? this.props.book.ISBN_10 : this.props.book.ISBN_13 ? isbn.parse(this.props.book.ISBN_13).asIsbn10() : 0, 
+      ISBN_10: this.props.book.ISBN_10 || (this.props.book.ISBN_13 ? isbn.parse(this.props.book.ISBN_13) ? isbn.parse(this.props.book.ISBN_13).asIsbn10() : 0 : 0), 
       ISBN_13: this.props.book.ISBN_13 || 0, 
       EDIT: this.props.book.EDIT || {
         createdBy: this.props.book.createdBy || '',

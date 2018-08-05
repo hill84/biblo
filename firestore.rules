@@ -5,13 +5,13 @@ service cloud.firestore {
     match /users/{uid} {
     	allow read;
       allow create: if isValidUser();
-      allow update: if isValidUser() && (userHasAllRoles('admin', 'editor') == true || (isOwner(uid) && isEditor()));
+      allow update: if (isEditor() && isAdmin()) || (isValidUser() && isEditor() && isOwner(uid));
     	allow delete: if userHasAllRoles('admin', 'editor') == true || isOwner(uid);
     }
 
     match /notifications/{uid} {
     	allow read;
-      allow write: if isOwner(uid);
+      allow write: if (isEditor() && isAdmin()) || isOwner(uid);
     }
 
     match /followers/{uid} {
@@ -28,12 +28,12 @@ service cloud.firestore {
     	allow read;
       allow create: if isEditor() && isValidBook();
       allow update: if isEditor() && isValidBook() && (incomingData().bid == existingData().bid);
-      allow delete: if userHasAllRoles('admin', 'editor') == true;
+      allow delete: if (isEditor() && isAdmin());
     }
     
     match /shelves/{uid} {
       allow read;
-      allow write: if userHasAllRoles('admin', 'editor') == true || (isEditor() && isOwner(uid));
+      allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
 
     	match /books/{bid} {
         allow read;
@@ -50,21 +50,21 @@ service cloud.firestore {
       match /reviewers/{uid} {
       	allow read;
         allow create, update: if isEditor();
-        allow delete: if userHasAllRoles('admin', 'editor') == true || (isEditor() && isOwner(uid));
+        allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
       }
     }
     
     match /authors/{aid} {
       allow read;
       allow create, update: if isEditor();
-      allow delete: if userHasAllRoles('admin', 'editor') == true;
+      allow delete: if isEditor() && isAdmin();
     }
     
     match /collections/{cid} {
     	match /books/{bid} {
         allow read;
         allow create, update: if isEditor();
-        allow delete: if userHasAllRoles('admin', 'editor') == true;
+        allow delete: if isEditor() && isAdmin();
       }
     }
 
@@ -75,7 +75,7 @@ service cloud.firestore {
     
     match /admin/{document=**} {
     	allow read: if isAdmin();
-      allow write: if userHasAllRoles('admin', 'editor') == true;
+      allow write: if isEditor() && isAdmin();
     }
 
     /// FUNCTIONS ///
