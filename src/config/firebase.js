@@ -43,7 +43,9 @@ export const followingsRef = uid => db.collection('followings').doc(uid);
 export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');
 
-export const collectionsRef = cid => db.collection('collections').doc(cid).collection('books');
+export const collectionRef = cid => db.collection('collections').doc(cid);
+export const collectionBooksRef = cid => db.collection('collections').doc(cid).collection('books');
+export const collectionsRef = db.collection('collections');
 
 export const reviewsRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
 export const reviewRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);

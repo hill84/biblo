@@ -97,6 +97,9 @@ export default class Layout extends React.Component {
                       </div>
                     </div>
                   </NavLink>
+                  {user.roles.admin && 
+                    <NavLink to={`/admin`}><MenuItem>Amministrazione</MenuItem></NavLink>
+                  }
                   <NavLink to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></NavLink>
                 </React.Fragment>
               :

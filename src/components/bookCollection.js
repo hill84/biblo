@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import { collectionsRef } from '../config/firebase';
+import { collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { booksPerRow /* , isTouchDevice */ } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
@@ -66,11 +66,11 @@ export default class BookCollection extends React.Component {
   fetchCollection = () => {
     const { bcid, cid, desc, limit } = this.state;
     //console.log(limit);
-    collectionsRef(cid).get().then(snap => {
+    collectionBooksRef(cid).get().then(snap => {
       if (!snap.empty) { 
         this.setState({ collectionCount: snap.docs.length });
         let books = [];
-        collectionsRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit).get().then(snap => {
+        collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit).get().then(snap => {
           snap.forEach(book => books.push(book.data()));
           this.setState({ 
             collection: books,
@@ -100,7 +100,7 @@ export default class BookCollection extends React.Component {
     this.setState({ loading: true });
     
     let nextBooks = [];
-		collectionsRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(limit).get().then(nextSnap => {
+		collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(book => nextBooks.push(book.data()));
         this.setState(prevState => ({ 
@@ -150,13 +150,13 @@ export default class BookCollection extends React.Component {
                 <React.Fragment>
                   <span className="counter last hide-xs">Ordina per</span>
                   <button 
-                    className="btn sm flat counter"
+                    className="btn sm icon flat counter"
                     onClick={() => this.orderBy('rating')}
                     title="Ordina per valutazione">
                     {icon.star()}
                   </button>
                   <button 
-                    className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} 
+                    className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
                     title={desc ? 'Ascendente' : 'Discendente'} 
                     onClick={this.onToggleDesc}>
                     {icon.arrowDown()}

@@ -61,6 +61,10 @@ service cloud.firestore {
     }
     
     match /collections/{cid} {
+      allow read;
+      allow create, update: if isEditor();
+      allow delete: if isEditor() && isAdmin();
+      
     	match /books/{bid} {
         allow read;
         allow create, update: if isEditor();
