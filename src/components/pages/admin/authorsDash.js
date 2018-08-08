@@ -57,34 +57,40 @@ export default class AuthorsDash extends React.Component {
   }
     
   fetch = direction => {
-    const { desc, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const { count, desc, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
-    const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const aRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching authors');
+    const prev = direction === 'prev';
+    const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
+    const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    const paginatedRef = baseRef.startAfter(startAfter);
+    const ref = direction ? paginatedRef : baseRef;
+    //console.log('fetching');
+    console.log({ startAfter, page });
     this.setState({ loading: true });
-    
-    authorsRef.get().then(fullSnap => {
-      //console.log(fullSnap);
-      if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length });
-        let lastVisible = fullSnap.docs[startAt];
-        //console.log({lastVisible, limit, direction, page});
-        const ref = direction ? aRef.startAt(lastVisible) : aRef;
-        ref.get().then(snap => {
-          //console.log(snap);
-          if (!snap.empty) {
-            const authors = [];
-            snap.forEach(author => authors.push({ ...author.data() }));
-            this.setState(prevState => ({
-              authors: authors,
-              loading: false,
-              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
-            }));
-          } else this.setState({ authors: null, loading: false });
-        });
-      } else this.setState({ count: 0 });
-    }).catch(error => console.warn(error));
+
+    const fetcher = () => {
+      ref.get().then(snap => {
+        //console.log(snap);
+        if (!snap.empty) {
+          const authors = [];
+          snap.forEach(author => authors.push(author.data()));
+          this.setState(prevState => ({
+            authors: authors,
+            loading: false,
+            page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limitBy[prevState.limitByIndex]) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+          }));
+        } else this.setState({ authors: null, count: 0, loading: false });
+      }).catch(error => console.warn(error));
+    }
+
+    if (!direction) {
+      authorsRef.get().then(fullSnap => {
+        if (!fullSnap.empty) { 
+          this.setState({ count: fullSnap.docs.length });
+          fetcher();
+        } else this.setState({ count: 0, page: 1 });
+      }).catch(error => console.warn(error));
+    } else fetcher();
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));

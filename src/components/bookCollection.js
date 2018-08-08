@@ -106,7 +106,7 @@ export default class BookCollection extends React.Component {
           this.setState({ count: fullSnap.docs.length });
           fetcher();
         }
-      });
+      }).catch(error => console.warn(error));
     } else fetcher();
   }
 
