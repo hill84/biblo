@@ -17,11 +17,11 @@ export default class BookCollection extends React.Component {
     pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
     stacked: this.props.stacked || false,
     collection: [],
-    collectionCount: 0,
+    count: 0,
     desc: false,
     loading: true,
     page: null,
-    lastVisible: null
+    //lastVisible: null
   }
 
   static propTypes = {
@@ -47,7 +47,7 @@ export default class BookCollection extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-    this.fetchCollection();
+    this.fetch();
   }
 
   componentWillUnmount() {
@@ -58,74 +58,62 @@ export default class BookCollection extends React.Component {
     const { bcid, cid, desc } = this.state;
     if (this._isMounted) {
       if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
-        this.fetchCollection();
+        this.fetch();
       }
     }
   }
-
-  fetchCollection = () => {
-    const { bcid, cid, desc, limit } = this.state;
-    //console.log(limit);
-    collectionBooksRef(cid).get().then(snap => {
-      if (!snap.empty) { 
-        this.setState({ collectionCount: snap.docs.length });
-        let books = [];
-        collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit).get().then(snap => {
-          snap.forEach(book => books.push(book.data()));
-          this.setState({ 
-            collection: books,
-            loading: false,
-            page: 1,
-            //lastVisible: snap.docs[snap.docs.length-1]
-          });
-        }).catch(error => console.warn("Error fetching collection:", error));
-      } else {
-        this.setState({ 
-          collectionCount: 0, 
-          collection: null,
-          loading: false,
-          page: null,
-          //lastVisible: null 
-        });
-      }
-    });
-  }
   
 	fetch = direction => {
-    const { bcid, cid, collectionCount, desc, /* firstVisible, lastVisible,  */limit, page } = this.state;
+    const { bcid, cid, count, desc, /* firstVisible, lastVisible,  */limit, page } = this.state;
     //console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
+    const prev = direction === 'prev';
     //const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
-    const startAfter = (direction === 'prev') ? (page > 1) ? ((page - 1) * limit) - limit : 0 : ((page * limit) > collectionCount) ? ((page - 1) * limit) : page * limit;
-
-    this.setState({ loading: true });
+    const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
+    const baseRef = collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit);
+    const paginatedRef = baseRef.startAfter(startAfter);
+    const ref = direction ? paginatedRef : baseRef;
     
-    let nextBooks = [];
-		collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').startAfter(startAfter).limit(limit).get().then(nextSnap => {
-      if (!nextSnap.empty) {
-        nextSnap.forEach(book => nextBooks.push(book.data()));
-        this.setState(prevState => ({ 
-          collection: nextBooks,
-          loading: false,
-          page: (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.collectionCount) ? prevState.page : prevState.page + 1,
-          //lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
-        }));
-        //console.log(nextBooks);
-        //console.log({'direction': direction, 'page': page});
-      } else {
-        this.setState({ 
-          collection: [],
-          loading: false,
-          page: null,
-          //lastVisible: null
-        });
-      }
-		}).catch(error => console.warn("Error fetching next page:", error));
+    this.setState({ loading: true });
+
+    const fetcher = () => {
+      ref.get().then(snap => {
+        if (!snap.empty) {
+          const books = [];
+          snap.forEach(book => books.push(book.data()));
+          this.setState(prevState => ({ 
+            collection: books,
+            loading: false,
+            page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
+            //lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
+          }));
+          //console.log(books);
+          //console.log({'direction': direction, 'page': page});
+        } else {
+          this.setState({ 
+            count: 0,
+            collection: [],
+            loading: false,
+            page: null,
+            //lastVisible: null
+          });
+        }
+      }).catch(error => console.warn("Error fetching collection:", error));
+    }
+
+    if (!direction) {
+      collectionBooksRef(cid).get().then(fullSnap => {
+        if (!fullSnap.empty) { 
+          this.setState({ count: fullSnap.docs.length });
+          fetcher();
+        }
+      });
+    } else fetcher();
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
 	render() {
-		const { booksPerRow, cid, collection, collectionCount, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;
+		const { booksPerRow, cid, collection, count, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;
     const covers = (collection && (collection.length > 0) ?
       <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, index) => 
@@ -141,10 +129,10 @@ export default class BookCollection extends React.Component {
 		return (
       <React.Fragment>
         <div className="head nav" role="navigation">
-          <span className="counter last title">{cid}</span> {collectionCount !== 0 && <span className="count hide-xs">({collectionCount} libri)</span>} 
-          {!loading && collectionCount > 0 &&
+          <span className="counter last title">{cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
+          {!loading && count > 0 &&
             <div className="pull-right">
-              {(pagination && collectionCount > limit) || scrollable ?
+              {(pagination && count > limit) || scrollable ?
                 <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
               :
                 <React.Fragment>
@@ -163,7 +151,7 @@ export default class BookCollection extends React.Component {
                   </button>
                 </React.Fragment>
               }
-              {pagination && collectionCount > limit &&
+              {pagination && count > limit &&
                 <React.Fragment>
                   <button 
                     disabled={page < 2 && 'disabled'} 
@@ -172,7 +160,7 @@ export default class BookCollection extends React.Component {
                     {icon.chevronLeft()}
                   </button>
                   <button 
-                    disabled={page > (collectionCount / limit) && 'disabled'} 
+                    disabled={page > (count / limit) && 'disabled'} 
                     className="btn sm clear append" 
                     onClick={() => this.fetch('next')} title="successivo">
                     {icon.chevronRight()}

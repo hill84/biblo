@@ -131,7 +131,7 @@ export default class Shelf extends React.Component {
     const orderByOptions = orderBy.map((option, index) => (
       <MenuItem
         key={option.type}
-        className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : null}
+        className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : ''}
         disabled={index === -1}
         selected={index === orderByIndex}
         onClick={event => this.onChangeOrderBy(event, index)}>

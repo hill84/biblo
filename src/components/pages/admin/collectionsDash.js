@@ -64,7 +64,7 @@ export default class collectionsDash extends React.Component {
     collectionsRef.get().then(fullSnap => {
       //console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length, lastVisible: fullSnap.docs[startAt] });
+        this.setState({ count: fullSnap.docs.length });
         console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? cRef.startAt(lastVisible || fullSnap.docs[startAt]) : cRef;
         ref.onSnapshot(snap => {
