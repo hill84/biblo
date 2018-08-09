@@ -17,6 +17,7 @@ export default class AuthorsDash extends React.Component {
     authors: null,
     count: 0,
     desc: true,
+    lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
@@ -36,10 +37,6 @@ export default class AuthorsDash extends React.Component {
     user: userType
 	}
 
-  /* static getDerivedStateFromProps(props, state) {
-    return null;
-  } */
-
 	componentDidMount() { 
     this._isMounted = true; 
     this.fetch();
@@ -57,15 +54,14 @@ export default class AuthorsDash extends React.Component {
   }
     
   fetch = direction => {
-    const { count, desc, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const { count, desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
     const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    const paginatedRef = baseRef.startAfter(startAfter);
+    const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef : baseRef;
     //console.log('fetching');
-    console.log({ startAfter, page });
+    console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     this.setState({ loading: true });
 
     const fetcher = () => {
@@ -76,8 +72,9 @@ export default class AuthorsDash extends React.Component {
           snap.forEach(author => authors.push(author.data()));
           this.setState(prevState => ({
             authors: authors,
+            lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
-            page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limitBy[prevState.limitByIndex]) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+            page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
           }));
         } else this.setState({ authors: null, count: 0, loading: false });
       }).catch(error => console.warn(error));
