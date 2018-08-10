@@ -123,7 +123,7 @@ ul.nolist li { display: block; }
 .avatar-row a { border-radius: 3px; transition: all .2s ease-in; }
 .avatar-row a:hover { background-color: rgba(0,151,167,.07); }
 .avatar-row a:active { background-color: rgba(0,151,167,.1); }
-.avatar-row .col { height: var(--avatarSize); line-height: var(--avatarSize); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.avatar-row [class^='col'] { height: var(--avatarSize); line-height: var(--avatarSize); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .avatar-row .ripple:before { left: 10%; }
 .avatar-row .avatar {
   display: inline-flex;

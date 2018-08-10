@@ -12,6 +12,7 @@ import { funcType, userType } from '../../../config/types';
 import AuthorsDash from './authorsDash';
 import BooksDash from './booksDash';
 import CollectionsDash from './collectionsDash';
+import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
 
 const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
@@ -150,8 +151,8 @@ export default class Admin extends React.Component {
             </div>}
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 4 && <div className="card tab dark" dir={tabDir}>
-              Citazioni
+            {tabSelected === 4 && <div className="tab" dir={tabDir}>
+              <QuotesDash user={user} openSnackbar={openSnackbar} />
             </div>}
           </React.Fragment>
           <React.Fragment>

@@ -5,27 +5,27 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { authorsRef } from '../../../config/firebase';
+import { quoteRef, quotesRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials, normalizeString } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 
-export default class AuthorsDash extends React.Component {
+export default class QuotesDash extends React.Component {
  	state = {
     user: this.props.user,
-    authors: null,
+    quotes: null,
     count: 0,
     desc: true,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
+    limitBy: [ 5, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
-      { type: 'created_num', label: 'Data'}, 
-      { type: 'displayName', label: 'Nome'}, 
-      { type: 'sex', label: 'Sesso'}
+      { type: 'author', label: 'Autore'}, 
+      { type: 'bookTitle', label: 'Libro'}, 
+      { type: 'coverURL', label: 'Cover'}, 
+      { type: 'created_num', label: 'Data di creazione'}
     ],
     orderByIndex: 0,
     page: 1,
@@ -57,7 +57,7 @@ export default class AuthorsDash extends React.Component {
     const { count, desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    const baseRef = quotesRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef : baseRef;
     //console.log('fetching');
@@ -68,20 +68,21 @@ export default class AuthorsDash extends React.Component {
       ref.onSnapshot(snap => {
         //console.log(snap);
         if (!snap.empty) {
-          const authors = [];
-          snap.forEach(author => authors.push(author.data()));
+          const quotes = [];
+          snap.forEach(quote => quotes.push(quote.data()));
+          console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
           this.setState(prevState => ({
-            authors: authors,
+            quotes: quotes,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
             page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
           }));
-        } else this.setState({ authors: null, count: 0, loading: false });
+        } else this.setState({ quotes: null, count: 0, loading: false });
       });
     }
 
     if (!direction) {
-      authorsRef.get().then(fullSnap => {
+      quotesRef.get().then(fullSnap => {
         if (!fullSnap.empty) { 
           this.setState({ count: fullSnap.docs.length });
           fetcher();
@@ -107,33 +108,50 @@ export default class AuthorsDash extends React.Component {
     this.props.openSnackbar('Modifiche salvate', 'success');
   }
 
+  onLock = (id, state) => {
+    if (id) {
+      if (state) {
+        //console.log(`Locking ${id}`);
+        quoteRef(id).update({ edit: false }).then(() => {
+          this.props.openSnackbar('Citazione bloccata', 'success');
+        }).catch(error => console.warn(error));
+      } else {
+        //console.log(`Unlocking ${id}`);
+        quoteRef(id).update({ edit: true }).then(() => {
+          this.props.openSnackbar('Citazione sbloccata', 'success');
+        }).catch(error => console.warn(error));
+      }
+    }
+  }
+
   onDelete = id => {
     console.log(`Deleting ${id}`);
     this.props.openSnackbar('Autore cancellato', 'success');
   }
 
 	render() {
-    const { authors, count, desc, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { quotes, count, desc, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const authorsList = (authors && (authors.length > 0) &&
-      authors.map((author) => 
-        <li key={author.displayName} className="avatar-row">
+    const quotesList = (quotes && (quotes.length > 0) &&
+      quotes.map((quote) => 
+        <li key={quote.qid} className="avatar-row">
           <div className="row">
-            <Link to={`/author/${author.displayName}`} className="col-auto hide-xs">
-              <Avatar className="avatar" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
-            </Link>
-            <div className="col-6 col-sm-4 col-lg-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
-            <div className="col-1"><button className="btn xs flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</button></div>
-            <div className="col hide-sm">{author.bio}</div>
+            <div className="col-auto">
+              <div className="mock-cover xs" style={{backgroundImage: `url(${quote.coverURL})`}}></div>
+            </div>
+            <Link to={`/book/${quote.bid}`} className="col">{quote.bookTitle}</Link>
+            <Link to={`/author/${quote.author}`} className="col">{quote.author}</Link>
+            <div className="col-5 hide-sm">{quote.quote}</div>
+            <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={quote.qid}/></div>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{new Date(author.created_num).toLocaleDateString()}</div>
+              <div className="timestamp">{new Date(quote.created_num).toLocaleDateString()}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
-              <button className="btn icon secondary" onClick={e => this.onLock(normalizeString(author.displayName))}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDelete(normalizeString(author.displayName))}>{icon.close()}</button>
+              <button className="btn icon green" onClick={e => this.onView(quote.qid)}>{icon.eye()}</button>
+              <button className="btn icon primary" onClick={e => this.onEdit(quote.qid)}>{icon.pencil()}</button>
+              <button className={`btn icon ${quote.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(quote.qid, quote.edit)} title={quote.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={e => this.onDelete(quote.qid)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -160,15 +178,15 @@ export default class AuthorsDash extends React.Component {
       </MenuItem>
     ));
 
-    if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
+    if (redirectTo) return <Redirect to={`/quote/${redirectTo}`} />
 
 		return (
-			<div className="container" id="authorsDashComponent">
+			<div className="container" id="quotesDashComponent">
         <div className="card dark" style={{ minHeight: 200 }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-sm">{`${authors ? authors.length : 0} di ${count || 0} autori`}</span>
+                <span className="counter hide-sm">{`${quotes ? quotes.length : 0} di ${count || 0} citazioni`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -191,20 +209,21 @@ export default class AuthorsDash extends React.Component {
           </div>
           {loading ? 
             <div className="loader"><CircularProgress /></div> 
-          : !authors ? 
-            <div className="empty text-center">Nessun autore</div>
+          : !quotes ? 
+            <div className="empty text-center">Nessuna citazione</div>
           :
             <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
                 <div className="row">
-                  <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
-                  <div className="col-6 col-sm-4 col-lg-2">Nominativo</div>
-                  <div className="col-1">Sesso</div>
-                  <div className="col hide-sm">Bio</div>
+                  <div className="col-auto"><div className="mock-cover xs hidden" title="cover"></div></div>
+                  <div className="col">Libro</div>
+                  <div className="col">Autore</div>
+                  <div className="col-5 hide-sm">Testo</div>
+                  <div className="col hide-sm">Qid</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
-              {authorsList}
+              {quotesList}
             </ul>
           }
           {count > limitBy[limitByIndex] &&

@@ -72,7 +72,8 @@ export default class Shelf extends React.Component {
   fetchUserBooks = direction => {
     const { desc, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
     if (uid) {
-      const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
+      const prev = direction === 'prev';
+      const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
       const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
       const empty = { 
         isOwner: luid === uid,
@@ -96,7 +97,7 @@ export default class Shelf extends React.Component {
                 isOwner: luid === uid,
                 userBooks,
                 loading: false,
-                page: direction ? (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.userBooksCount) ? prevState.page : prevState.page + 1 : 1
+                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.userBooksCount ? prevState.page : prevState.page + 1 : 1
               }));
             } else this.setState(empty);
           });
