@@ -18,7 +18,7 @@ export default class QuotesDash extends React.Component {
     desc: true,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 5, 25, 50, 100, 250, 500],
+    limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 

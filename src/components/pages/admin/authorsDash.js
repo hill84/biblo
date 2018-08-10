@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { authorsRef } from '../../../config/firebase';
+import { authorRef, authorsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { getInitials, normalizeString } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -107,6 +107,22 @@ export default class AuthorsDash extends React.Component {
     this.props.openSnackbar('Modifiche salvate', 'success');
   }
 
+  onLock = (id, state) => {
+    if (id) {
+      if (state) {
+        //console.log(`Locking ${id}`);
+        authorRef(id).update({ edit: false }).then(() => {
+          this.props.openSnackbar('Autore bloccato', 'success');
+        }).catch(error => console.warn(error));
+      } else {
+        //console.log(`Unlocking ${id}`);
+        authorRef(id).update({ edit: true }).then(() => {
+          this.props.openSnackbar('Autore sbloccato', 'success');
+        }).catch(error => console.warn(error));
+      }
+    }
+  }
+
   onDelete = id => {
     console.log(`Deleting ${id}`);
     this.props.openSnackbar('Autore cancellato', 'success');
@@ -132,7 +148,7 @@ export default class AuthorsDash extends React.Component {
             <div className="absolute-row right btns xs">
               <button className="btn icon green" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
-              <button className="btn icon secondary" onClick={e => this.onLock(normalizeString(author.displayName))}>{icon.lock()}</button>
+              <button className={`btn icon ${author.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(normalizeString(author.displayName), author.edit)} title={author.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button className="btn icon red" onClick={e => this.onDelete(normalizeString(author.displayName))}>{icon.close()}</button>
             </div>
           </div>
