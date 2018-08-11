@@ -188,7 +188,7 @@ export default class Shelf extends React.Component {
                   onClick={() => this.fetchUserBooks('prev')} title="precedente">
                   {icon.chevronLeft()}
                 </button>
-
+                <span className="page">{page}</span>
                 <button 
                   disabled={page > (userBooksCount / limit) && 'disabled'} 
                   className="btn flat" 

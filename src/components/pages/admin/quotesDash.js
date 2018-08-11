@@ -117,12 +117,12 @@ export default class QuotesDash extends React.Component {
       if (state) {
         //console.log(`Locking ${id}`);
         quoteRef(id).update({ edit: false }).then(() => {
-          this.props.openSnackbar('Citazione bloccata', 'success');
+          this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
         //console.log(`Unlocking ${id}`);
         quoteRef(id).update({ edit: true }).then(() => {
-          this.props.openSnackbar('Citazione sbloccata', 'success');
+          this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
       }
     }
@@ -241,7 +241,7 @@ export default class QuotesDash extends React.Component {
                 onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
-
+              <span className="page">{page}</span>
               <button 
                 disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
                 className="btn flat" 

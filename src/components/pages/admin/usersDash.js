@@ -120,15 +120,14 @@ export default class UsersDash extends React.Component {
     if (state) {
       //console.log(`Locking ${id}`);
       userRef(id).update({ 'roles.editor': false }).then(() => {
-        this.props.openSnackbar('Libro bloccato', 'success');
+        this.props.openSnackbar('Elemento bloccato', 'success');
       }).catch(error => console.warn(error));
     } else {
       //console.log(`Unlocking ${id}`);
       userRef(id).update({ 'roles.editor': true }).then(() => {
-        this.props.openSnackbar('Libro sbloccato', 'success');
+        this.props.openSnackbar('Elemento sbloccato', 'success');
       }).catch(error => console.warn(error));
     }
-    this.props.openSnackbar('Utente bloccato', 'success');
   }
 
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
@@ -270,7 +269,7 @@ export default class UsersDash extends React.Component {
                 onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
-
+              <span className="page">{page}</span>
               <button 
                 disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
                 className="btn flat" 

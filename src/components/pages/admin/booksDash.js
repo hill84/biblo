@@ -118,12 +118,12 @@ export default class BooksDash extends React.Component {
       if (state) {
         //console.log(`Locking ${id}`);
         bookRef(id).update({ 'EDIT.edit': false }).then(() => {
-          this.props.openSnackbar('Libro bloccato', 'success');
+          this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
         //console.log(`Unlocking ${id}`);
         bookRef(id).update({ 'EDIT.edit': true }).then(() => {
-          this.props.openSnackbar('Libro sbloccato', 'success');
+          this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
       }
     }
@@ -266,7 +266,7 @@ export default class BooksDash extends React.Component {
                 onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
-
+              <span className="page">{page}</span>
               <button 
                 disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
                 className="btn flat" 

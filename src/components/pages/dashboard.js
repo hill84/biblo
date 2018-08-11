@@ -10,6 +10,7 @@ import { followersRef, followingsRef, isAuthenticated, userRef } from '../../con
 import { icon } from '../../config/icons';
 import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
+import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
 
@@ -333,7 +334,7 @@ export default class Dashboard extends React.Component {
             <ShelfDetails />
           </div>
           <div className="card tab" dir={tabDir}>
-            <p>Attività</p>
+            <NewFeature />
           </div>
           <div className="card tab contacts-tab" dir={tabDir}>
             <div className="row">

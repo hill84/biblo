@@ -115,12 +115,12 @@ export default class AuthorsDash extends React.Component {
       if (state) {
         //console.log(`Locking ${id}`);
         authorRef(id).update({ edit: false }).then(() => {
-          this.props.openSnackbar('Autore bloccato', 'success');
+          this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
         //console.log(`Unlocking ${id}`);
         authorRef(id).update({ edit: true }).then(() => {
-          this.props.openSnackbar('Autore sbloccato', 'success');
+          this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
       }
     }
@@ -237,7 +237,7 @@ export default class AuthorsDash extends React.Component {
                 onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
-
+              <span className="page">{page}</span>
               <button 
                 disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
                 className="btn flat" 

@@ -113,12 +113,12 @@ export default class collectionsDash extends React.Component {
       if (state) {
         console.log(`Locking ${id}`);
         collectionRef(id).update({ edit: false }).then(() => {
-          this.props.openSnackbar('Collezione bloccata', 'success');
+          this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
         console.log(`Unlocking ${id}`);
         collectionRef(id).update({ edit: true }).then(() => {
-          this.props.openSnackbar('Collezione sbloccata', 'success');
+          this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
       }
     }
@@ -231,7 +231,7 @@ export default class collectionsDash extends React.Component {
                 onClick={() => this.fetch('prev')} title="precedente">
                 {icon.chevronLeft()}
               </button>
-
+              <span className="page">{page}</span>
               <button 
                 disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
                 className="btn flat" 

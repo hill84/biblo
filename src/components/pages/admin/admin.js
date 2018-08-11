@@ -1,14 +1,15 @@
 import AppBar from '@material-ui/core/AppBar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import SwipeableViews from 'react-swipeable-views';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
+import SwipeableViews from 'react-swipeable-views';
 import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 //import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
+import NewFeature from '../../newFeature';
 import AuthorsDash from './authorsDash';
 import BooksDash from './booksDash';
 import CollectionsDash from './collectionsDash';
@@ -156,8 +157,8 @@ export default class Admin extends React.Component {
             </div>}
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 5 && <div className="card tab dark" dir={tabDir}>
-              Notifiche
+            {tabSelected === 5 && <div className="tab card dark" dir={tabDir}>
+              <NewFeature />
             </div>}
           </React.Fragment>
         </SwipeableViews>

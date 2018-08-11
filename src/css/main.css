@@ -86,6 +86,8 @@ ul.nolist li { display: block; }
 .card .info-row.footer { display: block; }
 /* .info-row .btn { margin-top: 0; margin-bottom: 0; } */
 
+.pagination .page { padding: 0 10px; }
+
 .shelfdetails, .bookdetails { 
   --lighterTextClr: var(--lightestTextClr);
   color: var(--lightTextClr);
@@ -125,21 +127,21 @@ ul.nolist li { display: block; }
   background-color: var(--accentClr);
   animation: fadeIn .2s ease-out;
 }
-.table .labels { color: var(--lighterTextClr); font-size: .76rem; user-select: none; border-bottom: 1px solid var(--lightestTextClr); }
+.table li.labels { color: var(--lighterTextClr); font-size: .76rem; user-select: none; border-bottom: 1px solid var(--lightestTextClr); }
 .table li { position: relative; }
 .table .row, .table li .row { border-radius: 0; transition: all .1s ease-in; }
 .table .row:hover { background-color: rgba(0,0,0,.04); }
 .table .row .row, .table .labels .row { background-color: transparent; }
 .table .row .row { padding: 0; }
-.table li .row { 
+.table li .row, .avatar-row .row { 
   position: relative;
   overflow: hidden;
   padding: var(--pad) 0;
   border-radius: 3px;  
 }
-.table li a { border-radius: 3px; transition: all .2s ease-out; }
-.table li a:hover { background-color: rgba(0,151,167,.07); }
-.table li a:active { background-color: rgba(0,151,167,.1); }
+.table li a, .avatar-row a { border-radius: 3px; transition: all .2s ease-out; }
+.table li a:hover, .avatar-row a:hover { background-color: rgba(0,151,167,.07); }
+.table li a:active, .avatar-row a:active { background-color: rgba(0,151,167,.1); }
 .table li [class^='col'], .avatar-row [class^='col'] { 
   height: var(--avatarSize); 
   line-height: var(--avatarSize); 
@@ -1600,6 +1602,9 @@ hr.line {
 .text-justify { text-align: justify; }
 .centered { float: none; margin-left: auto; margin-right: auto; }
 .monotype { font-family: 'Roboto Mono', 'Courier New', Courier, monospace; }
+.light-text { color: var(--lightTextClr); }
+.lighter-text { color: var(--lighterTextClr); }
+.lightest-text { color: var(--lightestTextClr); }
 
 .btn .show-on-hover { 
   position: absolute; 
