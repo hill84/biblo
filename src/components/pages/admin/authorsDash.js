@@ -1,9 +1,11 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
 import { authorRef, authorsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
@@ -14,9 +16,10 @@ import CopyToClipboard from '../../copyToClipboard';
 export default class AuthorsDash extends React.Component {
  	state = {
     user: this.props.user,
-    authors: null,
     count: 0,
     desc: true,
+    isOpenDeleteDialog: false,
+    items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
@@ -60,7 +63,7 @@ export default class AuthorsDash extends React.Component {
     const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef : baseRef;
-    //console.log('fetching');
+    //console.log('fetching items');
     console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     this.setState({ loading: true });
 
@@ -68,15 +71,15 @@ export default class AuthorsDash extends React.Component {
       ref.onSnapshot(snap => {
         //console.log(snap);
         if (!snap.empty) {
-          const authors = [];
-          snap.forEach(author => authors.push(author.data()));
-          this.setState(prevState => ({
-            authors: authors,
+          const items = [];
+          snap.forEach(author => items.push(author.data()));
+          this.setState({
+            items: items,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
-            page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
-          }));
-        } else this.setState({ authors: null, count: 0, loading: false });
+            page: direction ? prev ? page > 1 ? page - 1 : 1 : (page * limit) > count ? page : page + 1 : 1
+          });
+        } else this.setState({ items: null, count: 0, loading: false });
       });
     }
 
@@ -123,22 +126,25 @@ export default class AuthorsDash extends React.Component {
     }
   }
 
-  onDelete = id => {
-    console.log(`Deleting ${id}`);
-    this.props.openSnackbar('Autore cancellato', 'success');
+  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onDelete = () => {
+    console.log(`Deleting ${this.state.selectedId}`);
+    this.setState({ isOpenDeleteDialog: false });
+    this.props.openSnackbar('Elemento cancellato', 'success');
   }
 
 	render() {
-    const { authors, count, desc, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const authorsList = (authors && (authors.length > 0) &&
-      authors.map((author) => 
-        <li key={author.displayName} className="avatar-row">
+    const itemsList = (items && (items.length > 0) &&
+      items.map((author) => 
+        <li key={author.displayName} className={`avatar-row ${author.edit ? '' : 'locked'}`}>
           <div className="row">
-            <Link to={`/author/${author.displayName}`} className="col-auto hide-xs">
+            <div className="col-auto hide-xs avatar-container">
               <Avatar className="avatar" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
-            </Link>
+            </div>
             <div className="col-6 col-sm-4 col-lg-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
             <div className="col-1"><button className="btn xs flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</button></div>
             <div className="col hide-sm">{author.bio}</div>
@@ -149,7 +155,7 @@ export default class AuthorsDash extends React.Component {
               <button className="btn icon green" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
               <button className={`btn icon ${author.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(normalizeString(author.displayName), author.edit)} title={author.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDelete(normalizeString(author.displayName))}>{icon.close()}</button>
+              <button className="btn icon red" onClick={e => this.onDeleteRequest(normalizeString(author.displayName))}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -184,7 +190,7 @@ export default class AuthorsDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-sm">{`${authors ? authors.length : 0} di ${count || 0} autori`}</span>
+                <span className="counter hide-sm">{`${items ? items.length : 0} di ${count || 0} autori`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -207,8 +213,8 @@ export default class AuthorsDash extends React.Component {
           </div>
           {loading ? 
             <div className="loader"><CircularProgress /></div> 
-          : !authors ? 
-            <div className="empty text-center">Nessun autore</div>
+          : !items ? 
+            <div className="empty text-center">Nessun elemento</div>
           :
             <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
@@ -220,10 +226,10 @@ export default class AuthorsDash extends React.Component {
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
-              {authorsList}
+              {itemsList}
             </ul>
           }
-          {count > limitBy[limitByIndex] &&
+          {items && count > limitBy[limitByIndex] &&
             <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
@@ -241,6 +247,19 @@ export default class AuthorsDash extends React.Component {
             </div>
           }
         </div>
+
+        <Dialog
+          open={isOpenDeleteDialog}
+          keepMounted
+          onClose={this.onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogActions>
+            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          </DialogActions>
+        </Dialog>
 			</div>
 		);
 	}

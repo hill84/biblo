@@ -1,8 +1,14 @@
 import Avatar from '@material-ui/core/Avatar';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import Slide from '@material-ui/core/Slide';
 import React from 'react';
 import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
@@ -10,12 +16,6 @@ import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
 import Rating from './rating';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
 
 export default class UserReview extends React.Component {
 	state = {
@@ -238,7 +238,7 @@ export default class UserReview extends React.Component {
   }
   
   render() {
-    const { errors, isEditing, loading, review, serverError, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
+    const { errors, isEditing, isOpenDeleteDialog, loading, review, serverError, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
 
     if (!user || !userBook) return null;
 
@@ -346,8 +346,8 @@ export default class UserReview extends React.Component {
         }
 
         <Dialog
-          open={this.state.isOpenDeleteDialog}
-          TransitionComponent={Transition}
+          open={isOpenDeleteDialog}
+          TransitionComponent={props => <Slide direction="up" {...props} />}
           keepMounted
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
@@ -369,5 +369,3 @@ export default class UserReview extends React.Component {
     );
   }
 }
-
-const Transition = props => <Slide direction="up" {...props} />;

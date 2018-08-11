@@ -1,4 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
@@ -13,9 +16,10 @@ import CopyToClipboard from '../../copyToClipboard';
 export default class BooksDash extends React.Component {
  	state = {
     user: this.props.user,
-    books: null,
     count: 0,
     desc: true,
+    isOpenDeleteDialog: false,
+    items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
@@ -63,7 +67,7 @@ export default class BooksDash extends React.Component {
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching books');
+    //console.log('fetching items');
     this.setState({ loading: true });
     
     booksRef.get().then(fullSnap => {
@@ -75,15 +79,15 @@ export default class BooksDash extends React.Component {
         ref.onSnapshot(snap => {
           console.log(snap);
           if (!snap.empty) {
-            const books = [];
-            snap.forEach(book => books.push({ ...book.data() }));
+            const items = [];
+            snap.forEach(item => items.push(item.data()));
             this.setState(prevState => ({
-              books: books,
+              items: items,
               lastVisible: snap.docs[startAt],
               loading: false,
               page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ books: null, lastVisible: null, loading: false });
+          } else this.setState({ items: null, lastVisible: null, loading: false });
         });
       } else this.setState({ count: 0 });
     }).catch(error => console.warn(error));
@@ -125,21 +129,21 @@ export default class BooksDash extends React.Component {
     }
   }
 
-  onDelete = id => {
-    if (id) {
-      //console.log(`Deleting ${id}`);
-      //TODO
-      this.props.openSnackbar('Libro cancellato', 'success');
-    }
+  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onDelete = () => {
+    console.log(`Deleting ${this.state.selectedId}`);
+    this.setState({ isOpenDeleteDialog: false });
+    this.props.openSnackbar('Elemento cancellato', 'success');
   }
 
 	render() {
-    const { books, count, desc,  limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const booksList = (books && (books.length > 0) &&
-      books.map((book) => 
-        <li key={book.bid} className="avatar-row">
+    const itemsList = (items && (items.length > 0) &&
+      items.map((book) => 
+        <li key={book.bid} className={`avatar-row ${book.EDIT.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
               <div className="mock-cover xs" style={{backgroundImage: `url(${book.covers[0]})`}}></div>
@@ -175,7 +179,7 @@ export default class BooksDash extends React.Component {
               <button className="btn icon green" onClick={e => this.onView(book.bid)} title="Anteprima">{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(book.bid)} title="Modifica">{icon.pencil()}</button>
               <button className={`btn icon ${book.EDIT.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(book.bid, book.EDIT.edit)} title={book.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDelete(book.bid)}>{icon.close()}</button>
+              <button className="btn icon red" onClick={e => this.onDeleteRequest(book.bid)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -210,7 +214,7 @@ export default class BooksDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${books ? books.length : 0} di ${count || 0} libri`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0} libri`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -233,11 +237,11 @@ export default class BooksDash extends React.Component {
           </div>
           {loading ? 
             <div className="loader"><CircularProgress /></div> 
-          : !books ? 
-            <div className="empty text-center">Nessun libro</div>
+          : !items ? 
+            <div className="empty text-center">Nessun elemento</div>
           :
             <ul className="table dense nolist font-sm">
-              <li className="avatar-row labels">
+              <li className="labels">
                 <div className="row">
                   <div className="col-auto"><div className="mock-cover xs hidden"></div></div>
                   <div className="col">Titolo</div>
@@ -251,10 +255,10 @@ export default class BooksDash extends React.Component {
                   <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>
               </li>
-              {booksList}
+              {itemsList}
             </ul>
           }
-          {count > limitBy[limitByIndex] &&
+          {items && count > limitBy[limitByIndex] &&
             <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
@@ -272,6 +276,19 @@ export default class BooksDash extends React.Component {
             </div>
           }
         </div>
+
+        <Dialog
+          open={isOpenDeleteDialog}
+          keepMounted
+          onClose={this.onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogActions>
+            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          </DialogActions>
+        </Dialog>
 			</div>
 		);
 	}

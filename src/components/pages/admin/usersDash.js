@@ -1,8 +1,12 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
 import { userRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
@@ -13,9 +17,10 @@ import CopyToClipboard from '../../copyToClipboard';
 export default class UsersDash extends React.Component {
  	state = {
     user: this.props.user,
-    users: null,
     count: 0,
     desc: true,
+    isOpenDeleteDialog: false,
+    items: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
@@ -32,6 +37,7 @@ export default class UsersDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
+    selectedId: null,
     loading: true
 	}
 
@@ -65,7 +71,7 @@ export default class UsersDash extends React.Component {
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const uRef = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching users');
+    //console.log('fetching items');
     this.setState({ loading: true });
     
     usersRef.get().then(fullSnap => {
@@ -78,14 +84,14 @@ export default class UsersDash extends React.Component {
         ref.onSnapshot(snap => {
           //console.log(snap);
           if (!snap.empty) {
-            const users = [];
-            snap.forEach(user => users.push({ ...user.data() }));
+            const items = [];
+            snap.forEach(item => items.push(item.data()));
             this.setState(prevState => ({
-              users: users,
+              items: items,
               loading: false,
               page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ users: null, loading: false });
+          } else this.setState({ items: null, loading: false });
         });
       } else this.setState({ count: 0 });
     }).catch(error => console.warn(error));
@@ -103,10 +109,10 @@ export default class UsersDash extends React.Component {
 
   onView = id => this.setState({ redirectTo: id });
 
-  onEdit = id => {
-    console.log(`Editing ${id}`);
+  onSendNote = id => {
+    console.log(`Sending notification to ${id}`);
     //TODO
-    this.props.openSnackbar('Modifiche salvate', 'success');
+    this.props.openSnackbar('Notifica inviata', 'success');
   }
 
   onLock = (id, state) => {
@@ -125,24 +131,28 @@ export default class UsersDash extends React.Component {
     this.props.openSnackbar('Utente bloccato', 'success');
   }
 
-  onDelete = id => {
-    console.log(`Deleting ${id}`);
-    //TODO
-    this.props.openSnackbar('Utente cancellato', 'success');
+  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onDelete = () => {
+    console.log(`Deleting ${this.state.selectedId}`);
+    this.setState({ isOpenDeleteDialog: false });
+    this.props.openSnackbar('Elemento cancellato', 'success');
   }
 
 	render() {
-    const { count, desc, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo, users } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const usersList = (users && (users.length > 0) &&
-      users.map((user) => 
-        <li key={user.uid} className="avatar-row">
+    const itemsList = (items && (items.length > 0) &&
+      items.map((user) => 
+        <li key={user.uid} className={`avatar-row ${user.roles.editor ? '' : 'locked'}`}>
           <div className="row">
-            <div className="col-auto hide-xs">
+            <div className="col-auto hide-xs avatar-container">
               <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
             </div>
-            <div className="col hide-sm" title={user.displayName}>{user.displayName}</div>
+            <Link to={`/dashboard/${user.uid}`} className="col hide-sm" title={user.displayName}>
+              {user.displayName}
+            </Link>
             <div className="col monotype" title={user.uid}>
               <CopyToClipboard openSnackbar={openSnackbar} text={user.uid}/>
             </div>
@@ -167,9 +177,9 @@ export default class UsersDash extends React.Component {
             </div>
             <div className="absolute-row right btns xs">
               <button className="btn icon green" onClick={e => this.onView(user.uid)} title="anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(user.uid)} title="modifica">{icon.pencil()}</button>
+              <button className="btn icon primary" onClick={e => this.onSendNote(user.uid)} title="Invia notifica">{icon.comment()}</button>
               <button className={`btn icon ${user.roles.editor ? 'secondary' : 'flat' }`} onClick={e => this.onLock(user.uid, user.roles.editor)} title={user.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDelete(user.uid)} title="elimina">{icon.close()}</button>
+              <button className="btn icon red" onClick={e => this.onDeleteRequest(user.uid)} title="elimina">{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -204,7 +214,7 @@ export default class UsersDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${users ? users.length : 0} di ${count || 0} utenti`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0} utenti`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -227,8 +237,8 @@ export default class UsersDash extends React.Component {
           </div>
           {loading ? 
             <div className="loader"><CircularProgress /></div> 
-          : !users ? 
-            <div className="empty text-center">Nessun utente</div>
+          : !items ? 
+            <div className="empty text-center">Nessun elemento</div>
           :
             <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
@@ -249,10 +259,10 @@ export default class UsersDash extends React.Component {
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
-              {usersList}
+              {itemsList}
             </ul>
           }
-          {count > limitBy[limitByIndex] &&
+          {items && count > limitBy[limitByIndex] &&
             <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
@@ -270,6 +280,19 @@ export default class UsersDash extends React.Component {
             </div>
           }
         </div>
+
+        <Dialog
+          open={isOpenDeleteDialog}
+          keepMounted
+          onClose={this.onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogActions>
+            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          </DialogActions>
+        </Dialog>
 			</div>
 		);
 	}

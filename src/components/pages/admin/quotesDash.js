@@ -1,5 +1,7 @@
-import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
@@ -13,9 +15,10 @@ import CopyToClipboard from '../../copyToClipboard';
 export default class QuotesDash extends React.Component {
  	state = {
     user: this.props.user,
-    quotes: null,
     count: 0,
     desc: true,
+    isOpenDeleteDialog: false,
+    items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
@@ -29,6 +32,7 @@ export default class QuotesDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
+    selectedId: null,
     loading: true
 	}
 
@@ -61,23 +65,23 @@ export default class QuotesDash extends React.Component {
     const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef : baseRef;
     //console.log('fetching');
-    console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
+    //console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     this.setState({ loading: true });
 
     const fetcher = () => {
       ref.onSnapshot(snap => {
         //console.log(snap);
         if (!snap.empty) {
-          const quotes = [];
-          snap.forEach(quote => quotes.push(quote.data()));
-          console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
+          const items = [];
+          snap.forEach(item => items.push(item.data()));
+          //console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
           this.setState(prevState => ({
-            quotes: quotes,
+            items: items,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
             page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
           }));
-        } else this.setState({ quotes: null, count: 0, loading: false });
+        } else this.setState({ items: null, count: 0, loading: false });
       });
     }
 
@@ -124,23 +128,26 @@ export default class QuotesDash extends React.Component {
     }
   }
 
-  onDelete = id => {
-    console.log(`Deleting ${id}`);
-    this.props.openSnackbar('Autore cancellato', 'success');
+  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onDelete = () => {
+    console.log(`Deleting ${this.state.selectedId}`);
+    this.setState({ isOpenDeleteDialog: false });
+    this.props.openSnackbar('Elemento cancellato', 'success');
   }
 
 	render() {
-    const { quotes, count, desc, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const quotesList = (quotes && (quotes.length > 0) &&
-      quotes.map((quote) => 
-        <li key={quote.qid} className="avatar-row">
+    const itemsList = (items && (items.length > 0) &&
+      items.map((quote) => 
+        <li key={quote.qid} className={`${quote.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
               <div className="mock-cover xs" style={{backgroundImage: `url(${quote.coverURL})`}}></div>
             </div>
-            <Link to={`/book/${quote.bid}`} className="col">{quote.bookTitle}</Link>
+            {quote.bid ? <Link to={`/book/${quote.bid}`} className="col">{quote.bookTitle}</Link> : <div className="col"/>}
             <Link to={`/author/${quote.author}`} className="col">{quote.author}</Link>
             <div className="col-5 hide-sm">{quote.quote}</div>
             <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={quote.qid}/></div>
@@ -151,7 +158,7 @@ export default class QuotesDash extends React.Component {
               <button className="btn icon green" onClick={e => this.onView(quote.qid)}>{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(quote.qid)}>{icon.pencil()}</button>
               <button className={`btn icon ${quote.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(quote.qid, quote.edit)} title={quote.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDelete(quote.qid)}>{icon.close()}</button>
+              <button className="btn icon red" onClick={e => this.onDeleteRequest(quote.qid)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -186,7 +193,7 @@ export default class QuotesDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-sm">{`${quotes ? quotes.length : 0} di ${count || 0} citazioni`}</span>
+                <span className="counter hide-sm">{`${items ? items.length : 0} di ${count || 0} citazioni`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -209,11 +216,11 @@ export default class QuotesDash extends React.Component {
           </div>
           {loading ? 
             <div className="loader"><CircularProgress /></div> 
-          : !quotes ? 
-            <div className="empty text-center">Nessuna citazione</div>
+          : !items ? 
+            <div className="empty text-center">Nessun elemento</div>
           :
             <ul className="table dense nolist font-sm">
-              <li className="avatar-row labels">
+              <li className="labels">
                 <div className="row">
                   <div className="col-auto"><div className="mock-cover xs hidden" title="cover"></div></div>
                   <div className="col">Libro</div>
@@ -223,10 +230,10 @@ export default class QuotesDash extends React.Component {
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>
-              {quotesList}
+              {itemsList}
             </ul>
           }
-          {count > limitBy[limitByIndex] &&
+          {items && count > limitBy[limitByIndex] &&
             <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
@@ -244,6 +251,19 @@ export default class QuotesDash extends React.Component {
             </div>
           }
         </div>
+
+        <Dialog
+          open={isOpenDeleteDialog}
+          keepMounted
+          onClose={this.onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogActions>
+            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          </DialogActions>
+        </Dialog>
 			</div>
 		);
 	}

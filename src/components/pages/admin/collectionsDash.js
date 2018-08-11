@@ -1,4 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
@@ -12,9 +15,10 @@ import { funcType, userType } from '../../../config/types';
 export default class collectionsDash extends React.Component {
  	state = {
     user: this.props.user,
-    collections: null,
     count: 0,
     desc: true,
+    isOpenDeleteDialog: false,
+    items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
@@ -58,7 +62,7 @@ export default class collectionsDash extends React.Component {
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const cRef = collectionsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching collections');
+    //console.log('fetching items');
     this.setState({ loading: true });
     
     collectionsRef.get().then(fullSnap => {
@@ -70,15 +74,15 @@ export default class collectionsDash extends React.Component {
         ref.onSnapshot(snap => {
           console.log(snap);
           if (!snap.empty) {
-            const collections = [];
-            snap.forEach(collection => collections.push({ ...collection.data() }));
+            const items = [];
+            snap.forEach(item => items.push(item.data()));
             this.setState(prevState => ({
-              collections: collections,
+              items: items,
               lastVisible: snap.docs[startAt],
               loading: false,
               page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
             }));
-          } else this.setState({ collections: null, lastVisible: null, loading: false });
+          } else this.setState({ items: null, lastVisible: null, loading: false });
         });
       } else this.setState({ count: 0 });
     }).catch(error => console.warn(error));
@@ -120,21 +124,21 @@ export default class collectionsDash extends React.Component {
     }
   }
 
-  onDelete = id => {
-    if (id) {
-      //console.log(`Deleting ${id}`);
-      //TODO
-      this.props.openSnackbar('Collezione cancellata', 'success');
-    }
+  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onDelete = () => {
+    console.log(`Deleting ${this.state.selectedId}`);
+    this.setState({ isOpenDeleteDialog: false });
+    this.props.openSnackbar('Elemento cancellato', 'success');
   }
 
 	render() {
-    const { collections, count, desc,  limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    const { openSnackbar } = this.props;
+    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    //const { openSnackbar } = this.props;
 
-    const collectionsList = (collections && (collections.length > 0) &&
-      collections.map((collection) => 
-        <li key={collection.title} className="avatar-row">
+    const itemsList = (items && (items.length > 0) &&
+      items.map((collection) => 
+        <li key={collection.title} className={`${collection.edit ? '' : 'locked'}`}>
           <div className="row">
             <Link to={`/collection/${collection.title}`} className="col">
               {collection.title}
@@ -147,7 +151,7 @@ export default class collectionsDash extends React.Component {
               <button className="btn icon green" onClick={e => this.onView(collection.title)} title="Anteprima">{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(collection.title)} title="Modifica">{icon.pencil()}</button>
               <button className={`btn icon ${collection.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(collection.title, collection.edit)} title={collection.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDelete(collection.title)}>{icon.close()}</button>
+              <button className="btn icon red" onClick={e => this.onDeleteRequest(collection.title)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -182,7 +186,7 @@ export default class collectionsDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${collections ? collections.length : 0} di ${count || 0} collezioni`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0} collezioni`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -205,8 +209,8 @@ export default class collectionsDash extends React.Component {
           </div>
           {loading ? 
             <div className="loader"><CircularProgress /></div> 
-          : !collections ? 
-            <div className="empty text-center">Nessuna collezione</div>
+          : !items ? 
+            <div className="empty text-center">Nessun elemento</div>
           :
             <ul className="table dense nolist font-sm">
               <li className="labels">
@@ -216,10 +220,10 @@ export default class collectionsDash extends React.Component {
                   <div className="col col-sm-2 col-lg-1 text-right">Modificata</div>
                 </div>
               </li>
-              {collectionsList}
+              {itemsList}
             </ul>
           }
-          {count > limitBy[limitByIndex] &&
+          {items && count > limitBy[limitByIndex] &&
             <div className="info-row centered pagination">
               <button 
                 disabled={page === 1 && 'disabled'} 
@@ -237,6 +241,19 @@ export default class collectionsDash extends React.Component {
             </div>
           }
         </div>
+
+        <Dialog
+          open={isOpenDeleteDialog}
+          keepMounted
+          onClose={this.onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogActions>
+            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          </DialogActions>
+        </Dialog>
 			</div>
 		);
 	}
