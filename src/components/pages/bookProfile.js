@@ -141,7 +141,7 @@ export default class BookProfile extends React.Component {
                     {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
                     {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
                     {book.format !== 'Libro' && <span className="counter">Formato: {book.format}</span>}
-                    {book.genres && book.genres[0] && <span className="counter">Gener{book.genres[1] ? 'i' : 'e'}: {book.genres.join(", ")}</span>}
+                    {book.genres && book.genres[0] && <span className="counter comma">Gener{book.genres[1] ? 'i' : 'e'}: {book.genres.map(genre => <Link to={`/genre/${genre}`} className="counter" key={genre}>{genre}</Link> )}</span>}
                   </div>
 
                   <div className="info-row">

@@ -11,6 +11,7 @@ import BookContainer from './components/pages/bookContainer';
 import Collection from './components/pages/collection';
 import CookiePage from './components/pages/cookiePage';
 import Dashboard from './components/pages/dashboard';
+import Genre from './components/pages/genre';
 import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
@@ -70,6 +71,7 @@ export default class App extends React.Component {
                     <Route path="/privacy" component={PrivacyPage} />
                     <Route path="/termini" component={TermsPage} />
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
+                    <RouteWithProps path="/genre/:gid" component={Genre} user={user} />
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
