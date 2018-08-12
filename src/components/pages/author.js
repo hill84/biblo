@@ -22,7 +22,7 @@ export default class Author extends React.Component {
       sex: ''
     },
     books: null,
-    coverview: true,
+    coverview: false,
     loading: true
   }
 

@@ -1031,7 +1031,7 @@ hr.line {
   color: var(--lighterTextClr);
   text-transform: uppercase;
   font-size: .7rem;
-  border-radius: 3px; 
+  border-radius: 3px;
   padding: 3px .4rem; 
 }
 .role-badges .badge { 
@@ -1596,6 +1596,51 @@ hr.line {
 .mock-cover { background-color: var(--primaryClr); background-size: cover; }
 .mock-cover.xs { width: 14px; height: 20px; border-radius: 1px; }
 
+/* GENRES */
+.genres { 
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+.genres.scrollable { white-space: nowrap; }
+.genres:before, .genres:after { 
+  content: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: var(--pad);
+  pointer-events: none;
+  z-index: 10;
+}
+.genres:before {
+  left: 0;
+  background: -webkit-gradient(right top,left top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
+  background: -webkit-linear-gradient(right,transparent 0,var(--cardBg) 90%);
+  background: -o-linear-gradient(right,transparent 0,var(--cardBg) 90%);
+  background: -webkit-gradient(linear,right top, left top,color-stop(0, transparent),color-stop(90%, var(--cardBg)));
+  background: linear-gradient(to left,transparent 0,var(--cardBg) 90%);
+}
+.genres:after {
+  right: 0;
+  background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
+  background: -webkit-linear-gradient(left,transparent 0,var(--cardBg) 90%);
+  background: -o-linear-gradient(left,transparent 0,var(--cardBg) 90%);
+  background: -webkit-gradient(linear,left top, right top,color-stop(0, transparent),color-stop(90%, var(--cardBg)));
+  background: linear-gradient(to right,transparent 0,var(--cardBg) 90%); 
+}
+.genres a {
+  margin: 3px 6px 3px 0;
+  background-color: var(--canvasLightClr);
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: .7rem;
+  border-radius: 3px;
+  padding: 3px .5rem;
+}
+.card .genres a { background-color: var(--canvasLighterClr); }
+/* .genres a.active { display: none; } */
+
 /* HELPERS */
 .text-right { text-align: right; }
 .text-center { text-align: center; }
@@ -1605,6 +1650,7 @@ hr.line {
 .light-text { color: var(--lightTextClr); }
 .lighter-text { color: var(--lighterTextClr); }
 .lightest-text { color: var(--lightestTextClr); }
+.primary-text { color: var(--primaryClr); }
 
 .btn .show-on-hover { 
   position: absolute; 
@@ -1846,4 +1892,6 @@ hr.line {
 @media (pointer: coarse) {
   .user.rating .react-rater { font-size: 36px; }
   .user.rating .label { display: none; }
+  .genres { white-space: nowrap; }
+  .genres:before, .genres:after { content: ''; }
 }

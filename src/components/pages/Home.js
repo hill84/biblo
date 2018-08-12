@@ -6,6 +6,7 @@ import { icon } from '../../config/icons';
 import { isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
 import BookCollection from '../bookCollection';
+import Genres from '../genres';
 import RandomQuote from '../randomQuote';
 
 const Home = () => (
@@ -42,6 +43,11 @@ const Home = () => (
 			</div>
 
       <RandomQuote className="card dark quote-container" />
+
+      <div className="pad-v-sm">
+        <h2>Generi</h2>
+        <Genres />
+      </div>
 
 			<div className="card dark">
 				<ul>

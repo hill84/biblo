@@ -4,6 +4,7 @@ import Link from 'react-router-dom/Link';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import Cover from '../cover';
+import Genres from '../genres';
 
 export default class Genre extends React.Component {
   state = {
@@ -14,16 +15,35 @@ export default class Genre extends React.Component {
   }
 
   componentDidMount() {
-    booksRef.where('genres', 'array-contains', this.props.match.params.gid).limit(this.state.limit).get().then(snap => {
-      if (!snap.empty) {
-        const books = [];
-        snap.forEach(book => books.push(book.data()));
-        //console.log(books);
-        this.setState({ books, loading: false });
-      } else {
-        this.setState({ books: null, loading: false });
+    this._isMounted = true;
+    this.fetch();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this._isMounted) {
+      if(this.props.match.params.gid !== prevProps.match.params.gid){
+        this.fetch();
       }
-		}).catch(error => console.warn("Error fetching genres' books:", error));
+    }
+  }
+
+  fetch = () => {
+    if (this.props.match.params.gid) {
+      booksRef.where('genres', 'array-contains', this.props.match.params.gid).limit(this.state.limit).get().then(snap => {
+        if (!snap.empty) {
+          const books = [];
+          snap.forEach(book => books.push(book.data()));
+          //console.log(books);
+          this.setState({ books, loading: false });
+        } else {
+          this.setState({ books: null, loading: false });
+        }
+      }).catch(error => console.warn("Error fetching genres' books:", error));
+    } else console.warn(`No gid`);
   }
   
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));
@@ -31,18 +51,17 @@ export default class Genre extends React.Component {
   render() {
     const { books, coverview, loading } = this.state;
 
-    const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
+    const covers = books && books.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
 
-    if (loading) {
-      return <div className="loader"><CircularProgress /></div>
-    }
+    if (loading) return <div className="loader"><CircularProgress /></div>
 
     return (
       <div className="container" id="genreComponent">
         <div className="card dark">
-          <h2 className="title">{this.props.match.params.gid}</h2>
+          <h2 className="title"><span className="primary-text">Genere:</span> {this.props.match.params.gid}</h2>
+          <Genres />
         </div>
-        
+
         {books ? 
           <div className="card">
             <div className="shelf">
@@ -67,11 +86,9 @@ export default class Genre extends React.Component {
             </div>
           </div>
         :
-          <div className="card dark pad-sm">
-            <div className="info-row empty text-center">
-              <p>Non ci sono ancora libri</p>
-              <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
-            </div>
+          <div className="info-row empty text-center pad-v">
+            <p>Non ci sono ancora libri di questo genere</p>
+            <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
           </div>
         }
 
