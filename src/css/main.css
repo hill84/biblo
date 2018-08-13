@@ -257,7 +257,7 @@ hr.line {
   z-index: 10;
 }
 .card.main { z-index: 10; }
-.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); }
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); margin-top: 0; }
 .card.sm { --pad: 14px; }
 .card.xs { --pad: 7px; }
 .card .footer, .dialog .footer, .tab .footer { 
@@ -1188,11 +1188,11 @@ hr.line {
   bottom: 0;
   height: 100%;
   pointer-events: none;
+  width: var(--pad);
   z-index: 10;
 }
 .shelf.scrollable:before {
   left: 0;
-  width: var(--pad);
   background: -moz-linear-gradient(right,transparent 0,var(--cardBg) 90%);
   background: -webkit-gradient(right top,left top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
   background: -webkit-linear-gradient(right,transparent 0,var(--cardBg) 90%);
@@ -1202,7 +1202,6 @@ hr.line {
 }
 .shelf.scrollable:after {
   right: 0;
-  width: calc(var(--bookWidth) / 2);
   background: -moz-linear-gradient(left,transparent 0,var(--cardBg) 90%);
   background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
   background: -webkit-linear-gradient(left,transparent 0,var(--cardBg) 90%);
@@ -1307,10 +1306,10 @@ hr.line {
   text-align: center;
   display: grid;
   align-items: center;
-  font-size: 4rem;
   color: rgba(0,0,0,.15);
   border: 3px dashed rgba(0,0,0,.15);
 }
+.book.empty .cover .add { font-size: 4rem; }
 .edit-book-cover.error .cover { background-color: var(--errorClr); }
 
 .cover * {
@@ -1378,10 +1377,11 @@ hr.line {
   align-items: left;
 }
 .shelf-row.stacked .cover, .shelf-row.stacked .info { float: left; }
-.shelf-row.stacked .cover { width: calc(.6667 * var(--coverWidth)); height: calc(.6667 * var(--coverHeight)); }
+.shelf-row.stacked .cover { --pad: 11px; width: calc(.6667 * var(--coverWidth)); height: calc(.6667 * var(--coverHeight)); font-size: 7px; }
+.shelf-row.stacked .cover .subtitle { display: none; }
 .shelf-row.stacked .info, .shelf-row.stacked .rating { text-align: left; width: 100%; }
+.shelf-row.stacked .info .title { font-size: .9rem; max-height: 64px; }
 .shelf-row.stacked .title, .shelf-row.stacked .subtitle, .shelf-row.stacked .author, .shelf-row.stacked .publisher { white-space: normal; }
-.shelf-row.stacked .title { font-size: .9rem; max-height: 64px; }
 
 /* RATING */
 .rating { 
@@ -1391,6 +1391,7 @@ hr.line {
   text-transform: uppercase;
   will-change: opacity; 
   animation: fadeIn .4s ease-in-out; 
+  user-select: none;
 }
 .book .rating { text-align: center; }
 .rating-labels { display: inline; }
@@ -1597,12 +1598,18 @@ hr.line {
 .mock-cover.xs { width: 14px; height: 20px; border-radius: 1px; }
 
 /* GENRES */
-.genres { 
+.genres { position: relative; }
+.genres .content { 
   position: relative;
   overflow: hidden;
   text-overflow: ellipsis; 
 }
-.genres.scrollable { white-space: nowrap; }
+.genres.scrollable .content {
+  white-space: nowrap;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; 
+}
 .genres:before, .genres:after { 
   content: none;
   position: absolute;
@@ -1640,6 +1647,34 @@ hr.line {
 }
 .card .genres a { background-color: var(--canvasLighterClr); }
 /* .genres a.active { display: none; } */
+
+/* BOOKMARK */
+.bookmark{ 
+  height: 24px;
+  line-height: 16px;
+  width: 16px;
+  border-left-width: 8px;
+  border-right-width: 8px;
+  border-bottom-width: 4px;
+  border-style: solid;
+  border-color: var(--primaryClr); 
+  border-bottom-color: transparent !important;
+  border-radius: 1px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 10px;
+  color: #333;
+  text-indent: -3px;
+  overflow: visible;
+  user-select: none;
+  z-index: 1;
+}
+.bookmark.accent { border-color: var(--accentClr); }
+.cover .bookmark {
+  position: absolute;
+  top: 0;
+  right: 9px;
+}
 
 /* HELPERS */
 .text-right { text-align: right; }
@@ -1892,6 +1927,11 @@ hr.line {
 @media (pointer: coarse) {
   .user.rating .react-rater { font-size: 36px; }
   .user.rating .label { display: none; }
-  .genres { white-space: nowrap; }
+  .genres .content {
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; 
+  }
   .genres:before, .genres:after { content: ''; }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { boolType, coverType } from '../config/types';
+import { boolType, coverType, numberType } from '../config/types';
 import { joinObj } from '../config/shared';
 import Rating from './rating';
 
@@ -11,6 +11,7 @@ export default class Cover extends React.Component {
   }
 
   static propTypes = {
+    bcid: numberType,
     book: coverType.isRequired,
     info: boolType,
     rating: boolType,
@@ -40,7 +41,7 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
-    const { full, index, info, rating } = this.props;
+    const { bcid, full, index, info, rating } = this.props;
 
     if (!book) return null;
 
@@ -48,6 +49,7 @@ export default class Cover extends React.Component {
       <div className="book" ref="coverComponent"> 
         {cover ?
           <div className="cover" style={{backgroundImage: `url(${cover})`, animationDelay: `.${index}s`}} title={book.title}>
+            {bcid && <div className="bookmark accent">{bcid}</div>}
             <div className="overlay"></div>
             {/* (book.covers && book.covers.length > 1) && 
               <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
@@ -55,6 +57,7 @@ export default class Cover extends React.Component {
           </div>
         :
           <div className="cover" title={book.title} style={{animationDelay: `.${index}s`}}>
+            {bcid && <div className="bookmark accent">{bcid}</div>}
             <div className="overlay"></div>
             <h2 className="title">{book.title}</h2>
             {book.subtitle && book.subtitle.length > 0 && <h3 className="subtitle">{book.subtitle}</h3>}

@@ -80,7 +80,7 @@ export default class Dashboard extends React.Component {
     
   fetchUser = () => {
 		const { luid, uid } = this.state;
-    console.log('fetching user');
+    //console.log('fetching user');
     userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         /* let count = -4;

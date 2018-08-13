@@ -39,15 +39,19 @@ const Home = () => (
 
 		<div className="container" style={{ marginTop: '-56px' }}>
 			<div className="card dark card-fullwidth-sm">
-				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
+				<BookCollection cid="Best seller" pagination={false} limit={7} scrollable={true} />
 			</div>
+      
+      <RandomQuote className="card dark quote-container card-fullwidth-sm" />
 
-      <RandomQuote className="card dark quote-container" />
-
-      <div className="pad-v-sm">
+      <div className="card dark card-fullwidth-sm">
         <h2>Generi</h2>
         <Genres />
       </div>
+
+      <div className="card dark card-fullwidth-sm">
+				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
+			</div>
 
 			<div className="card dark">
 				<ul>

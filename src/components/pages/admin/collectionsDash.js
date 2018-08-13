@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { collectionRef, collectionsRef } from '../../../config/firebase';
+import { collectionBooksRef, collectionRef, collectionsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -61,7 +61,7 @@ export default class collectionsDash extends React.Component {
     const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const cRef = collectionsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    const cRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
     //console.log('fetching items');
     this.setState({ loading: true });
     
@@ -69,13 +69,13 @@ export default class collectionsDash extends React.Component {
       //console.log(fullSnap);
       if (!fullSnap.empty) {
         this.setState({ count: fullSnap.docs.length });
-        console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
+        //console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? cRef.startAt(lastVisible || fullSnap.docs[startAt]) : cRef;
+
         ref.onSnapshot(snap => {
-          console.log(snap);
           if (!snap.empty) {
             const items = [];
-            snap.forEach(item => items.push(item.data()));
+            snap.forEach(item => items.push({ ...item.data(), title: item.id, books_num: item.data().books_num || '-' }));
             this.setState(prevState => ({
               items: items,
               lastVisible: snap.docs[startAt],

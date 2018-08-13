@@ -14,7 +14,7 @@ import 'moment/locale/it';
 import React from 'react';
 import Redirect from 'react-router-dom/Redirect';
 import isISBN from 'validator/lib/isISBN';
-import { bookRef, booksRef, collectionsRef, storageRef /* , timestamp */, uid } from '../../config/firebase';
+import { bookRef, booksRef, collectionBookRef, storageRef, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, validateImg } from '../../config/shared';
@@ -188,6 +188,7 @@ export default class BookForm extends React.Component {
       const errors = this.validate(book);
       this.setState({ errors, loading: true });
       if (Object.keys(errors).length === 0) {
+        let newBid = '';
         if (this.props.book.bid) {
           const { EDIT, ...restBook } = book;
           bookRef(this.props.book.bid).set({
@@ -208,6 +209,7 @@ export default class BookForm extends React.Component {
           });
         } else {
           let newBookRef = booksRef.doc();
+          newBid = newBookRef.id;
           newBookRef.set({
             ISBN_10: book.ISBN_10,
             ISBN_13: book.ISBN_13, 
@@ -241,11 +243,11 @@ export default class BookForm extends React.Component {
             title: book.title, 
             title_sort: book.title_sort
           }).then(() => {
-            this.setState({ redirectToBook: newBookRef.id });
+            this.setState({ redirectToBook: newBid });
             /* this.setState({ loading: false, changes: false });
             this.props.isEditing(); */
             openSnackbar('Nuovo libro creato', 'success');
-            //console.log(`New book created with bid ${newBookRef.id}`);
+            //console.log(`New book created with bid ${newBid}`);
           }).catch(error => {
             this.setState({
               authError: error.message,
@@ -257,10 +259,10 @@ export default class BookForm extends React.Component {
         if (book.collections) {
           book.collections.forEach(cid => {
             let bcid = 0;
-            collectionsRef(cid).doc(book.bid).get().then(collectionBook => {
+            collectionBookRef(cid, book.bid || newBid).get().then(collectionBook => {
               if (collectionBook.exists) { bcid = collectionBook.data().bcid; }
-              collectionsRef(cid).doc(book.bid).set({
-                bid: book.bid, 
+              collectionBookRef(cid, book.bid || newBid).set({
+                bid: book.bid || newBid, 
                 bcid: bcid,
                 covers: (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
@@ -270,9 +272,7 @@ export default class BookForm extends React.Component {
                 publication: book.publication,
                 rating_num: book.rating_num,
                 ratings_num: book.ratings_num
-              }).then(() => {
-                //console.log(`Book added to ${cid} collection`)
-              }).catch(error => console.warn(error));
+              })/* .then(() => console.log(`Book added to ${cid} collection`)) */.catch(error => console.warn(error));
             }).catch(error => console.warn(error));
           });
         }

@@ -118,7 +118,7 @@ export default class BookCollection extends React.Component {
       <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, index) => 
           <Link key={book.bid} to={`/book/${book.bid}`}>
-            <Cover book={book} rating={true} full={stacked} index={index} />
+            <Cover book={book} rating={true} full={stacked} index={index} bcid={book.bcid} />
           </Link>
         )}
       </div>
@@ -129,7 +129,7 @@ export default class BookCollection extends React.Component {
 		return (
       <React.Fragment>
         <div className="head nav" role="navigation">
-          <span className="counter last title">{cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
+          <span className="counter last title"><span className="primary-text hide-sm">Collezione:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?

@@ -55,6 +55,14 @@ export default class Review extends React.Component {
     } else console.warn('No bid or ruid');
   }
 
+  onAddResponse = () => {
+    //TODO
+  }
+
+  onSubmitResponse = () => {
+    //TODO
+  }
+
   render() {
     const { like, likes_num } = this.state;
     const { review } = this.props;

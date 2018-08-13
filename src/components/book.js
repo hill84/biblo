@@ -1,5 +1,5 @@
 import React from 'react';
-import { bookRef, collectionsRef, isAuthenticated, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
+import { bookRef, collectionBookRef, isAuthenticated, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
 import { bookType, funcType, stringType, userBookType, userType } from '../config/types';
 import BookForm from './forms/bookForm';
 import NoMatch from './noMatch';
@@ -88,7 +88,6 @@ export default class Book extends React.Component {
 
   componentDidMount(props) {
     this._isMounted = true;
-    console.log(this.props.search);
     if (this.props.bid) {
       this.setState({ loading: true });
       bookRef(this.props.bid).onSnapshot(snap => {
@@ -365,7 +364,7 @@ export default class Book extends React.Component {
 
         if (this.state.book.collections) {
           this.state.book.collections.forEach(cid => {
-            collectionsRef(cid).doc(this.state.book.bid).update({
+            collectionBookRef(cid, this.state.book.bid).update({
               rating_num: bookRating_num, 
               ratings_num: bookRatings_num
             }).then(() => {
@@ -422,13 +421,13 @@ export default class Book extends React.Component {
             ratings_num: bookRatings_num
           }
         });
-        //console.log('Book rated with ' + rate + ' stars');
+        //console.log(`Book rated with ${rate} stars`);
       }).catch(error => console.warn(error));
 
       if (this.state.book.collections) {
         this.state.book.collections.forEach(cid => {
           //console.log(cid);
-          collectionsRef(cid).doc(this.state.book.bid).update({
+          collectionBookRef(cid, this.state.book.bid).update({
             rating_num: bookRating_num, 
             ratings_num: bookRatings_num
           }).then(() => {
