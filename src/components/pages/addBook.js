@@ -26,7 +26,7 @@ export default class AddBook extends React.Component {
 			<div className="container" id="addBookComponent">
         {/* <h2>Aggiungi un libro</h2> */}
         <MuiThemeProvider theme={primaryTheme}>
-          <div className="card sm primary" id="search-book">
+          <div className="card sm primary search-book">
             <SearchBookForm onBookSelect={this.onBookSelect} user={user} />
           </div>
         </MuiThemeProvider>

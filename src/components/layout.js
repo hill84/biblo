@@ -14,15 +14,18 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import NavLink from 'react-router-dom/NavLink';
 import { signOut, uid } from '../config/firebase';
-import { appName, getInitials } from '../config/shared';
+import { appName, getInitials, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
 import Footer from './footer';
+import { icon } from '../config/icons';
 
 export default class Layout extends React.Component {
   state = {
     drawerIsOpen: false,
-    moreAnchorEl: null
+    moreAnchorEl: null,
+    notes: null,
+    notesAnchorEl: null
   }
 
   static propTypes = {
@@ -35,11 +38,14 @@ export default class Layout extends React.Component {
   onOpenMore = e => this.setState({ moreAnchorEl: e.currentTarget });
   onCloseMore = () => this.setState({ moreAnchorEl: null });
 
+  onOpenNotes = e => this.setState({ notesAnchorEl: e.currentTarget });
+  onCloseNotes = () => this.setState({ notesAnchorEl: null });
+
   onOpenDialog = () => this.setState({ dialogIsOpen: true });
   onCloseDialog = () => this.setState({ dialogIsOpen: false });
-
+  
   render() {
-    const { drawerIsOpen, moreAnchorEl } = this.state;
+    const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = this.state;
     const { children, user } = this.props;
 
     return (
@@ -52,8 +58,46 @@ export default class Layout extends React.Component {
             <Typography className="title" variant="title" color="inherit">
               <Link to="/">{appName}</Link>
             </Typography>
+            <IconButton
+              component={Link} 
+              to="/books/add"
+              aria-label="Search">
+              {icon.magnify()}
+            </IconButton>
             {user ? 
               <React.Fragment>
+                <IconButton
+                  className="notes-btn"
+                  aria-label="Notifications"
+                  aria-owns={notesAnchorEl ? 'notes-menu' : null}
+                  aria-haspopup="true"
+                  onClick={this.onOpenNotes}
+                  title={`${notes ? notes.length : 0} notifiche`}>
+                  {icon.bell()}
+                  {notes && <div className="dot">{notes.length}</div>}
+                </IconButton>
+                <Menu
+                  className="notes"
+                  id="notes-menu"
+                  anchorEl={notesAnchorEl}
+                  onClick={this.onCloseNotes}
+                  open={Boolean(notesAnchorEl)}
+                  onClose={this.onCloseNotes}>
+                  {notes && notes.length ?
+                    notes.map(note => (
+                      <MenuItem> 
+                        <div className="row">
+                          <div className="col text">{note.text}</div>
+                          <div className="col-auto date">{timeSince(note.created_num)}</div>
+                        </div>
+                      </MenuItem>
+                    ))
+                  : 
+                    <MenuItem className="text"><span className="icon">{icon.bellOff()}</span> Non ci sono nuove notifiche</MenuItem>
+                  }
+                  <MenuItem className="footer"><Link to="/notifications">Mostra tutte</Link></MenuItem> 
+                </Menu>
+
                 <IconButton
                   className="more-btn"
                   aria-label="More"
@@ -68,8 +112,8 @@ export default class Layout extends React.Component {
                   onClick={this.onCloseMore}
                   open={Boolean(moreAnchorEl)}
                   onClose={this.onCloseMore}>
-                  <Link to="/profile"><MenuItem>Profilo</MenuItem></Link>
-                  <Link to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></Link>
+                  <NavLink to="/profile"><MenuItem>Profilo</MenuItem></NavLink>
+                  <NavLink to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></NavLink>
                   <MenuItem onClick={() => signOut()}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>

@@ -815,16 +815,58 @@ hr.line {
   background-color: rgba(67,160,71,.5);
 }
 
+/* NOTIFICATIONS */
+.notes { --mainTextClr: #666; --lightTextClr: #aaa; --lighterTextClr: #ccc; }
+.notes ul { padding-top: 0; padding-bottom: 0; max-width: 320px; }
+.notes li:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,.03); }
+.notes .text { color: var(--mainTextClr); font-size: .8rem; white-space: normal; line-height: 125%; }
+.notes .text .icon { margin-right: 10px; }
+.notes .date { color: var(--lighterTextClr); font-size: .7rem; font-weight: 200; text-align: right; float: right; }
+.notes .footer, .notes .footer a { text-align: center; }
+
+.dot {
+  --dotSize: 16px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: var(--accentClr);
+  border-radius: 50%;
+  width: var(--dotSize);
+  height: var(--dotSize);
+  line-height: var(--dotSize);
+  color: #fff;
+  font-size: .55rem;
+  text-align: center;
+  transition: all .2s ease-in-out; 
+  will-change: opacity, transform;
+  animation: popIn .25s ease-out backwards; 
+}
+
 /* APPBAR */
 #layoutComponent { padding-top: 60px; flex-grow: 1; }
 #appBarComponent { position: fixed !important; top: 0; }
 #appBarComponent .toolbar { min-height: 60px; }
-#appBarComponent .title { flex: 1; }
-#appBarComponent .more-btn { margin-right: -12px; margin-left: 20px; color: inherit; }
-#appBarComponent .drawer-btn { margin-left: -12px; margin-right: 20px; color: inherit; }
+#appBarComponent .title { flex: 1; margin-left: 10px; margin-right: 10px; }
+#appBarComponent svg { --iconSize: 24px; }
+#appBarComponent button { color: #fff; }
+#appBarComponent .more-btn { margin-right: -12px; color: inherit; }
+#appBarComponent .drawer-btn { margin-left: -12px; color: inherit; }
+#appBarComponent button .dot { box-shadow: 0 0 0 3px var(--primaryClr); }
 #appBarComponent a { color: white; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
 #appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); }
+#appBarComponent .search-book { 
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  max-width: 420px; 
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+  width: 100%;
+  z-index: 1;
+}
 
 /* DRAWER */
 .drawer .list { width: 256px; }
@@ -863,24 +905,24 @@ hr.line {
 }
 
 /* searchBookForm */
-#search-book .form-group .loader { border-radius: 3px; }
-#search-book label + div:before, 
-#search-book label + div:after {
+.search-book .form-group .loader { border-radius: 3px; }
+.search-book label + div:before, 
+.search-book label + div:after {
   border-color: transparent !important;
 }
-#search-book .react-autosuggest__container {
+.search-book .react-autosuggest__container {
   background-color: rgba(10,15,20,.15);
   border-radius: 3px;
   padding-top: 5px;
   box-shadow: inset 0 1px 1px rgba(0,0,0,.07);
 }
-#search-book .form-group input {
+.search-book .form-group input {
   padding: 5px 3px 5px 10px;
 }
-#search-book .form-group label {
+.search-book .form-group label {
   left: 10px;
 }
-#search-book .search-by {
+.search-book .search-by {
   margin: 0 5px 5px 0;
 }
 
@@ -1748,6 +1790,7 @@ hr.line {
   to { opacity: 0; transform: scale(1); } 
 }
 @keyframes slideDown { from { opacity: 0; max-height: 36px; } to { opacity: 1; }}
+@keyframes popIn { 0% { opacity: 0; transform: scale(0); } 80% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); }}
 @keyframes showIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); }}
 @keyframes fadeIn { from { opacity: 0; } }
 @keyframes fadeOut { to { opacity: 0; } }

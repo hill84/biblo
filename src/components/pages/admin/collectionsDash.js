@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { collectionBooksRef, collectionRef, collectionsRef } from '../../../config/firebase';
+import { collectionRef, collectionsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -35,11 +35,7 @@ export default class collectionsDash extends React.Component {
 	static propTypes = {
     openSnackbar: funcType.isRequired,
     user: userType
-	}
-
-  /* static getDerivedStateFromProps(props, state) {
-    return null;
-  } */ 
+	} 
 
 	componentDidMount() { 
     this._isMounted = true; 
@@ -58,7 +54,7 @@ export default class collectionsDash extends React.Component {
   }
     
   fetch = direction => {
-    const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const { /* desc,  */lastVisible, limitBy, limitByIndex, /* orderBy, orderByIndex,  */page } = this.state;
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const cRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
