@@ -5,7 +5,7 @@ import { auth, isAuthenticated, reviewsRef, uid } from '../config/firebase';
 import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Review from './review';
-import InfiniteScroll from 'react-infinite-scroller';
+/* import InfiniteScroll from 'react-infinite-scroller'; */
 
 export default class Reviews extends React.Component {
 	state = {

@@ -257,7 +257,7 @@ hr.line {
   z-index: 10;
 }
 .card.main { z-index: 10; }
-.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); margin-top: 0; }
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); }
 .card.sm { --pad: 14px; }
 .card.xs { --pad: 7px; }
 .card .footer, .dialog .footer, .tab .footer { 
@@ -854,6 +854,7 @@ hr.line {
 #appBarComponent button .dot { box-shadow: 0 0 0 3px var(--primaryClr); }
 #appBarComponent a { color: white; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
+#appBarComponent .reveal { animation-duration: .3s; }
 #appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); }
 #appBarComponent .search-book { 
   position: absolute;
@@ -1778,9 +1779,14 @@ hr.line {
 }
 .fadeIn, .fadeOut { will-change: opacity; }
 .slideUp, .slideDown { will-change: transform; }
-.fadeIn.slideUp, .fadeIn.slideDown { will-change: opacity, transform; }
+.fadeIn.slideUp, .fadeIn.slideDown, .popIn { will-change: opacity, transform; }
 .fadeIn.slideUp { animation-name: fadeInSlideUp; }
 .fadeIn.slideDown { animation-name: fadeInSlideDown; }
+.popIn { animation-name: popIn; }
+
+.delay2 { animation-delay: .2s; }
+.delay4 { animation-delay: .4s; }
+.delay6 { animation-delay: .6s; }
 
 @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInSlideDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }

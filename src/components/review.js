@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import { isAuthenticated, reviewRef, uid, userBookRef } from '../config/firebase';
+import { isAuthenticated, reviewerRef, uid, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { reviewType } from '../config/types';
@@ -41,7 +41,7 @@ export default class Review extends React.Component {
     }
     //console.log({likes, 'likes_num': likes.length});
     if (bid && review.createdByUid) {
-      reviewRef(bid, review.createdByUid).update({
+      reviewerRef(bid, review.createdByUid).update({
         likes: likes
       }).then(() => {
         //console.log(`Book review likes updated`);

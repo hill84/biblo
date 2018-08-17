@@ -2,12 +2,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { collectionRef, collectionsRef } from '../../../config/firebase';
+import { collectionBooksRef, collectionRef, collectionsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -71,13 +73,21 @@ export default class collectionsDash extends React.Component {
         ref.onSnapshot(snap => {
           if (!snap.empty) {
             const items = [];
-            snap.forEach(item => items.push({ ...item.data(), title: item.id, books_num: item.data().books_num || '-' }));
-            this.setState(prevState => ({
-              items: items,
-              lastVisible: snap.docs[startAt],
-              loading: false,
-              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
-            }));
+            snap.forEach(item => {
+              const books = [];
+              collectionBooksRef(item.id).orderBy('bcid', 'desc').get().then(snap => {
+                snap.forEach(book => books.push(book.data().bid));
+              });
+              items.push({ ...item.data(), title: item.id, books });
+            });
+            setTimeout(() => {
+              this.setState(prevState => ({
+                items: items,
+                lastVisible: snap.docs[startAt],
+                loading: false,
+                page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
+              }));
+            }, 1000);
           } else this.setState({ items: null, lastVisible: null, loading: false });
         });
       } else this.setState({ count: 0 });
@@ -107,12 +117,12 @@ export default class collectionsDash extends React.Component {
   onLock = (id, state) => {
     if (id) {
       if (state) {
-        console.log(`Locking ${id}`);
+        //console.log(`Locking ${id}`);
         collectionRef(id).update({ edit: false }).then(() => {
           this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
-        console.log(`Unlocking ${id}`);
+        //console.log(`Unlocking ${id}`);
         collectionRef(id).update({ edit: true }).then(() => {
           this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
@@ -123,9 +133,12 @@ export default class collectionsDash extends React.Component {
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
-    console.log(`Deleting ${this.state.selectedId}`);
-    this.setState({ isOpenDeleteDialog: false });
-    this.props.openSnackbar('Elemento cancellato', 'success');
+    const { selectedId } = this.state;
+    //console.log(`Deleting ${selectedId}`);
+    collectionRef(selectedId).delete().then(() => {
+      this.onCloseDeleteDialog();
+      this.props.openSnackbar('Elemento cancellato', 'success');
+    }).catch(error => console.warn(error));
   }
 
 	render() {
@@ -139,7 +152,7 @@ export default class collectionsDash extends React.Component {
             <Link to={`/collection/${collection.title}`} className="col">
               {collection.title}
             </Link>
-            <div className="col">{collection.books_num}</div>
+            <div className="col">{collection.books.length}</div>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{timeSince(collection.lastEdit_num)}</div>
             </div>
@@ -245,6 +258,11 @@ export default class collectionsDash extends React.Component {
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Ricordati di rimuovere il riferimento alla collezione nei singoli libri.
+            </DialogContentText>
+          </DialogContent>
           <DialogActions>
             <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
             <button className="btn primary" onClick={this.onDelete}>Procedi</button>

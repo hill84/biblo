@@ -10,7 +10,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Slide from '@material-ui/core/Slide';
 import React from 'react';
-import { bookRef, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
+import { bookRef, reviewerRef, uid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
@@ -70,7 +70,7 @@ export default class UserReview extends React.Component {
 
   fetchUserReview = () => {
     //console.log('Fetching user review');
-    reviewRef(this.state.bid, uid).onSnapshot(snap => {
+    reviewerRef(this.state.bid, uid).onSnapshot(snap => {
       this.setState({ loading: true });
       if (snap.exists) {
         //console.log(snap.data());
@@ -99,7 +99,7 @@ export default class UserReview extends React.Component {
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.state.bid) {
-          reviewRef(this.state.bid, uid).set({
+          reviewerRef(this.state.bid, uid).set({
             ...this.state.review,
             createdByUid: this.state.user.uid,
             created_num: Number((new Date()).getTime()),
@@ -162,7 +162,7 @@ export default class UserReview extends React.Component {
     //DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (this.state.bid) {
           
-      reviewRef(this.state.bid, uid).delete().then(() => {
+      reviewerRef(this.state.bid, uid).delete().then(() => {
         //console.log(`Book review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
 

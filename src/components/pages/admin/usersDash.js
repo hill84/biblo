@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { userRef, usersRef } from '../../../config/firebase';
+import { /* priNotesRef,  */userRef, /* userShelfRef,  */usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { getInitials } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -133,9 +133,20 @@ export default class UsersDash extends React.Component {
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
-    console.log(`Deleting ${this.state.selectedId}`);
-    this.setState({ isOpenDeleteDialog: false });
-    this.props.openSnackbar('Elemento cancellato', 'success');
+    const { selectedId } = this.state;
+    //console.log(`Deleting ${selectedId}`);
+    userRef(selectedId).delete().then(() => {
+      /* 
+      userShelfRef(selectedId).delete().then(() => {
+        console.log(`User reviews deleted`);
+      }).catch(error => console.warn(error));
+      priNotesRef(selectedId).delete().then(() => {
+        console.log(`User notifications deleted`);
+      }).catch(error => console.warn(error)); 
+      */
+      this.setState({ isOpenDeleteDialog: false });
+      this.props.openSnackbar('Elemento cancellato', 'success');
+    }).catch(error => console.warn(error));
   }
 
 	render() {

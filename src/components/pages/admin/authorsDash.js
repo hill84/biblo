@@ -17,17 +17,18 @@ export default class AuthorsDash extends React.Component {
  	state = {
     user: this.props.user,
     count: 0,
-    desc: true,
+    desc: false,
+    firstVisible: null,
     isOpenDeleteDialog: false,
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
+    limitBy: [ 5, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
-      { type: 'created_num', label: 'Data'}, 
       { type: 'displayName', label: 'Nome'}, 
+      { type: 'created_num', label: 'Data'}, 
       { type: 'sex', label: 'Sesso'}
     ],
     orderByIndex: 0,
@@ -57,14 +58,19 @@ export default class AuthorsDash extends React.Component {
   }
     
   fetch = direction => {
-    const { count, desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const { count, desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
-    const ref = direction ? paginatedRef : baseRef;
+    const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    const paginatedRef = prev ? baseRef.endBefore(firstVisible) : baseRef.startAfter(lastVisible);
+    const ref = direction ? paginatedRef.limit(limit) : baseRef.limit(limit);
     //console.log('fetching items');
-    console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
+    console.log({ 
+      first: firstVisible && firstVisible.data().displayName, 
+      last: lastVisible && lastVisible.data().displayName, 
+      page, 
+      direction 
+    });
     this.setState({ loading: true });
 
     const fetcher = () => {
@@ -72,8 +78,9 @@ export default class AuthorsDash extends React.Component {
         //console.log(snap);
         if (!snap.empty) {
           const items = [];
-          snap.forEach(author => items.push(author.data()));
+          snap.forEach(item => items.push(item.data()));
           this.setState({
+            firstVisible: snap.docs[0],
             items: items,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
@@ -129,9 +136,12 @@ export default class AuthorsDash extends React.Component {
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
-    console.log(`Deleting ${this.state.selectedId}`);
-    this.setState({ isOpenDeleteDialog: false });
-    this.props.openSnackbar('Elemento cancellato', 'success');
+    const { selectedId } = this.state;
+    //console.log(`Deleting ${selectedId}`);
+    authorRef(selectedId).delete().then(() => {
+      this.setState({ isOpenDeleteDialog: false });
+      this.props.openSnackbar('Elemento cancellato', 'success');
+    }).catch(error => console.warn(error));
   }
 
 	render() {

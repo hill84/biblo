@@ -10,6 +10,7 @@ import Redirect from 'react-router-dom/Redirect';
 import { quoteRef, quotesRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';
+import { timeSince } from '../../../config/shared';
 import CopyToClipboard from '../../copyToClipboard';
 
 export default class QuotesDash extends React.Component {
@@ -25,10 +26,11 @@ export default class QuotesDash extends React.Component {
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
+      { type: 'lastEdit_num', label: 'Data ultima modifica'},
+      { type: 'EDIT.lastEditByUid', label: 'Modificata da'},
       { type: 'author', label: 'Autore'}, 
       { type: 'bookTitle', label: 'Libro'}, 
-      { type: 'coverURL', label: 'Cover'}, 
-      { type: 'created_num', label: 'Data di creazione'}
+      { type: 'coverURL', label: 'Cover'}
     ],
     orderByIndex: 0,
     page: 1,
@@ -105,10 +107,14 @@ export default class QuotesDash extends React.Component {
   onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
-  onView = id => this.setState({ redirectTo: id });
+  onView = id => {
+    console.log(`Viewing ${id}`);
+    //TODO
+  }
 
   onEdit = id => {
     console.log(`Editing ${id}`);
+    //TODO
     this.props.openSnackbar('Modifiche salvate', 'success');
   }
 
@@ -131,9 +137,12 @@ export default class QuotesDash extends React.Component {
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
-    console.log(`Deleting ${this.state.selectedId}`);
-    this.setState({ isOpenDeleteDialog: false });
-    this.props.openSnackbar('Elemento cancellato', 'success');
+    const { selectedId } = this.state;
+    //console.log(`Deleting ${selectedId}`);
+    quoteRef(selectedId).delete().then(() => {
+      this.setState({ isOpenDeleteDialog: false });
+      this.props.openSnackbar('Elemento cancellato', 'success');
+    }).catch(error => console.warn(error));
   }
 
 	render() {
@@ -151,8 +160,11 @@ export default class QuotesDash extends React.Component {
             <Link to={`/author/${quote.author}`} className="col">{quote.author}</Link>
             <div className="col-5 hide-sm">{quote.quote}</div>
             <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={quote.qid}/></div>
+            <Link to={`/dashboard/${quote.lastEditByUid}`} title={quote.lastEditByUid} className="col hide-sm">
+              {quote.lastEditBy}
+            </Link>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{new Date(quote.created_num).toLocaleDateString()}</div>
+              <div className="timestamp">{timeSince(quote.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
               <button className="btn icon green" onClick={e => this.onView(quote.qid)}>{icon.eye()}</button>
@@ -227,7 +239,8 @@ export default class QuotesDash extends React.Component {
                   <div className="col">Autore</div>
                   <div className="col-5 hide-sm">Testo</div>
                   <div className="col hide-sm">Qid</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
+                  <div className="col hide-sm">Modificato da</div>
+                  <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>
               </li>
               {itemsList}

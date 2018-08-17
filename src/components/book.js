@@ -1,5 +1,5 @@
 import React from 'react';
-import { bookRef, collectionBookRef, isAuthenticated, reviewRef, uid, userBookRef, userRef } from '../config/firebase';
+import { bookRef, collectionBookRef, isAuthenticated, reviewerRef, uid, userBookRef, userRef } from '../config/firebase';
 import { bookType, funcType, stringType, userBookType, userType } from '../config/types';
 import BookForm from './forms/bookForm';
 import NoMatch from './noMatch';
@@ -351,7 +351,7 @@ export default class Book extends React.Component {
         }).catch(error => console.warn(error));
 
         if (!!this.state.userBook.review.created_num) {
-          reviewRef(bid, uid).delete().then(() => {
+          reviewerRef(bid, uid).delete().then(() => {
             this.setState({ 
               userBook: { 
                 ...this.state.userBook, 

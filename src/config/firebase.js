@@ -35,6 +35,7 @@ auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentU
 
 export const usersRef = db.collection('users');
 export const userRef = uid => db.collection('users').doc(uid);
+export const userShelfRef = uid => db.collection('shelves').doc(uid);
 export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
 export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
 export const followersRef = uid => db.collection('followers').doc(uid);
@@ -48,8 +49,9 @@ export const collectionBooksRef = cid => db.collection('collections').doc(cid).c
 export const collectionBookRef = (cid, bid) => db.collection('collections').doc(cid).collection('books').doc(bid);
 export const collectionsRef = db.collection('collections');
 
+export const reviewRef = bid => db.collection('reviews').doc(bid);
 export const reviewsRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
-export const reviewRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);
+export const reviewerRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);
 
 export const authorRef = aid => db.collection('authors').doc(aid);
 export const authorsRef = db.collection('authors');
@@ -57,8 +59,8 @@ export const authorsRef = db.collection('authors');
 export const quoteRef = qid => db.collection('quotes').doc(qid);
 export const quotesRef = db.collection('quotes');
 
-export const pubNotifsRef = collection => db.collection('notifications').doc('__' + collection);
-export const priNotifsRef = uid => db.collection('notifications').doc(uid);
+export const pubNotesRef = collection => db.collection('notifications').doc('__' + collection);
+export const priNotesRef = uid => db.collection('notifications').doc(uid);
 
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 

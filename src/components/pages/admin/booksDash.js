@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { bookRef, booksRef } from '../../../config/firebase';
+import { bookRef, booksRef/* , reviewRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -132,9 +132,17 @@ export default class BooksDash extends React.Component {
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
-    console.log(`Deleting ${this.state.selectedId}`);
-    this.setState({ isOpenDeleteDialog: false });
-    this.props.openSnackbar('Elemento cancellato', 'success');
+    const { selectedId } = this.state;
+    //console.log(`Deleting ${selectedId}`);
+    bookRef(selectedId).delete().then(() => {
+      /* 
+      reviewRef(selectedId).delete().then(() => {
+        console.log(`Reviews deleted`);
+      }).catch(error => console.warn(error)); 
+      */
+      this.setState({ isOpenDeleteDialog: false });
+      this.props.openSnackbar('Elemento cancellato', 'success');
+    }).catch(error => console.warn(error));
   }
 
 	render() {

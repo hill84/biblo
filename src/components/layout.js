@@ -58,16 +58,17 @@ export default class Layout extends React.Component {
             <Typography className="title" variant="title" color="inherit">
               <Link to="/">{appName}</Link>
             </Typography>
-            <IconButton
-              component={Link} 
-              to="/books/add"
-              aria-label="Search">
-              {icon.magnify()}
-            </IconButton>
             {user ? 
               <React.Fragment>
                 <IconButton
-                  className="notes-btn"
+                  className="search-btn popIn reveal delay4"
+                  component={Link} 
+                  to="/books/add"
+                  aria-label="Search">
+                  {icon.magnify()}
+                </IconButton>
+                <IconButton
+                  className="notes-btn popIn reveal delay2"
                   aria-label="Notifications"
                   aria-owns={notesAnchorEl ? 'notes-menu' : null}
                   aria-haspopup="true"
@@ -104,7 +105,7 @@ export default class Layout extends React.Component {
                   aria-owns={moreAnchorEl ? 'more-menu' : null}
                   aria-haspopup="true"
                   onClick={this.onOpenMore}>
-                  <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+                  <Avatar className="avatar popIn reveal" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
                 </IconButton>
                 <Menu
                   id="more-menu"

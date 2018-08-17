@@ -15,6 +15,10 @@ import BooksDash from './booksDash';
 import CollectionsDash from './collectionsDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
+/* import NewAuthor from '../../forms/newAuthor';
+import NewCollection from '../../forms/newCollection';
+import NewNote from '../../forms/newNote'; */
+import NewQuote from '../../forms/newQuote';
 
 const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
 
@@ -25,7 +29,11 @@ export default class Admin extends React.Component {
     openSnackbar: this.props.openSnackbar,
     user: null,
     loadingUser: true,
-    tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0
+    tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0,
+    isOpenAuthorDialog: false,
+    isOpenCollectionDialog: false,
+    isOpenNoteDialog: false,
+    isOpenQuoteDialog: false
 	}
 
 	static propTypes = {
@@ -84,8 +92,10 @@ export default class Admin extends React.Component {
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
+  onToggleQuoteDialog = () => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog })); 
+
 	render() {
-		const { isAdmin, loadingUser, openSnackbar, tabDir, tabSelected, user } = this.state;
+		const { isAdmin, /* isOpenAuthorDialog, isOpenCollectionDialog, isOpenNoteDialog,  */isOpenQuoteDialog, loadingUser, openSnackbar, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
       return <div className="loader"><CircularProgress /></div>
@@ -102,15 +112,13 @@ export default class Admin extends React.Component {
 
 		return (
 			<div className="container" id="adminComponent">
-				
-        <div className="actions text-center pad-v-sm">
-          <Link to="/new-book" title="Crea libro" className="btn primary">{icon.plus()} libro</Link>
-          <Link to="/new-author" title="Crea autore" className="btn primary disabled">{icon.plus()} autore</Link>
-          <Link to="/new-collection" title="Crea collezione" className="btn primary disabled">{icon.plus()} collezione</Link>
-          <Link to="/new-quote" title="Crea citazione" className="btn primary disabled">{icon.plus()} citazione</Link>
-          <Link to="/new-notification" title="Crea notifica" className="btn primary disabled">{icon.plus()} Notifica</Link>
+        <div className="actions btns text-center pad-v-sm">
+          <button title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>
+          <button onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn primary disabled">{icon.plus()} autore</button>
+          <button onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn primary disabled">{icon.plus()} collezione</button>
+          <button onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn primary">{icon.plus()} citazione</button>
+          <button onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary disabled">{icon.plus()} Notifica</button>
         </div>
-
         <AppBar position="static" className="appbar flat">
           <Tabs 
             value={tabSelected}
@@ -163,6 +171,10 @@ export default class Admin extends React.Component {
           </React.Fragment>
         </SwipeableViews>
 
+        {/* isOpenAuthorDialog && <NewAuthor onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} /> */}
+        {/* isOpenCollectionDialog && <NewCollection onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} /> */}
+        {/* isOpenNoteDialog && <NewNote onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} /> */}
+        {isOpenQuoteDialog && <NewQuote onToggle={this.onToggleQuoteDialog} user={user} openSnackbar={openSnackbar} />}
 			</div>
 		);
 	}
