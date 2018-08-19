@@ -129,3 +129,16 @@ export const authorType = shape({ //TODO
   photoURL: string,
   sex: string.isRequired
 });
+
+export const quoteType = shape({
+  author: stringType.isRequired,
+  bid: stringType,
+  bootTitle: stringType,
+  coverURL: stringType,
+  lastEdit_num: numberType.isRequired,
+  lastEditBy: stringType.isRequired,
+  lastEditByUid: stringType.isRequired,
+  edit: boolType.isRequired,
+  qid: stringType.isRequired,
+  quote: stringType.isRequired
+});

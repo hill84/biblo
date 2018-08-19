@@ -4,10 +4,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
-import { funcType } from '../../config/types';
-import { quotesRef } from '../../config/firebase';
+import { funcType, stringType } from '../../config/types';
+import { quoteRef, quotesRef } from '../../config/firebase';
 
-export default class LoginForm extends React.Component {
+export default class QuoteForm extends React.Component {
 	state = {
     data: {
       author: '',
@@ -26,10 +26,43 @@ export default class LoginForm extends React.Component {
 
   static propTypes = {
     onToggle: funcType.isRequired,
-    openSnackbar: funcType.isRequired
+    openSnackbar: funcType.isRequired,
+    id: stringType
   }
 
-  onToggle = () => this.props.onToggle();
+  componentDidMount() {
+    this._isMounted = true; 
+    if (this.props.id) {
+      console.log(`Fetching on CDM...`);
+      this.fetch();
+    }
+  }
+
+  componentWillUnmount() { this._isMounted = false; }
+  
+  componentDidUpdate(prevProps, prevState) {
+    if (this._isMounted) {
+      if (this.props.id !== prevProps.id) {
+        console.log(`Fetching on CDU...`);
+        this.fetch();
+      }
+    }
+  }
+
+  fetch = () => {
+    this.setState({ loading: true });
+    console.log(this.props.id);
+    quoteRef(this.props.id).get().then(snap => {
+      if (!snap.empty) {
+        this.setState({ 
+          data: snap.data(),
+          loading: false
+        });
+      }
+    }).catch(error => console.warn(error));
+  }
+
+  onToggle = () => this.props.onToggle(this.state.selectedId);
 
 	onChange = e => {
 		this.setState({ 
@@ -54,22 +87,22 @@ export default class LoginForm extends React.Component {
 		this.setState({ authError: '', errors });
 		if(Object.keys(errors).length === 0) {
       this.setState({ loading: true });
-      const newRef = quotesRef.doc();
-      newRef.set({
+      const ref = data.qid ? quoteRef(data.qid) : quotesRef.doc();
+      ref.set({
         author: data.author,
         bid: data.bid,
-        bootTitle: data.bookTitle,
+        bookTitle: data.bookTitle,
         coverURL: data.coverURL,
         lastEdit_num: Number((new Date()).getTime()),
         lastEditBy: user.displayName,
         lastEditByUid: user.uid,
         edit: true,
-        qid: newRef.id,
+        qid: data.qid || ref.id,
         quote: data.quote
       }).then(() => {
         this.onToggle();
         this.setState({ loading: false });
-        openSnackbar('Nuovo elemento creato', 'success');
+        openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
       }).catch(error => console.warn(error));
 		}
 	};
@@ -82,6 +115,9 @@ export default class LoginForm extends React.Component {
       errors.quote = `Lunghezza massima ${this.state.quote_maxChars} caratteri`;
     } else if (data.quote && data.quote.length < this.state.quote_minChars) {
       errors.quote = `Lunghezza minima ${this.state.quote_minChars} caratteri`;
+    }
+    if (!data.author) { 
+      errors.quote = "Inserisci l'autore"; 
     }
 		return errors;
 	};
@@ -158,7 +194,7 @@ export default class LoginForm extends React.Component {
                   <InputLabel error={Boolean(errors.bookTitle)} htmlFor="bookTitle">Titolo libro</InputLabel>
                   <Input
                     id="bookTitle"
-                    name="title"
+                    name="bookTitle"
                     type="text"
                     placeholder="Titolo libro"
                     value={data.bookTitle}

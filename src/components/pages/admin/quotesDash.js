@@ -19,6 +19,7 @@ export default class QuotesDash extends React.Component {
     count: 0,
     desc: true,
     isOpenDeleteDialog: false,
+    isOpenFormDialog: false,
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
@@ -39,6 +40,7 @@ export default class QuotesDash extends React.Component {
 	}
 
 	static propTypes = {
+    onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType
 	}
@@ -107,16 +109,9 @@ export default class QuotesDash extends React.Component {
   onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
-  onView = id => {
-    console.log(`Viewing ${id}`);
-    //TODO
-  }
-
-  onEdit = id => {
-    console.log(`Editing ${id}`);
-    //TODO
-    this.props.openSnackbar('Modifiche salvate', 'success');
-  }
+  onView = id => this.setState({ redirectTo: id });
+  
+  onEdit = id => this.props.onToggleDialog(id);
 
   onLock = (id, state) => {
     if (id) {
@@ -156,7 +151,7 @@ export default class QuotesDash extends React.Component {
             <div className="col-auto">
               <div className="mock-cover xs" style={{backgroundImage: `url(${quote.coverURL})`}}></div>
             </div>
-            {quote.bid ? <Link to={`/book/${quote.bid}`} className="col">{quote.bookTitle}</Link> : <div className="col"/>}
+            {quote.bid ? <Link to={`/book/${quote.bid}`} className="col">{quote.bookTitle}</Link> : <div className="col">{quote.bookTitle}</div>}
             <Link to={`/author/${quote.author}`} className="col">{quote.author}</Link>
             <div className="col-5 hide-sm">{quote.quote}</div>
             <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={quote.qid}/></div>
@@ -167,7 +162,7 @@ export default class QuotesDash extends React.Component {
               <div className="timestamp">{timeSince(quote.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(quote.qid)}>{icon.eye()}</button>
+              <button className="btn icon green" onClick={e => this.onView(quote.author)}>{icon.eye()}</button>
               <button className="btn icon primary" onClick={e => this.onEdit(quote.qid)}>{icon.pencil()}</button>
               <button className={`btn icon ${quote.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(quote.qid, quote.edit)} title={quote.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button className="btn icon red" onClick={e => this.onDeleteRequest(quote.qid)}>{icon.close()}</button>
@@ -197,7 +192,7 @@ export default class QuotesDash extends React.Component {
       </MenuItem>
     ));
 
-    if (redirectTo) return <Redirect to={`/quote/${redirectTo}`} />
+    if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
 
 		return (
 			<div className="container" id="quotesDashComponent">

@@ -15,10 +15,10 @@ import BooksDash from './booksDash';
 import CollectionsDash from './collectionsDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
-/* import NewAuthor from '../../forms/newAuthor';
-import NewCollection from '../../forms/newCollection';
-import NewNote from '../../forms/newNote'; */
-import NewQuote from '../../forms/newQuote';
+/* import AuthorForm from '../../forms/authorForm';
+import CollectionForm from '../../forms/collectionForm';
+import NoteForm from '../../forms/noteForm'; */
+import QuoteForm from '../../forms/quoteForm';
 
 const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
 
@@ -29,6 +29,7 @@ export default class Admin extends React.Component {
     openSnackbar: this.props.openSnackbar,
     user: null,
     loadingUser: true,
+    selectedId: null,
     tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0,
     isOpenAuthorDialog: false,
     isOpenCollectionDialog: false,
@@ -92,10 +93,12 @@ export default class Admin extends React.Component {
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
-  onToggleQuoteDialog = () => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog })); 
+  onToggleQuoteDialog = id => {
+    this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog, selectedId: typeof id === 'string' ? id : null }));
+  }; 
 
 	render() {
-		const { isAdmin, /* isOpenAuthorDialog, isOpenCollectionDialog, isOpenNoteDialog,  */isOpenQuoteDialog, loadingUser, openSnackbar, tabDir, tabSelected, user } = this.state;
+		const { isAdmin, /* isOpenAuthorDialog, isOpenCollectionDialog, isOpenNoteDialog,  */isOpenQuoteDialog, loadingUser, openSnackbar, selectedId, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
       return <div className="loader"><CircularProgress /></div>
@@ -140,41 +143,53 @@ export default class Admin extends React.Component {
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
           <React.Fragment>
-            {tabSelected === 0 && <div className="tab" dir={tabDir}>
-              <UsersDash user={user} openSnackbar={openSnackbar} />
-            </div>}
+            {tabSelected === 0 && 
+              <div className="tab" dir={tabDir}>
+                <UsersDash user={user} openSnackbar={openSnackbar} />
+              </div>
+            }
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 1 && <div className="tab" dir={tabDir}>
-              <BooksDash user={user} openSnackbar={openSnackbar} />
-            </div>}
+            {tabSelected === 1 && 
+              <div className="tab" dir={tabDir}>
+                <BooksDash user={user} openSnackbar={openSnackbar} />
+              </div>
+            }
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 2 && <div className="tab" dir={tabDir}>
-              <AuthorsDash user={user} openSnackbar={openSnackbar} />
-            </div>}
+            {tabSelected === 2 && 
+              <div className="tab" dir={tabDir}>
+                <AuthorsDash user={user} openSnackbar={openSnackbar} />
+              </div>
+            }
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 3 && <div className="tab" dir={tabDir}>
-              <CollectionsDash user={user} openSnackbar={openSnackbar} />
-            </div>}
+            {tabSelected === 3 && 
+              <div className="tab" dir={tabDir}>
+                <CollectionsDash user={user} openSnackbar={openSnackbar} />
+              </div>
+            }
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 4 && <div className="tab" dir={tabDir}>
-              <QuotesDash user={user} openSnackbar={openSnackbar} />
-            </div>}
+            {tabSelected === 4 && 
+              <div className="tab" dir={tabDir}>
+                <QuotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleQuoteDialog} />
+              </div>
+            }
           </React.Fragment>
           <React.Fragment>
-            {tabSelected === 5 && <div className="tab card dark" dir={tabDir}>
-              <NewFeature />
-            </div>}
+            {tabSelected === 5 && 
+              <div className="tab card dark" dir={tabDir}>
+                <NewFeature />
+              </div>
+            }
           </React.Fragment>
         </SwipeableViews>
 
         {/* isOpenAuthorDialog && <NewAuthor onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} /> */}
         {/* isOpenCollectionDialog && <NewCollection onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} /> */}
         {/* isOpenNoteDialog && <NewNote onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} /> */}
-        {isOpenQuoteDialog && <NewQuote onToggle={this.onToggleQuoteDialog} user={user} openSnackbar={openSnackbar} />}
+        {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={this.onToggleQuoteDialog} user={user} openSnackbar={openSnackbar} />}
 			</div>
 		);
 	}
