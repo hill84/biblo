@@ -4,8 +4,8 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
-import { funcType, stringType } from '../../config/types';
 import { quoteRef, quotesRef } from '../../config/firebase';
+import { funcType, stringType } from '../../config/types';
 
 export default class QuoteForm extends React.Component {
 	state = {
@@ -33,7 +33,6 @@ export default class QuoteForm extends React.Component {
   componentDidMount() {
     this._isMounted = true; 
     if (this.props.id) {
-      console.log(`Fetching on CDM...`);
       this.fetch();
     }
   }
@@ -43,7 +42,6 @@ export default class QuoteForm extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (this._isMounted) {
       if (this.props.id !== prevProps.id) {
-        console.log(`Fetching on CDU...`);
         this.fetch();
       }
     }
@@ -51,7 +49,6 @@ export default class QuoteForm extends React.Component {
 
   fetch = () => {
     this.setState({ loading: true });
-    console.log(this.props.id);
     quoteRef(this.props.id).get().then(snap => {
       if (!snap.empty) {
         this.setState({ 
@@ -89,16 +86,16 @@ export default class QuoteForm extends React.Component {
       this.setState({ loading: true });
       const ref = data.qid ? quoteRef(data.qid) : quotesRef.doc();
       ref.set({
-        author: data.author,
-        bid: data.bid,
-        bookTitle: data.bookTitle,
-        coverURL: data.coverURL,
+        author: data.author || '',
+        bid: data.bid || '',
+        bookTitle: data.bookTitle || '',
+        coverURL: data.coverURL || '',
         lastEdit_num: Number((new Date()).getTime()),
         lastEditBy: user.displayName,
         lastEditByUid: user.uid,
-        edit: true,
+        edit: data.edit || true,
         qid: data.qid || ref.id,
-        quote: data.quote
+        quote: data.quote || ''
       }).then(() => {
         this.onToggle();
         this.setState({ loading: false });

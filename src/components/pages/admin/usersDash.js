@@ -46,10 +46,6 @@ export default class UsersDash extends React.Component {
     user: userType
 	}
 
-  /* static getDerivedStateFromProps(props, state) {
-    return null;
-  } */ 
-
 	componentDidMount() { 
     this._isMounted = true; 
     this.fetch();

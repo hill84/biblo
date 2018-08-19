@@ -6,10 +6,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
 import { authorRef, authorsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials, normalizeString } from '../../../config/shared';
+import { getInitials, normalizeString, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 
@@ -17,19 +18,21 @@ export default class AuthorsDash extends React.Component {
  	state = {
     user: this.props.user,
     count: 0,
-    desc: false,
+    desc: true,
     firstVisible: null,
     isOpenDeleteDialog: false,
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 5, 25, 50, 100, 250, 500],
+    limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
-      { type: 'displayName', label: 'Nome'}, 
-      { type: 'created_num', label: 'Data'}, 
-      { type: 'sex', label: 'Sesso'}
+      { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
+      { type: 'lastEditByUid', label: 'Modificato da' },
+      { type: 'displayName', label: 'Nominativo' }, 
+      { type: 'sex', label: 'Sesso' },
+      { type: 'photoURL', label: 'foto' }
     ],
     orderByIndex: 0,
     page: 1,
@@ -37,6 +40,7 @@ export default class AuthorsDash extends React.Component {
 	}
 
 	static propTypes = {
+    onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType
 	}
@@ -112,10 +116,7 @@ export default class AuthorsDash extends React.Component {
 
   onView = id => this.setState({ redirectTo: id });
 
-  onEdit = id => {
-    console.log(`Editing ${id}`);
-    this.props.openSnackbar('Modifiche salvate', 'success');
-  }
+  onEdit = id => this.props.onToggleDialog(id);
 
   onLock = (id, state) => {
     if (id) {
@@ -158,8 +159,9 @@ export default class AuthorsDash extends React.Component {
             <div className="col-6 col-sm-4 col-lg-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
             <div className="col-1"><button className="btn xs flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</button></div>
             <div className="col hide-sm">{author.bio}</div>
+            <Link to={`/dashboard/${author.lastEditByUid}`} title={author.lastEditByUid} className="col col-sm-3 col-lg-2">{author.lastEditBy}</Link>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{new Date(author.created_num).toLocaleDateString()}</div>
+              <div className="timestamp">{timeSince(author.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
               <button className="btn icon green" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
@@ -233,7 +235,8 @@ export default class AuthorsDash extends React.Component {
                   <div className="col-6 col-sm-4 col-lg-2">Nominativo</div>
                   <div className="col-1">Sesso</div>
                   <div className="col hide-sm">Bio</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
+                  <div className="col col-sm-3 col-lg-2">Modificato da</div>
+                  <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>
               </li>
               {itemsList}
