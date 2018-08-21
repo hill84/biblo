@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import { auth, isAuthenticated, reviewsRef, uid } from '../config/firebase';
+import { auth, isAuthenticated, reviewersRef, uid } from '../config/firebase';
 import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Review from './review';
@@ -16,9 +16,8 @@ export default class Reviews extends React.Component {
     desc: false,
     limit: 10,
     loading: true,
-    page: 1, // TODO PAGINATION
-    lastVisible: null,
-    errors: {}
+    page: 1, //TODO
+    //lastVisible: null
   }
 
   static propTypes = {
@@ -54,19 +53,19 @@ export default class Reviews extends React.Component {
 
   fetchReviews = bid => { 
     const { desc, limit, uid } = this.state;
-    reviewsRef(bid).onSnapshot(snap => {
+    reviewersRef(bid).onSnapshot(snap => {
       if (!snap.empty) {
         this.setState({ reviewsCount: snap.docs.length });
-        reviewsRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
-          let reviews = [];
+        reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+          const reviews = [];
           snap.forEach(review => review.data().createdByUid !== (uid) && reviews.push(review.data()));
           this.setState({ 
-            reviews: reviews,
+            reviews,
             loading: false,
             page: 1,
             //lastVisible: snap.docs[snap.docs.length-1]
           });
-        }).catch(error => console.warn("Error fetching reviews:", error));
+        }).catch(error => console.warn(error));
       } else {
         this.setState({ 
           reviewsCount: 0,
@@ -87,8 +86,8 @@ export default class Reviews extends React.Component {
 
     this.setState({ loading: true });
     
-    let nextReviews = [];
-		reviewsRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').startAfter(startAfter).limit(limit).get().then(nextSnap => {
+    const nextReviews = [];
+		reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').startAfter(startAfter).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(review => nextReviews.push(review.data()));
         this.setState(prevState => ({ 
@@ -108,7 +107,7 @@ export default class Reviews extends React.Component {
           //lastVisible: null
         });
       }
-		}).catch(error => console.warn("Error fetching next review:", error));
+		}).catch(error => console.warn(error));
   }
 	
 	render() {

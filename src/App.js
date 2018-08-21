@@ -16,6 +16,7 @@ import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
 import NewBook from './components/pages/newBook';
+import NewFeature from './components/newFeature';
 import NoMatchPage from './components/pages/noMatchPage';
 import PrivacyPage from './components/pages/privacyPage';
 import Profile from './components/pages/profile';
@@ -73,9 +74,11 @@ export default class App extends React.Component {
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
                     <RouteWithProps path="/genre/:gid" component={Genre} user={user} />
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/dashboard/:uid" component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                    <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                    <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
+                    <PrivateRoute path="/notifications" component={NewFeature} /* user={user} openSnackbar={openSnackbar} */ />
                     <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
                     <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />

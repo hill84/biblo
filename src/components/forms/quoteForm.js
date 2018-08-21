@@ -161,7 +161,7 @@ export default class QuoteForm extends React.Component {
                     id="author"
                     name="author"
                     type="text"
-                    placeholder="Autore"
+                    placeholder="Es: George Orwell"
                     value={data.author}
                     onChange={this.onChange}
                     error={Boolean(errors.author)}
@@ -176,7 +176,7 @@ export default class QuoteForm extends React.Component {
                     id="bid"
                     name="bid"
                     type="text"
-                    placeholder="Bid"
+                    placeholder="Es: JlGUWw6oeAj3maP5MQtn"
                     value={data.bid}
                     onChange={this.onChange}
                     error={Boolean(errors.bid)}
@@ -193,7 +193,7 @@ export default class QuoteForm extends React.Component {
                     id="bookTitle"
                     name="bookTitle"
                     type="text"
-                    placeholder="Titolo libro"
+                    placeholder="Es: 1984"
                     value={data.bookTitle}
                     onChange={this.onChange}
                     error={Boolean(errors.bookTitle)}
@@ -210,7 +210,7 @@ export default class QuoteForm extends React.Component {
                     id="coverURL"
                     name="coverURL"
                     type="text"
-                    placeholder="URL Copertina"
+                    placeholder="Es: //firebasestorage.googleapis.com/.../books%2Fcover.jpg"
                     value={data.coverURL}
                     onChange={this.onChange}
                     error={Boolean(errors.coverURL)}

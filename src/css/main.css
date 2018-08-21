@@ -249,13 +249,17 @@ hr.line {
   background-color: var(--cardBg);
   color: var(--mainTextClr);
   padding: var(--pad);
-  margin: 14px auto;
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 14px;
   border-radius: 3px;
   box-shadow: 0 1px 3px rgba(0,0,0,.2);
   will-change: opacity;
   animation: fadeIn .4s ease-out backwards;
   z-index: 10;
 }
+.container { margin-top: 14px; }
 .card.main { z-index: 10; }
 .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); }
 .card.sm { --pad: 14px; }
@@ -326,7 +330,6 @@ hr.line {
   background-color: transparent;
   box-shadow: none;
 }
-.tabs-container .tab .card:first-child { margin-top: 0; }
 
 /* DIALOG */
 .dialog {
@@ -510,6 +513,7 @@ hr.line {
   border-top-right-radius: 0;
 }
 .btn-footer, .btn-footer:hover, .btn-footer:active { box-shadow: none; transform: none; }
+.btn a, .btn:active a { color: inherit; }
 
 .btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; }
 .btn.flat { color: var(--linkClr); }
@@ -629,7 +633,7 @@ hr.line {
 
 /* CONTAINER */
 .container { z-index: 1; }
-.container .container { position: relative; padding-left: 0; padding-right: 0; }
+.container .container { position: relative; padding-left: 0; padding-right: 0; margin-top: 0; }
 .container.xs, .container.sm, .container.md { margin-left: auto; margin-right: auto; float: none; width: 100%; }
 .container.xs { max-width: 320px; }
 .container.sm { max-width: 420px; }
@@ -1023,6 +1027,7 @@ hr.line {
   font-size: .82rem;
   box-shadow: 0 -1px 1px rgba(0,0,0,.1);
 }
+#FooterComponent .container { margin-top: 0; }
 #FooterComponent .divider { margin: 0 auto; }
 
 .placeholder { margin: auto; }
@@ -1332,7 +1337,7 @@ hr.line {
   background-size: cover;
   background-position: top center;
   box-shadow: 0 2px 3px rgba(0,0,0,.12);
-  overflow: hidden;
+  /* overflow: hidden; */
   border-radius: 2px;
   color: rgba(0,0,0,.6);
   font-size: 9px;
@@ -1355,7 +1360,7 @@ hr.line {
 .book.empty .cover .add { font-size: 4rem; }
 .edit-book-cover.error .cover { background-color: var(--errorClr); }
 
-.cover * {
+.cover .title, .cover .subtitle, .cover .author, .cover .publisher {
   float: left;
   width: 100%;
   overflow: hidden;
@@ -1538,7 +1543,13 @@ hr.line {
 .review .foot .counter:after { content: none; }
 .review .foot .btn { --btnFontSize: .75rem; --btnHeight: 26px; --btnPad: .5rem; margin-top: 0; margin-bottom: 0; }
 .review .foot .btn:disabled { color: var(--lighterTextClr); cursor: unset; opacity: 1; }
-.edit-review { will-change: opacity; transform-origin: top; max-height: 500px; animation: slideDown .4s ease-in-out; }
+.edit-review { 
+  will-change: opacity; 
+  transform-origin: top; 
+  max-height: 500px; 
+  animation: slideDown .4s ease-in-out; 
+  z-index: 1200; 
+}
 .review .foot .thumb { margin-left: calc(-1 * var(--btnPad)); }
 .review .foot .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
 .thumb.false:not(:hover) { color: var(--lightTextClr); }
@@ -1715,8 +1726,15 @@ hr.line {
 .bookmark.accent { border-color: var(--accentClr); }
 .cover .bookmark {
   position: absolute;
-  top: 0;
+  top: -1px;
   right: 9px;
+}
+
+/* COLLECTION */
+.collection-profile .description {
+  text-align: justify;
+  white-space: pre-line;
+  word-wrap: break-word;
 }
 
 /* HELPERS */
@@ -1780,6 +1798,8 @@ hr.line {
 .fadeIn, .fadeOut { will-change: opacity; }
 .slideUp, .slideDown { will-change: transform; }
 .fadeIn.slideUp, .fadeIn.slideDown, .popIn { will-change: opacity, transform; }
+.fadeIn { animation-name: fadeIn; }
+.fadeOut { animation-name: fadeOut; }
 .fadeIn.slideUp { animation-name: fadeInSlideUp; }
 .fadeIn.slideDown { animation-name: fadeInSlideDown; }
 .popIn { animation-name: popIn; }
@@ -1787,6 +1807,8 @@ hr.line {
 .delay2 { animation-delay: .2s; }
 .delay4 { animation-delay: .4s; }
 .delay6 { animation-delay: .6s; }
+.delay8 { animation-delay: .8s; }
+.delay10 { animation-delay: 1s; }
 
 @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInSlideDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }

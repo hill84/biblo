@@ -41,26 +41,27 @@ export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).colle
 export const followersRef = uid => db.collection('followers').doc(uid);
 export const followingsRef = uid => db.collection('followings').doc(uid);
 
-export const bookRef = bid => db.collection('books').doc(bid);
 export const booksRef = db.collection('books');
+export const bookRef = bid => db.collection('books').doc(bid);
 
+export const collectionsRef = db.collection('collections');
 export const collectionRef = cid => db.collection('collections').doc(cid);
 export const collectionBooksRef = cid => db.collection('collections').doc(cid).collection('books');
 export const collectionBookRef = (cid, bid) => db.collection('collections').doc(cid).collection('books').doc(bid);
-export const collectionsRef = db.collection('collections');
 
+export const reviewsRef = db.collection('reviews');
 export const reviewRef = bid => db.collection('reviews').doc(bid);
-export const reviewsRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
+export const reviewersRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
 export const reviewerRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);
 
-export const authorRef = aid => db.collection('authors').doc(aid);
 export const authorsRef = db.collection('authors');
+export const authorRef = aid => db.collection('authors').doc(aid);
 
-export const quoteRef = qid => db.collection('quotes').doc(qid);
 export const quotesRef = db.collection('quotes');
+export const quoteRef = qid => db.collection('quotes').doc(qid);
 
-export const pubNotesRef = collection => db.collection('notifications').doc('__' + collection);
-export const priNotesRef = uid => db.collection('notifications').doc(uid);
+export const pubNoteRef = collection => db.collection('notifications').doc('__' + collection);
+export const noteRef = uid => db.collection('notifications').doc(uid);
 
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
 

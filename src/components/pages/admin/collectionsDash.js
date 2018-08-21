@@ -107,11 +107,8 @@ export default class collectionsDash extends React.Component {
   onView = id => this.setState({ redirectTo: id });
   
   onEdit = id => {
-    if (id) {
-      //console.log(`Editing ${id}`);
-      //TODO
-      this.setState({ redirectTo: id }); 
-    }
+    console.log(`Editing ${id}`);
+    //TODO
   }
 
   onLock = (id, state) => {
@@ -157,10 +154,10 @@ export default class collectionsDash extends React.Component {
               <div className="timestamp">{timeSince(collection.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(collection.title)} title="Anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(collection.title)} title="Modifica">{icon.pencil()}</button>
-              <button className={`btn icon ${collection.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(collection.title, collection.edit)} title={collection.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDeleteRequest(collection.title)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(collection.title)} title="Anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(collection.title)} title="Modifica">{icon.pencil()}</button>
+              <button className={`btn icon ${collection.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(collection.title, collection.edit)} title={collection.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(collection.title)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -195,7 +192,7 @@ export default class collectionsDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0} collezioni`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 

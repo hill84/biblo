@@ -59,9 +59,9 @@ export default class Shelf extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { coverview, desc, luid, orderByIndex, uid } = this.state;
+    const { /* coverview,  */desc, luid, orderByIndex, uid } = this.state;
     if (this._isMounted) {
-      if (coverview !== prevState.coverview || desc !== prevState.desc || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
+      if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
         this.fetchUserBooks();
       } else if (!luid && (luid !== prevState.luid)) {
         this.setState({ isOwner: false });
@@ -128,14 +128,14 @@ export default class Shelf extends React.Component {
 
   render() {
     const { booksPerRow, coverview, desc, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
-    const covers = userBooks && userBooks.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={index} rating={shelf === 'bookInShelf'} /></Link>);
-    const orderByOptions = orderBy.map((option, index) => (
+    const covers = userBooks && userBooks.map((book, i) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>);
+    const orderByOptions = orderBy.map((option, i) => (
       <MenuItem
         key={option.type}
         className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : ''}
-        disabled={index === -1}
-        selected={index === orderByIndex}
-        onClick={event => this.onChangeOrderBy(event, index)}>
+        disabled={i === -1}
+        selected={i === orderByIndex}
+        onClick={e => this.onChangeOrderBy(e, i)}>
         {option.label}
       </MenuItem>
     ));

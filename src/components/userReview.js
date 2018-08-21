@@ -63,7 +63,7 @@ export default class UserReview extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { bid, changes, isEditing, user } = this.state;
-    if(bid !== prevState.bid || user !== prevState.user || (changes && !isEditing && isEditing !== prevState.isEditing)){
+    if (bid !== prevState.bid || user !== prevState.user || (changes && !isEditing && isEditing !== prevState.isEditing)) {
       this.fetchUserReview();
     }
   }
@@ -244,6 +244,7 @@ export default class UserReview extends React.Component {
 
     return (
       <React.Fragment>
+        {isEditing && <div className="overlay" onClick={this.onExitEditing}></div>}
         <div className={`card user-review ${isEditing ? 'edit-review' : 'primary'}`}>
           {!loading &&        
             !isEditing ? (
@@ -297,6 +298,7 @@ export default class UserReview extends React.Component {
                       id="text"
                       name="text"
                       type="text"
+                      autoFocus
                       placeholder={`Scrivi una recensione (max ${text_maxChars} caratteri)...`}
                       value={review.text || ''}
                       onChange={this.onChangeMaxChars}
@@ -339,11 +341,11 @@ export default class UserReview extends React.Component {
           }
         </div>
 
-        {isEditing &&
+        {/* isEditing &&
           <div className="form-group">
             <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
           </div>
-        }
+         */}
 
         <Dialog
           open={isOpenDeleteDialog}

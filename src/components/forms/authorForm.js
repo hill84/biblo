@@ -146,7 +146,7 @@ export default class AuthorForm extends React.Component {
                     name="displayName"
                     type="text"
                     autoFocus
-                    placeholder="Nominativo"
+                    placeholder="Es: George Orwell"
                     value={data.displayName}
                     onChange={this.onChange}
                     error={Boolean(errors.displayName)}
@@ -154,12 +154,11 @@ export default class AuthorForm extends React.Component {
                   {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
                 </FormControl>
               </div>
-              <div className="form-group col-auto">
+              <div className="form-group col col-sm-3">
                 <FormControl className="select-field" margin="normal" fullWidth>
                   <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
                   <Select
                     id="sex"
-                    placeholder="Sesso"
                     value={data.sex}
                     onChange={this.onChangeSelect("sex")}
                     error={Boolean(errors.sex)}>
@@ -199,12 +198,12 @@ export default class AuthorForm extends React.Component {
             <div className="row">
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.source)} htmlFor="source">Fonte</InputLabel>
+                  <InputLabel error={Boolean(errors.source)} htmlFor="source">URL fonte</InputLabel>
                   <Input
                     id="source"
                     name="source"
                     type="text"
-                    placeholder="Fonte"
+                    placeholder="Es: //it.wikipedia.org/wiki/George_Orwell"
                     value={data.source}
                     onChange={this.onChange}
                     error={Boolean(errors.source)}
@@ -221,7 +220,7 @@ export default class AuthorForm extends React.Component {
                     id="photoURL"
                     name="photoURL"
                     type="text"
-                    placeholder="URL foto"
+                    placeholder="Es: //firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
                     value={data.photoURL}
                     onChange={this.onChange}
                     error={Boolean(errors.photoURL)}

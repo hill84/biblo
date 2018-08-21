@@ -112,18 +112,10 @@ export default class UsersDash extends React.Component {
   }
 
   onLock = (id, state) => {
-    console.log(`Locking ${id}`);
-    if (state) {
-      //console.log(`Locking ${id}`);
-      userRef(id).update({ 'roles.editor': false }).then(() => {
-        this.props.openSnackbar('Elemento bloccato', 'success');
-      }).catch(error => console.warn(error));
-    } else {
-      //console.log(`Unlocking ${id}`);
-      userRef(id).update({ 'roles.editor': true }).then(() => {
-        this.props.openSnackbar('Elemento sbloccato', 'success');
-      }).catch(error => console.warn(error));
-    }
+    console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
+    userRef(id).update({ 'roles.editor': !state }).then(() => {
+      this.props.openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
+    }).catch(error => console.warn(error));
   }
 
   onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
@@ -144,6 +136,8 @@ export default class UsersDash extends React.Component {
       this.props.openSnackbar('Elemento cancellato', 'success');
     }).catch(error => console.warn(error));
   }
+
+  onChangeRole = (id, role, state) => userRef(id).update({ [`roles.${role}`]: !state }).catch(error => console.warn(error));
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
@@ -170,22 +164,22 @@ export default class UsersDash extends React.Component {
                 <div className="col">{user.stats.shelf_num}</div>
                 <div className="col">{user.stats.wishlist_num}</div>
                 <div className="col">{user.stats.reviews_num}</div>
-                <div className="col">{user.stats.ratings_num}</div>
+                <div className="col hide-md">{user.stats.ratings_num}</div>
               </div>
             </div>
-            <div className="col col-sm-3 col-lg-2 btns xs">
-              <div className={`btn ${user.roles.editor ? 'selected' : 'flat'}`} title="editor">E</div>
-              <div className={`btn ${user.roles.premium ? 'selected' : 'flat'}`} title="premium">P</div>
-              <div className={`btn ${user.roles.admin ? 'selected' : 'flat'}`} title="admin">A</div>
+            <div className="col col-sm-2 btns xs">
+              <div className={`btn ${user.roles.editor ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(user.uid, 'editor', user.roles.editor)} title="editor">E</div>
+              <div className={`btn ${user.roles.premium ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(user.uid, 'premium', user.roles.premium)} title="premium">P</div>
+              <div className={`btn ${user.roles.admin ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(user.uid, 'admin', user.roles.admin)} title="admin">A</div>
             </div>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{new Date(user.creationTime).toLocaleDateString()}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(user.uid)} title="anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onSendNote(user.uid)} title="Invia notifica">{icon.comment()}</button>
-              <button className={`btn icon ${user.roles.editor ? 'secondary' : 'flat' }`} onClick={e => this.onLock(user.uid, user.roles.editor)} title={user.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDeleteRequest(user.uid)} title="elimina">{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(user.uid)} title="anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onSendNote(user.uid)} title="Invia notifica">{icon.bell()}</button>
+              <button className={`btn icon ${user.roles.editor ? 'secondary' : 'flat' }`} onClick={() => this.onLock(user.uid, user.roles.editor)} title={user.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(user.uid)} title="elimina">{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -220,7 +214,7 @@ export default class UsersDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0} utenti`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -258,10 +252,10 @@ export default class UsersDash extends React.Component {
                       <div className="col" title="Libri">{icon.book()}</div>
                       <div className="col" title="Desideri">{icon.heart()}</div>
                       <div className="col" title="Recensioni">{icon.review()}</div>
-                      <div className="col" title="Voti">{icon.star()}</div>
+                      <div className="col hide-md" title="Voti">{icon.star()}</div>
                     </div>
                   </div>
-                  <div className="col col-sm-3 col-lg-2">Ruoli</div>
+                  <div className="col col-sm-2">Ruoli</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>

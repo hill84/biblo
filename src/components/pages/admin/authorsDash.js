@@ -158,16 +158,16 @@ export default class AuthorsDash extends React.Component {
             </div>
             <div className="col-6 col-sm-4 col-lg-2" title={author.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={author.displayName}/></div>
             <div className="col-1"><button className="btn xs flat" title={author.sex === 'm' ? 'uomo' : 'donna'}>{author.sex}</button></div>
-            <div className="col hide-sm">{author.bio}</div>
+            <div className="col hide-lg">{author.bio}</div>
             <Link to={`/dashboard/${author.lastEditByUid}`} title={author.lastEditByUid} className="col col-sm-3 col-lg-2">{author.lastEditBy}</Link>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{timeSince(author.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(normalizeString(author.displayName))}>{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
-              <button className={`btn icon ${author.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(normalizeString(author.displayName), author.edit)} title={author.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDeleteRequest(normalizeString(author.displayName))}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(author.displayName)}>{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(normalizeString(author.displayName))}>{icon.pencil()}</button>
+              <button className={`btn icon ${author.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(normalizeString(author.displayName), author.edit)} title={author.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(normalizeString(author.displayName))}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -202,7 +202,7 @@ export default class AuthorsDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-sm">{`${items ? items.length : 0} di ${count || 0} autori`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
@@ -234,7 +234,7 @@ export default class AuthorsDash extends React.Component {
                   <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
                   <div className="col-6 col-sm-4 col-lg-2">Nominativo</div>
                   <div className="col-1">Sesso</div>
-                  <div className="col hide-sm">Bio</div>
+                  <div className="col hide-lg">Bio</div>
                   <div className="col col-sm-3 col-lg-2">Modificato da</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>

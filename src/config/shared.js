@@ -74,7 +74,7 @@ export const normalizeCover = str => str && String(str).replace('http:', '').rep
 export const capitalizeFirstLetter = str => str && String(str).charAt(0).toUpperCase() + String(str).slice(1);
 
 // CALCULATION
-const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) && `${Math.floor(minutes%60)} minuti`}`;
+const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) ? `${Math.floor(minutes%60)} minuti` : ''}`;
 
 export const calcReadingTime = pages => calcMinutesToTime(pages * .85);
 

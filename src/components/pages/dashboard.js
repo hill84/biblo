@@ -14,6 +14,8 @@ import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
 
+const tabs = ['shelf', 'wishlist', 'activity', 'contacts'];
+
 export default class Dashboard extends React.Component {
  	state = {
     isOwner: this.props.user ? this.props.user.uid === this.props.match.params.uid : false,
@@ -29,7 +31,7 @@ export default class Dashboard extends React.Component {
     lfollowings: {},
 		loading: true,
     progress: 0,
-    tabSelected: 0
+    tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0,
 	}
 
 	static propTypes = {
@@ -38,6 +40,11 @@ export default class Dashboard extends React.Component {
 	}
 
 	static getDerivedStateFromProps(props, state) {
+    if (tabs.indexOf(props.match.params.tab) !== -1) {
+      if (tabs.indexOf(props.match.params.tab) !== state.tabSelected) {
+        return { tabSelected: tabs.indexOf(props.match.params.tab) };
+      }
+    }
     if (props.user) {
       if (props.user.uid !== state.luid) { 
 				return { 
@@ -61,12 +68,11 @@ export default class Dashboard extends React.Component {
       this.fetchUser();
       this.fetchFollowers();
       this.fetchFollowings();
+      if (this.state.tabSelected === 0) this.props.history.replace(`/dashboard/${this.state.uid}/${tabs[0]}`, null);
     }
 	}
 
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
+	componentWillUnmount() { this._isMounted = false; }
 
   componentDidUpdate(prevProps, prevState) {
 		if (this._isMounted) {
@@ -83,13 +89,21 @@ export default class Dashboard extends React.Component {
     //console.log('fetching user');
     userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
-        /* let count = -4;
-        let tot = Object.keys(snap.data()).length - 4;
-        Object.keys(snap.data()).forEach(i => { if (typeof i !== 'undefined') count++ }); */
+        let count = 0;
+        let tot = Object.keys(snap.data()).length;
+        Object.keys(snap.data()).forEach(i => { 
+          //console.log(snap.data()[i]);
+          if (typeof snap.data()[i] === 'string') {
+            if (snap.data()[i] !== '') count++ 
+          } else if (Array.isArray(snap.data()[i])) {
+            if (snap.data()[i].length > 0) count++ 
+          } else count++
+        });
+        //console.log(count, tot);
         this.setState({
           isOwner: luid ? luid === uid : false,
           user: snap.data(),
-          progress: 100 // / tot * count
+          progress: Number((100 / tot * count).toFixed(1))
         });
         this.setState({ loading: false });
       } else this.setState({ isOwner: false, user: null, loading: false });
@@ -188,7 +202,10 @@ export default class Dashboard extends React.Component {
     } else console.warn('User is not authenticated');
   }
   
-  onTabSelect = (e, value) => this.setState({ tabSelected: value });
+  onTabSelect = (e, value) => {
+    if (value !== -1) this.props.history.push(`/dashboard/${this.state.uid}/${tabs[value]}`, null);
+    this.setState({ tabSelected: value });
+  };
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
@@ -292,15 +309,17 @@ export default class Dashboard extends React.Component {
 							</div>
 						</div>
 					</div>
-					{isOwner && progress < 100 && 
+					{isOwner && progress < 100 &&
 						<div className="col-md-auto col-12 hide-md flex">
-							<div className="card dark text-center">
-								<div className="progress-container">
-									<div className="progress-base"></div>
-									<CircularProgress mode="determinate" value={progress} size={60} max={100} thickness={5} />
-									<div className="progress-value">{progress}%</div>
-								</div>
-								<div className="info-row"><Link to="/profile"><button className="btn primary centered">Completa profilo</button></Link></div>
+							<div className="card dark pad-v-sm text-center flex align-items-center">
+                <div className="container">
+                  <div className="progress-container">
+                    <div className="progress-base"></div>
+                    <CircularProgress variant="static" value={progress} size={60} max={100} thickness={3} />
+                    <div className="progress-value">{progress}%</div>
+                  </div>
+                  <div className="info-row"><Link to="/profile" className="btn primary centered">Completa profilo</Link></div>
+                </div>
 							</div>
 						</div>
 					}
@@ -326,29 +345,30 @@ export default class Dashboard extends React.Component {
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
           <div className="card tab" dir={tabDir}>
-            <Shelf luid={luid} uid={uid} shelf="bookInShelf"/>
-            <ShelfDetails />
+            {tabSelected === 0 && <Shelf luid={luid} uid={uid} shelf="bookInShelf"/>}
           </div>
           <div className="card tab" dir={tabDir}>
-            <Shelf luid={luid} uid={uid} shelf="bookInWishlist" />
-            <ShelfDetails />
+            {tabSelected === 1 && <Shelf luid={luid} uid={uid} shelf="bookInWishlist" />}
           </div>
           <div className="card tab" dir={tabDir}>
-            <NewFeature />
+            {tabSelected === 2 && <NewFeature />}
           </div>
           <div className="card tab contacts-tab" dir={tabDir}>
-            <div className="row">
-              <div className="col-md-6 cols-12">
-                <h4>Seguito da:</h4>
-                {Object.keys(followers).length ? Followers : <EmptyRow/>}
+            {tabSelected === 3 && 
+              <div className="row">
+                <div className="col-md-6 cols-12">
+                  <h4>Seguito da:</h4>
+                  {Object.keys(followers).length ? Followers : <EmptyRow/>}
+                </div>
+                <div className="col-md-6 col-12">
+                  <h4>Segue:</h4>
+                  {Object.keys(followings).length ? Followings : <EmptyRow/>}
+                </div>
               </div>
-              <div className="col-md-6 col-12">
-                <h4>Segue:</h4>
-                {Object.keys(followings).length ? Followings : <EmptyRow/>}
-              </div>
-            </div>
+            }
           </div>
         </SwipeableViews>
+        <ShelfDetails />
 			</div>
 		);
 	}

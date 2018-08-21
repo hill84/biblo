@@ -38,15 +38,23 @@ const Home = () => (
 		</Parallax>
 
 		<div className="container" style={{ marginTop: '-56px' }}>
-			<div className="card dark card-fullwidth-sm">
-				<BookCollection cid="Best seller" pagination={false} limit={7} scrollable={true} />
-			</div>
-      
-      <RandomQuote className="card dark quote-container card-fullwidth-sm" />
-
       <div className="card dark card-fullwidth-sm">
-        <h2>Generi</h2>
-        <Genres />
+        <BookCollection cid="Best seller" pagination={false} limit={7} scrollable={true} />
+      </div>
+
+      <div className="row flex">
+        <div className="col-12 col-lg-5 flex">
+          <div className="card dark card-fullwidth-sm">
+            <h2>Citazione</h2>
+            <RandomQuote className="quote-container" />
+          </div>
+        </div>
+        <div className="col-12 col-lg-7 flex">
+          <div className="card dark card-fullwidth-sm">
+            <h2>Generi</h2>
+            <Genres />
+          </div>
+        </div>
       </div>
 
       <div className="card dark card-fullwidth-sm">

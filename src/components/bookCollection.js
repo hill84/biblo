@@ -97,7 +97,7 @@ export default class BookCollection extends React.Component {
             //lastVisible: null
           });
         }
-      }).catch(error => console.warn("Error fetching collection:", error));
+      }).catch(error => console.warn(error));
     }
 
     if (!direction) {
@@ -114,11 +114,11 @@ export default class BookCollection extends React.Component {
 
 	render() {
 		const { booksPerRow, cid, collection, count, desc, limit, loading, page, pagination, scrollable, stacked } = this.state;
-    const covers = (collection && (collection.length > 0) ?
+    const covers = (collection && collection.length ?
       <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
-        {collection.map((book, index) => 
+        {collection.map((book, i) => 
           <Link key={book.bid} to={`/book/${book.bid}`}>
-            <Cover book={book} rating={true} full={stacked} index={index} bcid={book.bcid} />
+            <Cover book={book} rating={true} full={stacked} index={i} bcid={book.bcid} />
           </Link>
         )}
       </div>
@@ -136,12 +136,12 @@ export default class BookCollection extends React.Component {
                 <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
               :
                 <React.Fragment>
-                  <span className="counter last hide-xs">Ordina per</span>
                   <button 
+                    disabled
                     className="btn sm icon flat counter"
                     onClick={() => this.orderBy('rating')}
                     title="Ordina per valutazione">
-                    {icon.star()}
+                    Ordina per {icon.star()}
                   </button>
                   <button 
                     className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 

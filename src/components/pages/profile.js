@@ -205,7 +205,7 @@ export default class Profile extends React.Component {
                     <Select
                       id="sex"
                       placeholder="es: Femmina"
-                      value={user.sex || null}
+                      value={user.sex || ''}
                       onChange={this.onChangeSelect("sex")}
                       error={Boolean(errors.sex)}>
                       <MenuItem key="m" value="m">Uomo</MenuItem>
@@ -247,7 +247,7 @@ export default class Profile extends React.Component {
                   <Select
                     id="languages"
                     placeholder="es: Italiano, Spagnolo"
-                    value={user.languages || null}
+                    value={user.languages || []}
                     onChange={this.onChangeSelect("languages")}
                     multiple>
                     {menuItemsMap(languages, user.languages)}
@@ -261,7 +261,7 @@ export default class Profile extends React.Component {
                   <Select
                     id="continent"
                     placeholder="es: Europa"
-                    value={user.continent || null}
+                    value={user.continent || ''}
                     onChange={this.onChangeSelect("continent")}>
                     {menuItemsMap(continents)}
                   </Select>
@@ -275,7 +275,7 @@ export default class Profile extends React.Component {
                     <Select
                       id="nation"
                       placeholder="es: Italia"
-                      value={user.country || null}
+                      value={user.country || ''}
                       onChange={this.onChangeSelect("country")}>
                       {(user.continent === 'Europa') && menuItemsMap(europeanCountries)}
                       {(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
@@ -291,7 +291,7 @@ export default class Profile extends React.Component {
                     <Select
                       id="city"
                       placeholder="es: Torino"
-                      value={user.city || null}
+                      value={user.city || ''}
                       onChange={this.onChangeSelect("city")}>
                       {menuItemsMap(italianProvinces)}
                     </Select>

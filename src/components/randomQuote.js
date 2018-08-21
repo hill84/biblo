@@ -26,13 +26,14 @@ export default class RandomQuote extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchRandomQuote();
+    this.fetch();
   }
   
-  fetchRandomQuote = () => {
+  fetch = () => {
     const { limit } = this.state;
     const { author } = this.props;
-    const ref = author ? quotesRef.where('author', '==', author).limit(limit) : quotesRef;
+    const ref = author ? quotesRef.where('author', '==', author).limit(limit) : quotesRef.limit(this.props.limit || 20);
+
     ref.get().then(snap => {
       if (!snap.empty) {
         //console.log(snap);
@@ -58,14 +59,14 @@ export default class RandomQuote extends React.Component {
           loading: false
         });
       }
-    }).catch(error => console.warn(`Error fetching quotes: ${error}`));
+    }).catch(error => console.warn(error));
   }
 
   render() {
     const { author, bid, bookTitle, className, coverURL, loading, quote } = this.state;
 
     if (loading) {
-      return <div className="relative loader"><CircularProgress /></div>
+      return <div className="loader"><CircularProgress /></div>
     } else if (!quote) { 
       return null 
     }

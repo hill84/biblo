@@ -79,12 +79,12 @@ export default class QuotesDash extends React.Component {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           //console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
-          this.setState(prevState => ({
+          this.setState({
             items: items,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
             page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
-          }));
+          });
         } else this.setState({ items: null, count: 0, loading: false });
       });
     }
@@ -162,10 +162,10 @@ export default class QuotesDash extends React.Component {
               <div className="timestamp">{timeSince(quote.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(quote.author)}>{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(quote.qid)}>{icon.pencil()}</button>
-              <button className={`btn icon ${quote.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(quote.qid, quote.edit)} title={quote.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDeleteRequest(quote.qid)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(quote.author)}>{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(quote.qid)}>{icon.pencil()}</button>
+              <button className={`btn icon ${quote.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(quote.qid, quote.edit)} title={quote.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(quote.qid)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -200,7 +200,7 @@ export default class QuotesDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-sm">{`${items ? items.length : 0} di ${count || 0} citazioni`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 

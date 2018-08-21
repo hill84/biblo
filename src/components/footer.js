@@ -5,7 +5,7 @@ import { appName } from '../config/shared';
 const Footer = () => (
   <footer>
     <div className="footer dark" id="FooterComponent">
-      <div className="container pad-v-xs">
+      <div className="container bottompend pad-v-xs">
         <div className="row">
           <div className="col hide-md"><p>© {appName} 2018</p></div>
           <div className="col-md-auto col-12 text-center-md text-right">

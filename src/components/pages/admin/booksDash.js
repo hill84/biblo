@@ -42,10 +42,6 @@ export default class BooksDash extends React.Component {
     user: userType
 	}
 
-  /* static getDerivedStateFromProps(props, state) {
-    return null;
-  } */ 
-
 	componentDidMount() { 
     this._isMounted = true; 
     this.fetch();
@@ -184,10 +180,10 @@ export default class BooksDash extends React.Component {
               <div className="timestamp">{timeSince(book.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={e => this.onView(book.bid)} title="Anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={e => this.onEdit(book.bid)} title="Modifica">{icon.pencil()}</button>
-              <button className={`btn icon ${book.EDIT.edit ? 'secondary' : 'flat' }`} onClick={e => this.onLock(book.bid, book.EDIT.edit)} title={book.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={e => this.onDeleteRequest(book.bid)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(book.bid)} title="Anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(book.bid)} title="Modifica">{icon.pencil()}</button>
+              <button className={`btn icon ${book.EDIT.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(book.bid, book.EDIT.edit)} title={book.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(book.bid)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -222,7 +218,7 @@ export default class BooksDash extends React.Component {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0} libri`}</span>
+                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
                 <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 

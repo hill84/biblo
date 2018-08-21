@@ -1,4 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { booksRef } from '../../config/firebase';
@@ -10,8 +12,16 @@ export default class Genre extends React.Component {
   state = {
     books: null,
     coverview: false,
-    limit: 16,
-    loading: true
+    desc: true,
+    limit: 24,
+    loading: true,
+    orderBy: [ 
+      { type: 'rating_num', label: 'Valutazione'}, 
+      { type: 'title', label: 'Titolo'}
+    ],
+    orderByIndex: 0,
+    orderMenuAnchorEl: null,
+    page: 1
   }
 
   componentDidMount() {
@@ -24,16 +34,19 @@ export default class Genre extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { desc, orderByIndex } = this.state;
     if (this._isMounted) {
-      if(this.props.match.params.gid !== prevProps.match.params.gid){
+      if(this.props.match.params.gid !== prevProps.match.params.gid || desc !== prevState.desc || orderByIndex !== prevState.orderByIndex){
         this.fetch();
       }
     }
   }
 
   fetch = () => {
-    if (this.props.match.params.gid) {
-      booksRef.where('genres', 'array-contains', this.props.match.params.gid).limit(this.state.limit).get().then(snap => {
+    const { desc, limit, orderBy, orderByIndex } = this.state;
+    const { gid } = this.props.match.params;
+    if (gid) {
+      booksRef.where('genres', 'array-contains', gid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
         if (!snap.empty) {
           const books = [];
           snap.forEach(book => books.push(book.data()));
@@ -42,16 +55,36 @@ export default class Genre extends React.Component {
         } else {
           this.setState({ books: null, loading: false });
         }
-      }).catch(error => console.warn("Error fetching genres' books:", error));
+      }).catch(error => console.warn(error));
     } else console.warn(`No gid`);
   }
-  
+
+  onChangeOrderBy = (e, i) => {
+    this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
+  }
+
+  onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
+
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));
 
-  render() {
-    const { books, coverview, loading } = this.state;
+  onOpenOrderMenu = e => this.setState({ orderMenuAnchorEl: e.currentTarget });
 
-    const covers = books && books.map(book => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
+  onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
+
+  render() {
+    const { books, coverview, desc, loading, orderBy, orderByIndex, orderMenuAnchorEl } = this.state;
+
+    const covers = books && books.map((book, i) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} /></Link>);
+
+    const orderByOptions = orderBy.map((option, i) => (
+      <MenuItem
+        key={option.type}
+        disabled={i === -1}
+        selected={i === orderByIndex}
+        onClick={e => this.onChangeOrderBy(e, i)}>
+        {option.label}
+      </MenuItem>
+    ));
 
     if (loading) return <div className="loader"><CircularProgress /></div>
 
@@ -76,6 +109,16 @@ export default class Genre extends React.Component {
                         {coverview ? icon.viewSequential() : icon.viewGrid()}
                       </button>
                       <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
+                    </div>
+                    <div className="col-auto">
+                      <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+                      <button className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                      <Menu 
+                        anchorEl={orderMenuAnchorEl} 
+                        open={Boolean(orderMenuAnchorEl)} 
+                        onClose={this.onCloseOrderMenu}>
+                        {orderByOptions}
+                      </Menu>
                     </div>
                   </div>
                 </div>

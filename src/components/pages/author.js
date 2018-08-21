@@ -23,7 +23,8 @@ export default class Author extends React.Component {
     },
     books: null,
     coverview: false,
-    loading: true
+    loading: true,
+    loadingBooks: true
   }
 
   componentDidMount() {
@@ -43,17 +44,17 @@ export default class Author extends React.Component {
         const books = [];
         snap.forEach(book => books.push(book.data()));
         //console.log(books);
-        this.setState({ books, loading: false });
+        this.setState({ books, loadingBooks: false });
       } else {
-        this.setState({ books: null, loading: false });
+        this.setState({ books: null, loadingBooks: false });
       }
-		}).catch(error => console.warn("Error fetching authors' books:", error));
+		}).catch(error => console.warn(error));
   }
   
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));
 
   render() {
-    const { author, books, coverview, loading } = this.state;
+    const { author, books, coverview, loading, loadingBooks } = this.state;
 
     const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
 
@@ -80,36 +81,42 @@ export default class Author extends React.Component {
           </div>
         </div>
         
-        {books ? 
-          <div className="card">
-            <div className="shelf">
-              <div className="collection hoverable-items">
-                <div className="head nav">
-                  <div className="row">
-                    <div className="col">
-                      <button 
-                        className="btn sm flat counter"
-                        title={coverview ? 'Stack view' : 'Cover view'} 
-                        onClick={this.onToggleView}>
-                        {coverview ? icon.viewSequential() : icon.viewGrid()}
-                      </button>
-                      <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
+        {loadingBooks ? 
+          <div className="loader relative"><CircularProgress /></div>
+        :
+          <React.Fragment>
+            {books ? 
+              <div className="card">
+                <div className="shelf">
+                  <div className="collection hoverable-items">
+                    <div className="head nav">
+                      <div className="row">
+                        <div className="col">
+                          <button 
+                            className="btn sm flat counter"
+                            title={coverview ? 'Stack view' : 'Cover view'} 
+                            onClick={this.onToggleView}>
+                            {coverview ? icon.viewSequential() : icon.viewGrid()}
+                          </button>
+                          <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`}>
+                      {covers}
                     </div>
                   </div>
                 </div>
-                <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`}>
-                  {covers}
+              </div>
+            :
+              <div className="card dark pad-sm">
+                <div className="info-row empty text-center">
+                  <p>Non ci sono ancora libri di {author.displayName}</p>
+                  <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
                 </div>
               </div>
-            </div>
-          </div>
-        :
-          <div className="card dark pad-sm">
-            <div className="info-row empty text-center">
-              <p>Non ci sono ancora libri di {author.displayName}</p>
-              <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
-            </div>
-          </div>
+            }
+          </React.Fragment>
         }
 
       </div>

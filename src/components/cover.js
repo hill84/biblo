@@ -46,31 +46,28 @@ export default class Cover extends React.Component {
     if (!book) return null;
 
 		return (
-      <div className="book" ref="coverComponent"> 
-        {cover ?
-          <div className="cover" style={{backgroundImage: `url(${cover})`, animationDelay: `.${index}s`}} title={book.title}>
-            {bcid && <div className="bookmark accent">{bcid}</div>}
-            <div className="overlay"></div>
-            {/* (book.covers && book.covers.length > 1) && 
-              <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
-            */}
-          </div>
-        :
-          <div className="cover" title={book.title} style={{animationDelay: `.${index}s`}}>
-            {bcid && <div className="bookmark accent">{bcid}</div>}
-            <div className="overlay"></div>
-            <h2 className="title">{book.title}</h2>
-            {book.subtitle && book.subtitle.length > 0 && <h3 className="subtitle">{book.subtitle}</h3>}
-            <span className="author">{joinObj(book.authors)}</span>
-            <span className="publisher">{book.publisher}</span>
-          </div>
-        }
-        {(info !== false) && 
+      <div className="book"> 
+        <div className="cover" title={book.title} style={{animationDelay: `${index/10}s`, backgroundImage: cover ? `url(${cover})` : null}}>
+          {bcid && <div className="bookmark accent"><div>{bcid}</div></div>}
+          <div className="overlay"></div>
+          {/* (book.covers && book.covers.length > 1) && 
+            <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
+          */}
+          {!cover &&
+            <React.Fragment>
+              <h2 className="title">{book.title}</h2>
+              {book.subtitle && book.subtitle.length && <h3 className="subtitle">{book.subtitle}</h3>}
+              <span className="author">{joinObj(book.authors)}</span>
+              <span className="publisher">{book.publisher}</span>
+            </React.Fragment>
+          }
+        </div>
+        {info !== false && 
           <div className="info">
             <strong className="title">{book.title}</strong>
             <span className="author">di {joinObj(book.authors)}</span>
             {full && <span className="publisher">{book.publisher}</span>}
-            {(book.rating_num > 0) && (rating !== false) && 
+            {book.rating_num > 0 && rating !== false && 
               <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
             }
           </div>

@@ -58,7 +58,7 @@ export default class Admin extends React.Component {
 	componentDidMount() { 
     this._isMounted = true; 
     if (this.state.aid) this.fetchUser();
-    if (this.state.tabSelected === 0) this.props.history.push(`/admin/${tabs[0]}`, null);
+    if (this.state.tabSelected === 0) this.props.history.replace(`/admin/${tabs[0]}`, null);
   }
 
 	componentWillUnmount() { this._isMounted = false; }

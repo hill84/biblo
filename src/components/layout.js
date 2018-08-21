@@ -13,7 +13,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import NavLink from 'react-router-dom/NavLink';
-import { signOut, uid } from '../config/firebase';
+import { /* noteRef,  */signOut, uid } from '../config/firebase';
 import { appName, getInitials, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
@@ -25,11 +25,38 @@ export default class Layout extends React.Component {
     drawerIsOpen: false,
     moreAnchorEl: null,
     notes: null,
-    notesAnchorEl: null
+    notesAnchorEl: null,
+    user: this.props.user
   }
 
   static propTypes = {
     user: userType
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.user !== state.user) { return { user: props.user }}
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { user } = this.state;
+    if(user !== prevState.user){
+      setTimeout(() => {
+        this.fetchNotes()
+      }, 1000);
+    }
+  }
+
+  fetchNotes = () => {
+    //TODO
+    /* const { user } = this.state;
+    noteRef(user.uid).onSnapshot(snap => {
+      if (!snap.empty) {
+        const notes = [];
+        snap.forEach(note => !note.data().read && notes.push(note.data()));
+        this.setState({ notes });
+      }
+    }); */
   }
   
   onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
@@ -45,8 +72,8 @@ export default class Layout extends React.Component {
   onCloseDialog = () => this.setState({ dialogIsOpen: false });
   
   render() {
-    const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = this.state;
-    const { children, user } = this.props;
+    const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl, user } = this.state;
+    const { children } = this.props;
 
     return (
       <div id="layoutComponent">
@@ -75,7 +102,7 @@ export default class Layout extends React.Component {
                   onClick={this.onOpenNotes}
                   title={`${notes ? notes.length : 0} notifiche`}>
                   {icon.bell()}
-                  {notes && <div className="dot">{notes.length}</div>}
+                  {notes && notes.length && <div className="dot">{notes.length}</div>}
                 </IconButton>
                 <Menu
                   className="notes"
