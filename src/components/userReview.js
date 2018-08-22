@@ -296,7 +296,7 @@ export default class UserReview extends React.Component {
                     <InputLabel error={Boolean(errors.text)} htmlFor="text">Recensione</InputLabel>
                     <Input
                       id="text"
-                      name="text"
+                      autoFocus
                       type="text"
                       autoFocus
                       placeholder={`Scrivi una recensione (max ${text_maxChars} caratteri)...`}

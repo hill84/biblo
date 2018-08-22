@@ -19,8 +19,8 @@ export const defaultTheme = createMuiTheme({
       contrastText: '#FFF',
     },
     text: {
-      primary: cyan[700],
-      secondary: "rgba(0, 0, 0, 0.3)",
+      //primary: cyan[700],
+      //secondary: "rgba(0, 0, 0, 0.3)",
       //disabled: "rgba(0, 0, 0, 0.38)",
       //hint: "rgba(0, 0, 0, 0.38)"
     },

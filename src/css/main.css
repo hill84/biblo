@@ -851,6 +851,18 @@ hr.line {
 #appBarComponent { position: fixed !important; top: 0; }
 #appBarComponent .toolbar { min-height: 60px; }
 #appBarComponent .title { flex: 1; margin-left: 10px; margin-right: 10px; }
+#appBarComponent .title sup {
+  display: inline-block;
+  background: var(--accentClr);
+  font-size: .5rem;
+  color: #333;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: .6px;
+  padding: 2px;
+  border-radius: 1px;
+  margin-left: -5px;
+}
 #appBarComponent svg { --iconSize: 24px; }
 #appBarComponent button { color: #fff; }
 #appBarComponent .more-btn { margin-right: -12px; color: inherit; }
@@ -877,7 +889,7 @@ hr.line {
 .drawer .list { width: 256px; }
 
 /* CUSTOM */
-.hero .container { padding-top: 140px; padding-bottom: 95px; }
+.hero .container { padding-top: 140px; padding-bottom: 95px; margin-top: 0; }
 .hero .bg img { animation: fadeIn .4s ease-in-out 0; }
 .hero .title {
   margin: 0;
@@ -1928,6 +1940,7 @@ hr.line {
 @media (max-width: 768px) {
   :root { --booksPerRow-lg: 3; }
   .text-center-md { text-align: center; }
+  .hero .container { padding-top: 65px; }
   .book-profile .title { font-size: 1.6rem; }
   .book-incipit { transform-origin: top center; animation-name: flipInX; }
   .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr; }
@@ -1998,11 +2011,11 @@ hr.line {
 @media (pointer: coarse) {
   .user.rating .react-rater { font-size: 36px; }
   .user.rating .label { display: none; }
-  .genres .content {
+  /* .genres .content {
     white-space: nowrap;
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch; 
   }
-  .genres:before, .genres:after { content: ''; }
+  .genres:before, .genres:after { content: ''; } */
 }

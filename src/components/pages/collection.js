@@ -63,7 +63,7 @@ export default class Collection extends React.Component {
         <div className="row">
           <div className="col">
             <div className="card dark collection-profile">
-              {loading ? <div className="loader pad-v"><CircularProgress /></div> : 
+              {loading ? <div className="loader"><CircularProgress /></div> : 
                 <React.Fragment>
                   <h2>{cid}</h2>
                   <p className="description">{collection.description}</p>
@@ -77,7 +77,7 @@ export default class Collection extends React.Component {
             {collections && 
               <div className="card dark">
                 <h2>Altre collezioni</h2>
-                {collections.map((collection, i) => 
+                {collections.map(collection => 
                   <li key={normalizeString(collection.title)}>
                     <Link to={`/collection/${collection.title}`}>{collection.title}</Link> 
                   </li>

@@ -4,7 +4,7 @@ import { appName } from '../../config/shared';
 
 const TermsPage = props => {
   return (
-    <div id="TermsPageComponent" class="reveal fadeIn slideUp">
+    <div id="TermsPageComponent" className="reveal fadeIn slideUp">
       <div className="container pad-v">
         <h2>Termini e condizioni d'uso</h2>
         <div className="text-justify text-left-sm">

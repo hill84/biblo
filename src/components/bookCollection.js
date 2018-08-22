@@ -135,21 +135,12 @@ export default class BookCollection extends React.Component {
               {(pagination && count > limit) || scrollable ?
                 <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
               :
-                <React.Fragment>
-                  <button 
-                    disabled
-                    className="btn sm icon flat counter"
-                    onClick={() => this.orderBy('rating')}
-                    title="Ordina per valutazione">
-                    Ordina per {icon.star()}
-                  </button>
-                  <button 
-                    className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
-                    title={desc ? 'Ascendente' : 'Discendente'} 
-                    onClick={this.onToggleDesc}>
-                    {icon.arrowDown()}
-                  </button>
-                </React.Fragment>
+                <button 
+                  className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
+                  title={desc ? 'Ascendente' : 'Discendente'} 
+                  onClick={this.onToggleDesc}>
+                  {icon.arrowDown()}
+                </button>
               }
               {pagination && count > limit &&
                 <React.Fragment>

@@ -58,6 +58,10 @@ const Home = () => (
       </div>
 
       <div className="card dark card-fullwidth-sm">
+        <BookCollection cid="Libri proibiti" pagination={false} limit={7} scrollable={true} />
+      </div>
+
+      <div className="card dark card-fullwidth-sm">
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
 			</div>
 
