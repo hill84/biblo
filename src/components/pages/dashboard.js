@@ -103,7 +103,7 @@ export default class Dashboard extends React.Component {
         this.setState({
           isOwner: luid ? luid === uid : false,
           user: snap.data(),
-          progress: Number((100 / tot * count).toFixed(1))
+          progress: Number((100 / tot * count).toFixed(0))
         });
         this.setState({ loading: false });
       } else this.setState({ isOwner: false, user: null, loading: false });

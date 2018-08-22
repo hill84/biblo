@@ -871,7 +871,7 @@ hr.line {
 #appBarComponent a { color: white; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
 #appBarComponent .reveal { animation-duration: .3s; }
-#appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); }
+#appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); font-size: 1rem; }
 #appBarComponent .search-book { 
   position: absolute;
   top: 4px;
@@ -996,7 +996,7 @@ hr.line {
   margin-bottom: 10px;
   width: 70px;
   height: 70px;
-  box-shadow: inset 0 0 0 50px var(--cardBg), 0 0 0 10px var(--cardBg);
+  box-shadow: /* inset 0 0 0 50px var(--cardBg),  */0 0 0 10px var(--cardBg);
 }
 
 /* author */

@@ -17,7 +17,8 @@ export default class SignupForm extends React.Component {
       password: '',
       roles: {
         admin: false,
-        editor: true
+        editor: true,
+        premium: false
       },
       stats: {
         followed_num: 0,
@@ -31,7 +32,7 @@ export default class SignupForm extends React.Component {
     loading: false,
     errors: {},
     authError: '',
-    redirectToReferrer: false
+    redirectTo: null
   };
 
 	onChange = e => {
@@ -41,11 +42,12 @@ export default class SignupForm extends React.Component {
 	};
 
 	onSubmit = e => {
-		e.preventDefault();
-		const errors = this.validate(this.state.data);
-		this.setState({ authError: '', errors });
+    e.preventDefault();
+    const { data } = this.state;
+		const errors = this.validate(data);
+		this.setState({ authError: '', loading: true, errors });
 		if(Object.keys(errors).length === 0) {
-			auth.createUserWithEmailAndPassword(this.state.data.email, this.state.data.password).catch(error => {
+			auth.createUserWithEmailAndPassword(data.email, data.password).catch(error => {
 				this.setState({
 					authError: error.message,
 					loading: false
@@ -55,16 +57,14 @@ export default class SignupForm extends React.Component {
 				if (user) {
 					userRef(user.uid).set({
 						uid: user.uid,
-						displayName: this.state.data.displayName,
+						displayName: data.displayName,
 						email: user.email,
 						creationTime: user.metadata.creationTime,
-						roles: this.state.roles,
-						stats: this.state.stats
+						roles: data.roles,
+						stats: data.stats
 					});
-					this.setState({ 
-						redirectToReferrer: true 
-					});
-				}
+					this.setState({ redirectTo: user.uid });
+				} else console.warn('No user is signed in');
 			});
 		}
 	};
@@ -81,10 +81,9 @@ export default class SignupForm extends React.Component {
 	};
 
 	render() {
-    const { authError, data, errors, redirectToReferrer } = this.state;
-		const { from } = {from: { pathname: '/profile' }};
+    const { authError, data, errors, redirectTo } = this.state;
 
-		if (redirectToReferrer) return <Redirect to={from} />
+		if (redirectTo) return <Redirect to={`/dashboard/${redirectTo}`} />
 
 		return (
 			<div ref="signupFormComponent">

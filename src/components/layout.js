@@ -83,7 +83,7 @@ export default class Layout extends React.Component {
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
             <Typography className="title" variant="title" color="inherit">
-              <Link to="/">{appName}<sup>Pre Alpha</sup></Link>
+              <Link to="/">{appName}<sup>Alpha</sup></Link>
             </Typography>
             {user ? 
               <React.Fragment>
