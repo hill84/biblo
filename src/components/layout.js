@@ -13,7 +13,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import NavLink from 'react-router-dom/NavLink';
-import { /* noteRef,  */signOut, uid } from '../config/firebase';
+import { noteRef, signOut, uid } from '../config/firebase';
 import { appName, getInitials, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
@@ -48,15 +48,15 @@ export default class Layout extends React.Component {
   }
 
   fetchNotes = () => {
-    //TODO
-    /* const { user } = this.state;
+    const { user } = this.state;
     noteRef(user.uid).onSnapshot(snap => {
-      if (!snap.empty) {
+      if (snap.exists) {
+        //console.log(snap.data().notes);
         const notes = [];
-        snap.forEach(note => !note.data().read && notes.push(note.data()));
+        snap.data().notes.forEach((note, i) => !note.read && notes.push({ ...note, nid: i }));
         this.setState({ notes });
       }
-    }); */
+    });
   }
   
   onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
@@ -77,7 +77,7 @@ export default class Layout extends React.Component {
 
     return (
       <div id="layoutComponent">
-        <AppBar id="appBarComponent" position="static">
+        <AppBar id="appBarComponent" className="dark" position="static">
           <Toolbar className="toolbar">
             <IconButton className="drawer-btn" aria-label="Menu" onClick={this.onToggleDrawer}> 
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
@@ -113,9 +113,11 @@ export default class Layout extends React.Component {
                   onClose={this.onCloseNotes}>
                   {notes && notes.length ?
                     notes.map(note => (
-                      <MenuItem> 
+                      <MenuItem key={note.nid}> 
                         <div className="row">
-                          <div className="col text">{note.text}</div>
+                          <div className="col text">
+                            <div dangerouslySetInnerHTML={{__html: note.text}} />
+                          </div>
                           <div className="col-auto date">{timeSince(note.created_num)}</div>
                         </div>
                       </MenuItem>

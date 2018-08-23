@@ -16,9 +16,9 @@ const Home = () => (
 			disabled={(isTouchDevice() || window.innerWidth < 768) ? true : false}
       strength={400}>
 			<div className="container text-center">
-				<h1 className="title reveal fadeIn slideUp">Scopriamo nuovi libri, insieme.</h1>
+				<h1 className="title reveal fadeIn slideUp">Scopriamo nuovi libri, insieme</h1>
 				<p className="subtitle reveal fadeIn slideUp">
-          <big className="hide-sm">Crea la tua libreria, scrivi una recensione, scopri cosa leggono i tuoi amici.</big>
+          <big className="hide-sm">Crea la tua libreria, scrivi una recensione, scopri cosa leggono i tuoi amici</big>
         </p>
         <div className="btns reveal fadeIn slideUp">
           {isAuthenticated() ? 

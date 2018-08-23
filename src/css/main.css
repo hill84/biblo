@@ -231,7 +231,8 @@ hr.line {
 }
 
 /* CARDS */
-.card, .light {
+.light, html.light .dark, html:not(.dark) .card:not(.dark):not(.primary) {
+  --mainBg: #f7f7f7;
   --cardBg: #fff;
   --contrastedTextClr: #000;
   --mainTextClr: #212529;
@@ -400,7 +401,7 @@ hr.line {
 }
 
 /* DARK */
-.dark, .dark .primary {
+.dark, .dark .primary, html.dark .light {
   --skltnBg: rgba(0,10,20,.15);
   --contrastedTextClr: #fff;
   --mainTextClr: rgba(230,250,255,.7);
@@ -414,8 +415,8 @@ hr.line {
   /* --btnDisabledBg: var(--canvasLighterClr); */
   --cardBg: var(--canvasLightClr);
 }
-.card.dark, .dark .card,
-.card.primary, .primary .card { 
+html:not(.light) .card.dark, .dark .card,
+html:not(.light) .card.primary, .primary .card { 
   font-weight: 200; 
 }
 
@@ -821,12 +822,15 @@ hr.line {
 
 /* NOTIFICATIONS */
 .notes { --mainTextClr: #666; --lightTextClr: #aaa; --lighterTextClr: #ccc; }
-.notes ul { padding-top: 0; padding-bottom: 0; max-width: 320px; }
+.notes ul { padding-top: 0; padding-bottom: 0; max-width: 320px; min-width: 260px; }
+.notes li, .notes .footer { padding-left: 8px; padding-right: 8px; height: auto; }
 .notes li:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,.03); }
-.notes .text { color: var(--mainTextClr); font-size: .8rem; white-space: normal; line-height: 125%; }
+.notes li .row { align-items: center; width: 100%; margin-left: 0; margin-right: 0; line-height: 125%; }
+.notes .text { color: var(--mainTextClr); font-size: .8rem; white-space: normal; }
 .notes .text .icon { margin-right: 10px; }
 .notes .date { color: var(--lighterTextClr); font-size: .7rem; font-weight: 200; text-align: right; float: right; }
-.notes .footer, .notes .footer a { text-align: center; }
+.notes .footer { text-align: center; }
+.notes .footer a { margin: auto; }
 
 .dot {
   --dotSize: 16px;
@@ -848,7 +852,13 @@ hr.line {
 
 /* APPBAR */
 #layoutComponent { padding-top: 60px; flex-grow: 1; }
-#appBarComponent { position: fixed !important; top: 0; }
+#appBarComponent { 
+  position: fixed !important; 
+  top: 0; 
+  background-color: var(--cardBg); 
+  color: var(--contrastedTextClr); 
+  box-shadow: 0 1px 10px -2px rgba(0,0,0,.2); 
+}
 #appBarComponent .toolbar { min-height: 60px; }
 #appBarComponent .title { flex: 1; margin-left: 10px; margin-right: 10px; }
 #appBarComponent .title sup {
@@ -862,13 +872,15 @@ hr.line {
   padding: 2px;
   border-radius: 1px;
   margin-left: -5px;
+  animation: fadeInSlideDown .8s ease-in-out 2.6s;
+  animation-fill-mode: both;
 }
 #appBarComponent svg { --iconSize: 24px; }
-#appBarComponent button { color: #fff; }
-#appBarComponent .more-btn { margin-right: -12px; color: inherit; }
-#appBarComponent .drawer-btn { margin-left: -12px; color: inherit; }
-#appBarComponent button .dot { box-shadow: 0 0 0 3px var(--primaryClr); }
-#appBarComponent a { color: white; }
+#appBarComponent button { color: currentColor; }
+#appBarComponent .more-btn { margin-right: -12px; color: currentColor; }
+#appBarComponent .drawer-btn { margin-left: -12px; color: currentColor; }
+#appBarComponent button .dot { box-shadow: 0 0 0 3px var(--cardBg); }
+#appBarComponent a { color: currentColor; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
 #appBarComponent .reveal { animation-duration: .3s; }
 #appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); font-size: 1rem; }
@@ -916,6 +928,7 @@ hr.line {
   background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 75%);
   animation: none;
 }
+html.light .hero * { text-shadow: none; }
 
 .form-group label + div:before {
   border-color: rgba(0,0,0,.15);
@@ -1556,7 +1569,7 @@ hr.line {
 .review .foot .btn { --btnFontSize: .75rem; --btnHeight: 26px; --btnPad: .5rem; margin-top: 0; margin-bottom: 0; }
 .review .foot .btn:disabled { color: var(--lighterTextClr); cursor: unset; opacity: 1; }
 .edit-review { 
-  will-change: opacity; 
+  will-change: transform, opacity; 
   transform-origin: top; 
   max-height: 500px; 
   animation: slideDown .4s ease-in-out; 
