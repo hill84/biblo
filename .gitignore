@@ -31,3 +31,5 @@ node_modules
 
 /Build/*
 \.vscode/launch\.json
+
+*.cache
