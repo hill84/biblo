@@ -4,7 +4,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
-import { noteRef/* , notesRef */ } from '../../config/firebase';
+import { FieldValue, noteRef/* , notesRef */ } from '../../config/firebase';
 import { funcType, stringType } from '../../config/types';
 
 export default class noteForm extends React.Component {
@@ -47,8 +47,9 @@ export default class noteForm extends React.Component {
     this.setState({ loading: true });
     noteRef(this.props.id).get().then(snap => {
       if (!snap.empty) {
+        //console.log(snap.data());
         this.setState({ 
-          data: snap.data().notes[this.props.i],
+          data: snap.data().notes[this.props.el],
           loading: false
         });
       }
@@ -77,23 +78,26 @@ export default class noteForm extends React.Component {
 	onSubmit = e => {
     e.preventDefault();
     const { data } = this.state;
-    const { openSnackbar, user } = this.props;
+    const { id, openSnackbar, user } = this.props;
 		const errors = this.validate(this.state.data);
 		this.setState({ authError: '', errors });
 		if(Object.keys(errors).length === 0) {
       this.setState({ loading: true });
-      //TODO
-      /* const ref = data.qid ? noteRef(data.qid) : notesRef.doc();
-      ref.set({
-        text: data.note || '',
-        created_num: Number((new Date()).getTime()),
-        createdByUid: user.uid,
-        read: data.read || false
+      //TOFIX
+      //console.log(id);
+      noteRef(id).update({ 
+        notes: FieldValue.arrayUnion({
+          text: data.text,
+          created_num: Number((new Date()).getTime()),
+          createdBy: user.displayName,
+          createdByUid: user.uid,
+          read: data.read || false
+        })
       }).then(() => {
         this.onToggle();
         this.setState({ loading: false });
         openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-      }).catch(error => console.warn(error)); */
+      }).catch(error => console.warn(error));
 		}
 	};
 

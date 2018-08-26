@@ -30,7 +30,8 @@ auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentU
 /* FIRESTORE */
 const db = firebase.firestore();
 db.settings({/* my settings... */ timestampsInSnapshots: true});
-export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+export const FieldValue = firebase.firestore.FieldValue;
+export const timestamp = FieldValue.serverTimestamp();
 //export const timestamp = firebase.ServerValue;
 
 export const usersRef = db.collection('users');

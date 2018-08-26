@@ -24,7 +24,7 @@ export default class NewFeature extends React.Component {
         <div className="text-center">
           <div className="pad-v">
             <h1>Questa funzionalità non è ancora pronta</h1>
-            <p>Ti piacerebbe far crescere {appName}? Contribuisci con una donazione.</p>
+            <p>Aiutami far crescere {appName}. <span className="hide-sm">Contribuisci con una donazione.</span></p>
             <p>
               <button className={`btn ${ isOpenPayments ? 'flat' : 'primary'}`} onClick={this.onTogglePayments}>Fai una donazione</button>
               {isOpenPayments && 

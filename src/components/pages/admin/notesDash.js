@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 /* import Link from 'react-router-dom/Link'; */
 import Redirect from 'react-router-dom/Redirect';
-import { /* noteRef,  */notesRef/* , pubNoteRef */ } from '../../../config/firebase';
+import { FieldValue, noteRef, notesRef/* , pubNoteRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';
 import { timeSince } from '../../../config/shared';
@@ -26,6 +26,7 @@ export default class NotesDash extends React.Component {
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     page: 1,
+    selectedEl: null,
     selectedId: null,
     loading: true
 	}
@@ -68,7 +69,7 @@ export default class NotesDash extends React.Component {
         //console.log(snap);
         if (!snap.empty) {
           const items = [];
-          snap.forEach(item => items.push({ notes: item.data().notes, id: item.id, expanded: false }));
+          snap.forEach(item => items.push({ notes: item.data().notes, id: item.id }));
           //console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
           this.setState({
             items: items,
@@ -98,18 +99,18 @@ export default class NotesDash extends React.Component {
 
   onView = id => this.setState({ redirectTo: id });
   
-  onEdit = (id, i) => this.props.onToggleDialog(id, i);
+  onEdit = (id, el) => this.props.onToggleDialog(id, el);
 
-  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
-  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onDeleteRequest = (id, el) => this.setState({ isOpenDeleteDialog: true, selectedId: id, selectedEl: el });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null, selectedEl: null });
   onDelete = () => {
-    const { selectedId } = this.state;
-    console.log(`Deleting ${selectedId}`);
-    //TODO
-    /* noteRef(selectedId).delete().then(() => {
+    const { items, selectedEl, selectedId } = this.state;
+    console.log({ items, selectedId, selectedEl });
+    const note = items.filter(obj => obj.id === selectedId)[0].notes[selectedEl];
+    noteRef(selectedId).update({ notes: FieldValue.arrayRemove(note) }).then(() => {
       this.setState({ isOpenDeleteDialog: false });
       this.props.openSnackbar('Elemento cancellato', 'success');
-    }).catch(error => console.warn(error)); */
+    }).catch(error => console.warn(error));
   }
 
   onToggleExpansion = id => this.setState({ selectedId: id });
