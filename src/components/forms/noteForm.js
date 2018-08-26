@@ -4,7 +4,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
-import { noteRef, notesRef } from '../../config/firebase';
+import { noteRef/* , notesRef */ } from '../../config/firebase';
 import { funcType, stringType } from '../../config/types';
 
 export default class noteForm extends React.Component {
@@ -111,8 +111,6 @@ export default class noteForm extends React.Component {
 
 	render() {
     const { authError, data, errors, loading, text_leftChars, text_maxChars } = this.state;
-    
-    if (!data) return null;
 
 		return (
 			<React.Fragment>

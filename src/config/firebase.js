@@ -14,13 +14,7 @@ const config = {
 
 if (!firebase.apps.length) firebase.initializeApp(config);
 
-const db = firebase.firestore();
-db.settings({/* my settings... */ timestampsInSnapshots: true});
-export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-//export const timestamp = firebase.ServerValue;
-
-const storage = firebase.storage();
-
+/* AUTH */
 export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
 export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
@@ -32,6 +26,12 @@ export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getIte
 export let uid = (auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid);
 auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
 //auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
+
+/* FIRESTORE */
+const db = firebase.firestore();
+db.settings({/* my settings... */ timestampsInSnapshots: true});
+export const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+//export const timestamp = firebase.ServerValue;
 
 export const usersRef = db.collection('users');
 export const userRef = uid => db.collection('users').doc(uid);
@@ -60,10 +60,13 @@ export const authorRef = aid => db.collection('authors').doc(aid);
 export const quotesRef = db.collection('quotes');
 export const quoteRef = qid => db.collection('quotes').doc(qid);
 
-export const pubNoteRef = collection => db.collection('notifications').doc('__' + collection);
 export const notesRef = db.collection('notifications');
 export const noteRef = uid => db.collection('notifications').doc(uid);
+export const pubNoteRef = collection => db.collection('notifications').doc(`__${collection}`);
 
-export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)
+/* STORAGE */
+const storage = firebase.storage();
+export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`);
 
+/* EXPORT */
 export default firebase;

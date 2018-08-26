@@ -95,7 +95,7 @@ export default class BookProfile extends React.Component {
     const { loading, openSnackbar } = this.props;
     const hasRole = role => user && user.roles && user.roles[role] === true;
     const hasBid = () => book && Boolean(book.bid);
-    const isLocked = () => book && book.EDIT.edit && !hasRole('admin');
+    const isLocked = () => book && !book.EDIT.edit && !hasRole('admin');
     const authors = book && <Link to={`/author/${Object.keys(book.authors)[0]}`}>{Object.keys(book.authors)[0]}</Link>;
 
     if (loading) return <div className="loader"><CircularProgress /></div>
@@ -129,7 +129,7 @@ export default class BookProfile extends React.Component {
                     {book.authors && <span className="counter">di {authors}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && hasRole('editor') && hasBid() &&
-                      <button className={`btn sm flat counter ${isLocked() ? 'disabled' : ''}`} onClick={this.onEditing}>
+                      <button className="btn sm flat counter" disabled={isLocked()} onClick={this.onEditing} title={book.EDIT.edit ? null : 'Solo gli amministratori possono modificare'}>
                         {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
                       </button>
                     }

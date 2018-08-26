@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 /* import Link from 'react-router-dom/Link'; */
 import Redirect from 'react-router-dom/Redirect';
-import { noteRef, notesRef/* , pubNoteRef */ } from '../../../config/firebase';
+import { /* noteRef,  */notesRef/* , pubNoteRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';
 import { timeSince } from '../../../config/shared';
@@ -44,16 +44,16 @@ export default class NotesDash extends React.Component {
 	componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
-    const { desc, limitByIndex, orderByIndex } = this.state;
+    const { limitByIndex } = this.state;
     if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      if (limitByIndex !== prevState.limitByIndex) {
         this.fetch();
       }
     }
   }
     
   fetch = direction => {
-    const { count, desc, lastVisible, limitBy, limitByIndex, page } = this.state;
+    const { count, /* lastVisible,  */limitBy, limitByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
     const baseRef = notesRef.limit(limit);
@@ -65,7 +65,7 @@ export default class NotesDash extends React.Component {
 
     const fetcher = () => {
       ref.onSnapshot(snap => {
-        console.log(snap);
+        //console.log(snap);
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push({ notes: item.data().notes, id: item.id, expanded: false }));
@@ -92,10 +92,6 @@ export default class NotesDash extends React.Component {
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
-  onOpenOrderMenu = e => this.setState({ orderMenuAnchorEl: e.currentTarget });
-  onChangeOrderBy = (e, i) => this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
-  onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
-
   onOpenLimitMenu = e => this.setState({ limitMenuAnchorEl: e.currentTarget });
   onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
@@ -108,7 +104,7 @@ export default class NotesDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
-    //console.log(`Deleting ${selectedId}`);
+    console.log(`Deleting ${selectedId}`);
     //TODO
     /* noteRef(selectedId).delete().then(() => {
       this.setState({ isOpenDeleteDialog: false });
@@ -119,23 +115,23 @@ export default class NotesDash extends React.Component {
   onToggleExpansion = id => this.setState({ selectedId: id });
 
 	render() {
-    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
+    const { count, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && items.length &&
-      items.map(item => 
-        <li 
-          key={item.id} 
-          class={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
-          onClick={() => this.onToggleExpansion(item.id)}>
-          <div className="row">
-            <div className="col-auto">{item.notes ? item.notes.length : 0}</div>
-            <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
-            <div className="col-1 text-right expandible-icon">
-              {icon.chevronDown()}
-            </div>
+    const itemsList = (items && items.length && items.map(item => 
+      <li 
+        key={item.id} 
+        className={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
+        onClick={() => this.onToggleExpansion(item.id)}>
+        <div className="row">
+          <div className="col-auto">{item.notes ? item.notes.length : 0}</div>
+          <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
+          <div className="col-1 text-right expandible-icon">
+            {icon.chevronDown()}
           </div>
-          {item.notes && <ul class="expandible">
+        </div>
+        {item.notes && 
+          <ul className="expandible">
             {item.notes.map((note, i) =>
               <li key={`${item.id}-${i}`} className={note.read ? 'read' : 'not-read'}>
                 <div className="row">
@@ -152,10 +148,10 @@ export default class NotesDash extends React.Component {
                 </div>
               </li>
             )}
-          </ul>}
-        </li>
-      )
-    );
+          </ul>
+        }
+      </li>
+    ));
 
     const limitByOptions = limitBy.map((option, index) => (
       <MenuItem
