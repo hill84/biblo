@@ -40,6 +40,7 @@ export const genres = [
   { id: "mu", name: "Musica" },
   { id: "na", name: "Narrativa" },
   { id: "po", name: "Poesia" },
+  { id: "pl", name: "Politica" },
   { id: "ps", name: "Psicologico" },
   { id: "re", name: "Religione e spiritualità" },
   { id: "ro", name: "Rosa" },
@@ -48,7 +49,7 @@ export const genres = [
   { id: "ss", name: "Scienze sociali" },
   { id: "st", name: "Storico" },
   { id: "th", name: "Thriller" },
-  { id: "um", name: "Umoristico" },
+  { id: "um", name: "Satira e umorismo" },
   { id: "vi", name: "Viaggi" }
 ];
 

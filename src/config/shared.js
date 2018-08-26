@@ -136,13 +136,14 @@ export const switchGenres = array => array.map(string => {
     case "Family & Relationships":      g = "Famigliae relazioni"; break;
     case "Fiction":                     g = "Narrativa"; break;
     case "History":                     g = "Storico"; break;
-    case "Humor":                       g = "Umoristico"; break;
+    case "Humor":                       g = "Satira e umorismo"; break;
     case "Juvenile Fiction":            g = "Per ragazzi"; break;
     case "Literary Criticism":          g = "Saggistica"; break;
     case "Medical":                     g = "Medicina e salute"; break;
     case "Mistery":                     g = "Mistero"; break;
     case "Music":                       g = "Musica"; break;
     case "Philosophy":                  g = "Filosofia"; break;
+    case "Politics":                    g = "Politica"; break;
     case "Poetry":                      g = "Poesia"; break;
     case "Science":                     g = "Scienza"; break; 
     case "Science fiction":             g = "Fantascienza"; break; 
