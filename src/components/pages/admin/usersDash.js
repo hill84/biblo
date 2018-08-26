@@ -2,13 +2,15 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import Redirect from 'react-router-dom/Redirect';
-import { /* priNotesRef,  */userRef, /* userShelfRef,  */usersRef } from '../../../config/firebase';
+import { noteRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { getInitials } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -124,14 +126,12 @@ export default class UsersDash extends React.Component {
     const { selectedId } = this.state;
     //console.log(`Deleting ${selectedId}`);
     userRef(selectedId).delete().then(() => {
-      /* 
       userShelfRef(selectedId).delete().then(() => {
         console.log(`User reviews deleted`);
       }).catch(error => console.warn(error));
-      priNotesRef(selectedId).delete().then(() => {
+      noteRef(selectedId).delete().then(() => {
         console.log(`User notifications deleted`);
-      }).catch(error => console.warn(error)); 
-      */
+      }).catch(error => console.warn(error));
       this.setState({ isOpenDeleteDialog: false });
       this.props.openSnackbar('Elemento cancellato', 'success');
     }).catch(error => console.warn(error));
@@ -143,43 +143,43 @@ export default class UsersDash extends React.Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && (items.length > 0) &&
-      items.map((user) => 
-        <li key={user.uid} className={`avatar-row ${user.roles.editor ? '' : 'locked'}`}>
+    const itemsList = (items && items.length &&
+      items.map(item => 
+        <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto hide-xs avatar-container">
-              <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+              <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
             </div>
-            <Link to={`/dashboard/${user.uid}`} className="col hide-sm" title={user.displayName}>
-              {user.displayName}
+            <Link to={`/dashboard/${item.uid}`} className="col hide-sm" title={item.displayName}>
+              {item.displayName}
             </Link>
-            <div className="col monotype" title={user.uid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={user.uid}/>
+            <div className="col monotype" title={item.uid}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.uid}/>
             </div>
-            <div className="col monotype hide-sm" title={user.email}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={user.email}/>
+            <div className="col monotype hide-sm" title={item.email}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.email}/>
             </div>
             <div className="col col-sm-3 col-lg-2">
               <div className="row text-center">
-                <div className="col">{user.stats.shelf_num}</div>
-                <div className="col">{user.stats.wishlist_num}</div>
-                <div className="col">{user.stats.reviews_num}</div>
-                <div className="col hide-md">{user.stats.ratings_num}</div>
+                <div className="col">{item.stats.shelf_num}</div>
+                <div className="col">{item.stats.wishlist_num}</div>
+                <div className="col">{item.stats.reviews_num}</div>
+                <div className="col hide-md">{item.stats.ratings_num}</div>
               </div>
             </div>
             <div className="col col-sm-2 btns xs">
-              <div className={`btn ${user.roles.editor ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(user.uid, 'editor', user.roles.editor)} title="editor">E</div>
-              <div className={`btn ${user.roles.premium ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(user.uid, 'premium', user.roles.premium)} title="premium">P</div>
-              <div className={`btn ${user.roles.admin ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(user.uid, 'admin', user.roles.admin)} title="admin">A</div>
+              <div className={`btn ${item.roles.editor ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(item.uid, 'editor', item.roles.editor)} title="editor">E</div>
+              <div className={`btn ${item.roles.premium ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(item.uid, 'premium', item.roles.premium)} title="premium">P</div>
+              <div className={`btn ${item.roles.admin ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(item.uid, 'admin', item.roles.admin)} title="admin">A</div>
             </div>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{new Date(user.creationTime).toLocaleDateString()}</div>
+              <div className="timestamp">{new Date(item.creationTime).toLocaleDateString()}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={() => this.onView(user.uid)} title="anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={() => this.onSendNote(user.uid)} title="Invia notifica">{icon.bell()}</button>
-              <button className={`btn icon ${user.roles.editor ? 'secondary' : 'flat' }`} onClick={() => this.onLock(user.uid, user.roles.editor)} title={user.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={() => this.onDeleteRequest(user.uid)} title="elimina">{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(item.uid)} title="anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onSendNote(item.uid)} title="Invia notifica">{icon.bell()}</button>
+              <button className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.uid, item.roles.editor)} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(item.uid)} title="elimina">{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -288,6 +288,11 @@ export default class UsersDash extends React.Component {
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Cancellando l'utente verranno rimosse anche la sua libreria e la cronologia delle sue notifiche.
+            </DialogContentText>
+          </DialogContent>
           <DialogActions>
             <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
             <button className="btn primary" onClick={this.onDelete}>Procedi</button>

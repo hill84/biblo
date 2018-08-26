@@ -142,22 +142,22 @@ export default class collectionsDash extends React.Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     //const { openSnackbar } = this.props;
 
-    const itemsList = (items && (items.length > 0) &&
-      items.map((collection) => 
-        <li key={collection.title} className={`${collection.edit ? '' : 'locked'}`}>
+    const itemsList = (items && items.length &&
+      items.map(item => 
+        <li key={item.title} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
-            <Link to={`/collection/${collection.title}`} className="col">
-              {collection.title}
+            <Link to={`/collection/${item.title}`} className="col">
+              {item.title}
             </Link>
-            <div className="col">{collection.books.length}</div>
+            <div className="col">{item.books.length}</div>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{timeSince(collection.lastEdit_num)}</div>
+              <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={() => this.onView(collection.title)} title="Anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={() => this.onEdit(collection.title)} title="Modifica">{icon.pencil()}</button>
-              <button className={`btn icon ${collection.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(collection.title, collection.edit)} title={collection.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={() => this.onDeleteRequest(collection.title)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
+              <button className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close()}</button>
             </div>
           </div>
         </li>

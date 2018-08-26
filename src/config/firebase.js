@@ -61,6 +61,7 @@ export const quotesRef = db.collection('quotes');
 export const quoteRef = qid => db.collection('quotes').doc(qid);
 
 export const pubNoteRef = collection => db.collection('notifications').doc('__' + collection);
+export const notesRef = db.collection('notifications');
 export const noteRef = uid => db.collection('notifications').doc(uid);
 
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`)

@@ -145,45 +145,45 @@ export default class BooksDash extends React.Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && (items.length > 0) &&
-      items.map((book) => 
-        <li key={book.bid} className={`avatar-row ${book.EDIT.edit ? '' : 'locked'}`}>
+    const itemsList = (items && items.length &&
+      items.map(item => 
+        <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs" style={{backgroundImage: `url(${book.covers[0]})`}}></div>
+              <div className="mock-cover xs" style={{backgroundImage: `url(${item.covers[0]})`}}></div>
             </div>
-            <Link to={`/book/${book.bid}`} className="col">
-              {book.title}
+            <Link to={`/book/${item.bid}`} className="col">
+              {item.title}
             </Link>
-            <Link to={`/author/${Object.keys(book.authors)[0]}`} className="col">
-              {Object.keys(book.authors)[0]}
+            <Link to={`/author/${Object.keys(item.authors)[0]}`} className="col">
+              {Object.keys(item.authors)[0]}
             </Link>
-            <div className="col hide-md monotype" title={book.bid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={book.bid}/>
+            <div className="col hide-md monotype" title={item.bid}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.bid}/>
             </div>
-            <div className="col hide-md monotype" title={book.ISBN_13}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/>
+            <div className="col hide-md monotype" title={item.ISBN_13}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_13}/>
             </div>
-            <div className="col hide-md monotype" title={book.ISBN_10}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10} />
+            <div className="col hide-md monotype" title={item.ISBN_10}>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_10} />
             </div>
-            <Link to={`/dashboard/${book.EDIT.createdByUid}`} title={book.EDIT.createdByUid} className="col hide-sm">
-              {book.EDIT.createdBy}
+            <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm">
+              {item.EDIT.createdBy}
             </Link>
             <div className="col hide-sm col-lg-1">
-              <div className="timestamp">{new Date(book.EDIT.created_num).toLocaleDateString()}</div>
+              <div className="timestamp">{new Date(item.EDIT.created_num).toLocaleDateString()}</div>
             </div>
-            <Link to={`/dashboard/${book.EDIT.lastEditByUid}`} title={book.EDIT.lastEditByUid} className="col">
-              {book.EDIT.lastEditBy}
+            <Link to={`/dashboard/${item.EDIT.lastEditByUid}`} title={item.EDIT.lastEditByUid} className="col">
+              {item.EDIT.lastEditBy}
             </Link>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{timeSince(book.EDIT.lastEdit_num)}</div>
+              <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={() => this.onView(book.bid)} title="Anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={() => this.onEdit(book.bid)} title="Modifica">{icon.pencil()}</button>
-              <button className={`btn icon ${book.EDIT.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(book.bid, book.EDIT.edit)} title={book.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={() => this.onDeleteRequest(book.bid)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(item.bid)} title="Anteprima">{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(item.bid)} title="Modifica">{icon.pencil()}</button>
+              <button className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.bid, item.EDIT.edit)} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(item.bid)}>{icon.close()}</button>
             </div>
           </div>
         </li>

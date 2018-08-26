@@ -144,28 +144,28 @@ export default class QuotesDash extends React.Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && (items.length > 0) &&
-      items.map((quote) => 
-        <li key={quote.qid} className={`${quote.edit ? '' : 'locked'}`}>
+    const itemsList = (items && items.length &&
+      items.map(item => 
+        <li key={item.qid} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs" style={{backgroundImage: `url(${quote.coverURL})`}}></div>
+              <div className="mock-cover xs" style={{backgroundImage: `url(${item.coverURL})`}}></div>
             </div>
-            {quote.bid ? <Link to={`/book/${quote.bid}`} className="col">{quote.bookTitle}</Link> : <div className="col">{quote.bookTitle}</div>}
-            <Link to={`/author/${quote.author}`} className="col">{quote.author}</Link>
-            <div className="col-5 hide-sm">{quote.quote}</div>
-            <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={quote.qid}/></div>
-            <Link to={`/dashboard/${quote.lastEditByUid}`} title={quote.lastEditByUid} className="col hide-sm">
-              {quote.lastEditBy}
+            {item.bid ? <Link to={`/book/${item.bid}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
+            <Link to={`/author/${item.author}`} className="col">{item.author}</Link>
+            <div className="col-5 hide-sm">{item.quote}</div>
+            <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.qid}/></div>
+            <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col hide-sm">
+              {item.lastEditBy}
             </Link>
             <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{timeSince(quote.lastEdit_num)}</div>
+              <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={() => this.onView(quote.author)}>{icon.eye()}</button>
-              <button className="btn icon primary" onClick={() => this.onEdit(quote.qid)}>{icon.pencil()}</button>
-              <button className={`btn icon ${quote.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(quote.qid, quote.edit)} title={quote.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={() => this.onDeleteRequest(quote.qid)}>{icon.close()}</button>
+              <button className="btn icon green" onClick={() => this.onView(item.author)}>{icon.eye()}</button>
+              <button className="btn icon primary" onClick={() => this.onEdit(item.qid)}>{icon.pencil()}</button>
+              <button className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.qid, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button className="btn icon red" onClick={() => this.onDeleteRequest(item.qid)}>{icon.close()}</button>
             </div>
           </div>
         </li>

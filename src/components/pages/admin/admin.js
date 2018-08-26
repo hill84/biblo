@@ -9,13 +9,13 @@ import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
-/* import CollectionForm from '../../forms/collectionForm';
-import NoteForm from '../../forms/noteForm'; */
+/* import CollectionForm from '../../forms/collectionForm'; */
+import NoteForm from '../../forms/noteForm';
 import QuoteForm from '../../forms/quoteForm';
-import NewFeature from '../../newFeature';
 import AuthorsDash from './authorsDash';
 import BooksDash from './booksDash';
 import CollectionsDash from './collectionsDash';
+import NotesDash from './notesDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
 
@@ -28,6 +28,7 @@ export default class Admin extends React.Component {
     openSnackbar: this.props.openSnackbar,
     user: null,
     loadingUser: true,
+    selectedI: null,
     selectedId: null,
     tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0,
     isOpenAuthorDialog: false,
@@ -96,11 +97,11 @@ export default class Admin extends React.Component {
 
   onToggleAuthorDialog = id => this.setState(prevState => ({ isOpenAuthorDialog: !prevState.isOpenAuthorDialog, selectedId: this.typeofId(id) }));
   onToggleCollectionDialog = id => this.setState(prevState => ({ isOpenCollectionDialog: !prevState.isOpenCollectionDialog, selectedId: this.typeofId(id) }));
-  onToggleNoteDialog = id => this.setState(prevState => ({ isOpenNoteDialog: !prevState.isOpenNoteDialog, selectedId: this.typeofId(id) }));
+  onToggleNoteDialog = (id, i) => this.setState(prevState => ({ isOpenNoteDialog: !prevState.isOpenNoteDialog, selectedId: this.typeofId(id), selectedI: this.typeofId(i) }));
   onToggleQuoteDialog = id => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog, selectedId: this.typeofId(id) }));
 
 	render() {
-		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, isOpenNoteDialog,  */isOpenQuoteDialog, loadingUser, openSnackbar, selectedId, tabDir, tabSelected, user } = this.state;
+		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, */ isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, selectedI, selectedId, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
       return <div className="loader"><CircularProgress /></div>
@@ -122,7 +123,7 @@ export default class Admin extends React.Component {
           <button onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn primary">{icon.plus()} autore</button>
           <button onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn primary disabled">{icon.plus()} collezione</button>
           <button onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn primary">{icon.plus()} citazione</button>
-          <button onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary disabled">{icon.plus()} Notifica</button>
+          <button onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary">{icon.plus()} Notifica</button>
         </div>
         <AppBar position="static" className="appbar flat">
           <Tabs 
@@ -181,8 +182,8 @@ export default class Admin extends React.Component {
           </React.Fragment>
           <React.Fragment>
             {tabSelected === 5 && 
-              <div className="tab card dark" dir={tabDir}>
-                <NewFeature />
+              <div className="tab" dir={tabDir}>
+                <NotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} />
               </div>
             }
           </React.Fragment>
@@ -190,7 +191,7 @@ export default class Admin extends React.Component {
 
         {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} />}
         {/* isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} /> */}
-        {/* isOpenNoteDialog && <NoteForm id={selectedId} onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} /> */}
+        {isOpenNoteDialog && <NoteForm id={selectedId} i={selectedI} onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} />}
         {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={this.onToggleQuoteDialog} user={user} openSnackbar={openSnackbar} />}
 			</div>
 		);
