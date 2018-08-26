@@ -48,7 +48,7 @@ export default class Cover extends React.Component {
 		return (
       <div className="book"> 
         <div className="cover" title={book.title} style={{animationDelay: `${index/10}s`, backgroundImage: cover ? `url(${cover})` : null}}>
-          {bcid && <div className="bookmark accent"><div>{bcid}</div></div>}
+          {bcid && bcid > 0 ? <div className="bookmark accent"><div>{bcid}</div></div> : null}
           <div className="overlay"></div>
           {/* (book.covers && book.covers.length > 1) && 
             <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
@@ -65,7 +65,7 @@ export default class Cover extends React.Component {
         {info !== false && 
           <div className="info">
             <strong className="title">{book.title}</strong>
-            <span className="author">di {joinObj(book.authors)}</span>
+            <span className="author"><span className="hide-sm">di</span> {joinObj(book.authors)}</span>
             {full && <span className="publisher">{book.publisher}</span>}
             {book.rating_num > 0 && rating !== false && 
               <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
