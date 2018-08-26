@@ -40,7 +40,7 @@ export default class Layout extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { user } = this.state;
-    if(user !== prevState.user){
+    if(user && user !== prevState.user){
       setTimeout(() => {
         this.fetchNotes()
       }, 1000);
@@ -49,14 +49,16 @@ export default class Layout extends React.Component {
 
   fetchNotes = () => {
     const { user } = this.state;
-    noteRef(user.uid).onSnapshot(snap => {
-      if (snap.exists) {
-        //console.log(snap.data().notes);
-        const notes = [];
-        snap.data().notes.forEach((note, i) => !note.read && notes.push({ ...note, nid: i }));
-        this.setState({ notes });
-      }
-    });
+    if (user) {
+      noteRef(user.uid).onSnapshot(snap => {
+        if (snap.exists) {
+          //console.log(snap.data().notes);
+          const notes = [];
+          snap.data().notes.forEach((note, i) => !note.read && notes.push({ ...note, nid: i }));
+          this.setState({ notes });
+        }
+      });
+    } else console.warn(`Cannot fetch notifications`);
   }
   
   onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
