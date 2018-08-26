@@ -5,8 +5,8 @@ service cloud.firestore {
     match /users/{uid} {
     	allow read;
       allow create: if isValidUser();
-      allow update: if (isEditor() && isAdmin()) || (isValidUser() && isEditor() && isOwner(uid));
-    	allow delete: if userHasAllRoles('admin', 'editor') == true || isOwner(uid);
+      allow update: if (isEditor() && isAdmin()) || (isValidUser() && isOwner(uid));
+    	allow delete: if (isEditor() && isAdmin()) || isOwner(uid);
     }
 
     match /notifications/{uid} {
