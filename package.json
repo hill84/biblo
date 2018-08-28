@@ -3,10 +3,10 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^1.5.1",
-    "@material-ui/icons": "^2.0.3",
+    "@material-ui/core": "^3.0.0",
+    "@material-ui/icons": "^3.0.0",
     "autosuggest-highlight": "^3.1.1",
-    "firebase": "^5.4.0",
+    "firebase": "^5.4.1",
     "isbn-utils": "^1.1.0",
     "material-ui-chip-input": "^1.0.0-beta.5",
     "material-ui-pickers": "^1.0.0-rc.13",
@@ -21,9 +21,9 @@
     "react-rater": "^0.4.8",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "1.1.5",
     "react-swipeable-views": "^0.12.16",
-    "validator": "^10.6.0"
+    "validator": "^10.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
