@@ -17,7 +17,7 @@ import isISBN from 'validator/lib/isISBN';
 import { bookRef, booksRef, collectionBookRef, storageRef, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, hasRole, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 import isbn from 'isbn-utils';
@@ -408,7 +408,8 @@ export default class BookForm extends React.Component {
 	render() {
     const { book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading, redirectToBook } = this.state;
     const { user } = this.props;
-    const isAdmin = () => user && user.roles && user.roles.admin === true;
+    const isAdmin = hasRole(user, 'admin');
+    
     const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
@@ -430,7 +431,7 @@ export default class BookForm extends React.Component {
             <div className="container md">
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
                 <Cover book={book} />
-                {isAdmin() && book.bid && !book.covers[0] && 
+                {isAdmin && book.bid && !book.covers[0] && 
                   <button className="btn sm flat centered">
                     <span>Carica un'immagine</span>
                     <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
@@ -634,7 +635,7 @@ export default class BookForm extends React.Component {
                     {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
                   </FormControl>
                 </div>
-                {isAdmin() &&
+                {isAdmin &&
                   <div className="form-group">
                     <FormControl className="chip-input" margin="normal" fullWidth>
                       <ChipInput
@@ -645,7 +646,7 @@ export default class BookForm extends React.Component {
                         value={book.collections}
                         onAdd={chip => this.onAddChip("collections", chip)}
                         onDelete={chip => this.onDeleteChip("collections", chip)}
-                        disabled={!isAdmin()}
+                        disabled={!isAdmin}
                         onKeyPress={e => this.onPreventDefault(e)}
                       />
                       {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}

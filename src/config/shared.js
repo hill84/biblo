@@ -35,6 +35,8 @@ export const arrToObj = (arr, fn) => {
   return obj;
 }; */
 
+export const hasRole = (user, role) => user && user.roles && user.roles[role] === true;
+
 // VALIDATION
 export const validateImg = (file, maxSize) => {
   const errors = {};

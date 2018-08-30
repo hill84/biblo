@@ -14,7 +14,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import NavLink from 'react-router-dom/NavLink';
 import { noteRef, signOut, uid } from '../config/firebase';
-import { appName, getInitials, timeSince } from '../config/shared';
+import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
 import Footer from './footer';
@@ -50,11 +50,27 @@ export default class Layout extends React.Component {
   fetchNotes = () => {
     const { user } = this.state;
     if (user) {
+      const notes = [];
+      let restCount = 0;
+      const roles = ['admin', 'editor', 'premium'];
+      roles.forEach(role => {
+        if (hasRole(user, role)) {
+          //console.log(`User has role ${role}`);
+          noteRef(`__${role}`).onSnapshot(snap => {
+            if (snap.exists) {
+              //console.log(snap.data().notes);
+              snap.data().notes && snap.data().notes.forEach((note, i) => {
+                restCount += snap.data().notes.length;
+                notes.push({ ...note, nid: i - 1 + restCount });
+              });
+            }
+          });
+        }
+      });
       noteRef(user.uid).onSnapshot(snap => {
         if (snap.exists) {
           //console.log(snap.data().notes);
-          const notes = [];
-          snap.data().notes && snap.data().notes.forEach((note, i) => !note.read && notes.push({ ...note, nid: i }));
+          snap.data().notes && snap.data().notes.forEach((note, i) => !note.read && notes.push({ ...note, nid: i + restCount }));
           this.setState({ notes });
         }
       });
@@ -114,8 +130,8 @@ export default class Layout extends React.Component {
                   open={Boolean(notesAnchorEl)}
                   onClose={this.onCloseNotes}>
                   {notes && notes.length ?
-                    notes.map(note => (
-                      <MenuItem key={note.nid}> 
+                    notes.map((note, i) => (
+                      <MenuItem key={note.nid} style={{animationDelay: (i + 1) / 10 + 's'}}> 
                         <div className="row">
                           <div className="col text">
                             <div dangerouslySetInnerHTML={{__html: note.text}} />
