@@ -12,6 +12,11 @@ service cloud.firestore {
     match /notifications/{uid} {
     	allow read;
       allow write: if (isEditor() && isAdmin()) || isOwner(uid);
+      
+      match /notes/{nid} {
+      	allow read;
+        allow write: if (isEditor() && isAdmin()) || isOwner(uid);
+      }
     }
 
     match /followers/{uid} {

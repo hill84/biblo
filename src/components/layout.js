@@ -13,7 +13,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import NavLink from 'react-router-dom/NavLink';
-import { noteRef, signOut, uid } from '../config/firebase';
+import { noteRef, notesRef, signOut, uid } from '../config/firebase';
 import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
@@ -51,29 +51,26 @@ export default class Layout extends React.Component {
     const { user } = this.state;
     if (user) {
       const notes = [];
-      let restCount = 0;
-      const roles = ['admin', 'editor', 'premium'];
+      const roles = ['admin', 'editor', 'premium', 'public'];
       roles.forEach(role => {
         if (hasRole(user, role)) {
-          //console.log(`User has role ${role}`);
-          noteRef(`__${role}`).onSnapshot(snap => {
-            if (snap.exists) {
-              //console.log(snap.data().notes);
-              snap.data().notes && snap.data().notes.forEach((note, i) => {
-                restCount += snap.data().notes.length;
-                notes.push({ ...note, nid: i - 1 + restCount });
+          notesRef(`__${role}`).onSnapshot(snap => {
+            if (!snap.empty) {
+              snap.forEach(note => {
+                notes.push({ ...note.data(), role })
               });
             }
           });
         }
       });
-      noteRef(user.uid).onSnapshot(snap => {
-        if (snap.exists) {
-          //console.log(snap.data().notes);
-          snap.data().notes && snap.data().notes.forEach((note, i) => !note.read && notes.push({ ...note, nid: i + restCount }));
+      notesRef(user.uid).get().then(snap => {
+        if (!snap.empty) {
+          snap.forEach(note => {
+            notes.push(note.data());
+          });
           this.setState({ notes });
         }
-      });
+      }).catch(error => console.warn(error));
     } else this.setState({ notes: null });
   }
   
@@ -83,7 +80,16 @@ export default class Layout extends React.Component {
   onOpenMore = e => this.setState({ moreAnchorEl: e.currentTarget });
   onCloseMore = () => this.setState({ moreAnchorEl: null });
 
-  onOpenNotes = e => this.setState({ notesAnchorEl: e.currentTarget });
+  onOpenNotes = e => {
+    const { notes, user } = this.state;
+    this.setState({ notesAnchorEl: e.currentTarget });
+    notes.filter(note => note.read !== true && !note.role).forEach(note => {
+      /* this.setState({
+        notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
+      }); */
+      noteRef(user.uid, note.nid).update({ read: true }).then().catch(error => console.warn(error));
+    });
+  }
   onCloseNotes = () => this.setState({ notesAnchorEl: null });
 
   onOpenDialog = () => this.setState({ dialogIsOpen: true });
@@ -92,6 +98,7 @@ export default class Layout extends React.Component {
   render() {
     const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl, user } = this.state;
     const { children } = this.props;
+    const toRead = notes => notes && notes.filter(note => !note.read || note.role);
 
     return (
       <div id="layoutComponent">
@@ -118,9 +125,9 @@ export default class Layout extends React.Component {
                   aria-owns={notesAnchorEl ? 'notes-menu' : null}
                   aria-haspopup="true"
                   onClick={this.onOpenNotes}
-                  title={`${notes ? notes.length : 0} notifiche`}>
+                  title={`${notes ? toRead(notes).length : 0} notifiche`}>
                   {icon.bell()}
-                  {notes && notes.length ? <div className="dot">{notes.length}</div> : null}
+                  {notes && toRead(notes).length ? <div className="dot">{toRead(notes).length}</div> : null}
                 </IconButton>
                 <Menu
                   className="notes"
@@ -129,8 +136,8 @@ export default class Layout extends React.Component {
                   onClick={this.onCloseNotes}
                   open={Boolean(notesAnchorEl)}
                   onClose={this.onCloseNotes}>
-                  {notes && notes.length ?
-                    notes.map((note, i) => (
+                  {notes && toRead(notes).length ?
+                    toRead(notes).map((note, i) => (
                       <MenuItem key={note.nid} style={{animationDelay: (i + 1) / 10 + 's'}}> 
                         <div className="row">
                           <div className="col text">

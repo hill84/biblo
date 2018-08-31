@@ -61,9 +61,9 @@ export const authorRef = aid => db.collection('authors').doc(aid);
 export const quotesRef = db.collection('quotes');
 export const quoteRef = qid => db.collection('quotes').doc(qid);
 
-export const notesRef = db.collection('notifications');
-export const noteRef = uid => db.collection('notifications').doc(uid);
-export const pubNoteRef = collection => db.collection('notifications').doc(`__${collection}`);
+export const notificationsRef = db.collection('notifications');
+export const notesRef = uid => db.collection('notifications').doc(uid).collection('notes');
+export const noteRef = (uid, nid) => db.collection('notifications').doc(uid).collection('notes').doc(nid);
 
 /* STORAGE */
 const storage = firebase.storage();
