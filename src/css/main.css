@@ -36,6 +36,7 @@
   --coverHeight: 180px;
   --skltnTitleY: 190px;
   --skltnAuthorY: 209px;
+  --skltnStarsY: 228px;
   --skltnCoverX: center;
   --skltnTitleX: center;
   --skltnBg: rgba(0,10,20,.15);
@@ -842,19 +843,20 @@ html:not(.light) .card.primary, .primary .card {
 .notes .date { color: var(--lighterTextClr); font-size: .7rem; font-weight: 200; text-align: right; float: right; }
 .notes .footer { text-align: center; }
 .notes .footer a { margin: auto; }
-
+.notes-btn:hover .dot { font-size: .6rem; transform: scale(1); }
 .dot {
-  --dotSize: 16px;
+  --dotSize: 14px;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 6px;
+  right: 6px;
   background-color: var(--accentClr);
   border-radius: 50%;
   width: var(--dotSize);
   height: var(--dotSize);
   line-height: var(--dotSize);
   color: #333;
-  font-size: .55rem;
+  font-size: 0;
+  transform: scale(.5);
   text-align: center;
   transition: all .2s ease-in-out; 
   will-change: opacity, transform;
@@ -1055,13 +1057,13 @@ html.light .hero * { text-shadow: none; }
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: var(--canvasLightClr);
+  background-color: transparent;
+  box-shadow: none;
   border-radius: 0; 
   margin-bottom: 0; 
   margin-top: 48px; 
   line-height: 200%;
   font-size: .82rem;
-  box-shadow: 0 -1px 1px rgba(0,0,0,.1);
 }
 #FooterComponent .container { margin-top: 0; }
 #FooterComponent .divider { margin: 0 auto; }
@@ -1651,7 +1653,7 @@ html.light .hero * { text-shadow: none; }
     linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnCoverX) top, 
     linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnTitleX) var(--skltnTitleY),
     linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnTitleX) var(--skltnAuthorY);
-  background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, 90px 11px;
+  background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, calc(var(--coverWidth) * .8) 11px;
   background-repeat: no-repeat;
   background-origin: content-box;
 }
@@ -2032,6 +2034,13 @@ html.light .hero * { text-shadow: none; }
 @media (max-width: 320px) {
   .book-incipit p { text-align: left; }
 }
+
+@media (min-width: 1201px) { .show-xl { display: none; } }
+@media (min-width: 993px) { .show-lg { display: none; } }
+@media (min-width: 769px) { .show-md { display: none; } }
+@media (min-width: 577px) { .show-sm { display: none; } }
+@media (min-width: 421px) { .show-xs { display: none; } }
+
 @media (pointer: coarse) {
   .user.rating .react-rater { font-size: 36px; }
   .user.rating .label { display: none; }

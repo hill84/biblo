@@ -93,12 +93,12 @@ export default class Admin extends React.Component {
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
-  typeofId = id => id ? typeof id === 'string' ? id : null : null;
+  son = id => id ? String(id) : null;
 
-  onToggleAuthorDialog = id => this.setState(prevState => ({ isOpenAuthorDialog: !prevState.isOpenAuthorDialog, selectedId: this.typeofId(id) }));
-  onToggleCollectionDialog = id => this.setState(prevState => ({ isOpenCollectionDialog: !prevState.isOpenCollectionDialog, selectedId: this.typeofId(id) }));
-  onToggleNoteDialog = (id, el) => this.setState(prevState => ({ isOpenNoteDialog: !prevState.isOpenNoteDialog, selectedId: this.typeofId(id), selectedEl: el }));
-  onToggleQuoteDialog = id => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog, selectedId: this.typeofId(id) }));
+  onToggleAuthorDialog = id => this.setState(prevState => ({ isOpenAuthorDialog: !prevState.isOpenAuthorDialog, selectedId: this.son(id) }));
+  onToggleCollectionDialog = id => this.setState(prevState => ({ isOpenCollectionDialog: !prevState.isOpenCollectionDialog, selectedId: this.son(id) }));
+  onToggleNoteDialog = (id, el) => this.setState(prevState => ({ isOpenNoteDialog: !prevState.isOpenNoteDialog, selectedId: this.son(id), selectedEl: this.son(el) }));
+  onToggleQuoteDialog = id => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog, selectedId: this.son(id) }));
 
 	render() {
 		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, */ isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, selectedEl, selectedId, tabDir, tabSelected, user } = this.state;
@@ -121,9 +121,9 @@ export default class Admin extends React.Component {
         <div className="actions btns text-center pad-v-sm">
           <button title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>
           <button onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn primary">{icon.plus()} autore</button>
-          <button onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn primary disabled">{icon.plus()} collezione</button>
+          {/* <button onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn primary">{icon.plus()} collezione</button> */}
           <button onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn primary">{icon.plus()} citazione</button>
-          <button onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary">{icon.plus()} Notifica</button>
+          {/* <button onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary">{icon.plus()} Notifica</button> */}
         </div>
         <AppBar position="static" className="appbar flat">
           <Tabs 
@@ -132,12 +132,12 @@ export default class Admin extends React.Component {
             fullWidth
             scrollable
             scrollButtons="auto">
-            <Tab label="Utenti" />
-            <Tab label="Libri" />
-            <Tab label="Autori" />
-            <Tab label="Collezioni" />
-            <Tab label="Citazioni" />
-            <Tab label="Notifiche" />
+            <Tab label={<React.Fragment><span className="show-md">{icon.account()}</span><span className="hide-md">Utenti</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="show-md">{icon.book()}</span><span className="hide-md">Libri</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="show-md">{icon.accountEdit()}</span><span className="hide-md">Autori</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="show-md">{icon.viewCarousel()}</span><span className="hide-md">Collezioni</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="show-md">{icon.quote()}</span><span className="hide-md">Citazioni</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="show-md">{icon.bell()}</span><span className="hide-md">Notifiche</span></React.Fragment>} />
           </Tabs>
         </AppBar>
         <SwipeableViews
@@ -148,7 +148,7 @@ export default class Admin extends React.Component {
           <React.Fragment>
             {tabSelected === 0 && 
               <div className="tab" dir={tabDir}>
-                <UsersDash user={user} openSnackbar={openSnackbar} />
+                <UsersDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} />
               </div>
             }
           </React.Fragment>
@@ -191,7 +191,7 @@ export default class Admin extends React.Component {
 
         {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} />}
         {/* isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} /> */}
-        {isOpenNoteDialog && <NoteForm id={selectedId} el={selectedEl} onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} />}
+        {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} />}
         {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={this.onToggleQuoteDialog} user={user} openSnackbar={openSnackbar} />}
 			</div>
 		);

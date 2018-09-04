@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 /* import Link from 'react-router-dom/Link'; */
 import Redirect from 'react-router-dom/Redirect';
-import { FieldValue, noteRef, notesRef/* , pubNoteRef */ } from '../../../config/firebase';
+import { noteRef, notesRef, notificationsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';
 import { timeSince } from '../../../config/shared';
@@ -57,7 +57,7 @@ export default class NotesDash extends React.Component {
     const { count, /* lastVisible,  */limitBy, limitByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const baseRef = notesRef.limit(limit);
+    const baseRef = notificationsRef.limit(limit);
     const paginatedRef = prev ? baseRef/* .endBefore(lastVisible) */ : baseRef/* .startAfter(lastVisible) */;
     const ref = direction ? paginatedRef : baseRef;
     //console.log('fetching');
@@ -65,26 +65,26 @@ export default class NotesDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      ref.onSnapshot(snap => {
-        //console.log(snap);
-        if (!snap.empty) {
+      ref.get().then(fullSnap => {
+        if (!fullSnap.empty) {
+          console.log(fullSnap);
           const items = [];
-          snap.forEach(item => items.push({ notes: item.data().notes, id: item.id }));
-          //console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
+          fullSnap.forEach(item => items.push({ id: item.id }));
           this.setState({
-            items: items,
-            lastVisible: snap.docs[snap.docs.length-1],
+            items,
+            count: fullSnap.size,
+            lastVisible: fullSnap.docs[fullSnap.size - 1],
             loading: false,
             page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
           });
         } else this.setState({ items: null, count: 0, loading: false });
-      });
+      }).catch(error => console.warn(error));
     }
 
     if (!direction) {
-      notesRef.get().then(fullSnap => {
+      notificationsRef.get().then(fullSnap => {
         if (!fullSnap.empty) { 
-          this.setState({ count: fullSnap.docs.length });
+          this.setState({ count: fullSnap.size });
           fetcher();
         } else this.setState({ count: 0, page: 1 });
       }).catch(error => console.warn(error));
@@ -104,22 +104,31 @@ export default class NotesDash extends React.Component {
   onDeleteRequest = (id, el) => this.setState({ isOpenDeleteDialog: true, selectedId: id, selectedEl: el });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null, selectedEl: null });
   onDelete = () => {
-    const { items, selectedEl, selectedId } = this.state;
-    console.log({ items, selectedId, selectedEl });
-    const note = items.filter(obj => obj.id === selectedId)[0].notes[selectedEl];
-    noteRef(selectedId).update({ notes: FieldValue.arrayRemove(note) }).then(() => {
+    const { selectedEl, selectedId } = this.state;
+    noteRef(selectedId, selectedEl).delete().then(() => {
       this.setState({ isOpenDeleteDialog: false });
       this.props.openSnackbar('Elemento cancellato', 'success');
     }).catch(error => console.warn(error));
   }
 
-  onToggleExpansion = id => this.setState({ selectedId: id });
+  onToggleExpansion = id => {
+    this.setState({ selectedId: id });
+    const selectedObj = this.state.items.findIndex(obj => obj.id === id);
+    notesRef(id).onSnapshot(snap => {
+      if (!snap.empty) {
+        const notes = [];
+        snap.forEach(note => notes.push(note.data()));
+        const items = [ ...this.state.items ];
+        items[selectedObj] = { id, notes };
+        this.setState({ items });
+      }
+    });
+  }
 
 	render() {
     const { count, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
     const { openSnackbar } = this.props;
-
-    const itemsList = (items && items.length && items.map(item => 
+    const itemsList = (items && items.length > 0 && items.map(item =>
       <li 
         key={item.id} 
         className={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
@@ -131,20 +140,23 @@ export default class NotesDash extends React.Component {
             {icon.chevronDown()}
           </div>
         </div>
-        {item.notes && 
+        {item.notes && item.notes.length > 0 && 
           <ul className="expandible">
             {item.notes.map((note, i) =>
-              <li key={`${item.id}-${i}`} className={note.read ? 'read' : 'not-read'}>
+              <li key={note.nid} className={note.read ? 'read' : 'not-read'}>
                 <div className="row">
                   <div className="col-auto">{i}</div>
                   <div className="col"><div dangerouslySetInnerHTML={{__html: note.text}} /></div>
-                  {note.read && <div className="col-auto text-right" title="Letta">{icon.check()}</div>}
+                  <div className="col-sm-3 col-lg-2 monotype hide-sm text-center">
+                    <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />
+                  </div>
+                  <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check() : icon.close()}</div>
                   <div className="col col-sm-2 col-lg-1 text-right">
                     <div className="timestamp">{timeSince(note.created_num)}</div>
                   </div>
                   <div className="absolute-row right btns xs">
-                    <button className="btn icon primary" onClick={() => this.onEdit(item.id, i)}>{icon.pencil()}</button>
-                    <button className="btn icon red" onClick={() => this.onDeleteRequest(item.id, i)}>{icon.close()}</button>
+                    <button className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil()}</button>
+                    <button className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close()}</button>
                   </div>
                 </div>
               </li>
@@ -192,7 +204,7 @@ export default class NotesDash extends React.Component {
               <li className="labels">
                 <div className="row">
                   <div className="col-auto">#</div>
-                  <div className="col">Nid</div>
+                  <div className="col">Uid</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                 </div>
               </li>

@@ -44,6 +44,7 @@ export default class UsersDash extends React.Component {
 	}
 
 	static propTypes = {
+    onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType
 	}
@@ -107,11 +108,7 @@ export default class UsersDash extends React.Component {
 
   onView = id => this.setState({ redirectTo: id });
 
-  onSendNote = id => {
-    console.log(`Sending notification to ${id}`);
-    //TODO
-    this.props.openSnackbar('Notifica inviata', 'success');
-  }
+  onNote = id => this.props.onToggleDialog(id);
 
   onLock = (id, state) => {
     console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
@@ -154,10 +151,10 @@ export default class UsersDash extends React.Component {
               {item.displayName}
             </Link>
             <div className="col monotype" title={item.uid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.uid}/>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.uid} />
             </div>
             <div className="col monotype hide-sm" title={item.email}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.email}/>
+              <CopyToClipboard openSnackbar={openSnackbar} text={item.email} />
             </div>
             <div className="col col-sm-3 col-lg-2">
               <div className="row text-center">
@@ -177,7 +174,7 @@ export default class UsersDash extends React.Component {
             </div>
             <div className="absolute-row right btns xs">
               <button className="btn icon green" onClick={() => this.onView(item.uid)} title="anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={() => this.onSendNote(item.uid)} title="Invia notifica">{icon.bell()}</button>
+              <button className="btn icon primary" onClick={() => this.onNote(item.uid)} title="Invia notifica">{icon.bell()}</button>
               <button className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.uid, item.roles.editor)} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button className="btn icon red" onClick={() => this.onDeleteRequest(item.uid)} title="elimina">{icon.close()}</button>
             </div>

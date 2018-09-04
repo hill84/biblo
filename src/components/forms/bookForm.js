@@ -208,13 +208,13 @@ export default class BookForm extends React.Component {
             openSnackbar(error.message, 'error');
           });
         } else {
-          let newBookRef = booksRef.doc();
+          const newBookRef = booksRef.doc();
           newBid = newBookRef.id;
           newBookRef.set({
             ISBN_10: book.ISBN_10,
             ISBN_13: book.ISBN_13, 
             authors: book.authors, 
-            bid: newBookRef.id,
+            bid: newBid,
             collections: book.collections,
             covers: book.covers, 
             description: book.description, 

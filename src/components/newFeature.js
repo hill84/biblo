@@ -23,7 +23,7 @@ export default class NewFeature extends React.Component {
       <div className="container empty">
         <div className="text-center">
           <div className="pad-v">
-            <h1>Questa funzionalità non è ancora pronta</h1>
+            <h2>Questa funzionalità non è ancora pronta</h2>
             <p>Aiutami far crescere {appName}. <span className="hide-sm">Contribuisci con una donazione.</span></p>
             <p>
               <button className={`btn ${ isOpenPayments ? 'flat' : 'primary'}`} onClick={this.onTogglePayments}>Fai una donazione</button>
@@ -38,7 +38,7 @@ export default class NewFeature extends React.Component {
           </div>
           <p className="font-sm">
             <Link className="counter" to="/donations">Perché è importante?</Link>
-            <Link className="counter last" to="/terms">Termini e condizioni</Link>
+            <Link className="counter last" to="/terms">Termini</Link>
           </p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
-import { FieldValue, noteRef/* , notesRef */ } from '../../config/firebase';
+import { noteRef, notesRef } from '../../config/firebase';
 import { funcType, stringType } from '../../config/types';
 
 export default class noteForm extends React.Component {
@@ -23,12 +23,14 @@ export default class noteForm extends React.Component {
   static propTypes = {
     onToggle: funcType.isRequired,
     openSnackbar: funcType.isRequired,
-    id: stringType
+    nid: stringType,
+    uid: stringType.isRequired
   }
 
   componentDidMount() {
+    const { nid, uid } = this.props;
     this._isMounted = true; 
-    if (this.props.id) {
+    if (nid && uid) {
       this.fetch();
     }
   }
@@ -36,24 +38,29 @@ export default class noteForm extends React.Component {
   componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
+    const { nid, uid } = this.props;
     if (this._isMounted) {
-      if (this.props.id !== prevProps.id) {
+      if (nid !== prevProps.nid || uid !== prevProps.uid) {
         this.fetch();
       }
     }
   }
 
   fetch = () => {
+    const { nid, uid } = this.props;
     this.setState({ loading: true });
-    noteRef(this.props.id).get().then(snap => {
-      if (!snap.empty) {
-        //console.log(snap.data());
-        this.setState({ 
-          data: snap.data().notes[this.props.el],
-          loading: false
-        });
-      }
-    }).catch(error => console.warn(error));
+    if (nid && uid) {
+      //console.log({ nid, uid });
+      noteRef(uid, nid).get().then(snap => {
+        if (!snap.empty) {
+          //console.log(snap.data());
+          this.setState({ 
+            data: snap.data(),
+            loading: false
+          });
+        }
+      }).catch(error => console.warn(error));
+    }
   }
 
   onToggle = () => this.props.onToggle(this.state.selectedId);
@@ -78,25 +85,25 @@ export default class noteForm extends React.Component {
 	onSubmit = e => {
     e.preventDefault();
     const { data } = this.state;
-    const { id, openSnackbar, user } = this.props;
-		const errors = this.validate(this.state.data);
+    const { nid, openSnackbar, uid, user } = this.props;
+		const errors = this.validate(data);
 		this.setState({ authError: '', errors });
 		if(Object.keys(errors).length === 0) {
       this.setState({ loading: true });
-      //TOFIX
-      //console.log(id);
-      noteRef(id).update({ 
-        notes: FieldValue.arrayUnion({
-          text: data.text,
-          created_num: Number((new Date()).getTime()),
-          createdBy: user.displayName,
-          createdByUid: user.uid,
-          read: data.read || false
-        })
+      //console.log(`Sending notification to ${uid}`);
+      const newNoteRef = notesRef(uid).doc();
+      const ref = nid ? noteRef(uid, nid) : newNoteRef;
+      ref.set({
+        nid: nid || newNoteRef.id,
+        text: data.text,
+        created_num: Number((new Date()).getTime()),
+        createdBy: user.displayName,
+        createdByUid: user.uid,
+        read: false
       }).then(() => {
         this.onToggle();
-        this.setState({ loading: false });
-        openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+        this.setState({ loading: false, data: { text: '' } });
+        openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
       }).catch(error => console.warn(error));
 		}
 	};
