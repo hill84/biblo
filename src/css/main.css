@@ -258,6 +258,7 @@ hr.line {
 }
 .card {
   position: relative;
+  width: 100%;
   background-color: var(--cardBg);
   color: var(--mainTextClr);
   padding: var(--pad);
@@ -582,19 +583,6 @@ html:not(.light) .card.primary, .primary .card {
 .btn.clear:hover { background-color: rgba(0,151,167,.07); }
 .btn.clear:active, .btn.clear.active { background-color: rgba(0,0,0,.05); color: rgba(0,0,0,.3); }
 
-::selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
-::-moz-selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
-.primary ::selection { background: rgba(255, 202, 40, .3); }
-.primary ::-moz-selection { background: rgba(255, 202, 40, .3); }
-
-#socialAuthComponent > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
-#socialAuthComponent > [class*="col-"]:first-child { padding-left: 7px; }
-#socialAuthComponent > [class*="col-"]:last-child { padding-right: 7px; }
-#socialAuthComponent button { float: left; width: 100%; margin: 3px 0; }
-.btn.facebook { background-color: #39569C; }
-.btn.google { background-color: #E24929; }
-.btn.twitter { background-color: #00ACED; }
-
 .btn:disabled, .btn:disabled:hover, .btn:disabled:active, .btn.disabled { 
   background-color: var(--btnDisabledBg);
   border-color: transparent;
@@ -614,6 +602,28 @@ html:not(.light) .card.primary, .primary .card {
 
 .btn.sm svg, .btns.sm .btn svg { --iconSize: 15px; }
 .btn.xs svg, .btns.xs .btn svg { --iconSize: 14px; }
+
+.btn.dot {
+  display: inline-block;
+  font-size: 0;
+  color: transparent;
+  padding: 0;
+  margin: auto 3px;
+}
+
+#socialAuthComponent > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
+#socialAuthComponent > [class*="col-"]:first-child { padding-left: 7px; }
+#socialAuthComponent > [class*="col-"]:last-child { padding-right: 7px; }
+#socialAuthComponent button { float: left; width: 100%; margin: 3px 0; }
+.btn.facebook { background-color: #39569C; }
+.btn.google { background-color: #E24929; }
+.btn.twitter { background-color: #00ACED; }
+
+/* SELECTION */
+::selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
+::-moz-selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
+.primary ::selection { background: rgba(255, 202, 40, .3); }
+.primary ::-moz-selection { background: rgba(255, 202, 40, .3); }
 
 /* FORM GROUP */
 .form-group label + div:before { border-color: rgba(0,0,0,.15); }
@@ -833,7 +843,7 @@ html:not(.light) .card.primary, .primary .card {
 /* NOTIFICATIONS */
 .notes { --mainTextClr: #666; --lightTextClr: #aaa; --lighterTextClr: #ccc; }
 .notes *::-webkit-scrollbar { display: none; }
-.notes ul { padding-top: 0; padding-bottom: 0; max-width: 320px; min-width: 260px; }
+.notes ul { padding: 0; max-width: 320px; min-width: 260px; }
 .notes li { animation: fadeInSlideUp .2s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
 .notes li, .notes .footer { padding-left: 8px; padding-right: 8px; height: auto; }
 .notes li:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,.03); }
@@ -845,20 +855,28 @@ html:not(.light) .card.primary, .primary .card {
 .notes .footer a { margin: auto; }
 .notes-btn:hover .dot { font-size: .6rem; transform: scale(1); }
 .dot {
-  --dotSize: 14px;
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background-color: var(--accentClr);
+  --dotSize: 8px;
+  display: block;
+  padding: 0;
+  margin: auto;
   border-radius: 50%;
+  min-width: 0;
   width: var(--dotSize);
   height: var(--dotSize);
   line-height: var(--dotSize);
-  color: #333;
-  font-size: 0;
-  transform: scale(.5);
   text-align: center;
   transition: all .2s ease-in-out; 
+}
+.badge.dot {
+  --dotSize: 16px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: var(--accentClr);
+  color: #333;
+  font-size: .55rem;
   will-change: opacity, transform;
   animation: popIn .25s ease-out backwards; 
 }
@@ -937,7 +955,6 @@ html:not(.light) .card.primary, .primary .card {
 }
 .hero .overlay {
   background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
-  background: -webkit-linear-gradient(top, transparent 0%,var(--mainBg) 75%);
   background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 75%);
   animation: none;
 }
@@ -979,7 +996,6 @@ html.light .hero * { text-shadow: none; }
   width: 100%;
   height: 150px;
   background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 95%);
-  background: -webkit-linear-gradient(top, transparent 0%,var(--mainBg) 95%);
   background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 95%);
   opacity: 1;
   will-change: opacity;
@@ -1179,13 +1195,11 @@ html.light .hero * { text-shadow: none; }
   top: calc(100% - var(--faderHeight));
   bottom: 0;
   background: -moz-linear-gradient(top, transparent 0%, var(--cardBg) 90%);
-  background: -webkit-linear-gradient(top, transparent 0%,var(--cardBg) 90%);
   background: linear-gradient(to bottom, transparent 0%,var(--cardBg) 90%);
 }
 .book-incipit:before {
   top: 0;
   background: -moz-linear-gradient(bottom, transparent 0%, var(--cardBg) 90%);
-  background: -webkit-linear-gradient(bottom, transparent 0%,var(--cardBg) 90%);
   background: linear-gradient(to top, transparent 0%,var(--cardBg) 90%);
 }
 .absolute-content { position: absolute; top: 0; left: 0; right: 0; }
@@ -1234,7 +1248,6 @@ html.light .hero * { text-shadow: none; }
   width: 100%;
   height: 50px;
   background: -moz-linear-gradient(top, transparent 0%, var(--cardBg) 90%);
-  background: -webkit-linear-gradient(top, transparent 0%,var(--cardBg) 90%);
   background: linear-gradient(to bottom, transparent 0%,var(--cardBg) 90%);
   opacity: 0;
   will-change: opacity;
@@ -1280,18 +1293,12 @@ html.light .hero * { text-shadow: none; }
 .shelf.scrollable:before {
   left: 0;
   background: -moz-linear-gradient(right,transparent 0,var(--cardBg) 90%);
-  background: -webkit-gradient(right top,left top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
-  background: -webkit-linear-gradient(right,transparent 0,var(--cardBg) 90%);
-  background: -o-linear-gradient(right,transparent 0,var(--cardBg) 90%);
   background: -ms-linear-gradient(right,transparent 0,var(--cardBg) 90%);
   background: linear-gradient(to left,transparent 0,var(--cardBg) 90%);
 }
 .shelf.scrollable:after {
   right: 0;
   background: -moz-linear-gradient(left,transparent 0,var(--cardBg) 90%);
-  background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
-  background: -webkit-linear-gradient(left,transparent 0,var(--cardBg) 90%);
-  background: -o-linear-gradient(left,transparent 0,var(--cardBg) 90%);
   background: -ms-linear-gradient(left,transparent 0,var(--cardBg) 90%);
   background: linear-gradient(to right,transparent 0,var(--cardBg) 90%);
 }
@@ -1416,7 +1423,6 @@ html.light .hero * { text-shadow: none; }
   z-index: 1;
   opacity: .8;
   background: -moz-linear-gradient(left, transparent 0%, rgba(255,255,255,0.02) 1%, rgba(0,0,0,0.06) 4%, rgba(255,255,255,0.09) 7%, rgba(255,255,255,0.2) 18%, rgba(255,255,255,0.2) 28%, transparent 100%);
-  background: -webkit-linear-gradient(left, transparent 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,transparent 100%);
   background: linear-gradient(to right, transparent 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,transparent 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startClrstr='#00ffffff', endClrstr='#00ffffff',GradientType=1 );
 }
@@ -1714,18 +1720,10 @@ html.light .hero * { text-shadow: none; }
 }
 .genres:before {
   left: 0;
-  background: -webkit-gradient(right top,left top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
-  background: -webkit-linear-gradient(right,transparent 0,var(--cardBg) 90%);
-  background: -o-linear-gradient(right,transparent 0,var(--cardBg) 90%);
-  background: -webkit-gradient(linear,right top, left top,color-stop(0, transparent),color-stop(90%, var(--cardBg)));
   background: linear-gradient(to left,transparent 0,var(--cardBg) 90%);
 }
 .genres:after {
   right: 0;
-  background: -webkit-gradient(left top,right top,color-stop(0,transparent),color-stop(90%,var(--cardBg)));
-  background: -webkit-linear-gradient(left,transparent 0,var(--cardBg) 90%);
-  background: -o-linear-gradient(left,transparent 0,var(--cardBg) 90%);
-  background: -webkit-gradient(linear,left top, right top,color-stop(0, transparent),color-stop(90%, var(--cardBg)));
   background: linear-gradient(to right,transparent 0,var(--cardBg) 90%); 
 }
 .genres a {
@@ -1774,6 +1772,24 @@ html.light .hero * { text-shadow: none; }
   white-space: pre-line;
   word-wrap: break-word;
 }
+
+/* BUBBLES */
+.bubble { 
+  margin: 0 4px; 
+  text-align: center; 
+  margin-left: auto; 
+  margin-right: auto;
+}
+.bubble .avatar { margin-left: auto; margin-right: auto; }
+.bubble .name {
+  margin-top: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.bubbles .hoverable-items .bubble .avatar { box-shadow: 0 0 0 transparent; transition: all .2s ease-in-out; }
+.bubbles .hoverable-items .bubble .avatar:hover { box-shadow: 0 0 0 3px var(--primaryClr); }
 
 /* HELPERS */
 .text-right { text-align: right; }

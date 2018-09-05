@@ -8,6 +8,7 @@ import heroImage from '../../images/covers-dark.jpg';
 import BookCollection from '../bookCollection';
 import Genres from '../genres';
 import RandomQuote from '../randomQuote';
+import Authors from '../authors';
 
 const Home = () => (
 	<div id="homeComponent">
@@ -59,6 +60,10 @@ const Home = () => (
 
       <div className="card dark card-fullwidth-sm">
         <BookCollection cid="Libri proibiti" pagination={false} limit={7} scrollable={true} />
+      </div>
+
+      <div className="card dark card-fullwidth-sm">
+        <Authors pagination={false} limit={7} scrollable={true} />
       </div>
 
       <div className="card dark card-fullwidth-sm">

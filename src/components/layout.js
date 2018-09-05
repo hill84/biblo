@@ -127,7 +127,7 @@ export default class Layout extends React.Component {
                   onClick={this.onOpenNotes}
                   title={`${notes ? toRead(notes).length : 0} notifiche`}>
                   {icon.bell()}
-                  {notes && toRead(notes).length ? <div className="dot">{toRead(notes).length}</div> : null}
+                  {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
                 </IconButton>
                 <Menu
                   className="notes"
