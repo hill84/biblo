@@ -31,6 +31,7 @@ export default class collectionsDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
+    selectedId: null,
     loading: true
 	}
 

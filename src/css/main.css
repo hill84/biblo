@@ -1676,6 +1676,23 @@ html.light .hero * { text-shadow: none; }
 }
 /* .stacked .skltn.book { background-repeat: repeat-y; } */
 
+.bubbles .skltn.shelf-row {
+  --shelf-rowHeight: 119px;
+}
+.skltn.bubble {
+  --skltnTitleY: calc(var(--size) + 12px);
+  --coverWidth: calc(var(--size) + 20px);
+  min-width: var(--bookWidth);
+  margin: 0 auto;
+  width: 100%;
+  height: var(--shelf-rowHeight);
+  background-image: radial-gradient(circle var(--size), var(--skltnBg) 50%, transparent 0), linear-gradient(var(--skltnBg), var(--skltnBg));
+  background-size: var(--size) var(--size), var(--coverWidth) 12px;
+  background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
+
 /* MESSAGE */
 .message { font-size: 12px; line-height: 12px; color: var(--lightTextClr); }
 .message.error { color: var(--errorClr); }
@@ -1775,21 +1792,33 @@ html.light .hero * { text-shadow: none; }
 
 /* BUBBLES */
 .bubble { 
+  --size: 80px;
+  min-width: var(--size); 
   margin: 0 4px; 
   text-align: center; 
   margin-left: auto; 
   margin-right: auto;
+  font-size: .8rem;
+  transition: all .2s ease-in-out; 
+  will-change: opacity, transform;
+  animation: showIn .3s ease-out backwards;
 }
-.bubble .avatar { margin-left: auto; margin-right: auto; }
-.bubble .name {
+.bubble .avatar { 
+  margin-left: auto; 
+  margin-right: auto; 
+  width: var(--size); 
+  height: var(--size); 
+}
+.bubble .title {
   margin-top: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
 }
-.bubbles .hoverable-items .bubble .avatar { box-shadow: 0 0 0 transparent; transition: all .2s ease-in-out; }
-.bubbles .hoverable-items .bubble .avatar:hover { box-shadow: 0 0 0 3px var(--primaryClr); }
+.hoverable-items .bubble .avatar { box-shadow: 0 0 0 transparent; transition: all .2s ease-in-out; }
+.hoverable-items .bubble:hover .avatar { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-3px); }
+.hoverable-items .bubble:active .avatar { transform: scale(.95) translateY(0); box-shadow: 0 0 0 transparent; }
 
 /* HELPERS */
 .text-right { text-align: right; }

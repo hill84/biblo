@@ -36,6 +36,7 @@ export default class AuthorsDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
+    selectedId: null,
     loading: true
 	}
 
@@ -159,7 +160,7 @@ export default class AuthorsDash extends React.Component {
             <div className="col-6 col-sm-4 col-lg-2" title={item.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={item.displayName}/></div>
             <div className="col-1"><button className="btn xs flat" title={item.sex === 'm' ? 'uomo' : 'donna'}>{item.sex}</button></div>
             <div className="col hide-lg">{item.bio}</div>
-            <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col col-sm-3 col-lg-2">{item.lastEditBy}</Link>
+            <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col col-sm-2 col-lg-1">{item.lastEditBy}</Link>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
@@ -235,7 +236,7 @@ export default class AuthorsDash extends React.Component {
                   <div className="col-6 col-sm-4 col-lg-2">Nominativo</div>
                   <div className="col-1">Sesso</div>
                   <div className="col hide-lg">Bio</div>
-                  <div className="col col-sm-3 col-lg-2">Modificato da</div>
+                  <div className="col col-sm-2 col-lg-1">Modificato da</div>
                   <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
                 </div>
               </li>

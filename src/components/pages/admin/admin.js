@@ -93,7 +93,7 @@ export default class Admin extends React.Component {
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
-  son = id => id ? String(id) : null;
+  son = id => id ? typeof id === 'string' ? id : typeof id === 'number' ? String(id) : null : null;
 
   onToggleAuthorDialog = id => this.setState(prevState => ({ isOpenAuthorDialog: !prevState.isOpenAuthorDialog, selectedId: this.son(id) }));
   onToggleCollectionDialog = id => this.setState(prevState => ({ isOpenCollectionDialog: !prevState.isOpenCollectionDialog, selectedId: this.son(id) }));

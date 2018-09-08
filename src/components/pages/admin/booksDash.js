@@ -34,6 +34,7 @@ export default class BooksDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
+    selectedId: null,
     loading: true
 	}
 

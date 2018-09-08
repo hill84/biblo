@@ -35,9 +35,7 @@ export default class AuthorForm extends React.Component {
 
   componentDidMount() {
     this._isMounted = true; 
-    if (this.props.id) {
-      this.fetch();
-    }
+    this.fetch();
   }
 
   componentWillUnmount() { this._isMounted = false; }
@@ -51,15 +49,17 @@ export default class AuthorForm extends React.Component {
   }
 
   fetch = () => {
-    this.setState({ loading: true });
-    authorRef(this.props.id).get().then(snap => {
-      if (!snap.empty) {
-        this.setState({ 
-          data: snap.data(),
-          loading: false
-        });
-      }
-    }).catch(error => console.warn(error));
+    if (typeof this.props.id === 'string') {
+      this.setState({ loading: true });
+      authorRef(this.props.id).get().then(snap => {
+        if (!snap.empty) {
+          this.setState({ 
+            data: snap.data(),
+            loading: false
+          });
+        }
+      }).catch(error => console.warn(error));
+    }
   }
 
   onToggle = () => this.props.onToggle(this.state.selectedId);

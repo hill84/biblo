@@ -48,6 +48,7 @@ export const genres = [
   { id: "sc", name: "Scienza" },
   { id: "ss", name: "Scienze sociali" },
   { id: "st", name: "Storico" },
+  { id: "te", name: "Teatro" },
   { id: "th", name: "Thriller" },
   { id: "um", name: "Satira e umorismo" },
   { id: "vi", name: "Viaggi" }

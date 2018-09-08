@@ -29,16 +29,13 @@ export default class Author extends React.Component {
 
   componentDidMount() {
     const { author } = this.state;
-		authorRef(`${normalizeString(author.displayName)}`).onSnapshot(snap => {
-			if (snap.exists) {
-				this.setState({ 
-					author: snap.data(),
-          loading: false
-				});
+		authorRef(`${normalizeString(author.displayName)}`).get().then(snap => {
+			if (!snap.empty) {
+				this.setState({ author: snap.data(), loading: false });
 			} else {
 				this.setState({ loading: false });
 			}
-    });
+    }).catch(error => console.warn(error));
     booksRef.where(`authors.${author.displayName}`, '==', true).get().then(snap => {
       if (!snap.empty) {
         const books = [];
@@ -109,11 +106,9 @@ export default class Author extends React.Component {
                 </div>
               </div>
             :
-              <div className="card dark pad-sm">
-                <div className="info-row empty text-center">
-                  <p>Non ci sono ancora libri di {author.displayName}</p>
-                  <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
-                </div>
+              <div className="info-row empty text-center pad-sm">
+                <p>Non ci sono ancora libri di {author.displayName}</p>
+                <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
               </div>
             }
           </React.Fragment>
