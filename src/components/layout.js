@@ -1,6 +1,5 @@
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
@@ -173,7 +172,10 @@ export default class Layout extends React.Component {
                 </Menu>
               </React.Fragment>
             : 
-              <Button><Link to="/login">Login</Link></Button>
+              <React.Fragment>
+                <button className="btn flat"><Link to="/login">Accedi</Link></button>
+                <button className="btn primary"><Link to="/signup">Registrati</Link></button>
+              </React.Fragment>
             }
           </Toolbar>
         </AppBar>
@@ -203,8 +205,8 @@ export default class Layout extends React.Component {
                 </React.Fragment>
               :
                 <div className="auth-header-buttons">
-                  <NavLink to="/login"><MenuItem>Login</MenuItem></NavLink>
-                  <NavLink to="/signup"><MenuItem>Signup</MenuItem></NavLink>
+                  <NavLink to="/login"><MenuItem>Accedi</MenuItem></NavLink>
+                  <NavLink to="/signup"><MenuItem>Registrati</MenuItem></NavLink>
                 </div>
               }
               <NavLink to="/" exact><MenuItem>Home</MenuItem></NavLink>

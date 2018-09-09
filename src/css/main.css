@@ -853,7 +853,6 @@ html:not(.light) .card.primary, .primary .card {
 .notes .date { color: var(--lighterTextClr); font-size: .7rem; font-weight: 200; text-align: right; float: right; }
 .notes .footer { text-align: center; }
 .notes .footer a { margin: auto; }
-.notes-btn:hover .dot { font-size: .6rem; transform: scale(1); }
 .dot {
   --dotSize: 8px;
   display: block;
@@ -880,6 +879,8 @@ html:not(.light) .card.primary, .primary .card {
   will-change: opacity, transform;
   animation: popIn .25s ease-out backwards; 
 }
+.notes-btn .dot { font-size: 0; transform: scale(.45); }
+.notes-btn:hover .dot { font-size: .6rem; transform: scale(1); }
 
 /* APPBAR */
 #layoutComponent { padding-top: 60px; flex-grow: 1; }
@@ -1821,8 +1822,9 @@ html.light .hero * { text-shadow: none; }
 .hoverable-items .bubble:active .avatar { transform: scale(.95) translateY(0); box-shadow: 0 0 0 transparent; }
 
 /* HELPERS */
-.text-right { text-align: right; }
 .text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
 .text-justify { text-align: justify; }
 .centered { float: none; margin-left: auto; margin-right: auto; }
 .monotype { font-family: 'Roboto Mono', 'Courier New', Courier, monospace; }

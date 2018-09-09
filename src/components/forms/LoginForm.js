@@ -2,10 +2,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import Link from 'react-router-dom/Link';
 import React from 'react';
 import Redirect from 'react-router-dom/Redirect';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
+import { appName } from '../../config/shared';
 import SocialAuth from '../socialAuth';
 
 export default class LoginForm extends React.Component {
@@ -63,6 +65,10 @@ export default class LoginForm extends React.Component {
 		return (
 			<div id="loginFormComponent">
 				<SocialAuth />
+
+        <div className="light-text pad-v-xs">
+          <small>Effettuando il login confermi la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</small>
+        </div>
 
 				<form onSubmit={this.onSubmit} noValidate>
 					<div className="form-group">

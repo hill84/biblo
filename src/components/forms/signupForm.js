@@ -1,15 +1,20 @@
+import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import Link from 'react-router-dom/Link';
 import React from 'react';
 import Redirect from 'react-router-dom/Redirect';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
+import { appName } from '../../config/shared';
 
 export default class SignupForm extends React.Component {
 	state = {
+    checkedTerms: false, 
     data: {
       uid: '',
       displayName: '',
@@ -34,6 +39,8 @@ export default class SignupForm extends React.Component {
     authError: '',
     redirectTo: null
   };
+
+  toggleCheckbox = name => event => this.setState({ [name]: event.target.checked });
 
 	onChange = e => {
 		this.setState({ 
@@ -81,71 +88,78 @@ export default class SignupForm extends React.Component {
 	};
 
 	render() {
-    const { authError, data, errors, redirectTo } = this.state;
+    const { authError, checkedTerms, data, errors, redirectTo } = this.state;
 
 		if (redirectTo) return <Redirect to={`/dashboard/${redirectTo}`} />
 
 		return (
-			<div ref="signupFormComponent">
-				<SocialAuth />
+			<React.Fragment>
+				{!checkedTerms ? 
+          <FormControlLabel className="text-left" label={
+            <span>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</span>
+          } control={
+            <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
+          } />
+        :
+          <form onSubmit={this.onSubmit} noValidate>
+            <SocialAuth />
+            <div className="form-group">
+              <FormControl className="input-field" margin="normal" fullWidth={true}>
+                <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome</InputLabel>
+                <Input
+                  id="displayName"
+                  name="displayName"
+                  type="text"
+                  autoFocus={true}
+                  placeholder="Mario Rossi"
+                  value={data.displayName}
+                  onChange={this.onChange}
+                  error={Boolean(errors.displayName)}
+                />
+                {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+              </FormControl>
+            </div>
 
-				<form onSubmit={this.onSubmit} noValidate>
-					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth={true}>
-              <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome</InputLabel>
-              <Input
-                id="displayName"
-                name="displayName"
-                type="text"
-                autoFocus={true}
-                placeholder="Mario Rossi"
-                value={data.displayName}
-                onChange={this.onChange}
-                error={Boolean(errors.displayName)}
-              />
-              {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
-            </FormControl>
-					</div>
+            <div className="form-group">
+              <FormControl className="input-field" margin="normal" fullWidth={true}>
+                <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="esempio@esempio.com"
+                  value={data.email}
+                  onChange={this.onChange}
+                  error={Boolean(errors.email)}
+                />
+                {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
+              </FormControl>
+            </div>
 
-					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth={true}>
-              <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="esempio@esempio.com"
-                value={data.email}
-                onChange={this.onChange}
-                error={Boolean(errors.email)}
-              />
-              {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
-            </FormControl>
-					</div>
+            <div className="form-group">
+              <FormControl className="input-field" margin="normal" fullWidth={true}>
+                <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Almeno 8 caratteri"
+                  value={data.password}
+                  onChange={this.onChange}
+                  error={Boolean(errors.password)}
+                />
+                {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
+              </FormControl>
+            </div>
 
-					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth={true}>
-              <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Almeno 8 caratteri"
-                value={data.password}
-                onChange={this.onChange}
-                error={Boolean(errors.password)}
-              />
-              {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
-            </FormControl>
-					</div>
+            {authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
-					{authError && <div className="row"><div className="col message error">{authError}</div></div>}
-
-					<div className="footer no-gutter">
-						<button className="btn btn-footer primary" onClick={this.onSubmit}>Registrati</button>
-					</div>
-				</form>
-			</div>
+            <div className="footer no-gutter">
+              <button className="btn btn-footer primary" onClick={this.onSubmit}>Registrati</button>
+            </div>
+          </form>
+        }
+			</React.Fragment>
 		);
 	}
 }

@@ -32,7 +32,7 @@ const Home = () => (
           }
         </div>
 			</div>
-      <Background className="bg">
+      <Background className="bg reveal fadeIn">
         <div className="overlay"></div>
         <img src={heroImage} alt="bookwall" />
       </Background>
