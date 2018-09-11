@@ -67,7 +67,7 @@ export default class NotesDash extends React.Component {
     const fetcher = () => {
       ref.get().then(fullSnap => {
         if (!fullSnap.empty) {
-          console.log(fullSnap);
+          //console.log(fullSnap);
           const items = [];
           fullSnap.forEach(item => items.push({ id: item.id }));
           this.setState({

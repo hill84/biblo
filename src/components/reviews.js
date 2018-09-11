@@ -58,7 +58,9 @@ export default class Reviews extends React.Component {
         this.setState({ reviewsCount: snap.docs.length });
         reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
           const reviews = [];
-          snap.forEach(review => review.data().createdByUid !== (uid) && reviews.push(review.data()));
+          if (!snap.empty) {
+            snap.forEach(review => review.data().createdByUid !== (uid) && reviews.push(review.data()));
+          }
           this.setState({ 
             reviews,
             loading: false,

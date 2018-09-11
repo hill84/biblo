@@ -14,12 +14,16 @@ export default class Author extends React.Component {
   state = {
     author: {
       bio: '',
-      created_num: 0,
-      languages: [],
-      followers: {},
       displayName: this.props.match.params.aid || '',
+      edit: null,
+      followers: {},
+      languages: [],
+      lastEditBy: '',
+      lastEditByUid: '',
+      lastEdit_num: 0,
       photoURL: '',
-      sex: ''
+      sex: '',
+      source: ''
     },
     books: null,
     coverview: false,
@@ -30,7 +34,7 @@ export default class Author extends React.Component {
   componentDidMount() {
     const { author } = this.state;
 		authorRef(`${normalizeString(author.displayName)}`).get().then(snap => {
-			if (!snap.empty) {
+			if (snap.exists) {
 				this.setState({ author: snap.data(), loading: false });
 			} else {
 				this.setState({ loading: false });
@@ -57,7 +61,7 @@ export default class Author extends React.Component {
 
     if (loading) {
       return <div className="loader"><CircularProgress /></div>
-    } else if (!author) {
+    } else if (!author.lastEditByUid && !books) {
       return <NoMatch title="Autore non trovato" location={this.props.location} />
     }
 

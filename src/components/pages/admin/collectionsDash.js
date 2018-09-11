@@ -77,7 +77,9 @@ export default class collectionsDash extends React.Component {
             snap.forEach(item => {
               const books = [];
               collectionBooksRef(item.id).orderBy('bcid', 'desc').get().then(snap => {
-                snap.forEach(book => books.push(book.data().bid));
+                if (!snap.empty) {
+                  snap.forEach(book => books.push(book.data().bid));
+                }
               });
               items.push({ ...item.data(), title: item.id, books });
             });

@@ -70,12 +70,12 @@ export default class AuthorsDash extends React.Component {
     const paginatedRef = prev ? baseRef.endBefore(firstVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef.limit(limit) : baseRef.limit(limit);
     //console.log('fetching items');
-    console.log({ 
+    /* console.log({ 
       first: firstVisible && firstVisible.data().displayName, 
       last: lastVisible && lastVisible.data().displayName, 
       page, 
       direction 
-    });
+    }); */
     this.setState({ loading: true });
 
     const fetcher = () => {
