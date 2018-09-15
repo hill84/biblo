@@ -36,7 +36,8 @@ exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((cha
     return null;
   }
 
-  countRef.transaction(current => (current || 0) + increment);
+  countRef.set({ count: count + increment }, {merge: true});
+  //countRef.transaction(current => (current || 0) + increment);
   console.log('Counter updated.');
   return null;
 });

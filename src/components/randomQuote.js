@@ -1,4 +1,3 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import Link from 'react-router-dom/Link';
 import { quotesRef } from '../config/firebase';
@@ -66,7 +65,7 @@ export default class RandomQuote extends React.Component {
     const { author, bid, bookTitle, className, coverURL, loading, quote } = this.state;
 
     if (loading) {
-      return <div className="loader"><CircularProgress /></div>
+      return <div className="skltn rows" />
     } else if (!quote) { 
       return null 
     }

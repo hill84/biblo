@@ -335,7 +335,7 @@ hr.line {
 .card.flat .avatar { background-color: #bdbdbd; box-shadow: none; }
 
 /* TABS */
-.appbar.flat { background-color: transparent; box-shadow: none; }
+.appbar.flat, .card.flat .head.nav { --cardBg: var(--canvasClr); background-color: transparent; box-shadow: none; }
 .tabs-container { padding: 0; }
 .tabs-container .card.tab { margin-top: 0; }
 .tabs-container.card .card.tab {
@@ -1636,7 +1636,7 @@ html.light .hero * { text-shadow: none; }
   height: var(--shelf-rowHeight);
   overflow: hidden;
 }
-.skltn.shelf-row:before {
+.skltn.shelf-row:before, .skltn.rows:before {
   content: "";
   position: absolute;
   top: 0;
@@ -1692,6 +1692,17 @@ html.light .hero * { text-shadow: none; }
   background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
   background-repeat: no-repeat;
   background-origin: content-box;
+}
+
+.skltn.rows {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100px;
+  max-height: 100%;
+  background-image: linear-gradient(var(--skltnBg) 50%, transparent 50%);
+  background-position: 0 0;
+  background-size: 100% 22px;
 }
 
 /* MESSAGE */

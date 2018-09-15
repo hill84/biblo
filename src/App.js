@@ -7,6 +7,7 @@ import AboutPage from './components/pages/aboutPage';
 import AddBook from './components/pages/addBook';
 import Admin from './components/pages/admin/admin';
 import Author from './components/pages/author';
+import Authors from './components/pages/authors';
 import BookContainer from './components/pages/bookContainer';
 import Collection from './components/pages/collection';
 import CookiePage from './components/pages/cookiePage';
@@ -72,6 +73,7 @@ export default class App extends React.Component {
                     <Route path="/privacy" component={PrivacyPage} />
                     <Route path="/terms" component={TermsPage} />
                     <RouteWithProps path="/author/:aid" component={Author} user={user} />
+                    <RouteWithProps path="/authors" component={Authors} user={user} />
                     <RouteWithProps path="/genre/:gid" component={Genre} user={user} />
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
