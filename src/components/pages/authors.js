@@ -5,6 +5,7 @@ import { authorsRef } from '../../config/firebase';
 import { numberType } from '../../config/types';
 import { getInitials } from '../../config/shared';
 import { skltn_bubbleRow } from '../skeletons';
+import { icon } from '../../config/icons';
 
 export default class Authors extends React.Component {
 	state = {
@@ -13,10 +14,7 @@ export default class Authors extends React.Component {
     desc: true,
     limit: this.props.limit || 50,
     loading: true,
-    page: 1,
-    pagination: false,
-    scrollable: true,
-    size: 50
+    page: 1
   }
 
   static propTypes = {
@@ -49,7 +47,7 @@ export default class Authors extends React.Component {
   }
 	
 	render() {
-    const { count, desc, items, limit, loading, page, pagination, scrollable, size } = this.state;
+    const { count, desc, items, limit, loading, page } = this.state;
 
     if (!loading && !items) {
       return <div className="info-row empty text-center">Non ci sono ancora autori.</div>;
@@ -57,17 +55,35 @@ export default class Authors extends React.Component {
 
 		return (
       <div className="container" id="authorsComponent">
-        <div className="bubbles row shelf">
-          {loading ? skltn_bubbleRow :
-            <div className="shelf-row hoverable-items" style={{gridTemplateColumns: 'repeat(10, 1fr)'}}>
-              {items.map((item, index) => 
-                <Link to={`/author/${item.displayName}`} key={item.displayName} style={{'--size': `${size}px`, animationDelay: `${index/10}s`}} className="bubble col">
-                  <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
-                  <div className="title">{item.displayName}</div>
-                </Link>
-              )}
-            </div>
-          }
+        <div className="card flat">
+          <div className="head nav" role="navigation">
+            <span className="counter last title primary-text">Autori</span> {count !== 0 && <span className="count hide-xs">({count})</span>} 
+            {!loading && count > 0 &&
+              <div className="pull-right">
+                <button 
+                  disabled={page < 2 && 'disabled'} 
+                  className="btn sm clear prepend" 
+                  onClick={() => this.fetch('prev')} title="precedente">
+                  {icon.chevronLeft()}
+                </button>
+                <button 
+                  disabled={page > (count / limit) && 'disabled'} 
+                  className="btn sm clear append" 
+                  onClick={() => this.fetch('next')} title="successivo">
+                  {icon.chevronRight()}
+                </button>
+              </div>
+            }
+          </div>
+
+          <div className="bubbles boxed shelf-row hoverable-items">
+            {loading ? skltn_bubbleRow : items.map((item, index) => 
+              <Link to={`/author/${item.displayName}`} key={item.displayName} style={{animationDelay: `${index/10}s`}} className="card dark bubble">
+                <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
+                <div className="title">{item.displayName}</div>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 		);

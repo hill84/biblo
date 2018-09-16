@@ -242,7 +242,7 @@ hr.line {
 }
 
 /* CARDS */
-.light, html.light .dark, html:not(.dark) .card:not(.dark):not(.primary) {
+.light, html.light .dark, html:not(.dark) .card:not(.dark):not(.primary):not(.flat) {
   --mainBg: #f7f7f7;
   --cardBg: #fff;
   --contrastedTextClr: #000;
@@ -326,6 +326,7 @@ hr.line {
 .card .empty { color: var(--lightTextClr); }
 .card.flat {
   --mainTextClr: rgba(255,255,255,.7);
+  --cardBg: var(--canvasClr);
   background-color: transparent;
   box-shadow: none;
   padding-left: 0;
@@ -1271,7 +1272,7 @@ html.light .hero * { text-shadow: none; }
   display: grid;
   width: 100%;
   grid-template-columns: repeat(var(--booksPerRow-lg), 1fr);
-  grid-gap: 20px;
+  grid-row-gap: 20px;
   grid-column-gap: 8px;
   padding-top: 4px;
 }
@@ -1805,11 +1806,10 @@ html.light .hero * { text-shadow: none; }
 /* BUBBLES */
 .bubble { 
   --size: 80px;
+  --pad: 14px;
   min-width: var(--size); 
-  margin: 0 4px; 
-  text-align: center; 
-  margin-left: auto; 
-  margin-right: auto;
+  margin: 0 auto; 
+  text-align: center;
   font-size: .8rem;
   transition: all .2s ease-in-out; 
   will-change: opacity, transform;
@@ -1827,10 +1827,18 @@ html.light .hero * { text-shadow: none; }
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  transition: all .2s ease-in-out; 
 }
 .hoverable-items .bubble .avatar { box-shadow: 0 0 0 transparent; transition: all .2s ease-in-out; }
 .hoverable-items .bubble:hover .avatar { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-3px); }
 .hoverable-items .bubble:active .avatar { transform: scale(.95) translateY(0); box-shadow: 0 0 0 transparent; }
+.bubbles.boxed { grid-gap: 8px; }
+.bubbles.boxed .bubble { min-height: calc(var(--size) + 10px + 38px + (var(--pad) * 2)); }
+.bubbles.boxed .bubble .avatar { background-color: rgba(0,0,0,.07); box-shadow: inset 1px 1px 0 1px rgba(0,0,0,.07); }
+.bubbles.boxed .bubble:hover { background-color: var(--primaryClr); }
+.bubbles.boxed .bubble:active { background-color: var(--accentClr); }
+.bubbles.boxed .bubble:hover .title { color: #fff; }
+.bubbles.boxed .bubble .title { white-space: normal; }
 
 /* HELPERS */
 .text-center { text-align: center; }

@@ -77,7 +77,7 @@ export default class Author extends React.Component {
               <div className="info-row bio">
                 <MinifiableText text={author.bio} maxChars={500} />
               </div>
-              <RandomQuote author={author.displayName} className="fadeIn slideUp reveal" />
+              <RandomQuote author={author.displayName} skeleton={false} className="fadeIn slideUp reveal" />
             </div>
           </div>
         </div>

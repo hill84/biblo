@@ -3,6 +3,7 @@ import Link from 'react-router-dom/Link';
 import { quotesRef } from '../config/firebase';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
+import { skltn_rows } from './skeletons';
 
 export default class RandomQuote extends React.Component {
   state = {
@@ -14,14 +15,16 @@ export default class RandomQuote extends React.Component {
     quote: '',
     limit: this.props.limit || 1,
     loading: true,
-    auto: false
+    auto: false,
+    skeleton: typeof this.props.skeleton === 'undefined' ? true : this.props.skeleton
   }
 
   static propTypes = {
     author: stringType,
     auto: boolType,
     className: stringType,
-    limit: numberType
+    limit: numberType,
+    skeleton: boolType,
   }
 
   componentDidMount() {
@@ -62,10 +65,10 @@ export default class RandomQuote extends React.Component {
   }
 
   render() {
-    const { author, bid, bookTitle, className, coverURL, loading, quote } = this.state;
+    const { author, bid, bookTitle, className, coverURL, loading, quote, skeleton } = this.state;
 
     if (loading) {
-      return <div className="skltn rows" />
+      return skeleton ? skltn_rows : null
     } else if (!quote) { 
       return null 
     }
