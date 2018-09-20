@@ -5,8 +5,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-/* import Link from 'react-router-dom/Link'; */
-import Redirect from 'react-router-dom/Redirect';
+import { Redirect } from 'react-router-dom';
 import { noteRef, notesRef, notificationsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { funcType, userType } from '../../../config/types';

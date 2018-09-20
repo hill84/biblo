@@ -10,9 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
-import Link from 'react-router-dom/Link';
-import NavLink from 'react-router-dom/NavLink';
-import { noteRef, notesRef, signOut, uid } from '../config/firebase';
+import { Link, NavLink } from 'react-router-dom';
+import { noteRef, notesRef, signOut, authid } from '../config/firebase';
 import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
@@ -167,7 +166,7 @@ export default class Layout extends React.Component {
                   open={Boolean(moreAnchorEl)}
                   onClose={this.onCloseMore}>
                   <NavLink to="/profile"><MenuItem>Profilo</MenuItem></NavLink>
-                  <NavLink to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></NavLink>
+                  <NavLink to={`/dashboard/${authid}`}><MenuItem>Dashboard</MenuItem></NavLink>
                   <MenuItem onClick={() => signOut()}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>
@@ -186,7 +185,7 @@ export default class Layout extends React.Component {
             open={drawerIsOpen}
             onClick={this.onCloseDrawer}>
             <nav className="list">
-              {user && uid ? 
+              {user && authid ? 
                 <React.Fragment>
                   <NavLink to="/profile" className="auth-header">
                     <div className="background" style={{backgroundImage: `url(${user.photoURL})`}} />
@@ -201,7 +200,7 @@ export default class Layout extends React.Component {
                   {user.roles.admin && 
                     <NavLink to={`/admin`}><MenuItem>Amministrazione</MenuItem></NavLink>
                   }
-                  <NavLink to={`/dashboard/${uid}`}><MenuItem>Dashboard</MenuItem></NavLink>
+                  <NavLink to={`/dashboard/${authid}`}><MenuItem>Dashboard</MenuItem></NavLink>
                 </React.Fragment>
               :
                 <div className="auth-header-buttons">

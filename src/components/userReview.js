@@ -10,7 +10,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Slide from '@material-ui/core/Slide';
 import React from 'react';
-import { bookRef, reviewerRef, uid, userBookRef, userRef } from '../config/firebase';
+import { bookRef, reviewerRef, authid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
@@ -70,7 +70,7 @@ export default class UserReview extends React.Component {
 
   fetchUserReview = () => {
     // console.log('Fetching user review');
-    reviewerRef(this.state.bid, uid).onSnapshot(snap => {
+    reviewerRef(this.state.bid, authid).onSnapshot(snap => {
       this.setState({ loading: true });
       if (snap.exists) {
         // console.log(snap.data());
@@ -99,7 +99,7 @@ export default class UserReview extends React.Component {
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.state.bid) {
-          reviewerRef(this.state.bid, uid).set({
+          reviewerRef(this.state.bid, authid).set({
             ...this.state.review,
             createdByUid: this.state.user.uid,
             created_num: Number((new Date()).getTime()),
@@ -110,7 +110,7 @@ export default class UserReview extends React.Component {
             // console.log(`Book review created`);
           }).catch(error => this.setState({ serverError: error.message }));
 
-          userBookRef(uid, this.state.bid).update({
+          userBookRef(authid, this.state.bid).update({
             ...this.state.userBook,
             review: {
               ...this.state.review,
@@ -135,7 +135,7 @@ export default class UserReview extends React.Component {
             // console.log(`Book reviews increased to ${bookReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
-          userRef(uid).update({
+          userRef(authid).update({
             'stats.reviews_num': userReviews_num
           }).then(() => {
             // console.log(`User reviews increased to ${userReviews_num}`);
@@ -162,11 +162,11 @@ export default class UserReview extends React.Component {
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (this.state.bid) {
           
-      reviewerRef(this.state.bid, uid).delete().then(() => {
+      reviewerRef(this.state.bid, authid).delete().then(() => {
         // console.log(`Book review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
 
-      userBookRef(uid, this.state.bid).update({
+      userBookRef(authid, this.state.bid).update({
         ...this.state.userBook,
         review: {}
       }).then(() => {
@@ -183,7 +183,7 @@ export default class UserReview extends React.Component {
         console.log(`Book reviews decreased to ${bookReviews_num}`);
       }).catch(error => this.setState({ serverError: error.message }));
 
-      userRef(uid).update({
+      userRef(authid).update({
         'stats.reviews_num': userReviews_num
       }).then(() => {
         console.log(`User reviews decreased to ${userReviews_num}`);

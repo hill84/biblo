@@ -9,7 +9,7 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
-import { uid, userBookRef } from '../../config/firebase';
+import { authid, userBookRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
 
@@ -81,7 +81,7 @@ export default class readingStateForm extends React.Component {
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
-        userBookRef(uid, this.props.bid).update({
+        userBookRef(authid, this.props.bid).update({
           'readingState.state_num': state_num,
           'readingState.start_num': this.state.start_num || null,
           'readingState.end_num': this.state.end_num || null

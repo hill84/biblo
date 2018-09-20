@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import Cover from '../cover';

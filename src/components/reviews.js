@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
-import Link from 'react-router-dom/Link';
-import { auth, isAuthenticated, reviewersRef, uid } from '../config/firebase';
+import { Link } from 'react-router-dom';
+import { auth, isAuthenticated, reviewersRef, authid } from '../config/firebase';
 import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Review from './review';
@@ -10,7 +10,7 @@ import Review from './review';
 export default class Reviews extends React.Component {
 	state = {
     bid: this.props.bid,
-    uid,
+    uid: authid,
     reviews: null,
     reviewsCount: 0,
     desc: false,

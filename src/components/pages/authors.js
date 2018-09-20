@@ -1,6 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { authorsRef } from '../../config/firebase';
 import { numberType } from '../../config/types';
 import { getInitials } from '../../config/shared';

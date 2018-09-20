@@ -1,6 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { normalizeString } from '../../config/shared';

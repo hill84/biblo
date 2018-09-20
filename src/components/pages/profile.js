@@ -12,7 +12,7 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
-import { storageRef, uid, userRef } from '../../config/firebase';
+import { storageRef, authid, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { calcAge, getInitials, validateImg } from '../../config/shared';
@@ -30,7 +30,7 @@ export default class Profile extends React.Component {
   }
 
 	componentDidMount() {
-		userRef(uid).onSnapshot(snap => {
+		userRef(authid).onSnapshot(snap => {
 			if (snap.exists) {
 				this.setState({ 
 					user: snap.data(),
@@ -73,7 +73,7 @@ export default class Profile extends React.Component {
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
       this.setState({ loading: true });
-			userRef(uid).set({
+			userRef(authid).set({
 				...this.state.user,
 				photoURL: this.state.imgPreview || '',
 				sex: this.state.user.sex || '',
@@ -121,7 +121,7 @@ export default class Profile extends React.Component {
     const errors = validateImg(file, 1);
     this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
-			const uploadTask = storageRef(`users/${uid}`, 'avatar').put(file);
+			const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
 			uploadTask.on('state_changed', snap => {
 				this.setState({
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100

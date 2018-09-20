@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { authorRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { getInitials, normalizeString } from '../../config/shared';

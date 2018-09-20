@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
-import Link from 'react-router-dom/Link';
-import { isAuthenticated, reviewerRef, uid, userBookRef } from '../config/firebase';
+import { Link } from 'react-router-dom';
+import { isAuthenticated, reviewerRef, authid, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, timeSince } from '../config/shared';
 import { reviewType } from '../config/types';
@@ -10,7 +10,7 @@ import MinifiableText from './minifiableText';
 
 export default class Review extends React.Component {
   state = {
-    like: this.props.review.likes.length && this.props.review.likes.indexOf(uid) > -1 ? true : false || false,
+    like: this.props.review.likes.length && this.props.review.likes.indexOf(authid) > -1 ? true : false || false,
     likes_num: this.props.review.likes.length || 0
   }
 
@@ -29,14 +29,14 @@ export default class Review extends React.Component {
     let likes = review.likes;
 
     if (like) {
-      likes = likes.filter(e => e !== uid);
+      likes = likes.filter(e => e !== authid);
       this.setState({ like: false, likes_num: likes.length });
-      // console.log(`User ${uid} remove like on review ${bid}/${review.createdByUid}`);
+      // console.log(`User ${authid} remove like on review ${bid}/${review.createdByUid}`);
       // console.log(`User likes decreased to ${likes.length}`);
     } else {
-      likes = [...likes, uid];
+      likes = [...likes, authid];
       this.setState({ like: true, likes_num: likes.length });
-      // console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
+      // console.log(`User ${authid} add like on review ${bid}/${review.createdByUid}`);
       // console.log(`User likes increased to ${likes.length}`);
     }
     // console.log({likes, 'likes_num': likes.length});
@@ -64,7 +64,7 @@ export default class Review extends React.Component {
     const { review } = this.props;
 
     return (
-      <div className={`review ${review.createdByUid === uid ? 'own' : ''}`}>
+      <div className={`review ${review.createdByUid === authid ? 'own' : ''}`}>
         <div className="row">
           <Link to={`/dashboard/${review.createdByUid}`} className="col-auto left">
             <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
@@ -87,10 +87,10 @@ export default class Review extends React.Component {
                 <div className="counter">
                   <button 
                     className={`btn flat thumb up ${like}`} 
-                    disabled={!isAuthenticated() || (review.createdByUid === uid)} 
+                    disabled={!isAuthenticated() || (review.createdByUid === authid)} 
                     onClick={this.onThumbChange}
                     title={like ? 'Non mi piace più' : 'Mi piace'}>
-                    {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === uid) ? abbrNum(likes_num) : 'Mi piace'}
+                    {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === authid) ? abbrNum(likes_num) : 'Mi piace'}
                   </button>
                 </div>
                 <div className="counter">

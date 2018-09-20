@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import React from 'react';
 import Rater from 'react-rater';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, calcReadingTime /* , joinObj */, timeSince } from '../../config/shared';

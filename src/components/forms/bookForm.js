@@ -12,10 +12,10 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
-import Redirect from 'react-router-dom/Redirect';
+import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isbn from 'isbn-utils';
-import { bookRef, booksRef, collectionBookRef, storageRef, uid } from '../../config/firebase';
+import { bookRef, booksRef, collectionBookRef, storageRef, authid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, hasRole, validateImg } from '../../config/shared';
@@ -195,7 +195,7 @@ export default class BookForm extends React.Component {
               ...EDIT,
               lastEdit_num: Number((new Date()).getTime()),
               lastEditBy: (this.props.user && this.props.user.displayName) || '',
-              lastEditByUid: uid || ''
+              lastEditByUid: authid || ''
             }
           }).then(() => {
             this.setState({ loading: false, changes: false });
@@ -219,11 +219,11 @@ export default class BookForm extends React.Component {
             EDIT: {
               created_num: Number((new Date()).getTime()),
               createdBy: (this.props.user && this.props.user.displayName) || '',
-              createdByUid: uid || '',
+              createdByUid: authid || '',
               edit: true,
               lastEdit_num: Number((new Date()).getTime()),
               lastEditBy: (this.props.user && this.props.user.displayName) || '',
-              lastEditByUid: uid || ''
+              lastEditByUid: authid || ''
             },
             edition_num: book.edition_num, 
             format: book.format, 

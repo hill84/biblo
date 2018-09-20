@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { booksPerRow /* , isTouchDevice */ } from '../config/shared';

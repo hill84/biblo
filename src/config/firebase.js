@@ -23,8 +23,8 @@ export const signOut = () => auth.signOut();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
-export let uid = (auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid);
-auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
+export let authid = (auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid);
+auth.onAuthStateChanged(user => user ? authid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
 // auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */

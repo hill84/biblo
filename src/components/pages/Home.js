@@ -1,7 +1,7 @@
 import React from 'react';
 import { Background, Parallax } from 'react-parallax';
-import Link from 'react-router-dom/Link';
-import { isAuthenticated, uid } from '../../config/firebase';
+import { Link } from 'react-router-dom';
+import { isAuthenticated, authid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
@@ -23,7 +23,7 @@ const Home = () => (
         </p>
         <div className="btns reveal fadeIn slideUp">
           {isAuthenticated() ? 
-            <Link to={`/dashboard/${uid}`} className="btn primary lg">La mia libreria</Link> 
+            <Link to={`/dashboard/${authid}`} className="btn primary lg">La mia libreria</Link> 
           : 
             <React.Fragment>
               <Link to="/signup" className="btn primary lg">Registrati</Link>
@@ -76,7 +76,7 @@ const Home = () => (
 					<li><Link to="/login">{icon.loginVariant()} Login</Link></li>
 					<li><Link to="/signup">{icon.accountPlus()} Signup</Link></li>
 					<li><Link to="/password-reset">{icon.lockReset()} Reset password</Link></li>
-					<li><Link to={`/dashboard/${uid}`}>{icon.dashboard()} Dashboard</Link></li>
+					<li><Link to={`/dashboard/${authid}`}>{icon.dashboard()} Dashboard</Link></li>
 					<li><Link to="/books/add">{icon.plusCircle()} Add book</Link></li>
 					<li><Link to="/new-book">{icon.newBox()} New book</Link></li>
 					<li><Link to="/profile">{icon.accountCircle()} Profile</Link></li>

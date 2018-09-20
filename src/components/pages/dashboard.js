@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';

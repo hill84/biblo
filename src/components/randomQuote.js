@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'react-router-dom/Link';
+import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
