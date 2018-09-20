@@ -50,7 +50,7 @@ export default class Genre extends React.Component {
         if (!snap.empty) {
           const books = [];
           snap.forEach(book => books.push(book.data()));
-          //console.log(books);
+          // console.log(books);
           this.setState({ books, loading: false });
         } else {
           this.setState({ books: null, loading: false });

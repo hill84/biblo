@@ -137,7 +137,7 @@ export default class Layout extends React.Component {
                   onClose={this.onCloseNotes}>
                   {notes && toRead(notes).length ?
                     toRead(notes).map((note, i) => (
-                      <MenuItem key={note.nid} style={{animationDelay: (i + 1) / 10 + 's'}}> 
+                      <MenuItem key={note.nid} style={{animationDelay: `${(i + 1) / 10  }s`}}> 
                         <div className="row">
                           <div className="col text">
                             <div dangerouslySetInnerHTML={{__html: note.text}} />

@@ -50,10 +50,10 @@ export default class noteForm extends React.Component {
     const { nid, uid } = this.props;
     this.setState({ loading: true });
     if (nid && uid) {
-      //console.log({ nid, uid });
+      // console.log({ nid, uid });
       noteRef(uid, nid).get().then(snap => {
         if (!snap.empty) {
-          //console.log(snap.data());
+          // console.log(snap.data());
           this.setState({ 
             data: snap.data(),
             loading: false
@@ -72,8 +72,8 @@ export default class noteForm extends React.Component {
   };
   
   onChangeMaxChars = e => {
-    let leftChars = `${e.target.name}_leftChars`;
-    let maxChars = `${e.target.name}_maxChars`;
+    const leftChars = `${e.target.name}_leftChars`;
+    const maxChars = `${e.target.name}_maxChars`;
     this.setState({
       ...this.state, 
       data: { ...this.state.data, [e.target.name]: e.target.value }, 
@@ -90,7 +90,7 @@ export default class noteForm extends React.Component {
 		this.setState({ authError: '', errors });
 		if(Object.keys(errors).length === 0) {
       this.setState({ loading: true });
-      //console.log(`Sending notification to ${uid}`);
+      // console.log(`Sending notification to ${uid}`);
       const newNoteRef = notesRef(uid).doc();
       const ref = nid ? noteRef(uid, nid) : newNoteRef;
       ref.set({
@@ -125,7 +125,7 @@ export default class noteForm extends React.Component {
 
 		return (
 			<React.Fragment>
-        <div className="overlay" onClick={this.onToggle}></div>
+        <div className="overlay" onClick={this.onToggle} />
         <div role="dialog" aria-describedby="new note" className="dialog light">
           {loading && <div className="loader"><CircularProgress /></div>}
           <div className="content">

@@ -105,7 +105,7 @@ export default class BookProfile extends React.Component {
         {isOpenIncipit && <Incipit title={book.title} incipit={book.incipit} onToggle={this.onToggleIncipit} />}
       
         <div id="BookProfileComponent">
-          <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
+          <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
 
           {isOpenReadingState && <ReadingStateForm bid={book.bid} readingState={userBook.readingState} onToggle={this.onToggleReadingState} />}
 
@@ -145,7 +145,7 @@ export default class BookProfile extends React.Component {
                   </div>
 
                   <div className="info-row">
-                    <Rating labels={true} ratings={{ratings_num: book.ratings_num, rating_num: book.rating_num}}/>
+                    <Rating labels ratings={{ratings_num: book.ratings_num, rating_num: book.rating_num}}/>
                   </div>
 
                   {isAuthenticated() &&

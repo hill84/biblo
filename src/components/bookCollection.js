@@ -21,7 +21,7 @@ export default class BookCollection extends React.Component {
     desc: false,
     loading: true,
     page: null,
-    //lastVisible: null
+    // lastVisible: null
   }
 
   static propTypes = {
@@ -65,9 +65,9 @@ export default class BookCollection extends React.Component {
   
 	fetch = direction => {
     const { bcid, cid, count, desc, /* firstVisible, lastVisible,  */limit, page } = this.state;
-    //console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
+    // console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
     const prev = direction === 'prev';
-    //const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
+    // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
     const baseRef = collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit);
     const paginatedRef = baseRef.startAfter(startAfter);
@@ -84,17 +84,17 @@ export default class BookCollection extends React.Component {
             collection: books,
             loading: false,
             page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
-            //lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
+            // lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
           }));
-          //console.log(books);
-          //console.log({'direction': direction, 'page': page});
+          // console.log(books);
+          // console.log({'direction': direction, 'page': page});
         } else {
           this.setState({ 
             count: 0,
             collection: [],
             loading: false,
             page: null,
-            //lastVisible: null
+            // lastVisible: null
           });
         }
       }).catch(error => console.warn(error));
@@ -118,7 +118,7 @@ export default class BookCollection extends React.Component {
       <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, i) => 
           <Link key={book.bid} to={`/book/${book.bid}`}>
-            <Cover book={book} rating={true} full={stacked} index={i} bcid={book.bcid} />
+            <Cover book={book} rating full={stacked} index={i} bcid={book.bcid} />
           </Link>
         )}
       </div>

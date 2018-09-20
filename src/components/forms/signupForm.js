@@ -104,13 +104,13 @@ export default class SignupForm extends React.Component {
           <form onSubmit={this.onSubmit} noValidate>
             <SocialAuth />
             <div className="form-group">
-              <FormControl className="input-field" margin="normal" fullWidth={true}>
+              <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome</InputLabel>
                 <Input
                   id="displayName"
                   name="displayName"
                   type="text"
-                  autoFocus={true}
+                  autoFocus
                   placeholder="Mario Rossi"
                   value={data.displayName}
                   onChange={this.onChange}
@@ -121,7 +121,7 @@ export default class SignupForm extends React.Component {
             </div>
 
             <div className="form-group">
-              <FormControl className="input-field" margin="normal" fullWidth={true}>
+              <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
                 <Input
                   id="email"
@@ -137,7 +137,7 @@ export default class SignupForm extends React.Component {
             </div>
 
             <div className="form-group">
-              <FormControl className="input-field" margin="normal" fullWidth={true}>
+              <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
                 <Input
                   id="password"

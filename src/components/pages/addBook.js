@@ -1,7 +1,7 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
-import { primaryTheme } from '../../config/themes';
 import Link from 'react-router-dom/Link';
+import { primaryTheme } from '../../config/themes';
 import { funcType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';

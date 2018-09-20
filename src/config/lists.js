@@ -71,7 +71,7 @@ export const languages = [
 
 export const continents = [
   { id: "AF", name: "Africa" },
-  //{ id: "AN", name: "Antartide" },
+  // { id: "AN", name: "Antartide" },
   { id: "AS", name: "Asia" },
   { id: "EU", name: "Europa" },
   { id: "NA", name: "Nordamerica" },
@@ -80,7 +80,7 @@ export const continents = [
 ];
 
 export const europeanCountries = [
-  //{ id: "", name: "Abcasia‎" },
+  // { id: "", name: "Abcasia‎" },
   { id: "AL", name: "Albania‎" },
   { id: "AD", name: "Andorra‎" },
   { id: "AM", name: "Armenia‎" },
@@ -102,7 +102,7 @@ export const europeanCountries = [
   { id: "IS", name: "Islanda‎" },
   { id: "IT", name: "Italia‎" },
   { id: "KZ", name: "Kazakistan‎" },
-  //{ id: "", name: "Kosovo‎" },
+  // { id: "", name: "Kosovo‎" },
   { id: "LV", name: "Lettonia‎" },
   { id: "LI", name: "Liechtenstein‎" },
   { id: "LT", name: "Lituania‎" },
@@ -112,15 +112,15 @@ export const europeanCountries = [
   { id: "MD", name: "Moldavia‎" },
   { id: "MC", name: "Principato di Monaco" },
   { id: "ME", name: "Montenegro‎" },
-  //{ id: "", name: "Nagorno Karabakh" },
+  // { id: "", name: "Nagorno Karabakh" },
   { id: "NO", name: "Norvegia‎" },
-  //{ id: "", name: "Ossezia del Sud" },
+  // { id: "", name: "Ossezia del Sud" },
   { id: "NL", name: "Paesi Bassi" },
   { id: "PL", name: "Polonia‎" },
   { id: "PT", name: "Portogallo‎" },
   { id: "UK", name: "Regno Unito" },
-  //{ id: "", name: "Repubblica Popolare di Doneck" },
-  //{ id: "", name: "Repubblica Popolare di Lugansk‎" },
+  // { id: "", name: "Repubblica Popolare di Doneck" },
+  // { id: "", name: "Repubblica Popolare di Lugansk‎" },
   { id: "RO", name: "Romania‎" },
   { id: "RU", name: "Russia‎" },
   { id: "SM", name: "San Marino" },
@@ -130,7 +130,7 @@ export const europeanCountries = [
   { id: "ES", name: "Spagna‎" },
   { id: "SE", name: "Svezia‎" },
   { id: "CH", name: "Svizzera‎" },
-  //{ id: "", name: "Transnistria‎" },
+  // { id: "", name: "Transnistria‎" },
   { id: "TR", name: "Turchia‎" },
   { id: "UA", name: "Ucraina‎" },
   { id: "HU", name: "Ungheria‎" }

@@ -10,14 +10,14 @@ import Review from './review';
 export default class Reviews extends React.Component {
 	state = {
     bid: this.props.bid,
-    uid: uid,
+    uid,
     reviews: null,
     reviewsCount: 0,
     desc: false,
     limit: 10,
     loading: true,
-    page: 1, //TODO
-    //lastVisible: null
+    page: 1, // TODO
+    // lastVisible: null
   }
 
   static propTypes = {
@@ -43,7 +43,7 @@ export default class Reviews extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if(this.state.bid !== prevState.bid || this.state.uid !== prevState.uid){
       this.fetchReviews(this.state.bid);
-      //console.log('Fetched updated reviews');
+      // console.log('Fetched updated reviews');
     }
   }
 
@@ -65,7 +65,7 @@ export default class Reviews extends React.Component {
             reviews,
             loading: false,
             page: 1,
-            //lastVisible: snap.docs[snap.docs.length-1]
+            // lastVisible: snap.docs[snap.docs.length-1]
           });
         }).catch(error => console.warn(error));
       } else {
@@ -74,7 +74,7 @@ export default class Reviews extends React.Component {
           reviews: null,
           loading: false,
           page: null,
-          //lastVisible: null
+          // lastVisible: null
         });
       }
     });
@@ -82,8 +82,8 @@ export default class Reviews extends React.Component {
 
   fetch = direction => {
     const { bid, desc, /* firstVisible, lastVisible,  */limit, page, reviewsCount } = this.state;
-    //console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
-    //const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
+    // console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
+    // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = (direction === 'prev') ? (page > 1) ? ((page - 1) * limit) - limit : 0 : ((page * limit) > reviewsCount) ? ((page - 1) * limit) : page * limit;
 
     this.setState({ loading: true });
@@ -97,16 +97,16 @@ export default class Reviews extends React.Component {
           loading: false,
           page: (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.reviewsCount) ? prevState.page : prevState.page + 1,
           prevPage: prevState.page,
-          //lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
+          // lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
         }));
-        //console.log(nextReviews);
+        // console.log(nextReviews);
         console.log({'direction': direction, 'prevPage': this.state.prevPage, 'page': page});
       } else {
         this.setState({ 
           reviews: null,
           loading: false,
           page: null,
-          //lastVisible: null
+          // lastVisible: null
         });
       }
 		}).catch(error => console.warn(error));

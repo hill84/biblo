@@ -69,11 +69,11 @@ export default class UserReview extends React.Component {
   }
 
   fetchUserReview = () => {
-    //console.log('Fetching user review');
+    // console.log('Fetching user review');
     reviewerRef(this.state.bid, uid).onSnapshot(snap => {
       this.setState({ loading: true });
       if (snap.exists) {
-        //console.log(snap.data());
+        // console.log(snap.data());
         this.setState({ review: snap.data() });
       } else {
         this.setState({ review: {
@@ -107,7 +107,7 @@ export default class UserReview extends React.Component {
             photoURL: this.state.user.photoURL,
             rating_num: this.state.userBook.rating_num
           }).then(() => {
-            //console.log(`Book review created`);
+            // console.log(`Book review created`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           userBookRef(uid, this.state.bid).update({
@@ -117,7 +117,7 @@ export default class UserReview extends React.Component {
               created_num: (new Date()).getTime()
             }
           }).then(() => {
-            //console.log(`User review posted`);
+            // console.log(`User review posted`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           let bookReviews_num = this.state.bookReviews_num;
@@ -131,14 +131,14 @@ export default class UserReview extends React.Component {
           bookRef(this.state.bid).update({
             reviews_num: bookReviews_num
           }).then(() => {
-            this.setState({ bookReviews_num: bookReviews_num });
-            //console.log(`Book reviews increased to ${bookReviews_num}`);
+            this.setState({ bookReviews_num });
+            // console.log(`Book reviews increased to ${bookReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           userRef(uid).update({
             'stats.reviews_num': userReviews_num
           }).then(() => {
-            //console.log(`User reviews increased to ${userReviews_num}`);
+            // console.log(`User reviews increased to ${userReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           this.setState({ 
@@ -159,18 +159,18 @@ export default class UserReview extends React.Component {
 
   onDelete = () => {
     this.setState({ isOpenDeleteDialog: false });
-    //DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
+    // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (this.state.bid) {
           
       reviewerRef(this.state.bid, uid).delete().then(() => {
-        //console.log(`Book review deleted`);
+        // console.log(`Book review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
 
       userBookRef(uid, this.state.bid).update({
         ...this.state.userBook,
         review: {}
       }).then(() => {
-        //console.log(`User review deleted`);
+        // console.log(`User review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
 
       const bookReviews_num = this.state.bookReviews_num - 1;
@@ -179,7 +179,7 @@ export default class UserReview extends React.Component {
       bookRef(this.state.bid).update({
         reviews_num: bookReviews_num
       }).then(() => {
-        this.setState({ bookReviews_num: bookReviews_num });
+        this.setState({ bookReviews_num });
         console.log(`Book reviews decreased to ${bookReviews_num}`);
       }).catch(error => this.setState({ serverError: error.message }));
 
@@ -211,8 +211,8 @@ export default class UserReview extends React.Component {
   }
 
   onChangeMaxChars = e => {
-    let leftChars = `${e.target.name}_leftChars`;
-    let maxChars = `${e.target.name}_maxChars`;
+    const leftChars = `${e.target.name}_leftChars`;
+    const maxChars = `${e.target.name}_maxChars`;
     this.setState({
       ...this.state, 
       review: { ...this.state.review, [e.target.name]: e.target.value },
@@ -244,7 +244,7 @@ export default class UserReview extends React.Component {
 
     return (
       <React.Fragment>
-        {isEditing && <div className="overlay" onClick={this.onExitEditing}></div>}
+        {isEditing && <div className="overlay" onClick={this.onExitEditing} />}
         <div className={`card user-review ${isEditing ? 'edit-review' : 'primary'}`}>
           {!loading &&        
             !isEditing ? (
@@ -262,7 +262,7 @@ export default class UserReview extends React.Component {
                           <h3>{user.displayName}</h3>
                         </div>
                         <div className="col text-right rating">
-                          <Rating ratings={{rating_num: userBook.rating_num}} labels={true} />
+                          <Rating ratings={{rating_num: userBook.rating_num}} labels />
                         </div>
                       </div>
                       <h4 className="title">{review.title}</h4>
@@ -291,13 +291,13 @@ export default class UserReview extends React.Component {
             : (
               <form onSubmit={this.onSubmit}>
                 <div className="form-group">
-
                   <FormControl className="input-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.text)} htmlFor="text">Recensione</InputLabel>
                     <Input
                       id="text"
+                      name="text"
                       type="text"
-                      autoFocus
+                      autoFocus={isEditing}
                       placeholder={`Scrivi una recensione (max ${text_maxChars} caratteri)...`}
                       value={review.text || ''}
                       onChange={this.onChangeMaxChars}
@@ -344,7 +344,7 @@ export default class UserReview extends React.Component {
           <div className="form-group">
             <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
           </div>
-         */}
+        */}
 
         <Dialog
           open={isOpenDeleteDialog}

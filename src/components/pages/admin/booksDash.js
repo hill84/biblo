@@ -64,21 +64,21 @@ export default class BooksDash extends React.Component {
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching items');
+    // console.log('fetching items');
     this.setState({ loading: true });
     
     booksRef.get().then(fullSnap => {
       if (!fullSnap.empty) {
         this.setState({ count: fullSnap.docs.length });
-        //console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
+        // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? bRef.startAt(lastVisible || fullSnap.docs[startAt]) : bRef;
         ref.onSnapshot(snap => {
-          //console.log(snap);
+          // console.log(snap);
           if (!snap.empty) {
             const items = [];
             snap.forEach(item => items.push(item.data()));
             this.setState(prevState => ({
-              items: items,
+              items,
               lastVisible: snap.docs[startAt],
               loading: false,
               page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
@@ -103,8 +103,8 @@ export default class BooksDash extends React.Component {
   
   onEdit = id => {
     if (id) {
-      //console.log(`Editing ${id}`);
-      //TODO
+      // console.log(`Editing ${id}`);
+      // TODO
       this.setState({ redirectTo: id }); 
     }
   }
@@ -112,12 +112,12 @@ export default class BooksDash extends React.Component {
   onLock = (id, state) => {
     if (id) {
       if (state) {
-        //console.log(`Locking ${id}`);
+        // console.log(`Locking ${id}`);
         bookRef(id).update({ 'EDIT.edit': false }).then(() => {
           this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
-        //console.log(`Unlocking ${id}`);
+        // console.log(`Unlocking ${id}`);
         bookRef(id).update({ 'EDIT.edit': true }).then(() => {
           this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
@@ -129,7 +129,7 @@ export default class BooksDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
-    //console.log(`Deleting ${selectedId}`);
+    // console.log(`Deleting ${selectedId}`);
     bookRef(selectedId).delete().then(() => {
       /* 
       reviewRef(selectedId).delete().then(() => {
@@ -150,7 +150,7 @@ export default class BooksDash extends React.Component {
         <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs" style={{backgroundImage: `url(${item.covers[0]})`}}></div>
+              <div className="mock-cover xs" style={{backgroundImage: `url(${item.covers[0]})`}} />
             </div>
             <Link to={`/book/${item.bid}`} className="col">
               {item.title}
@@ -247,7 +247,7 @@ export default class BooksDash extends React.Component {
             <ul className="table dense nolist font-sm">
               <li className="labels">
                 <div className="row">
-                  <div className="col-auto"><div className="mock-cover xs hidden"></div></div>
+                  <div className="col-auto"><div className="mock-cover xs hidden" /></div>
                   <div className="col">Titolo</div>
                   <div className="col">Autore</div>
                   <div className="col hide-md">Bid</div>

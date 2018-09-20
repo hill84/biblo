@@ -14,13 +14,13 @@ import 'moment/locale/it';
 import React from 'react';
 import Redirect from 'react-router-dom/Redirect';
 import isISBN from 'validator/lib/isISBN';
+import isbn from 'isbn-utils';
 import { bookRef, booksRef, collectionBookRef, storageRef, uid } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, hasRole, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
-import isbn from 'isbn-utils';
 
 export default class BookForm extends React.Component {
 	state = {
@@ -144,7 +144,7 @@ export default class BookForm extends React.Component {
 
   onDeleteChip = (key, chip) => { 
     this.setState({ 
-      //chips: this.state.chips.filter((c) => c !== chip) 
+      // chips: this.state.chips.filter((c) => c !== chip) 
       book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true 
     }); 
   }; 
@@ -157,19 +157,17 @@ export default class BookForm extends React.Component {
 
   onDeleteChipFromObj = (key, chip) => {
     this.setState({
-      //chips: this.state.chips.filter((c) => c !== chip)
+      // chips: this.state.chips.filter((c) => c !== chip)
       book: { 
         ...this.state.book, 
-        [key]: arrToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), function(item) { 
-          return { key: item, value: true }
-        })
+        [key]: arrToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
       }, changes: true
     });
   };
   
   onChangeMaxChars = e => {
-    let leftChars = `${e.target.name}_leftChars`;
-    let maxChars = `${e.target.name}_maxChars`;
+    const leftChars = `${e.target.name}_leftChars`;
+    const maxChars = `${e.target.name}_maxChars`;
     this.setState({
       ...this.state, 
       book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
@@ -247,7 +245,7 @@ export default class BookForm extends React.Component {
             /* this.setState({ loading: false, changes: false });
             this.props.isEditing(); */
             openSnackbar('Nuovo libro creato', 'success');
-            //console.log(`New book created with bid ${newBid}`);
+            // console.log(`New book created with bid ${newBid}`);
           }).catch(error => {
             this.setState({
               authError: error.message,
@@ -263,7 +261,7 @@ export default class BookForm extends React.Component {
               if (collectionBook.exists) { bcid = collectionBook.data().bcid; }
               collectionBookRef(cid, book.bid || newBid).set({
                 bid: book.bid || newBid, 
-                bcid: bcid,
+                bcid,
                 covers: (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
@@ -378,7 +376,7 @@ export default class BookForm extends React.Component {
     e.preventDefault();
     const { openSnackbar } = this.props;
 		const file = e.target.files[0];
-		//console.log(file);
+		// console.log(file);
 		const errors = validateImg(file, 1);
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
@@ -392,7 +390,7 @@ export default class BookForm extends React.Component {
         this.setState({ errors: { ...errors, upload: error.message } });
         openSnackbar(error.message, 'error');
 			}, () => {
-				//console.log('upload completed');
+				// console.log('upload completed');
 				this.setState({
 					imgPreview: uploadTask.snapshot.downloadURL,
 					changes: true,
@@ -414,7 +412,7 @@ export default class BookForm extends React.Component {
 			<MenuItem 
 				value={item.name} 
 				key={item.id} 
-				insetChildren={values ? true : false} 
+				insetChildren={!!values} 
 				checked={values ? values.includes(item.name) : false}>
 				{item.name}
       </MenuItem>
@@ -424,7 +422,7 @@ export default class BookForm extends React.Component {
 
 		return (
       <React.Fragment>
-        <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}}></div></div>
+        <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
         <div className="container top">
           <form onSubmit={this.onSubmit} className="card">
             {loading && <div className="loader"><CircularProgress /></div>}
@@ -436,7 +434,7 @@ export default class BookForm extends React.Component {
                     <span>Carica un'immagine</span>
                     <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
                     {(imgProgress > 0) && 
-                      <progress type="progress" value={imgProgress} max="100" className="progress"></progress>
+                      <progress type="progress" value={imgProgress} max="100" className="progress" />
                     }
                   </button>
                 }
@@ -569,8 +567,8 @@ export default class BookForm extends React.Component {
                         value={book.publication ? new Date(book.publication) : null}
                         onChange={this.onChangeDate("publication")}
                         margin="normal"
-                        animateYearScrolling={true}
-                        openToYearSelection={true}
+                        animateYearScrolling
+                        openToYearSelection
                         fullWidth
                       />
                     </MuiPickersUtilsProvider>
@@ -666,7 +664,7 @@ export default class BookForm extends React.Component {
                         value={book.description}
                         onChange={this.onChangeMaxChars}
                         rowsMax={30}
-                        multiline={true}
+                        multiline
                       />
                       {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
                       {(description_leftChars !== undefined) && 
@@ -696,7 +694,7 @@ export default class BookForm extends React.Component {
                         value={book.incipit || ''}
                         onChange={this.onChangeMaxChars}
                         rowsMax={30}
-                        multiline={true}
+                        multiline
                       />
                       {errors.incipit && <FormHelperText className="message error">{errors.incipit}</FormHelperText>}
                       {(incipit_leftChars !== undefined) && 

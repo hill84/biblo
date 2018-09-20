@@ -59,7 +59,7 @@ export default class Book extends React.Component {
         this.setState({ loading: true });
         bookRef(this.props.bid).onSnapshot(snap => {
           if (snap.exists) {
-            //console.log(snap.data());
+            // console.log(snap.data());
             this.setState({
               book: {
                 ...this.state.book,
@@ -92,7 +92,7 @@ export default class Book extends React.Component {
       this.setState({ loading: true });
       bookRef(this.props.bid).onSnapshot(snap => {
         if (snap.exists) {
-          //console.log(snap.data());
+          // console.log(snap.data());
           this.setState({
             book: {
               ...this.state.book,
@@ -126,7 +126,7 @@ export default class Book extends React.Component {
       userBookRef(uid, bid).onSnapshot(snap => {
         if (snap.exists) {
           this.setState({ userBook: snap.data() });
-          //console.log(`Update userBook ${bid}`);
+          // console.log(`Update userBook ${bid}`);
         }
       });
     }
@@ -155,7 +155,7 @@ export default class Book extends React.Component {
             bookInWishlist: false 
           }
         }); */
-        //console.log('Book added to user shelf');
+        // console.log('Book added to user shelf');
         openSnackbar('Libro aggiunto in libreria', 'success');
       }).catch(error => console.warn(error));
 
@@ -168,14 +168,14 @@ export default class Book extends React.Component {
             readers_num: bookReaders_num 
           }
         }); */
-        //console.log('Readers number increased');
+        // console.log('Readers number increased');
       }).catch(error => console.warn(error));
 
       userRef(uid).update({
         'stats.shelf_num': this.props.user.stats.shelf_num + 1,
         'stats.wishlist_num': userWishlist_num
       }).then(() => {
-        //console.log('User shelf number increased');
+        // console.log('User shelf number increased');
       }).catch(error => console.warn(error));
     } else console.warn(`Cannot addBookToShelf. User not authenticated`);
 	}
@@ -227,7 +227,7 @@ export default class Book extends React.Component {
             bookInWishlist: true 
           }
         }); */
-        //console.log('Book added to user wishlist');
+        // console.log('Book added to user wishlist');
         openSnackbar('Libro aggiunto in lista desideri', 'success');
       }).catch(error => console.warn(error));
 
@@ -237,7 +237,7 @@ export default class Book extends React.Component {
         /* 'stats.ratings_num': userRatings_num,
         'stats.reviews_num': userReviews_num */
       }).then(() => {
-        //console.log('User wishlist number increased');
+        // console.log('User wishlist number increased');
       }).catch(error => console.warn(error));
 
       /* bookRef(bid).update({
@@ -310,16 +310,16 @@ export default class Book extends React.Component {
             bookInWishlist: false,
             rating_num: userBookRating_num,
             readingState: { state_num: 1 },
-            review: review
+            review
           }
         });
-        //console.log(`Book removed from user ${bookshelf}`);
+        // console.log(`Book removed from user ${bookshelf}`);
       }).catch(error => console.warn(error));
   
       bookRef(bid).update({
         rating_num: bookRating_num,
         ratings_num: bookRatings_num,
-        review: review,
+        review,
         reviews_num: bookReviews_num,
         readers_num: bookReaders_num
       }).then(() => {
@@ -328,16 +328,16 @@ export default class Book extends React.Component {
             ...this.state.book, 
             rating_num: bookRating_num, 
             ratings_num: bookRatings_num,
-            review: review,
+            review,
             reviews_num: bookReviews_num,
             readers_num: bookReaders_num
           }
         });
-        //console.log('Rating and reader removed');
+        // console.log('Rating and reader removed');
       }).catch(error => console.warn(error));
   
       if (bookshelf === 'shelf') {
-        //console.log('will remove book and rating from user shelf stats');
+        // console.log('will remove book and rating from user shelf stats');
         userRef(uid).update({
           ...this.props.user,
           stats: {
@@ -347,18 +347,18 @@ export default class Book extends React.Component {
             ratings_num: userRatings_num
           }
         }).then(() => {
-          //console.log('Book and rating removed from user shelf stats');
+          // console.log('Book and rating removed from user shelf stats');
         }).catch(error => console.warn(error));
 
-        if (!!this.state.userBook.review.created_num) {
+        if (this.state.userBook.review.created_num) {
           reviewerRef(bid, uid).delete().then(() => {
             this.setState({ 
               userBook: { 
                 ...this.state.userBook, 
-                review: review
+                review
               }
             });
-            //console.log(`Review removed from book`);
+            // console.log(`Review removed from book`);
           }).catch(error => console.warn(error));
         }
 
@@ -368,12 +368,12 @@ export default class Book extends React.Component {
               rating_num: bookRating_num, 
               ratings_num: bookRatings_num
             }).then(() => {
-              //console.log(`updated book rating in "${cid}" collection`)
+              // console.log(`updated book rating in "${cid}" collection`)
             }).catch(error => console.warn(error));
           });
         };
       } else if (bookshelf === 'wishlist') {
-        //console.log('will remove book from user wishlist stats');
+        // console.log('will remove book from user wishlist stats');
         userRef(uid).update({
           ...this.props.user,
           stats: {
@@ -381,7 +381,7 @@ export default class Book extends React.Component {
             wishlist_num: userWishlist_num
           }
         }).then(() => {
-          //console.log('Book removed from user wishlist stats');
+          // console.log('Book removed from user wishlist stats');
         }).catch(error => console.warn(error));
       } else console.warn(`no bookshelf named "${bookshelf}"`);
     } else console.warn(`Cannot removeBookFromUserBooks. User not authenticated`);
@@ -390,7 +390,7 @@ export default class Book extends React.Component {
 	rateBook = (bid, rate) => {
     if (isAuthenticated()) {
       let bookRating_num = this.state.book.rating_num;
-      let userBookRating_num = this.state.userBook.rating_num;
+      const userBookRating_num = this.state.userBook.rating_num;
       let bookRatings_num = this.state.book.ratings_num; 
       let userRatings_num = this.props.user.stats.ratings_num; 
       
@@ -421,17 +421,17 @@ export default class Book extends React.Component {
             ratings_num: bookRatings_num
           }
         });
-        //console.log(`Book rated with ${rate} stars`);
+        // console.log(`Book rated with ${rate} stars`);
       }).catch(error => console.warn(error));
 
       if (this.state.book.collections) {
         this.state.book.collections.forEach(cid => {
-          //console.log(cid);
+          // console.log(cid);
           collectionBookRef(cid, this.state.book.bid).update({
             rating_num: bookRating_num, 
             ratings_num: bookRatings_num
           }).then(() => {
-            //console.log(`updated book rating in "${cid}" collection`)
+            // console.log(`updated book rating in "${cid}" collection`)
           }).catch(error => console.warn(error));
         });
       };
@@ -445,13 +445,13 @@ export default class Book extends React.Component {
             rating_num: rate 
           }
         });
-        //console.log('User book rated with ' + rate + ' stars');
+        // console.log('User book rated with ' + rate + ' stars');
       }).catch(error => console.warn(error));
 
       userRef(uid).update({
         'stats.ratings_num': userRatings_num
       }).then(() => {
-        //console.log('User ratings number increased');
+        // console.log('User ratings number increased');
       }).catch(error => console.warn(error));
     } else console.warn(`Cannot rateBook. User not authenticated`);
 	}

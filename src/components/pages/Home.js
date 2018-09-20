@@ -33,14 +33,14 @@ const Home = () => (
         </div>
 			</div>
       <Background className="bg reveal fadeIn">
-        <div className="overlay"></div>
+        <div className="overlay" />
         <img src={heroImage} alt="bookwall" />
       </Background>
 		</Parallax>
 
 		<div className="container" style={{ marginTop: '-56px' }}>
       <div className="card dark card-fullwidth-sm">
-        <BookCollection cid="Best seller" pagination={false} limit={7} scrollable={true} />
+        <BookCollection cid="Best seller" pagination={false} limit={7} scrollable />
       </div>
 
       <div className="row flex">
@@ -59,15 +59,15 @@ const Home = () => (
       </div>
 
       <div className="card dark card-fullwidth-sm">
-        <BookCollection cid="Libri proibiti" pagination={false} limit={7} scrollable={true} />
+        <BookCollection cid="Libri proibiti" pagination={false} limit={7} scrollable />
       </div>
 
       <div className="card dark card-fullwidth-sm">
-        <Authors pagination={false} limit={7} scrollable={true} />
+        <Authors pagination={false} limit={7} scrollable />
       </div>
 
       <div className="card dark card-fullwidth-sm">
-				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable={true} />
+				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable />
 			</div>
 
 			<div className="card dark">

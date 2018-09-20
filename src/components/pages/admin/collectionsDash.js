@@ -61,14 +61,14 @@ export default class collectionsDash extends React.Component {
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const cRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
-    //console.log('fetching items');
+    // console.log('fetching items');
     this.setState({ loading: true });
     
     collectionsRef.get().then(fullSnap => {
-      //console.log(fullSnap);
+      // console.log(fullSnap);
       if (!fullSnap.empty) {
         this.setState({ count: fullSnap.docs.length });
-        //console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
+        // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? cRef.startAt(lastVisible || fullSnap.docs[startAt]) : cRef;
 
         ref.onSnapshot(snap => {
@@ -85,7 +85,7 @@ export default class collectionsDash extends React.Component {
             });
             setTimeout(() => {
               this.setState(prevState => ({
-                items: items,
+                items,
                 lastVisible: snap.docs[startAt],
                 loading: false,
                 page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
@@ -111,18 +111,18 @@ export default class collectionsDash extends React.Component {
   
   onEdit = id => {
     console.log(`Editing ${id}`);
-    //TODO
+    // TODO
   }
 
   onLock = (id, state) => {
     if (id) {
       if (state) {
-        //console.log(`Locking ${id}`);
+        // console.log(`Locking ${id}`);
         collectionRef(id).update({ edit: false }).then(() => {
           this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
-        //console.log(`Unlocking ${id}`);
+        // console.log(`Unlocking ${id}`);
         collectionRef(id).update({ edit: true }).then(() => {
           this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
@@ -134,7 +134,7 @@ export default class collectionsDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
-    //console.log(`Deleting ${selectedId}`);
+    // console.log(`Deleting ${selectedId}`);
     collectionRef(selectedId).delete().then(() => {
       this.onCloseDeleteDialog();
       this.props.openSnackbar('Elemento cancellato', 'success');
@@ -143,7 +143,7 @@ export default class collectionsDash extends React.Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    //const { openSnackbar } = this.props;
+    // const { openSnackbar } = this.props;
 
     const itemsList = (items && items.length &&
       items.map(item => 

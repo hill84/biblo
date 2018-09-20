@@ -69,7 +69,7 @@ export default class AuthorsDash extends React.Component {
     const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
     const paginatedRef = prev ? baseRef.endBefore(firstVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef.limit(limit) : baseRef.limit(limit);
-    //console.log('fetching items');
+    // console.log('fetching items');
     /* console.log({ 
       first: firstVisible && firstVisible.data().displayName, 
       last: lastVisible && lastVisible.data().displayName, 
@@ -80,13 +80,13 @@ export default class AuthorsDash extends React.Component {
 
     const fetcher = () => {
       ref.onSnapshot(snap => {
-        //console.log(snap);
+        // console.log(snap);
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           this.setState({
             firstVisible: snap.docs[0],
-            items: items,
+            items,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
             page: direction ? prev ? page > 1 ? page - 1 : 1 : (page * limit) > count ? page : page + 1 : 1
@@ -122,12 +122,12 @@ export default class AuthorsDash extends React.Component {
   onLock = (id, state) => {
     if (id) {
       if (state) {
-        //console.log(`Locking ${id}`);
+        // console.log(`Locking ${id}`);
         authorRef(id).update({ edit: false }).then(() => {
           this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
-        //console.log(`Unlocking ${id}`);
+        // console.log(`Unlocking ${id}`);
         authorRef(id).update({ edit: true }).then(() => {
           this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
@@ -139,7 +139,7 @@ export default class AuthorsDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
-    //console.log(`Deleting ${selectedId}`);
+    // console.log(`Deleting ${selectedId}`);
     authorRef(selectedId).delete().then(() => {
       this.setState({ isOpenDeleteDialog: false });
       this.props.openSnackbar('Elemento cancellato', 'success');
@@ -232,7 +232,7 @@ export default class AuthorsDash extends React.Component {
             <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
                 <div className="row">
-                  <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
+                  <div className="col-auto hide-xs"><div className="avatar" title="avatar" /></div>
                   <div className="col-6 col-sm-4 col-lg-2">Nominativo</div>
                   <div className="col-1">Sesso</div>
                   <div className="col hide-lg">Bio</div>

@@ -2,8 +2,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import { appName } from '../../config/shared';
 
-const TermsPage = props => {
-  return (
+const TermsPage = props => (
     <div id="TermsPageComponent" className="reveal fadeIn slideUp">
       <div className="container pad-v">
         <h2>Termini e condizioni d'uso</h2>
@@ -27,6 +26,5 @@ const TermsPage = props => {
       </div>
     </div>
   );
-};
 
 export default TermsPage;

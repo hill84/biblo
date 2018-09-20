@@ -120,14 +120,17 @@ export const userReviewType = shape({
   title: stringType
 });
 
-export const authorType = shape({ //TODO
-  aid: string.isRequired,
+export const authorType = shape({
   bio: stringType,
-  created_num: numberType.isRequired,
-  followers: objectOf(bool).isRequired,
   displayName: stringType.isRequired,
+  edit: boolType.isRequired,
+  followers: objectOf(bool).isRequired,
+  lastEditBy: stringType.isRequired,
+  lastEditByUid: stringType.isRequired,
+  lastEdit_num: numberType.isRequired,
   photoURL: string,
-  sex: string.isRequired
+  sex: string.isRequired,
+  source: string
 });
 
 export const quoteType = shape({
@@ -135,10 +138,10 @@ export const quoteType = shape({
   bid: stringType,
   bootTitle: stringType,
   coverURL: stringType,
-  lastEdit_num: numberType.isRequired,
+  edit: boolType.isRequired,
   lastEditBy: stringType.isRequired,
   lastEditByUid: stringType.isRequired,
-  edit: boolType.isRequired,
+  lastEdit_num: numberType.isRequired,
   qid: stringType.isRequired,
   quote: stringType.isRequired
 });

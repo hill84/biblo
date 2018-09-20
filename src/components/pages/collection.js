@@ -87,7 +87,7 @@ export default class Collection extends React.Component {
           </div>
           <div className="col-md-6">
             <div className="card">
-              <BookCollection cid={cid} pagination={false} booksPerRow={1} stacked={true} />
+              <BookCollection cid={cid} pagination={false} booksPerRow={1} stacked />
             </div>
           </div>
         </div>

@@ -25,14 +25,14 @@ export const storageKey_uid = 'uid';
 export const isAuthenticated = () => !!auth.currentUser || !!localStorage.getItem(storageKey_uid);
 export let uid = (auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid);
 auth.onAuthStateChanged(user => user ? uid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
-//auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
+// auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */
 const db = firebase.firestore();
 db.settings({/* my settings... */ timestampsInSnapshots: true});
 export const FieldValue = firebase.firestore.FieldValue;
 export const timestamp = FieldValue.serverTimestamp();
-//export const timestamp = firebase.ServerValue;
+// export const timestamp = firebase.ServerValue;
 
 export const usersRef = db.collection('users');
 export const userRef = uid => db.collection('users').doc(uid);

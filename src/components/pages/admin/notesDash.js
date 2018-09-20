@@ -60,14 +60,14 @@ export default class NotesDash extends React.Component {
     const baseRef = notificationsRef.limit(limit);
     const paginatedRef = prev ? baseRef/* .endBefore(lastVisible) */ : baseRef/* .startAfter(lastVisible) */;
     const ref = direction ? paginatedRef : baseRef;
-    //console.log('fetching');
-    //console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
+    // console.log('fetching');
+    // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     this.setState({ loading: true });
 
     const fetcher = () => {
       ref.get().then(fullSnap => {
         if (!fullSnap.empty) {
-          //console.log(fullSnap);
+          // console.log(fullSnap);
           const items = [];
           fullSnap.forEach(item => items.push({ id: item.id }));
           this.setState({

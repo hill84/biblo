@@ -31,36 +31,32 @@ export default class Review extends React.Component {
     if (like) {
       likes = likes.filter(e => e !== uid);
       this.setState({ like: false, likes_num: likes.length });
-      //console.log(`User ${uid} remove like on review ${bid}/${review.createdByUid}`);
-      //console.log(`User likes decreased to ${likes.length}`);
+      // console.log(`User ${uid} remove like on review ${bid}/${review.createdByUid}`);
+      // console.log(`User likes decreased to ${likes.length}`);
     } else {
       likes = [...likes, uid];
       this.setState({ like: true, likes_num: likes.length });
-      //console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
-      //console.log(`User likes increased to ${likes.length}`);
+      // console.log(`User ${uid} add like on review ${bid}/${review.createdByUid}`);
+      // console.log(`User likes increased to ${likes.length}`);
     }
-    //console.log({likes, 'likes_num': likes.length});
+    // console.log({likes, 'likes_num': likes.length});
     if (bid && review.createdByUid) {
-      reviewerRef(bid, review.createdByUid).update({
-        likes: likes
-      }).then(() => {
-        //console.log(`Book review likes updated`);
+      reviewerRef(bid, review.createdByUid).update({ likes }).then(() => {
+        // console.log(`Book review likes updated`);
       }).catch(error => console.warn(error.message));
 
-      userBookRef(review.createdByUid, bid).update({
-        likes: likes
-      }).then(() => {
-        //console.log(`User book review likes updated`);
+      userBookRef(review.createdByUid, bid).update({ likes }).then(() => {
+        // console.log(`User book review likes updated`);
       }).catch(error => console.warn(error.message));
     } else console.warn('No bid or ruid');
   }
 
   onAddResponse = () => {
-    //TODO
+    // TODO
   }
 
   onSubmitResponse = () => {
-    //TODO
+    // TODO
   }
 
   render() {
@@ -79,7 +75,7 @@ export default class Review extends React.Component {
                 <h3>{review.displayName}</h3>
               </Link>
               <div className="col text-right rating">
-                <Rating ratings={{rating_num: review.rating_num}} labels={true} />
+                <Rating ratings={{rating_num: review.rating_num}} labels />
               </div>
             </div>
             {review.title && <h4 className="title">{review.title}</h4>}

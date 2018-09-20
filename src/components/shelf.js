@@ -7,7 +7,7 @@ import { icon } from '../config/icons';
 import { booksPerRow } from '../config/shared';
 import { numberType, stringType } from '../config/types';
 import Cover from './cover';
-import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
+import { skltn_shelfStack, skltn_shelfRow } from './skeletons';
 
 export default class Shelf extends React.Component {
   state = {
@@ -86,7 +86,7 @@ export default class Shelf extends React.Component {
       shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
           this.setState({ userBooksCount: fullSnap.docs.length });
-          let lastVisible = fullSnap.docs[startAt];
+          const lastVisible = fullSnap.docs[startAt];
           const ref = direction ? shelfRef.startAt(lastVisible) : shelfRef;
           ref.limit(limit).onSnapshot(snap => {
             this.setState({ loading: true });
@@ -148,7 +148,7 @@ export default class Shelf extends React.Component {
               <div className="row">
                 <div className="col">
                   <button 
-                    className={`btn sm flat counter`} 
+                    className="btn sm flat counter" 
                     title={coverview ? 'Stack view' : 'Cover view'} 
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential() : icon.viewGrid()}

@@ -2,7 +2,7 @@ import React from 'react';
 import { numberType, _oneOfType, stringType, funcType } from '../config/types';
 
 const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
-  //console.log('Async: Copying to clipboard was successful!');
+  // console.log('Async: Copying to clipboard was successful!');
   props.openSnackbar('Copiato negli appunti', 'success');
 }, error => {
   props.openSnackbar('Errore interno', 'error');

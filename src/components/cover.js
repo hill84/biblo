@@ -7,7 +7,7 @@ export default class Cover extends React.Component {
   state = {
     book: this.props.book,
     cover: (this.props.book.covers && this.props.book.covers[0]) || '',
-    //index: 0
+    // index: 0
   }
 
   static propTypes = {
@@ -23,7 +23,7 @@ export default class Cover extends React.Component {
       return { 
         book: props.book, 
         cover: (props.book && props.book.covers[0]) || '', 
-        //index: 0
+        // index: 0
       }; 
     }
     return null;
@@ -49,7 +49,7 @@ export default class Cover extends React.Component {
       <div className="book"> 
         <div className="cover" title={book.title} style={{animationDelay: `${index/10}s`, backgroundImage: cover ? `url(${cover})` : null}}>
           {bcid && bcid > 0 ? <div className="bookmark accent"><div>{bcid}</div></div> : null}
-          <div className="overlay"></div>
+          <div className="overlay" />
           {/* (book.covers && book.covers.length > 1) && 
             <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
           */}

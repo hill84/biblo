@@ -50,7 +50,7 @@ export default class readingStateForm extends React.Component {
 	};
 
   onChangeDate = key => date => {
-    //console.log(date);
+    // console.log(date);
 		this.setState({ 
       [key]: new Date(date).getTime(), 
       changes: true,
@@ -86,7 +86,7 @@ export default class readingStateForm extends React.Component {
           'readingState.start_num': this.state.start_num || null,
           'readingState.end_num': this.state.end_num || null
         }).then(() => {
-          //console.log(`UserBook readingState updated`);
+          // console.log(`UserBook readingState updated`);
           this.setState({ loading: false });
           this.props.onToggle();
         }).catch(error => console.warn(error));
@@ -99,13 +99,13 @@ export default class readingStateForm extends React.Component {
 
 		return (
       <React.Fragment>
-        <div className="overlay" onClick={this.onToggle}></div>
+        <div className="overlay" onClick={this.onToggle} />
         <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
           {loading && <div className="loader"><CircularProgress /></div>}
           <div className="content">
             <div className="row">
               <div className="form-group col">
-                <FormControl className="select-field" margin="normal" fullWidth={true}>
+                <FormControl className="select-field" margin="normal" fullWidth>
                   <InputLabel htmlFor="state_num">Stato lettura</InputLabel>
                   <Select
                     id="state_num"
@@ -139,7 +139,7 @@ export default class readingStateForm extends React.Component {
                       value={start_num ? new Date(start_num) : null}
                       onChange={this.onChangeDate("start_num")}
                       margin="normal"
-                      animateYearScrolling={true}
+                      animateYearScrolling
                       todayLabel="Oggi"
                       showTodayButton
                       fullWidth
@@ -164,7 +164,7 @@ export default class readingStateForm extends React.Component {
                         value={end_num ? new Date(end_num) : null}
                         onChange={this.onChangeDate("end_num")}
                         margin="normal"
-                        animateYearScrolling={true}
+                        animateYearScrolling
                         todayLabel="Oggi"
                         showTodayButton
                         fullWidth

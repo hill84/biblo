@@ -72,13 +72,13 @@ export default class LoginForm extends React.Component {
 
 				<form onSubmit={this.onSubmit} noValidate>
 					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth={true}>
+            <FormControl className="input-field" margin="normal" fullWidth>
               <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                autoFocus={true}
+                autoFocus
                 placeholder="esempio@esempio.com"
                 value={data.email}
                 onChange={this.handleChange}
@@ -89,7 +89,7 @@ export default class LoginForm extends React.Component {
 					</div>
 
 					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth={true}>
+            <FormControl className="input-field" margin="normal" fullWidth>
               <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
               <Input
                 id="password"

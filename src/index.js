@@ -7,10 +7,8 @@ import './css/grid.min.css';
 import './css/main.css';
 import registerServiceWorker from './registerServiceWorker';
 
-const history = createBrowserHistory();
-
 ReactDOM.render(
-	<Router history={history}>
+	<Router history={createBrowserHistory()}>
 		<App />
 	</Router>,
 	document.getElementById('root')

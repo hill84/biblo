@@ -1,8 +1,7 @@
 import React from 'react';
 import { appName } from '../../config/shared';
 
-const AboutPage = props => {
-  return (
+const AboutPage = props => (
     <div id="AboutPageComponent" className="reveal fadeIn slideUp">
       <div className="container pad-v">
         <h2>Chi siamo</h2>
@@ -16,6 +15,5 @@ const AboutPage = props => {
       </div>
     </div>
   );
-};
 
 export default AboutPage;

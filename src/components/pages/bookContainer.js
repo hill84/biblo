@@ -1,12 +1,10 @@
 import React from 'react';
 import Book from '../book';
 
-const BookContainer = props => {
-  return (
+const BookContainer = props => (
     <div id="BookContainerComponent">
       <Book bid={props.match.params.bid} user={props.user} openSnackbar={props.openSnackbar} />
     </div>
   );
-};
 
 export default BookContainer;

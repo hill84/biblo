@@ -88,7 +88,7 @@ export default class Profile extends React.Component {
 					success: true
         });
         this.props.openSnackbar('Modifiche salvate', 'success');
-				//this.setState({ redirectToReferrer: true });
+				// this.setState({ redirectToReferrer: true });
 			}).catch(error => {
 				this.setState({
 					authError: error.message,
@@ -117,7 +117,7 @@ export default class Profile extends React.Component {
     e.preventDefault();
     const { openSnackbar } = this.props;
 		const file = e.target.files[0];
-		//console.log(file);
+		// console.log(file);
     const errors = validateImg(file, 1);
     this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
@@ -131,7 +131,7 @@ export default class Profile extends React.Component {
         this.setState({ errors: { ...errors, upload: error.message } });
         openSnackbar(error.message, 'error');
 			}, () => {
-				//console.log('upload completed');
+				// console.log('upload completed');
 				this.setState({
 					imgPreview: uploadTask.snapshot.downloadURL,
 					changes: true,
@@ -144,7 +144,7 @@ export default class Profile extends React.Component {
 
 	render() {
 		const { changes, errors, imgPreview, loading, imgProgress, success, user } = this.state;
-		//const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
+		// const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
 		const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
 				value={item.name} 
@@ -233,8 +233,8 @@ export default class Profile extends React.Component {
                       value={user.birth_date ? new Date(user.birth_date) : null}
                       onChange={this.onChangeDate("birth_date")}
                       margin="normal"
-                      animateYearScrolling={true}
-                      openToYearSelection={true}
+                      animateYearScrolling
+                      openToYearSelection
                       fullWidth
                     />
                   </MuiPickersUtilsProvider>

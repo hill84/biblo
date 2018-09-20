@@ -68,19 +68,19 @@ export default class QuotesDash extends React.Component {
     const baseRef = quotesRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
     const ref = direction ? paginatedRef : baseRef;
-    //console.log('fetching');
-    //console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
+    // console.log('fetching');
+    // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     this.setState({ loading: true });
 
     const fetcher = () => {
       ref.onSnapshot(snap => {
-        //console.log(snap);
+        // console.log(snap);
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
-          //console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
+          // console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
           this.setState({
-            items: items,
+            items,
             lastVisible: snap.docs[snap.docs.length-1],
             loading: false,
             page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
@@ -116,12 +116,12 @@ export default class QuotesDash extends React.Component {
   onLock = (id, state) => {
     if (id) {
       if (state) {
-        //console.log(`Locking ${id}`);
+        // console.log(`Locking ${id}`);
         quoteRef(id).update({ edit: false }).then(() => {
           this.props.openSnackbar('Elemento bloccato', 'success');
         }).catch(error => console.warn(error));
       } else {
-        //console.log(`Unlocking ${id}`);
+        // console.log(`Unlocking ${id}`);
         quoteRef(id).update({ edit: true }).then(() => {
           this.props.openSnackbar('Elemento sbloccato', 'success');
         }).catch(error => console.warn(error));
@@ -133,7 +133,7 @@ export default class QuotesDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
-    //console.log(`Deleting ${selectedId}`);
+    // console.log(`Deleting ${selectedId}`);
     quoteRef(selectedId).delete().then(() => {
       this.setState({ isOpenDeleteDialog: false });
       this.props.openSnackbar('Elemento cancellato', 'success');
@@ -149,7 +149,7 @@ export default class QuotesDash extends React.Component {
         <li key={item.qid} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs" style={{backgroundImage: `url(${item.coverURL})`}}></div>
+              <div className="mock-cover xs" style={{backgroundImage: `url(${item.coverURL})`}} />
             </div>
             {item.bid ? <Link to={`/book/${item.bid}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
             <Link to={`/author/${item.author}`} className="col">{item.author}</Link>
@@ -229,7 +229,7 @@ export default class QuotesDash extends React.Component {
             <ul className="table dense nolist font-sm">
               <li className="labels">
                 <div className="row">
-                  <div className="col-auto"><div className="mock-cover xs hidden" title="cover"></div></div>
+                  <div className="col-auto"><div className="mock-cover xs hidden" title="cover" /></div>
                   <div className="col">Libro</div>
                   <div className="col">Autore</div>
                   <div className="col-5 hide-sm">Testo</div>

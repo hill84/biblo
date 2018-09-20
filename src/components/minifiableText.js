@@ -25,7 +25,7 @@ export default class MinifiableText extends React.Component {
   }
 
   minifyText = () => {
-    this.setState({ isTextMinified: this.state.text.length > this.state.maxChars ? true : false });
+    this.setState({ isTextMinified: this.state.text.length > this.state.maxChars });
   }
 
   onMinify = () => {

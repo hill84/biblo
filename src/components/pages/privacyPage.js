@@ -1,7 +1,6 @@
 import React from 'react';
 
-const PrivacyPage = props => {
-  return (
+const PrivacyPage = props => (
     <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
       <div className="container pad-v">
         <h2>Privacy policy</h2>
@@ -9,6 +8,5 @@ const PrivacyPage = props => {
       </div>
     </div>
   );
-};
 
 export default PrivacyPage;

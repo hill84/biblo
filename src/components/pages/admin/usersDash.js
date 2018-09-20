@@ -70,23 +70,23 @@ export default class UsersDash extends React.Component {
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const uRef = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    //console.log('fetching items');
+    // console.log('fetching items');
     this.setState({ loading: true });
     
     usersRef.get().then(fullSnap => {
-      //console.log(fullSnap);
+      // console.log(fullSnap);
       if (!fullSnap.empty) {
         this.setState({ count: fullSnap.docs.length });
-        let lastVisible = fullSnap.docs[startAt];
-        //console.log({lastVisible, limit, direction, page});
+        const lastVisible = fullSnap.docs[startAt];
+        // console.log({lastVisible, limit, direction, page});
         const ref = direction ? uRef.startAt(lastVisible) : uRef;
         ref.onSnapshot(snap => {
-          //console.log(snap);
+          // console.log(snap);
           if (!snap.empty) {
             const items = [];
             snap.forEach(item => items.push(item.data()));
             this.setState(prevState => ({
-              items: items,
+              items,
               loading: false,
               page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
             }));
@@ -121,7 +121,7 @@ export default class UsersDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
-    //console.log(`Deleting ${selectedId}`);
+    // console.log(`Deleting ${selectedId}`);
     userRef(selectedId).delete().then(() => {
       userShelfRef(selectedId).delete().then(() => {
         console.log(`User reviews deleted`);
@@ -240,7 +240,7 @@ export default class UsersDash extends React.Component {
             <ul className="table dense nolist font-sm">
               <li className="avatar-row labels">
                 <div className="row">
-                  <div className="col-auto hide-xs"><div className="avatar" title="avatar"></div></div>
+                  <div className="col-auto hide-xs"><div className="avatar" title="avatar" /></div>
                   <div className="col hide-sm">Nominativo</div>
                   <div className="col">Uid</div>
                   <div className="col hide-sm">Email</div>

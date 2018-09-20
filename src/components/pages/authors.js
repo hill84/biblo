@@ -47,7 +47,7 @@ export default class Authors extends React.Component {
   }
 	
 	render() {
-    const { count, desc, items, limit, loading, page } = this.state;
+    const { count, items, limit, loading, page } = this.state;
 
     if (!loading && !items) {
       return <div className="info-row empty text-center">Non ci sono ancora autori.</div>;

@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import React from 'react';
-//import { isAuthenticated } from '../../config/firebase';
+// import { isAuthenticated } from '../../config/firebase';
 import Autosuggest from 'react-autosuggest';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
@@ -87,7 +87,7 @@ export default class SearchBookForm extends React.Component {
     const { searchBy } = this.state; 
     if (b.value) return b.value;
     const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label
-    //console.log(b.label);
+    // console.log(b.label);
     const matches = match(label, query);
     const parts = parse(label, matches);
     const searchTextHighlighted = parts.map((part, index) => part.highlight ? 
@@ -178,11 +178,11 @@ export default class SearchBookForm extends React.Component {
           q: searchText, 
           [searchBy.type]: searchTextType
         };
-        //console.log(searchParams);
+        // console.log(searchParams);
         fetch(new Request(booksAPIRef(searchParams), { method: 'GET' })).then(res => res.json()).then(json => {
-          let options = [];
+          const options = [];
           if (json.items && json.items.length > 0) {
-            //console.log(json.items);
+            // console.log(json.items);
             json.items.forEach(item => {
               const b = item.volumeInfo;
               const iis = b.industryIdentifiers;
@@ -196,7 +196,7 @@ export default class SearchBookForm extends React.Component {
                   createdByUid: this.props.user.uid || '',
                   created_num: (new Date()).getTime() || 0
                 },
-                authors: (b.authors && arrToObj(b.authors.map(author => author.split('.').join('')), function(item) { return { key: item, value: true }})) || {},
+                authors: (b.authors && arrToObj(b.authors.map(author => author.split('.').join('')), item => ({ key: item, value: true }))) || {},
                 bid: '',
                 collections: [],
                 covers: (b.imageLinks && [normalizeCover(b.imageLinks.small || b.imageLinks.thumbnail || b.imageLinks.smallThumbnail)]) || [],
@@ -223,7 +223,7 @@ export default class SearchBookForm extends React.Component {
           this.setState({ loading: false, suggestions: options });
         });
       } else {
-        //console.log(searchBy.key);
+        // console.log(searchBy.key);
         let query;
         let optionLabel = searchBy.key;
         const capitalizedSearchTextType = capitalizeFirstLetter(searchTextType);
@@ -240,14 +240,14 @@ export default class SearchBookForm extends React.Component {
         };
 
         query.limit(maxSearchResults).onSnapshot(snap => {
-          let options = [];
+          const options = [];
           if (!snap.empty) {
-            //console.log(snap);
+            // console.log(snap);
             snap.forEach(doc => {
-              //console.log(doc.data());
+              // console.log(doc.data());
               options.push({
                 ...doc.data(),
-                label: typeof doc.data()[optionLabel] === 'object' ? String(Object.keys(doc.data()[optionLabel])[0]) : doc.data()[optionLabel] //Autosuggest OPTION LABEL
+                label: typeof doc.data()[optionLabel] === 'object' ? String(Object.keys(doc.data()[optionLabel])[0]) : doc.data()[optionLabel] // Autosuggest OPTION LABEL
               });
             });
           } else options.push(emptyBook);
@@ -283,7 +283,7 @@ export default class SearchBookForm extends React.Component {
           {loading && <div className="loader"><CircularProgress /></div>}
 
           <Autosuggest
-            //alwaysRenderSuggestions={true}
+            // alwaysRenderSuggestions={true}
             renderInputComponent={this.renderInput}
             suggestions={suggestions}
             shouldRenderSuggestions={this.shouldRenderSuggestions}
@@ -298,7 +298,7 @@ export default class SearchBookForm extends React.Component {
               type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
               label: `${this.props.new ? 'Crea un libro' : 'Cerca un libro'} per ${searchBy.label}`,
               placeholder: `Es: ${searchBy.hint}`,
-              value: value,
+              value,
               onChange: this.onChange,
               endAdornment: <button className="btn sm primary search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
             }}

@@ -71,8 +71,8 @@ export default class AuthorForm extends React.Component {
   };
   
   onChangeMaxChars = e => {
-    let leftChars = `${e.target.name}_leftChars`;
-    let maxChars = `${e.target.name}_maxChars`;
+    const leftChars = `${e.target.name}_leftChars`;
+    const maxChars = `${e.target.name}_maxChars`;
     this.setState({
       ...this.state, 
       data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
@@ -133,7 +133,7 @@ export default class AuthorForm extends React.Component {
 
 		return (
 			<React.Fragment>
-        <div className="overlay" onClick={this.onToggle}></div>
+        <div className="overlay" onClick={this.onToggle} />
         <div role="dialog" aria-describedby="new author" className="dialog light">
           {loading && <div className="loader"><CircularProgress /></div>}
           <div className="content">

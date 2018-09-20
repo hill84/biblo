@@ -26,10 +26,10 @@ export default class NewBook extends React.Component {
         {/* <h2>Crea la tua scheda libro</h2> */}
         <MuiThemeProvider theme={primaryTheme}>
           <div className="card sm primary search-book">
-            <SearchBookForm onBookSelect={this.onBookSelect} user={user} new={true} />
+            <SearchBookForm onBookSelect={this.onBookSelect} user={user} new />
           </div>
         </MuiThemeProvider>
-				{book && <Book book={book} user={user} openSnackbar={openSnackbar} isEditing={true} />}
+				{book && <Book book={book} user={user} openSnackbar={openSnackbar} isEditing />}
 			</div>
 		);
 	}

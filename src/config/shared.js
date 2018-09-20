@@ -1,4 +1,6 @@
 import { badWords } from './lists';
+
+// APP
 export const appName = 'Biblo';
 
 // JUNCTION
@@ -13,7 +15,7 @@ export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 // UTILITY
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {
-  //console.log('Async: Copying to clipboard was successful!');
+  // console.log('Async: Copying to clipboard was successful!');
 }, error => console.warn('Async: Could not copy text: ', error));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
 export const getInitials = text => text && text.split(" ").map(w => w.charAt(0)).join('');
@@ -44,10 +46,10 @@ export const validateImg = (file, maxSize) => {
   const fileExtension = file.name.split('.').pop();
   const ext = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'svg', 'SVG', 'gif', 'GIF', 'webp', 'WEBP'];
   if (ext.indexOf(fileExtension) === -1) {
-    //console.warn(`Image file extension not supperted: ${fileExtension}`);
+    // console.warn(`Image file extension not supperted: ${fileExtension}`);
     errors.upload = `Tipo file non valido: ${fileExtension}`;
   } else if (file.size > maxBytes) {
-    //console.warn('File size too big');
+    // console.warn('File size too big');
     errors.upload = `File troppo pesante. Max ${maxSize}MB.`;
   }
   return errors;
@@ -94,11 +96,11 @@ export const timeSince = date => {
   if (interval > 1) return `${interval} ore fa`;
   interval = Math.floor(seconds / 60);
   if (interval > 1) return `${interval} minuti fa`;
-  return 'poco fa'; //`${Math.floor(seconds)} secondi fa`;
+  return 'poco fa'; // `${Math.floor(seconds)} secondi fa`;
 };
 
 export const booksPerRow = () => {
-  const w = window.innerWidth; //document.documentElement.clientWidth;
+  const w = window.innerWidth; // document.documentElement.clientWidth;
   let b = 7;
   if (w <= 359) { b = 2; } else 
   if (w <= 768) { b = 3; } else 

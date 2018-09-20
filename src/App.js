@@ -3,6 +3,7 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import Layout from './components/layout';
+import NewFeature from './components/newFeature';
 import AboutPage from './components/pages/aboutPage';
 import AddBook from './components/pages/addBook';
 import Admin from './components/pages/admin/admin';
@@ -12,12 +13,12 @@ import BookContainer from './components/pages/bookContainer';
 import Collection from './components/pages/collection';
 import CookiePage from './components/pages/cookiePage';
 import Dashboard from './components/pages/dashboard';
+import DonationsPage from './components/pages/donationsPage';
 import Genre from './components/pages/genre';
 import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
 import NewBook from './components/pages/newBook';
-import NewFeature from './components/newFeature';
 import NoMatchPage from './components/pages/noMatchPage';
 import PrivacyPage from './components/pages/privacyPage';
 import Profile from './components/pages/profile';
@@ -69,6 +70,7 @@ export default class App extends React.Component {
                     <Route path="/collection/:cid" component={Collection} />
                     <Route path="/about" component={AboutPage} />
                     <Route path="/cookie" component={CookiePage} />
+                    <Route path="/donations" component={DonationsPage} />
                     <Route path="/help" component={HelpPage} />
                     <Route path="/privacy" component={PrivacyPage} />
                     <Route path="/terms" component={TermsPage} />

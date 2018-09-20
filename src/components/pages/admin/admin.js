@@ -74,7 +74,7 @@ export default class Admin extends React.Component {
     
   fetchUser = () => {
 		const { aid } = this.state;
-    //console.log('fetching user');
+    // console.log('fetching user');
     userRef(aid).onSnapshot(snap => {
       if (snap.exists) {
         this.setState({

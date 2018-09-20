@@ -19,22 +19,22 @@ export const defaultTheme = createMuiTheme({
       contrastText: '#FFF',
     },
     text: {
-      //primary: cyan[700],
-      //secondary: "rgba(0, 0, 0, 0.3)",
-      //disabled: "rgba(0, 0, 0, 0.38)",
-      //hint: "rgba(0, 0, 0, 0.38)"
+      // primary: cyan[700],
+      // secondary: "rgba(0, 0, 0, 0.3)",
+      // disabled: "rgba(0, 0, 0, 0.38)",
+      // hint: "rgba(0, 0, 0, 0.38)"
     },
     background: {
       paper: '#FFF',
       default: blueGrey[900]
     },
     action: {
-      //active: "rgba(0, 0, 0, 0.54)",
+      // active: "rgba(0, 0, 0, 0.54)",
       hover: "rgba(0, 151, 167, 0.07)",
-      //hoverOpacity: 0.08,
+      // hoverOpacity: 0.08,
       selected: "rgba(0, 151, 167, 0.1)",
-      //disabled: "rgba(0, 0, 0, 0.26)",
-      //disabledBackground: "rgba(0, 0, 0, 0.12)"
+      // disabled: "rgba(0, 0, 0, 0.26)",
+      // disabledBackground: "rgba(0, 0, 0, 0.12)"
     }
   }
 });

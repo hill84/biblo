@@ -43,7 +43,7 @@ export default class Incipit extends React.Component {
             <p id="incipit" className={isBig ? 'big' : 'regular'}>{incipit}</p>
           </div>
         </div>
-        <div className="overlay" onClick={this.onToggle}></div>
+        <div className="overlay" onClick={this.onToggle} />
       </React.Fragment>
 		);
 	}

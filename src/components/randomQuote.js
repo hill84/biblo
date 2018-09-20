@@ -38,7 +38,7 @@ export default class RandomQuote extends React.Component {
 
     ref.get().then(snap => {
       if (!snap.empty) {
-        //console.log(snap);
+        // console.log(snap);
         const count = snap.size;
         const randomIndex = Math.floor(Math.random() * count);
         const quote = snap.docs[randomIndex].data();
@@ -81,7 +81,7 @@ export default class RandomQuote extends React.Component {
               <Link to={`/book/${bid}`} className="hoverable-items">
                 <div className="book">
                   <div className="cover" style={{backgroundImage: `url(${coverURL})`}} title={bookTitle}>
-                    <div className="overlay"></div>
+                    <div className="overlay" />
                   </div>
                 </div>
               </Link>
