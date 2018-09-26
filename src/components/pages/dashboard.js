@@ -244,14 +244,14 @@ export default class Dashboard extends React.Component {
         <span className="counter">{icon.starOutline()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
         <span className="counter">{icon.messageTextOutline()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
       </div>
-    )
+    );
 		const EmptyRow = () => (
       <div className="avatar-row empty">
         <div className="row">
           <div className="col">Nessuno</div>
         </div>
       </div>
-    )
+    );
 
 		return (
 			<div className="container" id="dashboardComponent">
@@ -316,7 +316,7 @@ export default class Dashboard extends React.Component {
 					}
 				</div>
 
-        <AppBar position="static" className="toppend">
+        <AppBar position="static" className="appbar flat mobile">
           <Tabs 
             // tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
             value={tabSelected}
@@ -324,14 +324,14 @@ export default class Dashboard extends React.Component {
             fullWidth
             scrollable
             scrollButtons="auto">
-            <Tab label="Libreria" />
-            <Tab label="Desideri" />
-            <Tab label="Attività" />
-            <Tab label="Contatti" />
+            <Tab label={<React.Fragment><span className="icon show-md">{icon.book()}</span><span className="label">Libri</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="icon show-md">{icon.heart()}</span><span className="label">Desideri</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="icon show-md">{icon.poll()}</span><span className="label">Attività</span></React.Fragment>} />
+            <Tab label={<React.Fragment><span className="icon show-md">{icon.account()}</span><span className="label">Contatti</span></React.Fragment>} />
           </Tabs>
         </AppBar>
         <SwipeableViews
-          className="card bottompend tabs-container"
+          className="card tabs-container"
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
