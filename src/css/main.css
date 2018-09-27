@@ -2056,15 +2056,18 @@ html.light .hero * { text-shadow: none; }
     bottom: 0; 
     left: 0;
     right: 0; 
+    border-radius: 0;
     background-color: rgba(50, 67, 78, 0.96); 
-    background: -moz-linear-gradient(top, rgba(50, 67, 78, 0.9) 0%, rgba(50, 67, 78, 1) 100%);
-    background: linear-gradient(to bottom, rgba(50, 67, 78, 0.9) 0%, rgba(50, 67, 78, 1) 100%);
+    background: -moz-linear-gradient(top, rgba(50, 67, 78, 0.96) 0%, rgba(50, 67, 78, 1) 100%);
+    background: linear-gradient(to bottom, rgba(50, 67, 78, 0.96) 0%, rgba(50, 67, 78, 1) 100%);
     box-shadow: 0 -1px 10px -2px rgba(0,0,0,.2);
+    animation: fadeInSlideUp .4s cubic-bezier(0.215, 0.61, 0.355, 1) .4s both;
   }
   .appbar.mobile .label { display: block; height: 0; line-height: 20px; font-size: .6rem; font-weight: 200; opacity: 0; transition: all .2s ease-in-out; }
   .appbar.mobile button { height: 52px; }
   .appbar.mobile button[aria-selected="true"] .label { height: 20px; opacity: .5; }
-  .appbar.mobile div + span { height: 3px; box-shadow: 0 -1px 10px var(--accentClr), 0 -1px 20px var(--accentClr), 0 -1px 30px var(--accentClr); }
+  .appbar.mobile div + span { height: 3px; }
+  .tabs-container.mobile { border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); }
   .hide-md { display: none; }
 }
 @media (max-width: 576px) {

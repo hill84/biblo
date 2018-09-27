@@ -252,6 +252,12 @@ export default class Dashboard extends React.Component {
         </div>
       </div>
     );
+    const TabLabel = (icon, label) => (
+      <React.Fragment>
+        <span className="icon show-md">{icon}</span>
+        <span className="label">{label}</span>
+      </React.Fragment>
+    );
 
 		return (
 			<div className="container" id="dashboardComponent">
@@ -316,7 +322,7 @@ export default class Dashboard extends React.Component {
 					}
 				</div>
 
-        <AppBar position="static" className="appbar flat mobile">
+        <AppBar position="static" className="appbar toppend mobile">
           <Tabs 
             // tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
             value={tabSelected}
@@ -324,14 +330,14 @@ export default class Dashboard extends React.Component {
             fullWidth
             scrollable
             scrollButtons="auto">
-            <Tab label={<React.Fragment><span className="icon show-md">{icon.book()}</span><span className="label">Libri</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="icon show-md">{icon.heart()}</span><span className="label">Desideri</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="icon show-md">{icon.poll()}</span><span className="label">Attività</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="icon show-md">{icon.account()}</span><span className="label">Contatti</span></React.Fragment>} />
+            <Tab label={TabLabel(icon.book(), 'Libri')} />
+            <Tab label={TabLabel(icon.heart(), 'Desideri')} />
+            <Tab label={TabLabel(icon.poll(), 'Attività')} />
+            <Tab label={TabLabel(icon.account(), 'Contatti')} />
           </Tabs>
         </AppBar>
         <SwipeableViews
-          className="card tabs-container"
+          className="card tabs-container bottompend mobile"
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
@@ -349,11 +355,11 @@ export default class Dashboard extends React.Component {
               <div className="row">
                 <div className="col-md-6 cols-12">
                   <h4>Seguito da:</h4>
-                  {Object.keys(followers).length ? Followers : <EmptyRow/>}
+                  {Object.keys(followers).length ? Followers : <EmptyRow />}
                 </div>
                 <div className="col-md-6 col-12">
                   <h4>Segue:</h4>
-                  {Object.keys(followings).length ? Followings : <EmptyRow/>}
+                  {Object.keys(followings).length ? Followings : <EmptyRow />}
                 </div>
               </div>
             }
