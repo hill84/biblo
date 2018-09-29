@@ -46,20 +46,13 @@ export default class BookCollection extends React.Component {
   }
 
   componentDidMount() {
-    this._isMounted = true;
     this.fetch();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { bcid, cid, desc } = this.state;
-    if (this._isMounted) {
-      if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
-        this.fetch();
-      }
+    if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
+      this.fetch();
     }
   }
   

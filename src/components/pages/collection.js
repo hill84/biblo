@@ -22,18 +22,13 @@ export default class Collection extends React.Component {
   }
 
   componentDidMount() {
-    this._isMounted = true;
     this.fetch();
   }
 
-  componentWillUnmount() { this._isMounted = false; }
-
   componentDidUpdate(prevProps, prevState) {
-		if (this._isMounted) {
-      if (this.state.cid !== prevState.cid) {
-        this.fetch();
-      }
-		}
+    if (this.state.cid !== prevState.cid) {
+      this.fetch();
+    }
 	}
 
   fetch = () => {

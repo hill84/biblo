@@ -46,14 +46,17 @@ export default class UsersDash extends React.Component {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType
-	}
+  }
 
-	componentDidMount() { 
+	componentDidMount() {
     this._isMounted = true; 
     this.fetch();
   }
 
-	componentWillUnmount() { this._isMounted = false; }
+	componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubUsers && this.unsubUsers();
+  }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
@@ -79,7 +82,7 @@ export default class UsersDash extends React.Component {
         const lastVisible = fullSnap.docs[startAt];
         // console.log({lastVisible, limit, direction, page});
         const ref = direction ? uRef.startAt(lastVisible) : uRef;
-        ref.onSnapshot(snap => {
+        this.unsubUsers = ref.onSnapshot(snap => {
           // console.log(snap);
           if (!snap.empty) {
             const items = [];

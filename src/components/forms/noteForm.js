@@ -29,20 +29,15 @@ export default class noteForm extends React.Component {
 
   componentDidMount() {
     const { nid, uid } = this.props;
-    this._isMounted = true; 
     if (nid && uid) {
       this.fetch();
     }
   }
-
-  componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
     const { nid, uid } = this.props;
-    if (this._isMounted) {
-      if (nid !== prevProps.nid || uid !== prevProps.uid) {
-        this.fetch();
-      }
+    if (nid !== prevProps.nid || uid !== prevProps.uid) {
+      this.fetch();
     }
   }
 

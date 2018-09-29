@@ -25,20 +25,13 @@ export default class Genre extends React.Component {
   }
 
   componentDidMount() {
-    this._isMounted = true;
     this.fetch();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { desc, orderByIndex } = this.state;
-    if (this._isMounted) {
-      if(this.props.match.params.gid !== prevProps.match.params.gid || desc !== prevState.desc || orderByIndex !== prevState.orderByIndex){
-        this.fetch();
-      }
+    if(this.props.match.params.gid !== prevProps.match.params.gid || desc !== prevState.desc || orderByIndex !== prevState.orderByIndex){
+      this.fetch();
     }
   }
 

@@ -6,7 +6,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { bookRef, booksRef/* , reviewRef */ } from '../../../config/firebase';
+import { bookRef, booksRef /* , reviewRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -43,11 +43,9 @@ export default class BooksDash extends React.Component {
 	}
 
 	componentDidMount() { 
-    this._isMounted = true; 
+    this._isMounted = true;
     this.fetch();
   }
-
-	componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
@@ -56,6 +54,11 @@ export default class BooksDash extends React.Component {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubBooks && this.unsubBooks();
   }
     
   fetch = direction => {
@@ -71,7 +74,7 @@ export default class BooksDash extends React.Component {
         this.setState({ count: fullSnap.docs.length });
         // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? bRef.startAt(lastVisible || fullSnap.docs[startAt]) : bRef;
-        ref.onSnapshot(snap => {
+        this.unsubBooks = ref.onSnapshot(snap => {
           // console.log(snap);
           if (!snap.empty) {
             const items = [];

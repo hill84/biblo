@@ -42,14 +42,17 @@ export default class QuotesDash extends React.Component {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType
-	}
+  }
 
 	componentDidMount() { 
-    this._isMounted = true; 
+    this._isMounted = true;
     this.fetch();
   }
 
-	componentWillUnmount() { this._isMounted = false; }
+	componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubQuotes && this.unsubQuotes();
+  }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
@@ -72,7 +75,7 @@ export default class QuotesDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      ref.onSnapshot(snap => {
+      this.unsubQuotes = ref.onSnapshot(snap => {
         // console.log(snap);
         if (!snap.empty) {
           const items = [];

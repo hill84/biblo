@@ -43,14 +43,17 @@ export default class AuthorsDash extends React.Component {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType
-	}
+  }
 
 	componentDidMount() { 
-    this._isMounted = true; 
+    this._ismounted = true;
     this.fetch();
   }
 
-	componentWillUnmount() { this._isMounted = false; }
+	componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubAuthors && this.unsubAuthors();
+  }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
@@ -78,7 +81,7 @@ export default class AuthorsDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      ref.onSnapshot(snap => {
+      this.unsubAuthors = ref.onSnapshot(snap => {
         // console.log(snap);
         if (!snap.empty) {
           const items = [];

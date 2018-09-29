@@ -37,7 +37,7 @@ export default class Dashboard extends React.Component {
 	static propTypes = {
     openSnackbar: funcType.isRequired,
     user: userType
-	}
+  }
 
 	static getDerivedStateFromProps(props, state) {
     if (tabs.indexOf(props.match.params.tab) !== -1) {
@@ -70,18 +70,20 @@ export default class Dashboard extends React.Component {
       this.fetchFollowings();
       if (this.state.tabSelected === 0) this.props.history.replace(`/dashboard/${this.state.uid}/${tabs[0]}`, null);
     }
-	}
+  }
 
-	componentWillUnmount() { this._isMounted = false; }
+	componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   componentDidUpdate(prevProps, prevState) {
-		if (this._isMounted) {
+    if (this._isMounted) {
       if (this.state.uid !== prevState.uid || this.state.luid !== prevState.luid) {
         this.fetchUser();
         this.fetchFollowers();
         this.fetchFollowings();
       }
-		}
+    }
 	}
     
   fetchUser = () => {

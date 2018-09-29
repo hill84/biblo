@@ -30,8 +30,9 @@ export default class Reviews extends React.Component {
   }
 
   componentDidMount(prevState) {
+    this._isMounted = true;
     this.fetchReviews(this.state.bid);
-    this.unsubscribe = auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(user => {
       if (user) {
         this.setState({ uid: user.uid });
       } else {
@@ -41,14 +42,16 @@ export default class Reviews extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.bid !== prevState.bid || this.state.uid !== prevState.uid){
-      this.fetchReviews(this.state.bid);
-      // console.log('Fetched updated reviews');
+    if (this._isMounted) {
+      if(this.state.bid !== prevState.bid || this.state.uid !== prevState.uid){
+        this.fetchReviews(this.state.bid);
+        // console.log('Fetched updated reviews');
+      }
     }
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
+    this._isMounted = false;
   }
 
   fetchReviews = bid => { 

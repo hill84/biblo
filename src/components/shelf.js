@@ -1,3 +1,5 @@
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
@@ -7,27 +9,30 @@ import { icon } from '../config/icons';
 import { booksPerRow } from '../config/shared';
 import { numberType, stringType } from '../config/types';
 import Cover from './cover';
-import { skltn_shelfStack, skltn_shelfRow } from './skeletons';
+import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 export default class Shelf extends React.Component {
   state = {
     luid: this.props.luid,
     uid: this.props.uid,
-    isOwner: this.props.luid === this.props.uid,
-    shelf: this.props.shelf || 'bookInShelf',
-    orderMenuAnchorEl: null,
     booksPerRow: this.props.booksPerRow || 4,
-    limit: booksPerRow() * 2 - 1,
-    orderBy: [ 
-      { type: 'added_num', label: 'Data aggiunta'}, 
-      { type: 'title', label: 'Titolo'}, 
-      { type: 'rating_num', label: 'Valutazione'}, 
-      { type: 'authors', label: 'Autore'}
-    ],
-    orderByIndex: 0,
     coverview: true,
     desc: true,
+    filterBy: [ 'Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consulatazione'],
+    filterByIndex: 0,
+    filterMenuAnchorEl: null,
+    isOwner: this.props.luid === this.props.uid,
+    limit: booksPerRow() * 2 - 1,
     loading: true,
+    orderBy: [ 
+      { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar() }, 
+      { type: 'title', label: 'Titolo', icon: icon.formatTitle() }, 
+      { type: 'rating_num', label: 'Valutazione', icon: icon.star() }, 
+      { type: 'authors', label: 'Autore', icon: icon.accountEdit() }
+    ],
+    orderByIndex: 0,
+    orderMenuAnchorEl: null,
+    shelf: this.props.shelf || 'bookInShelf',
     userBooks: [],
     userBooksCount : 0,
     pagination: true,
@@ -59,9 +64,9 @@ export default class Shelf extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { /* coverview,  */desc, luid, orderByIndex, uid } = this.state;
+    const { /* coverview,  */desc, filterByIndex, luid, orderByIndex, uid } = this.state;
     if (this._isMounted) {
-      if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
+      if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
         this.fetchUserBooks();
       } else if (!luid && (luid !== prevState.luid)) {
         this.setState({ isOwner: false });
@@ -70,11 +75,12 @@ export default class Shelf extends React.Component {
   }
 
   fetchUserBooks = direction => {
-    const { desc, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
+    const { desc, filterByIndex, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
     if (uid) {
       const prev = direction === 'prev';
       const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
-      const shelfRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+      const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+      const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
       const empty = { 
         isOwner: luid === uid,
         userBooksCount: 0, 
@@ -110,6 +116,10 @@ export default class Shelf extends React.Component {
     this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
   }
 
+  onChangeFilterBy = (e, i) => {
+    this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
+  }
+
   onChangeSelect = key => e => {
 		this.setState({ 
       success: false, changes: true, 
@@ -123,12 +133,23 @@ export default class Shelf extends React.Component {
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
 
   onOpenOrderMenu = e => this.setState({ orderMenuAnchorEl: e.currentTarget });
-
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
+  onOpenFilterMenu = e => this.setState({ filterMenuAnchorEl: e.currentTarget });
+  onCloseFilterMenu = () => this.setState({ filterMenuAnchorEl: null });
+
   render() {
-    const { booksPerRow, coverview, desc, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
-    const covers = userBooks && userBooks.map((book, i) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>);
+    const { booksPerRow, coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
+    const covers = userBooks && userBooks.length > 0 && userBooks.map((book, i) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>);
+    const filterByOptions = filterBy.map((option, i) => (
+      <MenuItem
+        key={i}
+        disabled={i === -1}
+        selected={i === filterByIndex}
+        onClick={e => this.onChangeFilterBy(e, i)}>
+        {option}
+      </MenuItem>
+    ));
     const orderByOptions = orderBy.map((option, i) => (
       <MenuItem
         key={option.type}
@@ -136,7 +157,8 @@ export default class Shelf extends React.Component {
         disabled={i === -1}
         selected={i === orderByIndex}
         onClick={e => this.onChangeOrderBy(e, i)}>
-        {option.label}
+        <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
+        <ListItemText inset primary={orderBy[i].label} />
       </MenuItem>
     ));
 
@@ -153,17 +175,44 @@ export default class Shelf extends React.Component {
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential() : icon.viewGrid()}
                   </button>
-                  <span className="counter hide-sm">{userBooksCount !== userBooks.length ? `${userBooks.length} di ` : ''}{userBooksCount} libri</span>
+                  <span className="counter hide-sm">{userBooksCount !== userBooks.length ? `${userBooks.length} di ` : ''}{userBooksCount} libr{userBooksCount !== 1 ? 'i' : 'o'}</span>
                 </div>
                 <div className="col-auto">
-                  <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                  <button className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                  {shelf === 'bookInShelf' &&
+                    <React.Fragment>
+                      <button 
+                        className="btn sm flat counter" 
+                        onClick={this.onOpenFilterMenu}>
+                        {filterBy[filterByIndex]}
+                      </button>
+                      <Menu 
+                        anchorEl={filterMenuAnchorEl} 
+                        open={Boolean(filterMenuAnchorEl)} 
+                        onClose={this.onCloseFilterMenu}>
+                        {filterByOptions}
+                      </Menu>
+                    </React.Fragment>
+                  }
+                  <button 
+                    className="btn sm flat counter" 
+                    onClick={this.onOpenOrderMenu} 
+                    disabled={!userBooksCount}>
+                    <span className="hide-sm">Ordina per {orderBy[orderByIndex].label}</span>
+                    <span className="show-sm">{orderBy[orderByIndex].icon}</span>
+                  </button>
                   <Menu 
                     anchorEl={orderMenuAnchorEl} 
                     open={Boolean(orderMenuAnchorEl)} 
                     onClose={this.onCloseOrderMenu}>
                     {orderByOptions}
                   </Menu>
+                  <button 
+                    className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} 
+                    title={desc ? 'Ascendente' : 'Discendente'} 
+                    onClick={this.onToggleDesc} 
+                    disabled={!userBooksCount}>
+                    {icon.arrowDown()}
+                  </button>
                 </div>
               </div>
             </div>

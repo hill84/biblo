@@ -38,7 +38,7 @@ export const userType = shape({
 });
 
 export const bookType = shape({
-  ISBN_10: number,
+  ISBN_10: oneOfType([number, string]),
   ISBN_13: number.isRequired,
   EDIT: shape({
     createdBy: string.isRequired,

@@ -31,19 +31,14 @@ export default class QuoteForm extends React.Component {
   }
 
   componentDidMount() {
-    this._isMounted = true; 
     if (this.props.id) {
       this.fetch();
     }
   }
-
-  componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
-    if (this._isMounted) {
-      if (this.props.id !== prevProps.id) {
-        this.fetch();
-      }
+    if (this.props.id !== prevProps.id) {
+      this.fetch();
     }
   }
 

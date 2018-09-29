@@ -412,7 +412,7 @@ export default class BookForm extends React.Component {
 			<MenuItem 
 				value={item.name} 
 				key={item.id} 
-				insetChildren={!!values} 
+				// insetChildren={Boolean(values)} 
 				checked={values ? values.includes(item.name) : false}>
 				{item.name}
       </MenuItem>
@@ -508,11 +508,11 @@ export default class BookForm extends React.Component {
                       <Input
                         id="ISBN_10"
                         name="ISBN_10"
-                        type="number"
+                        type="text"
                         placeholder="es: 8854152609"
                         error={Boolean(errors.ISBN_10)}
                         value={book.ISBN_10}
-                        onChange={this.onChangeNumber}
+                        onChange={this.onChange}
                       />
                       {errors.ISBN_10 && <FormHelperText className="message error">{errors.ISBN_10}</FormHelperText>}
                     </FormControl>

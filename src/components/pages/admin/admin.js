@@ -40,9 +40,9 @@ export default class Admin extends React.Component {
 	static propTypes = {
     openSnackbar: funcType.isRequired,
     user: userType
-	}
+  }
 
- static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props, state) {
     if (tabs.indexOf(props.match.params.tab) !== -1) {
       if (tabs.indexOf(props.match.params.tab) !== state.tabSelected) {
         return { tabSelected: tabs.indexOf(props.match.params.tab) };
@@ -57,25 +57,28 @@ export default class Admin extends React.Component {
   } 
 
 	componentDidMount() { 
-    this._isMounted = true; 
+    this._isMounted = true;
     if (this.state.aid) this.fetchUser();
     if (this.state.tabSelected === 0) this.props.history.replace(`/admin/${tabs[0]}`, null);
   }
 
-	componentWillUnmount() { this._isMounted = false; }
+	componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubUser && this.unsubUser();
+  }
 
   componentDidUpdate(prevProps, prevState) {
-		if (this._isMounted) {
+    if (this._isMounted) {
       if (this.state.aid !== prevState.aid) {
         this.fetchUser();
       }
-		}
+    }
 	}
     
   fetchUser = () => {
 		const { aid } = this.state;
     // console.log('fetching user');
-    userRef(aid).onSnapshot(snap => {
+    this.unsubUser = userRef(aid).onSnapshot(snap => {
       if (snap.exists) {
         this.setState({
           isAdmin: snap.data().roles.admin,

@@ -37,11 +37,9 @@ export default class NotesDash extends React.Component {
 	}
 
 	componentDidMount() { 
-    this._isMounted = true; 
+    this._isMounted = true;
     this.fetch();
   }
-
-	componentWillUnmount() { this._isMounted = false; }
   
   componentDidUpdate(prevProps, prevState) {
     const { limitByIndex } = this.state;
@@ -50,6 +48,10 @@ export default class NotesDash extends React.Component {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this.unsubNotes && this.unsubNotes();
   }
     
   fetch = direction => {
@@ -113,7 +115,7 @@ export default class NotesDash extends React.Component {
   onToggleExpansion = id => {
     this.setState({ selectedId: id });
     const selectedObj = this.state.items.findIndex(obj => obj.id === id);
-    notesRef(id).onSnapshot(snap => {
+    this.unsubNotes = notesRef(id).onSnapshot(snap => {
       if (!snap.empty) {
         const notes = [];
         snap.forEach(note => notes.push(note.data()));

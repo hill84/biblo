@@ -8,6 +8,7 @@
   --accentLightClr: rgb(255, 213, 79);    /* amber300 */
   --accentClr: rgb(255, 202, 40);         /* amber400 */
   --accentDarkClr: rgb(255, 193, 7);      /* amber500 */
+  --secondaryClr: rgb(236, 64, 122);      /* pink400*/
   --greenLightClr: rgb(76, 175, 80);      /* green500 */
   --greenClr: rgb(67, 160, 71);           /* green600 */
   --greenDarkClr: rgb(56, 142, 60);       /* green700 */
@@ -1355,14 +1356,15 @@ html.light .hero * { text-shadow: none; }
   text-transform: uppercase;
   color: var(--lightTextClr);
   transform-origin: top center;
+  transition: all .2s ease-in-out;
   z-index: 11;
 }
 .card .head.nav, .dialog .head.nav, .tab .head.nav {
   background-color: var(--cardBg);
-  box-shadow: 0 1px 3px rgba(0,0,0,.15);
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
 }
+.dialog .head.nav { box-shadow: 0 1px 3px rgba(0,0,0,.15); }
 .head.nav + .shelf-row, .head.nav + .shelf, .head.nav + .table { margin-top: 40px; }
 .head.nav .info-row { margin-bottom: 0; }
 .head.nav .counter, .head.nav .count { line-height: inherit; vertical-align: middle; }

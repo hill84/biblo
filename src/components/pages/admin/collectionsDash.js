@@ -1,9 +1,9 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
@@ -37,14 +37,17 @@ export default class collectionsDash extends React.Component {
 	static propTypes = {
     openSnackbar: funcType.isRequired,
     user: userType
-	} 
+  } 
 
 	componentDidMount() { 
-    this._isMounted = true; 
+    this._isMounted = true;
     this.fetch();
   }
 
-	componentWillUnmount() { this._isMounted = false; }
+	componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubCollections && this.unsubCollections();
+  }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
@@ -70,7 +73,7 @@ export default class collectionsDash extends React.Component {
         // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? cRef.startAt(lastVisible || fullSnap.docs[startAt]) : cRef;
 
-        ref.onSnapshot(snap => {
+        this.unsubCollections = ref.onSnapshot(snap => {
           if (!snap.empty) {
             const items = [];
             snap.forEach(item => {
