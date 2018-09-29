@@ -7,7 +7,7 @@ import { getInitials } from '../../config/shared';
 import { skltn_bubbleRow } from '../skeletons';
 import { icon } from '../../config/icons';
 
-export default class Authors extends React.Component {
+export default class AuthorsPage extends React.Component {
 	state = {
     items: null,
     count: 0,

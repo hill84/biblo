@@ -7,8 +7,8 @@ import NewFeature from './components/newFeature';
 import AboutPage from './components/pages/aboutPage';
 import AddBook from './components/pages/addBook';
 import Admin from './components/pages/admin/admin';
-import Author from './components/pages/author';
-import Authors from './components/pages/authors';
+import AuthorPage from './components/pages/authorPage';
+import AuthorsPage from './components/pages/authorsPage';
 import BookContainer from './components/pages/bookContainer';
 import Collection from './components/pages/collection';
 import CookiePage from './components/pages/cookiePage';
@@ -36,7 +36,6 @@ export default class App extends React.Component {
 	}
 
 	componentDidMount() {
-		this._isMounted = true;
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				window.localStorage.setItem(storageKey_uid, user.uid);
@@ -74,8 +73,8 @@ export default class App extends React.Component {
                     <Route path="/help" component={HelpPage} />
                     <Route path="/privacy" component={PrivacyPage} />
                     <Route path="/terms" component={TermsPage} />
-                    <RouteWithProps path="/author/:aid" component={Author} user={user} />
-                    <RouteWithProps path="/authors" component={Authors} user={user} />
+                    <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
+                    <RouteWithProps path="/authors" component={AuthorsPage} user={user} />
                     <RouteWithProps path="/genre/:gid" component={Genre} user={user} />
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />

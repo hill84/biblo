@@ -10,7 +10,7 @@ import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
 import RandomQuote from '../randomQuote';
 
-export default class Author extends React.Component {
+export default class AuthorPage extends React.Component {
   state = {
     author: {
       bio: '',
