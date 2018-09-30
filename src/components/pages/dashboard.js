@@ -332,7 +332,7 @@ export default class Dashboard extends React.Component {
             fullWidth
             scrollable
             scrollButtons="auto">
-            <Tab label={TabLabel(icon.book(), 'Libri')} />
+            <Tab label={TabLabel(icon.book(), 'Libreria')} />
             <Tab label={TabLabel(icon.heart(), 'Desideri')} />
             <Tab label={TabLabel(icon.poll(), 'Attività')} />
             <Tab label={TabLabel(icon.account(), 'Contatti')} />

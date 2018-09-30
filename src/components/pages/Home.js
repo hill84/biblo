@@ -2,7 +2,7 @@ import React from 'react';
 import { Background, Parallax } from 'react-parallax';
 import { Link } from 'react-router-dom';
 import { isAuthenticated, authid } from '../../config/firebase';
-import { icon } from '../../config/icons';
+/* import { icon } from '../../config/icons'; */
 import { isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
 import BookCollection from '../bookCollection';
@@ -70,7 +70,7 @@ const Home = () => (
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable />
 			</div>
 
-			<div className="card dark">
+			{/* <div className="card dark">
 				<ul>
           <li><Link to="/admin">Admin</Link></li>
 					<li><Link to="/login">{icon.loginVariant()} Login</Link></li>
@@ -82,7 +82,7 @@ const Home = () => (
 					<li><Link to="/profile">{icon.accountCircle()} Profile</Link></li>
 					<li><Link to="/error404">{icon.reader()} No match</Link></li>
 				</ul>
-			</div>
+			</div> */}
 		</div>
 	</div>
 );

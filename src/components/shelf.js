@@ -93,7 +93,7 @@ export default class Shelf extends React.Component {
         if (!fullSnap.empty) { 
           this.setState({ userBooksCount: fullSnap.docs.length });
           const lastVisible = fullSnap.docs[startAt];
-          const ref = direction ? shelfRef.startAt(lastVisible) : shelfRef;
+          const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
           ref.limit(limit).onSnapshot(snap => {
             this.setState({ loading: true });
             if (!snap.empty) {
@@ -175,9 +175,6 @@ export default class Shelf extends React.Component {
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential() : icon.viewGrid()}
                   </button>
-                  <span className="counter hide-sm">{userBooksCount !== userBooks.length ? `${userBooks.length} di ` : ''}{userBooksCount} libr{userBooksCount !== 1 ? 'i' : 'o'}</span>
-                </div>
-                <div className="col-auto">
                   {shelf === 'bookInShelf' &&
                     <React.Fragment>
                       <button 
@@ -193,6 +190,9 @@ export default class Shelf extends React.Component {
                       </Menu>
                     </React.Fragment>
                   }
+                  <span className="counter last hide-sm">{userBooksCount !== userBooks.length ? `${userBooks.length} di ` : ''}{userBooksCount} libr{userBooksCount !== 1 ? 'i' : 'o'}</span>
+                </div>
+                <div className="col-auto">
                   <button 
                     className="btn sm flat counter" 
                     onClick={this.onOpenOrderMenu} 

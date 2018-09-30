@@ -2,6 +2,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { MuiThemeProvider } from '@material-ui/core/styles';
@@ -11,12 +13,12 @@ import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { noteRef, notesRef, signOut, authid } from '../config/firebase';
+import { authid, noteRef, notesRef, signOut } from '../config/firebase';
+import { icon } from '../config/icons';
 import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
 import Footer from './footer';
-import { icon } from '../config/icons';
 
 export default class Layout extends React.Component {
   state = {
@@ -198,17 +200,42 @@ export default class Layout extends React.Component {
                     </div>
                   </NavLink>
                   {user.roles.admin && 
-                    <NavLink to={`/admin`}><MenuItem>Amministrazione</MenuItem></NavLink>
+                    <NavLink to={`/admin`}>
+                      <MenuItem>
+                        <ListItemIcon>{icon.gauge()}</ListItemIcon>
+                        <ListItemText inset primary="Amministrazione" />
+                      </MenuItem>
+                    </NavLink>
                   }
-                  <NavLink to={`/dashboard/${authid}`}><MenuItem>Dashboard</MenuItem></NavLink>
+                  <NavLink to={`/dashboard/${authid}`}>
+                    <MenuItem>
+                      <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
+                      <ListItemText inset primary="Dashboard" />
+                    </MenuItem>
+                  </NavLink>
                 </React.Fragment>
               :
                 <div className="auth-header-buttons">
-                  <NavLink to="/login"><MenuItem>Accedi</MenuItem></NavLink>
-                  <NavLink to="/signup"><MenuItem>Registrati</MenuItem></NavLink>
+                  <NavLink to="/login">
+                    <MenuItem>
+                      <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
+                      <ListItemText inset primary="Accedi" />
+                    </MenuItem>
+                  </NavLink>
+                  <NavLink to="/signup">
+                    <MenuItem>
+                      <ListItemIcon>{icon.accountPlus()}</ListItemIcon>
+                      <ListItemText inset primary="Registrati" />
+                    </MenuItem>
+                  </NavLink>
                 </div>
               }
-              <NavLink to="/" exact><MenuItem>Home</MenuItem></NavLink>
+              <NavLink to="/" exact>
+                <MenuItem>
+                  <ListItemIcon>{icon.home()}</ListItemIcon>
+                  <ListItemText inset primary="Home" />
+                </MenuItem>
+              </NavLink>
             </nav>
           </Drawer>
         </MuiThemeProvider>

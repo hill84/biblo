@@ -911,7 +911,7 @@ html:not(.light) .card.primary, .primary .card {
 }
 #appBarComponent svg { --iconSize: 24px; }
 #appBarComponent button { color: currentColor; }
-#appBarComponent .more-btn { margin-right: -12px; color: currentColor; }
+#appBarComponent .more-btn { margin-right: -12px; color: currentColor; padding: 7px; }
 #appBarComponent .drawer-btn { margin-left: -12px; color: currentColor; }
 #appBarComponent button .dot { box-shadow: 0 0 0 3px var(--cardBg); }
 #appBarComponent a { color: currentColor; }
@@ -933,6 +933,8 @@ html:not(.light) .card.primary, .primary .card {
 
 /* DRAWER */
 .drawer .list { width: 256px; }
+.drawer .list .svg-icon { margin-right: 0; }
+.drawer .list span, .drawer .list .svg-icon { color: inherit; }
 
 /* CUSTOM */
 .hero .container { padding-top: 140px; padding-bottom: 95px; margin-top: 0; }
@@ -944,13 +946,13 @@ html:not(.light) .card.primary, .primary .card {
   font-family: 'Roboto Slab', serif;
   font-size: 2.4em;
   line-height: 125%;
-  text-shadow: 0 0 50px rgba(38, 50, 56, 1), 0 0 5px rgba(38, 50, 56, .3);
+  text-shadow: 0 0 50px rgb(38, 50, 56), 0 0 5px rgba(38, 50, 56, .3);
   animation-delay: .4s;
 }
 .hero .subtitle { 
   font-size: 1.1em; 
   margin-bottom: 1.2rem; 
-  text-shadow: 0 0 10px rgba(38, 50, 56, 1); 
+  text-shadow: 0 0 10px rgb(38, 50, 56); 
   animation-delay: .6s; 
 }
 .hero .btns {
@@ -1041,7 +1043,7 @@ html.light .hero * { text-shadow: none; }
   margin-bottom: 10px;
   width: 70px;
   height: 70px;
-  box-shadow: /* inset 0 0 0 50px var(--cardBg),  */0 0 0 10px var(--cardBg);
+  box-shadow: 0 0 0 10px var(--cardBg);
 }
 
 /* author */
@@ -1370,7 +1372,7 @@ html.light .hero * { text-shadow: none; }
 .dialog .head.nav { box-shadow: 0 1px 3px rgba(0,0,0,.15); }
 .head.nav + .shelf-row, .head.nav + .shelf, .head.nav + .table { margin-top: 40px; }
 .head.nav .info-row { margin-bottom: 0; }
-.head.nav .counter, .head.nav .count { line-height: inherit; vertical-align: middle; }
+.head.nav .counter, .head.nav .count { line-height: inherit; /* vertical-align: middle; */ }
 .head.nav .count { color: var(--lighterTextClr); }
 .head.nav button.btn { display: inline; }
 
@@ -1775,14 +1777,14 @@ html.light .hero * { text-shadow: none; }
 
 /* BOOKMARK */
 .bookmark{ 
-  height: 24px;
+  height: 16px;
   line-height: 16px;
   width: 16px;
   border-left-width: 8px;
   border-right-width: 8px;
   border-bottom-width: 4px;
   border-style: solid;
-  border-color: var(--primaryClr); 
+  border-color: var(--primaryDarkClr); 
   border-bottom-color: transparent !important;
   border-radius: 1px;
   text-align: center;
@@ -1794,7 +1796,7 @@ html.light .hero * { text-shadow: none; }
   user-select: none;
   z-index: 1;
 }
-.bookmark.accent { border-color: var(--accentClr); }
+.bookmark.accent { border-color: var(--accentClr); height: 24px; }
 .cover .bookmark {
   position: absolute;
   top: -1px;
@@ -1968,14 +1970,14 @@ html.light .hero * { text-shadow: none; }
     background-color: rgba(67,160,71,.2);
   }
   
-  .tt { position: relative; }
+  .tt { position: relative; overflow: visible; }
   .tt .tip {
     position: absolute;
     padding: 4px 8px; 
     margin: auto;
     bottom: calc(100% + 4px);
-    left: 0;
-    right: 0;
+    left: -50%;
+    right: -50%;
     height: fit-content;
     width: fit-content;
     display: block;
@@ -2041,8 +2043,9 @@ html.light .hero * { text-shadow: none; }
   .book-profile .title { font-size: 1.6rem; }
   .book-incipit { transform-origin: top center; animation-name: flipInX; }
   .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr; }
-  #dashboardComponent .basic-profile-card { margin-top: 60px; }
-  #dashboardComponent .basic-profile .avatar { margin-top: -60px; }
+  /* #dashboardComponent .basic-profile-card { margin-top: 60px; }
+  #dashboardComponent .basic-profile .avatar { margin-top: -60px; } */
+  .basic-profile .username { font-size: 1.5rem; }
   .basic-profile .badge { 
     border-radius: 9px;
     height: 8px;
@@ -2071,7 +2074,6 @@ html.light .hero * { text-shadow: none; }
   .appbar.mobile .label { display: block; height: 0; line-height: 20px; font-size: .6rem; font-weight: 200; opacity: 0; transition: all .2s ease-in-out; }
   .appbar.mobile button { height: 52px; }
   .appbar.mobile button[aria-selected="true"] .label { height: 20px; opacity: .5; }
-  .appbar.mobile div + span { height: 3px; }
   .tabs-container.mobile { border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); }
   .hide-md { display: none; }
 }

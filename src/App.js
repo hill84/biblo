@@ -17,6 +17,7 @@ import DonationsPage from './components/pages/donationsPage';
 import Genre from './components/pages/genre';
 import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
+import IconsPage from './components/pages/iconsPage';
 import Login from './components/pages/login';
 import NewBook from './components/pages/newBook';
 import NoMatchPage from './components/pages/noMatchPage';
@@ -79,6 +80,7 @@ export default class App extends React.Component {
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                    <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/notifications" component={NewFeature} /* user={user} openSnackbar={openSnackbar} */ />
