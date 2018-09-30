@@ -1308,13 +1308,15 @@ html.light .hero * { text-shadow: none; }
 .shelf.scrollable .info-row { position: relative; z-index: 11; }
 .scrollable .shelf-row {
   display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   white-space: nowrap;
   overflow-x: scroll;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--pad);
 }
 .scrollable .shelf-row::-webkit-scrollbar {
   display: none;
@@ -1326,6 +1328,7 @@ html.light .hero * { text-shadow: none; }
   width: calc(var(--bookWidth) + 5px);
   margin-left: 4px;
   margin-right: 4px;
+  scroll-snap-align: start;
 }
 .scrollable .shelf-row a:first-child, .scrollable .shelf-row .skltn:first-child { margin-left: 0; }
 .scrollable .shelf-row a:last-child, .scrollable .shelf-row .skltn:last-child { margin-right: 0; }
