@@ -66,11 +66,10 @@ export default class NotesDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      ref.get().then(fullSnap => {
+      this.unsubNotifications = ref.onSnapshot(fullSnap => {
         if (!fullSnap.empty) {
-          // console.log(fullSnap);
           const items = [];
-          fullSnap.forEach(item => items.push({ id: item.id }));
+          fullSnap.forEach(item => items.push({ id: item.id, count: item.data().count }));
           this.setState({
             items,
             count: fullSnap.size,
@@ -79,7 +78,7 @@ export default class NotesDash extends React.Component {
             page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
           });
         } else this.setState({ items: null, count: 0, loading: false });
-      }).catch(error => console.warn(error));
+      });
     }
 
     if (!direction) {
@@ -120,7 +119,7 @@ export default class NotesDash extends React.Component {
         const notes = [];
         snap.forEach(note => notes.push(note.data()));
         const items = [ ...this.state.items ];
-        items[selectedObj] = { id, notes };
+        items[selectedObj] = { ...items[selectedObj], notes };
         this.setState({ items });
       }
     });
@@ -135,7 +134,7 @@ export default class NotesDash extends React.Component {
         className={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
         onClick={() => this.onToggleExpansion(item.id)}>
         <div className="row">
-          <div className="col-auto">{item.notes ? item.notes.length : 0}</div>
+          <div className="col-auto">{item.count || 0}</div>
           <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
           <div className="col-1 text-right expandible-icon">
             {icon.chevronDown()}
@@ -146,7 +145,7 @@ export default class NotesDash extends React.Component {
             {item.notes.map((note, i) =>
               <li key={note.nid} className={note.read ? 'read' : 'not-read'}>
                 <div className="row">
-                  <div className="col-auto">{i}</div>
+                  <div className="col-auto">{i + 1}</div>
                   <div className="col"><div dangerouslySetInnerHTML={{__html: note.text}} /></div>
                   <div className="col-sm-3 col-lg-2 monotype hide-sm text-center">
                     <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />

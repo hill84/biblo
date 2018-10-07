@@ -3,6 +3,8 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
+// firebase deploy --only functions
+
 const fn = functions.firestore;
 const fs = admin.firestore();
 
@@ -28,23 +30,25 @@ exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((cha
   const countRef = fs.collection('notifications').doc(uid);
 
   let increment;
-  if (change.after.exists() && !change.before.exists()) {
+  if (change.after.exists && !change.before.exists) {
     increment = 1;
-  } else if (!change.after.exists() && change.before.exists()) {
+  } else if (!change.after.exists && change.before.exists) {
     increment = -1;
   } else {
     return null;
   }
 
-  countRef.set({ count: count + increment }, {merge: true});
-  //countRef.transaction(current => (current || 0) + increment);
-  console.log('Counter updated.');
-  return null;
+  return countRef.get().then(snap => {
+    const count = (snap.data().count || 0) + increment;
+
+    return countRef.update({ count });
+  });
 });
 
 exports.recountNotes = fn.document('notifications/{uid}').onDelete((snap, context) => {
   const uid = context.params.uid;
   const collectionRef = fs.collection('notifications').doc(uid).collection('notes');
-  console.log('Counter updated.');
+
+  console.log('Notes subcollection deleted.');
   return collectionRef.delete();
 });
