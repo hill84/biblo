@@ -1,14 +1,13 @@
 import React from 'react';
 import { Background, Parallax } from 'react-parallax';
 import { Link } from 'react-router-dom';
-import { isAuthenticated, authid } from '../../config/firebase';
-/* import { icon } from '../../config/icons'; */
+import { authid, isAuthenticated } from '../../config/firebase';
 import { isTouchDevice } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
+import Authors from '../authors';
 import BookCollection from '../bookCollection';
 import Genres from '../genres';
 import RandomQuote from '../randomQuote';
-import Authors from '../authors';
 
 const Home = () => (
 	<div id="homeComponent">
@@ -69,20 +68,6 @@ const Home = () => (
       <div className="card dark card-fullwidth-sm">
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable />
 			</div>
-
-			{/* <div className="card dark">
-				<ul>
-          <li><Link to="/admin">Admin</Link></li>
-					<li><Link to="/login">{icon.loginVariant()} Login</Link></li>
-					<li><Link to="/signup">{icon.accountPlus()} Signup</Link></li>
-					<li><Link to="/password-reset">{icon.lockReset()} Reset password</Link></li>
-					<li><Link to={`/dashboard/${authid}`}>{icon.dashboard()} Dashboard</Link></li>
-					<li><Link to="/books/add">{icon.plusCircle()} Add book</Link></li>
-					<li><Link to="/new-book">{icon.newBox()} New book</Link></li>
-					<li><Link to="/profile">{icon.accountCircle()} Profile</Link></li>
-					<li><Link to="/error404">{icon.reader()} No match</Link></li>
-				</ul>
-			</div> */}
 		</div>
 	</div>
 );

@@ -58,6 +58,17 @@ service cloud.firestore {
         allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
       }
     }
+
+    match /feeds/latestReviews {
+    	allow read;
+      allow write: if isEditor();
+      
+      match /reviews/{bid} {
+      	allow read;
+        allow create, update: if isEditor();
+        allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+      }
+    }
     
     match /authors/{aid} {
       allow read;

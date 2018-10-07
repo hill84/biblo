@@ -8,7 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import Slide from '@material-ui/core/Slide';
+import Grow from '@material-ui/core/Grow';
 import React from 'react';
 import { bookRef, reviewerRef, authid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
@@ -24,6 +24,8 @@ export default class UserReview extends React.Component {
     user: this.props.user || {},
     userBook: this.props.userBook || {},
     review: {
+      bookTitle: '',
+      coverURL: '',
       createdByUid: '',
       created_num: 0,
       displayName: '',
@@ -101,6 +103,8 @@ export default class UserReview extends React.Component {
         if (this.state.bid) {
           reviewerRef(this.state.bid, authid).set({
             ...this.state.review,
+            bookTitle: this.state.userBook.title,
+            coverURL: !!this.state.userBook.covers[0] ? [this.state.userBook.covers[0]] : [],
             createdByUid: this.state.user.uid,
             created_num: Number((new Date()).getTime()),
             displayName: this.state.user.displayName,
@@ -199,6 +203,8 @@ export default class UserReview extends React.Component {
       this.setState({ 
         review: {
           ...this.state.review,
+          bookTitle: '',
+          coverURL: [],
           created_num: 0,
           likes: [],
           rating_num: 0,
@@ -348,7 +354,7 @@ export default class UserReview extends React.Component {
 
         <Dialog
           open={isOpenDeleteDialog}
-          TransitionComponent={props => <Slide direction="up" {...props} />}
+          TransitionComponent={Transition}
           keepMounted
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
@@ -370,3 +376,5 @@ export default class UserReview extends React.Component {
     );
   }
 }
+
+const Transition = props => <Grow {...props} />;

@@ -48,7 +48,7 @@ export default class Cover extends React.Component {
 		return (
       <div className="book"> 
         <div className="cover" title={book.title} style={{animationDelay: `${index/10}s`, backgroundImage: cover ? `url(${cover})` : null}}>
-          {bcid && bcid > 0 && <div className="bookmark accent"><div>{bcid}</div></div>}
+          {bcid && bcid > 0 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
           {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
           <div className="overlay" />
           {/* (book.covers && book.covers.length > 1) && 

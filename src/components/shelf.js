@@ -140,7 +140,9 @@ export default class Shelf extends React.Component {
 
   render() {
     const { booksPerRow, coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
-    const covers = userBooks && userBooks.length > 0 && userBooks.map((book, i) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>);
+    const covers = userBooks && userBooks.length > 0 && userBooks.map((book, i) => (
+      <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
+    ));
     const filterByOptions = filterBy.map((option, i) => (
       <MenuItem
         key={i}

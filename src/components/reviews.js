@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { auth, isAuthenticated, reviewersRef, authid } from '../config/firebase';
+import { auth, isAuthenticated, latestReviewsRef, reviewersRef, authid } from '../config/firebase';
 import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Review from './review';
@@ -21,7 +21,7 @@ export default class Reviews extends React.Component {
   }
 
   static propTypes = {
-    bid: stringType.isRequired
+    bid: stringType // .isRequired
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -56,10 +56,12 @@ export default class Reviews extends React.Component {
 
   fetchReviews = bid => { 
     const { desc, limit, uid } = this.state;
-    reviewersRef(bid).onSnapshot(snap => {
+    const ref = bid ? reviewersRef(bid) : latestReviewsRef;
+    ref.onSnapshot(snap => {
       if (!snap.empty) {
         this.setState({ reviewsCount: snap.docs.length });
-        reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+        
+        ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
           const reviews = [];
           if (!snap.empty) {
             snap.forEach(review => review.data().createdByUid !== (uid) && reviews.push(review.data()));

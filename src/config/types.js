@@ -103,17 +103,21 @@ export const ratingsType = shape({
 });
 
 export const reviewType = shape({
-  photoURL: stringType,
-  displayName: stringType.isRequired,
+  bookTitle: stringType,
+  coverURL: arrayOf(string),
   createdByUid: stringType.isRequired,
   created_num: numberType.isRequired,
+  displayName: stringType.isRequired,
   likes: arrayOf(string).isRequired,
+  photoURL: stringType,
   rating_num: numberType.isRequired,
   text: stringType.isRequired,
   title: stringType
 });
 
 export const userReviewType = shape({
+  bookTitle: stringType,
+  coverURL: arrayOf(string),
   created_num: numberType.isRequired,
   likes_num: numberType.isRequired,
   text: stringType.isRequired,

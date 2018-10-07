@@ -4,7 +4,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
+import Grow from '@material-ui/core/Grow';
 import React from 'react';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
@@ -249,4 +249,4 @@ export default class BookProfile extends React.Component {
 	}
 }
 
-const Transition = props => <Slide direction="up" {...props} />;
+const Transition = props => <Grow {...props} />;
