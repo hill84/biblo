@@ -8,9 +8,10 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { quoteRef, quotesRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { funcType, userType } from '../../../config/types';
 import { timeSince } from '../../../config/shared';
+import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
+import PaginationControls from '../../paginationControls';
 
 export default class QuotesDash extends React.Component {
  	state = {
@@ -228,37 +229,29 @@ export default class QuotesDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <ul className="table dense nolist font-sm">
-              <li className="labels">
-                <div className="row">
-                  <div className="col-auto"><div className="mock-cover xs hidden" title="cover" /></div>
-                  <div className="col">Libro</div>
-                  <div className="col">Autore</div>
-                  <div className="col-5 hide-sm">Testo</div>
-                  <div className="col hide-sm">Qid</div>
-                  <div className="col hide-sm">Modificato da</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
-                </div>
-              </li>
-              {itemsList}
-            </ul>
-          }
-          {items && count > limitBy[limitByIndex] &&
-            <div className="info-row centered pagination">
-              <button 
-                disabled={page === 1 && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('prev')} title="precedente">
-                {icon.chevronLeft()}
-              </button>
-              <span className="page">{page}</span>
-              <button 
-                disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('next')} title="successivo">
-                {icon.chevronRight()}
-              </button>
-            </div>
+            <React.Fragment>
+              <ul className="table dense nolist font-sm">
+                <li className="labels">
+                  <div className="row">
+                    <div className="col-auto"><div className="mock-cover xs hidden" title="cover" /></div>
+                    <div className="col">Libro</div>
+                    <div className="col">Autore</div>
+                    <div className="col-5 hide-sm">Testo</div>
+                    <div className="col hide-sm">Qid</div>
+                    <div className="col hide-sm">Modificato da</div>
+                    <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
+                  </div>
+                </li>
+                {itemsList}
+              </ul>
+              <PaginationControls 
+                count={count} 
+                fetchNext={() => this.fetch('next')} 
+                fetchPrev={() => this.fetch('prev')} 
+                limit={limitBy[limitByIndex]}
+                page={page}
+              />
+            </React.Fragment>
           }
         </div>
 

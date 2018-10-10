@@ -14,6 +14,7 @@ import { icon } from '../../../config/icons';
 import { getInitials } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
+import PaginationControls from '../../paginationControls';
 
 export default class UsersDash extends React.Component {
  	state = {
@@ -239,44 +240,36 @@ export default class UsersDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <ul className="table dense nolist font-sm">
-              <li className="avatar-row labels">
-                <div className="row">
-                  <div className="col-auto hide-xs"><div className="avatar" title="avatar" /></div>
-                  <div className="col hide-sm">Nominativo</div>
-                  <div className="col">Uid</div>
-                  <div className="col hide-sm">Email</div>
-                  <div className="col col-sm-3 col-lg-2">
-                    <div className="row text-center">
-                      <div className="col" title="Libri">{icon.book()}</div>
-                      <div className="col" title="Desideri">{icon.heart()}</div>
-                      <div className="col" title="Recensioni">{icon.review()}</div>
-                      <div className="col hide-md" title="Voti">{icon.star()}</div>
+            <React.Fragment>
+              <ul className="table dense nolist font-sm">
+                <li className="avatar-row labels">
+                  <div className="row">
+                    <div className="col-auto hide-xs"><div className="avatar" title="avatar" /></div>
+                    <div className="col hide-sm">Nominativo</div>
+                    <div className="col">Uid</div>
+                    <div className="col hide-sm">Email</div>
+                    <div className="col col-sm-3 col-lg-2">
+                      <div className="row text-center">
+                        <div className="col" title="Libri">{icon.book()}</div>
+                        <div className="col" title="Desideri">{icon.heart()}</div>
+                        <div className="col" title="Recensioni">{icon.review()}</div>
+                        <div className="col hide-md" title="Voti">{icon.star()}</div>
+                      </div>
                     </div>
+                    <div className="col col-sm-2">Ruoli</div>
+                    <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                   </div>
-                  <div className="col col-sm-2">Ruoli</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
-                </div>
-              </li>
-              {itemsList}
-            </ul>
-          }
-          {items && count > limitBy[limitByIndex] &&
-            <div className="info-row centered pagination">
-              <button 
-                disabled={page === 1 && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('prev')} title="precedente">
-                {icon.chevronLeft()}
-              </button>
-              <span className="page">{page}</span>
-              <button 
-                disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('next')} title="successivo">
-                {icon.chevronRight()}
-              </button>
-            </div>
+                </li>
+                {itemsList}
+              </ul>
+              <PaginationControls 
+                count={count} 
+                fetchNext={() => this.fetch('next')} 
+                fetchPrev={() => this.fetch('prev')} 
+                limit={limitBy[limitByIndex]}
+                page={page}
+              />
+            </React.Fragment>
           }
         </div>
 

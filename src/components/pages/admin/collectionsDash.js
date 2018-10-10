@@ -12,6 +12,7 @@ import { collectionBooksRef, collectionRef, collectionsRef } from '../../../conf
 import { icon } from '../../../config/icons';
 import { timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
+import PaginationControls from '../../paginationControls';
 
 export default class collectionsDash extends React.Component {
  	state = {
@@ -223,33 +224,25 @@ export default class collectionsDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <ul className="table dense nolist font-sm">
-              <li className="labels">
-                <div className="row">
-                  <div className="col">Titolo</div>
-                  <div className="col">Libri</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">Modificata</div>
-                </div>
-              </li>
-              {itemsList}
-            </ul>
-          }
-          {items && count > limitBy[limitByIndex] &&
-            <div className="info-row centered pagination">
-              <button 
-                disabled={page === 1 && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('prev')} title="precedente">
-                {icon.chevronLeft()}
-              </button>
-              <span className="page">{page}</span>
-              <button 
-                disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('next')} title="successivo">
-                {icon.chevronRight()}
-              </button>
-            </div>
+            <React.Fragment>
+              <ul className="table dense nolist font-sm">
+                <li className="labels">
+                  <div className="row">
+                    <div className="col">Titolo</div>
+                    <div className="col">Libri</div>
+                    <div className="col col-sm-2 col-lg-1 text-right">Modificata</div>
+                  </div>
+                </li>
+                {itemsList}
+              </ul>
+              <PaginationControls 
+                count={count} 
+                fetchNext={() => this.fetch('next')} 
+                fetchPrev={() => this.fetch('prev')} 
+                limit={limitBy[limitByIndex]}
+                page={page}
+              />
+            </React.Fragment>
           }
         </div>
 

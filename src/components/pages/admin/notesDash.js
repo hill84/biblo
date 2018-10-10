@@ -8,9 +8,10 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { noteRef, notesRef, notificationsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { funcType, userType } from '../../../config/types';
 import { timeSince } from '../../../config/shared';
+import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
+import PaginationControls from '../../paginationControls';
 
 export default class NotesDash extends React.Component {
  	state = {
@@ -200,33 +201,25 @@ export default class NotesDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <ul className="table dense nolist font-sm">
-              <li className="labels">
-                <div className="row">
-                  <div className="col-auto">#</div>
-                  <div className="col">Uid</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
-                </div>
-              </li>
-              {itemsList}
-            </ul>
-          }
-          {items && count > limitBy[limitByIndex] &&
-            <div className="info-row centered pagination">
-              <button 
-                disabled={page === 1 && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('prev')} title="precedente">
-                {icon.chevronLeft()}
-              </button>
-              <span className="page">{page}</span>
-              <button 
-                disabled={page > (count / limitBy[limitByIndex]) && 'disabled'} 
-                className="btn flat" 
-                onClick={() => this.fetch('next')} title="successivo">
-                {icon.chevronRight()}
-              </button>
-            </div>
+            <React.Fragment>
+              <ul className="table dense nolist font-sm">
+                <li className="labels">
+                  <div className="row">
+                    <div className="col-auto">#</div>
+                    <div className="col">Uid</div>
+                    <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
+                  </div>
+                </li>
+                {itemsList}
+              </ul>
+              <PaginationControls 
+                count={count} 
+                fetchNext={() => this.fetch('next')} 
+                fetchPrev={() => this.fetch('prev')} 
+                limit={limitBy[limitByIndex]}
+                page={page}
+              />
+            </React.Fragment>
           }
         </div>
 

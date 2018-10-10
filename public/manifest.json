@@ -10,7 +10,7 @@
       "type": "image/x-icon"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "/?utm_source=pwa_homescreen",
   "display": "standalone",
   "theme_color": "#0097a7",
   "background_color": "#263238"

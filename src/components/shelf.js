@@ -9,6 +9,7 @@ import { icon } from '../config/icons';
 import { booksPerRow } from '../config/shared';
 import { numberType, stringType } from '../config/types';
 import Cover from './cover';
+import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 export default class Shelf extends React.Component {
@@ -33,11 +34,10 @@ export default class Shelf extends React.Component {
     orderByIndex: 0,
     orderMenuAnchorEl: null,
     shelf: this.props.shelf || 'bookInShelf',
-    userBooks: [],
-    userBooksCount : 0,
+    items: [],
+    count : 0,
     pagination: true,
-    page: 1,
-    lastVisible: null
+    page: 1
   }
 
   static propTypes = {
@@ -83,27 +83,27 @@ export default class Shelf extends React.Component {
       const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
       const empty = { 
         isOwner: luid === uid,
-        userBooksCount: 0, 
-        userBooks: [],
+        count: 0, 
+        items: [],
         loading: false,
         page: 1
       };
   
       shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
-          this.setState({ userBooksCount: fullSnap.docs.length });
+          this.setState({ count: fullSnap.docs.length });
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
           ref.limit(limit).onSnapshot(snap => {
             this.setState({ loading: true });
             if (!snap.empty) {
-              const userBooks = [];
-              snap.forEach(userBook => userBooks.push({ ...userBook.data(), bid: userBook.id }));
+              const items = [];
+              snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
               this.setState(prevState => ({ 
                 isOwner: luid === uid,
-                userBooks,
+                items,
                 loading: false,
-                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.userBooksCount ? prevState.page : prevState.page + 1 : 1
+                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
               }));
             } else this.setState(empty);
           });
@@ -139,8 +139,8 @@ export default class Shelf extends React.Component {
   onCloseFilterMenu = () => this.setState({ filterMenuAnchorEl: null });
 
   render() {
-    const { booksPerRow, coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, userBooks, userBooksCount } = this.state;
-    const covers = userBooks && userBooks.length > 0 && userBooks.map((book, i) => (
+    const { booksPerRow, coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
+    const covers = items && items.length > 0 && items.map((book, i) => (
       <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
     ));
     const filterByOptions = filterBy.map((option, i) => (
@@ -192,13 +192,13 @@ export default class Shelf extends React.Component {
                       </Menu>
                     </React.Fragment>
                   }
-                  <span className="counter last hide-sm">{userBooksCount !== userBooks.length ? `${userBooks.length} di ` : ''}{userBooksCount} libr{userBooksCount !== 1 ? 'i' : 'o'}</span>
+                  <span className="counter last hide-sm">{count !== items.length ? `${items.length} di ` : ''}{count} libr{count !== 1 ? 'i' : 'o'}</span>
                 </div>
                 <div className="col-auto">
                   <button 
                     className="btn sm flat counter" 
                     onClick={this.onOpenOrderMenu} 
-                    disabled={!userBooksCount}>
+                    disabled={!count}>
                     <span className="hide-sm">Ordina per {orderBy[orderByIndex].label}</span>
                     <span className="show-sm">{orderBy[orderByIndex].icon}</span>
                   </button>
@@ -212,7 +212,7 @@ export default class Shelf extends React.Component {
                     className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} 
                     title={desc ? 'Ascendente' : 'Discendente'} 
                     onClick={this.onToggleDesc} 
-                    disabled={!userBooksCount}>
+                    disabled={!count}>
                     {icon.arrowDown()}
                   </button>
                 </div>
@@ -231,22 +231,14 @@ export default class Shelf extends React.Component {
                 {covers}
               </div>
             }
-            {pagination && userBooksCount > limit &&
-              <div className="info-row footer centered pagination">
-                <button 
-                  disabled={page === 1 && 'disabled'} 
-                  className="btn flat" 
-                  onClick={() => this.fetchUserBooks('prev')} title="precedente">
-                  {icon.chevronLeft()}
-                </button>
-                <span className="page">{page}</span>
-                <button 
-                  disabled={page > (userBooksCount / limit) && 'disabled'} 
-                  className="btn flat" 
-                  onClick={() => this.fetchUserBooks('next')} title="successivo">
-                  {icon.chevronRight()}
-                </button>
-              </div>
+            {pagination && 
+              <PaginationControls 
+                count={count} 
+                fetchNext={() => this.fetchUserBooks('next')} 
+                fetchPrev={() => this.fetchUserBooks('prev')} 
+                limit={limit}
+                page={page}
+              />
             }
           </div>
         </div>
