@@ -1387,7 +1387,7 @@ html.light .hero * { text-shadow: none; }
   position: relative;
   width: var(--coverWidth);
   height: var(--coverHeight);
-  background-color: var(--primaryClr);
+  background-color: var(--canvasLighterClr);
   background-size: cover;
   background-position: top center;
   box-shadow: 0 2px 3px rgba(0,0,0,.12);

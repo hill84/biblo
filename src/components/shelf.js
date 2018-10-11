@@ -172,7 +172,7 @@ export default class Shelf extends React.Component {
               <div className="row">
                 <div className="col">
                   <button 
-                    className="btn sm flat counter" 
+                    className="btn sm flat counter icon" 
                     title={coverview ? 'Stack view' : 'Cover view'} 
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential() : icon.viewGrid()}
