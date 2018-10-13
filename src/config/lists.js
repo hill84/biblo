@@ -1,3 +1,5 @@
+export const roles = ['admin', 'editor', 'premium', 'public'];
+
 export const ratingLabels = { 
   0: "Nessun voto", 
   '0.5': "Orrendo", 

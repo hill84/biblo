@@ -24,6 +24,10 @@ export const defaultTheme = createMuiTheme({
       // disabled: "rgba(0, 0, 0, 0.38)",
       // hint: "rgba(0, 0, 0, 0.38)"
     },
+    typography: {
+      suppressDeprecationWarnings: true,
+      useNextVariants: true
+    },
     background: {
       paper: '#FFF',
       default: blueGrey[900]
@@ -57,6 +61,10 @@ export const darkTheme = createMuiTheme({
     background: {
       paper: '#32434E',
       default: blueGrey[900]
+    },
+    typography: {
+      suppressDeprecationWarnings: true,
+      useNextVariants: true
     }
   }
 });
@@ -79,48 +87,10 @@ export const primaryTheme = createMuiTheme({
     background: {
       paper: '#32434E',
       default: blueGrey[900]
+    },
+    typography: {
+      suppressDeprecationWarnings: true,
+      useNextVariants: true
     }
   }
 });
-
-/* export const muiTheme = getMuiTheme({
-  palette: {
-    primary1Color: cyan700,
-    primary2Color: cyan900,
-    accent1Color: amber400,
-    accent2Color: amber500,
-    pickerHeaderColor: cyan700
-  },
-  appBar: { height: 60 },
-  drawer: { color: blueGrey900 },
-  datePicker: { selectColor: cyan700 },
-  menuItem: { hoverColor: 'rgba(0, 151, 167, 0.1)' }
-});
-
-export const muiThemeDark = getMuiTheme({
-  palette: {
-    textColor: '#fff',
-    secondaryTextColor: 'rgba(255,255,255,.7)',
-    alternateTextColor: '#303030',
-    canvasColor: '#303030',
-    borderColor: 'rgba(255,255,255,.3)',
-    disabledColor: 'rgba(255,255,255,.3)',
-    pickerHeaderColor: 'rgba(255,255,255,.12)',
-    clockCircleColor: 'rgba(255,255,255,.12)',
-  }
-});
-
-export const muiThemePrimary = getMuiTheme({
-  palette: {
-    primary1Color: 'rgba(255,255,255,.7)',
-    primary2Color: '#fff',
-    textColor: '#fff',
-    secondaryTextColor: 'rgba(255,255,255,.7)',
-    alternateTextColor: '#303030',
-    canvasColor: '#303030',
-    borderColor: 'rgba(255,255,255,.3)',
-    disabledColor: 'rgba(255,255,255,.3)',
-    pickerHeaderColor: 'rgba(255,255,255,.12)',
-    clockCircleColor: 'rgba(255,255,255,.12)',
-  }
-}); */

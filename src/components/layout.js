@@ -15,6 +15,7 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { authid, noteRef, notesRef, signOut } from '../config/firebase';
 import { icon } from '../config/icons';
+import { roles } from '../config/lists';
 import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { userType } from '../config/types';
@@ -51,7 +52,6 @@ export default class Layout extends React.Component {
     const { user } = this.state;
     if (user) {
       const notes = [];
-      const roles = ['admin', 'editor', 'premium', 'public'];
       roles.forEach(role => {
         if (hasRole(user, role)) {
           notesRef(`__${role}`).onSnapshot(snap => {
@@ -107,7 +107,7 @@ export default class Layout extends React.Component {
             <IconButton className="drawer-btn" aria-label="Menu" onClick={this.onToggleDrawer}> 
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
-            <Typography className="title" variant="title" color="inherit">
+            <Typography className="title" variant="h6" color="inherit">
               <Link to="/">{appName}<sup>Alpha</sup></Link>
             </Typography>
             {user ? 

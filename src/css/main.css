@@ -24,6 +24,7 @@
   --canvasLighterClr: rgb(64, 86, 99);    /* blueGrey701 */
   --mainBg: var(--canvasClr);
   --cardBg: var(--mainBg);
+  --bookBg: var(--canvasLighterClr);
   --radius: 3px;
   --btnHeight: 36px;
   --btnPad: .8rem;
@@ -89,7 +90,10 @@ ul.nolist li { display: block; }
 .card .info-row.footer { display: block; }
 /* .info-row .btn { margin-top: 0; margin-bottom: 0; } */
 
-.pagination .page { padding: 0 10px; }
+.pagination { --size: 20px; }
+.pagination .page { padding: 0 10px; font-weight: 200; }
+.pagination .btn { vertical-align: middle; margin-top: 0; margin-bottom: 0; line-height: var(--size); }
+.pagination .btn svg { --iconSize: var(--size); }
 
 .shelfdetails, .bookdetails { 
   --lighterTextClr: var(--lightestTextClr);
@@ -1232,7 +1236,7 @@ html.light .hero * { text-shadow: none; }
 .book-profile .title { font-size: 2.2rem; }
 .book-profile .subtitle { font-size: 1.35rem; color: var(--lightTextClr); }
 .book-profile .rating { height: var(--btnHeight); line-height: var(--btnHeight); }
-.book-profile .description { margin-top: .6rem; }
+.book-profile .description { margin-top: .6rem; white-space: pre-line; word-wrap: break-word; }
 
 .minifiable {
   display: inline-block;
@@ -1387,7 +1391,7 @@ html.light .hero * { text-shadow: none; }
   position: relative;
   width: var(--coverWidth);
   height: var(--coverHeight);
-  background-color: var(--canvasLighterClr);
+  background-color: var(--bookBg);
   background-size: cover;
   background-position: top center;
   box-shadow: 0 2px 3px rgba(0,0,0,.12);
@@ -1590,6 +1594,7 @@ html.light .hero * { text-shadow: none; }
 .review .rating { line-height: inherit; }
 .review .rating .rating-num { margin-left: 7px; }
 .review .rating .ratings-num { display: none; }
+.review .text { white-space: pre-line; word-wrap: break-word; }
 .review .foot { color: var(--lighterTextClr); font-size: .82rem; }
 .review .foot .counter { display: inline-block; }
 .review .foot .counter + .counter { margin-left: 3px; }
@@ -1729,7 +1734,7 @@ html.light .hero * { text-shadow: none; }
 .snackbar-content.warning { background-color: var(--accentClr); }
 
 /* MOCKS */
-.mock-cover { background-color: var(--primaryClr); background-size: cover; }
+.mock-cover { background-color: var(--bookBg); background-size: cover; }
 .mock-cover.xs { width: 14px; height: 20px; border-radius: 1px; }
 
 /* GENRES */
