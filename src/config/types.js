@@ -22,7 +22,7 @@ export const userType = shape({
   country: string,
   city: string,
   languages: arrayOf(string),
-  photoURL: string,
+  photoURL: string.isRequired,
   sex: string,
   roles: shape({
     admin: bool.isRequired,

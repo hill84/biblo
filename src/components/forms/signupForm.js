@@ -66,6 +66,7 @@ export default class SignupForm extends React.Component {
 						displayName: data.displayName,
 						email: user.email,
 						creationTime: user.metadata.creationTime,
+						photoURL: '',
 						roles: data.roles,
 						stats: data.stats
 					});

@@ -83,7 +83,7 @@ export default class Layout extends React.Component {
   onOpenNotes = e => {
     const { notes, user } = this.state;
     this.setState({ notesAnchorEl: e.currentTarget });
-    notes.filter(note => note.read !== true && !note.role).forEach(note => {
+    notes && notes.filter(note => note.read !== true && !note.role).forEach(note => {
       /* this.setState({
         notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
       }); */
