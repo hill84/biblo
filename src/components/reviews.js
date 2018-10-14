@@ -2,26 +2,27 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { auth, isAuthenticated, latestReviewsRef, reviewersRef, authid } from '../config/firebase';
-import { icon } from '../config/icons';
 import { stringType } from '../config/types';
 import Review from './review';
+import PaginationControls from './paginationControls';
 /* import InfiniteScroll from 'react-infinite-scroller'; */
 
 export default class Reviews extends React.Component {
 	state = {
     bid: this.props.bid,
     uid: authid,
-    reviews: null,
-    reviewsCount: 0,
-    desc: false,
-    limit: 10,
+    items: null,
+    count: 0,
+    desc: true,
+    limit: 5,
     loading: true,
-    page: 1, // TODO
-    // lastVisible: null
+    page: 1,
+    firstVisible: null,
+    lastVisible: null
   }
 
   static propTypes = {
-    bid: stringType // .isRequired
+    bid: stringType
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -59,68 +60,54 @@ export default class Reviews extends React.Component {
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
     ref.onSnapshot(snap => {
       if (!snap.empty) {
-        this.setState({ reviewsCount: snap.docs.length });
+        this.setState({ count: snap.docs.length });
         
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
-          const reviews = [];
+          const items = [];
           if (!snap.empty) {
-            snap.forEach(review => review.data().createdByUid !== (uid) && reviews.push(review.data()));
+            snap.forEach(item => item.data().createdByUid !== (uid) && items.push(item.data()));
           }
           this.setState({ 
-            reviews,
+            items, 
             loading: false,
-            page: 1,
-            // lastVisible: snap.docs[snap.docs.length-1]
+            lastVisible: snap.docs[snap.docs.length-1]
           });
         }).catch(error => console.warn(error));
       } else {
-        this.setState({ 
-          reviewsCount: 0,
-          reviews: null,
-          loading: false,
-          page: null,
-          // lastVisible: null
-        });
+        this.setState({ loading: false });
       }
     });
   }
 
-  fetch = direction => {
-    const { bid, desc, /* firstVisible, lastVisible,  */limit, page, reviewsCount } = this.state;
-    // console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
-    // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
-    const startAfter = (direction === 'prev') ? (page > 1) ? ((page - 1) * limit) - limit : 0 : ((page * limit) > reviewsCount) ? ((page - 1) * limit) : page * limit;
+  fetch = () => {
+    const { bid, desc, items, lastVisible, limit, uid } = this.state;
 
     this.setState({ loading: true });
-    
-    const nextReviews = [];
-		reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').startAfter(startAfter).limit(limit).get().then(nextSnap => {
+
+		reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
-        nextSnap.forEach(review => nextReviews.push(review.data()));
+        nextSnap.forEach(item => item.data().createdByUid !== (uid) && items.push(item.data()));
         this.setState(prevState => ({ 
-          reviews: nextReviews,
+          items,
           loading: false,
-          page: (direction === 'prev') ? (prevState.page > 1) ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.reviewsCount) ? prevState.page : prevState.page + 1,
-          prevPage: prevState.page,
-          // lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
+          page: (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1,
+          lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
         }));
-        // console.log(nextReviews);
-        console.log({'direction': direction, 'prevPage': this.state.prevPage, 'page': page});
       } else {
         this.setState({ 
-          reviews: null,
+          items: null,
           loading: false,
           page: null,
-          // lastVisible: null
+          lastVisible: null
         });
       }
 		}).catch(error => console.warn(error));
   }
 	
 	render() {
-    const { bid, limit, loading, page, reviews, reviewsCount } = this.state;
+    const { bid, items, limit, loading, page, count } = this.state;
 
-    if (!reviews || reviews.length === 0) {
+    if (!items || items.length === 0) {
       if (loading) { 
         return <div className="loader relative"><CircularProgress /></div>; 
       } else { 
@@ -137,38 +124,32 @@ export default class Reviews extends React.Component {
 		return (
       <React.Fragment>
         <div className="card dark reviews">
-          {reviews.map(review => 
+          {items.map(item => 
             <Review 
-              key={review.createdByUid} 
+              key={item.createdByUid} 
               bid={bid}
               review={{
-                photoURL: review.photoURL || '',
-                displayName: review.displayName || '',
-                createdByUid: review.createdByUid || '',
-                created_num: review.created_num || 0,
-                likes: review.likes || {},
-                rating_num: review.rating_num || 0,
-                text: review.text || '',
-                title: review.title || '',
+                photoURL: item.photoURL || '',
+                displayName: item.displayName || '',
+                createdByUid: item.createdByUid || '',
+                created_num: item.created_num || 0,
+                likes: item.likes || {},
+                rating_num: item.rating_num || 0,
+                text: item.text || '',
+                title: item.title || '',
               }} 
             />
           )}
         </div>
-        {reviewsCount > limit &&
-          <React.Fragment>
-            <button 
-              disabled={page < 2 && 'disabled'} 
-              className="btn sm clear prepend" 
-              onClick={() => this.fetch('prev')} title="precedente">
-              {icon.chevronLeft()}
-            </button>
-            <button 
-              disabled={page > (reviewsCount / limit) && 'disabled'} 
-              className="btn sm clear append" 
-              onClick={() => this.fetch('next')} title="successivo">
-              {icon.chevronRight()}
-            </button>
-          </React.Fragment>
+        {count > 0 && items.length < count &&
+          <PaginationControls 
+            count={count} 
+            fetchNext={this.fetch} 
+            limit={limit}
+            loading={loading}
+            oneWay
+            page={page}
+          />
         }
       </React.Fragment>
 		);

@@ -94,6 +94,7 @@ ul.nolist li { display: block; }
 .pagination .page { padding: 0 10px; font-weight: 200; }
 .pagination .btn { vertical-align: middle; margin-top: 0; margin-bottom: 0; line-height: var(--size); }
 .pagination .btn svg { --iconSize: var(--size); }
+.pagination.loading .btn svg { color: var(--primaryClr); will-change: transform; animation: rotate .3s infinite; }
 
 .shelfdetails, .bookdetails { 
   --lighterTextClr: var(--lightestTextClr);
@@ -1252,7 +1253,7 @@ html.light .hero * { text-shadow: none; }
 .minifiable:after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: -1px;
   left: 0;
   width: 100%;
   height: 50px;
@@ -1586,15 +1587,19 @@ html.light .hero * { text-shadow: none; }
 /* REVIEWS */
 .card.user-review, .card.reviews { padding-top: 14px; padding-bottom: 14px; }
 .card.user-review .footer { margin-bottom: -14px; }
-.review + .review { margin-top: 7px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
+.review { --avatarSize: 32px; }
+.reviews .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
+.review + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
 .review .left { padding-right: 0; }
-.review .head { line-height: 40px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.review .left .avatar { width: var(--avatarSize); height: var(--avatarSize); line-height: var(--avatarSize); font-size: .9rem; }
+.review .right { padding-left: 14px; }
+.review .head { line-height: var(--avatarSize); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
 .review .title { color: var(--contrastedTextClr); }
 .review .rating { line-height: inherit; }
 .review .rating .rating-num { margin-left: 7px; }
 .review .rating .ratings-num { display: none; }
-.review .text { white-space: pre-line; word-wrap: break-word; }
+.review .text { margin-top: .5rem; white-space: pre-line; word-wrap: break-word; }
 .review .foot { color: var(--lighterTextClr); font-size: .82rem; }
 .review .foot .counter { display: inline-block; }
 .review .foot .counter + .counter { margin-left: 3px; }
@@ -1926,6 +1931,7 @@ html.light .hero * { text-shadow: none; }
 .delay8 { animation-delay: .8s; }
 .delay10 { animation-delay: 1s; }
 
+@keyframes rotate { to { transform: rotate(360deg); } }
 @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInSlideDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }
 

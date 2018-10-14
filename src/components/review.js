@@ -64,7 +64,7 @@ export default class Review extends React.Component {
     const { review } = this.props;
 
     return (
-      <div className={`review ${review.createdByUid === authid ? 'own' : ''}`}>
+      <div className={review.createdByUid === authid ? 'own review' : 'review'}>
         <div className="row">
           <Link to={`/dashboard/${review.createdByUid}`} className="col-auto left">
             <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
@@ -74,9 +74,11 @@ export default class Review extends React.Component {
               <Link to={`/dashboard/${review.createdByUid}`} className="col-auto author">
                 <h3>{review.displayName}</h3>
               </Link>
-              <div className="col text-right rating">
-                <Rating ratings={{rating_num: review.rating_num}} labels />
-              </div>
+              {review.rating_num > 0 && 
+                <div className="col text-right rating">
+                  <Rating ratings={{rating_num: review.rating_num}} labels />
+                </div>
+              }
             </div>
             {review.title && <h4 className="title">{review.title}</h4>}
             <div className="info-row text">
