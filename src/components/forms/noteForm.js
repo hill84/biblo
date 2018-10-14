@@ -88,9 +88,9 @@ export default class noteForm extends React.Component {
       // console.log(`Sending notification to ${uid}`);
       const newNoteRef = notesRef(uid).doc();
       const ref = nid ? noteRef(uid, nid) : newNoteRef;
-      if (!nid) {
+      /* if (!nid) {
         notesRef(uid).set({ count: 0 })
-      }
+      } */
       ref.set({
         nid: nid || newNoteRef.id,
         text: data.text,

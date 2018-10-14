@@ -18,15 +18,16 @@ const fs = admin.firestore();
 // REVIEWS
 exports.reviewsFeed = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const bid = context.params.bid;
+  const uid = context.params.uid;
   const feedRef = fs.collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
   const item = change.after.data();
 
   if (change.after.exists && !change.before.exists) {
-    return feedRef.set({ item });
+    return feedRef.set(item);
   } else if (!change.after.exists && change.before.exists) {
     return feedRef.delete();
   } else {
-    return feedRef.update({ item });
+    return feedRef.update(item);
   }
 });
 

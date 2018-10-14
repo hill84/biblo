@@ -17,7 +17,6 @@ export default class Reviews extends React.Component {
     limit: 5,
     loading: true,
     page: 1,
-    firstVisible: null,
     lastVisible: null
   }
 
@@ -56,22 +55,22 @@ export default class Reviews extends React.Component {
   }
 
   fetchReviews = bid => { 
-    const { desc, limit, uid } = this.state;
+    const { desc, limit } = this.state;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
+  
     ref.onSnapshot(snap => {
       if (!snap.empty) {
         this.setState({ count: snap.docs.length });
-        
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
           const items = [];
           if (!snap.empty) {
-            snap.forEach(item => item.data().createdByUid !== (uid) && items.push(item.data()));
+            snap.forEach(item => items.push(item.data()));
+            this.setState({
+              items, 
+              loading: false,
+              lastVisible: snap.docs[snap.docs.length-1]
+            });
           }
-          this.setState({ 
-            items, 
-            loading: false,
-            lastVisible: snap.docs[snap.docs.length-1]
-          });
         }).catch(error => console.warn(error));
       } else {
         this.setState({ loading: false });
@@ -80,13 +79,13 @@ export default class Reviews extends React.Component {
   }
 
   fetch = () => {
-    const { bid, desc, items, lastVisible, limit, uid } = this.state;
+    const { bid, desc, items, lastVisible, limit } = this.state;
+    const ref = bid ? reviewersRef(bid) : latestReviewsRef;
 
     this.setState({ loading: true });
-
-		reviewersRef(bid).orderBy('created_num', desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
+		ref.orderBy('created_num', desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
-        nextSnap.forEach(item => item.data().createdByUid !== (uid) && items.push(item.data()));
+        nextSnap.forEach(item => items.push(item.data()));
         this.setState(prevState => ({ 
           items,
           loading: false,
@@ -124,13 +123,16 @@ export default class Reviews extends React.Component {
 		return (
       <React.Fragment>
         <div className="card dark reviews">
-          {items.map(item => 
+          {items.map((item, index) => 
             <Review 
-              key={item.createdByUid} 
+              key={`${index}_${item.createdByUid}`} 
               bid={bid}
               review={{
+                bid: item.bid || '',
                 photoURL: item.photoURL || '',
                 displayName: item.displayName || '',
+                bookTitle: item.bookTitle,
+                covers: item.covers || [],
                 createdByUid: item.createdByUid || '',
                 created_num: item.created_num || 0,
                 likes: item.likes || {},

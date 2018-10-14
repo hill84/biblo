@@ -24,8 +24,9 @@ export default class UserReview extends React.Component {
     user: this.props.user || {},
     userBook: this.props.userBook || {},
     review: {
+      bid: '',
       bookTitle: '',
-      coverURL: '',
+      covers: [],
       createdByUid: '',
       created_num: 0,
       displayName: '',
@@ -103,8 +104,9 @@ export default class UserReview extends React.Component {
         if (this.state.bid) {
           reviewerRef(this.state.bid, authid).set({
             ...this.state.review,
+            bid: this.state.userBook.bid,
             bookTitle: this.state.userBook.title,
-            coverURL: !!this.state.userBook.covers[0] ? [this.state.userBook.covers[0]] : [],
+            covers: this.state.userBook.covers,
             createdByUid: this.state.user.uid,
             created_num: Number((new Date()).getTime()),
             displayName: this.state.user.displayName,
@@ -203,8 +205,9 @@ export default class UserReview extends React.Component {
       this.setState({ 
         review: {
           ...this.state.review,
+          bid: '',
           bookTitle: '',
-          coverURL: [],
+          covers: [],
           created_num: 0,
           likes: [],
           rating_num: 0,

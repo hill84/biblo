@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { isAuthenticated, reviewerRef, authid, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, timeSince } from '../config/shared';
-import { reviewType } from '../config/types';
+import { reviewType, stringType } from '../config/types';
 import Rating from './rating';
 import MinifiableText from './minifiableText';
+import Cover from './cover';
 
 export default class Review extends React.Component {
   state = {
@@ -15,6 +16,7 @@ export default class Review extends React.Component {
   }
 
   static propTypes = {
+    bid: stringType,
     review: reviewType.isRequired
   }
 
@@ -61,19 +63,34 @@ export default class Review extends React.Component {
 
   render() {
     const { like, likes_num } = this.state;
-    const { review } = this.props;
+    const { bid, review } = this.props;
 
     return (
-      <div className={review.createdByUid === authid ? 'own review' : 'review'}>
+      <div className={isAuthenticated() && review.createdByUid === authid ? 'own review' : 'review'}>
         <div className="row">
-          <Link to={`/dashboard/${review.createdByUid}`} className="col-auto left">
-            <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
-          </Link>
+          <div className="col-auto left">
+            {!bid ?
+              <Link to={`/book/${review.bid}`} className="hoverable-items">
+                <Cover info={false} book={{
+                  bid: review.bid,
+                  title: review.bookTitle,
+                  authors: { 'author': true },
+                  covers: review.covers,
+                  publisher: 'publisher'
+                }} />
+              </Link>
+            :
+              <Link to={`/dashboard/${review.createdByUid}`}>
+                <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
+              </Link>
+            }
+          </div>
           <div className="col right">
             <div className="head row">
               <Link to={`/dashboard/${review.createdByUid}`} className="col-auto author">
                 <h3>{review.displayName}</h3>
               </Link>
+              {isAuthenticated() && review.createdByUid === authid && <span className="badge">TU</span>}
               {review.rating_num > 0 && 
                 <div className="col text-right rating">
                   <Rating ratings={{rating_num: review.rating_num}} labels />
@@ -85,20 +102,22 @@ export default class Review extends React.Component {
               <MinifiableText text={review.text} maxChars={500} />
             </div>
             <div className="foot row">
-              <div className="col-auto likes">
-                <div className="counter">
-                  <button 
-                    className={`btn flat thumb up ${like}`} 
-                    disabled={!isAuthenticated() || (review.createdByUid === authid)} 
-                    onClick={this.onThumbChange}
-                    title={like ? 'Non mi piace più' : 'Mi piace'}>
-                    {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === authid) ? abbrNum(likes_num) : 'Mi piace'}
-                  </button>
+              {bid && 
+                <div className="col-auto likes">
+                  <div className="counter">
+                    <button 
+                      className={`btn flat thumb up ${like}`} 
+                      disabled={!isAuthenticated() || (review.createdByUid === authid)} 
+                      onClick={this.onThumbChange}
+                      title={like ? 'Non mi piace più' : 'Mi piace'}>
+                      {icon.thumbUp()} {(likes_num > 0) || (review.createdByUid === authid) ? abbrNum(likes_num) : 'Mi piace'}
+                    </button>
+                  </div>
+                  <div className="counter">
+                    <button disabled className="btn sm flat" onClick={this.onAddResponse}>{icon.pencil()} <span className="hide-sm">Rispondi</span></button>
+                  </div>
                 </div>
-                <div className="counter">
-                  <button disabled className="btn sm flat" onClick={this.onAddResponse}>{icon.pencil()} <span className="hide-sm">Rispondi</span></button>
-                </div>
-              </div>
+              }
               <div className="col counter text-right date">{timeSince(review.created_num)}</div>
             </div>
           </div>

@@ -8,6 +8,7 @@ import Authors from '../authors';
 import BookCollection from '../bookCollection';
 import Genres from '../genres';
 import RandomQuote from '../randomQuote';
+import Reviews from '../reviews';
 
 const Home = () => (
 	<div id="homeComponent">
@@ -60,6 +61,8 @@ const Home = () => (
       <div className="card dark card-fullwidth-sm">
         <BookCollection cid="Libri proibiti" pagination={false} limit={7} scrollable />
       </div>
+
+      <Reviews />
 
       <div className="card dark card-fullwidth-sm">
         <Authors pagination={false} limit={7} scrollable />
