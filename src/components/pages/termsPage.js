@@ -5,7 +5,7 @@ import { appName } from '../../config/shared';
 const TermsPage = props => (
     <div id="TermsPageComponent" className="reveal fadeIn slideUp">
       <div className="container pad-v">
-        <h2>Termini e condizioni d'uso</h2>
+        <h1>Termini e condizioni d'uso</h1>
         <div className="text-justify text-left-sm">
           <ol>
             <li>Questi termini e condizioni d'uso si applicano all'uso dei Servizi (come definito di seguito) compreso l'utilizzo del sito web {appName}.com (il "Sito Web"). All'accesso al sito o all'utilizzo dei Servizi o di qualsiasi software associato, si acconsente ad essere vincolati da questi termini e condizioni d'uso, che si abbia un account o meno.</li>

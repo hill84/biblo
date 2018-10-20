@@ -2,6 +2,8 @@ import { badWords } from './lists';
 
 // APP
 export const appName = 'Biblo';
+export const appURL = 'https://delibris-4fa3b.firebaseapp.com';
+export const appMainEmail = 'giu.gerbino@gmail.com';
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
@@ -22,8 +24,7 @@ export const getInitials = text => text && text.split(" ").map(w => w.charAt(0))
 export const objToArr = obj => Object.keys(obj);
 export const arrToObj = (arr, fn) => {
   const obj = {};
-  const len = arr.length;
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < arr.length; i++) {
     const item = fn(arr[i], i, arr);
     obj[item.key] = item.value;
   }
@@ -44,8 +45,8 @@ export const validateImg = (file, maxSize) => {
   const errors = {};
   const maxBytes = maxSize * 1048576;
   const fileExtension = file.name.split('.').pop();
-  const ext = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'svg', 'SVG', 'gif', 'GIF', 'webp', 'WEBP'];
-  if (ext.indexOf(fileExtension) === -1) {
+  const ext = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'];
+  if (ext.indexOf(fileExtension.toLowerCase()) === -1) {
     // console.warn(`Image file extension not supperted: ${fileExtension}`);
     errors.upload = `Tipo file non valido: ${fileExtension}`;
   } else if (file.size > maxBytes) {
@@ -101,12 +102,13 @@ export const timeSince = date => {
 
 export const booksPerRow = () => {
   const w = window.innerWidth; // document.documentElement.clientWidth;
-  let b = 7;
+  /* let b = 7;
   if (w <= 359) { b = 2; } else 
   if (w <= 768) { b = 3; } else 
   if (w <= 992) { b = 4; } else 
   if (w <= 1200) { b = 6; }
-  return b;
+  return b; */
+  return w <= 359 ? 2 : w <= 768 ? 3 : w <= 992 ? 4 : w <= 1200 ? 6 : 7;
 }
 
 export const abbrNum = (number, decPlaces = 0) => {
