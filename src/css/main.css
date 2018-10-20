@@ -938,8 +938,8 @@ html:not(.light) .card.primary, .primary .card {
 
 /* DRAWER */
 .drawer .list { width: 256px; }
-.drawer .list .svg-icon { margin-right: 0; }
-.drawer .list span, .drawer .list .svg-icon { color: inherit; }
+.drawer .list li div { margin: 0; }
+.drawer .list li div, .drawer .list .svg-icon, .drawer .list li div span { color: inherit; }
 
 /* CUSTOM */
 .hero .container { padding-top: 140px; padding-bottom: 95px; margin-top: 0; }

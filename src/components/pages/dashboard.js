@@ -92,9 +92,10 @@ export default class Dashboard extends React.Component {
     userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         let count = 0;
-        const tot = Object.keys(snap.data()).length;
+        const keys = ['creationTime', 'uid', 'displayName', 'email', 'birth_date', 'continent', 'country', 'city', 'languages', 'photoURL', 'sex', 'roles', 'stats'];
+        const tot = keys.length;
         Object.keys(snap.data()).forEach(i => { 
-          // console.log(snap.data()[i]);
+          // console.log(i + ': ' + typeof snap.data()[i] + ' - ' + snap.data()[i]);
           if (typeof snap.data()[i] === 'string') {
             if (snap.data()[i] !== '') count++ 
           } else if (Array.isArray(snap.data()[i])) {
