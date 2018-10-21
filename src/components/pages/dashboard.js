@@ -9,12 +9,11 @@ import SwipeableViews from 'react-swipeable-views';
 import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../config/shared';
+import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
-
-const tabs = ['shelf', 'wishlist', 'activity', 'contacts'];
 
 export default class Dashboard extends React.Component {
  	state = {
@@ -23,9 +22,7 @@ export default class Dashboard extends React.Component {
 		uid: this.props.match.params.uid,
     user: null,
 		followers: {},
-		followers_num: 0,
 		followings: {},
-		followings_num: 0,
     follow: false,
     lfollowers: {},
     lfollowings: {},
@@ -89,11 +86,11 @@ export default class Dashboard extends React.Component {
   fetchUser = () => {
 		const { luid, uid } = this.state;
     // console.log('fetching user');
+    this.setState({ loading: true });
     userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         let count = 0;
-        const keys = ['creationTime', 'uid', 'displayName', 'email', 'birth_date', 'continent', 'country', 'city', 'languages', 'photoURL', 'sex', 'roles', 'stats'];
-        const tot = keys.length;
+        const tot = profileKeys.length;
         Object.keys(snap.data()).forEach(i => { 
           // console.log(i + ': ' + typeof snap.data()[i] + ' - ' + snap.data()[i]);
           if (typeof snap.data()[i] === 'string') {
@@ -121,10 +118,9 @@ export default class Dashboard extends React.Component {
         // console.log(snap.data());
         this.setState({
           followers: snap.data(),
-          followers_num: Object.keys(snap.data()).length,
           follow: luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false
         });
-      } else this.setState({ followers: {}, followers_num: 0, follow: false });
+      } else this.setState({ followers: {}, follow: false });
     });
     if (isAuthenticated()) {
       if (luid && luid !== uid) {
@@ -145,11 +141,8 @@ export default class Dashboard extends React.Component {
     followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         // console.log(snap.data());
-        this.setState({
-          followings: snap.data(),
-          followings_num: Object.keys(snap.data()).length
-        });
-      } else this.setState({ followings: {}, followings_num: 0 });
+        this.setState({ followings: snap.data() });
+      } else this.setState({ followings: {} });
     });
     if (luid && luid !== uid) {
       // console.log('fetching lfollowings');
@@ -167,13 +160,12 @@ export default class Dashboard extends React.Component {
     const { openSnackbar } = this.props;
 		if (isAuthenticated()) {
 			const { followers, followings, lfollowers, lfollowings, luid, uid } = this.state;
-			const computedFollowers = luid !== uid ? { ...lfollowers } : { ...followers };
-			const computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
+			let computedFollowers = luid !== fuid ? { ...followers } : { ...lfollowers };
+			let computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
 			// console.log({ luid, fuid, computedFollowers, computedFollowings, followers, followings, lfollowers, lfollowings });
       let snackbarMsg = '';
       const lindex = Object.keys(computedFollowers).indexOf(luid);
-			const findex = Object.keys(computedFollowings).indexOf(fuid);
-			
+			const findex = Object.keys(computedFollowings).indexOf(fuid);			
 			// console.log({ lindex, findex });
 
       if (lindex > -1 || findex > -1) {
@@ -181,28 +173,41 @@ export default class Dashboard extends React.Component {
 				if (findex > -1) delete computedFollowings[fuid];
         snackbarMsg = `Non segui più ${fuser.displayName}`;
       } else {
-				computedFollowers[luid] = {
-          displayName: this.props.user.displayName,
-          photoURL: this.props.user.photoURL,
-          timestamp: (new Date()).getTime()
+        computedFollowers = { 
+          ...computedFollowers,
+          [luid]: {
+            displayName: this.props.user.displayName,
+            photoURL: this.props.user.photoURL,
+            timestamp: (new Date()).getTime()
+          }
         };
-				computedFollowings[fuid] = {
-          displayName: fuser.displayName,
-          photoURL: fuser.photoURL,
-          timestamp: (new Date()).getTime()
+				computedFollowings = {
+          ...computedFollowings,
+          [fuid]: {
+            displayName: fuser.displayName,
+            photoURL: fuser.photoURL,
+            timestamp: (new Date()).getTime()
+          }
         };
 				snackbarMsg = `Segui ${fuser.displayName}`;
 			}
-
-			// console.log({ computedFollowers, computedFollowings });
+      // console.log({ computedFollowers, computedFollowings });
 	
 			// VISITED
-			followersRef(fuid).set(computedFollowers).then(() => openSnackbar(snackbarMsg, 'success')); 
-	
-			// VISITOR
-			followingsRef(luid).set(computedFollowings).then(() => openSnackbar(snackbarMsg, 'success'));
-			
-    } else console.warn('User is not authenticated');
+			followersRef(fuid).set(computedFollowers).then(() => {
+        // VISITOR
+        followingsRef(luid).set(computedFollowings).then(() => {
+          openSnackbar(snackbarMsg, 'success');
+        }).catch(error => {
+          console.warn(`Followings error: ${error}`);
+        }); 
+      }).catch(error => {
+        console.warn(`Followers error: ${error}`);
+      });
+    } else {
+      console.warn('User is not authenticated');
+      openSnackbar('Utente non autenticato', 'error');
+    }
   }
   
   onTabSelect = (e, value) => {
@@ -213,28 +218,26 @@ export default class Dashboard extends React.Component {
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
 	render() {
-		const { follow, followers, followers_num, followings, followings_num, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
+		const { follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
 
-		if (!user) {
-			if (loading) return <div className="loader"><CircularProgress /></div>
-			return <NoMatch title="Dashboard utente non trovata" location={this.props.location} history={this.props.history} />
-		}
+    if (loading) return <div className="loader"><CircularProgress /></div>
+		if (!user) return <NoMatch title="Dashboard utente non trovata" location={this.props.location} history={this.props.history} />
 
 		const usersList = obj => Object.keys(obj).map(f => (
-        <div key={f} className="avatar-row">
-          <Link to={`/dashboard/${f}`} className="row ripple">
-            <div className="col">
-              <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>{obj[f].displayName}
-            </div>
-            <div className="col-auto">
-              <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
-              {isOwner && f !== luid && <button className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
-                {obj === followings ? 'Non seguire' : 'Segui'}
-              </button>}
-            </div>
-          </Link>
-        </div> 
-      ));
+      <div key={f} className="avatar-row">
+        <Link to={`/dashboard/${f}`} className="row ripple">
+          <div className="col">
+            <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>{obj[f].displayName}
+          </div>
+          <div className="col-auto">
+            <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
+            {isOwner && f !== luid && <button className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
+              {obj === followings ? 'Non seguire' : 'Segui'}
+            </button>}
+          </div>
+        </Link>
+      </div> 
+    ));
     const Followers = usersList(followers);
     const Followings = usersList(followings);
     const Roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={`${i}_${r}`} className={`badge ${r}`}>{r}</div>);
@@ -301,8 +304,8 @@ export default class Dashboard extends React.Component {
 													: <span>{icon.plus()} Segui</span> }
 												</button>
 											}
-											<span className="counter">Seguito da: <b>{followers_num}</b></span>
-											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{followings_num}</b></span>
+											<span className="counter">Seguito da: <b>{Object.keys(followers).length}</b></span>
+											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{Object.keys(followings).length}</b></span>
 										</div>
 									</div>
 								</div>

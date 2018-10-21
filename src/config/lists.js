@@ -1,4 +1,6 @@
 export const roles = ['admin', 'editor', 'premium', 'public'];
+export const dashboardTabs = ['shelf', 'wishlist', 'activity', 'contacts'];
+export const profileKeys = ['creationTime', 'uid', 'displayName', 'email', 'birth_date', 'continent', 'country', 'city', 'languages', 'photoURL', 'sex', 'roles', 'stats'];
 
 export const ratingLabels = { 
   0: "Nessun voto", 

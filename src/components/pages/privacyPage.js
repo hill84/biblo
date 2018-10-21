@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { appMainEmail, appName, appURL } from '../../config/shared';
 
 const PrivacyPage = props => (
@@ -63,7 +62,7 @@ const PrivacyPage = props => (
 
         <h2>Trasferimento dei dati</h2>
         <p>Le vostre informazioni, compresi i Dati personali, possono essere trasferite a - e mantenute su - computer situati al di fuori del vostro stato, provincia, nazione o altra giurisdizione governativa dove le leggi sulla protezione dei dati possono essere diverse da quelle della vostra giurisdizione.</p>
-        <p>Se ci si trova al di fuori di Italy e si sceglie di fornire informazioni a noi, si ricorda che trasferiamo i dati, compresi i dati personali, in Italy e li elaboriamo lì.</p>
+        <p>Se ci si trova al di fuori dell'Italia e si sceglie di fornire informazioni a {appName}, si ricorda che trasferiamo i dati, compresi i dati personali, in Italia e li elaboriamo lì.</p>
         <p>Il vostro consenso alla presente Informativa sulla privacy seguito dall'invio di tali informazioni rappresenta il vostro consenso al trasferimento.</p>
         <p>{appName} adotterà tutte le misure ragionevolmente necessarie per garantire che i vostri dati siano trattati in modo sicuro e in conformità con la presente Informativa sulla privacy e nessun trasferimento dei vostri Dati Personali sarà effettuato a un'organizzazione o a un paese a meno che non vi siano controlli adeguati dei vostri dati e altre informazioni personali.</p>
 

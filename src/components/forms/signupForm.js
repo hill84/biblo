@@ -25,8 +25,6 @@ export default class SignupForm extends React.Component {
         premium: false
       },
       stats: {
-        followed_num: 0,
-        followers_num: 0,
         ratings_num: 0,
         reviews_num: 0,
         shelf_num: 0,

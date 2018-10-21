@@ -101,8 +101,8 @@ export default class Review extends React.Component {
             <div className="info-row text">
               <MinifiableText text={review.text} maxChars={500} />
             </div>
-            <div className="foot row">
-              {bid && 
+            {bid && 
+              <div className="foot row">
                 <div className="col-auto likes">
                   <div className="counter">
                     <button 
@@ -117,9 +117,9 @@ export default class Review extends React.Component {
                     <button disabled className="btn sm flat" onClick={this.onAddResponse}>{icon.pencil()} <span className="hide-sm">Rispondi</span></button>
                   </div>
                 </div>
-              }
-              <div className="col counter text-right date">{timeSince(review.created_num)}</div>
-            </div>
+                <div className="col counter text-right date">{timeSince(review.created_num)}</div>
+              </div>
+            }
           </div>
         </div>
       </div>
