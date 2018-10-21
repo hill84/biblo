@@ -16,9 +16,8 @@ const fs = admin.firestore();
 // });
 
 // REVIEWS
-exports.reviewsFeed = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
+exports.feedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const bid = context.params.bid;
-  const uid = context.params.uid;
   const feedRef = fs.collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
   const item = change.after.data();
 
@@ -32,9 +31,7 @@ exports.reviewsFeed = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((chan
 });
 
 // NOTIFICATIONS
-exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
-  const uid = context.params.uid;
-  const countRef = fs.collection('notifications').doc(uid)
+exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite(async (change, context) => {
   let increment;
   if (change.after.exists && !change.before.exists) {
     increment = 1;
@@ -43,14 +40,16 @@ exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((cha
   } else {
     return null;
   }
+  
+  const uid = context.params.uid;
+  const countRef = fs.collection('notifications').doc(uid);
+  const snap = await countRef.get();
+  const count = (snap.data().count || 0) + increment;
 
-  return countRef.get().then(snap => {
-    const count = (snap.data().count || 0) + increment;
-    return countRef.update({ count });
-  });
+  return countRef.update({ count });
 });
 
-exports.recountNotes = fn.document('notifications/{uid}').onDelete((snap, context) => {
+exports.clearSubNotes = fn.document('notifications/{uid}').onDelete((snap, context) => {
   const uid = context.params.uid;
   const collectionRef = fs.collection('notifications').doc(uid).collection('notes');
 
