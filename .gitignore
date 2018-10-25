@@ -33,3 +33,5 @@ node_modules
 \.vscode/launch\.json
 
 *.cache
+
+\.firebase/
