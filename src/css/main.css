@@ -1453,6 +1453,22 @@ html.light .hero * { text-shadow: none; }
 .book .info .subtitle { font-weight: 400; font-size: .8rem; color: var(--mainTextClr); }
 .book .info .author { font-size: .7rem; font-weight: 300; color: var(--lightTextClr); }
 .book .info .publisher { font-weight: 300; font-size: .7rem; color: var(--mainTextClr); }
+.book .info .progress {
+  background: rgba(0,0,0,.1);
+  height: 6px;
+  margin-top: 11px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.book .info .progress .bar {
+  height: 100%;
+  background-color: var(--primaryClr);
+  border-top-left-radius: 99px;
+  border-bottom-left-radius: 99px;
+}
 
 .audio.book .cover {
   width: var(--coverHeight);
@@ -1513,7 +1529,7 @@ html.light .hero * { text-shadow: none; }
 .react-rater > * { display: inline-block; }
 .react-rater-star {
   cursor: pointer;
-  color: rgba(0,0,0,.2);
+  color: rgba(0,0,0,.1);
   position: relative; 
   transition: color .2s ease-in-out;
 }

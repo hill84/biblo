@@ -71,6 +71,11 @@ export default class Cover extends React.Component {
             {book.rating_num > 0 && rating !== false && 
               <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
             }
+            {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 &&
+              <div className="progress">
+                <div className="bar" style={{width: `${book.readingState.progress_num}%`}}></div>
+              </div>
+            }
           </div>
         }
       </div>
