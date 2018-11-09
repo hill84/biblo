@@ -60,8 +60,9 @@ export default class AuthorPage extends React.Component {
     const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
 
     if (loading) {
-      return <div className="loader"><CircularProgress /></div>
-    } else if (!author.lastEditByUid && !books) {
+      return <div aria-hidden="true" className="loader"><CircularProgress /></div>
+    } 
+    if (!author.lastEditByUid && !books) {
       return <NoMatch title="Autore non trovato" location={this.props.location} />
     }
 
@@ -83,7 +84,7 @@ export default class AuthorPage extends React.Component {
         </div>
         
         {loadingBooks ? 
-          <div className="loader relative"><CircularProgress /></div>
+          <div aria-hidden="true" className="loader relative"><CircularProgress /></div>
         :
           <React.Fragment>
             {books ? 
@@ -94,6 +95,7 @@ export default class AuthorPage extends React.Component {
                       <div className="row">
                         <div className="col">
                           <button 
+                            type="button"
                             className="btn sm flat counter"
                             title={coverview ? 'Stack view' : 'Cover view'} 
                             onClick={this.onToggleView}>

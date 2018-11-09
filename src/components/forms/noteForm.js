@@ -125,7 +125,7 @@ export default class noteForm extends React.Component {
 			<React.Fragment>
         <div className="overlay" onClick={this.onToggle} />
         <div role="dialog" aria-describedby="new note" className="dialog light">
-          {loading && <div className="loader"><CircularProgress /></div>}
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="content">
             <div className="row">
               <div className="form-group col">
@@ -155,7 +155,7 @@ export default class noteForm extends React.Component {
 					  {authError && <div className="row"><div className="col message error">{authError}</div></div>}
           </div>
           <div className="footer no-gutter">
-            <button className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
           </div>
         </div>
       </React.Fragment>

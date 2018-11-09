@@ -174,8 +174,8 @@ export default class Layout extends React.Component {
               </React.Fragment>
             : 
               <React.Fragment>
-                <button className="btn flat"><Link to="/login">Accedi</Link></button>
-                <button className="btn primary"><Link to="/signup">Registrati</Link></button>
+                <button type="button" className="btn flat"><Link to="/login">Accedi</Link></button>
+                <button type="button" className="btn primary"><Link to="/signup">Registrati</Link></button>
               </React.Fragment>
             }
           </Toolbar>

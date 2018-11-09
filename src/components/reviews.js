@@ -108,7 +108,7 @@ export default class Reviews extends React.Component {
 
     if (!items || items.length === 0) {
       if (loading) { 
-        return <div className="loader relative"><CircularProgress /></div>; 
+        return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
       } else { 
         return (
           <div className="card dark reviews">

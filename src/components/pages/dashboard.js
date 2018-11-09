@@ -220,7 +220,7 @@ export default class Dashboard extends React.Component {
 	render() {
 		const { follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
 
-    if (loading) return <div className="loader"><CircularProgress /></div>
+    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 		if (!user) return <NoMatch title="Dashboard utente non trovata" location={this.props.location} history={this.props.history} />
 
 		const usersList = obj => Object.keys(obj).map(f => (
@@ -231,7 +231,7 @@ export default class Dashboard extends React.Component {
           </div>
           <div className="col-auto">
             <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
-            {isOwner && f !== luid && <button className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
+            {isOwner && f !== luid && <button type="button" className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
               {obj === followings ? 'Non seguire' : 'Segui'}
             </button>}
           </div>
@@ -288,11 +288,12 @@ export default class Dashboard extends React.Component {
 											</span>
 											{user.languages && <span className="counter hide-sm">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 											{user.creationTime && <span className="counter hide-sm">Su {appName} dal <b>{creationYear}</b></span>}
-											{isOwner && progress === 100 && <Link to="/profile"><button className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
+											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">
 											{!isOwner && isAuthenticated() &&
-												<button 
+                        <button 
+                          type="button"
 													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
 													// disabled={!isAuthenticated()}
 													onClick={e => this.onFollowUser(e)}>

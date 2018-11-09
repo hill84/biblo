@@ -29,9 +29,9 @@ export default class NewFeature extends React.Component {
               <button className={`btn ${ isOpenPayments ? 'flat' : 'primary'}`} onClick={this.onTogglePayments}>Fai una donazione</button>
               {isOpenPayments && 
                 <div className="btns pad-v-sm fadeIn slideDown reveal">
-                  <button className="btn primary"><a target="_blank" rel="noopener noreferrer" href={coinbaseURL}>{icon.bitcoin()} Coinbase</a></button>
-                  <button className="btn primary"><a target="_blank" rel="noopener noreferrer" href={paypalURL}>{icon.paypal()} Paypal</a></button>
-                  <button className="btn primary" disabled><a href="/">{icon.creditCard()} Bonifico</a></button>
+                  <button type="button" className="btn primary"><a target="_blank" rel="noopener noreferrer" href={coinbaseURL}>{icon.bitcoin()} Coinbase</a></button>
+                  <button type="button" className="btn primary"><a target="_blank" rel="noopener noreferrer" href={paypalURL}>{icon.paypal()} Paypal</a></button>
+                  <button type="button" className="btn primary" disabled><a href="/">{icon.creditCard()} Bonifico</a></button>
                 </div>
               }
             </p>

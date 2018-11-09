@@ -156,8 +156,8 @@ export default class NotesDash extends React.Component {
                     <div className="timestamp">{timeSince(note.created_num)}</div>
                   </div>
                   <div className="absolute-row right btns xs">
-                    <button className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil()}</button>
-                    <button className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close()}</button>
+                    <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil()}</button>
+                    <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close()}</button>
                   </div>
                 </div>
               </li>
@@ -186,7 +186,7 @@ export default class NotesDash extends React.Component {
             <div className="row">
               <div className="col">
                 <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
-                <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
+                <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
                   open={Boolean(limitMenuAnchorEl)} 
@@ -197,7 +197,7 @@ export default class NotesDash extends React.Component {
             </div>
           </div>
           {loading ? 
-            <div className="loader"><CircularProgress /></div> 
+            <div aria-hidden="true" className="loader"><CircularProgress /></div> 
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
@@ -231,8 +231,8 @@ export default class NotesDash extends React.Component {
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
           <DialogActions>
-            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+            <button type="button" className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn primary" onClick={this.onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
 			</div>

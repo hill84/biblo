@@ -79,7 +79,7 @@ export default class Genre extends React.Component {
       </MenuItem>
     ));
 
-    if (loading) return <div className="loader"><CircularProgress /></div>
+    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 
     return (
       <div className="container" id="genreComponent">
@@ -96,6 +96,7 @@ export default class Genre extends React.Component {
                   <div className="row">
                     <div className="col">
                       <button 
+                        type="button"
                         className="btn sm flat counter"
                         title={coverview ? 'Stack view' : 'Cover view'} 
                         onClick={this.onToggleView}>
@@ -104,8 +105,8 @@ export default class Genre extends React.Component {
                       <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
                     </div>
                     <div className="col-auto">
-                      <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                      <button className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                      <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+                      <button type="button" className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
                       <Menu 
                         anchorEl={orderMenuAnchorEl} 
                         open={Boolean(orderMenuAnchorEl)} 

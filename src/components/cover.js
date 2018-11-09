@@ -52,7 +52,7 @@ export default class Cover extends React.Component {
           {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
           <div className="overlay" />
           {/* (book.covers && book.covers.length > 1) && 
-            <button className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
+            <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
           */}
           {!cover &&
             <React.Fragment>

@@ -160,10 +160,10 @@ export default class collectionsDash extends React.Component {
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
-              <button className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
-              <button className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close()}</button>
+              <button type="button" className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
+              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
+              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -199,7 +199,7 @@ export default class collectionsDash extends React.Component {
             <div className="row">
               <div className="col">
                 <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
-                <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
+                <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   anchorEl={limitMenuAnchorEl} 
                   open={Boolean(limitMenuAnchorEl)} 
@@ -208,19 +208,19 @@ export default class collectionsDash extends React.Component {
                 </Menu>
               </div>
               <div className="col-auto">
-                <button className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+                <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                 <Menu 
                   anchorEl={orderMenuAnchorEl} 
                   open={Boolean(orderMenuAnchorEl)} 
                   onClose={this.onCloseOrderMenu}>
                   {orderByOptions}
                 </Menu>
-                <button className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                <button type="button" className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
               </div>
             </div>
           </div>
           {loading ? 
-            <div className="loader"><CircularProgress /></div> 
+            <div aria-hidden="true" className="loader"><CircularProgress /></div> 
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
@@ -259,8 +259,8 @@ export default class collectionsDash extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+            <button type="button" className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn primary" onClick={this.onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
 			</div>

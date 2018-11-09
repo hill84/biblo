@@ -40,7 +40,7 @@ export default class MinifiableText extends React.Component {
 		return (
       <React.Fragment>
         <span className={`minifiable ${isTextMinified ? 'minified' : 'expanded'}`}>{text}</span>
-        {isTextMinified && <React.Fragment><br/><button className="link" onClick={this.onMinify}>Mostra tutto</button></React.Fragment>}
+        {isTextMinified && <React.Fragment><br/><button type="button" className="link" onClick={this.onMinify}>Mostra tutto</button></React.Fragment>}
       </React.Fragment>
 		);
 	}

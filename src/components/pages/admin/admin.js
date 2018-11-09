@@ -107,7 +107,7 @@ export default class Admin extends React.Component {
 		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, */ isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, selectedEl, selectedId, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
-      return <div className="loader"><CircularProgress /></div>
+      return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     } else if (!isAdmin) {
       return (
         <div className="container empty" id="adminComponent">
@@ -122,11 +122,11 @@ export default class Admin extends React.Component {
 		return (
 			<div className="container" id="adminComponent">
         <div className="actions btns text-center pad-v-sm">
-          <button title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>
-          <button onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn primary">{icon.plus()} autore</button>
-          {/* <button onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn primary">{icon.plus()} collezione</button> */}
-          <button onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn primary">{icon.plus()} citazione</button>
-          {/* <button onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary">{icon.plus()} Notifica</button> */}
+          <button type="button" title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>
+          <button type="button" onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn primary">{icon.plus()} autore</button>
+          {/* <button type="button" onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn primary">{icon.plus()} collezione</button> */}
+          <button type="button" onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn primary">{icon.plus()} citazione</button>
+          {/* <button type="button" onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn primary">{icon.plus()} Notifica</button> */}
         </div>
         <AppBar position="static" className="appbar flat">
           <Tabs 

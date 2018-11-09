@@ -4,7 +4,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import DatePicker from 'material-ui-pickers/DatePicker';
-import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MomentUtils from '@date-io/moment';
 import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
 import moment from 'moment';
 import 'moment/locale/it';
@@ -101,7 +101,7 @@ export default class readingStateForm extends React.Component {
       <React.Fragment>
         <div className="overlay" onClick={this.onToggle} />
         <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
-          {loading && <div className="loader"><CircularProgress /></div>}
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="content">
             <div className="row">
               <div className="form-group col">
@@ -177,7 +177,7 @@ export default class readingStateForm extends React.Component {
             }
           </div>
           <div className="footer no-gutter">
-            <button className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
           </div>
         </div>
       </React.Fragment>

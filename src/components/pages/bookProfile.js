@@ -98,7 +98,7 @@ export default class BookProfile extends React.Component {
     const isLocked = () => book && !book.EDIT.edit && !hasRole('admin');
     const authors = book && <Link to={`/author/${Object.keys(book.authors)[0]}`}>{Object.keys(book.authors)[0]}</Link>;
 
-    if (loading) return <div className="loader"><CircularProgress /></div>
+    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 
 		return (
       <React.Fragment>
@@ -116,7 +116,7 @@ export default class BookProfile extends React.Component {
                   {book.incipit ? 
                     <div role="button" className="hoverable-items" onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
-                      <button className="btn xs centered flat" style={{'marginTop': '10px'}}>Leggi incipit</button>
+                      <button type="button" className="btn xs centered flat" style={{'marginTop': '10px'}}>Leggi incipit</button>
                     </div>
                   :
                     <Cover book={book} rating={false} info={false} />
@@ -129,7 +129,7 @@ export default class BookProfile extends React.Component {
                     {book.authors && <span className="counter">di {authors}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && hasRole('editor') && hasBid() &&
-                      <button className="btn sm flat counter" disabled={isLocked()} onClick={this.onEditing} title={book.EDIT.edit ? null : 'Solo gli amministratori possono modificare'}>
+                      <button type="button" className="btn sm flat counter" disabled={isLocked()} onClick={this.onEditing} title={book.EDIT.edit ? null : 'Solo gli amministratori possono modificare'}>
                         {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
                       </button>
                     }
@@ -153,23 +153,23 @@ export default class BookProfile extends React.Component {
                       <div className="info-row">
                         {userBook.bookInShelf ? 
                           <React.Fragment>
-                            <button className="btn success error-on-hover" onClick={this.onRemoveBookFromShelfRequest}>
+                            <button type="button" className="btn success error-on-hover" onClick={this.onRemoveBookFromShelfRequest}>
                               <span className="hide-on-hover">{icon.check()} libreria</span>
                               <span className="show-on-hover">{icon.close()} libreria</span>
                             </button>
-                            <button className="btn" onClick={this.onToggleReadingState}><span className="hide-xs">Stato</span> lettura</button>
+                            <button type="button" className="btn" onClick={this.onToggleReadingState}><span className="hide-xs">Stato</span> lettura</button>
                           </React.Fragment>
                         :
-                          <button className="btn primary" disabled={!hasBid()} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
+                          <button type="button" className="btn primary" disabled={!hasBid()} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
                         }
                         {userBook.bookInWishlist && 
-                          <button className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
+                          <button type="button" className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
                             <span className="hide-on-hover">{icon.check()} desideri</span>
                             <span className="show-on-hover">{icon.close()} desideri</span>
                           </button>
                         }
                         {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                          <button className="btn flat" disabled={!hasBid()} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
+                          <button type="button" className="btn flat" disabled={!hasBid()} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
                         }
                       </div>
                       {userBook.bookInShelf &&
@@ -239,8 +239,8 @@ export default class BookProfile extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <button className="btn flat" onClick={this.onCloseRemoveDialog}>Annulla</button>
-            <button className="btn primary" onClick={this.onRemoveBookFromShelf}>Procedi</button>
+            <button type="button" className="btn flat" onClick={this.onCloseRemoveDialog}>Annulla</button>
+            <button type="button" className="btn primary" onClick={this.onRemoveBookFromShelf}>Procedi</button>
           </DialogActions>
         </Dialog>
 

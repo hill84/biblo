@@ -61,12 +61,14 @@ export default class AuthorsPage extends React.Component {
             {!loading && count > 0 &&
               <div className="pull-right">
                 <button 
+                  type="button"
                   disabled={page < 2 && 'disabled'} 
                   className="btn sm clear prepend" 
                   onClick={() => this.fetch('prev')} title="precedente">
                   {icon.chevronLeft()}
                 </button>
                 <button 
+                  type="button"
                   disabled={page > (count / limit) && 'disabled'} 
                   className="btn sm clear append" 
                   onClick={() => this.fetch('next')} title="successivo">

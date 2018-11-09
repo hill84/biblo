@@ -106,7 +106,7 @@ export default class LoginForm extends React.Component {
 					{authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
 					<div className="footer no-gutter">
-						<button className="btn btn-footer primary" onClick={this.handleSubmit}>Accedi</button>
+						<button type="button" className="btn btn-footer primary" onClick={this.handleSubmit}>Accedi</button>
 					</div>
 				</form>
 			</div>

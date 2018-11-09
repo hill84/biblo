@@ -7,7 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import DatePicker from 'material-ui-pickers/DatePicker';
-import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MomentUtils from '@date-io/moment';
 import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
 import moment from 'moment';
 import 'moment/locale/it';
@@ -159,7 +159,7 @@ export default class Profile extends React.Component {
 		return (
       <div className="container" id="profileComponent">
         <div className="card">
-          {loading && <div className="loader"><CircularProgress /></div>}
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="container sm">
             <div className="row basic-profile">
               
@@ -318,7 +318,7 @@ export default class Profile extends React.Component {
             </form>
           </div>
           <div className="footer no-gutter">
-            <button className={`btn btn-footer primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
+            <button type="button" className={`btn btn-footer primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
           </div>
         </div>
       </div>

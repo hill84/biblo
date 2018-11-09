@@ -40,6 +40,7 @@ export default class PaginationControls extends React.Component {
             {!oneWay &&
               <React.Fragment>
                 <button 
+                  type="button"
                   disabled={page === 1 && 'disabled'} 
                   className="btn icon rounded flat" 
                   onClick={fetchPrev} title="precedente">
@@ -49,6 +50,7 @@ export default class PaginationControls extends React.Component {
               </React.Fragment>
             }
             <button 
+              type="button"
               disabled={(loading || page >= (count / limit)) && 'disabled'} 
               className={`btn rounded flat ${oneWay && !loading ? 'oneway' : 'icon'}`}
               onClick={fetchNext} title="successivo">

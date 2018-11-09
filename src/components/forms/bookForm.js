@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import ChipInput from 'material-ui-chip-input';
 import DatePicker from 'material-ui-pickers/DatePicker';
-import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MomentUtils from '@date-io/moment';
 import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
 import moment from 'moment';
 import 'moment/locale/it';
@@ -425,12 +425,12 @@ export default class BookForm extends React.Component {
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
         <div className="container top">
           <form onSubmit={this.onSubmit} className="card">
-            {loading && <div className="loader"><CircularProgress /></div>}
+            {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
             <div className="container md">
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
                 <Cover book={book} />
                 {isAdmin && book.bid && !book.covers[0] && 
-                  <button className="btn sm flat centered">
+                  <button type="button" className="btn sm flat centered">
                     <span>Carica un'immagine</span>
                     <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
                     {(imgProgress > 0) && 
@@ -676,7 +676,7 @@ export default class BookForm extends React.Component {
                   </div>
                 :
                   <div className="info-row">
-                    <button className="btn flat centered" onClick={this.onToggleDescription}>
+                    <button type="button" className="btn flat centered" onClick={this.onToggleDescription}>
                       {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
                     </button>
                   </div>
@@ -706,7 +706,7 @@ export default class BookForm extends React.Component {
                   </div>
                 :
                   <div className="info-row">
-                    <button className="btn flat centered" onClick={this.onToggleIncipit}>
+                    <button type="button" className="btn flat centered" onClick={this.onToggleIncipit}>
                       {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
                     </button>
                   </div>
@@ -715,12 +715,12 @@ export default class BookForm extends React.Component {
               </div>
             </div>
             <div className="footer no-gutter">
-              <button className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
+              <button type="button" className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
             </div>
           </form>
           {book.bid && 
             <div className="form-group">
-              <button onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
+              <button type="button" onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
             </div>
           }
         </div>

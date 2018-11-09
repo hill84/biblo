@@ -77,10 +77,10 @@ export default class PasswordResetForm extends React.Component {
             {authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
             <div className="footer no-gutter">
-              <button className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
+              <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
             </div>
           </form>
-          {this.props.loading && <div className="loader"><CircularProgress /></div>}
+          {this.props.loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         </div>
 			</div>
 		);

@@ -172,6 +172,7 @@ export default class Shelf extends React.Component {
               <div className="row">
                 <div className="col">
                   <button 
+                    type="button"
                     className="btn sm flat counter icon" 
                     title={coverview ? 'Stack view' : 'Cover view'} 
                     onClick={this.onToggleView}>
@@ -180,6 +181,7 @@ export default class Shelf extends React.Component {
                   {shelf === 'bookInShelf' &&
                     <React.Fragment>
                       <button 
+                        type="button"
                         className="btn sm flat counter" 
                         onClick={this.onOpenFilterMenu}>
                         {filterBy[filterByIndex]}
@@ -196,6 +198,7 @@ export default class Shelf extends React.Component {
                 </div>
                 <div className="col-auto">
                   <button 
+                    type="button"
                     className="btn sm flat counter" 
                     onClick={this.onOpenOrderMenu} 
                     disabled={!count}>
@@ -209,6 +212,7 @@ export default class Shelf extends React.Component {
                     {orderByOptions}
                   </Menu>
                   <button 
+                    type="button"
                     className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} 
                     title={desc ? 'Ascendente' : 'Discendente'} 
                     onClick={this.onToggleDesc} 

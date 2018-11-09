@@ -58,12 +58,12 @@ export default class Collection extends React.Component {
         <div className="row">
           <div className="col">
             <div className="card dark collection-profile">
-              {loading ? <div className="loader"><CircularProgress /></div> : 
+              {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : 
                 <React.Fragment>
                   <h2>{cid}</h2>
                   <p className="description">{collection.description}</p>
                   <div className="info-row">
-                    <button className="btn primary" disabled>{icon.plus()} Segui</button>
+                    <button type="button" className="btn primary" disabled>{icon.plus()} Segui</button>
                     <span className="counter last">0 follower</span>
                   </div>
                 </React.Fragment>

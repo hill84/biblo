@@ -131,7 +131,7 @@ export default class SearchBookForm extends React.Component {
           <span className="title">Libro non trovato...</span>
         </div>
         <div className="secondaryText">
-          <button className="btn primary">Crea nuovo</button>
+          <button type="button" className="btn primary">Crea nuovo</button>
         </div>
       </MenuItem>
     );
@@ -280,7 +280,7 @@ export default class SearchBookForm extends React.Component {
     return (
       <div className="container sm search-book-container">
         <div className="form-group">
-          {loading && <div className="loader"><CircularProgress /></div>}
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
 
           <Autosuggest
             // alwaysRenderSuggestions={true}

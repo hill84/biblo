@@ -129,6 +129,7 @@ export default class BookCollection extends React.Component {
                 <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
               :
                 <button 
+                  type="button"
                   className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
                   title={desc ? 'Ascendente' : 'Discendente'} 
                   onClick={this.onToggleDesc}>
@@ -138,12 +139,14 @@ export default class BookCollection extends React.Component {
               {pagination && count > limit &&
                 <React.Fragment>
                   <button 
+                    type="button"
                     disabled={page < 2 && 'disabled'} 
                     className="btn sm clear prepend" 
                     onClick={() => this.fetch('prev')} title="precedente">
                     {icon.chevronLeft()}
                   </button>
                   <button 
+                    type="button"
                     disabled={page > (count / limit) && 'disabled'} 
                     className="btn sm clear append" 
                     onClick={() => this.fetch('next')} title="successivo">

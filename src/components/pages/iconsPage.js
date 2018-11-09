@@ -17,7 +17,7 @@ const IconsPage = props => (
         { Object.keys(icon).map((item, i) => 
           <div className="col tt" onClick={() => copy(item, props)} key={i}>
             <span className="tip">{item}</span>
-            <button className="btn lg centered icon flat">
+            <button type="button" className="btn lg centered icon flat">
               {icon[item]()}
             </button>
           </div>

@@ -106,6 +106,7 @@ export default class Review extends React.Component {
                 <div className="col-auto likes">
                   <div className="counter">
                     <button 
+                      type="button"
                       className={`btn flat thumb up ${like}`} 
                       disabled={!isAuthenticated() || (review.createdByUid === authid)} 
                       onClick={this.onThumbChange}
@@ -114,7 +115,7 @@ export default class Review extends React.Component {
                     </button>
                   </div>
                   <div className="counter">
-                    <button disabled className="btn sm flat" onClick={this.onAddResponse}>{icon.pencil()} <span className="hide-sm">Rispondi</span></button>
+                    <button type="button" disabled className="btn sm flat" onClick={this.onAddResponse}>{icon.pencil()} <span className="hide-sm">Rispondi</span></button>
                   </div>
                 </div>
                 <div className="col counter text-right date">{timeSince(review.created_num)}</div>
