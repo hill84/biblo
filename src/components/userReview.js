@@ -258,7 +258,7 @@ export default class UserReview extends React.Component {
           {!loading &&        
             !isEditing ? (
               !review.text ? 
-                <button className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
+                <button type="button" className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
               :
                 <div className="review">
                   <div className="row">
@@ -279,16 +279,16 @@ export default class UserReview extends React.Component {
                       <div className="foot row">
                         <div className="col-auto likes">
                           <div className="counter">
-                            <button className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp()} {abbrNum(review.likes.length)}</button>
+                            <button type="button" className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp()} {abbrNum(review.likes.length)}</button>
                           </div>
                           <div className="counter">
-                            <button className="btn sm flat" disabled>{icon.comment()} 0</button>
+                            <button type="button" className="btn sm flat" disabled>{icon.comment()} 0</button>
                           </div>
                           <div className="counter">
-                            <button className="btn sm flat" onClick={this.onEditing}>{icon.pencil()} <span className="hide-sm">Modifica</span></button>
+                            <button type="button" className="btn sm flat" onClick={this.onEditing}>{icon.pencil()} <span className="hide-sm">Modifica</span></button>
                           </div>
                           <div className="counter">
-                            <button className="btn sm flat" onClick={this.onDeleteRequest}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
+                            <button type="button" className="btn sm flat" onClick={this.onDeleteRequest}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
                           </div>
                         </div>
                         <div className="col text-right date">{timeSince(review.created_num)}</div>
@@ -342,7 +342,7 @@ export default class UserReview extends React.Component {
                 }
 
                 <div className="footer no-gutter">
-                  <button className="btn btn-footer primary" disabled={!this.state.changes}>Pubblica</button>
+                  <button type="button" className="btn btn-footer primary" disabled={!this.state.changes}>Pubblica</button>
                 </div>
               </form>
             )

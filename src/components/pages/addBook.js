@@ -31,14 +31,13 @@ export default class AddBook extends React.Component {
           </div>
         </MuiThemeProvider>
 				{book ?
-					<Book book={book} user={user} openSnackbar={openSnackbar} />
+					<Book bid={book.bid} book={book} user={user} openSnackbar={openSnackbar} />
 				:
 					<div className="text-center pad-v fadeIn reveal" style={{animationDelay: '3s'}}>
 						<p>Non hai trovato il libro che cercavi?</p>
 						<p><Link to="/new-book" className="btn primary">Crea la tua scheda libro</Link></p>
 					</div>
 				}
-				
 			</div>
 		);
 	}
