@@ -20,6 +20,19 @@
 	"rules": {
 		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
 		"jsx-a11y/anchor-is-valid": ["error", { "specialLink": ["to"] }],
-		"linebreak-style": ["error", "windows"]
+    "linebreak-style": ["error", "windows"],
+    "no-nested-ternary" : "off",
+    "no-underscore-dangle" : "off",
+    "no-console" : "off",
+    "camelcase": "off",
+    "lines-between-class-members" : "off",
+    "react/destructuring-assignment" : "off",
+    "react/require-default-props" : "warn",
+    "react/no-array-index-key" : "warn",
+    "react/no-danger" : "warn",
+    "import/prefer-default-export" : "warn",
+    "prefer-destructuring" : "warn",
+    "spaced-comment" : "warn",
+    "no-unused-vars": "warn"
 	}
 }

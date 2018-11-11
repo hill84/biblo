@@ -17,21 +17,17 @@ const fs = admin.firestore();
 
 // REVIEWS
 exports.feedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
-  const bid = context.params.bid;
+  const { bid } = context.params;
   const feedRef = fs.collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
   const item = change.after.data();
 
-  if (change.after.exists && !change.before.exists) {
-    return feedRef.set(item);
-  } else if (!change.after.exists && change.before.exists) {
-    return feedRef.delete();
-  } else {
-    return feedRef.update(item);
-  }
+  if (change.after.exists && !change.before.exists) return feedRef.set(item);
+  if (!change.after.exists && change.before.exists) return feedRef.delete();
+  return feedRef.update(item);
 });
 
 // NOTIFICATIONS
-exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite(async (change, context) => {
+exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
   let increment;
   if (change.after.exists && !change.before.exists) {
     increment = 1;
@@ -41,16 +37,16 @@ exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite(asyn
     return null;
   }
   
-  const uid = context.params.uid;
+  const { uid } = context.params;
   const countRef = fs.collection('notifications').doc(uid);
-  const snap = await countRef.get();
+  const snap = countRef.get();
   const count = (snap.data().count || 0) + increment;
 
   return countRef.update({ count });
 });
 
 exports.clearSubNotes = fn.document('notifications/{uid}').onDelete((snap, context) => {
-  const uid = context.params.uid;
+  const { uid } = context.params;
   const collectionRef = fs.collection('notifications').doc(uid).collection('notes');
 
   return collectionRef.delete();

@@ -1,14 +1,474 @@
 {
-  // Example:
-  //
-  // "indexes": [
-  //   {
-  //     "collectionId": "widgets",
-  //     "fields": [
-  //       { "fieldPath": "foo", "mode": "ASCENDING" },
-  //       { "fieldPath": "bar", "mode": "DESCENDING" }
-  //     ]
-  //   }
-  // ]
-  "indexes": []
+  "indexes": [
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "title_sort",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "ISBN_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "genres",
+          "mode": "ARRAY_CONTAINS"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "genres",
+          "mode": "ARRAY_CONTAINS"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInWishlist",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "authors",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "authors",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "photoURL",
+          "mode": "DESCENDING"
+        },
+        {
+          "fieldPath": "created_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInWishlist",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "added_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "genres",
+          "mode": "ARRAY_CONTAINS"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "genres",
+          "mode": "ARRAY_CONTAINS"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "added_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "reviewers",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "created_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "likes_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "publication",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInWishlist",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "added_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "authors",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInWishlist",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "added_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInWishlist",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bcid",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "readingState.state_num",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "authors",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "added_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "authors",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating_num",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bcid",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "publication",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bcid",
+          "mode": "DESCENDING"
+        },
+        {
+          "fieldPath": "publication",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInShelf",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "added_num",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "books",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "bookInWishlist",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "mode": "ASCENDING"
+        }
+      ]
+    }
+  ]
 }
