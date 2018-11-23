@@ -424,7 +424,7 @@ export default class BookForm extends React.Component {
       <React.Fragment>
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
         <div className="container top">
-          <form onSubmit={this.onSubmit} className="card">
+          <form className="card">
             {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
             <div className="container md">
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
@@ -715,7 +715,7 @@ export default class BookForm extends React.Component {
               </div>
             </div>
             <div className="footer no-gutter">
-              <button type="button" className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
+              <button type="button" onClick={this.onSubmit} className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
             </div>
           </form>
           {book.bid && 

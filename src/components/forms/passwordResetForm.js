@@ -57,7 +57,7 @@ export default class PasswordResetForm extends React.Component {
 				<h2>Recupero password</h2>
 				<div className="card">
 					<p>Per favore, inserisci la tua email per recuperare la password.</p>
-          <form onSubmit={this.onSubmit} noValidate>
+          <form noValidate>
             <div className="form-group">
               <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
