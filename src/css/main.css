@@ -396,7 +396,7 @@ hr.line {
   color: var(--lighterTextClr);
   font-weight: 300;
   font-size: .8rem;
-  line-height: 38px;
+  line-height: 36px;
   padding-left: 35px;
   overflow: hidden;
   text-overflow: ellipsis;

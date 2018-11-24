@@ -1,15 +1,19 @@
 import React from 'react';
-import { objectType, stringType } from '../config/types';
+import { stringType, shapeType, funcType } from '../config/types';
 
 export default class NoMatch extends React.Component {
   static propTypes = {
-    history: objectType,
+    history: shapeType({
+      goBack: funcType.isRequired
+    }).isRequired,
     imgUrl: stringType,
-    location: objectType,
+    location: shapeType({
+      pathname: stringType
+    }),
     title: stringType,
   }
 
-  goBack = () => this.props.history && this.props.history.goBack();
+  goBack = () => this.props.history.goBack();
 
   render() {
     const { imgUrl, location, title } = this.props;

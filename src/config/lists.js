@@ -38,6 +38,7 @@ export const genres = [
   { id: "fu", name: "Fumetti e Graphic novel" },
   { id: "gl", name: "Giallo" },
   { id: "ho", name: "Horror" },
+  { id: "in", name: "Informatica" },
   { id: "ju", name: "Per ragazzi" },
   { id: "ms", name: "Medicina e salute" },
   { id: "mi", name: "Mistero" },

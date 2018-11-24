@@ -5,6 +5,7 @@ import { collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { normalizeString } from '../../config/shared';
 import BookCollection from '../bookCollection';
+import NoMatch from '../noMatch';
 
 export default class Collection extends React.Component {
   state = {
@@ -33,11 +34,13 @@ export default class Collection extends React.Component {
 
   fetch = () => {
     collectionRef(this.state.cid).get().then(snap => {
-      if (!snap.empty) {
+      if (snap.exists) {
         this.setState({
           collection: snap.data(),
           loading: false
         });
+      } else {
+        this.setState({ loading: false });
       }
     }).catch(error => console.warn(error));
 
@@ -52,6 +55,11 @@ export default class Collection extends React.Component {
 
   render() {
     const { cid, collection, collections, loading } = this.state;
+    const { history, location } = this.props;
+
+    if (!collection && !loading) {
+      return <NoMatch title="Collezione non trovata" history={history} location={location} />
+    }
 
     return (
       <div id="CollectionComponent" className="container">

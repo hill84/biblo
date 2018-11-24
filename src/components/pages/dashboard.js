@@ -218,10 +218,11 @@ export default class Dashboard extends React.Component {
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
 	render() {
-		const { follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
+    const { follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
+    const { history, location } = this.props;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
-		if (!user) return <NoMatch title="Dashboard utente non trovata" location={this.props.location} history={this.props.history} />
+		if (!user) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
 
 		const usersList = obj => Object.keys(obj).map(f => (
       <div key={f} className="avatar-row">

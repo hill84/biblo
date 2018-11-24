@@ -126,7 +126,7 @@ export default class BookCollection extends React.Component {
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?
-                <Link to={`/collection/${cid}`} className="btn sm flat counter">Vedi tutti</Link>
+                <button className="btn sm flat counter"><Link to={`/collection/${cid}`}>Vedi tutti</Link></button>
               :
                 <button 
                   type="button"
@@ -141,14 +141,14 @@ export default class BookCollection extends React.Component {
                   <button 
                     type="button"
                     disabled={page < 2 && 'disabled'} 
-                    className="btn sm clear prepend" 
+                    className="btn sm flat prepend" 
                     onClick={() => this.fetch('prev')} title="precedente">
                     {icon.chevronLeft()}
                   </button>
                   <button 
                     type="button"
                     disabled={page > (count / limit) && 'disabled'} 
-                    className="btn sm clear append" 
+                    className="btn sm flat append" 
                     onClick={() => this.fetch('next')} title="successivo">
                     {icon.chevronRight()}
                   </button>

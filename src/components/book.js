@@ -464,21 +464,22 @@ export default class Book extends React.Component {
 	
 	render() {
     const { book, isEditing, loading, user, userBook } = this.state;
+    const { history, location, openSnackbar } = this.props;
 
-    if (!loading && !book) return <NoMatch title="Libro non trovato" location={this.props.location} />
+    if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
 		return (
       <React.Fragment>
         {isEditing && isAuthenticated() ?
           <BookForm 
-            openSnackbar={this.props.openSnackbar}
+            openSnackbar={openSnackbar}
             isEditing={this.isEditing} 
             book={book} 
             user={user}
           />
         :
           <BookProfile 
-            openSnackbar={this.props.openSnackbar}
+            openSnackbar={openSnackbar}
             addBookToShelf={this.addBookToShelf} 
             addBookToWishlist={this.addBookToWishlist} 
             removeBookFromShelf={this.removeBookFromShelf} 

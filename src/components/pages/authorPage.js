@@ -56,6 +56,7 @@ export default class AuthorPage extends React.Component {
 
   render() {
     const { author, books, coverview, loading, loadingBooks } = this.state;
+    const { history, location } = this.props;
 
     const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
 
@@ -63,7 +64,7 @@ export default class AuthorPage extends React.Component {
       return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     } 
     if (!author.lastEditByUid && !books) {
-      return <NoMatch title="Autore non trovato" location={this.props.location} />
+      return <NoMatch title="Autore non trovato" history={history} location={location} />
     }
 
     return (

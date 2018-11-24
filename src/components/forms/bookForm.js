@@ -15,7 +15,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isbn from 'isbn-utils';
-import { bookRef, booksRef, collectionBookRef, storageRef, authid } from '../../config/firebase';
+import { bookRef, booksRef, collectionBookRef, storageRef, authid, collectionRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, hasRole, validateImg } from '../../config/shared';
@@ -258,7 +258,15 @@ export default class BookForm extends React.Component {
           book.collections.forEach(cid => {
             let bcid = 0;
             collectionBookRef(cid, book.bid || newBid).get().then(collectionBook => {
-              if (collectionBook.exists) { bcid = collectionBook.data().bcid; }
+              if (collectionBook.exists) { 
+                bcid = collectionBook.data().bcid; 
+              } else {
+                collectionRef(cid).set({
+                  title: cid,
+                  books_num: 1,
+                  description: ''
+                }).catch(error => console.warn(error));
+              }
               collectionBookRef(cid, book.bid || newBid).set({
                 bid: book.bid || newBid, 
                 bcid,
@@ -270,7 +278,7 @@ export default class BookForm extends React.Component {
                 publication: book.publication,
                 rating_num: book.rating_num,
                 ratings_num: book.ratings_num
-              })/* .then(() => console.log(`Book added to ${cid} collection`)) */.catch(error => console.warn(error));
+              }).catch(error => console.warn(error));
             }).catch(error => console.warn(error));
           });
         }
