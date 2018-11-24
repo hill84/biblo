@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { collectionRef, collectionsRef } from '../../config/firebase';
+import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { normalizeString } from '../../config/shared';
 import BookCollection from '../bookCollection';
@@ -12,6 +12,7 @@ export default class Collection extends React.Component {
     cid: this.props.match.params.cid,
     collection: null,
     collections: null,
+    followers: null,
     loading: true
   }
 
@@ -35,12 +36,23 @@ export default class Collection extends React.Component {
   fetch = () => {
     collectionRef(this.state.cid).get().then(snap => {
       if (snap.exists) {
+        collectionFollowersRef(this.state.cid).get().then(snap => {
+          if (!snap.empty) {
+            const followers = [];
+            snap.forEach(follower => followers.push(follower.data()));
+            this.setState({ followers });
+          }
+        }).catch(error => console.warn(error));
         this.setState({
           collection: snap.data(),
           loading: false
         });
       } else {
-        this.setState({ loading: false });
+        this.setState({ 
+          collection: null,
+          followers: null,
+          loading: false 
+        });
       }
     }).catch(error => console.warn(error));
 
@@ -49,12 +61,14 @@ export default class Collection extends React.Component {
         const collections = [];
         snap.forEach(collection => collection.id !== (this.state.cid) && collections.push(collection.data()));
         this.setState({ collections });
+      } else {
+        this.setState({ collections: null });
       }
     }).catch(error => console.warn(error));
   }
 
   render() {
-    const { cid, collection, collections, loading } = this.state;
+    const { cid, collection, collections, followers, loading } = this.state;
     const { history, location } = this.props;
 
     if (!collection && !loading) {
@@ -65,18 +79,16 @@ export default class Collection extends React.Component {
       <div id="CollectionComponent" className="container">
         <div className="row">
           <div className="col">
-            <div className="card dark collection-profile">
-              {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : 
-                <React.Fragment>
-                  <h2>{cid}</h2>
-                  <p className="description">{collection.description}</p>
-                  <div className="info-row">
-                    <button type="button" className="btn primary" disabled>{icon.plus()} Segui</button>
-                    <span className="counter last">0 follower</span>
-                  </div>
-                </React.Fragment>
-              }
-            </div>
+            {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : 
+              <div className="card dark collection-profile">
+                <h2>{cid}</h2>
+                <p className="description">{collection.description}</p>
+                <div className="info-row">
+                  <button type="button" className="btn primary" disabled>{icon.plus()} Segui</button>
+                  <span className="counter last disabled">{followers ? followers.length : 0} follower</span>
+                </div>
+              </div>
+            }
             {collections && 
               <div className="card dark">
                 <h2>Altre collezioni</h2>

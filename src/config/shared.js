@@ -143,6 +143,7 @@ export const switchGenres = array => array.map(string => {
     case "Fiction":                     g = "Narrativa"; break;
     case "History":                     g = "Storico"; break;
     case "Humor":                       g = "Satira e umorismo"; break;
+    case "Informatics":                 g = "Informatica"; break;
     case "Juvenile Fiction":            g = "Per ragazzi"; break;
     case "Literary Criticism":          g = "Saggistica"; break;
     case "Medical":                     g = "Medicina e salute"; break;

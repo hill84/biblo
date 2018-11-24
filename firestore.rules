@@ -86,6 +86,11 @@ service cloud.firestore {
         allow create, update: if isEditor();
         allow delete: if isEditor() && isAdmin();
       }
+
+      match /followers/{bid} {
+        allow read;
+        allow write: if isEditor();
+      }
     }
 
     match /quotes/{qid} {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { bookRef, collectionBookRef, isAuthenticated, reviewerRef, authid, userBookRef, userRef } from '../config/firebase';
-import { bookType, funcType, stringType, userBookType, userType } from '../config/types';
+import { bookType, funcType, stringType, userBookType, userType, objectType } from '../config/types';
 import BookForm from './forms/bookForm';
 import NoMatch from './noMatch';
 import BookProfile from './pages/bookProfile';
@@ -29,6 +29,8 @@ export default class Book extends React.Component {
   static propTypes = {
     bid: stringType,
     book: bookType,
+    history: objectType,
+    location: objectType,
     openSnackbar: funcType.isRequired,
     user: userType,
     userBook: userBookType
