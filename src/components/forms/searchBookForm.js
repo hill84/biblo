@@ -9,10 +9,11 @@ import parse from 'autosuggest-highlight/parse';
 import React from 'react';
 // import { isAuthenticated } from '../../config/firebase';
 import Autosuggest from 'react-autosuggest';
+import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
 import { arrToObj, capitalizeFirstLetter, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
-import { userType } from '../../config/types';
+import { boolType, funcType, userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
   state = {
@@ -29,11 +30,14 @@ export default class SearchBookForm extends React.Component {
     searchText: '',
     value: '',
     loading: false,
-    maxSearchResults: 8,
-    suggestions: []
+    maxSearchResults: 30,
+    suggestions: [],
+    redirectToReferrer: ''
   }
 
   static propTypes = {
+    new: boolType,
+    onBookSelect: funcType,
     user: userType
   }
 
@@ -45,7 +49,7 @@ export default class SearchBookForm extends React.Component {
   onCloseSearchMenu = () => this.setState({ searchAnchorEl: null });
   onOpenSearchMenu = e => this.setState({ searchAnchorEl: e.currentTarget });
 
-  onClickSearchBy = option => this.setState({ searchBy: option, maxSearchResults: option.key === 'ISBN_13' ? 1 : 8, searchByAnchorEl: null });
+  onClickSearchBy = option => this.setState(prevState => ({ searchBy: option, maxSearchResults: option.key === 'ISBN_13' ? 1 : prevState.maxSearchResults, searchByAnchorEl: null }));
   onCloseSearchByMenu = () => this.setState({ searchByAnchorEl: null });
   onOpenSearchByMenu = e => this.setState({ searchByAnchorEl: e.currentTarget });
 
@@ -105,7 +109,7 @@ export default class SearchBookForm extends React.Component {
           </span>
         </div>
         <div className="secondaryText">
-          {searchBy.key === 'title' || searchBy.key === 'author' ? `di ${Object.keys(b.authors)[0]}` : searchTextHighlighted}
+          {searchBy.key === 'title' || searchBy.key === 'author' ? Object.keys(b.authors).length ? `di ${Object.keys(b.authors)[0]}` : null : searchTextHighlighted}
         </div>
       </MenuItem>
     );
@@ -120,11 +124,10 @@ export default class SearchBookForm extends React.Component {
 
   fetchOptions = value => {
     const { maxSearchResults, searchBy } = this.state;
-    const { user } = this.props;
+    const { newBook, user } = this.props;
     const searchText = value.normalize();
     const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : 
-      typeof searchText === 'object' ? String(Object.keys(searchText.split('.').join(''))[0]) : 
-      String(searchText);
+      typeof searchText === 'object' ? String(Object.keys(searchText.split('.').join(''))[0]) : String(searchText);
     const emptyBookCTA = (
       <MenuItem className="menuitem-book empty" component="div">
         <div className="primaryText">
@@ -165,7 +168,18 @@ export default class SearchBookForm extends React.Component {
       title: searchBy.key === 'title' ? searchText : '',
       title_sort: searchBy.key === 'title' ? normalizeString(searchText) : '',
       value: emptyBookCTA
-    }
+    };
+
+    /* const existingBookCTA = (
+      <MenuItem className="menuitem-book empty" component="div">
+        <div className="primaryText">
+          <span className="title">Libro già presente</span>
+        </div>
+        <div className="secondaryText">
+          <button type="button" className="btn primary">Apri</button>
+        </div>
+      </MenuItem>
+    ); */
 
     if (!value) return;
     
@@ -173,12 +187,42 @@ export default class SearchBookForm extends React.Component {
 
     this.timer = setTimeout(() => {
       this.setState({ loading: true });
-      if (this.props.new) {
+      if (newBook) {
         const searchParams = {
           q: searchText, 
           [searchBy.type]: searchTextType
         };
         // console.log(searchParams);
+
+        // SEARCH FOR EXISTING BOOK
+        if (searchBy.key === 'ISBN_13') {
+          booksRef.where(searchBy.where, '==', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
+            // console.log({ snap });
+            if (!snap.empty) {
+              /* const options = [];
+              snap.forEach(doc => {
+                // console.log(doc.data());
+                const optionLabel = searchBy.key;
+                // console.log(doc.data()[optionLabel]);
+
+                options.push({
+                  ...doc.data(),
+                  label: typeof doc.data()[optionLabel] === 'object' ? String(Object.keys(doc.data()[optionLabel])[0]) : doc.data()[optionLabel],
+                  value: existingBookCTA
+                });
+              });
+              this.setState({ loading: false, suggestions: options }); */
+
+              let referrer;
+              snap.forEach(doc => {
+                referrer = `/book/${doc.data().bid}`
+              });
+
+              this.setState({ redirectToReferrer: referrer });
+            }
+          });
+        }
+
         fetch(new Request(booksAPIRef(searchParams), { method: 'GET' })).then(res => res.json()).then(json => {
           const options = [];
           if (json.items && json.items.length > 0) {
@@ -192,8 +236,8 @@ export default class SearchBookForm extends React.Component {
                 ISBN_13: (ISBN_13.length && Number(ISBN_13[0].identifier)) || 0,
                 ISBN_10: (ISBN_10.length && Number(ISBN_10[0].identifier)) || 0,
                 EDIT: {
-                  createdBy: this.props.user.displayName || '',
-                  createdByUid: this.props.user.uid || '',
+                  createdBy: user.displayName || '',
+                  createdByUid: user.uid || '',
                   created_num: (new Date()).getTime() || 0
                 },
                 authors: (b.authors && arrToObj(b.authors.map(author => author.split('.').join('')), item => ({ key: item, value: true }))) || {},
@@ -266,7 +310,8 @@ export default class SearchBookForm extends React.Component {
   }
 
   render() {
-    const { loading, searchBy, searchByAnchorEl, searchByOptions, suggestions, value } = this.state;
+    const { loading, redirectToReferrer, searchBy, searchByAnchorEl, searchByOptions, suggestions, value } = this.state;
+    const { newBook } = this.props;
     const options = searchByOptions.map(option => (
       <MenuItem 
         key={option.type} 
@@ -277,9 +322,11 @@ export default class SearchBookForm extends React.Component {
       </MenuItem>
     ));
 
+    if (redirectToReferrer) return <Redirect to={redirectToReferrer} />
+
     return (
       <div className="container sm search-book-container">
-        <div className="form-group">
+        <div className="form-group customScrollbar">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
 
           <Autosuggest
@@ -294,13 +341,13 @@ export default class SearchBookForm extends React.Component {
             renderSuggestion={this.renderSuggestion}
             onSuggestionSelected={this.onSuggestionSelected}
             inputProps={{
-              className: `input-field`,
+              className: 'input-field',
               type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
-              label: `${this.props.new ? 'Crea un libro' : 'Cerca un libro'} per ${searchBy.label}`,
+              label: `${newBook ? 'Crea un libro' : 'Cerca un libro'} per ${searchBy.label}`,
               placeholder: `Es: ${searchBy.hint}`,
               value,
               onChange: this.onChange,
-              endAdornment: <button className="btn sm primary search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
+              endAdornment: <button type="button" className="btn sm flat search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
             }}
           />
           {/* searchBy.key === 'ISBN_13' && isNaN(value) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}

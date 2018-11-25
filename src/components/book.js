@@ -88,20 +88,23 @@ export default class Book extends React.Component {
     }
   }
 
-  componentDidMount(props) {
+  componentDidMount() {
+    const { book, userBook } = this.state;
+    const { bid } = this.props;
+
     this._isMounted = true;
-    if (this.props.bid) {
+    if (bid) {
       this.setState({ loading: true });
-      bookRef(this.props.bid).onSnapshot(snap => {
+      bookRef(bid).onSnapshot(snap => {
         if (snap.exists) {
           // console.log(snap.data());
           this.setState({
             book: {
-              ...this.state.book,
+              ...book,
               ...snap.data()
             },
             userBook: {
-              ...this.state.userBook,
+              ...userBook,
               bid: snap.data().bid || '',
               authors: snap.data().authors,
               covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
@@ -110,12 +113,12 @@ export default class Book extends React.Component {
               subtitle: snap.data().subtitle,
             }
           });
-        } else console.warn(`No book with bid ${this.props.bid}`);
+        } else console.warn(`No book with bid ${bid}`);
         this.setState({ loading: false });
       });
     }
-    if (authid && (this.props.bid || this.state.book.bid)) {
-      this.fetchUserBook(this.props.bid || this.state.book.bid);
+    if (authid && (bid || book.bid)) {
+      this.fetchUserBook(bid || book.bid);
     }
   }
 
@@ -269,38 +272,41 @@ export default class Book extends React.Component {
   removeBookFromWishlist = bid => this.removeBookFromUserBooks(bid, 'wishlist');
   
   removeBookFromUserBooks = (bid, bookshelf) => {
+    const { user } = this.props;
+    const { book, userBook } = this.state;
+
     if (isAuthenticated()) {
-      let userShelf_num = this.props.user.stats.shelf_num;
-      let userWishlist_num = this.props.user.stats.wishlist_num;
-      let bookRating_num = this.state.book.rating_num;
-      let bookRatings_num = this.state.book.ratings_num;
-      let bookReaders_num = this.state.book.readers_num;
-      let bookReviews_num = this.state.book.reviews_num;
-      let userReviews_num = this.props.user.stats.reviews_num;
-      let userRatings_num = this.props.user.stats.ratings_num;
-      let userBookRating_num = this.state.userBook.rating_num;
-      let review = this.state.userBook.review;
+      let userShelf_num = user.stats.shelf_num;
+      let userWishlist_num = user.stats.wishlist_num;
+      let bookRating_num = book.rating_num;
+      let bookRatings_num = book.ratings_num;
+      let bookReaders_num = book.readers_num;
+      let bookReviews_num = book.reviews_num;
+      let userReviews_num = user.stats.reviews_num;
+      let userRatings_num = user.stats.ratings_num;
+      let userBookRating_num = userBook.rating_num;
+      let review = userBook.review;
   
-      if (this.state.userBook.bookInShelf) {
+      if (userBook.bookInShelf) {
         userShelf_num -= 1;
         bookReaders_num -= 1;
       } else {
         userWishlist_num -= 1;
       }
   
-      if (this.state.book.rating_num !== 0) {
+      if (book.rating_num !== 0) {
         bookRating_num -= userBookRating_num;
         bookRatings_num -= 1;
         userRatings_num -= 1;
         userBookRating_num = 0;
       }
   
-      if (this.state.book.reviews_num !== 0) {
+      if (book.reviews_num !== 0) {
         bookReviews_num -= 1;
         userReviews_num -= 1;
       }
 
-      if (this.state.userBook.review.created_num) {
+      if (userBook.review.created_num) {
         review = {};
       }
       

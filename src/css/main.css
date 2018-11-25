@@ -1557,7 +1557,27 @@ html.light .hero * { text-shadow: none; }
   padding: 10px 0;
   margin-top: 0;
   margin-bottom: 0;
+  max-height: calc(100vh - 220px);
+  overflow: auto;
 }
+.customScrollbar ::-webkit-scrollbar {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 6px;
+  background-color: transparent;
+}
+.customScrollbar ::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.customScrollbar ::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background-color: rgba(100, 100, 100, .3);
+  cursor: pointer;
+}
+.customScrollbar ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 100, 100, .4);
+}
+
 .menuitem-book { 
   --mainTextClr: #666;
   --lightTextClr: #aaa;

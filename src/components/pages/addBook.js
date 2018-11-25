@@ -1,6 +1,7 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { icon } from '../../config/icons';
 import { primaryTheme } from '../../config/themes';
 import { funcType, userType } from '../../config/types';
 import Book from '../book';
@@ -24,7 +25,7 @@ export default class AddBook extends React.Component {
 
 		return (
 			<div className="container" id="addBookComponent">
-        {/* <h2>Aggiungi un libro</h2> */}
+        {!book && <h2 className="text-center">{icon.magnify()} Cerca un libro</h2>}
         <MuiThemeProvider theme={primaryTheme}>
           <div className="card sm primary search-book">
             <SearchBookForm onBookSelect={this.onBookSelect} user={user} />
