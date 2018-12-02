@@ -153,13 +153,13 @@ export default class Book extends React.Component {
         bookInShelf: true,
         bookInWishlist: false
       }).then(() => {
-        /* this.setState({ 
+        this.setState({ 
           userBook: { 
             ...this.state.userBook, 
             bookInShelf: true, 
             bookInWishlist: false 
           }
-        }); */
+        });
         // console.log('Book added to user shelf');
         openSnackbar('Libro aggiunto in libreria', 'success');
       }).catch(error => console.warn(error));
@@ -167,12 +167,12 @@ export default class Book extends React.Component {
       bookRef(bid).update({
         readers_num: bookReaders_num
       }).then(() => {
-        /* this.setState({ 
+        this.setState({ 
           book: { 
             ...this.state.book, 
             readers_num: bookReaders_num 
           }
-        }); */
+        });
         // console.log('Readers number increased');
       }).catch(error => console.warn(error));
 
@@ -327,18 +327,17 @@ export default class Book extends React.Component {
       bookRef(bid).update({
         rating_num: bookRating_num,
         ratings_num: bookRatings_num,
-        review,
-        reviews_num: bookReviews_num,
-        readers_num: bookReaders_num
+        readers_num: bookReaders_num,
+        reviews_num: bookReviews_num
       }).then(() => {
         this.setState({ 
           book: { 
             ...this.state.book, 
             rating_num: bookRating_num, 
             ratings_num: bookRatings_num,
+            readers_num: bookReaders_num,
             review,
-            reviews_num: bookReviews_num,
-            readers_num: bookReaders_num
+            reviews_num: bookReviews_num
           }
         });
         // console.log('Rating and reader removed');

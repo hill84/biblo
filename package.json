@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "dependencies": {
     "@date-io/moment": "0.0.2",

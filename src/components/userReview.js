@@ -258,7 +258,7 @@ export default class UserReview extends React.Component {
           {!loading &&        
             !isEditing ? (
               !review.text ? 
-                <button type="button" className="btn flat centered" onClick={this.onEditing}>Aggiungi una recensione</button>
+                <button type="button" className="btn flat centered rounded" onClick={this.onEditing}>Aggiungi una recensione</button>
               :
                 <div className="review">
                   <div className="row">

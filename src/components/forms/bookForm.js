@@ -18,7 +18,7 @@ import isbn from 'isbn-utils';
 import { bookRef, booksRef, collectionBookRef, storageRef, authid, collectionRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, hasRole, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, hasRole, normalizeString, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 
@@ -188,9 +188,10 @@ export default class BookForm extends React.Component {
       if (Object.keys(errors).length === 0) {
         let newBid = '';
         if (this.props.book.bid) {
-          const { EDIT, ...restBook } = book;
+          const { EDIT, title_sort, ...restBook } = book;
           bookRef(this.props.book.bid).set({
             ...restBook,
+            title_sort: normalizeString(book.title) || book.title_sort,
             EDIT: {
               ...EDIT,
               lastEdit_num: Number((new Date()).getTime()),
@@ -728,7 +729,7 @@ export default class BookForm extends React.Component {
           </form>
           {book.bid && 
             <div className="form-group">
-              <button type="button" onClick={this.onExitEditing} className="btn flat centered">Annulla</button>
+              <button type="button" onClick={this.onExitEditing} className="btn flat rounded centered">Annulla</button>
             </div>
           }
         </div>

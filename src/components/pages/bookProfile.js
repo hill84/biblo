@@ -114,7 +114,7 @@ export default class BookProfile extends React.Component {
               <div className="row">
                 <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
                   {book.incipit ? 
-                    <div role="button" className="hoverable-items" onClick={this.onToggleIncipit}>
+                    <div role="button" className={`hoverable-items ${book.format === 'Audiolibro' ? 'audio' : ''}`} onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
                       <button type="button" className="btn xs centered flat" style={{'marginTop': '10px'}}>Leggi incipit</button>
                     </div>
@@ -122,7 +122,7 @@ export default class BookProfile extends React.Component {
                     <Cover book={book} rating={false} info={false} />
                   }
                 </div>
-                <div className={`col book-profile ${book.format === 'Audiolibro' ? 'audio' : ''}`}>
+                <div className="col book-profile">
                   <h2 className="title">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
