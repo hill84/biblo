@@ -7,13 +7,16 @@ import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import Cover from '../cover';
 import Genres from '../genres';
+import PaginationControls from '../paginationControls';
 
 export default class Genre extends React.Component {
   state = {
-    books: null,
+    count: 0,
     coverview: false,
     desc: true,
-    limit: 24,
+    items: null,
+    lastVisible: null,
+    limit: 28,
     loading: true,
     orderBy: [ 
       { type: 'rating_num', label: 'Valutazione'}, 
@@ -29,8 +32,9 @@ export default class Genre extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { desc, orderByIndex } = this.state;
-    if(this.props.match.params.gid !== prevProps.match.params.gid || desc !== prevState.desc || orderByIndex !== prevState.orderByIndex){
+    const { desc, limit, orderByIndex } = this.state;
+    const { gid } = this.props.match.params;
+    if (gid !== prevProps.match.params.gid || desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
   }
@@ -38,15 +42,52 @@ export default class Genre extends React.Component {
   fetch = () => {
     const { desc, limit, orderBy, orderByIndex } = this.state;
     const { gid } = this.props.match.params;
+    const ref = booksRef.where('genres', 'array-contains', gid);
+
     if (gid) {
-      booksRef.where('genres', 'array-contains', gid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
-        if (!snap.empty) {
-          const books = [];
-          snap.forEach(book => books.push(book.data()));
-          // console.log(books);
-          this.setState({ books, loading: false });
+      ref.get().then(fullSnap => {
+        if (!fullSnap.empty) {
+          this.setState({ count: fullSnap.docs.length });
+          ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+            if (!snap.empty) {
+              const items = [];
+              snap.forEach(item => items.push(item.data()));
+              // console.log(items);
+              this.setState({ items, lastVisible: snap.docs[snap.docs.length-1], loading: false, page: 1 });
+            } else {
+              this.setState({ items: null, count: 0, loading: false, page: 1 });
+            }
+          }).catch(error => console.warn(error));
         } else {
-          this.setState({ books: null, loading: false });
+          this.setState({ items: null, count: 0, loading: false, page: 1 });
+        }
+      }).catch(error => console.warn(error));
+    } else console.warn(`No gid`);
+  }
+
+  fetchNext = () => {
+    const { desc, items, lastVisible, limit, orderBy, orderByIndex } = this.state;
+    const { gid } = this.props.match.params;
+    const ref = booksRef.where('genres', 'array-contains', gid);
+
+    if (gid) {
+      this.setState({ loading: true });
+      ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
+        if (!nextSnap.empty) {
+          nextSnap.forEach(item => items.push(item.data()));
+          this.setState(prevState => ({ 
+            items,
+            loading: false,
+            page: (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1,
+            lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
+          }));
+        } else {
+          this.setState({ 
+            items: null,
+            loading: false,
+            page: null,
+            lastVisible: null
+          });
         }
       }).catch(error => console.warn(error));
     } else console.warn(`No gid`);
@@ -65,9 +106,9 @@ export default class Genre extends React.Component {
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
   render() {
-    const { books, coverview, desc, loading, orderBy, orderByIndex, orderMenuAnchorEl } = this.state;
+    const { count, coverview, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page } = this.state;
 
-    const covers = books && books.map((book, i) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} /></Link>);
+    const covers = items && items.map((item, i) => <Link key={item.bid} to={`/book/${item.bid}`}><Cover book={item} index={i} page={page} /></Link>);
 
     const orderByOptions = orderBy.map((option, i) => (
       <MenuItem
@@ -79,7 +120,9 @@ export default class Genre extends React.Component {
       </MenuItem>
     ));
 
-    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
+    if ((!items || items.length === 0) && loading) {
+      return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
+    }
 
     return (
       <div className="container" id="genreComponent">
@@ -88,7 +131,7 @@ export default class Genre extends React.Component {
           <Genres />
         </div>
 
-        {books ? 
+        {items ? 
           <div className="card">
             <div className="shelf">
               <div className="collection hoverable-items">
@@ -102,7 +145,7 @@ export default class Genre extends React.Component {
                         onClick={this.onToggleView}>
                         {coverview ? icon.viewSequential() : icon.viewGrid()}
                       </button>
-                      <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
+                      <span className="counter">{items.length || 0} libr{items.length === 1 ? 'o' : 'i'} {count > items.length ? `di ${count}` : ''}</span>
                     </div>
                     <div className="col-auto">
                       <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
@@ -125,8 +168,19 @@ export default class Genre extends React.Component {
         :
           <div className="info-row empty text-center pad-v">
             <p>Non ci sono ancora libri di questo genere</p>
-            <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
+            <Link to="/new-book?search=genre" className="btn primary">Aggiungi libro</Link>
           </div>
+        }
+
+        {count > 0 && items && items.length < count &&
+          <PaginationControls 
+            count={count} 
+            fetchNext={this.fetchNext} 
+            limit={limit}
+            loading={loading}
+            oneWay
+            page={page}
+          />
         }
 
       </div>

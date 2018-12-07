@@ -31,7 +31,7 @@ export default class Reviews extends React.Component {
 
   componentDidMount(prevState) {
     this._isMounted = true;
-    this.fetchReviews(this.state.bid);
+    this.fetch(this.state.bid);
     auth.onAuthStateChanged(user => {
       if (user) {
         this.setState({ uid: user.uid });
@@ -44,7 +44,7 @@ export default class Reviews extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (this._isMounted) {
       if(this.state.bid !== prevState.bid || this.state.uid !== prevState.uid){
-        this.fetchReviews(this.state.bid);
+        this.fetch(this.state.bid);
         // console.log('Fetched updated reviews');
       }
     }
@@ -54,7 +54,7 @@ export default class Reviews extends React.Component {
     this._isMounted = false;
   }
 
-  fetchReviews = bid => { 
+  fetch = bid => { 
     const { desc, limit } = this.state;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
   
@@ -78,7 +78,7 @@ export default class Reviews extends React.Component {
     });
   }
 
-  fetch = () => {
+  fetchNext = () => {
     const { bid, desc, items, lastVisible, limit } = this.state;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
 
@@ -146,7 +146,7 @@ export default class Reviews extends React.Component {
         {count > 0 && items.length < count &&
           <PaginationControls 
             count={count} 
-            fetchNext={this.fetch} 
+            fetchNext={this.fetchNext} 
             limit={limit}
             loading={loading}
             oneWay

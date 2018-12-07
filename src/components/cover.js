@@ -14,6 +14,7 @@ export default class Cover extends React.Component {
     bcid: numberType,
     book: coverType.isRequired,
     info: boolType,
+    page: numberType,
     rating: boolType,
     full: boolType
   }
@@ -41,13 +42,14 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
-    const { bcid, full, index, info, rating } = this.props;
+    const { animationDelay, bcid, full, index, info, page, rating } = this.props;
+    const delay = page && page > 1 ? 0 : index / 20;
 
     if (!book) return null;
 
 		return (
       <div className="book"> 
-        <div className="cover" title={book.title} style={{animationDelay: `${index/10}s`, backgroundImage: cover ? `url(${cover})` : null}}>
+        <div className="cover" title={book.title} style={{animationDelay: (animationDelay !== false) ? `${delay}s` : '', backgroundImage: cover ? `url(${cover})` : null}}>
           {bcid && bcid > 0 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
           {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
           <div className="overlay" />
