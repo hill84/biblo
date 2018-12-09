@@ -81,7 +81,7 @@ export const capitalizeFirstLetter = str => str && String(str).charAt(0).toUpper
 // CALCULATION
 const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) ? `${Math.floor(minutes%60)} minuti` : ''}`;
 
-export const calcReadingTime = pages => calcMinutesToTime(pages * .85);
+export const calcReadingTime = pages => calcMinutesToTime(pages * 1.25);
 
 export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
 

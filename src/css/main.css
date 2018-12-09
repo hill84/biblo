@@ -1453,22 +1453,8 @@ html.light .hero * { text-shadow: none; }
 .book .info .subtitle { font-weight: 400; font-size: .8rem; color: var(--mainTextClr); }
 .book .info .author { font-size: .7rem; font-weight: 300; color: var(--lightTextClr); }
 .book .info .publisher { font-weight: 300; font-size: .7rem; color: var(--mainTextClr); }
-.book .info .progress {
-  background: rgba(0,0,0,.1);
-  height: 6px;
-  margin-top: 11px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-  border-radius: 99px;
-  overflow: hidden;
-}
-.book .info .progress .bar {
-  height: 100%;
-  background-color: var(--primaryClr);
-  border-top-left-radius: 99px;
-  border-bottom-left-radius: 99px;
-}
+.book .info .stepper { margin-top: 11px; width: 80%; max-width: 96px; animation: fadeIn .4s ease-in-out; }
+.book .info .stepper .bar { transform-origin: left; will-change: transform; animation: scaleX .25s ease-in-out; }
 
 .audio .book .cover {
   width: var(--coverHeight);
@@ -1505,6 +1491,7 @@ html.light .hero * { text-shadow: none; }
 .shelf-row.stacked .cover .subtitle { display: none; }
 .shelf-row.stacked .info, .shelf-row.stacked .rating { text-align: left; width: 100%; }
 .shelf-row.stacked .info .title { font-size: .9rem; max-height: 64px; }
+.shelf-row.stacked .info .stepper { margin-left: 0; }
 .shelf-row.stacked .title, .shelf-row.stacked .subtitle, .shelf-row.stacked .author, .shelf-row.stacked .publisher { white-space: normal; }
 
 /* RATING */
@@ -1698,6 +1685,41 @@ html.light .hero * { text-shadow: none; }
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+
+/* STEPPER */
+.stepper-container.form-control {
+  margin-top: 16px;
+}
+.stepper-container .label {
+  color: rgba(0, 0, 0, 0.54);
+  padding: 0;
+  font-size: .75rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1;
+  text-align: center;
+  height: calc(50% - 3px);
+}
+.stepper-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper {
+  background: rgba(0,0,0,.1);
+  height: 6px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.stepper .bar {
+  height: 100%;
+  background-color: var(--primaryClr);
+  border-top-left-radius: 99px;
+  border-bottom-left-radius: 99px;
+  transition: all .2s ease-in-out;
 }
 
 /* SKELETONS */
@@ -1986,12 +2008,9 @@ html.light .hero * { text-shadow: none; }
 @keyframes rotate { to { transform: rotate(360deg); } }
 @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInSlideDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }
-
-@keyframes ripple { 
-  from { transform: scale(0); } 
-  to { opacity: 0; transform: scale(1); } 
-}
+@keyframes ripple {  from { transform: scale(0); } to { opacity: 0; transform: scale(1); }}
 @keyframes slideDown { from { opacity: 0; max-height: 36px; } to { opacity: 1; }}
+@keyframes scaleX { from { transform: scaleX(0); } to { transform: scaleX(1); }}
 @keyframes popIn { 0% { opacity: 0; transform: scale(0); } 80% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); }}
 @keyframes showIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); }}
 @keyframes fadeIn { from { opacity: 0; } }
@@ -2160,6 +2179,12 @@ html.light .hero * { text-shadow: none; }
   .book-profile .description { max-height: 1300px; }
   .book-incipit p { font-size: .9rem; }
   .book-incipit .big { font-size: 1.1rem; }
+  .review { 
+    --avatarSize: 24px;
+    --bookWidth: 40px;
+    --coverWidth: 40px;
+    --coverHeight: 64px; 
+  }
   .review .rating { font-size: inherit; font-weight: inherit; }
   .review .react-rater { font-size: 16px; }
   .review .react-rater div:not(:first-child) { display: none; }

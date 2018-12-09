@@ -56,6 +56,8 @@ export default class Book extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { book, userBook } = this.state;
+
     if (this._isMounted) {
       if(this.props.bid !== prevProps.bid){
         this.setState({ loading: true });
@@ -64,11 +66,11 @@ export default class Book extends React.Component {
             // console.log(snap.data());
             this.setState({
               book: {
-                ...this.state.book,
+                ...book,
                 ...snap.data()
               },
               userBook: {
-                ...this.state.userBook,
+                ...userBook,
                 bid: snap.data().bid || '',
                 authors: snap.data().authors || {},
                 covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
@@ -79,8 +81,9 @@ export default class Book extends React.Component {
             });
           } else console.warn(`No book with bid ${this.props.bid}`);
           this.setState({ loading: false });
+        }).then(() => {
+          this.fetchUserBook(this.props.bid);
         });
-        this.fetchUserBook(this.props.bid);
       }
       if (this.props.book !== prevProps.book) {
         this.fetchUserBook(this.props.book.bid);
@@ -95,8 +98,8 @@ export default class Book extends React.Component {
     this._isMounted = true;
     if (bid) {
       this.setState({ loading: true });
-      bookRef(bid).onSnapshot(snap => {
-        if (snap.exists) {
+      bookRef(bid).get().then(snap => {
+        if (!snap.empty) {
           // console.log(snap.data());
           this.setState({
             book: {
@@ -110,15 +113,14 @@ export default class Book extends React.Component {
               covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
               publisher: snap.data().publisher,
               title: snap.data().title,
-              subtitle: snap.data().subtitle,
+              subtitle: snap.data().subtitle
             }
           });
         } else console.warn(`No book with bid ${bid}`);
         this.setState({ loading: false });
+      }).then(() => {
+        this.fetchUserBook(bid || book.bid);
       });
-    }
-    if (authid && (bid || book.bid)) {
-      this.fetchUserBook(bid || book.bid);
     }
   }
 
@@ -131,7 +133,7 @@ export default class Book extends React.Component {
       userBookRef(authid, bid).onSnapshot(snap => {
         if (snap.exists) {
           this.setState({ userBook: snap.data() });
-          // console.log(`Update userBook ${bid}`);
+          // console.log(snap.data());
         }
       });
     }

@@ -70,13 +70,12 @@ export default class Cover extends React.Component {
             <strong className="title">{book.title}</strong>
             <span className="author"><span className="hide-sm">di</span> {joinObj(book.authors)}</span>
             {full && <span className="publisher">{book.publisher}</span>}
-            {book.rating_num > 0 && rating !== false && 
-              <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
-            }
-            {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 &&
-              <div className="progress">
-                <div className="bar" style={{width: `${book.readingState.progress_num}%`}}></div>
+            {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ?
+              <div className="stepper">
+                <div className="bar" style={{width: `${book.readingState.progress_num}%`}} title={`${book.readingState.progress_num}%`}></div>
               </div>
+            : book.rating_num > 0 && rating !== false && 
+              <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
             }
           </div>
         }
