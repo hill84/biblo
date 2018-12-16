@@ -78,6 +78,7 @@ export default class Review extends React.Component {
                   covers: review.covers,
                   publisher: 'publisher'
                 }} />
+                <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
               </Link>
             :
               <Link to={`/dashboard/${review.createdByUid}`}>
@@ -88,11 +89,15 @@ export default class Review extends React.Component {
           <div className="col right">
             <div className="head row">
               <Link to={`/dashboard/${review.createdByUid}`} className="col-auto author">
-                <h3>{review.displayName}</h3>
+                <h3>
+                  {review.displayName}
+                  {/* isAuthenticated() && review.createdByUid === authid && <span className="badge">TU</span> */}
+                  {!bid && <span className="date">{timeSince(review.created_num)}</span>}
+                </h3>
               </Link>
-              {isAuthenticated() && review.createdByUid === authid && <span className="badge">TU</span>}
+              
               {review.rating_num > 0 && 
-                <div className="col text-right rating">
+                <div className="col text-right">
                   <Rating ratings={{rating_num: review.rating_num}} labels />
                 </div>
               }

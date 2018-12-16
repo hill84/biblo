@@ -463,13 +463,25 @@ export default class Book extends React.Component {
         // console.log('User ratings number increased');
       }).catch(error => console.warn(error));
     } else console.warn(`Cannot rateBook. User not authenticated`);
-	}
+  }
+  
+  addReview = () => {
+    this.setState(prevState => ({
+      book: { ...prevState.book, reviews_num: prevState.book.reviews_num + 1 }
+    }));
+  }
+
+  removeReview = () => {
+    this.setState(prevState => ({
+      book: { ...prevState.book, reviews_num: prevState.book.reviews_num - 1 }
+    }));
+  }
 
   isEditing = () => {
     if (this.state.book.EDIT.edit || this.state.user.roles.admin) {
       this.setState(prevState => ({ isEditing: !prevState.isEditing }));
     } else console.warn('Cannot edit book. Book locked');
-  };
+  }
 	
 	render() {
     const { book, isEditing, loading, user, userBook } = this.state;
@@ -491,8 +503,10 @@ export default class Book extends React.Component {
             openSnackbar={openSnackbar}
             addBookToShelf={this.addBookToShelf} 
             addBookToWishlist={this.addBookToWishlist} 
+            addReview={this.addReview}
             removeBookFromShelf={this.removeBookFromShelf} 
             removeBookFromWishlist={this.removeBookFromWishlist} 
+            removeReview={this.removeReview}
             rateBook={this.rateBook}
             isEditing={this.isEditing}
             loading={loading}

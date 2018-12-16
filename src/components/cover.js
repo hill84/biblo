@@ -52,6 +52,7 @@ export default class Cover extends React.Component {
         <div className="cover" title={book.title} style={{animationDelay: (animationDelay !== false) ? `${delay}s` : '', backgroundImage: cover ? `url(${cover})` : null}}>
           {bcid && bcid > 0 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
           {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
+          {book.review && book.review.text && <div className="cover-review">Recensione</div>}
           <div className="overlay" />
           {/* (book.covers && book.covers.length > 1) && 
             <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 

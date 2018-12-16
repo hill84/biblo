@@ -13,7 +13,7 @@ import React from 'react';
 import { bookRef, reviewerRef, authid, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, timeSince } from '../config/shared';
-import { stringType, userBookType } from '../config/types';
+import { stringType, userBookType, funcType } from '../config/types';
 import Rating from './rating';
 
 
@@ -48,7 +48,9 @@ export default class UserReview extends React.Component {
   }
 
   static propTypes = {
+    addReview: funcType.isRequired,
     bid: stringType.isRequired,
+    removeReview: funcType.isRequired,
     userBook: userBookType
   }
 
@@ -138,7 +140,8 @@ export default class UserReview extends React.Component {
             reviews_num: bookReviews_num
           }).then(() => {
             this.setState({ bookReviews_num });
-            // console.log(`Book reviews increased to ${bookReviews_num}`);
+            this.props.addReview();
+            console.log(`Book reviews increased to ${bookReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
           userRef(authid).update({
@@ -186,13 +189,14 @@ export default class UserReview extends React.Component {
         reviews_num: bookReviews_num
       }).then(() => {
         this.setState({ bookReviews_num });
+        this.props.removeReview();
         console.log(`Book reviews decreased to ${bookReviews_num}`);
       }).catch(error => this.setState({ serverError: error.message }));
 
       userRef(authid).update({
         'stats.reviews_num': userReviews_num
       }).then(() => {
-        console.log(`User reviews decreased to ${userReviews_num}`);
+        // console.log(`User reviews decreased to ${userReviews_num}`);
       }).catch(error => this.setState({ serverError: error.message }));
 
       this.setState({ serverError: '' });
@@ -232,16 +236,17 @@ export default class UserReview extends React.Component {
   };
 
   validate = review => {
+    const { text_maxChars, text_minChars, title_maxChars } = this.state;
     const errors = {};
-    if (review.title && review.title.length > this.state.title_maxChars) {
-      errors.title = `Lunghezza massima ${this.state.title_maxChars} caratteri`;
+    if (review.title && review.title.length > title_maxChars) {
+      errors.title = `Lunghezza massima ${title_maxChars} caratteri`;
     }
     if (!review.text) {
       errors.text = "Aggiungi una recensione";
-    } else if (review.text.length > this.state.text_maxChars) {
-      errors.text = `Lunghezza massima ${this.state.text_maxChars} caratteri`;
-    } else if (review.text.length < this.state.text_minChars) {
-      errors.text = `Lunghezza minima ${this.state.text_minChars} caratteri`;
+    } else if (review.text.length > text_maxChars) {
+      errors.text = `Lunghezza massima ${text_maxChars} caratteri`;
+    } else if (review.text.length < text_minChars) {
+      errors.text = `Lunghezza minima ${text_minChars} caratteri`;
     }
     return errors;
   }
@@ -298,7 +303,7 @@ export default class UserReview extends React.Component {
                 </div>
               )
             : (
-              <form onSubmit={this.onSubmit}>
+              <form>
                 <div className="form-group">
                   <FormControl className="input-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.text)} htmlFor="text">Recensione</InputLabel>
@@ -342,7 +347,7 @@ export default class UserReview extends React.Component {
                 }
 
                 <div className="footer no-gutter">
-                  <button type="button" className="btn btn-footer primary" disabled={!this.state.changes}>Pubblica</button>
+                  <button type="button" className="btn btn-footer primary" onClick={this.onSubmit} disabled={!this.state.changes}>Pubblica</button>
                 </div>
               </form>
             )

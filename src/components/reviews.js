@@ -123,6 +123,7 @@ export default class Reviews extends React.Component {
 		return (
       <React.Fragment>
         <div className="card dark reviews">
+          {!bid && <h2>Ultime recensioni</h2>}
           {items.map((item, index) => 
             <Review 
               key={`${index}_${item.createdByUid}`} 

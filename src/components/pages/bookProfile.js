@@ -37,11 +37,13 @@ export default class BookProfile extends React.Component {
   }
 
   static propTypes = {
+    addReview: funcType.isRequired,
     addBookToShelf: funcType.isRequired,
     addBookToWishlist: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     removeBookFromShelf: funcType.isRequired,
     removeBookFromWishlist: funcType.isRequired,
+    removeReview: funcType.isRequired,
     rateBook: funcType.isRequired,
     isEditing: funcType.isRequired,
     user: userType,
@@ -92,7 +94,7 @@ export default class BookProfile extends React.Component {
   
 	render() {
     const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
-    const { loading, openSnackbar } = this.props;
+    const { addReview, loading, openSnackbar, removeReview } = this.props;
     const hasRole = role => user && user.roles && user.roles[role] === true;
     const hasBid = () => book && Boolean(book.bid);
     const isLocked = () => book && !book.EDIT.edit && !hasRole('admin');
@@ -215,7 +217,7 @@ export default class BookProfile extends React.Component {
             {book.bid &&
               <React.Fragment>
                 {isAuthenticated() && hasRole('editor') && userBook.bookInShelf &&
-                  <UserReview bid={book.bid} bookReviews_num={book.reviews_num} user={user} userBook={userBook} /> 
+                  <UserReview addReview={addReview} bid={book.bid} bookReviews_num={book.reviews_num} removeReview={removeReview} user={user} userBook={userBook} /> 
                 }
                 <Reviews bid={book.bid} />
               </React.Fragment>

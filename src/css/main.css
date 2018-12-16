@@ -1447,6 +1447,22 @@ html.light .hero * { text-shadow: none; }
 .cover .title { color: #fff; font-size: 142%; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
 .cover .publisher { position: absolute; width: auto; left: var(--pad); right: var(--pad); bottom: var(--pad); }
+.cover .cover-review { 
+  position: absolute;
+  bottom: -6px;
+  right: -8px;
+  display: inline-block; 
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, .98); 
+  color: var(--textClr);
+  border-radius: 9px; 
+  padding: .16rem .54rem;
+  text-transform: uppercase;
+  text-align: center; 
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+  transition: all .25s ease-in-out;
+  z-index: 2;
+}
 .book .info { text-align: center; font-size: .8rem; width: var(--bookWidth); }
 .book .info .title, .book .info .author { display: block; margin: auto; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .book .info .title { margin-top: 8px; font-weight: 400; color: var(--mainTextClr); transition: color .3s ease-in-out; }
@@ -1614,18 +1630,35 @@ html.light .hero * { text-shadow: none; }
 .card.user-review .footer { margin-bottom: -14px; }
 .review { 
   --avatarSize: 32px; 
-  --bookWidth: 60px;
-  --coverWidth: 60px;
-  --coverHeight: 92px; 
+  --bookWidth: 40px;
+  --coverWidth: 40px;
+  --coverHeight: 64px; 
 }
 .review .cover { --pad: 7px; font-size: 7px; }
 .reviews .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
 .review + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
-.review .left { padding-right: 0; }
-.review .left .avatar { width: var(--avatarSize); height: var(--avatarSize); line-height: var(--avatarSize); font-size: .9rem; }
-.review .right { padding-left: 14px; }
+.review .left { position: relative; padding-right: 0; }
+.review .left .avatar.absolute {
+  --avatarSize: 28px; 
+  position: absolute;
+  top: 3px;
+  right: -9px;
+  border: 3px solid var(--cardBg);
+  font-size: .7rem; 
+  will-change: opacity, transform;
+  transition: all .2s ease-in-out;
+} 
+.review .left .avatar { 
+  width: var(--avatarSize); 
+  height: var(--avatarSize); 
+  line-height: var(--avatarSize); 
+  font-size: .8rem; 
+}
+.review .hoverable-items:hover .avatar.absolute { opacity: 0; transform: scale(0); user-select: none; }
+.review .right { padding-left: 14px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .review .head { line-height: var(--avatarSize); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
+.review .head h3 .date { font-size: .82rem; color: var(--lighterTextClr); margin-left: 10px; font-weight: 200; }
 .review .title { color: var(--contrastedTextClr); }
 .review .rating { line-height: inherit; animation: none; }
 .review .rating .rating-num { margin-left: 7px; }
@@ -1657,7 +1690,7 @@ html.light .hero * { text-shadow: none; }
   margin: -14px calc(var(--pad) * -1);
 }
 .review + .own.review { margin-top: 14px; } */
-.own.review .head .badge { padding-top: 0; padding-bottom: 0; }
+.own.review .head .badge { padding: 0; background-color: var(--primaryClr); width: 6px; height: 6px; color: transparent; margin-left: 8px; }
 
 /* CIRCULAR PROGRESS BAR */
 .progress-container {
@@ -2179,12 +2212,15 @@ html.light .hero * { text-shadow: none; }
   .book-profile .description { max-height: 1300px; }
   .book-incipit p { font-size: .9rem; }
   .book-incipit .big { font-size: 1.1rem; }
+  .minifiable { max-height: 560px; }
   .review { 
     --avatarSize: 24px;
     --bookWidth: 40px;
     --coverWidth: 40px;
     --coverHeight: 64px; 
   }
+  .review .left { padding-left: 0; }
+  .review .avatar { font-size: .5rem; }
   .review .rating { font-size: inherit; font-weight: inherit; }
   .review .react-rater { font-size: 16px; }
   .review .react-rater div:not(:first-child) { display: none; }
