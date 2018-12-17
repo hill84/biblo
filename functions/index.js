@@ -51,13 +51,8 @@ exports.truncateFeedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onCre
 // NOTIFICATIONS
 exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
   let increment;
-  if (change.after.exists && !change.before.exists) {
-    increment = 1;
-  } else if (!change.after.exists && change.before.exists) {
-    increment = -1;
-  } else {
-    return null;
-  }
+  if (change.after.exists && !change.before.exists) { increment = 1 } else 
+  if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
   
   const { uid } = context.params;
   const countRef = fs.collection('notifications').doc(uid);

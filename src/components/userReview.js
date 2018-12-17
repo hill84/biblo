@@ -134,13 +134,13 @@ export default class UserReview extends React.Component {
           if (!this.state.review.created_num) {
             bookReviews_num += 1;
             userReviews_num += 1;
+            this.props.addReview();
           }
 
           bookRef(this.state.bid).update({
             reviews_num: bookReviews_num
           }).then(() => {
             this.setState({ bookReviews_num });
-            this.props.addReview();
             console.log(`Book reviews increased to ${bookReviews_num}`);
           }).catch(error => this.setState({ serverError: error.message }));
 
