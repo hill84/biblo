@@ -178,6 +178,14 @@ export default class BookForm extends React.Component {
     if (e.key === 'Enter') e.preventDefault(); 
   }
 
+  checkISBNnum = async num => {
+    const result = await booksRef.where('ISBN_13', '==', Number(num)).limit(1).get().then(snap => {
+      if (!snap.empty) return true;
+      return false;
+    }).catch(error => console.warn(error));
+    return result;
+  }
+
   onSubmit = e => {
     e.preventDefault();
     const { book, changes } = this.state;
@@ -331,6 +339,8 @@ export default class BookForm extends React.Component {
       }
     } else if (!isISBN(String(book.ISBN_13), 13)) {
       errors.ISBN_13 = "Codice non valido";
+    } else if (!this.props.book.bid && this.checkISBNnum(book.ISBN_13)) {
+      errors.ISBN_13 = "Libro già presente";
     }
     if (book.ISBN_10 && (String(book.ISBN_10).length !== 10)) {
       errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
