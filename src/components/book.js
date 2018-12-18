@@ -117,9 +117,8 @@ export default class Book extends React.Component {
             }
           });
         } else console.warn(`No book with bid ${bid}`);
-        this.setState({ loading: false });
+        this.setState({ loading: false }, () => this.fetchUserBook(bid || book.bid));
       });
-      this.fetchUserBook(bid || book.bid);
     }
   }
 
