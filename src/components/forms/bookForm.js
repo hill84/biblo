@@ -186,12 +186,12 @@ export default class BookForm extends React.Component {
     return result;
   }
 
-  onSubmit = e => {
+  onSubmit = async e => {
     e.preventDefault();
     const { book, changes } = this.state;
     const { openSnackbar } = this.props;
     if (changes || !book.bid) {
-      const errors = this.validate(book);
+      const errors = await this.validate(book);
       this.setState({ errors, loading: true });
       if (Object.keys(errors).length === 0) {
         let newBid = '';
@@ -300,8 +300,10 @@ export default class BookForm extends React.Component {
     } else this.props.isEditing();
   };
 
-  validate = book => {
+  validate = async book => {
     const errors = {};
+    const isDuplicate = await this.checkISBNnum(book.ISBN_13);
+    
     if (!book.title) {
       errors.title = "Inserisci il titolo";
     } else if (book.title.length > 255) {
@@ -339,7 +341,7 @@ export default class BookForm extends React.Component {
       }
     } else if (!isISBN(String(book.ISBN_13), 13)) {
       errors.ISBN_13 = "Codice non valido";
-    } else if (!this.props.book.bid && this.checkISBNnum(book.ISBN_13)) {
+    } else if (!this.props.book.bid && isDuplicate) {
       errors.ISBN_13 = "Libro già presente";
     }
     if (book.ISBN_10 && (String(book.ISBN_10).length !== 10)) {

@@ -98,8 +98,8 @@ export default class Book extends React.Component {
     this._isMounted = true;
     if (bid) {
       this.setState({ loading: true });
-      bookRef(bid).get().then(snap => {
-        if (!snap.empty) {
+      bookRef(bid).onSnapshot(snap => {
+        if (snap.exists) {
           // console.log(snap.data());
           this.setState({
             book: {
@@ -118,9 +118,8 @@ export default class Book extends React.Component {
           });
         } else console.warn(`No book with bid ${bid}`);
         this.setState({ loading: false });
-      }).then(() => {
-        this.fetchUserBook(bid || book.bid);
       });
+      this.fetchUserBook(bid || book.bid);
     }
   }
 
