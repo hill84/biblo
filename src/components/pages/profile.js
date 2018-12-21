@@ -121,23 +121,26 @@ export default class Profile extends React.Component {
     const errors = validateImg(file, 1);
     this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
-			const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
+      const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
+      // console.log(uploadTask);
 			uploadTask.on('state_changed', snap => {
 				this.setState({
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
 				});
 			}, error => {
         console.warn(`Upload error: ${error.message}`);
-        this.setState({ errors: { ...errors, upload: error.message } });
-        openSnackbar(error.message, 'error');
+        this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
 			}, () => {
-				// console.log('upload completed');
-				this.setState({
-					imgPreview: uploadTask.snapshot.downloadURL,
-					changes: true,
-					success: false
-        });
-        openSnackbar('Immagine caricata', 'success');
+        // console.log('upload completed');
+        uploadTask.then(snap => 
+          snap.ref.getDownloadURL().then(url => 
+            this.setState({
+              imgPreview: url,
+              changes: true,
+              success: false
+            }, () => openSnackbar('Immagine caricata', 'success'))
+          )
+        );
 			});
 		} else openSnackbar(errors.upload, 'error');
 	};
@@ -168,7 +171,7 @@ export default class Profile extends React.Component {
                   <Avatar className="avatar" src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
                   <div className="overlay">
                     <span title="Carica un'immagine">+</span>
-                    <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)}/>
+                    <input type="file" accept="image/*" className="upload" onChange={this.onImageChange}/>
                   </div>
                   <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
                 </div>

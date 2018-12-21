@@ -408,16 +408,18 @@ export default class BookForm extends React.Component {
 				});
 			}, error => {
 				console.warn(`upload error: ${error.message}`);
-        this.setState({ errors: { ...errors, upload: error.message } });
-        openSnackbar(error.message, 'error');
+        this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
 			}, () => {
-				// console.log('upload completed');
-				this.setState({
-					imgPreview: uploadTask.snapshot.downloadURL,
-					changes: true,
-					success: false
-        });
-        openSnackbar('Immagine caricata', 'success');
+        // console.log('upload completed');
+        uploadTask.then(snap => 
+          snap.ref.getDownloadURL().then(url => 
+            this.setState({
+              imgPreview: url,
+              changes: true,
+              success: false
+            }, () => openSnackbar('Immagine caricata', 'success'))
+          )
+        );
 			});
 		} else openSnackbar(errors.upload, 'error');
 	};
