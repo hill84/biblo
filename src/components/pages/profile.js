@@ -12,7 +12,7 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
-import { storageRef, authid, userRef } from '../../config/firebase';
+import firebase, { storageRef, authid, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { calcAge, getInitials, validateImg } from '../../config/shared';
@@ -123,7 +123,7 @@ export default class Profile extends React.Component {
 		if(Object.keys(errors).length === 0) {
       const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
       // console.log(uploadTask);
-			uploadTask.on('state_changed', snap => {
+			uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
 				this.setState({
 					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
 				});

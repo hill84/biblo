@@ -15,7 +15,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isbn from 'isbn-utils';
-import { bookRef, booksRef, collectionBookRef, storageRef, authid, collectionRef } from '../../config/firebase';
+import firebase, { bookRef, booksRef, collectionBookRef, storageRef, authid, collectionRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, hasRole, normalizeString, validateImg } from '../../config/shared';
@@ -188,7 +188,7 @@ export default class BookForm extends React.Component {
 
   onSubmit = async e => {
     e.preventDefault();
-    const { book, changes } = this.state;
+    const { book, changes, imgPreview } = this.state;
     const { openSnackbar } = this.props;
     if (changes || !book.bid) {
       const errors = await this.validate(book);
@@ -196,9 +196,10 @@ export default class BookForm extends React.Component {
       if (Object.keys(errors).length === 0) {
         let newBid = '';
         if (this.props.book.bid) {
-          const { EDIT, title_sort, ...restBook } = book;
+          const { covers, EDIT, title_sort, ...restBook } = book;
           bookRef(this.props.book.bid).set({
             ...restBook,
+            covers: [imgPreview] || book.covers,
             title_sort: normalizeString(book.title) || book.title_sort,
             EDIT: {
               ...EDIT,
@@ -223,7 +224,7 @@ export default class BookForm extends React.Component {
             authors: book.authors, 
             bid: newBid,
             collections: book.collections,
-            covers: book.covers, 
+            covers: [imgPreview] || book.covers, 
             description: book.description, 
             EDIT: {
               created_num: Number((new Date()).getTime()),
@@ -279,7 +280,7 @@ export default class BookForm extends React.Component {
               collectionBookRef(cid, book.bid || newBid).set({
                 bid: book.bid || newBid, 
                 bcid,
-                covers: (!!book.covers[0] && Array(book.covers[0])) || [],
+                covers: [imgPreview] || (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
                 authors: book.authors, 
@@ -402,9 +403,9 @@ export default class BookForm extends React.Component {
 		this.setState({ errors });
 		if(Object.keys(errors).length === 0) {
 			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
-			uploadTask.on('state_changed', snap => {
+			const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
 				this.setState({
-					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
+					imgProgress: snap.bytesTransferred / snap.totalBytes * 100
 				});
 			}, error => {
 				console.warn(`upload error: ${error.message}`);
@@ -415,11 +416,13 @@ export default class BookForm extends React.Component {
           snap.ref.getDownloadURL().then(url => 
             this.setState({
               imgPreview: url,
+              book: { ...this.state.book, covers: [url]},
               changes: true,
               success: false
-            }, () => openSnackbar('Immagine caricata', 'success'))
+            }, () => console.log(url)) //openSnackbar('Immagine caricata', 'success'))
           )
         );
+        unsubUploadTask();
 			});
 		} else openSnackbar(errors.upload, 'error');
 	};
@@ -452,13 +455,11 @@ export default class BookForm extends React.Component {
             <div className="container md">
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
                 <Cover book={book} />
-                {isAdmin && book.bid && !book.covers[0] && 
-                  <button type="button" className="btn sm flat centered">
-                    <span>Carica un'immagine</span>
-                    <input type="file" accept="image/*" className="upload" onChange={e => this.onImageChange(e)} />
-                    {(imgProgress > 0) && 
-                      <progress type="progress" value={imgProgress} max="100" className="progress" />
-                    }
+                {isAdmin && book.bid /* && !book.covers[0] */ && 
+                  <button type="button" className={`btn sm centered ${imgProgress === 100 ? 'success' : 'flat'}`}>
+                    <input type="file" accept="image/*" className="upload" onChange={this.onImageChange} />
+                    {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" className="stepper" /> */}
+                    <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
                   </button>
                 }
               </div>

@@ -626,6 +626,9 @@ html:not(.light) .card.primary, .primary .card {
 .btn.google { background-color: #E24929; }
 .btn.twitter { background-color: #00ACED; }
 
+.btn .stepper { min-width: 90px; }
+.btn .stepper + span { display: none; }
+
 /* SELECTION */
 ::selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
 ::-moz-selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }
@@ -1753,6 +1756,32 @@ html.light .hero * { text-shadow: none; }
   border-top-left-radius: 99px;
   border-bottom-left-radius: 99px;
   transition: all .2s ease-in-out;
+}
+
+progress.stepper {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 6px;
+  width: 100%;
+  border: none;
+}
+
+progress.stepper::-webkit-progress-bar {
+  background-color: rgba(0,0,0,.1);
+  border-radius: 99px;
+}
+
+progress.stepper::-webkit-progress-value {
+  background-color: var(--primaryClr);
+  border-top-left-radius: 99px;
+  border-bottom-left-radius: 99px;
+  transition: all .2s ease-in-out;
+}
+
+progress[value='100'].stepper::-webkit-progress-bar {
+  background-color: var(--successClr);
+  border-radius: 99px;
 }
 
 /* SKELETONS */
