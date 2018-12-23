@@ -7,32 +7,28 @@ service firebase.storage {
       //allow write: if isSignedIn();
     //}
 
-    match /users/{uid} {
-    	allow read;
-      allow write: if isEditor() && (isAdmin() || isOwner(uid));
+    match /{allImages=**} {
+      allow read;
     }
 
-    match /books/{bid} {
-    	allow read;
-      allow create, update: if isEditor();
-      allow delete: if userHasAllRoles('admin', 'editor') == true;
+    match /users/{uid}/{allPaths=**} {
+      allow write: if isOneOfRoles(resource, ['editor', 'admin']) || isOwner(uid);
     }
 
-    match /authors/{aid} {
-    	allow read;
-      allow create, update: if isEditor();
-      allow delete: if userHasAllRoles('admin', 'editor') == true;
+    match /books/{bid}/{allPaths=**} {
+      allow write: if isOneOfRoles(resource, ['editor', 'admin']);
     }
 
-    match /collections/{cid} {
-    	allow read;
-      allow create, update: if isEditor();
-      allow delete: if userHasAllRoles('admin', 'editor') == true;
+    match /authors/{aid}/{allPaths=**} {
+      allow write: if isOneOfRoles(resource, ['editor', 'admin']);
+    }
+
+    match /collections/{cid}/{allPaths=**} {
+      allow write: if isOneOfRoles(resource, ['editor', 'admin']);
     }
 
     match /admin/{allPaths=**} {
-    	allow read: if isAdmin();
-      allow write: if userHasAllRoles('admin', 'editor') == true;
+    	allow read, write: if isOneOfRoles(resource, ['admin']);
     }
 
     /// FUNCTIONS ///
@@ -40,32 +36,12 @@ service firebase.storage {
       return request.auth != null;
     }
 
-    function getUserData() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    function getRole(rsc) {
+      return rsc.data.roles[request.auth.uid];
     }
 
-    function userHasRole(role) {
-      return getUserData().roles[role] == true;
-    }
-
-    function isAdmin() {
-      return getUserData().roles['admin'] == true;
-    }
-
-    function isEditor() {
-      return getUserData().roles['editor'] == true;
-    }
-
-    function isPremium() {
-      return getUserData().roles['premium'] == true;
-    }
-
-    function userHasAnyRole(roles) {
-      return getUserData().roles.keys().hasAny(roles);
-    }
-
-    function userHasAllRoles(roles) {
-      return getUserData().roles.keys().hasAll(roles);
+    function isOneOfRoles(rsc, array) {
+      return isSignedIn() && (getRole(rsc) in array);
     }
 
     function isOwner(uid) {
