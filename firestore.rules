@@ -97,6 +97,16 @@ service cloud.firestore {
     	allow read;
       allow write: if isEditor();
     }
+
+    match /challenges/{cid} {
+    	allow read;
+      allow write: if isEditor();
+    }
+
+    match /userChallenges/{uid} {
+    	allow read;
+      allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+    }
     
     match /admin/{document=**} {
     	allow read: if isAdmin();
