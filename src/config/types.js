@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 
-const { arrayOf, bool, func, shape, number, object, objectOf, oneOf, oneOfType, string } = PropTypes;
+const { array, arrayOf, bool, func, shape, number, object, objectOf, oneOf, oneOfType, string } = PropTypes;
 
+export const arrayOfType = arrayOf;
 export const funcType = func;
 export const stringType = string;
 export const boolType = bool;
@@ -83,14 +84,14 @@ export const coverType = shape({
 
 export const userBookType = shape({
   review: shape({
-    created_num: numberType,
-    text: stringType,
-    title: stringType
+    created_num: number,
+    text: string,
+    title: string
   }).isRequired,
   readingState: shape({
-    state_num: numberType.isRequired,
-    start_num: numberType,
-    end_num: numberType
+    state_num: number.isRequired,
+    start_num: number,
+    end_num: number
   }).isRequired,
   rating_num: number.isRequired,
   bookInShelf: bool.isRequired,
@@ -103,49 +104,68 @@ export const ratingsType = shape({
 });
 
 export const reviewType = shape({
-  bookTitle: stringType,
+  bookTitle: string,
   coverURL: arrayOf(string),
-  createdByUid: stringType.isRequired,
-  created_num: numberType.isRequired,
-  displayName: stringType.isRequired,
+  createdByUid: string.isRequired,
+  created_num: number.isRequired,
+  displayName: string.isRequired,
   likes: arrayOf(string).isRequired,
-  photoURL: stringType,
-  rating_num: numberType.isRequired,
-  text: stringType.isRequired,
-  title: stringType
+  photoURL: string,
+  rating_num: number.isRequired,
+  text: string.isRequired,
+  title: string
 });
 
 export const userReviewType = shape({
-  bookTitle: stringType,
+  bookTitle: string,
   coverURL: arrayOf(string),
-  created_num: numberType.isRequired,
-  likes_num: numberType.isRequired,
-  text: stringType.isRequired,
-  title: stringType
+  created_num: number.isRequired,
+  likes_num: number.isRequired,
+  text: string.isRequired,
+  title: string
 });
 
 export const authorType = shape({
-  bio: stringType,
-  displayName: stringType.isRequired,
-  edit: boolType.isRequired,
+  bio: string,
+  displayName: string.isRequired,
+  edit: bool.isRequired,
   followers: objectOf(bool).isRequired,
-  lastEditBy: stringType.isRequired,
-  lastEditByUid: stringType.isRequired,
-  lastEdit_num: numberType.isRequired,
+  lastEditBy: string.isRequired,
+  lastEditByUid: string.isRequired,
+  lastEdit_num: number.isRequired,
   photoURL: string,
   sex: string.isRequired,
   source: string
 });
 
 export const quoteType = shape({
-  author: stringType.isRequired,
-  bid: stringType,
-  bootTitle: stringType,
-  coverURL: stringType,
-  edit: boolType.isRequired,
-  lastEditBy: stringType.isRequired,
-  lastEditByUid: stringType.isRequired,
-  lastEdit_num: numberType.isRequired,
-  qid: stringType.isRequired,
-  quote: stringType.isRequired
+  author: string.isRequired,
+  bid: string,
+  bootTitle: string,
+  coverURL: string,
+  edit: bool.isRequired,
+  lastEditBy: string.isRequired,
+  lastEditByUid: string.isRequired,
+  lastEdit_num: number.isRequired,
+  qid: string.isRequired,
+  quote: string.isRequired
 });
+
+export const challengesType = arrayOf(shape({
+  cid: string.isRequired,
+  title: string.isRequired,
+  books: object.isRequired
+}));
+
+export const challengeType = arrayOf(shape({
+  cid: string.isRequired,
+  title: string.isRequired,
+  description: string,
+  books: arrayOf(shape({
+    author: string.isRequired,
+    bid: string.isRequired,
+    cover: string,
+    title: string.isRequired
+  })),
+  followers: array
+}));

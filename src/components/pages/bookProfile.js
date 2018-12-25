@@ -98,7 +98,7 @@ export default class BookProfile extends React.Component {
     const hasRole = role => user && user.roles && user.roles[role] === true;
     const hasBid = () => book && Boolean(book.bid);
     const isLocked = () => book && !book.EDIT.edit && !hasRole('admin');
-    const authors = book && <Link to={`/author/${Object.keys(book.authors)[0]}`}>{Object.keys(book.authors)[0]}</Link>;
+    // const authors = book && <Link to={`/author/${Object.keys(book.authors)[0]}`}>{Object.keys(book.authors)[0]}</Link>;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 
@@ -128,7 +128,7 @@ export default class BookProfile extends React.Component {
                   <h2 className="title">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
-                    {book.authors && <span className="counter">di {authors}</span>}
+                  {book.authors && <span className="counter comma">di {Object.keys(book.authors).map(author => <Link to={`/author/${author}`} className="counter" key={author}>{author}</Link> )}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && hasRole('editor') && hasBid() &&
                       <button type="button" className="btn sm flat counter" disabled={isLocked()} onClick={this.onEditing} title={book.EDIT.edit ? null : 'Solo gli amministratori possono modificare'}>

@@ -1177,6 +1177,8 @@ html.light .hero * { text-shadow: none; }
   color: currentColor;
   white-space: nowrap;
 }
+.counter.comma .counter:nth-child(n - 1):after { content: 'e'; margin-left: .15rem; }
+.counter.comma a.counter:after { color: initial; }
 .counter:last-child:after, .counter.comma .counter:last-child:after, .counter.last:after, .counter.btn:after { content: none; }
 .counter.last + .counter { margin-left: 6px; }
 .counter.btn, .btn-row .btn { margin-top: 0; margin-bottom: 0; }
@@ -1701,15 +1703,16 @@ html.light .hero * { text-shadow: none; }
   height: 60px;
   width: 60px;
   margin: auto;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
-.progress-container .progress-base {
+.progress-container .progress-base, .circle-icon {
   height: 60px;
   width: 60px;
   border-radius: 60px;
   border: 5px solid rgba(0,0,0,.1);
   margin: auto;
 }
+.circle-icon { padding: 12px; }
 .progress-container .progress-base, .progress-container .progress-value {
   position: absolute;
   top: 0;
@@ -1722,6 +1725,7 @@ html.light .hero * { text-shadow: none; }
   justify-content: center;
   flex-direction: column;
 }
+.progress-books { font-size: .75rem; color: var(--lightTextClr); }
 
 /* STEPPER */
 .stepper-container.form-control {
@@ -2238,6 +2242,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   /* .card-fullwidth-sm .head.nav { box-shadow: none; } */
   .shelf-row:not(.stacked) .book .react-rater { font-size: 14px; }
   .book-profile .title { font-size: 1.2rem; }
+  .book-profile .subtitle { font-size: 1rem; }
   .book-profile .description { max-height: 1300px; }
   .book-incipit p { font-size: .9rem; }
   .book-incipit .big { font-size: 1.1rem; }

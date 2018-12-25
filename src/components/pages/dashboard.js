@@ -6,11 +6,11 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
-import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, isAuthenticated, userChallengesRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../config/shared';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { funcType, userType } from '../../config/types';
+import { challengesType, funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
@@ -32,8 +32,28 @@ export default class Dashboard extends React.Component {
 	}
 
 	static propTypes = {
+    challenges: challengesType,
     openSnackbar: funcType.isRequired,
     user: userType
+  }
+
+  static defaultProps = {
+    challenges: [{
+      cid: '',
+      title: 'Challenge title',
+      books: {
+        '1': true,
+        '2': true,
+        '3': true,
+        '4': true,
+        '5': false,
+        '6': false,
+        '7': false,
+        '8': false,
+        '9': false,
+        '10': false
+      }
+    }]
   }
 
 	static getDerivedStateFromProps(props, state) {
@@ -65,6 +85,7 @@ export default class Dashboard extends React.Component {
       this.fetchUser();
       this.fetchFollowers();
       this.fetchFollowings();
+      this.fetchUserChallenges();
       if (this.state.tabSelected === 0) this.props.history.replace(`/dashboard/${this.state.uid}/${tabs[0]}`, null);
     }
   }
@@ -79,6 +100,9 @@ export default class Dashboard extends React.Component {
         this.fetchUser();
         this.fetchFollowers();
         this.fetchFollowings();
+        if (this.state.luid !== prevState.luid) {
+          this.fetchUserChallenges();
+        }
       }
     }
 	}
@@ -217,9 +241,25 @@ export default class Dashboard extends React.Component {
 
   onTabSelectIndex = index => this.setState({ tabSelected: index });
 
+  fetchUserChallenges = () => {
+    const { luid } = this.state;
+		if (luid && isAuthenticated()) {
+      userChallengesRef(luid).get().then(snap => {
+        if (!snap.empty) {
+          console.log(snap);
+          this.setState({ challenges: snap.data() });
+        } else console.log(`No challenges for user ${luid}`);
+      });
+    }
+  }
+
 	render() {
     const { follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
-    const { history, location } = this.props;
+    const { challenges, history, location } = this.props;
+    const challengeBooks = challenges[challenges.length - 1].books;
+    const challengeBooks_num = Object.keys(challengeBooks).length;
+    const challengeReadBooks_num = Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length;
+    const challengeProgress = 100 / challengeBooks_num * challengeReadBooks_num;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 		if (!user) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
@@ -314,19 +354,41 @@ export default class Dashboard extends React.Component {
 							</div>
 						</div>
 					</div>
-					{isOwner && progress < 100 &&
-						<div className="col-md-auto col-12 hide-md flex">
-							<div className="card dark pad-v-sm text-center flex align-items-center">
+          {isOwner && 
+            <div className="col-md-auto col-12 hide-md flex">
+              <div className="card dark pad-v-sm text-center flex align-items-center">
                 <div className="container">
-                  <div className="progress-container">
-                    <div className="progress-base" />
-                    <CircularProgress variant="static" value={progress} size={60} max={100} thickness={3} />
-                    <div className="progress-value">{progress}%</div>
-                  </div>
-                  <div className="info-row"><Link to="/profile" className="btn primary centered">Completa profilo</Link></div>
+                  {progress < 100 ?
+                    <React.Fragment> 
+                      <div className="progress-container profile-progress">
+                        <div className="progress-base" />
+                        <CircularProgress variant="static" value={progress} size={60} max={100} thickness={3} />
+                        <div className="progress-value">{progress}%</div>
+                      </div>
+                      <div className="info-row"><Link to="/profile" className="btn primary centered">Completa profilo</Link></div>
+                    </React.Fragment> 
+                  : challenges && challengeProgress < 100 ? 
+                    <React.Fragment> 
+                      <div className="progress-container challenge-progress">
+                        <div className="progress-base" />
+                        <CircularProgress variant="static" value={challengeProgress} size={60} max={100} thickness={3} />
+                        <div className="progress-value">{challengeProgress}%</div>
+                      </div>
+                      <div className="info-row">
+                        <div className="progress-books counter last">{`${challengeReadBooks_num} di ${challengeBooks_num} libri`}</div> 
+                        <Link to="/challenge" className="btn sm primary centered">Vedi sfida</Link>
+                      </div>
+                    </React.Fragment> 
+                  : 
+                    <React.Fragment>
+                      <div className="info-row circle-icon">{icon.reader()}</div>
+                      <div className="info-row pad-v-xs">Mettiti alla prova</div>
+                      <div className="info-row"><Link to="/challenges" className="btn sm primary centered">Scegli una sfida</Link></div>
+                    </React.Fragment> 
+                  }
                 </div>
-							</div>
-						</div>
+              </div>
+            </div>
 					}
 				</div>
 

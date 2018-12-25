@@ -67,6 +67,11 @@ export const notificationsRef = db.collection('notifications');
 export const notesRef = uid => db.collection('notifications').doc(uid).collection('notes');
 export const noteRef = (uid, nid) => db.collection('notifications').doc(uid).collection('notes').doc(nid);
 
+export const challengesRef = db.collection('challenges');
+export const challengeRef = cid => db.collection('challenges').doc(cid);
+export const userChallengesRef = uid => db.collection('userChallenges').doc(uid).collection('challenges');
+export const userChallengeRef = (uid, cid) => db.collection('userChallenges').doc(uid).collection('challenges').doc(cid);
+
 /* STORAGE */
 const storage = firebase.storage();
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`);

@@ -23,9 +23,9 @@ export default class NoMatch extends React.Component {
         <div className="card dark empty">
           <div className="text-center">
             <h1>{title || 'Pagina non trovata'}</h1>
-            <p>Controlla di aver digitato correttamente l'indirizzo{location && <span className="hide-sm">: <big><code>{location.pathname}</code></big></span>}.</p>
+            <p>Controlla di aver digitato correttamente l'indirizzo{location && <span className="hide-sm">: <big><code className="primary-text">{location.pathname}</code></big></span>}.</p>
             {imgUrl && <img src={imgUrl} alt="Pagina non trovata" />}
-            <button type="button" onClick={this.goBack} className="btn flat">Torna indietro</button>
+            <button type="button" onClick={this.goBack} className="btn flat rounded">Torna indietro</button>
           </div>
         </div>
       </div>

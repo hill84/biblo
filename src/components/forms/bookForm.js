@@ -199,7 +199,7 @@ export default class BookForm extends React.Component {
           const { covers, EDIT, title_sort, ...restBook } = book;
           bookRef(this.props.book.bid).set({
             ...restBook,
-            covers: [imgPreview] || book.covers,
+            covers: imgPreview && Array(imgPreview) || book.covers,
             title_sort: normalizeString(book.title) || book.title_sort,
             EDIT: {
               ...EDIT,
@@ -224,7 +224,7 @@ export default class BookForm extends React.Component {
             authors: book.authors, 
             bid: newBid,
             collections: book.collections,
-            covers: [imgPreview] || book.covers, 
+            covers: imgPreview && Array(imgPreview) || book.covers, 
             description: book.description, 
             EDIT: {
               created_num: Number((new Date()).getTime()),
@@ -280,7 +280,7 @@ export default class BookForm extends React.Component {
               collectionBookRef(cid, book.bid || newBid).set({
                 bid: book.bid || newBid, 
                 bcid,
-                covers: [imgPreview] || (!!book.covers[0] && Array(book.covers[0])) || [],
+                covers: imgPreview && Array(imgPreview) || (!!book.covers[0] && Array(book.covers[0])) || [],
                 title: book.title,  
                 subtitle: book.subtitle, 
                 authors: book.authors, 
