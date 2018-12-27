@@ -1177,7 +1177,7 @@ html.light .hero * { text-shadow: none; }
   color: currentColor;
   white-space: nowrap;
 }
-.counter.comma .counter:nth-child(n - 1):after { content: 'e'; margin-left: .15rem; }
+.counter.comma .counter:nth-last-child(2):after { content: "e"; margin-left: .15rem; }
 .counter.comma a.counter:after { color: initial; }
 .counter:last-child:after, .counter.comma .counter:last-child:after, .counter.last:after, .counter.btn:after { content: none; }
 .counter.last + .counter { margin-left: 6px; }
@@ -2008,6 +2008,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .lighter-text { color: var(--lighterTextClr); }
 .lightest-text { color: var(--lightestTextClr); }
 .primary-text { color: var(--primaryClr); }
+.text-sm { font-size: 80%; }
+.text-xs { font-size: 70%; }
 
 .btn .show-on-hover { 
   position: absolute; 

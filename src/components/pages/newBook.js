@@ -30,7 +30,8 @@ export default class NewBook extends React.Component {
             <SearchBookForm onBookSelect={this.onBookSelect} user={user} newBook />
           </div>
         </MuiThemeProvider>
-				{book && <Book book={book} user={user} openSnackbar={openSnackbar} isEditing />}
+				{book ? <Book book={book} user={user} openSnackbar={openSnackbar} isEditing />
+        : <p className="text-sm lighter-text text-center">Powered by <a href="https://books.google.com/">Google Books</a></p>}
 			</div>
 		);
 	}
