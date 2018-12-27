@@ -33,11 +33,18 @@ export default class AddBook extends React.Component {
         </MuiThemeProvider>
 				{book ?
 					<Book bid={book.bid} book={book} user={user} openSnackbar={openSnackbar} />
-				:
-					<div className="text-center pad-v fadeIn reveal" style={{animationDelay: '2s'}}>
-						<p>Non hai trovato il libro che cercavi?</p>
-						<p><Link to="/new-book" className="btn primary">Crea la tua scheda libro</Link></p>
-					</div>
+        :
+          <React.Fragment>
+            <p className="text-center">
+              <Link to="/genres" className="counter">Generi</Link>
+              <Link to="/collections" className="counter">Collezioni</Link>
+              <Link to="/authors" className="counter">Autori</Link>
+            </p>
+            <div className="text-center pad-v fadeIn reveal" style={{animationDelay: '2s'}}>
+              <p>Non hai trovato il libro che cercavi?</p>
+              <p><Link to="/new-book" className="btn primary">Crea la tua scheda libro</Link></p>
+            </div>
+          </React.Fragment>
 				}
 			</div>
 		);
