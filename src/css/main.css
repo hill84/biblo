@@ -281,6 +281,7 @@ hr.line {
 .container { margin-top: 14px; }
 .card.main { z-index: 10; }
 .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 { color: var(--mainTextClr); }
+.card > h1, .card h2, .card > h3, .card > h4, .card > h5, .card > h6 { margin-top: 0; }
 .card.sm { --pad: 14px; }
 .card.xs { --pad: 7px; }
 .card .footer, .dialog .footer, .tab .footer { 
@@ -1382,7 +1383,7 @@ html.light .hero * { text-shadow: none; }
   border-top-right-radius: var(--radius);
 }
 .dialog .head.nav { box-shadow: 0 1px 3px rgba(0,0,0,.15); }
-.head.nav + .shelf-row, .head.nav + .shelf, .head.nav + .table { margin-top: 40px; }
+.head.nav + .shelf-row, .head.nav + .shelf, .head.nav + .table { margin-top: 24px; }
 .head.nav .info-row { margin-bottom: 0; }
 .head.nav .counter, .head.nav .count { line-height: inherit; /* vertical-align: middle; */ }
 .head.nav .count { color: var(--lighterTextClr); }
@@ -1452,13 +1453,13 @@ html.light .hero * { text-shadow: none; }
 .cover .title { color: #fff; font-size: 142%; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
 .cover .publisher { position: absolute; width: auto; left: var(--pad); right: var(--pad); bottom: var(--pad); }
-.cover .cover-review { 
+.cover .cover-review, .cover .readers-num { 
   position: absolute;
   bottom: -6px;
   right: -8px;
   display: inline-block; 
   overflow: hidden;
-  background-color: rgba(255, 255, 255, .98); 
+  background-color: rgba(255, 255, 255, .98);
   color: var(--textClr);
   border-radius: 9px; 
   padding: .16rem .54rem;
@@ -1468,6 +1469,11 @@ html.light .hero * { text-shadow: none; }
   transition: all .25s ease-in-out;
   z-index: 2;
 }
+.cover .readers-num { 
+  background-color: var(--canvasLighterClr); 
+  color: var(--mainTextClr); 
+}
+.book:hover .readers-num { opacity: 0; }
 .book .info { text-align: center; font-size: .8rem; width: var(--bookWidth); }
 .book .info .title, .book .info .author { display: block; margin: auto; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .book .info .title { margin-top: 8px; font-weight: 400; color: var(--mainTextClr); transition: color .3s ease-in-out; }
@@ -1947,6 +1953,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   z-index: 1;
 }
 .bookmark.accent { border-color: var(--accentClr); height: 24px; }
+.bookmark div { position: absolute; left: -10px; width: 24px; overflow: hidden; }
 .cover .bookmark {
   position: absolute;
   top: -1px;

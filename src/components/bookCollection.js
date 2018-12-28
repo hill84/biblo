@@ -1,15 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { collectionBooksRef } from '../config/firebase';
+import { booksRef, collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { booksPerRow /* , isTouchDevice */ } from '../config/shared';
+import { appName, booksPerRow /* , isTouchDevice */ } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 export default class BookCollection extends React.Component {
 	state = {
-    cid: this.props.cid || 'top',
+    cid: this.props.cid,
     bcid: this.props.bcid || 'bcid',
     booksPerRow: this.props.booksPerRow || 1,
     limit:  this.props.limit || (this.props.pagination ? booksPerRow() : 98),
@@ -18,7 +18,7 @@ export default class BookCollection extends React.Component {
     stacked: this.props.stacked || false,
     collection: [],
     count: 0,
-    desc: false,
+    desc: this.props.desc || false,
     loading: true,
     page: null,
     // lastVisible: null
@@ -28,6 +28,7 @@ export default class BookCollection extends React.Component {
     cid: stringType.isRequired,
     bcid: stringType,
     booksPerRow: numberType,
+    desc: boolType,
     limit: numberType,
     pagination: boolType,
     scrollable: boolType,
@@ -35,9 +36,10 @@ export default class BookCollection extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.cid !== state.cid) { return { cid: props.cid || 'top' }; }
+    if (props.cid !== state.cid) { return { cid: props.cid }; }
     if (props.bcid !== state.bcid) { return { bcid: props.bcid || 'bcid' }; }
     if (props.booksPerRow !== state.booksPerRow) { return { booksPerRow: props.booksPerRow || 1 }; }
+    if (props.desc !== state.desc) { return { desc: props.desc || false }; }
     if (props.limit !== state.limit) { return { limit: props.limit || (props.pagination ? booksPerRow() : 98) }; }
     if (props.pagination !== state.pagination) { return { pagination: props.pagination || false }; }
     if (props.scrollable !== state.scrollable) { return { scrollable: props.scrollable || false }; }
@@ -62,7 +64,7 @@ export default class BookCollection extends React.Component {
     const prev = direction === 'prev';
     // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
-    const baseRef = collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit);
+    const baseRef = cid === 'Top' ? booksRef.orderBy('readers_num', 'desc').limit(limit) : collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit);
     const paginatedRef = baseRef.startAfter(startAfter);
     const ref = direction ? paginatedRef : baseRef;
     
@@ -79,7 +81,6 @@ export default class BookCollection extends React.Component {
             page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
             // lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
           }));
-          // console.log(books);
           // console.log({'direction': direction, 'page': page});
         } else {
           this.setState({ 
@@ -93,14 +94,19 @@ export default class BookCollection extends React.Component {
       }).catch(error => console.warn(error));
     }
 
-    if (!direction) {
-      collectionBooksRef(cid).get().then(fullSnap => {
-        if (!fullSnap.empty) { 
-          this.setState({ count: fullSnap.docs.length });
-          fetcher();
-        }
-      }).catch(error => console.warn(error));
-    } else fetcher();
+    if (cid === 'Top') {
+      this.setState({ count: limit });
+      fetcher();
+    } else {
+      if (!direction) {
+        collectionBooksRef(cid).get().then(fullSnap => {
+          if (!fullSnap.empty) { 
+            this.setState({ count: fullSnap.docs.length });
+            fetcher();
+          }
+        }).catch(error => console.warn(error));
+      } else fetcher();
+    }
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -111,7 +117,7 @@ export default class BookCollection extends React.Component {
       <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, i) => 
           <Link key={book.bid} to={`/book/${book.bid}`}>
-            <Cover book={book} rating full={stacked} index={i} bcid={book.bcid} />
+            <Cover book={book} rating full={stacked} index={i} bcid={book.bcid} showReaders={cid === 'Top'} />
           </Link>
         )}
       </div>
@@ -126,7 +132,7 @@ export default class BookCollection extends React.Component {
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?
-                <button className="btn sm flat counter"><Link to={`/collection/${cid}`}>Vedi tutti</Link></button>
+                cid === 'Top' ? `I ${limit} libri più letti su ${appName}` : <button className="btn sm flat counter"><Link to={`/collection/${cid}`}>Vedi tutti</Link></button>
               :
                 <button 
                   type="button"
@@ -141,14 +147,14 @@ export default class BookCollection extends React.Component {
                   <button 
                     type="button"
                     disabled={page < 2 && 'disabled'} 
-                    className="btn sm flat prepend" 
+                    className="btn sm flat icon rounded" 
                     onClick={() => this.fetch('prev')} title="precedente">
                     {icon.chevronLeft()}
                   </button>
                   <button 
                     type="button"
                     disabled={page > (count / limit) && 'disabled'} 
-                    className="btn sm flat append" 
+                    className="btn sm flat icon rounded" 
                     onClick={() => this.fetch('next')} title="successivo">
                     {icon.chevronRight()}
                   </button>

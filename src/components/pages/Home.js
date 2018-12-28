@@ -65,11 +65,19 @@ const Home = () => (
       <Reviews />
 
       <div className="card dark card-fullwidth-sm">
+				<BookCollection cid="Premio Strega" pagination={false} limit={7} desc={true} scrollable />
+			</div>
+
+      <div className="card dark card-fullwidth-sm">
         <Authors pagination={false} limit={7} scrollable />
       </div>
 
       <div className="card dark card-fullwidth-sm">
 				<BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable />
+			</div>
+
+      <div className="card dark card-fullwidth-sm">
+				<BookCollection cid="Top" pagination={false} limit={7} scrollable />
 			</div>
 		</div>
 	</div>

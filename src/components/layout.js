@@ -38,11 +38,22 @@ export default class Layout extends React.Component {
     if (props.user !== state.user) { return { user: props.user }}
     return null;
   }
+  
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+    if (this.timer){
+      clearTimeout(this.timer);
+    }
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const { user } = this.state;
-    if(user !== prevState.user){
-      setTimeout(() => {
+    if(this.mounted && user !== prevState.user){
+      this.timer = setTimeout(() => {
         this.fetchNotes()
       }, 1000);
     }
@@ -112,6 +123,15 @@ export default class Layout extends React.Component {
             </Typography>
             {user ? 
               <React.Fragment>
+                {user.roles.admin && 
+                  <IconButton
+                    className="search-btn popIn reveal delay6"
+                    component={Link} 
+                    to="/new-book"
+                    aria-label="New book">
+                    {icon.plus()}
+                  </IconButton>
+                }
                 <IconButton
                   className="search-btn popIn reveal delay4"
                   component={Link} 
@@ -246,6 +266,6 @@ export default class Layout extends React.Component {
 
         <Footer />
       </div> 
-    )
+    );
   }
 }

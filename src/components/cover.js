@@ -1,6 +1,6 @@
 import React from 'react';
 import { boolType, coverType, numberType } from '../config/types';
-import { joinObj } from '../config/shared';
+import { abbrNum, joinObj } from '../config/shared';
 import Rating from './rating';
 
 export default class Cover extends React.Component {
@@ -16,6 +16,7 @@ export default class Cover extends React.Component {
     info: boolType,
     page: numberType,
     rating: boolType,
+    showReaders: boolType,
     full: boolType
   }
 
@@ -42,7 +43,7 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
-    const { animationDelay, bcid, full, index, info, page, rating } = this.props;
+    const { animationDelay, bcid, full, index, info, page, rating, showReaders } = this.props;
     const delay = page && page > 1 ? 0 : index / 20;
 
     if (!book) return null;
@@ -50,9 +51,10 @@ export default class Cover extends React.Component {
 		return (
       <div className="book"> 
         <div className="cover" title={book.title} style={{animationDelay: (animationDelay !== false) ? `${delay}s` : '', backgroundImage: cover ? `url(${cover})` : null}}>
-          {bcid && bcid > 0 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
+          {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
           {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
           {book.review && book.review.text && <div className="cover-review">Recensione</div>}
+          {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)}</div> : ''}
           <div className="overlay" />
           {/* (book.covers && book.covers.length > 1) && 
             <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 

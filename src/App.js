@@ -67,13 +67,13 @@ export default class App extends React.Component {
                     <Route path="/login" component={Login} />
                     <Route path="/password-reset" component={PasswordResetForm} />
                     <Route path="/signup" component={Signup} />
-                    <Route path="/collection/:cid" component={Collection} />
                     <Route path="/about" component={AboutPage} />
                     <Route path="/cookie" component={CookiePage} />
                     <Route path="/donations" component={DonationsPage} />
                     <Route path="/help" component={HelpPage} />
                     <Route path="/privacy" component={PrivacyPage} />
                     <Route path="/terms" component={TermsPage} />
+                    <RouteWithProps path="/collection/:cid" component={Collection} user={user} />
                     <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
                     <RouteWithProps path="/authors" component={AuthorsPage} user={user} />
                     <RouteWithProps path="/genre/:gid" component={Genre} user={user} />

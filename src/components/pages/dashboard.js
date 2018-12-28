@@ -337,7 +337,7 @@ export default class Dashboard extends React.Component {
                           type="button"
 													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
 													// disabled={!isAuthenticated()}
-													onClick={e => this.onFollowUser(e)}>
+													onClick={this.onFollowUser}>
 													{follow ? 
 														<React.Fragment>
 															<span className="hide-on-hover">{icon.check()} Segui</span>
