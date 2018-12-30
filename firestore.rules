@@ -7,6 +7,21 @@ service cloud.firestore {
       allow create: if isValidUser();
       allow update: if (isEditor() && isAdmin()) || (isValidUser() && isOwner(uid));
     	allow delete: if (isEditor() && isAdmin()) || isOwner(uid);
+
+      match /challenges/{cid} {
+        allow read;
+        allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+      }
+
+      match /collectiones/{cid} {
+        allow read;
+        allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+      }
+
+      match /authors/{aid} {
+        allow read;
+        allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+      }
     }
 
     match /notifications/{uid} {
@@ -101,11 +116,6 @@ service cloud.firestore {
     match /challenges/{cid} {
     	allow read;
       allow write: if isEditor();
-    }
-
-    match /userChallenges/{uid} {
-    	allow read;
-      allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
     }
     
     match /admin/{document=**} {

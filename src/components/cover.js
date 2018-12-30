@@ -2,6 +2,7 @@ import React from 'react';
 import { boolType, coverType, numberType } from '../config/types';
 import { abbrNum, joinObj } from '../config/shared';
 import Rating from './rating';
+import { icon } from '../config/icons';
 
 export default class Cover extends React.Component {
   state = {
@@ -54,7 +55,7 @@ export default class Cover extends React.Component {
           {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
           {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
           {book.review && book.review.text && <div className="cover-review">Recensione</div>}
-          {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)}</div> : ''}
+          {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account()}</div> : ''}
           <div className="overlay" />
           {/* (book.covers && book.covers.length > 1) && 
             <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 

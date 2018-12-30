@@ -4,7 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { userBooksRef } from '../config/firebase';
+import { userBooksRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { booksPerRow } from '../config/shared';
 import { numberType, stringType } from '../config/types';
@@ -92,6 +92,11 @@ export default class Shelf extends React.Component {
       shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
           this.setState({ count: fullSnap.docs.length });
+          const fullBooks = [];
+          fullSnap.forEach(fullUserBook => fullBooks.push({ 
+            readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
+          }));
+          
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
           ref.limit(limit).onSnapshot(snap => {
@@ -104,7 +109,35 @@ export default class Shelf extends React.Component {
                 items,
                 loading: false,
                 page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
-              }));
+              }), () => {
+                // GET CHALLENGES
+                luid === uid && userRef(luid).collection('challenges').get().then(snap => {
+                  if (!snap.empty) {
+                    const challenges = [];
+                    snap.forEach(doc => challenges.push(doc.data()));
+                    // UPDATE READING STATE OF CHALLENGE BOOKS 
+                    const cid = challenges[0].cid;
+                    const cBooks = { ...challenges[0].books };
+                    Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
+                      fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
+                        cBooks[item.bid] = true;
+                      });
+                    });
+                    Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
+                      fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
+                        cBooks[item.bid] = false;
+                      });
+                    });
+                    if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
+                      console.warn(cBooks);
+                      userRef(luid).collection('challenges').doc(cid).update({ 
+                        books: cBooks, 
+                        completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Number((new Date()).getTime()) : 0
+                      }).then().catch(error => console.warn(error));
+                    } // else console.log('No challenge books to update');
+                  }
+                }).catch(error => console.warn(error));
+              });
             } else this.setState(empty);
           });
         } else this.setState(empty);

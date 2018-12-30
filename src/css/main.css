@@ -1453,6 +1453,7 @@ html.light .hero * { text-shadow: none; }
 .cover .title { color: #fff; font-size: 142%; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
 .cover .publisher { position: absolute; width: auto; left: var(--pad); right: var(--pad); bottom: var(--pad); }
+.cover svg { --iconSize: 12px; }
 .cover .cover-review, .cover .readers-num { 
   position: absolute;
   bottom: -6px;
@@ -1471,7 +1472,8 @@ html.light .hero * { text-shadow: none; }
 }
 .cover .readers-num { 
   background-color: var(--canvasLighterClr); 
-  color: var(--mainTextClr); 
+  color: var(--mainTextClr);
+  font-weight: 200; 
 }
 .book:hover .readers-num { opacity: 0; }
 .book .info { text-align: center; font-size: .8rem; width: var(--bookWidth); }
@@ -1731,7 +1733,6 @@ html.light .hero * { text-shadow: none; }
   justify-content: center;
   flex-direction: column;
 }
-.progress-books { font-size: .75rem; color: var(--lightTextClr); }
 
 /* STEPPER */
 .stepper-container.form-control {

@@ -6,11 +6,11 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
-import { followersRef, followingsRef, isAuthenticated, userChallengesRef, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../config/shared';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { challengesType, funcType, userType } from '../../config/types';
+import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 import Shelf from '../shelf';
@@ -21,6 +21,7 @@ export default class Dashboard extends React.Component {
 		luid: this.props.user && this.props.user.uid,
 		uid: this.props.match.params.uid,
     user: null,
+    challenges: [],
 		followers: {},
 		followings: {},
     follow: false,
@@ -32,28 +33,8 @@ export default class Dashboard extends React.Component {
 	}
 
 	static propTypes = {
-    challenges: challengesType,
     openSnackbar: funcType.isRequired,
     user: userType
-  }
-
-  static defaultProps = {
-    challenges: [{
-      cid: '',
-      title: 'Challenge title',
-      books: {
-        '1': true,
-        '2': true,
-        '3': true,
-        '4': true,
-        '5': false,
-        '6': false,
-        '7': false,
-        '8': false,
-        '9': false,
-        '10': false
-      }
-    }]
   }
 
 	static getDerivedStateFromProps(props, state) {
@@ -243,26 +224,29 @@ export default class Dashboard extends React.Component {
 
   fetchUserChallenges = () => {
     const { luid } = this.state;
-		if (luid && isAuthenticated()) {
-      userChallengesRef(luid).get().then(snap => {
+		if (luid) {
+      userRef(luid).collection('challenges').onSnapshot(snap => {
         if (!snap.empty) {
-          console.log(snap);
-          this.setState({ challenges: snap.data() });
-        } else console.log(`No challenges for user ${luid}`);
+          const challenges = [];
+          snap.forEach(doc => challenges.push(doc.data()));
+          this.setState({ challenges });
+        } // else console.log(`No challenges for user ${luid}`);
       });
     }
   }
 
 	render() {
-    const { follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
-    const { challenges, history, location } = this.props;
-    const challengeBooks = challenges[challenges.length - 1].books;
-    const challengeBooks_num = Object.keys(challengeBooks).length;
-    const challengeReadBooks_num = Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length;
-    const challengeProgress = 100 / challengeBooks_num * challengeReadBooks_num;
+    const { challenges, follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
+    const { history, location } = this.props;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 		if (!user) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
+
+    const challengeBooks = challenges && challenges.length && challenges.filter(challenge => challenge.completed_num === 0)[0].books;
+    const challengeBooks_num = challengeBooks && Object.keys(challengeBooks).length;
+    const challengeReadBooks_num = challengeBooks && Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length;
+    const challengeProgress = challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0;
+    const challengeCompleted = challengeProgress === 100;
 
 		const usersList = obj => Object.keys(obj).map(f => (
       <div key={f} className="avatar-row">
@@ -355,37 +339,18 @@ export default class Dashboard extends React.Component {
 						</div>
 					</div>
           {isOwner && 
-            <div className="col-md-auto col-12 hide-md flex">
+            <div className="col-lg-2 col-md-3 col-12 hide-md flex">
               <div className="card dark pad-v-sm text-center flex align-items-center">
                 <div className="container">
-                  {progress < 100 ?
-                    <React.Fragment> 
-                      <div className="progress-container profile-progress">
-                        <div className="progress-base" />
-                        <CircularProgress variant="static" value={progress} size={60} max={100} thickness={3} />
-                        <div className="progress-value">{progress}%</div>
-                      </div>
-                      <div className="info-row"><Link to="/profile" className="btn primary centered">Completa profilo</Link></div>
-                    </React.Fragment> 
-                  : challenges && challengeProgress < 100 ? 
-                    <React.Fragment> 
-                      <div className="progress-container challenge-progress">
-                        <div className="progress-base" />
-                        <CircularProgress variant="static" value={challengeProgress} size={60} max={100} thickness={3} />
-                        <div className="progress-value">{challengeProgress}%</div>
-                      </div>
-                      <div className="info-row">
-                        <div className="progress-books counter last">{`${challengeReadBooks_num} di ${challengeBooks_num} libri`}</div> 
-                        <Link to="/challenge" className="btn sm primary centered">Vedi sfida</Link>
-                      </div>
-                    </React.Fragment> 
-                  : 
-                    <React.Fragment>
-                      <div className="info-row circle-icon">{icon.reader()}</div>
-                      <div className="info-row pad-v-xs">Mettiti alla prova</div>
-                      <div className="info-row"><Link to="/challenges" className="btn sm primary centered">Scegli una sfida</Link></div>
-                    </React.Fragment> 
-                  }
+                  <div className="progress-container">
+                    <div className="progress-base" />
+                    <CircularProgress variant="static" value={progress < 100 ? progress : !challengeCompleted ? challengeProgress : 0} size={60} max={100} thickness={3} />
+                    <div className="progress-value">{progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader()}</div>
+                  </div>
+                  <div className="info-row">
+                    <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Scegli sfida'}</div>
+                    <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary centered" style={{marginBottom: 0, display: 'inline-block'}}>{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
+                  </div>
                 </div>
               </div>
             </div>
