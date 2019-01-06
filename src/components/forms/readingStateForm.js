@@ -48,25 +48,34 @@ export default class readingStateForm extends React.Component {
     return null;
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const { progress_num, state_num, steps } = this.state;
-
-    if (state_num !== prevState.state_num) {
-      switch (state_num) {
-        case 1: this.setState({ progress_num: 0 }); break;
-        case 2: this.setState({ progress_num: (100 / steps) }); break;
-        case 3: 
-        case 4: 
-        case 5: this.setState({ progress_num: 100 }); break;
-        default: break;
+    if (this._isMounted) {
+      if (state_num !== prevState.state_num) {
+        switch (state_num) {
+          case 1: this.setState({ progress_num: 0 }); break;
+          case 2: this.setState({ progress_num: (100 / steps) }); break;
+          case 3: 
+          case 4: 
+          case 5: this.setState({ progress_num: 100 }); break;
+          default: break;
+        }
+        this.setState({ changes: true });
       }
-      this.setState({ changes: true });
-    }
-    if (progress_num !== prevState.progress_num) {
-      if (progress_num === 0) this.setState({ state_num: 1 });
-      if (progress_num === (100 / steps)) this.setState({ state_num: 2 });
-      if (progress_num === 100) this.setState({ state_num: 3 });
-      this.setState({ changes: true });
+      if (progress_num !== prevState.progress_num) {
+        if (progress_num === 0) this.setState({ state_num: 1 });
+        if (progress_num === (100 / steps)) this.setState({ state_num: 2 });
+        if (progress_num === 100) this.setState({ state_num: 3 });
+        this.setState({ changes: true });
+      }
     }
   }
 

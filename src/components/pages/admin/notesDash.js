@@ -52,7 +52,8 @@ export default class NotesDash extends React.Component {
   }
 
   componentWillUnmount() {
-    this.unsubNotes && this.unsubNotes();
+    this.unsubNotesFetch && this.unsubNotesFetch();
+    this.unsubNotificationsFetch && this.unsubNotificationsFetch();
   }
     
   fetch = direction => {
@@ -67,7 +68,7 @@ export default class NotesDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      this.unsubNotifications = ref.onSnapshot(fullSnap => {
+      this.unsubNotificationsFetch = ref.onSnapshot(fullSnap => {
         if (!fullSnap.empty) {
           const items = [];
           fullSnap.forEach(item => items.push({ id: item.id, count: item.data().count }));
@@ -85,9 +86,13 @@ export default class NotesDash extends React.Component {
     if (!direction) {
       notificationsRef.get().then(fullSnap => {
         if (!fullSnap.empty) { 
-          this.setState({ count: fullSnap.size });
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.size });
+          }
           fetcher();
-        } else this.setState({ count: 0, page: 1 });
+        } else if (this._isMounted) {
+          this.setState({ count: 0, page: 1 });
+        }
       }).catch(error => console.warn(error));
     } else fetcher();
   }
@@ -115,7 +120,7 @@ export default class NotesDash extends React.Component {
   onToggleExpansion = id => {
     this.setState({ selectedId: id });
     const selectedObj = this.state.items.findIndex(obj => obj.id === id);
-    this.unsubNotes = notesRef(id).onSnapshot(snap => {
+    this.unsubNotesFetch = notesRef(id).onSnapshot(snap => {
       if (!snap.empty) {
         const notes = [];
         snap.forEach(note => notes.push(note.data()));

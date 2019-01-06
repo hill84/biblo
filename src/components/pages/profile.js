@@ -30,7 +30,7 @@ export default class Profile extends React.Component {
   }
 
 	componentDidMount() {
-		userRef(authid).onSnapshot(snap => {
+		this.unsubUserFetch = userRef(authid).onSnapshot(snap => {
 			if (snap.exists) {
 				this.setState({ 
 					user: snap.data(),
@@ -41,7 +41,11 @@ export default class Profile extends React.Component {
 				this.setState({ loading: false });
 			}
 		});
-	}
+  }
+  
+  componentWillUnmount() {
+    this.unsubUserFetch && this.unsubUserFetch();
+  }
 
 	onChange = e => {
 		this.setState({ 

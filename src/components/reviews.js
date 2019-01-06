@@ -40,6 +40,11 @@ export default class Reviews extends React.Component {
       }
     });
   }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.reviewersFetch && this.reviewersFetch();
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (this._isMounted) {
@@ -50,15 +55,11 @@ export default class Reviews extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   fetch = bid => { 
     const { desc, limit } = this.state;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
   
-    ref.onSnapshot(snap => {
+    this.reviewersFetch = ref.onSnapshot(snap => {
       if (!snap.empty) {
         this.setState({ count: snap.docs.length });
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {

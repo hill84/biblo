@@ -28,7 +28,12 @@ export default class RandomQuote extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetch();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
   
   fetch = () => {
@@ -38,28 +43,30 @@ export default class RandomQuote extends React.Component {
 
     ref.get().then(snap => {
       if (!snap.empty) {
-        // console.log(snap);
         const count = snap.size;
         const randomIndex = Math.floor(Math.random() * count);
         const quote = snap.docs[randomIndex].data();
-
-        this.setState({
-          author: quote.author,
-          bid: quote.bid,
-          bookTitle: quote.bookTitle,
-          coverURL: quote.coverURL,
-          quote: quote.quote,
-          loading: false
-        });
+        if (this._isMounted) {
+          this.setState({
+            author: quote.author,
+            bid: quote.bid,
+            bookTitle: quote.bookTitle,
+            coverURL: quote.coverURL,
+            quote: quote.quote,
+            loading: false
+          });
+        }
       } else {
-        this.setState({
-          author: '',
-          bid: '',
-          bookTitle: '',
-          coverURL: '',
-          quote: '',
-          loading: false
-        });
+        if (this._isMounted) {
+          this.setState({
+            author: '',
+            bid: '',
+            bookTitle: '',
+            coverURL: '',
+            quote: '',
+            loading: false
+          });
+        }
       }
     }).catch(error => console.warn(error));
   }

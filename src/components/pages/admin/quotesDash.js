@@ -52,7 +52,7 @@ export default class QuotesDash extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
-    this.unsubQuotes && this.unsubQuotes();
+    this.unsubQuotesFetch && this.unsubQuotesFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -76,7 +76,7 @@ export default class QuotesDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      this.unsubQuotes = ref.onSnapshot(snap => {
+      this.unsubQuotesFetch = ref.onSnapshot(snap => {
         // console.log(snap);
         if (!snap.empty) {
           const items = [];
@@ -95,9 +95,13 @@ export default class QuotesDash extends React.Component {
     if (!direction) {
       quotesRef.get().then(fullSnap => {
         if (!fullSnap.empty) { 
-          this.setState({ count: fullSnap.docs.length });
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.docs.length });
+          }
           fetcher();
-        } else this.setState({ count: 0, page: 1 });
+        } else if (this._isMounted) {
+          this.setState({ count: 0, page: 1 });
+        }
       }).catch(error => console.warn(error));
     } else fetcher();
   }

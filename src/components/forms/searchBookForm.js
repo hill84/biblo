@@ -42,7 +42,9 @@ export default class SearchBookForm extends React.Component {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timer);
+    this.timer && clearTimeout(this.timer);
+    this.unsubBooksFetch && this.unsubBooksFetch();
+    this.unsubQuery && this.unsubQuery();
   }
 
   onClickSearch = option => this.setState({ searchBy: option, searchAnchorEl: null });
@@ -183,7 +185,7 @@ export default class SearchBookForm extends React.Component {
 
     if (!value) return;
     
-    clearTimeout(this.timer);
+    this.timer && clearTimeout(this.timer);
 
     this.timer = setTimeout(() => {
       this.setState({ loading: true });
@@ -196,7 +198,7 @@ export default class SearchBookForm extends React.Component {
 
         // SEARCH FOR EXISTING BOOK
         if (searchBy.key === 'ISBN_13') {
-          booksRef.where(searchBy.where, '==', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
+          this.unsubBooksFetch = booksRef.where(searchBy.where, '==', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
             // console.log({ snap });
             if (!snap.empty) {
               /* const options = [];
@@ -283,7 +285,7 @@ export default class SearchBookForm extends React.Component {
             query = booksRef.where(searchBy.where, '>=', searchTextType); break;
         };
 
-        query.limit(maxSearchResults).onSnapshot(snap => {
+        this.unsubQuery = query.limit(maxSearchResults).onSnapshot(snap => {
           const options = [];
           if (!snap.empty) {
             // console.log(snap);

@@ -48,13 +48,20 @@ export default class BookCollection extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetch();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { bcid, cid, desc } = this.state;
-    if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
-      this.fetch();
+    if (this._isMounted) {
+      if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
+        this.fetch();
+      }
     }
   }
   
@@ -75,21 +82,25 @@ export default class BookCollection extends React.Component {
         if (!snap.empty) {
           const books = [];
           snap.forEach(book => books.push(book.data()));
-          this.setState(prevState => ({ 
-            collection: books,
-            loading: false,
-            page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
-            // lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
-          }));
+          if (this._isMounted) {
+            this.setState(prevState => ({ 
+              collection: books,
+              loading: false,
+              page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
+              // lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
+            }));
+          }
           // console.log({'direction': direction, 'page': page});
         } else {
-          this.setState({ 
-            count: 0,
-            collection: [],
-            loading: false,
-            page: null,
-            // lastVisible: null
-          });
+          if (this._isMounted) {
+            this.setState({ 
+              count: 0,
+              collection: [],
+              loading: false,
+              page: null,
+              // lastVisible: null
+            });
+          }
         }
       }).catch(error => console.warn(error));
     }
@@ -101,7 +112,9 @@ export default class BookCollection extends React.Component {
       if (!direction) {
         collectionBooksRef(cid).get().then(fullSnap => {
           if (!fullSnap.empty) { 
-            this.setState({ count: fullSnap.docs.length });
+            if (this._isMounted) {
+              this.setState({ count: fullSnap.docs.length });
+            }
             fetcher();
           }
         }).catch(error => console.warn(error));

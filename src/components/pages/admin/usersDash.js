@@ -56,7 +56,7 @@ export default class UsersDash extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
-    this.unsubUsers && this.unsubUsers();
+    this.unsubUsersFetch && this.unsubUsersFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -79,11 +79,13 @@ export default class UsersDash extends React.Component {
     usersRef.get().then(fullSnap => {
       // console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length });
+        if (this._isMounted) {
+          this.setState({ count: fullSnap.docs.length });
+        }
         const lastVisible = fullSnap.docs[startAt];
         // console.log({lastVisible, limit, direction, page});
         const ref = direction ? uRef.startAt(lastVisible) : uRef;
-        this.unsubUsers = ref.onSnapshot(snap => {
+        this.unsubUsersFetch = ref.onSnapshot(snap => {
           // console.log(snap);
           if (!snap.empty) {
             const items = [];
@@ -95,7 +97,9 @@ export default class UsersDash extends React.Component {
             }));
           } else this.setState({ items: null, loading: false });
         });
-      } else this.setState({ count: 0 });
+      } else if (this._isMounted) {
+        this.setState({ count: 0 });
+      }
     }).catch(error => console.warn(error));
   }
 

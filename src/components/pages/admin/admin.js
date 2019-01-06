@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
+import { screenSize } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
 /* import CollectionForm from '../../forms/collectionForm'; */
@@ -64,7 +65,7 @@ export default class Admin extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
-    this.unsubUser && this.unsubUser();
+    this.unsubUserFetch && this.unsubUserFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -78,7 +79,7 @@ export default class Admin extends React.Component {
   fetchUser = () => {
 		const { aid } = this.state;
     // console.log('fetching user');
-    this.unsubUser = userRef(aid).onSnapshot(snap => {
+    this.unsubUserFetch = userRef(aid).onSnapshot(snap => {
       if (snap.exists) {
         this.setState({
           isAdmin: snap.data().roles.admin,
@@ -132,8 +133,7 @@ export default class Admin extends React.Component {
           <Tabs 
             value={tabSelected}
             onChange={this.onTabSelect}
-            fullWidth
-            scrollable
+            variant={screenSize() === 'sm' ? 'scrollable' : 'fullWidth'}
             scrollButtons="auto">
             <Tab label={<React.Fragment><span className="show-md">{icon.account()}</span><span className="hide-md">Utenti</span></React.Fragment>} />
             <Tab label={<React.Fragment><span className="show-md">{icon.book()}</span><span className="hide-md">Libri</span></React.Fragment>} />

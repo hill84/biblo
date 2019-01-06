@@ -30,21 +30,29 @@ export default class Collection extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetch();
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubCollectionFollowersFetch && this.unsubCollectionFollowersFetch();
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.cid !== prevState.cid || this.props.user !== prevProps.user) {
-      this.fetch();
+    if (this._isMounted) {
+      if (this.state.cid !== prevState.cid || this.props.user !== prevProps.user) {
+        this.fetch();
+      }
     }
-	}
+  }
 
   fetch = () => {
     const { cid } = this.state;
     const { user } = this.props;
     collectionRef(cid).get().then(snap => {
       if (!snap.empty) {
-        collectionFollowersRef(cid).onSnapshot(snap => {
+        this.unsubCollectionFollowersFetch = collectionFollowersRef(cid).onSnapshot(snap => {
           if (!snap.empty) {
             const followers = [];
             snap.forEach(follower => followers.push(follower.data()));
@@ -58,12 +66,14 @@ export default class Collection extends React.Component {
           loading: false
         });
       } else {
-        this.setState({ 
-          collection: null,
-          followers: null,
-          follow: false,
-          loading: false 
-        });
+        if (this._isMounted) {
+          this.setState({ 
+            collection: null,
+            followers: null,
+            follow: false,
+            loading: false 
+          });
+        }
       }
     }).catch(error => console.warn(error));
 
@@ -71,9 +81,13 @@ export default class Collection extends React.Component {
       if (!snap.empty) {
         const collections = [];
         snap.forEach(collection => collection.id !== (cid) && collections.push(collection.data()));
-        this.setState({ collections });
+        if (this._isMounted) {
+          this.setState({ collections });
+        }
       } else {
-        this.setState({ collections: null });
+        if (this._isMounted) {
+          this.setState({ collections: null });
+        }
       }
     }).catch(error => console.warn(error));
   }

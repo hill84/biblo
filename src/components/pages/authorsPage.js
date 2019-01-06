@@ -31,12 +31,14 @@ export default class AuthorsPage extends React.Component {
       if (!snap.empty) {
         const items = [];
         snap.forEach(item => items.push(item.data()));
-        this.setState({ 
-          count: snap.docs.length,
-          items,
-          loading: false
-        });
-      } else {
+        if (this._isMounted) {
+          this.setState({ 
+            count: snap.docs.length,
+            items,
+            loading: false
+          });
+        }
+      } else if (this._isMounted) {
         this.setState({ 
           count: 0,
           items: null,

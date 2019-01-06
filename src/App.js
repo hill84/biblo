@@ -40,7 +40,7 @@ export default class App extends React.Component {
 		auth.onAuthStateChanged(user => {
 			if (user) {
 				window.localStorage.setItem(storageKey_uid, user.uid);
-				userRef(user.uid).onSnapshot(snap => {
+				this.unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
 					if (snap.exists) {
 						this.setState({ user: snap.data() });
 					} else console.warn(`User not found in database`);
@@ -50,7 +50,11 @@ export default class App extends React.Component {
 				this.setState({ user: null });
 			}
 		});
-	}
+  }
+  
+  componentWillUnmount() {
+    this.unsubUserFetch && this.unsubUserFetch();
+  }
 
 	render() {
 		const { user } = this.state;

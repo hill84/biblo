@@ -28,14 +28,21 @@ export default class Genre extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetch();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { desc, limit, orderByIndex } = this.state;
     const { gid } = this.props.match.params;
-    if (gid !== prevProps.match.params.gid || desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
-      this.fetch();
+    if (this._isMounted) {
+      if (gid !== prevProps.match.params.gid || desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
+        this.fetch();
+      }
     }
   }
 
@@ -47,19 +54,27 @@ export default class Genre extends React.Component {
     if (gid) {
       ref.get().then(fullSnap => {
         if (!fullSnap.empty) {
-          this.setState({ count: fullSnap.docs.length });
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.docs.length });
+          }
           ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
             if (!snap.empty) {
               const items = [];
               snap.forEach(item => items.push(item.data()));
               // console.log(items);
-              this.setState({ items, lastVisible: snap.docs[snap.docs.length-1], loading: false, page: 1 });
+              if (this._isMounted) {
+                this.setState({ items, lastVisible: snap.docs[snap.docs.length-1], loading: false, page: 1 });
+              }
             } else {
-              this.setState({ items: null, count: 0, loading: false, page: 1 });
+              if (this._isMounted) {
+                this.setState({ items: null, count: 0, loading: false, page: 1 });
+              }
             }
           }).catch(error => console.warn(error));
         } else {
-          this.setState({ items: null, count: 0, loading: false, page: 1 });
+          if (this._isMounted) {
+            this.setState({ items: null, count: 0, loading: false, page: 1 });
+          }
         }
       }).catch(error => console.warn(error));
     } else console.warn(`No gid`);
@@ -75,19 +90,23 @@ export default class Genre extends React.Component {
       ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
         if (!nextSnap.empty) {
           nextSnap.forEach(item => items.push(item.data()));
-          this.setState(prevState => ({ 
-            items,
-            loading: false,
-            page: (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1,
-            lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
-          }));
+          if (this._isMounted) {
+            this.setState(prevState => ({ 
+              items,
+              loading: false,
+              page: (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1,
+              lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
+            }));
+          }
         } else {
-          this.setState({ 
-            items: null,
-            loading: false,
-            page: null,
-            lastVisible: null
-          });
+          if (this._isMounted) {
+            this.setState({ 
+              items: null,
+              loading: false,
+              page: null,
+              lastVisible: null
+            });
+          }
         }
       }).catch(error => console.warn(error));
     } else console.warn(`No gid`);

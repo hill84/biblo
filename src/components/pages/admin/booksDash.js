@@ -47,6 +47,11 @@ export default class BooksDash extends React.Component {
     this._isMounted = true;
     this.fetch();
   }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubBooksFetch && this.unsubBooksFetch();
+  }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
@@ -57,10 +62,6 @@ export default class BooksDash extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubBooks && this.unsubBooks();
-  }
     
   fetch = direction => {
     const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
@@ -72,10 +73,12 @@ export default class BooksDash extends React.Component {
     
     booksRef.get().then(fullSnap => {
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length });
+        if (this._isMounted) {
+          this.setState({ count: fullSnap.docs.length });
+        }
         // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? bRef.startAt(lastVisible || fullSnap.docs[startAt]) : bRef;
-        this.unsubBooks = ref.onSnapshot(snap => {
+        this.unsubBooksFetch = ref.onSnapshot(snap => {
           // console.log(snap);
           if (!snap.empty) {
             const items = [];
@@ -88,7 +91,11 @@ export default class BooksDash extends React.Component {
             }));
           } else this.setState({ items: null, lastVisible: null, loading: false });
         });
-      } else this.setState({ count: 0 });
+      } else {
+        if (this._isMounted) {
+          this.setState({ count: 0 });
+        }
+      }
     }).catch(error => console.warn(error));
   }
 

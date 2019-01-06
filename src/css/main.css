@@ -1453,12 +1453,14 @@ html.light .hero * { text-shadow: none; }
 .cover .title { color: #fff; font-size: 142%; font-weight: 400; }
 .cover .author { font-size: 110%; font-weight: 500; }
 .cover .publisher { position: absolute; width: auto; left: var(--pad); right: var(--pad); bottom: var(--pad); }
-.cover svg { --iconSize: 12px; }
+.cover svg { --iconSize: 10px; margin-left: 3px; }
 .cover .cover-review, .cover .readers-num { 
   position: absolute;
   bottom: -6px;
   right: -8px;
   display: inline-block; 
+  display: flex;
+  align-items: center;
   overflow: hidden;
   background-color: rgba(255, 255, 255, .98);
   color: var(--textClr);
@@ -1474,8 +1476,9 @@ html.light .hero * { text-shadow: none; }
   background-color: var(--canvasLighterClr); 
   color: var(--mainTextClr);
   font-weight: 200; 
+  will-change: opacity, transform;
 }
-.book:hover .readers-num { opacity: 0; }
+.book:hover .readers-num { opacity: 0; transform: translateY(5px); }
 .book .info { text-align: center; font-size: .8rem; width: var(--bookWidth); }
 .book .info .title, .book .info .author { display: block; margin: auto; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .book .info .title { margin-top: 8px; font-weight: 400; color: var(--mainTextClr); transition: color .3s ease-in-out; }

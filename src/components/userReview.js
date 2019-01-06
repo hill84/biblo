@@ -62,20 +62,28 @@ export default class UserReview extends React.Component {
     return null;
   }
 
-  componentDidMount(prevState) {
+  componentDidMount() {
+    this._isMounted = true;
     this.fetchUserReview();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubReviewerFetch && this.unsubReviewerFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { bid, changes, isEditing, user } = this.state;
-    if (bid !== prevState.bid || user !== prevState.user || (changes && !isEditing && isEditing !== prevState.isEditing)) {
-      this.fetchUserReview();
+    if (this._isMounted) {
+      if (bid !== prevState.bid || user !== prevState.user || (changes && !isEditing && isEditing !== prevState.isEditing)) {
+        this.fetchUserReview();
+      }
     }
   }
 
   fetchUserReview = () => {
     // console.log('Fetching user review');
-    reviewerRef(this.state.bid, authid).onSnapshot(snap => {
+    this.unsubReviewerFetch = reviewerRef(this.state.bid, authid).onSnapshot(snap => {
       this.setState({ loading: true });
       if (snap.exists) {
         // console.log(snap.data());

@@ -18,9 +18,19 @@ export default class MinifiableText extends React.Component {
     return null;
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.text && this.state.text.length !== prevState.text.length){
-      this.minifyText();
+    if (this._isMounted) {
+      if (this.state.text && this.state.text.length !== prevState.text.length){
+        this.minifyText();
+      }
     }
   }
 

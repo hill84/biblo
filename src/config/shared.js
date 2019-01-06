@@ -100,14 +100,13 @@ export const timeSince = date => {
   return 'poco fa'; // `${Math.floor(seconds)} secondi fa`;
 };
 
+export const screenSize = () => {
+  const w = window.innerWidth; // document.documentElement.clientWidth;
+  return w <= 359 ? 'xs' : w <= 768 ? 'sm' : w <= 992 ? 'md' : w <= 1200 ? 'lg' : 'xl';
+}
+
 export const booksPerRow = () => {
   const w = window.innerWidth; // document.documentElement.clientWidth;
-  /* let b = 7;
-  if (w <= 359) { b = 2; } else 
-  if (w <= 768) { b = 3; } else 
-  if (w <= 992) { b = 4; } else 
-  if (w <= 1200) { b = 6; }
-  return b; */
   return w <= 359 ? 2 : w <= 768 ? 3 : w <= 992 ? 4 : w <= 1200 ? 6 : 7;
 }
 

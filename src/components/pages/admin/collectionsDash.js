@@ -47,7 +47,8 @@ export default class collectionsDash extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
-    this.unsubCollections && this.unsubCollections();
+    this.timer && clearTimeout(this.timer);
+    this.unsubCollectionsFetch && this.unsubCollectionsFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -70,11 +71,13 @@ export default class collectionsDash extends React.Component {
     collectionsRef.get().then(fullSnap => {
       // console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length });
+        if (this._isMounted) {
+          this.setState({ count: fullSnap.docs.length });
+        }
         // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const ref = direction ? cRef.startAt(lastVisible || fullSnap.docs[startAt]) : cRef;
 
-        this.unsubCollections = ref.onSnapshot(snap => {
+        this.unsubCollectionsFetch = ref.onSnapshot(snap => {
           if (!snap.empty) {
             const items = [];
             snap.forEach(item => {
@@ -86,7 +89,10 @@ export default class collectionsDash extends React.Component {
               });
               items.push({ ...item.data(), title: item.id, books });
             });
-            setTimeout(() => {
+            
+            this.timer && clearTimeout(this.timer);
+
+            this.timer = setTimeout(() => {
               this.setState(prevState => ({
                 items,
                 lastVisible: snap.docs[startAt],
@@ -96,7 +102,9 @@ export default class collectionsDash extends React.Component {
             }, 1000);
           } else this.setState({ items: null, lastVisible: null, loading: false });
         });
-      } else this.setState({ count: 0 });
+      } else if (this._isMounted) {
+        this.setState({ count: 0 });
+      }
     }).catch(error => console.warn(error));
   }
 

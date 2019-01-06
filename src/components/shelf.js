@@ -61,6 +61,8 @@ export default class Shelf extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
+    this.unsubUserBooksFullFetch && this.unsubUserBooksFullFetch();
+    this.unsubUserBooksFetch && this.unsubUserBooksFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -89,7 +91,7 @@ export default class Shelf extends React.Component {
         page: 1
       };
   
-      shelfRef.onSnapshot(fullSnap => {
+      this.unsubUserBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
           this.setState({ count: fullSnap.docs.length });
           const fullBooks = [];
@@ -99,7 +101,7 @@ export default class Shelf extends React.Component {
           
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
-          ref.limit(limit).onSnapshot(snap => {
+          this.unsubUserBooksFetch = ref.limit(limit).onSnapshot(snap => {
             this.setState({ loading: true });
             if (!snap.empty) {
               const items = [];

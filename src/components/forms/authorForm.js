@@ -35,11 +35,18 @@ export default class AuthorForm extends React.Component {
 
   componentDidMount() {
     this.fetch();
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
   
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.id !== prevProps.id) {
-      this.fetch();
+    if (this._isMounted) {
+      if (this.props.id !== prevProps.id) {
+        this.fetch();
+      }
     }
   }
 

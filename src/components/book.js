@@ -61,7 +61,7 @@ export default class Book extends React.Component {
     if (this._isMounted) {
       if(this.props.bid !== prevProps.bid){
         this.setState({ loading: true });
-        bookRef(this.props.bid).onSnapshot(snap => {
+        this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
           if (snap.exists) {
             // console.log(snap.data());
             this.setState({
@@ -98,7 +98,7 @@ export default class Book extends React.Component {
     this._isMounted = true;
     if (bid) {
       this.setState({ loading: true });
-      bookRef(bid).onSnapshot(snap => {
+      this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
         if (snap.exists) {
           // console.log(snap.data());
           this.setState({
@@ -124,11 +124,14 @@ export default class Book extends React.Component {
 
   componentWillUnmount () {
     this._isMounted = false;
+    this.unsubBookFetch && this.unsubBookFetch();
+    this.unsubBookUpdate && this.unsubBookUpdate();
+    this.unsubUserBookFetch && this.unsubUserBookFetch();
   }
   
   fetchUserBook = bid => {
     if (isAuthenticated() && bid) {
-      userBookRef(authid, bid).onSnapshot(snap => {
+      this.unsubUserBookFetch = userBookRef(authid, bid).onSnapshot(snap => {
         if (snap.exists) {
           this.setState({ userBook: snap.data() });
           // console.log(snap.data());

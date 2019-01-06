@@ -53,7 +53,7 @@ export default class AuthorsDash extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
-    this.unsubAuthors && this.unsubAuthors();
+    this.unsubAuthorsFetch && this.unsubAuthorsFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -82,7 +82,7 @@ export default class AuthorsDash extends React.Component {
     this.setState({ loading: true });
 
     const fetcher = () => {
-      this.unsubAuthors = ref.onSnapshot(snap => {
+      this.unsubAuthorsFetch = ref.onSnapshot(snap => {
         // console.log(snap);
         if (!snap.empty) {
           const items = [];
@@ -101,9 +101,13 @@ export default class AuthorsDash extends React.Component {
     if (!direction) {
       authorsRef.get().then(fullSnap => {
         if (!fullSnap.empty) { 
-          this.setState({ count: fullSnap.docs.length });
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.docs.length });
+          }
           fetcher();
-        } else this.setState({ count: 0, page: 1 });
+        } else if (this._isMounted) {
+          this.setState({ count: 0, page: 1 });
+        }
       }).catch(error => console.warn(error));
     } else fetcher();
   }

@@ -40,22 +40,23 @@ export default class Layout extends React.Component {
   }
   
   componentDidMount() {
-    this.mounted = true;
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
-    this.mounted = false;
-    if (this.timer){
-      clearTimeout(this.timer);
-    }
+    this._isMounted = false;
+    this.timer && clearTimeout(this.timer);
+    this.unsubNotesFetch && this.unsubNotesFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { user } = this.state;
-    if(this.mounted && user !== prevState.user){
-      this.timer = setTimeout(() => {
-        this.fetchNotes()
-      }, 1000);
+    if(this._isMounted) {
+      if (user !== prevState.user){
+        this.timer = setTimeout(() => {
+          this.fetchNotes()
+        }, 1000);
+      }
     }
   }
 
@@ -65,7 +66,7 @@ export default class Layout extends React.Component {
       const notes = [];
       roles.forEach(role => {
         if (hasRole(user, role)) {
-          notesRef(`__${role}`).onSnapshot(snap => {
+          this.unsubNotesFetch = notesRef(`__${role}`).onSnapshot(snap => {
             if (!snap.empty) {
               snap.forEach(note => {
                 notes.push({ ...note.data(), role })

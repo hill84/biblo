@@ -23,11 +23,21 @@ class Stepper extends React.Component {
     return null;
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const { activeStep, steps } = this.state;
 
-    if (activeStep !== prevState.activeStep) {
-      this.setState({ percent: 100/steps * activeStep });
+    if (this._isMounted) {
+      if (activeStep !== prevState.activeStep) {
+        this.setState({ percent: 100/steps * activeStep });
+      }
     }
   }
 

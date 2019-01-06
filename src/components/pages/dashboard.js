@@ -73,6 +73,12 @@ export default class Dashboard extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
+    this.unsubUserFetch && this.unsubUserFetch();
+    this.unsubCollectionFetch && this.unsubCollectionFetch();
+    this.unsubLuidFollowersFetch && this.unsubLuidFollowersFetch();
+    this.unsubLuidFollowingsFetch && this.unsubLuidFollowingsFetch();
+    this.unsubUidFollowersFetch && this.unsubUidFollowersFetch();
+    this.unsubUidFollowingsFetch && this.unsubUidFollowingsFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -92,7 +98,7 @@ export default class Dashboard extends React.Component {
 		const { luid, uid } = this.state;
     // console.log('fetching user');
     this.setState({ loading: true });
-    userRef(uid).onSnapshot(snap => {
+    this.unsubUserFetch = userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         let count = 0;
         const tot = profileKeys.length;
@@ -118,7 +124,7 @@ export default class Dashboard extends React.Component {
 	fetchFollowers = () => {
 		const { luid, uid } = this.state;
     // console.log('fetching followers');
-    followersRef(uid).onSnapshot(snap => {
+    this.unsubUidFollowersFetch = followersRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         // console.log(snap.data());
         this.setState({
@@ -130,7 +136,7 @@ export default class Dashboard extends React.Component {
     if (isAuthenticated()) {
       if (luid && luid !== uid) {
         // console.log('fetching lfollowers');
-        followersRef(luid).onSnapshot(snap => {
+        this.unsubLuidFollowersFetch = followersRef(luid).onSnapshot(snap => {
           if (snap.exists) {
             // console.log({ lfollowers: snap.data() });
             this.setState({ lfollowers: snap.data() });
@@ -143,7 +149,7 @@ export default class Dashboard extends React.Component {
 	fetchFollowings = () => {
 		const { luid, uid } = this.state;
     // console.log('fetching followings');
-    followingsRef(uid).onSnapshot(snap => {
+    this.unsubUidFollowingsFetch = followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         // console.log(snap.data());
         this.setState({ followings: snap.data() });
@@ -151,7 +157,7 @@ export default class Dashboard extends React.Component {
     });
     if (luid && luid !== uid) {
       // console.log('fetching lfollowings');
-      followingsRef(luid).onSnapshot(snap => {
+      this.unsubLuidFollowingsFetch = followingsRef(luid).onSnapshot(snap => {
         if (snap.exists) {
           // console.log({ lfollowings: snap.data() });
           this.setState({ lfollowings: snap.data() });
@@ -225,7 +231,7 @@ export default class Dashboard extends React.Component {
   fetchUserChallenges = () => {
     const { luid } = this.state;
 		if (luid) {
-      userRef(luid).collection('challenges').onSnapshot(snap => {
+      this.unsubCollectionFetch = userRef(luid).collection('challenges').onSnapshot(snap => {
         if (!snap.empty) {
           const challenges = [];
           snap.forEach(doc => challenges.push(doc.data()));
@@ -362,8 +368,8 @@ export default class Dashboard extends React.Component {
             // tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
             value={tabSelected}
             onChange={this.onTabSelect}
-            fullWidth
-            scrollable
+            variant="fullWidth"
+            // variant="scrollable"
             scrollButtons="auto">
             <Tab label={TabLabel(icon.book(), 'Libreria')} />
             <Tab label={TabLabel(icon.heart(), 'Desideri')} />
