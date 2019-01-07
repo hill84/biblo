@@ -102,6 +102,6 @@ export default class RandomQuote extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

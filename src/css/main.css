@@ -1146,11 +1146,15 @@ html.light .hero * { text-shadow: none; }
   display: inline-block; 
   margin-left: 4px; 
   background-color: rgba(0,0,0,.07);
-  color: var(--lighterTextClr);
   text-transform: uppercase;
   font-size: .7rem;
   border-radius: 3px;
   padding: 3px .4rem; 
+}
+.text-left .badge {
+  margin-left: 0;
+  margin-right: 4px;
+  margin-bottom: 4px;
 }
 .role-badges .badge { 
   display: block;
@@ -1891,6 +1895,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 /* MOCKS */
 .mock-cover { background-color: var(--bookBg); background-size: cover; }
 .mock-cover.xs { width: 14px; height: 20px; border-radius: 1px; }
+.mock-cover .thumb { width: 100%; }
 
 /* GENRES */
 .genres { position: relative; }
@@ -2021,6 +2026,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .primary-text { color: var(--primaryClr); }
 .text-sm { font-size: 80%; }
 .text-xs { font-size: 70%; }
+.overflow-hidden { overflow: hidden; }
 
 .btn .show-on-hover { 
   position: absolute; 

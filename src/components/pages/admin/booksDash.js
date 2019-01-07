@@ -5,6 +5,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef /* , reviewRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
@@ -160,7 +161,16 @@ export default class BooksDash extends React.Component {
         <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs" style={{backgroundImage: `url(${item.covers[0]})`}} />
+              <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.covers[0]})`}}>
+                <ImageZoom
+                  defaultStyles={{ 
+                    zoomContainer: { zIndex: 1200 }, 
+                    overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } 
+                  }}
+                  image={{ src: item.covers[0], className: 'thumb hidden' }}
+                  zoomImage={{ className: 'magnified', maxHeight: '400px' }}
+                />
+              </div>
             </div>
             <Link to={`/book/${item.bid}`} className="col">
               {item.title}
@@ -205,7 +215,7 @@ export default class BooksDash extends React.Component {
         key={option.type}
         disabled={index === -1}
         selected={index === orderByIndex}
-        onClick={event => this.onChangeOrderBy(event, index)}>
+        onClick={e => this.onChangeOrderBy(e, index)}>
         {option.label}
       </MenuItem>
     ));
@@ -215,7 +225,7 @@ export default class BooksDash extends React.Component {
         key={option}
         disabled={index === -1}
         selected={index === limitByIndex}
-        onClick={event => this.onChangeLimitBy(event, index)}>
+        onClick={e => this.onChangeLimitBy(e, index)}>
         {option}
       </MenuItem>
     ));

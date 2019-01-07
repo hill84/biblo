@@ -61,10 +61,12 @@ export default class Collection extends React.Component {
             this.setState({ followers: 0, follow: false });
           }
         });
-        this.setState({
-          collection: snap.data(),
-          loading: false
-        });
+        if (this._isMounted) {
+          this.setState({
+            collection: snap.data(),
+            loading: false
+          });
+        }
       } else {
         if (this._isMounted) {
           this.setState({ 
@@ -142,12 +144,15 @@ export default class Collection extends React.Component {
               </div>
             }
             {collections && 
-              <div className="card dark">
+              <div className="card dark text-left">
                 <h2>Altre collezioni</h2>
                 {collections.map(collection => 
-                  <li key={normalizeString(collection.title)}>
-                    <Link to={`/collection/${collection.title}`}>{collection.title}</Link> 
-                  </li>
+                  <Link 
+                    to={`/collection/${collection.title}`} 
+                    key={normalizeString(collection.title)} 
+                    className="badge">
+                    {collection.title}
+                  </Link>
                 )}
               </div>
             }
