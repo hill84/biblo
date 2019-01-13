@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, normalizeString } from '../../config/shared';
-import BookCollection from '../bookCollection';
-import NoMatch from '../noMatch';
 import { userType } from '../../config/types';
+import BookCollection from '../bookCollection';
+import MinifiableText from '../minifiableText';
+import NoMatch from '../noMatch';
 
 export default class Collection extends React.Component {
   state = {
@@ -122,40 +123,44 @@ export default class Collection extends React.Component {
       <div id="CollectionComponent" className="container">
         <div className="row">
           <div className="col">
-            {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : 
-              <div className="card dark collection-profile">
-                <h2>{cid}</h2>
-                <p className="description">{collection.description}</p>
-                <div className="info-row">
-                  <button 
-                    type="button" 
-                    className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
-                    onClick={this.onFollow} 
-                    disabled={!user}>
-                    {follow ? 
-                      <React.Fragment>
-                        <span className="hide-on-hover">{icon.check()} Segui</span>
-                        <span className="show-on-hover">Smetti</span>
-                      </React.Fragment> 
-                    : <span>{icon.plus()} Segui</span> }
-                  </button>
-                  <span className="counter last disabled">{followers ? abbrNum(followers.length) : 0} {icon.account()}</span>
+            <div className="sticky no-sticky-sm">
+              {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : 
+                <div className="card dark collection-profile">
+                  <h2>{cid}</h2>
+                  <div className="info-row description">
+                    <MinifiableText text={collection.description} maxChars={700} />
+                  </div>
+                  <div className="info-row">
+                    <button 
+                      type="button" 
+                      className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
+                      onClick={this.onFollow} 
+                      disabled={!user}>
+                      {follow ? 
+                        <React.Fragment>
+                          <span className="hide-on-hover">{icon.check()} Segui</span>
+                          <span className="show-on-hover">Smetti</span>
+                        </React.Fragment> 
+                      : <span>{icon.plus()} Segui</span> }
+                    </button>
+                    <span className="counter last disabled">{followers ? abbrNum(followers.length) : 0} {icon.account()}</span>
+                  </div>
                 </div>
-              </div>
-            }
-            {collections && 
-              <div className="card dark text-left">
-                <h2>Altre collezioni</h2>
-                {collections.map(collection => 
-                  <Link 
-                    to={`/collection/${collection.title}`} 
-                    key={normalizeString(collection.title)} 
-                    className="badge">
-                    {collection.title}
-                  </Link>
-                )}
-              </div>
-            }
+              }
+              {collections && 
+                <div className="card dark text-left">
+                  <h2>Altre collezioni</h2>
+                  {collections.map(collection => 
+                    <Link 
+                      to={`/collection/${collection.title}`} 
+                      key={normalizeString(collection.title)} 
+                      className="badge">
+                      {collection.title}
+                    </Link>
+                  )}
+                </div>
+              }
+            </div>
           </div>
           <div className="col-md-6">
             <div className="card">

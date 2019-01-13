@@ -5,6 +5,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
+import { genres } from '../../config/lists';
+import { screenSize } from '../../config/shared';
 import Cover from '../cover';
 import Genres from '../genres';
 import PaginationControls from '../paginationControls';
@@ -24,16 +26,19 @@ export default class Genre extends React.Component {
     ],
     orderByIndex: 0,
     orderMenuAnchorEl: null,
-    page: 1
+    page: 1,
+    screenSize: screenSize()
   }
 
   componentDidMount() {
     this._isMounted = true;
+    window.addEventListener('resize', this.updateScreenSize);
     this.fetch();
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+    window.removeEventListener('resize', this.updateScreenSize);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -45,6 +50,8 @@ export default class Genre extends React.Component {
       }
     }
   }
+
+  updateScreenSize = () => this.setState({ screenSize: screenSize() });
 
   fetch = () => {
     const { desc, limit, orderBy, orderByIndex } = this.state;
@@ -125,7 +132,7 @@ export default class Genre extends React.Component {
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
   render() {
-    const { count, coverview, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page } = this.state;
+    const { count, coverview, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
 
     const covers = items && items.map((item, i) => <Link key={item.bid} to={`/book/${item.bid}`}><Cover book={item} index={i} page={page} /></Link>);
 
@@ -139,15 +146,19 @@ export default class Genre extends React.Component {
       </MenuItem>
     ));
 
+    const genreColor = genres.filter(genre => genre.name === this.props.match.params.gid)[0].color;
+
+    const scrollable = screenSize === 'xs' || screenSize === 'sm';
+
     if ((!items || items.length === 0) && loading) {
       return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
     }
 
     return (
       <div className="container" id="genreComponent">
-        <div className="card dark">
+        <div className="card dark" style={{ backgroundColor: !scrollable ? genreColor : null }}>
           <h2 className="title"><span className="primary-text">Genere:</span> {this.props.match.params.gid}</h2>
-          <Genres />
+          <Genres scrollable={scrollable} />
         </div>
 
         {items ? 

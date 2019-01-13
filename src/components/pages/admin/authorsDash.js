@@ -79,7 +79,9 @@ export default class AuthorsDash extends React.Component {
       page, 
       direction 
     }); */
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
 
     const fetcher = () => {
       this.unsubAuthorsFetch = ref.onSnapshot(snap => {
@@ -105,8 +107,10 @@ export default class AuthorsDash extends React.Component {
             this.setState({ count: fullSnap.docs.length });
           }
           fetcher();
-        } else if (this._isMounted) {
-          this.setState({ count: 0, page: 1 });
+        } else {
+          if (this._isMounted) {
+            this.setState({ count: 0, page: 1 });
+          }
         }
       }).catch(error => console.warn(error));
     } else fetcher();

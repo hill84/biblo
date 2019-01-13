@@ -101,12 +101,12 @@ export const timeSince = date => {
 };
 
 export const screenSize = () => {
-  const w = window.innerWidth; // document.documentElement.clientWidth;
+  const w = window.innerWidth;
   return w <= 359 ? 'xs' : w <= 768 ? 'sm' : w <= 992 ? 'md' : w <= 1200 ? 'lg' : 'xl';
 }
 
 export const booksPerRow = () => {
-  const w = window.innerWidth; // document.documentElement.clientWidth;
+  const w = window.innerWidth;
   return w <= 359 ? 2 : w <= 768 ? 3 : w <= 992 ? 4 : w <= 1200 ? 6 : 7;
 }
 
@@ -155,7 +155,7 @@ export const switchGenres = array => array.map(string => {
     case "Science fiction":             g = "Fantascienza"; break; 
     case "Social Science":              g = "Scienze sociali"; break;
     case "Travel":                      g = "Viaggi"; break;
-    default:                            g = ""; break;
+    default:                            g = "Narrativa"; break;
   }
   return g;
 });
@@ -179,3 +179,27 @@ export const switchLanguages = string => {
   }
   return l;
 };
+
+export const handleFirestoreError = err => {
+  // https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestoreException.Code
+  const firestoreErrors = [
+    { code: 'aborted', msg: "The operation was aborted." },
+    { code: 'already-exists', msg: "Some document that we attempted to create already exists." },
+    { code: 'cancelled', msg: "The operation was cancelled." },
+    { code: 'data-loss', msg: "Unrecoverable data loss or corruption." },
+    { code: 'deadline-exceeded', msg: "Deadline expired before operation could complete." },
+    { code: 'failed-precondition', msg: "Operation was rejected because of a failed precondition." },
+    { code: 'internal', msg: "Internal error." },
+    { code: 'invalid-argument', msg: "Client specified an invalid argument." }, 
+    { code: 'not-found', msg: "Some requested document was not found." }, 
+    { code: 'out-of-range', msg: "Operation was attempted past the valid range." }, 
+    { code: 'permission-denied', msg: "The caller does not have permission to execute the specified operation." }, 
+    { code: 'resource-exhausted', msg: "Some resource has been exhausted, perhaps a per-user quota." },
+    { code: 'unauthenticated', msg: "The request does not have valid authentication credentials for the operation." },
+    { code: 'unavailable', msg: "The service is currently unavailable." },
+    { code: 'unimplemented', msg: "Operation is not implemented or not supported/enabled." },
+    { code: 'unknown', msg: "Unknown error." }
+  ];
+  const errorMsg = firestoreErrors.filter(e => e.code === err.code);
+  return errorMsg.length ? errorMsg[0].msg : 'Errore sconosciuto.';
+}

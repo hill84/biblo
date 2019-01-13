@@ -66,7 +66,9 @@ export default class collectionsDash extends React.Component {
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const cRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
     // console.log('fetching items');
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
     
     collectionsRef.get().then(fullSnap => {
       // console.log(fullSnap);
@@ -97,13 +99,15 @@ export default class collectionsDash extends React.Component {
                 items,
                 lastVisible: snap.docs[startAt],
                 loading: false,
-                page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
+                page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
               }));
             }, 1000);
           } else this.setState({ items: null, lastVisible: null, loading: false });
         });
-      } else if (this._isMounted) {
-        this.setState({ count: 0 });
+      } else {
+        if (this._isMounted) {
+          this.setState({ count: 0 });
+        }
       }
     }).catch(error => console.warn(error));
   }

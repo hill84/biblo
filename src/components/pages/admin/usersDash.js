@@ -74,7 +74,9 @@ export default class UsersDash extends React.Component {
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
     const uRef = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     // console.log('fetching items');
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
     
     usersRef.get().then(fullSnap => {
       // console.log(fullSnap);
@@ -97,8 +99,10 @@ export default class UsersDash extends React.Component {
             }));
           } else this.setState({ items: null, loading: false });
         });
-      } else if (this._isMounted) {
-        this.setState({ count: 0 });
+      } else {
+        if (this._isMounted) {
+          this.setState({ count: 0 });
+        }
       }
     }).catch(error => console.warn(error));
   }

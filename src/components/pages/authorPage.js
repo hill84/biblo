@@ -32,12 +32,17 @@ export default class AuthorPage extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     const { author } = this.state;
 		authorRef(`${normalizeString(author.displayName)}`).get().then(snap => {
 			if (snap.exists) {
-				this.setState({ author: snap.data(), loading: false });
+        if (this._isMounted) {
+          this.setState({ author: snap.data(), loading: false });
+        }
 			} else {
-				this.setState({ loading: false });
+        if (this._isMounted) {
+          this.setState({ loading: false });
+        }
 			}
     }).catch(error => console.warn(error));
     booksRef.where(`authors.${author.displayName}`, '==', true).get().then(snap => {
@@ -45,11 +50,19 @@ export default class AuthorPage extends React.Component {
         const books = [];
         snap.forEach(book => books.push(book.data()));
         // console.log(books);
-        this.setState({ books, loadingBooks: false });
+        if (this._isMounted) {
+          this.setState({ books, loadingBooks: false });
+        }
       } else {
-        this.setState({ books: null, loadingBooks: false });
+        if (this._isMounted) {
+          this.setState({ books: null, loadingBooks: false });
+        }
       }
 		}).catch(error => console.warn(error));
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
   
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));

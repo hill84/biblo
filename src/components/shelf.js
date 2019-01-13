@@ -57,23 +57,29 @@ export default class Shelf extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     this.fetchUserBooks();
+    window.addEventListener('resize', this.updateLimit);
   }
 
   componentWillUnmount() {
     this._isMounted = false;
     this.unsubUserBooksFullFetch && this.unsubUserBooksFullFetch();
     this.unsubUserBooksFetch && this.unsubUserBooksFetch();
+    window.removeEventListener('resize', this.updateLimit);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { /* coverview,  */desc, filterByIndex, luid, orderByIndex, uid } = this.state;
-    if (this._isMounted) {
-      if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
-        this.fetchUserBooks();
-      } else if (!luid && (luid !== prevState.luid)) {
+    const { /* coverview,  */desc, filterByIndex, limit, luid, orderByIndex, uid } = this.state;
+    if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
+      this.fetchUserBooks();
+    } else if (!luid && (luid !== prevState.luid)) {
+      if (this._isMounted) {
         this.setState({ isOwner: false });
       }
     }
+  }
+
+  updateLimit = () => {
+    this.setState({ limit: booksPerRow() * 2 - 1 });
   }
 
   fetchUserBooks = direction => {

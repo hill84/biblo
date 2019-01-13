@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { appName, calcAge, getInitials, joinToLowerCase, timeSince } from '../../config/shared';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
+import { appName, calcAge, getInitials, joinToLowerCase, screenSize, timeSince } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
@@ -29,6 +29,7 @@ export default class Dashboard extends React.Component {
     lfollowings: {},
 		loading: true,
     progress: 0,
+    screenSize: screenSize(),
     tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0,
 	}
 
@@ -62,6 +63,7 @@ export default class Dashboard extends React.Component {
 
 	componentDidMount() {
     this._isMounted = true;
+    window.addEventListener('resize', this.updateScreenSize);
     if (this.state.uid) {
       this.fetchUser();
       this.fetchFollowers();
@@ -73,6 +75,7 @@ export default class Dashboard extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
+    window.removeEventListener('resize', this.updateScreenSize);
     this.unsubUserFetch && this.unsubUserFetch();
     this.unsubCollectionFetch && this.unsubCollectionFetch();
     this.unsubLuidFollowersFetch && this.unsubLuidFollowersFetch();
@@ -92,12 +95,16 @@ export default class Dashboard extends React.Component {
         }
       }
     }
-	}
+  }
+  
+  updateScreenSize = () => this.setState({ screenSize: screenSize() });
     
   fetchUser = () => {
-		const { luid, uid } = this.state;
-    // console.log('fetching user');
-    this.setState({ loading: true });
+    const { luid, uid } = this.state;
+    if (this._isMounted) {
+      // console.log('fetching user');
+      this.setState({ loading: true });
+    }
     this.unsubUserFetch = userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         let count = 0;
@@ -242,7 +249,7 @@ export default class Dashboard extends React.Component {
   }
 
 	render() {
-    const { challenges, follow, followers, followings, isOwner, loading, luid, progress, tabDir, tabSelected, uid, user } = this.state;
+    const { challenges, follow, followers, followings, isOwner, loading, luid, progress, screenSize, tabDir, tabSelected, uid, user } = this.state;
     const { history, location } = this.props;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -303,29 +310,29 @@ export default class Dashboard extends React.Component {
 						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
 								<div className="role-badges">{Roles}</div>
-								<div className="row text-center-md">
-									<div className="col-md-auto col-sm-12">
+								<div className="row">
+									<div className="col-auto">
 										<Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
 									</div>
 									<div className="col">
 										<h2 className="username">{user.displayName}</h2>
-										<div className="info-row">
+										<div className="info-row hide-xs">
 											{user.sex && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : 'Altro'}</span>}
 											{user.birth_date && <span className="counter">{calcAge(user.birth_date)} anni</span>}
-											<span className="counter hide-xs comma">
+											<span className="counter comma">
 												{user.city && <span className="counter">{user.city}</span>}
 												{user.country && <span className="counter">{user.country}</span>}
 												{user.continent && <span className="counter">{user.continent}</span>}
 											</span>
-											{user.languages && <span className="counter hide-sm">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
-											{user.creationTime && <span className="counter hide-sm">Su {appName} dal <b>{creationYear}</b></span>}
+											{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
+											{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">
 											{!isOwner && isAuthenticated() &&
                         <button 
                           type="button"
-													className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
+													className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
 													// disabled={!isAuthenticated()}
 													onClick={this.onFollowUser}>
 													{follow ? 
@@ -337,7 +344,7 @@ export default class Dashboard extends React.Component {
 												</button>
 											}
 											<span className="counter">Seguito da: <b>{Object.keys(followers).length}</b></span>
-											<span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{Object.keys(followings).length}</b></span>
+											{screenSize !== 'xs' && <span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{Object.keys(followings).length}</b></span>}
 										</div>
 									</div>
 								</div>

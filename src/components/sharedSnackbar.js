@@ -7,14 +7,14 @@ import { SharedSnackbarConsumer } from '../context/sharedSnackbar';
 
 const SharedSnackbar = () => (
   <SharedSnackbarConsumer>
-    {({ snackbarIsOpen, message, closeSnackbar, variant }) => (
+    {({ snackbarIsOpen, message, closeSnackbar, variant, autoHideDuration }) => (
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
         }}
         open={snackbarIsOpen}
-        autoHideDuration={5000}
+        autoHideDuration={autoHideDuration || 5000}
         onClose={closeSnackbar}
         >
         <SnackbarContent

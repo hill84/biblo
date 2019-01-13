@@ -21,11 +21,17 @@ export default class Authors extends React.Component {
   }
 
   static propTypes = {
-    limit: numberType
+    limit: numberType,
+    size: numberType
   }
 
   componentDidMount(prevState) {
+    this._isMounted = true;
     this.fetch();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => { 
@@ -34,17 +40,21 @@ export default class Authors extends React.Component {
       if (!snap.empty) {
         const items = [];
         snap.forEach(item => items.push(item.data()));
-        this.setState({ 
-          count: snap.docs.length,
-          items,
-          loading: false
-        });
+        if (this._isMounted) {
+          this.setState({ 
+            count: snap.docs.length,
+            items,
+            loading: false
+          });
+        }
       } else {
-        this.setState({ 
-          count: 0,
-          items: null,
-          loading: false
-        });
+        if (this._isMounted) {
+          this.setState({ 
+            count: 0,
+            items: null,
+            loading: false
+          });
+        }
       }
     }).catch(error => console.warn(error));
   }

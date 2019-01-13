@@ -18,7 +18,7 @@ import { icon } from '../config/icons';
 import { roles } from '../config/lists';
 import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
-import { userType } from '../config/types';
+import { funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
 
 export default class Layout extends React.Component {
@@ -31,6 +31,8 @@ export default class Layout extends React.Component {
   }
 
   static propTypes = {
+    error: stringType,
+    openSnackbar: funcType.isRequired,
     user: userType
   }
 
@@ -51,11 +53,15 @@ export default class Layout extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { user } = this.state;
+    const { error, openSnackbar } = this.props;
     if(this._isMounted) {
       if (user !== prevState.user){
         this.timer = setTimeout(() => {
           this.fetchNotes()
         }, 1000);
+      }
+      if (error !== prevProps.error) {
+        openSnackbar(error, 'error', 9000);
       }
     }
   }
@@ -126,7 +132,7 @@ export default class Layout extends React.Component {
               <React.Fragment>
                 {user.roles.admin && 
                   <IconButton
-                    className="search-btn popIn reveal delay6"
+                    className="search-btn popIn reveal delay6 hide-xs"
                     component={Link} 
                     to="/new-book"
                     aria-label="New book">

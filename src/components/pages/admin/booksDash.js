@@ -62,24 +62,26 @@ export default class BooksDash extends React.Component {
       }
     }
   }
-
     
   fetch = direction => {
     const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const bRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    const oRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    const lRef = oRef.limit(limit);
     // console.log('fetching items');
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
     
-    booksRef.get().then(fullSnap => {
+    oRef.get().then(fullSnap => {
       if (!fullSnap.empty) {
         if (this._isMounted) {
           this.setState({ count: fullSnap.docs.length });
         }
-        // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
-        const ref = direction ? bRef.startAt(lastVisible || fullSnap.docs[startAt]) : bRef;
-        this.unsubBooksFetch = ref.onSnapshot(snap => {
+        console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
+        const dRef = direction ? lRef.startAt(lastVisible || fullSnap.docs[startAt]) : lRef;
+        this.unsubBooksFetch = dRef.onSnapshot(snap => {
           // console.log(snap);
           if (!snap.empty) {
             const items = [];
@@ -88,7 +90,7 @@ export default class BooksDash extends React.Component {
               items,
               lastVisible: snap.docs[startAt],
               loading: false,
-              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.usersCount) ? prevState.page : prevState.page + 1 : 1
+              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
             }));
           } else this.setState({ items: null, lastVisible: null, loading: false });
         });
@@ -168,7 +170,7 @@ export default class BooksDash extends React.Component {
                     overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } 
                   }}
                   image={{ src: item.covers[0], className: 'thumb hidden' }}
-                  zoomImage={{ className: 'magnified', maxHeight: '400px' }}
+                  zoomImage={{ className: 'magnified', maxheight: '400px' }}
                 />
               </div>
             </div>

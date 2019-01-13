@@ -35,7 +35,8 @@ export default class Admin extends React.Component {
     isOpenAuthorDialog: false,
     isOpenCollectionDialog: false,
     isOpenNoteDialog: false,
-    isOpenQuoteDialog: false
+    isOpenQuoteDialog: false,
+    screenSize: screenSize()
 	}
 
 	static propTypes = {
@@ -61,11 +62,13 @@ export default class Admin extends React.Component {
     this._isMounted = true;
     if (this.state.aid) this.fetchUser();
     if (this.state.tabSelected === 0) this.props.history.replace(`/admin/${tabs[0]}`, null);
+    window.addEventListener('resize', this.updateScreenSize);
   }
 
 	componentWillUnmount() {
     this._isMounted = false;
     this.unsubUserFetch && this.unsubUserFetch();
+    window.removeEventListener('resize', this.updateScreenSize);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -74,7 +77,9 @@ export default class Admin extends React.Component {
         this.fetchUser();
       }
     }
-	}
+  }
+  
+  updateScreenSize = () => this.setState({ screenSize: screenSize() });
     
   fetchUser = () => {
 		const { aid } = this.state;
@@ -105,7 +110,7 @@ export default class Admin extends React.Component {
   onToggleQuoteDialog = id => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog, selectedId: this.son(id) }));
 
 	render() {
-		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, */ isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, selectedEl, selectedId, tabDir, tabSelected, user } = this.state;
+		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, */ isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, screenSize, selectedEl, selectedId, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
       return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -133,7 +138,7 @@ export default class Admin extends React.Component {
           <Tabs 
             value={tabSelected}
             onChange={this.onTabSelect}
-            variant={screenSize() === 'sm' ? 'scrollable' : 'fullWidth'}
+            variant={screenSize === 'sm' ? 'scrollable' : 'fullWidth'}
             scrollButtons="auto">
             <Tab label={<React.Fragment><span className="show-md">{icon.account()}</span><span className="hide-md">Utenti</span></React.Fragment>} />
             <Tab label={<React.Fragment><span className="show-md">{icon.book()}</span><span className="hide-md">Libri</span></React.Fragment>} />

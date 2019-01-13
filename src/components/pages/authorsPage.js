@@ -22,7 +22,12 @@ export default class AuthorsPage extends React.Component {
   }
 
   componentDidMount(prevState) {
+    this._isMounted = true;
     this.fetch();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => { 

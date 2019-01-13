@@ -73,7 +73,9 @@ export default class QuotesDash extends React.Component {
     const ref = direction ? paginatedRef : baseRef;
     // console.log('fetching');
     // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
 
     const fetcher = () => {
       this.unsubQuotesFetch = ref.onSnapshot(snap => {
@@ -99,8 +101,10 @@ export default class QuotesDash extends React.Component {
             this.setState({ count: fullSnap.docs.length });
           }
           fetcher();
-        } else if (this._isMounted) {
-          this.setState({ count: 0, page: 1 });
+        } else {
+          if (this._isMounted) {
+            this.setState({ count: 0, page: 1 });
+          }
         }
       }).catch(error => console.warn(error));
     } else fetcher();

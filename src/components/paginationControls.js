@@ -1,6 +1,6 @@
 import React from 'react';
 import { icon } from '../config/icons';
-import { funcType, numberType, boolType } from '../config/types';
+import { boolType, funcType, numberType } from '../config/types';
 
 export default class PaginationControls extends React.Component {
   state = {
@@ -25,6 +25,7 @@ export default class PaginationControls extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (props.count !== state.count) { return { count: props.count }; }
+    if (props.limit !== state.limit) { return { limit: props.limit }; }
     if (props.loading !== state.loading) { return { loading: props.loading }; }
     if (props.page !== state.page) { return { page: props.page }; }
     return null;
