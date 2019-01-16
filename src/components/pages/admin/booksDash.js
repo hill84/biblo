@@ -79,7 +79,7 @@ export default class BooksDash extends React.Component {
         if (this._isMounted) {
           this.setState({ count: fullSnap.docs.length });
         }
-        console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
+        // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
         const dRef = direction ? lRef.startAt(lastVisible || fullSnap.docs[startAt]) : lRef;
         this.unsubBooksFetch = dRef.onSnapshot(snap => {
           // console.log(snap);

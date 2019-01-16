@@ -88,15 +88,20 @@ export default class BookForm extends React.Component {
     return null;
   }
 
-  /* componentDidMount(props) {
-    if (this.props.book.bid) {
+  componentDidMount(props) {
+    this._isMounted = true;
+    /* if (this.props.book.bid) {
       bookRef(this.props.book.bid).onSnapshot(snap => {
         this.setState({
           book: snap.data()
         });
       });
-    }
-  } */
+    } */
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   onToggleDescription = e => {
     e.preventDefault();
@@ -208,12 +213,18 @@ export default class BookForm extends React.Component {
               lastEditByUid: authid || ''
             }
           }).then(() => {
-            this.setState({ loading: false, changes: false });
-            this.props.isEditing();
-            openSnackbar('Modifiche salvate', 'success');
+            if (this._isMounted) {
+              this.setState({ loading: false, changes: false }, () => {
+                this.props.isEditing();
+                openSnackbar('Modifiche salvate', 'success');
+              });
+            }
           }).catch(error => {
-            this.setState({ authError: error.message, loading: false });
-            openSnackbar(error.message, 'error');
+            if (this._isMounted) {
+              this.setState({ authError: error.message, loading: false }, () => {
+                openSnackbar(error.message, 'error');
+              });
+            }
           });
         } else {
           const newBookRef = booksRef.doc();
@@ -251,17 +262,23 @@ export default class BookForm extends React.Component {
             title: book.title, 
             title_sort: book.title_sort
           }).then(() => {
-            this.setState({ redirectToBook: newBid });
-            /* this.setState({ loading: false, changes: false });
-            this.props.isEditing(); */
-            openSnackbar('Nuovo libro creato', 'success');
-            // console.log(`New book created with bid ${newBid}`);
+            if (this._isMounted) {
+              this.setState({ redirectToBook: newBid }, () => {
+                /* this.setState({ loading: false, changes: false });
+                this.props.isEditing(); */
+                openSnackbar('Nuovo libro creato', 'success');
+                // console.log(`New book created with bid ${newBid}`);
+              });
+            }
           }).catch(error => {
-            this.setState({
-              authError: error.message,
-              loading: false
-            });
-            openSnackbar(error.message, 'error');
+            if (this._isMounted) {
+              this.setState({
+                authError: error.message,
+                loading: false
+              }, () => {
+                openSnackbar(error.message, 'error');
+              });
+            }
           });
         }
         if (book.collections) {
@@ -293,13 +310,15 @@ export default class BookForm extends React.Component {
           });
         }
       } else {
-        this.setState({ loading: false });
-        if (errors.description) { this.setState({ isEditingDescription: true })}
-        if (errors.incipit) { this.setState({ isEditingIncipit: true })}
-        openSnackbar('Ricontrolla i dati inseriti', 'error');
+        if (this._isMounted) {
+          this.setState({ loading: false });
+          if (errors.description) { this.setState({ isEditingDescription: true })}
+          if (errors.incipit) { this.setState({ isEditingIncipit: true })}
+          openSnackbar('Ricontrolla i dati inseriti', 'error');
+        }
       }
     } else this.props.isEditing();
-  };
+  }
 
   validate = async book => {
     const errors = {};
@@ -374,19 +393,19 @@ export default class BookForm extends React.Component {
     }
     if (book.description && book.description.length < 100) {
       errors.description = `Lunghezza minima 100 caratteri`;
-      this.setState({ isEditingDescription: true });
+      if (this._isMounted) { this.setState({ isEditingDescription: true }) }
     }
     if (book.description && book.description.length > this.state.description_maxChars) {
       errors.description = `Lunghezza massima ${this.state.description_maxChars} caratteri`;
-      this.setState({ isEditingDescription: true });
+      if (this._isMounted) { this.setState({ isEditingDescription: true }) }
     }
     if (book.incipit && book.incipit.length < 255) {
       errors.incipit = `Lunghezza minima 255 caratteri`;
-      this.setState({ isEditingIncipit: true });
+      if (this._isMounted) { this.setState({ isEditingIncipit: true }) }
     }
     if (book.incipit && book.incipit.length > this.state.incipit_maxChars) {
       errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
-      this.setState({ isEditingIncipit: true });
+      if (this._isMounted) { this.setState({ isEditingIncipit: true }) }
     }
     ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
       if (checkBadWords(book[text])) errors[text] = "Niente volgarità"
@@ -401,15 +420,17 @@ export default class BookForm extends React.Component {
 		// console.log(file);
 		const errors = validateImg(file, 1);
 		this.setState({ errors });
-		if(Object.keys(errors).length === 0) {
+		if (Object.keys(errors).length === 0) {
 			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
 			const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
-				this.setState({
-					imgProgress: snap.bytesTransferred / snap.totalBytes * 100
-				});
+				if (this._isMounted) { 
+          this.setState({ imgProgress: snap.bytesTransferred / snap.totalBytes * 100 });
+        }
 			}, error => {
 				console.warn(`upload error: ${error.message}`);
-        this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
+        if (this._isMounted) { 
+          this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
+        }
 			}, () => {
         // console.log('upload completed');
         uploadTask.then(snap => 

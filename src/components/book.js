@@ -97,7 +97,9 @@ export default class Book extends React.Component {
 
     this._isMounted = true;
     if (bid) {
-      this.setState({ loading: true });
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
       this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
         if (snap.exists) {
           // console.log(snap.data());

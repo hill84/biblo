@@ -929,7 +929,7 @@ html:not(.light) .card.primary, .primary .card {
 #appBarComponent a { color: currentColor; }
 #appBarComponent a:active { color: rgba(0,0,0,.3); }
 #appBarComponent .reveal { animation-duration: .3s; }
-#appBarComponent .avatar { --size: 34px; width: var(--size); height: var(--size); font-size: 1rem; }
+#appBarComponent .avatar { --avatarSize: 34px; width: var(--avatarSize); height: var(--avatarSize); font-size: 1rem; }
 #appBarComponent .search-book { 
   position: absolute;
   top: 4px;
@@ -1861,14 +1861,14 @@ progress[value='100'].stepper::-webkit-progress-bar {
   --shelf-rowHeight: 119px;
 }
 .skltn.bubble {
-  --skltnTitleY: calc(var(--size) + 12px);
-  --coverWidth: calc(var(--size) + 20px);
+  --skltnTitleY: calc(var(--avatarSize) + 12px);
+  --coverWidth: calc(var(--avatarSize) + 20px);
   min-width: var(--bookWidth);
   margin: 0 auto;
   width: 100%;
   height: var(--shelf-rowHeight);
-  background-image: radial-gradient(circle var(--size), var(--skltnBg) 50%, transparent 0), linear-gradient(var(--skltnBg), var(--skltnBg));
-  background-size: var(--size) var(--size), var(--coverWidth) 12px;
+  background-image: radial-gradient(circle var(--avatarSize), var(--skltnBg) 50%, transparent 0), linear-gradient(var(--skltnBg), var(--skltnBg));
+  background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
   background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
   background-repeat: no-repeat;
   background-origin: content-box;
@@ -2004,9 +2004,9 @@ progress[value='100'].stepper::-webkit-progress-bar {
 
 /* BUBBLES */
 .bubble { 
-  --size: 80px;
+  --avatarSize: 80px;
   --pad: 14px;
-  min-width: var(--size); 
+  min-width: var(--avatarSize); 
   margin: 0 auto; 
   text-align: center;
   font-size: .8rem;
@@ -2017,8 +2017,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .bubble .avatar { 
   margin-left: auto; 
   margin-right: auto; 
-  width: var(--size); 
-  height: var(--size); 
+  width: var(--avatarSize); 
+  height: var(--avatarSize); 
 }
 .bubble .title {
   margin-top: 10px;
@@ -2032,7 +2032,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .hoverable-items .bubble:hover .avatar { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-3px); }
 .hoverable-items .bubble:active .avatar { transform: scale(.95) translateY(0); box-shadow: 0 0 0 transparent; }
 .bubbles.boxed { grid-gap: 8px; }
-.bubbles.boxed .bubble { min-height: calc(var(--size) + 10px + 38px + (var(--pad) * 2)); }
+.bubbles.boxed .bubble { min-height: calc(var(--avatarSize) + 10px + 38px + (var(--pad) * 2)); }
 .bubbles.boxed .bubble .avatar { background-color: rgba(0,0,0,.07); box-shadow: inset 1px 1px 0 1px rgba(0,0,0,.07); }
 .bubbles.boxed .bubble:hover { background-color: var(--primaryClr); }
 .bubbles.boxed .bubble:active { background-color: var(--accentClr); }
