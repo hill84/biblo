@@ -704,7 +704,7 @@ export default class BookForm extends React.Component {
                         id="description"
                         name="description"
                         type="text"
-                        placeholder={`Inserisci una descrizione del libro (max ${description_maxChars} caratteri)...`}
+                        placeholder={`Inserisci una descrizione (max ${description_maxChars} caratteri)...`}
                         error={Boolean(errors.description)}
                         value={book.description}
                         onChange={this.onChangeMaxChars}
@@ -734,7 +734,7 @@ export default class BookForm extends React.Component {
                         id="incipit"
                         name="incipit"
                         type="text"
-                        placeholder={`Inserisci i primi paragrafi del libro (max ${incipit_maxChars} caratteri)...`}
+                        placeholder={`Inserisci i primi paragrafi (max ${incipit_maxChars} caratteri)...`}
                         error={Boolean(errors.incipit)}
                         value={book.incipit || ''}
                         onChange={this.onChangeMaxChars}

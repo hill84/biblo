@@ -1,7 +1,7 @@
 import createBrowserHistory from 'history/createBrowserHistory';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router } from 'react-router-dom';
+import { Router, withRouter } from 'react-router-dom';
 import App from './app';
 import './css/grid.min.css';
 import './css/main.css';
@@ -15,9 +15,25 @@ if (process.env.NODE_ENV === 'production') {
   }
 }
 
+class ScrollToTop extends React.Component {
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  render() {
+    return this.props.children;
+  }
+}
+
+export default withRouter(ScrollToTop);
+
 ReactDOM.render(
 	<Router history={createBrowserHistory()}>
-		<App />
+		<ScrollToTop>
+      <App/>
+    </ScrollToTop>
 	</Router>,
 	document.getElementById('root')
 );

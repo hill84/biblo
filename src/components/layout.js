@@ -177,7 +177,7 @@ export default class Layout extends React.Component {
                   : 
                     <MenuItem className="text"><span className="icon">{icon.bellOff()}</span> Non ci sono nuove notifiche</MenuItem>
                   }
-                  <MenuItem className="footer"><Link to="/notifications">Mostra tutte</Link></MenuItem> 
+                  <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
                 </Menu>
 
                 <IconButton
@@ -201,8 +201,8 @@ export default class Layout extends React.Component {
               </React.Fragment>
             : 
               <React.Fragment>
-                <button type="button" className="btn flat"><Link to="/login">Accedi</Link></button>
-                <button type="button" className="btn primary"><Link to="/signup">Registrati</Link></button>
+                <NavLink to="/login" className="btn flat">Accedi</NavLink>
+                <NavLink to="/signup" className="btn primary">Registrati</NavLink>
               </React.Fragment>
             }
           </Toolbar>

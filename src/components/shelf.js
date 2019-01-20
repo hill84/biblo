@@ -83,10 +83,12 @@ export default class Shelf extends React.Component {
   }
 
   fetchUserBooks = direction => {
-    const { desc, filterByIndex, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
+    const { desc, filterByIndex, isOwner, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
+    const ulimit = isOwner ? limit : limit + 1;
+
     if (uid) {
       const prev = direction === 'prev';
-      const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
+      const startAt = direction ? prev ? ((page - 1) * ulimit) - ulimit : page * ulimit : 0;
       const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
       const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
       const empty = { 
@@ -107,7 +109,7 @@ export default class Shelf extends React.Component {
           
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
-          this.unsubUserBooksFetch = ref.limit(limit).onSnapshot(snap => {
+          this.unsubUserBooksFetch = ref.limit(ulimit).onSnapshot(snap => {
             this.setState({ loading: true });
             if (!snap.empty) {
               const items = [];
@@ -116,7 +118,7 @@ export default class Shelf extends React.Component {
                 isOwner: luid === uid,
                 items,
                 loading: false,
-                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
+                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.ulimit) > prevState.count ? prevState.page : prevState.page + 1 : 1
               }), () => {
                 // GET CHALLENGES
                 luid === uid && userRef(luid).collection('challenges').get().then(snap => {

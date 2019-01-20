@@ -1,14 +1,15 @@
 import React from 'react';
-import { numberType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/types';
 
 export default class MinifiableText extends React.Component {
 	state = {
-    isTextMinified: this.props.text && this.props.text.length > (this.props.maxChars || 700) ? true : false,
+    isTextMinified: this.props.textMinified === false ? this.props.textMinified : (this.props.text && this.props.text.length > (this.props.maxChars || 700)),
     maxChars: this.props.maxChars || 700,
     text: this.props.text
   }
 
   static propTypes = {
+    textMinified: boolType,
     maxChars: numberType,
     text: stringType.isRequired
   }
@@ -27,9 +28,16 @@ export default class MinifiableText extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this._isMounted) {
-      if (this.state.text && this.state.text.length !== prevState.text.length){
+    if (this.state.text && this.state.text.length !== prevState.text.length) {
+      if (this._isMounted) {
         this.minifyText();
+      }
+    }
+    if (this.props.textMinified !== prevProps.textMinified) {
+      if (this._isMounted) {
+        this.setState({
+          isTextMinified: this.props.textMinified === false ? this.props.textMinified : (this.props.text && this.props.text.length > (this.props.maxChars || 700))
+        });
       }
     }
   }

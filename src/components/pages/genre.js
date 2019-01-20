@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { screenSize } from '../../config/shared';
+import { isTouchDevice, screenSize } from '../../config/shared';
 import Cover from '../cover';
 import Genres from '../genres';
 import PaginationControls from '../paginationControls';
@@ -148,7 +148,7 @@ export default class Genre extends React.Component {
 
     const genreColor = genres.filter(genre => genre.name === this.props.match.params.gid)[0].color;
 
-    const scrollable = screenSize === 'xs' || screenSize === 'sm';
+    const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 
     if ((!items || items.length === 0) && loading) {
       return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
@@ -156,9 +156,9 @@ export default class Genre extends React.Component {
 
     return (
       <div className="container" id="genreComponent">
-        <div className="card dark" style={{ backgroundColor: !scrollable ? genreColor : null }}>
+        <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
           <h2 className="title"><span className="primary-text">Genere:</span> {this.props.match.params.gid}</h2>
-          <Genres scrollable={scrollable} />
+          <Genres scrollable={isScrollable} />
         </div>
 
         {items ? 

@@ -1,13 +1,13 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, normalizeString } from '../../config/shared';
+import { abbrNum, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
 import { userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
+import { skltn_rows } from '../skeletons';
 
 export default class Collection extends React.Component {
   state = {
@@ -16,7 +16,9 @@ export default class Collection extends React.Component {
     collections: null,
     followers: null,
     follow: false,
-    loading: true
+    loading: true,
+    loadingCollections: true,
+    screenSize: screenSize()
   }
 
   static propTypes = {
@@ -32,11 +34,13 @@ export default class Collection extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
+    window.addEventListener('resize', this.updateScreenSize);
     this.fetch();
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+    window.removeEventListener('resize', this.updateScreenSize);
     this.unsubCollectionFollowersFetch && this.unsubCollectionFollowersFetch();
   }
 
@@ -48,9 +52,12 @@ export default class Collection extends React.Component {
     }
   }
 
+  updateScreenSize = () => this.setState({ screenSize: screenSize() });
+
   fetch = () => {
     const { cid } = this.state;
     const { user } = this.props;
+
     collectionRef(cid).get().then(snap => {
       if (!snap.empty) {
         this.unsubCollectionFollowersFetch = collectionFollowersRef(cid).onSnapshot(snap => {
@@ -63,10 +70,7 @@ export default class Collection extends React.Component {
           }
         });
         if (this._isMounted) {
-          this.setState({
-            collection: snap.data(),
-            loading: false
-          });
+          this.setState({ collection: snap.data(), loading: false });
         }
       } else {
         if (this._isMounted) {
@@ -85,11 +89,11 @@ export default class Collection extends React.Component {
         const collections = [];
         snap.forEach(collection => collection.id !== (cid) && collections.push(collection.data()));
         if (this._isMounted) {
-          this.setState({ collections });
+          this.setState({ collections, loadingCollections: false });
         }
       } else {
         if (this._isMounted) {
-          this.setState({ collections: null });
+          this.setState({ collections: null, loadingCollections: false });
         }
       }
     }).catch(error => console.warn(error));
@@ -112,8 +116,11 @@ export default class Collection extends React.Component {
   }
 
   render() {
-    const { cid, collection, collections, followers, follow, loading } = this.state;
+    const { cid, collection, collections, followers, follow, loading, loadingCollections, screenSize } = this.state;
     const { history, location, user } = this.props;
+
+    const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
+    const isTextMinified = screenSize === 'xs' || screenSize === 'sm' || screenSize === 'md';
 
     if (!collection && !loading) {
       return <NoMatch title="Collezione non trovata" history={history} location={location} />
@@ -123,43 +130,50 @@ export default class Collection extends React.Component {
       <div id="CollectionComponent" className="container">
         <div className="row">
           <div className="col">
-            <div className="sticky no-sticky-sm">
-              {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : 
-                <div className="card dark collection-profile">
-                  <h2>{cid}</h2>
-                  <div className="info-row description">
-                    <MinifiableText text={collection.description} maxChars={700} />
-                  </div>
-                  <div className="info-row">
-                    <button 
-                      type="button" 
-                      className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
-                      onClick={this.onFollow} 
-                      disabled={!user}>
-                      {follow ? 
-                        <React.Fragment>
-                          <span className="hide-on-hover">{icon.check()} Segui</span>
-                          <span className="show-on-hover">Smetti</span>
-                        </React.Fragment> 
-                      : <span>{icon.plus()} Segui</span> }
-                    </button>
-                    <span className="counter last disabled">{followers ? abbrNum(followers.length) : 0} {icon.account()}</span>
+            <div className="sticky no-sticky-md">
+              
+              <div className="card dark collection-profile">
+                <h2>{cid}</h2>
+                {loading ? skltn_rows : 
+                  <React.Fragment>
+                    <div className="info-row description">
+                      <MinifiableText text={collection.description} maxChars={700} textMinified={isTextMinified} />
+                    </div>
+                    <div className="info-row">
+                      <button 
+                        type="button" 
+                        className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
+                        onClick={this.onFollow} 
+                        disabled={!user}>
+                        {follow ? 
+                          <React.Fragment>
+                            <span className="hide-on-hover">{icon.check()} Segui</span>
+                            <span className="show-on-hover">Smetti</span>
+                          </React.Fragment> 
+                        : <span>{icon.plus()} Segui</span> }
+                      </button>
+                      <span className="counter last disabled">{followers ? abbrNum(followers.length) : 0} {isScrollable ? icon.account() : 'follower'}</span>
+                    </div>
+                  </React.Fragment>
+                }
+              </div>
+              
+              <div className="card dark text-left">
+                <h2>Altre collezioni</h2>
+                <div className={`badges ${isScrollable ? 'scrollable' : 'fullview'}`}>
+                  <div className="content">
+                    {loadingCollections ? skltn_rows : collections.map(collection => 
+                      <Link 
+                        to={`/collection/${collection.title}`} 
+                        key={normalizeString(collection.title)} 
+                        className="badge">
+                        {collection.title}
+                      </Link>
+                    )}
                   </div>
                 </div>
-              }
-              {collections && 
-                <div className="card dark text-left">
-                  <h2>Altre collezioni</h2>
-                  {collections.map(collection => 
-                    <Link 
-                      to={`/collection/${collection.title}`} 
-                      key={normalizeString(collection.title)} 
-                      className="badge">
-                      {collection.title}
-                    </Link>
-                  )}
-                </div>
-              }
+              </div>
+              
             </div>
           </div>
           <div className="col-md-6">
