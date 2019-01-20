@@ -219,7 +219,7 @@ export default class BookProfile extends React.Component {
                 {isAuthenticated() && hasRole('editor') && userBook.bookInShelf &&
                   <UserReview addReview={addReview} bid={book.bid} bookReviews_num={book.reviews_num} removeReview={removeReview} user={user} userBook={userBook} /> 
                 }
-                <Reviews bid={book.bid} />
+                <Reviews bid={book.bid} user={user} />
               </React.Fragment>
             }
 

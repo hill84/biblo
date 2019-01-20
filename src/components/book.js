@@ -80,10 +80,10 @@ export default class Book extends React.Component {
               }
             });
           } else console.warn(`No book with bid ${this.props.bid}`);
-          this.setState({ loading: false });
-        }).then(() => {
-          this.fetchUserBook(this.props.bid);
-        });
+          this.setState({ loading: false }, () => {
+            this.fetchUserBook(this.props.bid);
+          });
+        })
       }
       if (this.props.book !== prevProps.book) {
         this.fetchUserBook(this.props.book.bid);

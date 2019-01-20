@@ -1,16 +1,14 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { auth, isAuthenticated, latestReviewsRef, reviewersRef, authid } from '../config/firebase';
-import { stringType } from '../config/types';
+import { isAuthenticated, latestReviewsRef, reviewersRef } from '../config/firebase';
+import { stringType, userType } from '../config/types';
 import Review from './review';
 import PaginationControls from './paginationControls';
 /* import InfiniteScroll from 'react-infinite-scroller'; */
 
 export default class Reviews extends React.Component {
 	state = {
-    bid: this.props.bid,
-    uid: authid,
     items: null,
     count: 0,
     desc: true,
@@ -21,24 +19,13 @@ export default class Reviews extends React.Component {
   }
 
   static propTypes = {
-    bid: stringType
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.bid !== state.bid) { return { bid: props.bid }}
-    return null;
+    bid: stringType,
+    user: userType
   }
 
   componentDidMount(prevState) {
     this._isMounted = true;
-    this.fetch(this.state.bid);
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        this.setState({ uid: user.uid });
-      } else {
-        this.setState({ uid: null });
-      }
-    });
+    this.fetch(this.props.bid);
   }
   
   componentWillUnmount() {
@@ -47,11 +34,9 @@ export default class Reviews extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this._isMounted) {
-      if(this.state.bid !== prevState.bid || this.state.uid !== prevState.uid){
-        this.fetch(this.state.bid);
-        // console.log('Fetched updated reviews');
-      }
+    if (this.props.bid !== prevProps.bid || this.props.user !== prevProps.user){
+      this.fetch(this.props.bid);
+      // console.log('Fetched updated reviews');
     }
   }
 
@@ -80,32 +65,40 @@ export default class Reviews extends React.Component {
   }
 
   fetchNext = () => {
-    const { bid, desc, items, lastVisible, limit } = this.state;
+    const { desc, items, lastVisible, limit } = this.state;
+    const { bid } = this.props;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
 
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
 		ref.orderBy('created_num', desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(item => items.push(item.data()));
-        this.setState(prevState => ({ 
-          items,
-          loading: false,
-          page: (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1,
-          lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
-        }));
+        if (this._isMounted) {
+          this.setState(prevState => ({ 
+            items,
+            loading: false,
+            page: (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1,
+            lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
+          }));
+        }
       } else {
-        this.setState({ 
-          items: null,
-          loading: false,
-          page: null,
-          lastVisible: null
-        });
+        if (this._isMounted) {
+          this.setState({ 
+            items: null,
+            loading: false,
+            page: null,
+            lastVisible: null
+          });
+        }
       }
 		}).catch(error => console.warn(error));
   }
 	
 	render() {
-    const { bid, items, limit, loading, page, count } = this.state;
+    const { items, limit, loading, page, count } = this.state;
+    const { bid, user } = this.props;
 
     if (!items || items.length === 0) {
       if (loading) { 
@@ -129,6 +122,7 @@ export default class Reviews extends React.Component {
             <Review 
               key={`${index}_${item.createdByUid}`} 
               bid={bid}
+              user={user}
               review={{
                 bid: item.bid || '',
                 photoURL: item.photoURL || '',
@@ -137,6 +131,8 @@ export default class Reviews extends React.Component {
                 covers: item.covers || [],
                 createdByUid: item.createdByUid || '',
                 created_num: item.created_num || 0,
+                flag: item.flag,
+                dislikes: item.dislikes || {},
                 likes: item.likes || {},
                 rating_num: item.rating_num || 0,
                 text: item.text || '',

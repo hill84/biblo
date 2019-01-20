@@ -109,6 +109,11 @@ export const reviewType = shape({
   createdByUid: string.isRequired,
   created_num: number.isRequired,
   displayName: string.isRequired,
+  flag: shape({
+    value: stringType.isRequired,
+    flaggedByUid: stringType.isRequired,
+    flagged_num: numberType.isRequired
+  }),
   likes: arrayOf(string).isRequired,
   photoURL: string,
   rating_num: number.isRequired,

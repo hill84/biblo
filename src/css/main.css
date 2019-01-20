@@ -1678,6 +1678,15 @@ html.light .hero * { text-shadow: none; }
 .review .cover { --pad: 7px; font-size: 7px; }
 .reviews .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
 .review + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
+.review.flagged {
+  background-color: rgba(255,0,0,.08);
+  margin-left: calc(var(--pad) * -1);
+  margin-right: calc(var(--pad) * -1);
+  margin-bottom: -14px;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+  padding-bottom: 14px;
+}
 .review .left { position: relative; padding-right: 0; }
 .review .left .avatar.absolute {
   --avatarSize: 28px; 
@@ -1720,9 +1729,11 @@ html.light .hero * { text-shadow: none; }
 }
 .review .foot .thumb { margin-left: calc(-1 * var(--btnPad)); }
 .review .foot .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
-.thumb.false:not(:hover) { color: var(--lightTextClr); }
-.thumb.up.true:not(:hover) { color: var(--linkClr); }
-.thumb.down.true:not(:hover) { color: var(--errorClr); }
+/* .thumb.false:not(:hover):not(:active) { color: var(--lightTextClr); } */
+.thumb.up.true { color: var(--linkClr); }
+.thumb.up.true:hover { color: var(--lightTextClr); }
+.thumb.down.true { color: var(--errorClr); }
+.thumb.down.true:hover { color: var(--lightTextClr); }
 .user-review .review .foot .btn:disabled { color: var(--lightTextClr); }
 /* .own.review {
   background-image: linear-gradient(to bottom, rgba(0, 151, 167, .1) 0%, transparent 70%);
@@ -2163,10 +2174,17 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .btn.asc:hover svg { transform: rotate(0deg); }
   .btn.desc:hover svg { transform: rotate(180deg); }
 
-  .thumb.false:not(:hover), .thumb.true:hover { color: var(--lightTextClr); }
+  .review .foot .btn:hover, .thumb.up.false:hover { color: var(--primaryClr); }
+  .review .foot .btn:active, .review .foot .thumb:active { color: rgba(0, 0, 0, .3); }
+  .thumb.false, .thumb.true:hover { color: var(--lightTextClr); }
+  .thumb.down.true, .thumb.down.false:hover { color: var(--errorClr); }
+  .thumb.true:hover:not(:disabled) svg { transform: rotateX(180deg); }
+  /*
+  .thumb.false:not(:hover):not(:active), .thumb.true:hover { color: var(--lightTextClr); }
   .thumb.up.true:not(:hover), .thumb.up.false:hover { color: var(--linkClr); }
   .thumb.down.true:not(:hover), .thumb.down.false:hover { color: var(--errorClr); }
   .thumb.true:hover:not(:disabled) svg { transform: rotateX(180deg); }
+  */
 
   .copy { 
     padding: 2px 4px;
@@ -2227,6 +2245,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
     transform: perspective(150) scale(1) rotateX(0deg);
     box-shadow: 0 1px 4px rgba(0,10,15,.15);
   }
+  .review .show-on-hover { opacity: 0; will-change: opacity; }
+  .review:hover .show-on-hover { opacity: 1; }
 }
 
 .relative { position: relative; }
