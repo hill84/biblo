@@ -1,12 +1,14 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+/* const gcs = require('@google-cloud/storage')();
+const spawn = require('child-process-promise').spawn;
+const path = require('path');
+const os = require('os');
+const fs = require('fs'); */
 
 admin.initializeApp();
 
 // firebase deploy --only functions
-
-const fn = functions.firestore;
-const fs = admin.firestore();
 
 // const timestamp = snap.get('created_at');
 // const date = timestamp.toDate();
@@ -19,9 +21,9 @@ const fs = admin.firestore();
 // });
 
 // REVIEWS
-exports.feedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
+exports.feedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const { bid } = context.params;
-  const feedRef = fs.collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
+  const feedRef = admin.firestore().collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
   const item = change.after.data();
 
   if (change.after.exists && !change.before.exists) return feedRef.set(item); // add review to feed
@@ -29,8 +31,8 @@ exports.feedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onWrite((chan
   return feedRef.update(item);
 });
 
-exports.truncateFeedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onCreate((change, context) => {
-  const latestReviewsRef = fs.collection('feeds').doc('latestReviews');
+exports.truncateFeedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => {
+  const latestReviewsRef = admin.firestore().collection('feeds').doc('latestReviews');
   const reviewsRef = latestReviewsRef.collection('reviews');
     
   return reviewsRef.orderBy('created_num', 'desc').get().then(snap => {
@@ -49,22 +51,68 @@ exports.truncateFeedReviews = fn.document('reviews/{bid}/reviewers/{uid}').onCre
 });
 
 // NOTIFICATIONS
-exports.countNotes = fn.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
+exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
   let increment;
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
   
   const { uid } = context.params;
-  const countRef = fs.collection('notifications').doc(uid);
+  const countRef = admin.firestore().collection('notifications').doc(uid);
   const snap = countRef.get();
   const count = (snap.data().count || 0) + increment;
 
   return countRef.update({ count });
 });
 
-exports.clearSubNotes = fn.document('notifications/{uid}').onDelete((change, context) => {
+exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDelete((snap, context) => {
   const { uid } = context.params;
-  const collectionRef = fs.collection('notifications').doc(uid).collection('notes');
+  const collectionRef = admin.firestore().collection('notifications').doc(uid).collection('notes');
 
   return collectionRef.delete();
+});
+
+// COLLECTIONS
+exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => {
+  let increment;
+  if (change.after.exists && !change.before.exists) { increment = 1 } else 
+  if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
+  
+  const { bid, cid } = context.params;
+  const countRef = admin.firestore().collection('collections').doc(cid);
+  
+  const snap = countRef.get()
+  const books_num = (snap.data().books_num || 0) + increment;
+  return countRef.update({ books_num });  
+});
+
+// BOOKS
+exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, context) => {
+  const { bid } = context.params;
+  const item = snap.data();
+
+  if ((item.collections || []).length > 0) {
+    item.collections.forEach(col => {
+      admin.firestore().collection('collections').doc(col).collection('books').doc(bid).delete(); // delete book from each collection
+    });
+  }
+
+  const ReviewsRef = admin.firestore().collection('reviews').doc(bid);
+
+  ReviewsRef.collection('reviewers').get().then(snap => {
+    if (!snap.empty) {
+      snap.forEach(reviewer => {
+        ReviewsRef.collection('reviewers').doc(reviewer.id).delete(); // delete book reviews
+      });
+    } else {
+      ReviewsRef.delete(); // delete book from reviews
+    }
+  });
+  return firebase.storage().bucket().deleteFiles({ prefix: `books/${bid}` }); // delete folder in storage
+});
+
+// USERS
+exports.clearUser = functions.firestore.document('users/{uid}').onDelete((snap, context) => {
+  const { uid } = context.params;
+
+  return firebase.storage().bucket().deleteFiles({ prefix: `users/${uid}` }); // delete folder in storage
 });

@@ -419,7 +419,7 @@ export default class BookForm extends React.Component {
 		const file = e.target.files[0];
 		// console.log(file);
 		const errors = validateImg(file, 1);
-		this.setState({ errors });
+		if (this._isMounted) { this.setState({ errors }) };
 		if (Object.keys(errors).length === 0) {
 			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
 			const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
