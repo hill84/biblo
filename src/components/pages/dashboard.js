@@ -281,7 +281,7 @@ export default class Dashboard extends React.Component {
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 		if (!user) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
 
-    const challengeBooks = challenges && challenges.length && challenges.filter(challenge => challenge.completed_num === 0)[0].books;
+    const challengeBooks = challenges && challenges.length && challenges.filter(challenge => challenge.completed_num !== challenge.books.length)[0].books;
     const challengeBooks_num = challengeBooks && Object.keys(challengeBooks).length;
     const challengeReadBooks_num = challengeBooks && Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length;
     const challengeProgress = challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0;

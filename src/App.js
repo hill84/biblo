@@ -25,7 +25,7 @@ import PrivacyPage from './components/pages/privacyPage';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
-// import Challenge from './components/pages/challenge';
+import Challenge from './components/pages/challenge';
 // import Challenges from './components/pages/challenges';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { handleFirestoreError } from './config/shared';
@@ -102,7 +102,7 @@ export default class App extends React.Component {
                     <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
                     <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/challenge" component={NewFeature} user={user} openSnackbar={openSnackbar} />
+                    <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
                     <PrivateRoute path="/challenges" component={NewFeature} user={user} openSnackbar={openSnackbar} />
                     <Redirect from="/home" to="/" />
                     <Route component={NoMatchPage} />

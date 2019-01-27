@@ -1116,9 +1116,9 @@ html.light .hero * { text-shadow: none; }
 
 /* randomquote */
 .randomquote {
-  --bookWidth: 60px;
-  --coverWidth: 60px;
-  --coverHeight: 92px;
+  --bookWidth: 40px;
+  --coverWidth: 40px;
+  --coverHeight: 64px;
 }
 .randomquote .cover { --pad: 7px; font-size: 7px; }
 
@@ -2017,15 +2017,13 @@ progress[value='100'].stepper::-webkit-progress-bar {
   text-indent: -3px;
   overflow: visible;
   user-select: none;
+  transition: all .2s ease-in-out;
   z-index: 1;
 }
 .bookmark.accent { border-color: var(--accentClr); height: 24px; }
 .bookmark div { position: absolute; left: -10px; width: 24px; overflow: hidden; }
-.cover .bookmark {
-  position: absolute;
-  top: -1px;
-  right: 9px;
-}
+.cover .bookmark { position: absolute; top: -1px; right: 9px; }
+.cover:hover .bookmark { height: 10px; color: transparent; }
 
 /* COLLECTION */
 .collection-profile .description {

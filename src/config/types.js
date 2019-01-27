@@ -159,7 +159,7 @@ export const quoteType = shape({
 export const challengesType = arrayOf(shape({
   cid: string.isRequired,
   title: string.isRequired,
-  books: object.isRequired
+  books: arrayOf(PropTypes.bool).isRequired
 }));
 
 export const challengeType = arrayOf(shape({
@@ -169,7 +169,7 @@ export const challengeType = arrayOf(shape({
   books: arrayOf(shape({
     author: string.isRequired,
     bid: string.isRequired,
-    cover: string,
+    cover: string.isRequired,
     title: string.isRequired
   })),
   followers: array
