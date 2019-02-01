@@ -25,7 +25,7 @@ export default class NewFeature extends React.Component {
           <div className="pad-v">
             <h2>Questa funzionalità non è ancora pronta</h2>
             <p>Aiutami a far crescere {appName}. <span className="hide-sm">Contribuisci con una donazione.</span></p>
-            <p>
+            <div>
               <button className={`btn ${ isOpenPayments ? 'flat' : 'primary'}`} onClick={this.onTogglePayments}>Fai una donazione</button>
               {isOpenPayments && 
                 <div className="btns pad-v-sm fadeIn slideDown reveal">
@@ -34,7 +34,7 @@ export default class NewFeature extends React.Component {
                   {/* <button type="button" className="btn primary" disabled><a href="/">{icon.creditCard()} Bonifico</a></button> */}
                 </div>
               }
-            </p>
+            </div>
           </div>
           <p className="font-sm">
             <Link className="counter" to="/donations">Perché è importante?</Link>

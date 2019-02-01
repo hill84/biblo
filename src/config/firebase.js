@@ -29,7 +29,7 @@ auth.onAuthStateChanged(user => user ? authid = ((auth.currentUser && auth.curre
 
 /* FIRESTORE */
 const db = firebase.firestore();
-db.settings({/* my settings... */ timestampsInSnapshots: true});
+db.settings({/* my settings... */});
 export const FieldValue = firebase.firestore.FieldValue;
 export const timestamp = FieldValue.serverTimestamp();
 // export const timestamp = firebase.ServerValue;
