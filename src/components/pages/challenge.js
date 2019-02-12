@@ -7,7 +7,7 @@ import { skltn_rows, skltn_shelfRow } from '../skeletons';
 
 class Challenge extends React.Component {
   state = {
-    challenges: null,
+    challenge: null,
     loading: false,
     userChallenges: null
   }
@@ -31,63 +31,62 @@ class Challenge extends React.Component {
     const { user } = this.props;
 
     if (this._isMounted) { 
-      this.setState({ loading: true }, () => {
-        userChallengesRef(user.uid).get().then(uSnap => {
-          if (!uSnap.empty) {
-            const challenges = [];
-            const userChallenges = [];
-            uSnap.forEach(item => {
-              item.data().cid && userChallenges.push(item.data());
-            });
-            userChallenges.forEach(item => {
-              challengeRef(item.cid).get().then(snap => {
-                if (snap.exists) {
-                  challenges.push(snap.data());
+      if (user) {
+        this.setState({ loading: true }, () => {
+          userChallengesRef(user.uid).get().then(uSnap => {
+            if (!uSnap.empty) {
+              const userChallenges = [];
+              uSnap.forEach(item => {
+                if (item.data().cid) {
+                  userChallenges.push(item.data());
+                  challengeRef(item.data().cid).get().then(snap => {
+                    if (snap.exists) {
+                      if (this._isMounted) {
+                        this.setState({ challenge: snap.data() });
+                      }
+                    }
+                  }).catch(error => console.warn(error));
                 }
-              }).catch(error => console.warn(error));
-            });
-            if (this._isMounted) {
-              this.setState({ challenges, userChallenges, loading: false });
+              });
+              if (this._isMounted) {
+                this.setState({ userChallenges, loading: false });
+              }
+            } else {
+              if (this._isMounted) {
+                this.setState({ challenge: null, userChallenges: null, loading: false });
+              }
             }
-          } else {
-            if (this._isMounted) {
-              this.setState({ challenges: null, userChallenges: null, loading: false });
-            }
-          }
-        }).catch(error => console.warn(error));
-      });
+          }).catch(error => console.warn(error));
+        });
+      }
     }
   }
 
   render() { 
-    if (!this.props.user) return null;
+    const { user } = this.props;
+    const { challenge, loading, userChallenges } = this.state;
 
-    const { challenges, loading, userChallenges } = this.state;
+    if (!user) return null;
 
-    const covers = !challenges 
-      ? <div className="info-row empty">Non ci sono libri in questa sfida.</div>
-      : <React.Fragment>
-          {challenges.map(item => 
-            <div key={item.cid} className={`shelf-row books-per-row-${booksPerRow} abreast`}>
-              {Object.keys(item.books).map((bid, i) => 
-                <Link key={bid} to={`/book/${bid}`}>
-                  <Cover book={item.books[bid]} rating={false} full={true} index={i} />
-                </Link>
-              )}
-            </div>
-          )}
-        </React.Fragment>
+    const empty = <div className="info-row empty">Sfida non trovata.</div>;
+
+    const covers = !challenge ? empty : userChallenges.map(item =>
+      <div key={item.cid} className={`shelf-row books-per-row-${booksPerRow} abreast`}>
+        {Object.keys(item.books).map((bid, i) => 
+          <Link key={bid} to={`/book/${bid}`} className={item.books[bid] ? 'read' : 'not-read'}>
+            <Cover book={challenge.books[bid]} rating={false} index={i} />
+          </Link>
+        )}
+      </div>
+    );
 
     return (
       <div className="container">
         <h2>Sfida</h2>
-        {loading ? skltn_rows : !userChallenges 
-          ? <div className="info-row empty">Non ci sono sfide.</div> 
-          : <ul>{userChallenges.map(item => <li key={item.cid}>{item.title}</li> )}</ul>
-        }
+        {loading ? skltn_rows : !userChallenges ? empty : <ul>{userChallenges.map(item => <li key={item.cid}>{item.title}</li> )}</ul>}
         <div className="card dark card-fullwidth-sm">
           <div className="shelf collection hoverable-items scrollable">
-            {loading ? skltn_shelfRow : covers}
+            {loading ? skltn_shelfRow : covers }
           </div>
         </div>
       </div>

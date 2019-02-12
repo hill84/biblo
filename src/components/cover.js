@@ -7,18 +7,27 @@ import { icon } from '../config/icons';
 export default class Cover extends React.Component {
   state = {
     book: this.props.book,
-    cover: (this.props.book.covers && this.props.book.covers[0]) || '',
+    cover: (this.props.book && this.props.book.covers && this.props.book.covers[0]) || '',
     // index: 0
   }
 
   static propTypes = {
     bcid: numberType,
-    book: coverType.isRequired,
+    book: coverType,
     info: boolType,
     page: numberType,
     rating: boolType,
     showReaders: boolType,
     full: boolType
+  }
+
+  static defaultProps = {
+    book: {
+      bid: 'unknown',
+      title: 'Titolo',
+      pages: 0,
+      authors: { Autore: true }
+    }
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -47,7 +56,7 @@ export default class Cover extends React.Component {
     const { animationDelay, bcid, full, index, info, page, rating, showReaders } = this.props;
     const delay = page && page > 1 ? 0 : index / 20;
 
-    if (!book) return null;
+    // if (!book) return null;
 
 		return (
       <div className="book"> 
@@ -63,9 +72,9 @@ export default class Cover extends React.Component {
           {!cover &&
             <React.Fragment>
               <h2 className="title">{book.title}</h2>
-              {book.subtitle && book.subtitle.length && <h3 className="subtitle">{book.subtitle}</h3>}
+              {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
               <span className="author">{joinObj(book.authors)}</span>
-              <span className="publisher">{book.publisher}</span>
+              {book.publisher && <span className="publisher">{book.publisher}</span>}
             </React.Fragment>
           }
         </div>
@@ -73,7 +82,7 @@ export default class Cover extends React.Component {
           <div className="info">
             <strong className="title">{book.title}</strong>
             <span className="author"><span className="hide-sm">di</span> {joinObj(book.authors)}</span>
-            {full && <span className="publisher">{book.publisher}</span>}
+            {full && book.publisher && <span className="publisher">{book.publisher}</span>}
             {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ?
               <div className="stepper">
                 <div className="bar" style={{width: `${book.readingState.progress_num}%`}} title={`${book.readingState.progress_num}%`}></div>

@@ -78,7 +78,7 @@ export const coverType = shape({
   authors: shape().isRequired,
   format: string,
   covers: arrayOf(string),
-  publisher: string.isRequired,
+  publisher: string, // required on create
   incipit: string
 });
 

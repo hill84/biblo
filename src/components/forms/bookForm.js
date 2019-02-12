@@ -598,13 +598,14 @@ export default class BookForm extends React.Component {
                 <div className="row">
                   <div className="form-group col-8">
                     <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
-                      <DatePicker 
+                      <DatePicker
                         className="date-picker"
                         name="publication"
                         cancelLabel="Annulla"
                         leftArrowIcon={icon.chevronLeft()}
                         rightArrowIcon={icon.chevronRight()}
                         format="D MMMM YYYY"
+                        disableFuture
                         maxDate={new Date()}
                         maxDateMessage="Data non valida"
                         error={Boolean(errors.publication)}
@@ -613,7 +614,7 @@ export default class BookForm extends React.Component {
                         onChange={this.onChangeDate("publication")}
                         margin="normal"
                         animateYearScrolling
-                        openToYearSelection
+                        openTo="year"
                         fullWidth
                       />
                     </MuiPickersUtilsProvider>
