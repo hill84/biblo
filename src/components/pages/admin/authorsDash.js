@@ -7,9 +7,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { authorRef, authorsRef } from '../../../config/firebase';
+import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials, normalizeString, timeSince } from '../../../config/shared';
+import { getInitials, handleFirestoreError, normalizeString, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -32,7 +32,7 @@ export default class AuthorsDash extends React.Component {
       { type: 'lastEditByUid', label: 'Modificato da' },
       { type: 'displayName', label: 'Nominativo' }, 
       { type: 'sex', label: 'Sesso' },
-      { type: 'photoURL', label: 'foto' }
+      { type: 'photoURL', label: 'Foto' }
     ],
     orderByIndex: 0,
     page: 1,
@@ -47,7 +47,7 @@ export default class AuthorsDash extends React.Component {
   }
 
 	componentDidMount() { 
-    this._ismounted = true;
+    this._isMounted = true;
     this.fetch();
   }
 
@@ -65,13 +65,14 @@ export default class AuthorsDash extends React.Component {
     }
   }
     
-  fetch = direction => {
+  fetch = e => {
     const { count, desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
     const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
     const paginatedRef = prev ? baseRef.endBefore(firstVisible) : baseRef.startAfter(lastVisible);
-    const ref = direction ? paginatedRef.limit(limit) : baseRef.limit(limit);
+    const dRef = direction ? paginatedRef : baseRef;
     // console.log('fetching items');
     /* console.log({ 
       first: firstVisible && firstVisible.data().displayName, 
@@ -84,8 +85,7 @@ export default class AuthorsDash extends React.Component {
     }
 
     const fetcher = () => {
-      this.unsubAuthorsFetch = ref.onSnapshot(snap => {
-        // console.log(snap);
+      this.unsubAuthorsFetch = dRef.limit(limit).onSnapshot(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
@@ -96,23 +96,23 @@ export default class AuthorsDash extends React.Component {
             loading: false,
             page: direction ? prev ? page > 1 ? page - 1 : 1 : (page * limit) > count ? page : page + 1 : 1
           });
-        } else this.setState({ items: null, count: 0, loading: false });
+        } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false, page: 1 });
       });
     }
 
     if (!direction) {
-      authorsRef.get().then(fullSnap => {
-        if (!fullSnap.empty) { 
+      countRef('authors').get().then(fullSnap => {
+        if (fullSnap.exists) { 
           if (this._isMounted) {
-            this.setState({ count: fullSnap.docs.length });
+            this.setState({ count: fullSnap.data().count });
           }
           fetcher();
         } else {
           if (this._isMounted) {
-            this.setState({ count: 0, page: 1 });
+            this.setState({ count: 0 });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
   }
 
@@ -256,8 +256,7 @@ export default class AuthorsDash extends React.Component {
               </ul>
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetch('next')} 
-                fetchPrev={() => this.fetch('prev')} 
+                fetch={this.fetch} 
                 limit={limitBy[limitByIndex]}
                 page={page}
               />

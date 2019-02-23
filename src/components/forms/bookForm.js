@@ -419,7 +419,9 @@ export default class BookForm extends React.Component {
 		const file = e.target.files[0];
 		// console.log(file);
 		const errors = validateImg(file, 1);
-		if (this._isMounted) { this.setState({ errors }) };
+		if (this._isMounted) { 
+      this.setState({ errors }) 
+    };
 		if (Object.keys(errors).length === 0) {
 			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
 			const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
@@ -427,7 +429,7 @@ export default class BookForm extends React.Component {
           this.setState({ imgProgress: snap.bytesTransferred / snap.totalBytes * 100 });
         }
 			}, error => {
-				console.warn(`upload error: ${error.message}`);
+				// console.warn(`upload error: ${error.message}`);
         if (this._isMounted) { 
           this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
         }
@@ -440,7 +442,7 @@ export default class BookForm extends React.Component {
               book: { ...this.state.book, covers: [url]},
               changes: true,
               success: false
-            }, () => console.log(url)) //openSnackbar('Immagine caricata', 'success'))
+            }/* , () => console.log(url) && openSnackbar('Immagine caricata', 'success') */)
           )
         );
         unsubUploadTask();
@@ -477,7 +479,7 @@ export default class BookForm extends React.Component {
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
                 <Cover book={book} />
                 {isAdmin && book.bid /* && !book.covers[0] */ && 
-                  <button type="button" className={`btn sm centered ${imgProgress === 100 ? 'success' : 'flat'}`}>
+                  <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
                     <input type="file" accept="image/*" className="upload" onChange={this.onImageChange} />
                     {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" className="stepper" /> */}
                     <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
@@ -722,7 +724,7 @@ export default class BookForm extends React.Component {
                   </div>
                 :
                   <div className="info-row">
-                    <button type="button" className="btn flat centered" onClick={this.onToggleDescription}>
+                    <button type="button" className="btn flat rounded centered" onClick={this.onToggleDescription}>
                       {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
                     </button>
                   </div>
@@ -752,7 +754,7 @@ export default class BookForm extends React.Component {
                   </div>
                 :
                   <div className="info-row">
-                    <button type="button" className="btn flat centered" onClick={this.onToggleIncipit}>
+                    <button type="button" className="btn flat rounded centered" onClick={this.onToggleIncipit}>
                       {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
                     </button>
                   </div>

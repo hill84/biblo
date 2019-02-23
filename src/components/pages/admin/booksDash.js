@@ -7,9 +7,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
-import { bookRef, booksRef /* , reviewRef */ } from '../../../config/firebase';
+import { bookRef, booksRef, countRef/* , reviewRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { timeSince } from '../../../config/shared';
+import { handleFirestoreError, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -63,43 +63,48 @@ export default class BooksDash extends React.Component {
     }
   }
     
-  fetch = direction => {
-    const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+  fetch = e => {
+    const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
-    const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const oRef = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
-    const lRef = oRef.limit(limit);
-    // console.log('fetching items');
+    // const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
+    const ref = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    const dRef = direction ? ref.startAt(lastVisible) : ref;
+    
     if (this._isMounted) {
       this.setState({ loading: true });
     }
+
+    const fetcher = () => {
+      this.unsubBooksFetch = dRef.onSnapshot(snap => {
+        if (!snap.empty) {
+          // console.log(snap.docs[snap.docs.length - 1].id);
+          const items = [];
+          snap.forEach(item => items.push(item.data()));
+          this.setState(prevState => ({
+            firstVisible: snap.docs[0],
+            items,
+            lastVisible: snap.docs[snap.docs.length-1],
+            loading: false,
+            page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+          }));
+        } else this.setState({ items: null, lastVisible: null, loading: false });
+      });
+    }
     
-    oRef.get().then(fullSnap => {
-      if (!fullSnap.empty) {
+    countRef('books').get().then(fullSnap => {
+      if (fullSnap.exists) {
         if (this._isMounted) {
-          this.setState({ count: fullSnap.docs.length });
+          this.setState({ count: fullSnap.data().count }, () => fetcher());
         }
         // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
-        const dRef = direction ? lRef.startAt(lastVisible || fullSnap.docs[startAt]) : lRef;
-        this.unsubBooksFetch = dRef.onSnapshot(snap => {
-          // console.log(snap);
-          if (!snap.empty) {
-            const items = [];
-            snap.forEach(item => items.push(item.data()));
-            this.setState(prevState => ({
-              items,
-              lastVisible: snap.docs[startAt],
-              loading: false,
-              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-            }));
-          } else this.setState({ items: null, lastVisible: null, loading: false });
-        });
+        
       } else {
         if (this._isMounted) {
           this.setState({ count: 0 });
         }
       }
-    }).catch(error => console.warn(error));
+    }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -123,6 +128,7 @@ export default class BooksDash extends React.Component {
   }
 
   onLock = (id, state) => {
+    // console.log('onLock');
     if (id) {
       if (state) {
         // console.log(`Locking ${id}`);
@@ -286,8 +292,7 @@ export default class BooksDash extends React.Component {
               </ul>
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetch('next')} 
-                fetchPrev={() => this.fetch('prev')} 
+                fetch={this.fetch}
                 limit={limitBy[limitByIndex]}
                 page={page}
               />

@@ -3,36 +3,23 @@ import { icon } from '../config/icons';
 import { boolType, funcType, numberType } from '../config/types';
 
 export default class PaginationControls extends React.Component {
-  state = {
-    count: this.props.count,
-    fetchNext: this.props.fetchNext,
-    fetchPrev: this.props.fetchPrev,
-    limit: this.props.limit,
-    loading: this.props.loading || false,
-    oneWay: this.props.oneWay || false,
-    page: this.props.page || 1
-  }
-
   static propTypes = {
     count: numberType.isRequired,
-    fetchNext: funcType.isRequired,
-    fetchPrev: funcType,
+    fetch: funcType.isRequired,
     limit: numberType.isRequired,
     loading: boolType,
     oneWay: boolType,
     page: numberType
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.count !== state.count) { return { count: props.count }; }
-    if (props.limit !== state.limit) { return { limit: props.limit }; }
-    if (props.loading !== state.loading) { return { loading: props.loading }; }
-    if (props.page !== state.page) { return { page: props.page }; }
-    return null;
+  static defaultProps = {
+    loading: false,
+    oneWay: false,
+    page: 1
   }
 
   render() {
-    const { count, fetchNext, fetchPrev, limit, loading, oneWay, page } = this.state;
+    const { count, fetch, limit, loading, oneWay, page } = this.props;
 
     return (
       <React.Fragment>
@@ -44,7 +31,9 @@ export default class PaginationControls extends React.Component {
                   type="button"
                   disabled={page === 1 && 'disabled'} 
                   className="btn icon rounded flat" 
-                  onClick={fetchPrev} title="precedente">
+                  data-direction="prev"
+                  onClick={fetch} 
+                  title="precedente">
                   {icon.chevronLeft()}
                 </button>
                 <span className="page">{page} di {(count % limit > 0 ? 1 : 0) + ((count - count % limit) / limit)}</span>
@@ -54,7 +43,9 @@ export default class PaginationControls extends React.Component {
               type="button"
               disabled={(loading || page >= (count / limit)) && 'disabled'} 
               className={`btn rounded flat ${oneWay && !loading ? 'oneway' : 'icon'}`}
-              onClick={fetchNext} title="successivo">
+              data-direction="next"
+              onClick={fetch} 
+              title="successivo">
               {oneWay ? loading ? icon.loading() : 'Mostra altro' : icon.chevronRight()}
             </button>
           </div>

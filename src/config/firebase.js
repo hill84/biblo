@@ -72,6 +72,8 @@ export const challengeRef = cid => db.collection('challenges').doc(cid);
 export const userChallengesRef = uid => db.collection('users').doc(uid).collection('challenges');
 export const userChallengeRef = (uid, cid) => db.collection('users').doc(uid).collection('challenges').doc(cid);
 
+export const countRef = cid => db.collection('counters').doc(cid);
+
 /* STORAGE */
 const storage = firebase.storage();
 export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`);

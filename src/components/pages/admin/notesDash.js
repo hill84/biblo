@@ -6,9 +6,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { noteRef, notesRef, notificationsRef } from '../../../config/firebase';
+import { countRef, noteRef, notesRef, notificationsRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { timeSince } from '../../../config/shared';
+import { handleFirestoreError, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -56,13 +56,14 @@ export default class NotesDash extends React.Component {
     this.unsubNotificationsFetch && this.unsubNotificationsFetch();
   }
     
-  fetch = direction => {
+  fetch = e => {
     const { count, /* lastVisible,  */limitBy, limitByIndex, page } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const baseRef = notificationsRef.limit(limit);
-    const paginatedRef = prev ? baseRef/* .endBefore(lastVisible) */ : baseRef/* .startAfter(lastVisible) */;
-    const ref = direction ? paginatedRef : baseRef;
+    const lRef = notificationsRef.limit(limit);
+    const paginatedRef = prev ? lRef/* .endBefore(lastVisible) */ : lRef/* .startAfter(lastVisible) */;
+    const dRef = direction ? paginatedRef : lRef;
     // console.log('fetching');
     // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     if (this._isMounted) {
@@ -70,7 +71,7 @@ export default class NotesDash extends React.Component {
     }
 
     const fetcher = () => {
-      this.unsubNotificationsFetch = ref.onSnapshot(fullSnap => {
+      this.unsubNotificationsFetch = dRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) {
           const items = [];
           fullSnap.forEach(item => items.push({ id: item.id, count: item.data().count }));
@@ -86,10 +87,10 @@ export default class NotesDash extends React.Component {
     }
 
     if (!direction) {
-      notificationsRef.get().then(fullSnap => {
-        if (!fullSnap.empty) { 
+      countRef('notifications').get().then(fullSnap => {
+        if (fullSnap.exists) { 
           if (this._isMounted) {
-            this.setState({ count: fullSnap.size });
+            this.setState({ count: fullSnap.data().count });
           }
           fetcher();
         } else {
@@ -97,7 +98,7 @@ export default class NotesDash extends React.Component {
             this.setState({ count: 0, page: 1 });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
   }
 
@@ -223,8 +224,7 @@ export default class NotesDash extends React.Component {
               </ul>
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetch('next')} 
-                fetchPrev={() => this.fetch('prev')} 
+                fetch={this.fetch}
                 limit={limitBy[limitByIndex]}
                 page={page}
               />

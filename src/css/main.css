@@ -37,6 +37,7 @@
   --pad: 24px;
   --avatarSize: 40px;
   --booksPerRow-lg: 7;
+  --bubblesPerRow-lg: 9;
   --shelf-rowHeight: 224px;
   --bookWidth: 140px;
   --coverWidth: 120px;
@@ -603,6 +604,11 @@ html:not(.light) .card.primary, .primary .card {
   --btnFontSize: .65rem;
   --radius: 2px;
 }
+.btn.rounded, .btns .btn.rounded { --btnPad: 1rem; }
+.btn.xl.rounded, .btns.xl .btn.rounded { --btnPad: 1.6rem; }
+.btn.lg.rounded, .btns.lg .btn.rounded { --btnPad: 1.4rem; }
+.btn.sm.rounded, .btns.sm .btn.rounded { --btnPad: .8rem; }
+.btn.xs.rounded, .btns.xs .btn.rounded { --btnPad: .55rem; }
 
 .btn.primary { background-color: var(--primaryClr); }
 .btn.primary:hover { background-color: var(--primaryLightClr); }
@@ -907,7 +913,7 @@ html:not(.light) .card.primary, .primary .card {
   display: block;
   padding: 0;
   margin: auto;
-  border-radius: 50%;
+  border-radius: 99px;
   min-width: 0;
   width: var(--dotSize);
   height: var(--dotSize);
@@ -921,7 +927,8 @@ html:not(.light) .card.primary, .primary .card {
   top: 5px;
   right: 5px;
   padding: 0;
-  border-radius: 50%;
+  width: var(--dotSize);
+  border-radius: 99px;
   background-color: var(--accentClr);
   color: #333;
   font-size: .55rem;
@@ -1121,6 +1128,8 @@ html.light .hero * { text-shadow: none; }
   --coverHeight: 64px;
 }
 .randomquote .cover { --pad: 7px; font-size: 7px; }
+
+.randomquote + .bio { margin-top: 10px; }
 
 /* FooterComponent */
 #FooterComponent { 
@@ -1487,6 +1496,7 @@ html.light .hero * { text-shadow: none; }
   height: 100%;
   z-index: 1;
   opacity: .8;
+  border-radius: inherit;
   background: -moz-linear-gradient(left, transparent 0%, rgba(255,255,255,0.02) 1%, rgba(0,0,0,0.06) 4%, rgba(255,255,255,0.09) 7%, rgba(255,255,255,0.2) 18%, rgba(255,255,255,0.2) 28%, transparent 100%);
   background: linear-gradient(to right, transparent 0%,rgba(255,255,255,0.02) 1%,rgba(0,0,0,0.06) 4%,rgba(255,255,255,0.09) 7%,rgba(255,255,255,0.2) 18%,rgba(255,255,255,0.2) 28%,transparent 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startClrstr='#00ffffff', endClrstr='#00ffffff',GradientType=1 );
@@ -1531,7 +1541,24 @@ html.light .hero * { text-shadow: none; }
 .book .info .stepper { margin-top: 11px; width: 80%; max-width: 96px; animation: fadeIn .4s ease-in-out; }
 .book .info .stepper .bar { transform-origin: left; will-change: transform; animation: scaleX .25s ease-in-out; }
 
-.not-read .book .cover { opacity: .3; }
+/* .not-read .book .cover { opacity: .4; } */
+.read .book .cover .overlay:before {
+  content: 'LETTO';
+  position: absolute;
+  top: calc(50% - 24px);
+  left: calc(50% - 24px);
+  background-color: var(--canvasLighterClr);
+  color: var(--lightTextClr);
+  font-weight: 200;
+  font-size: 10px;
+  border-radius: 33px;
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  opacity: .92;
+} 
+.read .book .cover .overlay { background: none; background-color: rgba(0, 151, 167, .86); opacity: 1; }
 
 .audio .book .cover {
   width: var(--coverHeight);
@@ -1841,6 +1868,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 
 /* SKELETONS */
+.skltns-row { display: block; }
 .skltn.shelf-row, .skltn.stacked {
   position: relative;
   height: var(--shelf-rowHeight);
@@ -1889,11 +1917,12 @@ progress[value='100'].stepper::-webkit-progress-bar {
 
 .bubbles .skltn.shelf-row {
   --shelf-rowHeight: 119px;
+  grid-template-columns: repeat(var(--bubblesPerRow-lg), 1fr);
 }
 .skltn.bubble {
   --skltnTitleY: calc(var(--avatarSize) + 12px);
   --coverWidth: calc(var(--avatarSize) + 20px);
-  min-width: var(--bookWidth);
+  /* min-width: var(--bookWidth); */
   margin: 0 auto;
   width: 100%;
   height: var(--shelf-rowHeight);
@@ -1995,6 +2024,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .badges .badge:active, .badges .badge.active, 
 #genreComponent .genre .badge:active, #genreComponent .genre .badge.active { background-color: transparent; }
 #genreComponent .card { overflow: hidden; transition: background-color .4s ease-in-out; }
+#genreComponent .card h2 { color: var(--contrastedTextClr); }
 #genreComponent .badges:not(.scrollable) .badge { color: rgba(0, 0, 0, .5); font-weight: 600; }
 #genreComponent .badges:not(.scrollable) .badge:not(.active) { background-color: rgba(255, 255, 255, .2); }
 #genreComponent .badges:not(.scrollable) .badge:hover { background-color: rgba(255, 255, 255, .3); }
@@ -2036,6 +2066,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 
 /* BUBBLES */
+.bubbles { grid-template-columns: repeat(var(--bubblesPerRow-lg), 1fr); }
 .bubble { 
   --avatarSize: 80px;
   --pad: 14px;
@@ -2052,6 +2083,10 @@ progress[value='100'].stepper::-webkit-progress-bar {
   margin-right: auto; 
   width: var(--avatarSize); 
   height: var(--avatarSize); 
+  overflow: visible;
+}
+.bubble .avatar img {
+  border-radius: inherit;
 }
 .bubble .title {
   margin-top: 10px;
@@ -2061,15 +2096,18 @@ progress[value='100'].stepper::-webkit-progress-bar {
   max-width: 100%;
   transition: all .2s ease-in-out; 
 }
-.hoverable-items .bubble .avatar { box-shadow: 0 0 0 transparent; transition: all .2s ease-in-out; }
-.hoverable-items .bubble:hover .avatar { box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 8px; transform: translateY(-3px); }
-.hoverable-items .bubble:active .avatar { transform: scale(.95) translateY(0); box-shadow: 0 0 0 transparent; }
-.bubbles.boxed { grid-gap: 8px; }
-.bubbles.boxed .bubble { min-height: calc(var(--avatarSize) + 10px + 38px + (var(--pad) * 2)); }
+.hoverable-items .bubble .avatar { overflow: hidden; transition: all .2s ease-in-out; will-change: transform; }
+.hoverable-items .bubble .avatar img { transition: all .3s ease-in-out; will-change: transform; }
+.hoverable-items .bubble:hover .avatar img { transform: scale(1.2); }
+.hoverable-items .bubble:active .avatar { transform: scale(.90); }
+.hoverable-items.boxed .bubble:hover { box-shadow: inset 0 0 0 100px rgba(0,0,0,.05), 0 0 0 4px rgba(0,0,0,.05); }
+.shelf.bubbles .bubble { --avatarSize: 80px; --bookWidth: 108.3px; --booksPerRow-lg: 9; }
+.bubbles.boxed { grid-gap: 12px; }
+.bubbles.boxed .bubble { width: 100%; border-radius: 2px; min-height: calc(var(--avatarSize) + 38px + (var(--pad) * 2)); padding: 10px 0; }
 .bubbles.boxed .bubble .avatar { background-color: rgba(0,0,0,.07); box-shadow: inset 1px 1px 0 1px rgba(0,0,0,.07); }
-.bubbles.boxed .bubble:hover { background-color: var(--primaryClr); }
+/* .bubbles.boxed .bubble:hover { background-color: var(--primaryClr); }
 .bubbles.boxed .bubble:active { background-color: var(--accentClr); }
-.bubbles.boxed .bubble:hover .title { color: #fff; }
+.bubbles.boxed .bubble:hover .title { color: #fff; }*/
 .bubbles.boxed .bubble .title { white-space: normal; }
 
 /* HELPERS */
@@ -2256,7 +2294,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .hide-always { display: none !important; }
 
 @media (max-width: 1200px) {
-  :root { --booksPerRow-lg: 6; }
+  :root { --booksPerRow-lg: 6; --bubblesPerRow-lg: 8; }
   .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr 1fr 1fr; }
   .shelf-row.stacked.books-per-row-3 { grid-template-columns: 1fr 1fr; }
   .shelf-row.stacked.books-per-row-2 { grid-template-columns: 1fr; }
@@ -2264,7 +2302,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .hide-xl { display: none; }
 }
 @media (max-width: 992px) {
-  :root { --booksPerRow-lg: 4; }
+  :root { --booksPerRow-lg: 4; --bubblesPerRow-lg: 5; }
   .text-center-lg { text-align: center; }
   .book-profile .description { max-height: 600px; }
   .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr 1fr; }
@@ -2273,7 +2311,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .hide-lg { display: none; }
 }
 @media (max-width: 768px) {
-  :root { --booksPerRow-lg: 3; }
+  :root { --booksPerRow-lg: 3; --bubblesPerRow-lg: 4; }
   .text-center-md { text-align: center; }
   .hero .container { padding-top: 65px; }
   .book-profile .title { font-size: 1.6rem; }
@@ -2349,9 +2387,12 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .review .react-rater { font-size: 16px; }
   .review .react-rater div:not(:first-child) { display: none; }
   .no-sticky-sm { position: initial; }
+  .shelf.bubbles .bubble { --avatarSize: 70px; --bookWidth: 84px; }
+  .bubble { --avatarSize: 70px; }
   .hide-sm { display: none; }
 }
 @media (max-width: 420px) {
+  :root { --booksPerRow-lg: 2; --bubblesPerRow-lg: 3; } 
   .shelf-row:not(.stacked) { 
     --bookWidth: 84px;
     --coverWidth: 80px;
@@ -2369,7 +2410,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .hide-xs { display: none; }
 }
 @media (max-width: 359px) {
-  :root { --booksPerRow-lg: 2; } 
+  :root { --bubblesPerRow-lg: 2; } 
 }
 @media (max-width: 320px) {
   .book-incipit p { text-align: left; }

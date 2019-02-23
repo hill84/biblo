@@ -17,7 +17,7 @@ export default class Authors extends React.Component {
     page: 1,
     pagination: false,
     scrollable: true,
-    size: this.props.size || 80
+    size: this.props.size
   }
 
   static propTypes = {
@@ -106,9 +106,9 @@ export default class Authors extends React.Component {
         </div>
         <div className="bubbles row shelf scrollable">
           {loading ? skltn_bubbleRow :
-            <div className="shelf-row hoverable-items">
+            <div className="shelf-row hoverable-items avatars-row">
               {items.map((item, index) => 
-                <Link to={`/author/${item.displayName}`} key={item.displayName} style={{'--avatarSize': `${size}px`, animationDelay: `${index/10}s`}} className="bubble col">
+                <Link to={`/author/${item.displayName}`} key={item.displayName} style={{'--avatarSize': size, animationDelay: `${index/10}s`}} className="bubble col">
                   <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
                   <div className="title">{item.displayName}</div>
                 </Link>

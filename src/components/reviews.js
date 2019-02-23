@@ -144,7 +144,7 @@ export default class Reviews extends React.Component {
         {count > 0 && items.length < count &&
           <PaginationControls 
             count={count} 
-            fetchNext={this.fetchNext} 
+            fetch={this.fetchNext} 
             limit={limit}
             loading={loading}
             oneWay

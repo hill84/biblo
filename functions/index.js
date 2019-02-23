@@ -20,7 +20,22 @@ admin.initializeApp();
 //  response.send("Hello from Firebase!");
 // });
 
+// HELPERS
+const count = (doc, change) => {
+  let increment;
+  if (change.after.exists && !change.before.exists) { increment = 1 } else 
+  if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
+
+  const countRef = admin.firestore().collection('counters').doc(doc);
+  return countRef.get().then(snap => {
+    const count = (snap.data().count || 0) + increment;
+    return countRef.update({ count });
+  });
+}
+
 // REVIEWS
+exports.countReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite(change => count('reviews', change));
+
 exports.feedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const { bid } = context.params;
   const feedRef = admin.firestore().collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
@@ -51,6 +66,8 @@ exports.truncateFeedReviews = functions.firestore.document('reviews/{bid}/review
 });
 
 // NOTIFICATIONS
+exports.countNotifications = functions.firestore.document('notifications/{nid}').onWrite(change => count('notifications', change));
+
 exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
   let increment;
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
@@ -58,8 +75,7 @@ exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{ni
   
   const { uid } = context.params;
   const countRef = admin.firestore().collection('notifications').doc(uid);
-  const snap = countRef.get();
-  const count = (snap.data().count || 0) + increment;
+  const count = (change.after.data().count || 0) + increment;
 
   return countRef.update({ count });
 });
@@ -72,20 +88,23 @@ exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDe
 });
 
 // COLLECTIONS
+exports.countCollections = functions.firestore.document('collections/{cid}').onWrite(change => count('collections', change));
+
 exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => {
   let increment;
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
   
-  const { bid, cid } = context.params;
+  const { cid } = context.params;
   const countRef = admin.firestore().collection('collections').doc(cid);
-  
-  const snap = countRef.get()
-  const books_num = (snap.data().books_num || 0) + increment;
+  const books_num = (change.after.data().books_num || 0) + increment;
+
   return countRef.update({ books_num });  
 });
 
 // BOOKS
+exports.countBooks = functions.firestore.document('books/{bid}').onWrite(change => count('books', change));
+
 exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, context) => {
   const { bid } = context.params;
   const item = snap.data();
@@ -103,16 +122,25 @@ exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, 
       snap.forEach(reviewer => {
         ReviewsRef.collection('reviewers').doc(reviewer.id).delete(); // delete book reviews
       });
-    } else {
-      ReviewsRef.delete(); // delete book from reviews
-    }
+    } else { ReviewsRef.delete(); } // delete book from reviews
   });
   return firebase.storage().bucket().deleteFiles({ prefix: `books/${bid}` }); // delete folder in storage
 });
 
 // USERS
+exports.countUsers = functions.firestore.document('users/{uid}').onWrite(change => count('users', change));
+
 exports.clearUser = functions.firestore.document('users/{uid}').onDelete((snap, context) => {
   const { uid } = context.params;
 
   return firebase.storage().bucket().deleteFiles({ prefix: `users/${uid}` }); // delete folder in storage
 });
+
+// AUTHORS
+exports.countAuthors = functions.firestore.document('authors/{aid}').onWrite(change => count('authors', change));
+
+// QUOTES
+exports.countQuotes = functions.firestore.document('quotes/{qid}').onWrite(change => count('quotes', change));
+
+// CHALLENGES
+exports.countChallenges = functions.firestore.document('challenges/{cid}').onWrite(change => count('challenges', change));

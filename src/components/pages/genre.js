@@ -14,7 +14,7 @@ import PaginationControls from '../paginationControls';
 export default class Genre extends React.Component {
   state = {
     count: 0,
-    coverview: false,
+    coverview: true,
     desc: true,
     items: null,
     lastVisible: null,
@@ -157,7 +157,14 @@ export default class Genre extends React.Component {
     return (
       <div className="container" id="genreComponent">
         <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
-          <h2 className="title"><span className="primary-text">Genere:</span> {this.props.match.params.gid}</h2>
+          <div className="row">
+            <div className="col">
+              <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {this.props.match.params.gid}</h2>
+            </div>
+            <div className="col-auto text-right">
+              <Link to="/genres" className="btn sm flat" style={{color: !isScrollable ? 'white' : ''}}>Generi</Link>
+            </div>
+          </div>
           <Genres scrollable={isScrollable} />
         </div>
 
@@ -205,7 +212,7 @@ export default class Genre extends React.Component {
         {count > 0 && items && items.length < count &&
           <PaginationControls 
             count={count} 
-            fetchNext={this.fetchNext} 
+            fetch={this.fetchNext} 
             limit={limit}
             loading={loading}
             oneWay

@@ -370,7 +370,7 @@ export default class Dashboard extends React.Component {
 												</button>
 											}
 											<span className="counter">Follower: <b>{Object.keys(followers).length}</b></span>
-											{screenSize !== 'xs' && <span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{Object.keys(followings).length}</b></span>}
+											{screenSize !== 'sm' && <span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{Object.keys(followings).length}</b></span>}
 										</div>
 									</div>
 								</div>
@@ -401,7 +401,6 @@ export default class Dashboard extends React.Component {
             // tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
             value={tabSelected}
             onChange={this.onTabSelect}
-
             variant="fullWidth"
             // variant="scrollable"
             scrollButtons="auto">

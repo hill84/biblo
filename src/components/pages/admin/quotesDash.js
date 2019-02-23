@@ -6,9 +6,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { quoteRef, quotesRef } from '../../../config/firebase';
+import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { timeSince } from '../../../config/shared';
+import { handleFirestoreError, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -64,13 +64,14 @@ export default class QuotesDash extends React.Component {
     }
   }
     
-  fetch = direction => {
+  fetch = e => {
     const { count, desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
     const baseRef = quotesRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
     const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
-    const ref = direction ? paginatedRef : baseRef;
+    const dRef = direction ? paginatedRef : baseRef;
     // console.log('fetching');
     // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
     if (this._isMounted) {
@@ -78,7 +79,7 @@ export default class QuotesDash extends React.Component {
     }
 
     const fetcher = () => {
-      this.unsubQuotesFetch = ref.onSnapshot(snap => {
+      this.unsubQuotesFetch = dRef.onSnapshot(snap => {
         // console.log(snap);
         if (!snap.empty) {
           const items = [];
@@ -95,10 +96,10 @@ export default class QuotesDash extends React.Component {
     }
 
     if (!direction) {
-      quotesRef.get().then(fullSnap => {
-        if (!fullSnap.empty) { 
+      countRef('quotes').get().then(fullSnap => {
+        if (fullSnap.exists) { 
           if (this._isMounted) {
-            this.setState({ count: fullSnap.docs.length });
+            this.setState({ count: fullSnap.data().count });
           }
           fetcher();
         } else {
@@ -106,7 +107,7 @@ export default class QuotesDash extends React.Component {
             this.setState({ count: 0, page: 1 });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
   }
 
@@ -254,8 +255,7 @@ export default class QuotesDash extends React.Component {
               </ul>
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetch('next')} 
-                fetchPrev={() => this.fetch('prev')} 
+                fetch={this.fetch}
                 limit={limitBy[limitByIndex]}
                 page={page}
               />

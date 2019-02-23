@@ -118,7 +118,7 @@ export default class BookProfile extends React.Component {
                   {book.incipit ? 
                     <div role="button" className={`hoverable-items ${book.format === 'Audiolibro' ? 'audio' : ''}`} onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
-                      <button type="button" className="btn xs centered flat" style={{'marginTop': '10px'}}>Leggi incipit</button>
+                      <button type="button" className="btn xs rounded flat centered" style={{'marginTop': '10px'}}>Leggi incipit</button>
                     </div>
                   :
                     <Cover book={book} rating={false} info={false} />

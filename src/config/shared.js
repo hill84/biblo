@@ -16,6 +16,7 @@ export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
 // UTILITY
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
+export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
 }, error => console.warn('Async: Could not copy text: ', error));

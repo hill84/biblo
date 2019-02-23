@@ -82,8 +82,9 @@ export default class Shelf extends React.Component {
     this.setState({ limit: booksPerRow() * 2 - 1 });
   }
 
-  fetchUserBooks = direction => {
+  fetchUserBooks = e => {
     const { desc, filterByIndex, isOwner, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
     const ulimit = isOwner ? limit : limit + 1;
 
     if (uid) {
@@ -217,6 +218,7 @@ export default class Shelf extends React.Component {
                   <button 
                     type="button"
                     className="btn sm flat counter icon" 
+                    disabled={!count}
                     title={coverview ? 'Stack view' : 'Cover view'} 
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential() : icon.viewGrid()}
@@ -244,7 +246,7 @@ export default class Shelf extends React.Component {
                     type="button"
                     className="btn sm flat counter" 
                     onClick={this.onOpenOrderMenu} 
-                    disabled={!count}>
+                    disabled={count < 2}>
                     <span className="hide-sm">Ordina per {orderBy[orderByIndex].label}</span>
                     <span className="show-sm">{orderBy[orderByIndex].icon}</span>
                   </button>
@@ -259,7 +261,7 @@ export default class Shelf extends React.Component {
                     className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} 
                     title={desc ? 'Ascendente' : 'Discendente'} 
                     onClick={this.onToggleDesc} 
-                    disabled={!count}>
+                    disabled={count < 2}>
                     {icon.arrowDown()}
                   </button>
                 </div>
@@ -281,8 +283,7 @@ export default class Shelf extends React.Component {
             {pagination && 
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetchUserBooks('next')} 
-                fetchPrev={() => this.fetchUserBooks('prev')} 
+                fetch={this.fetchUserBooks}
                 limit={limit}
                 page={page}
               />

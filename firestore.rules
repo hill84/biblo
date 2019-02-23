@@ -118,6 +118,11 @@ service cloud.firestore {
       allow write: if isEditor();
     }
     
+    match /counters/{cid} {
+      allow read;
+      allow write: if isEditor() && isAdmin();
+    }
+    
     match /admin/{document=**} {
     	allow read: if isAdmin();
       allow write: if isEditor() && isAdmin();

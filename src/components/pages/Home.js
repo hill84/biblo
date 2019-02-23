@@ -88,7 +88,7 @@ class Home extends React.Component {
           </div>
     
           <div className="card dark card-fullwidth-sm">
-            <Authors pagination={false} limit={7} scrollable />
+            <Authors pagination={false} limit={9} scrollable />
           </div>
     
           <div className="card dark card-fullwidth-sm">

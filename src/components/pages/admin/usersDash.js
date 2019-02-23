@@ -9,9 +9,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { noteRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
+import { countRef, noteRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials } from '../../../config/shared';
+import { getInitials, handleFirestoreError } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -21,8 +21,10 @@ export default class UsersDash extends React.Component {
     user: this.props.user,
     count: 0,
     desc: true,
+    firstVisible: null,
     isOpenDeleteDialog: false,
     items: null,
+    lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
@@ -49,8 +51,8 @@ export default class UsersDash extends React.Component {
     user: userType
   }
 
-	componentDidMount() {
-    this._isMounted = true; 
+	componentDidMount() { 
+    this._isMounted = true;
     this.fetch();
   }
 
@@ -68,43 +70,53 @@ export default class UsersDash extends React.Component {
     }
   }
     
-  fetch = direction => {
-    const { desc, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+  fetch = e => {
+    const { desc, firstVisible, lastVisible,  limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
+    const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
-    const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const uRef = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    // console.log('fetching items');
+    // const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
+    const ref = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
+    const paginatedRef = prev ? ref.endBefore(firstVisible) : ref.startAfter(lastVisible);
+    const dRef = direction ? paginatedRef : ref;
+
     if (this._isMounted) {
       this.setState({ loading: true });
     }
+
+    const fetcher = () => {
+      this.unsubUsersFetch = dRef.onSnapshot(snap => {
+        if (!snap.empty) {
+          const items = [];
+          snap.forEach(item => items.push(item.data()));
+          this.setState(prevState => ({
+            firstVisible: snap.docs[0],
+            items,
+            lastVisible: snap.docs[snap.docs.length-1],
+            loading: false,
+            page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+          }), () => {
+            console.log(this.state.firstVisible.id, this.state.lastVisible.id, direction, this.state.page);
+          });
+        } else this.setState({ items: null, loading: false });
+      });
+    }
     
-    usersRef.get().then(fullSnap => {
-      // console.log(fullSnap);
-      if (!fullSnap.empty) {
-        if (this._isMounted) {
-          this.setState({ count: fullSnap.docs.length });
+    if (!direction) {
+      countRef('users').get().then(fullSnap => {
+        if (fullSnap.exists) {
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.data().count }, () => fetcher());
+          }
+        } else {
+          if (this._isMounted) {
+            this.setState({ count: 0 });
+          }
         }
-        const lastVisible = fullSnap.docs[startAt];
-        // console.log({lastVisible, limit, direction, page});
-        const ref = direction ? uRef.startAt(lastVisible) : uRef;
-        this.unsubUsersFetch = ref.onSnapshot(snap => {
-          // console.log(snap);
-          if (!snap.empty) {
-            const items = [];
-            snap.forEach(item => items.push(item.data()));
-            this.setState(prevState => ({
-              items,
-              loading: false,
-              page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-            }));
-          } else this.setState({ items: null, loading: false });
-        });
-      } else {
-        if (this._isMounted) {
-          this.setState({ count: 0 });
-        }
-      }
-    }).catch(error => console.warn(error));
+      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+    } else {
+      fetcher();
+    }
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -272,8 +284,7 @@ export default class UsersDash extends React.Component {
               </ul>
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetch('next')} 
-                fetchPrev={() => this.fetch('prev')} 
+                fetch={this.fetch} 
                 limit={limitBy[limitByIndex]}
                 page={page}
               />

@@ -8,9 +8,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { collectionBooksRef, collectionRef, collectionsRef } from '../../../config/firebase';
+import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { timeSince } from '../../../config/shared';
+import { handleFirestoreError, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
@@ -60,26 +60,27 @@ export default class collectionsDash extends React.Component {
     }
   }
     
-  fetch = direction => {
+  fetch = e => {
     const { /* desc,  */lastVisible, limitBy, limitByIndex, /* orderBy, orderByIndex,  */page } = this.state;
+    const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const cRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
+    const lRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
     // console.log('fetching items');
     if (this._isMounted) {
       this.setState({ loading: true });
     }
     
-    collectionsRef.get().then(fullSnap => {
+    countRef('collections').get().then(fullSnap => {
       // console.log(fullSnap);
-      if (!fullSnap.empty) {
+      if (fullSnap.exists) {
         if (this._isMounted) {
-          this.setState({ count: fullSnap.docs.length });
+          this.setState({ count: fullSnap.data().count });
         }
         // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
-        const ref = direction ? cRef.startAt(lastVisible || fullSnap.docs[startAt]) : cRef;
+        const dRef = direction ? lRef.startAt(lastVisible || fullSnap.docs[startAt]) : lRef;
 
-        this.unsubCollectionsFetch = ref.onSnapshot(snap => {
+        this.unsubCollectionsFetch = dRef.onSnapshot(snap => {
           if (!snap.empty) {
             const items = [];
             snap.forEach(item => {
@@ -109,7 +110,7 @@ export default class collectionsDash extends React.Component {
           this.setState({ count: 0 });
         }
       }
-    }).catch(error => console.warn(error));
+    }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -249,8 +250,7 @@ export default class collectionsDash extends React.Component {
               </ul>
               <PaginationControls 
                 count={count} 
-                fetchNext={() => this.fetch('next')} 
-                fetchPrev={() => this.fetch('prev')} 
+                fetch={this.fetch}
                 limit={limitBy[limitByIndex]}
                 page={page}
               />

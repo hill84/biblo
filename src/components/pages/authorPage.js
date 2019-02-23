@@ -26,7 +26,7 @@ export default class AuthorPage extends React.Component {
       source: ''
     },
     books: null,
-    coverview: false,
+    coverview: true,
     loading: true,
     loadingBooks: true
   }
@@ -88,11 +88,18 @@ export default class AuthorPage extends React.Component {
               <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
             </div>
             <div className="col">
-              <h2 className="title">{author.displayName}</h2>
+              <div className="row">
+                <div className="col">
+                  <h2 className="title">{author.displayName}</h2>
+                </div>
+                <div className="col-auto text-right hide-md">
+                  <Link to="/authors" className="btn sm flat">Autori</Link>
+                </div>
+              </div>
+              <RandomQuote author={author.displayName} skeleton={false} className="fadeIn slideUp reveal" />
               <div className="info-row bio">
                 <MinifiableText text={author.bio} maxChars={500} />
               </div>
-              <RandomQuote author={author.displayName} skeleton={false} className="fadeIn slideUp reveal" />
             </div>
           </div>
         </div>
