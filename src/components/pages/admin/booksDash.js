@@ -64,12 +64,13 @@ export default class BooksDash extends React.Component {
   }
     
   fetch = e => {
-    const { desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
+    const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
-    // const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const ref = booksRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    const dRef = direction ? ref.startAt(lastVisible) : ref;
+    const ref = booksRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
+    const dRef = direction ? paginatedRef : ref;
     
     if (this._isMounted) {
       this.setState({ loading: true });
@@ -78,33 +79,32 @@ export default class BooksDash extends React.Component {
     const fetcher = () => {
       this.unsubBooksFetch = dRef.onSnapshot(snap => {
         if (!snap.empty) {
-          // console.log(snap.docs[snap.docs.length - 1].id);
           const items = [];
           snap.forEach(item => items.push(item.data()));
           this.setState(prevState => ({
-            firstVisible: snap.docs[0],
-            items,
-            lastVisible: snap.docs[snap.docs.length-1],
+            firstVisible: snap.docs[prev ? snap.docs.length-1 : 0],
+            items: prev ? items.reverse() : items,
+            lastVisible: snap.docs[prev ? 0 : snap.docs.length-1],
             loading: false,
-            page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-          }));
-        } else this.setState({ items: null, lastVisible: null, loading: false });
+            page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+          }), () => this.unsubBooksFetch());
+        } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false });
       });
     }
     
-    countRef('books').get().then(fullSnap => {
-      if (fullSnap.exists) {
-        if (this._isMounted) {
-          this.setState({ count: fullSnap.data().count }, () => fetcher());
+    if (!direction) {
+      countRef('books').get().then(fullSnap => {
+        if (fullSnap.exists) {
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.data().count }, () => fetcher());
+          }
+        } else {
+          if (this._isMounted) {
+            this.setState({ count: 0 });
+          }
         }
-        // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
-        
-      } else {
-        if (this._isMounted) {
-          this.setState({ count: 0 });
-        }
-      }
-    }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+    } else fetcher();
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));

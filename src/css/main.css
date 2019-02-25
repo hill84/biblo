@@ -2072,6 +2072,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   --pad: 14px;
   min-width: var(--avatarSize); 
   margin: 0 auto; 
+  border-radius: 99px;
   text-align: center;
   font-size: .8rem;
   transition: all .2s ease-in-out; 
@@ -2096,6 +2097,27 @@ progress[value='100'].stepper::-webkit-progress-bar {
   max-width: 100%;
   transition: all .2s ease-in-out; 
 }
+
+.bubble-group .bubble { 
+  --avatarSize: 24px; 
+  position: relative;
+  display: inline-block;
+  margin-left: -2px;
+  vertical-align: middle;
+  height: var(--avatarSize); 
+  box-shadow: 0 0 0 3px var(--cardBg); 
+  background-color: #bdbdbd;
+  color: #333;
+  font-size: 12px;
+  animation-delay: .3s;
+  z-index: 1;
+}
+.bubble-group .bubble:nth-child(2) { animation-delay: .4s; } 
+.bubble-group .bubble:nth-child(3) { animation-delay: .5s; } 
+.bubble-group .bubble:nth-child(4) { animation-delay: .6s; }
+.bubble-group.inline { margin-right: 4px; }
+.bubble-group.inline .avatar { display: inline-flex; }
+
 .hoverable-items .bubble .avatar { overflow: hidden; transition: all .2s ease-in-out; will-change: transform; }
 .hoverable-items .bubble .avatar img { transition: all .3s ease-in-out; will-change: transform; }
 .hoverable-items .bubble:hover .avatar img { transform: scale(1.2); }

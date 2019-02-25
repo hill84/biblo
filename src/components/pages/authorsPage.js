@@ -4,12 +4,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { authorRef, authorsRef, countRef } from '../../config/firebase';
+import { authorsRef, countRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { getInitials } from '../../config/shared';
 import { numberType } from '../../config/types';
 import PaginationControls from '../paginationControls';
-import { skltn_bubbleRow } from '../skeletons';
 
 export default class AuthorsPage extends React.Component {
 	state = {
@@ -40,43 +39,42 @@ export default class AuthorsPage extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
-    this.unsubAuthorsFetch && this.unsubAuthorsFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { desc, limitByIndex, orderByIndex } = this.state;
+    const { desc, limit, orderByIndex } = this.state;
     if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
         this.fetch();
       }
     }
   }
 
   fetch = e => { 
-    const { count, desc, firstVisible, lastVisible, limit, orderBy, orderByIndex, page } = this.state;
+    const { desc, firstVisible, lastVisible, limit, orderBy, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
-    const baseRef = authorsRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
-    const paginatedRef = prev ? baseRef.endBefore(firstVisible) : baseRef.startAfter(lastVisible);
-    const dRef = direction ? paginatedRef : baseRef;
+    const ref = authorsRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
+    const dRef = direction ? paginatedRef : ref;
 
     if (this._isMounted) {
       this.setState({ loading: true });
     }
 
     const fetcher = () => {
-      dRef.limit(limit).get().then(snap => {
+      dRef.get().then(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           if (this._isMounted) {
-            this.setState({ 
-              firstVisible: snap.docs[0],
-              items,
-              lastVisible: snap.docs[snap.docs.length-1],
+            this.setState(prevState => ({ 
+              firstVisible: snap.docs[prev ? snap.docs.length-1 : 0],
+              items: prev ? items.reverse() : items,
+              lastVisible: snap.docs[prev ? 0 : snap.docs.length-1],
               loading: false,
-              page: direction ? prev ? page > 1 ? page - 1 : 1 : (page * limit) > count ? page : page + 1 : 1
-            });
+              page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+            }));
           }
         } else {
           if (this._isMounted) {
@@ -90,9 +88,8 @@ export default class AuthorsPage extends React.Component {
       countRef('authors').get().then(fullSnap => {
         if (fullSnap.exists) {
           if (this._isMounted) {
-            this.setState({ count: fullSnap.data().count });
+            this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-          fetcher();
         } else if (this._isMounted) {
           this.setState({ count: 0 });
         }

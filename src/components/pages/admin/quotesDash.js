@@ -65,33 +65,31 @@ export default class QuotesDash extends React.Component {
   }
     
   fetch = e => {
-    const { count, desc, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = this.state;
+    const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
-    const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const baseRef = quotesRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    const paginatedRef = prev ? baseRef.endBefore(lastVisible) : baseRef.startAfter(lastVisible);
-    const dRef = direction ? paginatedRef : baseRef;
-    // console.log('fetching');
-    // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
+    const limit = limitBy[limitByIndex];
+    const ref = quotesRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
+    const dRef = direction ? paginatedRef : ref;
+
     if (this._isMounted) {
       this.setState({ loading: true });
     }
 
     const fetcher = () => {
       this.unsubQuotesFetch = dRef.onSnapshot(snap => {
-        // console.log(snap);
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
-          // console.log({ limit, length: snap.docs.length, rest: limit - snap.docs.length });
-          this.setState({
-            items,
-            lastVisible: snap.docs[snap.docs.length-1],
+          this.setState(prevState => ({
+            firstVisible: snap.docs[prev ? snap.docs.length-1 : 0],
+            items: prev ? items.reverse() : items,
+            lastVisible: snap.docs[prev ? 0 : snap.docs.length-1],
             loading: false,
-            page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
-          });
-        } else this.setState({ items: null, count: 0, loading: false });
+            page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+          }), () => this.unsubQuotesFetch());
+        } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false });
       });
     }
 
@@ -99,12 +97,11 @@ export default class QuotesDash extends React.Component {
       countRef('quotes').get().then(fullSnap => {
         if (fullSnap.exists) { 
           if (this._isMounted) {
-            this.setState({ count: fullSnap.data().count });
+            this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-          fetcher();
         } else {
           if (this._isMounted) {
-            this.setState({ count: 0, page: 1 });
+            this.setState({ count: 0 });
           }
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));

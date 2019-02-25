@@ -1,8 +1,9 @@
+import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
+import { abbrNum, getInitials, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
 import { userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
@@ -152,7 +153,21 @@ export default class Collection extends React.Component {
                           </React.Fragment> 
                         : <span>{icon.plus()} Segui</span> }
                       </button>
-                      <span className="counter last disabled">{followers ? abbrNum(followers.length) : 0} {isScrollable ? icon.account() : 'follower'}</span>
+                      <div className="counter last inline">
+                        {/* followers ? abbrNum(followers.length) : 0} {isScrollable ? icon.account() : 'follower' */}
+                        {followers ? followers.length > 3 && followers.length < 13 ? 
+                          <div className="bubble-group inline">
+                            {followers.slice(0,3).map(item => (
+                              <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
+                                <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
+                                  {!item.photoURL && getInitials(item.displayName)}
+                                </Avatar>
+                              </Link>
+                            ))}
+                            <div className="bubble empty">{followers.length - 3}+</div>
+                          </div>
+                        : `${abbrNum(followers.length)} ${isScrollable ? icon.account() : 'follower'}` : ''}
+                      </div>
                     </div>
                   </React.Fragment>
                 }
