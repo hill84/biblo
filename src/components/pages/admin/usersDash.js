@@ -75,9 +75,8 @@ export default class UsersDash extends React.Component {
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
-    // const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
-    const ref = usersRef.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit);
-    const paginatedRef = prev ? ref.endBefore(firstVisible) : ref.startAfter(lastVisible);
+    const ref = usersRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
     const dRef = direction ? paginatedRef : ref;
 
     if (this._isMounted) {
@@ -90,15 +89,13 @@ export default class UsersDash extends React.Component {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           this.setState(prevState => ({
-            firstVisible: snap.docs[0],
-            items,
-            lastVisible: snap.docs[snap.docs.length-1],
+            firstVisible: snap.docs[prev ? snap.size -1 : 0],
+            items: prev ? items.reverse() : items,
+            lastVisible: snap.docs[prev ? 0 : snap.size -1],
             loading: false,
             page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-          }), () => {
-            console.log(this.state.firstVisible.id, this.state.lastVisible.id, direction, this.state.page);
-          });
-        } else this.setState({ items: null, loading: false });
+          }));
+        } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false });
       });
     }
     
@@ -114,9 +111,7 @@ export default class UsersDash extends React.Component {
           }
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
-    } else {
-      fetcher();
-    }
+    } else fetcher();
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -129,18 +124,29 @@ export default class UsersDash extends React.Component {
   onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
-  onView = id => this.setState({ redirectTo: id });
-
-  onNote = id => this.props.onToggleDialog(id);
-
-  onLock = (id, state) => {
-    console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
-    userRef(id).update({ 'roles.editor': !state }).then(() => {
-      this.props.openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
-    }).catch(error => console.warn(error));
+  onView = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    this.setState({ redirectTo: id });
   }
 
-  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  onNote = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    this.props.onToggleDialog(id);
+  }
+
+  onLock = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    const state = e.currentTarget.parentNode.dataset.state === 'true';
+    // console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
+    userRef(id).update({ 'roles.editor': !state }).then(() => {
+      this.props.openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
+    }).catch(err => console.warn(err));
+  }
+
+  onDeleteRequest = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    this.setState({ isOpenDeleteDialog: true, selectedId: id });
+  }
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
@@ -148,16 +154,21 @@ export default class UsersDash extends React.Component {
     userRef(selectedId).delete().then(() => {
       userShelfRef(selectedId).delete().then(() => {
         console.log(`User reviews deleted`);
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
       noteRef(selectedId).delete().then(() => {
         console.log(`User notifications deleted`);
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
       this.setState({ isOpenDeleteDialog: false });
       this.props.openSnackbar('Elemento cancellato', 'success');
-    }).catch(error => console.warn(error));
+    }).catch(err => console.warn(err));
   }
 
-  onChangeRole = (id, role, state) => userRef(id).update({ [`roles.${role}`]: !state }).catch(error => console.warn(error));
+  onChangeRole = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    const role = e.currentTarget.dataset.role;
+    const state = e.currentTarget.dataset.state === 'true';
+    userRef(id).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
+  }
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
@@ -187,19 +198,19 @@ export default class UsersDash extends React.Component {
                 <div className="col hide-md">{item.stats.ratings_num}</div>
               </div>
             </div>
-            <div className="col col-sm-2 btns xs">
-              <div className={`btn ${item.roles.editor ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(item.uid, 'editor', item.roles.editor)} title="editor">E</div>
-              <div className={`btn ${item.roles.premium ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(item.uid, 'premium', item.roles.premium)} title="premium">P</div>
-              <div className={`btn ${item.roles.admin ? 'selected' : 'flat'}`} onClick={() => this.onChangeRole(item.uid, 'admin', item.roles.admin)} title="admin">A</div>
+            <div className="col col-sm-2 btns xs text-center" data-id={item.uid}>
+              <div className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={this.onChangeRole} title="editor">E</div>
+              <div className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={this.onChangeRole} title="premium">P</div>
+              <div className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={this.onChangeRole} title="admin">A</div>
             </div>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{new Date(item.creationTime).toLocaleDateString()}</div>
             </div>
-            <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(item.uid)} title="anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={() => this.onNote(item.uid)} title="Invia notifica">{icon.bell()}</button>
-              <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.uid, item.roles.editor)} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.uid)} title="elimina">{icon.close()}</button>
+            <div className="absolute-row right btns xs" data-id={item.uid} data-state={item.roles.editor}>
+              <button type="button" className="btn icon green" onClick={this.onView} title="anteprima">{icon.eye()}</button>
+              <button type="button" className="btn icon primary" onClick={this.onNote} title="Invia notifica">{icon.bell()}</button>
+              <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+              <button type="button" className="btn icon red" onClick={this.onDeleteRequest} title="elimina">{icon.close()}</button>
             </div>
           </div>
         </li>
@@ -276,7 +287,7 @@ export default class UsersDash extends React.Component {
                         <div className="col hide-md" title="Voti">{icon.star()}</div>
                       </div>
                     </div>
-                    <div className="col col-sm-2">Ruoli</div>
+                    <div className="col col-sm-2 text-center">Ruoli</div>
                     <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
                   </div>
                 </li>

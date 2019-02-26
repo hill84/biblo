@@ -57,7 +57,7 @@ export default class NotesDash extends React.Component {
   }
     
   fetch = e => {
-    const { count, /* lastVisible,  */limitBy, limitByIndex, page } = this.state;
+    const { /* lastVisible,  */limitBy, limitByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
@@ -71,17 +71,16 @@ export default class NotesDash extends React.Component {
     }
 
     const fetcher = () => {
-      this.unsubNotificationsFetch = dRef.onSnapshot(fullSnap => {
-        if (!fullSnap.empty) {
+      this.unsubNotificationsFetch = dRef.onSnapshot(snap => {
+        if (!snap.empty) {
           const items = [];
-          fullSnap.forEach(item => items.push({ id: item.id, count: item.data().count }));
-          this.setState({
+          snap.forEach(item => items.push({ id: item.id, count: item.data().count }));
+          this.setState(prevState => ({
             items,
-            count: fullSnap.size,
-            lastVisible: fullSnap.docs[fullSnap.size - 1],
+            lastVisible: snap.docs[snap.size - 1],
             loading: false,
-            page: direction ? prev ? (page > 1) ? (page - 1) : 1 : ((page * limit) > count) ? page : (page + 1) : 1
-          });
+            page: direction ? prev ? (prevState.page > 1) ? (prevState.page - 1) : 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : (prevState.page + 1) : 1
+          }));
         } else this.setState({ items: null, count: 0, loading: false });
       });
     }

@@ -82,12 +82,12 @@ export default class BooksDash extends React.Component {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           this.setState(prevState => ({
-            firstVisible: snap.docs[prev ? snap.docs.length-1 : 0],
+            firstVisible: snap.docs[prev ? snap.size -1 : 0],
             items: prev ? items.reverse() : items,
-            lastVisible: snap.docs[prev ? 0 : snap.docs.length-1],
+            lastVisible: snap.docs[prev ? 0 : snap.size -1],
             loading: false,
             page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-          }), () => this.unsubBooksFetch());
+          }));
         } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false });
       });
     }
@@ -117,34 +117,37 @@ export default class BooksDash extends React.Component {
   onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
-  onView = id => this.setState({ redirectTo: id });
+  onView = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    this.setState({ redirectTo: id });
+  }
   
-  onEdit = id => {
-    if (id) {
-      // console.log(`Editing ${id}`);
-      // TODO
-      this.setState({ redirectTo: id }); 
+  onEdit = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    this.setState({ redirectTo: id }); // TODO
+  }
+
+  onLock = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    const state = e.currentTarget.parentNode.dataset.state === 'true';
+
+    if (state) {
+      // console.log(`Locking ${id}`);
+      bookRef(id).update({ 'EDIT.edit': false }).then(() => {
+        this.props.openSnackbar('Elemento bloccato', 'success');
+      }).catch(error => console.warn(error));
+    } else {
+      // console.log(`Unlocking ${id}`);
+      bookRef(id).update({ 'EDIT.edit': true }).then(() => {
+        this.props.openSnackbar('Elemento sbloccato', 'success');
+      }).catch(error => console.warn(error));
     }
   }
 
-  onLock = (id, state) => {
-    // console.log('onLock');
-    if (id) {
-      if (state) {
-        // console.log(`Locking ${id}`);
-        bookRef(id).update({ 'EDIT.edit': false }).then(() => {
-          this.props.openSnackbar('Elemento bloccato', 'success');
-        }).catch(error => console.warn(error));
-      } else {
-        // console.log(`Unlocking ${id}`);
-        bookRef(id).update({ 'EDIT.edit': true }).then(() => {
-          this.props.openSnackbar('Elemento sbloccato', 'success');
-        }).catch(error => console.warn(error));
-      }
-    }
+  onDeleteRequest = e => {
+    const id = e.currentTarget.parentNode.dataset.id;
+    this.setState({ isOpenDeleteDialog: true, selectedId: id });
   }
-
-  onDeleteRequest = id => this.setState({ isOpenDeleteDialog: true, selectedId: id });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
@@ -164,59 +167,57 @@ export default class BooksDash extends React.Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && items.length &&
-      items.map(item => 
-        <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
-          <div className="row">
-            <div className="col-auto">
-              <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.covers[0]})`}}>
-                <ImageZoom
-                  defaultStyles={{ 
-                    zoomContainer: { zIndex: 1200 }, 
-                    overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } 
-                  }}
-                  image={{ src: item.covers[0], className: 'thumb hidden' }}
-                  zoomImage={{ className: 'magnified', maxheight: '400px' }}
-                />
-              </div>
-            </div>
-            <Link to={`/book/${item.bid}`} className="col">
-              {item.title}
-            </Link>
-            <Link to={`/author/${Object.keys(item.authors)[0]}`} className="col">
-              {Object.keys(item.authors)[0]}
-            </Link>
-            <div className="col hide-md monotype" title={item.bid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.bid}/>
-            </div>
-            <div className="col hide-md monotype" title={item.ISBN_13}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_13}/>
-            </div>
-            <div className="col hide-md monotype" title={item.ISBN_10}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_10} />
-            </div>
-            <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm">
-              {item.EDIT.createdBy}
-            </Link>
-            <div className="col hide-sm col-lg-1">
-              <div className="timestamp">{new Date(item.EDIT.created_num).toLocaleDateString()}</div>
-            </div>
-            <Link to={`/dashboard/${item.EDIT.lastEditByUid}`} title={item.EDIT.lastEditByUid} className="col">
-              {item.EDIT.lastEditBy}
-            </Link>
-            <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
-            </div>
-            <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(item.bid)} title="Anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.bid)} title="Modifica">{icon.pencil()}</button>
-              <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.bid, item.EDIT.edit)} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.bid)}>{icon.close()}</button>
+    const itemsList = items && items.length && items.map(item => (
+      <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
+        <div className="row">
+          <div className="col-auto">
+            <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.covers[0]})`}}>
+              <ImageZoom
+                defaultStyles={{ 
+                  zoomContainer: { zIndex: 1200 }, 
+                  overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } 
+                }}
+                image={{ src: item.covers[0], className: 'thumb hidden' }}
+                zoomImage={{ className: 'magnified', maxheight: '400px' }}
+              />
             </div>
           </div>
-        </li>
-      )
-    );
+          <Link to={`/book/${item.bid}`} className="col">
+            {item.title}
+          </Link>
+          <Link to={`/author/${Object.keys(item.authors)[0]}`} className="col">
+            {Object.keys(item.authors)[0]}
+          </Link>
+          <div className="col hide-md monotype" title={item.bid}>
+            <CopyToClipboard openSnackbar={openSnackbar} text={item.bid}/>
+          </div>
+          <div className="col hide-md monotype" title={item.ISBN_13}>
+            <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_13}/>
+          </div>
+          <div className="col hide-md monotype" title={item.ISBN_10}>
+            <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_10} />
+          </div>
+          <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm">
+            {item.EDIT.createdBy}
+          </Link>
+          <div className="col hide-sm col-lg-1">
+            <div className="timestamp">{new Date(item.EDIT.created_num).toLocaleDateString()}</div>
+          </div>
+          <Link to={`/dashboard/${item.EDIT.lastEditByUid}`} title={item.EDIT.lastEditByUid} className="col">
+            {item.EDIT.lastEditBy}
+          </Link>
+          <div className="col col-sm-2 col-lg-1 text-right">
+            <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
+          </div>
+          <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit}>
+            <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye()}</button>
+            <button type="button" className="btn icon primary" onClick={this.onEdit} title="Modifica">{icon.pencil()}</button>
+            <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+            <button type="button" className="btn icon red" onClick={this.onDeleteRequest}>{icon.close()}</button>
+          </div>
+        </div>
+      </li>
+    ));
 
     const orderByOptions = orderBy.map((option, index) => (
       <MenuItem

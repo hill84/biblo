@@ -83,12 +83,12 @@ export default class QuotesDash extends React.Component {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           this.setState(prevState => ({
-            firstVisible: snap.docs[prev ? snap.docs.length-1 : 0],
+            firstVisible: snap.docs[prev ? snap.size -1 : 0],
             items: prev ? items.reverse() : items,
-            lastVisible: snap.docs[prev ? 0 : snap.docs.length-1],
+            lastVisible: snap.docs[prev ? 0 : snap.size -1],
             loading: false,
             page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-          }), () => this.unsubQuotesFetch());
+          }));
         } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false });
       });
     }
