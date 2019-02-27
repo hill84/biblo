@@ -964,6 +964,7 @@ html:not(.light) .card.primary, .primary .card {
   animation: fadeInSlideDown .8s ease-in-out 2.6s;
   animation-fill-mode: both;
 }
+#appBarComponent .title .version { font-size: .6rem; color: var(--lighterTextClr); font-weight: 200; }
 #appBarComponent svg { --iconSize: 24px; }
 #appBarComponent button { color: currentColor; }
 #appBarComponent .more-btn { margin-right: -12px; color: currentColor; padding: 7px; }
@@ -2145,6 +2146,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .primary-text { color: var(--primaryClr); }
 .text-sm { font-size: 80%; }
 .text-xs { font-size: 70%; }
+.text-xxs { font-size: 60%; }
 .overflow-hidden { overflow: hidden; }
 
 .btn .show-on-hover { 

@@ -20,6 +20,7 @@ import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
+import { version } from '../../package.json';
 
 export default class Layout extends React.Component {
   state = {
@@ -118,6 +119,8 @@ export default class Layout extends React.Component {
     const { children } = this.props;
     const toRead = notes => notes && notes.filter(note => !note.read || note.role);
 
+    console.log('App version', version);
+
     return (
       <div id="layoutComponent">
         <AppBar id="appBarComponent" className="dark" position="static">
@@ -126,7 +129,7 @@ export default class Layout extends React.Component {
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
             <Typography className="title" variant="h6" color="inherit">
-              <Link to="/">{appName}<sup>Alpha</sup></Link>
+              <Link to="/">{appName}<sup>Alpha</sup> <span className="version">v {version}</span></Link>
             </Typography>
             {user ? 
               <React.Fragment>
