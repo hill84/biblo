@@ -9,6 +9,7 @@ import BookCollection from '../bookCollection';
 import Genres from '../genres';
 import RandomQuote from '../randomQuote';
 import Reviews from '../reviews';
+import { InView } from 'react-intersection-observer';
 
 class Home extends React.Component {
   state = {
@@ -28,6 +29,7 @@ class Home extends React.Component {
   render() { 
     const { screenSize } = this.state;
     const isScrollable = isTouchDevice() || screenSize === 'sm' || screenSize === 'xs';
+    const rootMargin = '200px';
 
     return (
       <div id="homeComponent">
@@ -42,10 +44,10 @@ class Home extends React.Component {
             </p>
             <div className="btns reveal fadeIn slideUp">
               {isAuthenticated() ? 
-                <Link to={`/dashboard/${authid}`} className="btn primary lg">La mia libreria</Link> 
+                <Link to={`/dashboard/${authid}`} className="btn primary lg rounded">La mia libreria</Link> 
               : 
                 <React.Fragment>
-                  <Link to="/signup" className="btn primary lg">Registrati</Link>
+                  <Link to="/signup" className="btn primary lg rounded">Registrati</Link>
                   <p><small>Sei già registrato? <Link to="/login">Accedi</Link></small></p>
                 </React.Fragment>
               }
@@ -76,28 +78,54 @@ class Home extends React.Component {
               </div>
             </div>
           </div>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
+                <BookCollection cid="Libri proibiti" pagination={false} limit={7} inView={inView} scrollable />
+              </div>
+            }
+          </InView>
     
-          <div className="card dark card-fullwidth-sm">
-            <BookCollection cid="Libri proibiti" pagination={false} limit={7} scrollable />
-          </div>
-    
-          <Reviews />
-    
-          <div className="card dark card-fullwidth-sm">
-            <BookCollection cid="Premio Strega" pagination={false} limit={7} desc={true} scrollable />
-          </div>
-    
-          <div className="card dark card-fullwidth-sm">
-            <Authors pagination={false} limit={9} scrollable />
-          </div>
-    
-          <div className="card dark card-fullwidth-sm">
-            <BookCollection cid="Harry Potter" pagination={false} limit={7} scrollable />
-          </div>
-    
-          <div className="card dark card-fullwidth-sm">
-            <BookCollection cid="Top" pagination={false} limit={7} scrollable />
-          </div>
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div ref={ref}>
+                {inView && <Reviews />}
+              </div>
+            }
+          </InView>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
+                <BookCollection cid="Premio Strega" pagination={false} limit={7} inView={inView} desc scrollable />
+              </div>
+            }
+          </InView>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
+                <Authors pagination={false} limit={9} inView={inView} scrollable />
+              </div>
+            }
+          </InView>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
+                <BookCollection cid="Harry Potter" pagination={false} limit={7} inView={inView} scrollable />
+              </div>
+            }
+          </InView>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
+                <BookCollection cid="Top" pagination={false} limit={7} inView={inView} scrollable />
+              </div>
+            }
+          </InView>
         </div>
       </div>
     );

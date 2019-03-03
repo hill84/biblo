@@ -13,6 +13,7 @@ import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { version } from '../../package.json';
 import { authid, noteRef, notesRef, signOut } from '../config/firebase';
 import { icon } from '../config/icons';
 import { roles } from '../config/lists';
@@ -20,7 +21,6 @@ import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
-import { version } from '../../package.json';
 
 export default class Layout extends React.Component {
   state = {
@@ -119,8 +119,6 @@ export default class Layout extends React.Component {
     const { children } = this.props;
     const toRead = notes => notes && notes.filter(note => !note.read || note.role);
 
-    console.log('App version', version);
-
     return (
       <div id="layoutComponent">
         <AppBar id="appBarComponent" className="dark" position="static">
@@ -129,7 +127,7 @@ export default class Layout extends React.Component {
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
             <Typography className="title" variant="h6" color="inherit">
-              <Link to="/">{appName}<sup>Alpha</sup> <span className="version">v {version}</span></Link>
+              <Link to="/">{appName}<sup>Alpha</sup></Link>
             </Typography>
             {user ? 
               <React.Fragment>
@@ -189,7 +187,10 @@ export default class Layout extends React.Component {
                   aria-owns={moreAnchorEl ? 'more-menu' : null}
                   aria-haspopup="true"
                   onClick={this.onOpenMore}>
-                  <Avatar className="avatar popIn reveal" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+                  <Avatar className="avatar popIn reveal" src={user.photoURL} alt={user.displayName}>
+                    {!user.photoURL && getInitials(user.displayName)}
+                  </Avatar>
+                  {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
                 </IconButton>
                 <Menu
                   id="more-menu"
@@ -199,7 +200,7 @@ export default class Layout extends React.Component {
                   onClose={this.onCloseMore}>
                   <NavLink to="/profile"><MenuItem>Profilo</MenuItem></NavLink>
                   <NavLink to={`/dashboard/${authid}`}><MenuItem>Dashboard</MenuItem></NavLink>
-                  <MenuItem onClick={() => signOut()}>Esci</MenuItem>
+                  <MenuItem onClick={signOut}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>
             : 
@@ -266,6 +267,11 @@ export default class Layout extends React.Component {
                   <ListItemText inset primary="Home" />
                 </MenuItem>
               </NavLink>
+
+              <MenuItem className="bottom-item">
+                <div className="version">v {version}</div>
+              </MenuItem>
+              
             </nav>
           </Drawer>
         </MuiThemeProvider>

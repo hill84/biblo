@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, getInitials, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
-import { userType } from '../../config/types';
+import { abbrNum, getInitials, handleFirestoreError, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
+import { userType, funcType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
@@ -23,6 +23,7 @@ export default class Collection extends React.Component {
   }
 
   static propTypes = {
+    openSnackbar: funcType.isRequired,
     user: userType
   }
 
@@ -57,7 +58,7 @@ export default class Collection extends React.Component {
 
   fetch = () => {
     const { cid } = this.state;
-    const { user } = this.props;
+    const { openSnackbar, user } = this.props;
 
     collectionRef(cid).get().then(snap => {
       if (!snap.empty) {
@@ -83,7 +84,7 @@ export default class Collection extends React.Component {
           });
         }
       }
-    }).catch(error => console.warn(error));
+    }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
 
     collectionsRef.get().then(snap => {
       if (!snap.empty) {
@@ -97,22 +98,22 @@ export default class Collection extends React.Component {
           this.setState({ collections: null, loadingCollections: false });
         }
       }
-    }).catch(error => console.warn(error));
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   }
 
   onFollow = () => {
     const { cid, follow } = this.state;
-    const { user } = this.props;
+    const { openSnackbar, user } = this.props;
 
     if (follow) {
-      collectionFollowersRef(cid).doc(user.uid).delete().then().catch(error => console.warn(error));
+      collectionFollowersRef(cid).doc(user.uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       collectionFollowersRef(cid).doc(user.uid).set({
         uid: user.uid,
-        displayName: this.props.user.displayName,
-        photoURL: this.props.user.photoURL,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
         timestamp: (new Date()).getTime()
-      }).then().catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   }
 
@@ -156,16 +157,18 @@ export default class Collection extends React.Component {
                       <div className="counter last inline">
                         {/* followers ? abbrNum(followers.length) : 0} {isScrollable ? icon.account() : 'follower' */}
                         {followers ? followers.length > 3 && followers.length < 13 ? 
-                          <div className="bubble-group inline">
-                            {followers.slice(0,3).map(item => (
-                              <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
-                                <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
-                                  {!item.photoURL && getInitials(item.displayName)}
-                                </Avatar>
-                              </Link>
-                            ))}
-                            <div className="bubble empty">{followers.length - 3}+</div>
-                          </div>
+                          <React.Fragment>
+                            <div className="bubble-group inline">
+                              {followers.slice(0,3).map(item => (
+                                <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
+                                  <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
+                                    {!item.photoURL && getInitials(item.displayName)}
+                                  </Avatar>
+                                </Link>
+                              ))}
+                            </div>
+                            {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
+                          </React.Fragment>
                         : `${abbrNum(followers.length)} ${isScrollable ? icon.account() : 'follower'}` : ''}
                       </div>
                     </div>

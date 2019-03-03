@@ -10,6 +10,7 @@ import Admin from './components/pages/admin/admin';
 import AuthorPage from './components/pages/authorPage';
 import AuthorsPage from './components/pages/authorsPage';
 import BookContainer from './components/pages/bookContainer';
+import Challenge from './components/pages/challenge';
 import Collection from './components/pages/collection';
 import CookiePage from './components/pages/cookiePage';
 import Dashboard from './components/pages/dashboard';
@@ -25,7 +26,6 @@ import PrivacyPage from './components/pages/privacyPage';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
-import Challenge from './components/pages/challenge';
 // import Challenges from './components/pages/challenges';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { handleFirestoreError } from './config/shared';
@@ -90,7 +90,7 @@ export default class App extends React.Component {
                     <Route path="/terms" component={TermsPage} />
                     <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
                     <RouteWithProps path="/authors" component={AuthorsPage} user={user} />
-                    <RouteWithProps path="/collection/:cid" component={Collection} user={user} />
+                    <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/genre/:gid" component={Genre} user={user} />
                     <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />

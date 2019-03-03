@@ -275,7 +275,7 @@ export default class UsersDash extends React.Component {
               <ul className="table dense nolist font-sm">
                 <li className="avatar-row labels">
                   <div className="row">
-                    <div className="col-auto hide-xs"><div className="avatar" title="avatar" /></div>
+                    <div className="col-auto hide-xs"><div className="avatar hidden" title="avatar" /></div>
                     <div className="col hide-sm">Nominativo</div>
                     <div className="col">Uid</div>
                     <div className="col hide-sm">Email</div>

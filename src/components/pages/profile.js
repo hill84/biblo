@@ -1,3 +1,4 @@
+import MomentUtils from '@date-io/moment';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
@@ -7,12 +8,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import DatePicker from 'material-ui-pickers/DatePicker';
-import MomentUtils from '@date-io/moment';
 import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
-import firebase, { storageRef, authid, userRef } from '../../config/firebase';
+import { Link } from 'react-router-dom';
+import firebase, { authid, storageRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { calcAge, getInitials, validateImg } from '../../config/shared';
@@ -327,6 +328,9 @@ export default class Profile extends React.Component {
           <div className="footer no-gutter">
             <button type="button" className={`btn btn-footer primary ${success && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={this.onSubmit}>{success ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
           </div>
+        </div>
+        <div className="text-center"> 
+          <Link to={`/dashboard/${user.uid}`} className="btn flat rounded">Vai alla dashboard</Link>
         </div>
       </div>
 		);

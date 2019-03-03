@@ -9,11 +9,13 @@ import SwipeableViews from 'react-swipeable-views';
 import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { appName, calcAge, getInitials, joinToLowerCase, screenSize, timeSince } from '../../config/shared';
+import { appName, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
+// import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
+import ImageZoom from 'react-medium-image-zoom';
 
 export default class Dashboard extends React.Component {
  	state = {
@@ -22,8 +24,12 @@ export default class Dashboard extends React.Component {
 		uid: this.props.match.params.uid,
     user: null,
     challenges: [],
-		followers: {},
-		followings: {},
+    followers: {},
+    followersCount: 0,
+    followersPage: 1,
+    followings: {},
+    followingsCount: 0,
+    followingsPage: 1,
     follow: false,
     lfollowers: {},
     lfollowings: {},
@@ -118,8 +124,10 @@ export default class Dashboard extends React.Component {
     this.unsubUserFetch = userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         let count = 0;
-        const tot = profileKeys.length;
-        Object.keys(snap.data()).forEach(i => { 
+        const keys = Object.keys(snap.data()).filter(item => profileKeys.includes(item));
+        const tot = keys.length;
+        
+        keys.forEach(i => { 
           // console.log(i + ': ' + typeof snap.data()[i] + ' - ' + snap.data()[i]);
           if (typeof snap.data()[i] === 'string') {
             if (snap.data()[i] !== '') count++ 
@@ -130,10 +138,10 @@ export default class Dashboard extends React.Component {
         // console.log(count, tot);
         this.setState({
           isOwner: luid ? luid === uid : false,
+          loading: false,
           user: snap.data(),
           progress: Number((100 / tot * count).toFixed(0))
         });
-        this.setState({ loading: false });
       } else this.setState({ isOwner: false, user: null, loading: false });
     });
   }
@@ -147,9 +155,10 @@ export default class Dashboard extends React.Component {
         // console.log(snap.data());
         this.setState({
           followers: snap.data(),
+          // followersCount: 10, // TODO
           follow: luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false
         });
-      } else this.setState({ followers: {}, follow: false });
+      } else this.setState({ followers: {}, followersCount: 0, follow: false });
     });
     if (isAuthenticated()) {
       if (luid && luid !== uid) {
@@ -172,9 +181,12 @@ export default class Dashboard extends React.Component {
     this.unsubUidFollowingsFetch && this.unsubUidFollowingsFetch();
     this.unsubUidFollowingsFetch = followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
-        this.setState({ followings: snap.data() });
+        this.setState({ 
+          followings: snap.data(), 
+          // followingsCount: 10 // TODO
+        });
         // console.log({ uid, followings: snap.data() });
-      } else this.setState({ followings: {} });
+      } else this.setState({ followings: {}, followingsCount: 0 });
     });
     
     if (luid && luid !== uid) {
@@ -200,7 +212,7 @@ export default class Dashboard extends React.Component {
       let snackbarMsg = '';
       const lindex = Object.keys(computedFollowers).indexOf(luid);
 			const findex = Object.keys(computedFollowings).indexOf(fuid);			
-			console.log({ fuid, fuser, lindex, findex });
+			// console.log({ fuid, fuser, lindex, findex });
 
       if (lindex > -1 || findex > -1) {
         if (lindex > -1) delete computedFollowers[luid];
@@ -225,15 +237,15 @@ export default class Dashboard extends React.Component {
         };
 				snackbarMsg = `Segui ${fuser.displayName}`;
 			}
-      console.log({ computedFollowers, computedFollowings });
+      // console.log({ computedFollowers, computedFollowings });
 	
 			// VISITED
 			followersRef(fuid).set(computedFollowers).then(() => {
         // VISITOR
         followingsRef(luid).set(computedFollowings).then(() => {
           openSnackbar(snackbarMsg, 'success');
-        }).catch(error => console.warn(`Followings error: ${error}`)); 
-      }).catch(error => console.warn(`Followers error: ${error}`));
+        }).catch(err => console.warn(`Followings error: ${err}`)); 
+      }).catch(err => console.warn(`Followers error: ${err}`));
     } else {
       openSnackbar('Utente non autenticato', 'error');
     }
@@ -275,8 +287,8 @@ export default class Dashboard extends React.Component {
   }
 
 	render() {
-    const { challenges, follow, followers, followings, isOwner, loading, luid, progress, screenSize, tabDir, tabSelected, uid, user } = this.state;
-    const { history, location } = this.props;
+    const { challenges, follow, followers, /* followersCount, followersLoading, followersPage, */ followings, /* followingsCount, followingsLoading, followingsPage, */ isOwner, loading, luid, progress, screenSize, tabDir, tabSelected, uid, user } = this.state;
+    const { history, location, openSnackbar } = this.props;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 		if (!user) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
@@ -286,33 +298,46 @@ export default class Dashboard extends React.Component {
     const challengeReadBooks_num = challengeBooks && Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length;
     const challengeProgress = challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0;
     const challengeCompleted = challengeProgress === 100;
-
-		const usersList = obj => Object.keys(obj).map(f => (
-      <div key={f} className="avatar-row">
-        <Link to={`/dashboard/${f}`} className="row ripple">
-          <div className="col">
-            <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>{obj[f].displayName}
-          </div>
-          <div className="col-auto">
-            <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
-            {isOwner && f !== luid && <button type="button" className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
-              {obj === followings ? 'Non seguire' : 'Segui'}
-            </button>}
-          </div>
-        </Link>
-      </div> 
-    ));
-    const Followers = usersList(followers);
-    const Followings = usersList(followings);
-    const Roles = Object.keys(user.roles).map((r, i) => user.roles[r] && <div key={`${i}_${r}`} className={`badge ${r}`}>{r}</div>);
-
-		const creationYear = user && String(new Date(user.creationTime).getFullYear());
+    const isMini = isTouchDevice() || screenSize === 'sm' || screenSize === 'xs';
+		const usersList = obj => (
+      <React.Fragment>
+        {Object.keys(obj).map(f => (
+          <div key={f} className="avatar-row">
+            <Link to={`/dashboard/${f}`} className="row ripple">
+              <div className="col">
+                <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>{obj[f].displayName}
+              </div>
+              {!isMini && 
+                <div className="col-auto">
+                  <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
+                  {isOwner && f !== luid && 
+                    <button type="button" className="btn flat show-on-hover" onClick={e => this.onFollowUser(e, f, obj[f])}>
+                      {obj === followers ? 'Segui' : 'Non seguire'}
+                    </button>
+                  }
+                </div>
+              }
+            </Link>
+          </div> 
+        ))}
+        {/* <PaginationControls // TODO
+          count={obj === followers ? followersCount : followingsCount} 
+          fetch={obj === followers ? this.fetchFollowers : this.fetchFollowings} 
+          limit={4}
+          loading={obj === followers ? followersLoading : followingsLoading}
+          oneWay
+          page={obj === followers ? followersPage : followingsPage}
+        /> */}
+      </React.Fragment>
+    );
+    const Roles = Object.keys(user.roles).map((role, i) => user.roles[role] && <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>);
+    const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const ShelfDetails = () => (
       <div className="info-row footer centered shelfdetails">
         <span className="counter">{icon.book()} <span className="hide-sm">Libri:</span> <b>{user.stats.shelf_num}</b></span>
-        <span className="counter">{icon.heartOutline()} <span className="hide-sm">Desideri:</span> <b>{user.stats.wishlist_num}</b></span>
-        <span className="counter">{icon.starOutline()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
-        <span className="counter">{icon.messageTextOutline()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
+        <span className="counter">{icon.heart()} <span className="hide-sm">Desideri:</span> <b>{user.stats.wishlist_num}</b></span>
+        <span className="counter">{icon.star()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
+        <span className="counter">{icon.messageText()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
       </div>
     );
 		const EmptyRow = () => (
@@ -335,10 +360,18 @@ export default class Dashboard extends React.Component {
 					<div className="col-md col-12">
 						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
-								<div className="role-badges">{Roles}</div>
+                <div className="role-badges">{Roles} {!user.roles.editor && <div className="badge red">Modifiche disabilitate</div>}</div>
 								<div className="row">
 									<div className="col-auto">
-										<Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+                    <Avatar className="avatar" /* src={user.photoURL} */ alt={user.displayName}>
+                      {user.photoURL ? 
+                        <ImageZoom
+                          defaultStyles={imageZoomDefaultStyles}
+                          image={{ src: user.photoURL, className: 'thumb' }}
+                          zoomImage={{ className: 'magnified avatar' }}
+                        />
+                      : getInitials(user.displayName)}
+                    </Avatar>
 									</div>
 									<div className="col">
 										<h2 className="username">{user.displayName}</h2>
@@ -387,8 +420,8 @@ export default class Dashboard extends React.Component {
                     <div className="progress-value">{progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader()}</div>
                   </div>
                   <div className="info-row">
-                    <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Scegli sfida'}</div>
-                    <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary centered" style={{marginBottom: 0, display: 'inline-block'}}>{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
+                    <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Nessuna sfida'}</div>
+                    <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded centered" style={{marginBottom: 0, display: 'inline-block'}}>{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
                   </div>
                 </div>
               </div>
@@ -416,10 +449,10 @@ export default class Dashboard extends React.Component {
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
           <div className="card tab" dir={tabDir}>
-            {tabSelected === 0 && <Shelf luid={luid} uid={uid} shelf="bookInShelf"/>}
+            {tabSelected === 0 && <Shelf luid={luid} uid={uid} openSnackbar={openSnackbar} shelf="bookInShelf" />}
           </div>
           <div className="card tab" dir={tabDir}>
-            {tabSelected === 1 && <Shelf luid={luid} uid={uid} shelf="bookInWishlist" />}
+            {tabSelected === 1 && <Shelf luid={luid} uid={uid} openSnackbar={openSnackbar} shelf="bookInWishlist" />}
           </div>
           <div className="card tab" dir={tabDir}>
             {tabSelected === 2 && <NewFeature />}
@@ -429,11 +462,11 @@ export default class Dashboard extends React.Component {
               <div className="row">
                 <div className="col-md-6 cols-12">
                   <h4>Seguito da:</h4>
-                  {Object.keys(followers).length ? Followers : <EmptyRow />}
+                  {Object.keys(followers).length ? usersList(followers) : <EmptyRow />}
                 </div>
                 <div className="col-md-6 col-12">
                   <h4>Segue:</h4>
-                  {Object.keys(followings).length ? Followings : <EmptyRow />}
+                  {Object.keys(followings).length ? usersList(followings) : <EmptyRow />}
                 </div>
               </div>
             }

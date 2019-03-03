@@ -6,8 +6,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { booksPerRow } from '../config/shared';
-import { numberType, stringType } from '../config/types';
+import { booksPerRow, handleFirestoreError } from '../config/shared';
+import { numberType, stringType, funcType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -43,6 +43,7 @@ export default class Shelf extends React.Component {
   static propTypes = {
     booksPerRow: numberType,
     limit: numberType,
+    openSnackbar: funcType.isRequired,
     shelf: stringType,
     luid: stringType,
     uid: stringType.isRequired
@@ -78,12 +79,11 @@ export default class Shelf extends React.Component {
     }
   }
 
-  updateLimit = () => {
-    this.setState({ limit: booksPerRow() * 2 - 1 });
-  }
+  updateLimit = () => this.setState({ limit: booksPerRow() * 2 - 1 });
 
   fetchUserBooks = e => {
     const { desc, filterByIndex, isOwner, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
+    const { openSnackbar } = this.props;
     const direction = e && e.currentTarget.dataset.direction;
     const ulimit = isOwner ? limit : limit + 1;
 
@@ -144,10 +144,10 @@ export default class Shelf extends React.Component {
                       userRef(luid).collection('challenges').doc(cid).update({ 
                         books: cBooks, 
                         completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Number((new Date()).getTime()) : 0
-                      }).then().catch(error => console.warn(error));
+                      }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
                     } // else console.log('No challenge books to update');
                   }
-                }).catch(error => console.warn(error));
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
               });
             } else this.setState(empty);
           });
@@ -156,13 +156,9 @@ export default class Shelf extends React.Component {
     } else console.warn(`No uid: ${uid}`);
   }
 
-  onChangeOrderBy = (e, i) => {
-    this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
-  }
+  onChangeOrderBy = (e, i) => this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
 
-  onChangeFilterBy = (e, i) => {
-    this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
-  }
+  onChangeFilterBy = (e, i) => this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
 
   onChangeSelect = key => e => {
 		this.setState({ 

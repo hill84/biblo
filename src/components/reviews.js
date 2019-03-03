@@ -5,6 +5,7 @@ import { isAuthenticated, latestReviewsRef, reviewersRef } from '../config/fireb
 import { stringType, userType } from '../config/types';
 import Review from './review';
 import PaginationControls from './paginationControls';
+import { handleFirestoreError } from '../config/shared';
 /* import InfiniteScroll from 'react-infinite-scroller'; */
 
 export default class Reviews extends React.Component {
@@ -23,7 +24,7 @@ export default class Reviews extends React.Component {
     user: userType
   }
 
-  componentDidMount(prevState) {
+  componentDidMount() {
     this._isMounted = true;
     this.fetch(this.props.bid);
   }
@@ -33,7 +34,7 @@ export default class Reviews extends React.Component {
     this.reviewersFetch && this.reviewersFetch();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.bid !== prevProps.bid || this.props.user !== prevProps.user){
       this.fetch(this.props.bid);
       // console.log('Fetched updated reviews');
@@ -41,12 +42,13 @@ export default class Reviews extends React.Component {
   }
 
   fetch = bid => { 
+    const { openSnackbar } = this.props;
     const { desc, limit } = this.state;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
   
-    this.reviewersFetch = ref.onSnapshot(snap => {
-      if (!snap.empty) {
-        this.setState({ count: snap.docs.length });
+    this.reviewersFetch = ref.onSnapshot(fullSnap => { // TODO: remove fullSnap
+      if (!fullSnap.empty) {
+        this.setState({ count: fullSnap.docs.length });
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
           const items = [];
           if (!snap.empty) {
@@ -57,7 +59,7 @@ export default class Reviews extends React.Component {
               lastVisible: snap.docs[snap.docs.length-1]
             });
           }
-        }).catch(error => console.warn(error));
+        }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
       } else {
         this.setState({ loading: false });
       }
@@ -66,7 +68,7 @@ export default class Reviews extends React.Component {
 
   fetchNext = () => {
     const { desc, items, lastVisible, limit } = this.state;
-    const { bid } = this.props;
+    const { bid, openSnackbar } = this.props;
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
 
     if (this._isMounted) {
@@ -93,7 +95,7 @@ export default class Reviews extends React.Component {
           });
         }
       }
-		}).catch(error => console.warn(error));
+		}).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
   }
 	
 	render() {

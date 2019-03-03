@@ -50,6 +50,7 @@ export default class UserReview extends React.Component {
   static propTypes = {
     addReview: funcType.isRequired,
     bid: stringType.isRequired,
+    openSnackbar: funcType.isRequired,
     removeReview: funcType.isRequired,
     userBook: userBookType
   }
@@ -124,7 +125,7 @@ export default class UserReview extends React.Component {
             rating_num: this.state.userBook.rating_num
           }).then(() => {
             // console.log(`Book review created`);
-          }).catch(error => this.setState({ serverError: error.message }));
+          }).catch(err => this.setState({ serverError: err.message }));
 
           userBookRef(authid, this.state.bid).update({
             ...this.state.userBook,
@@ -134,7 +135,7 @@ export default class UserReview extends React.Component {
             }
           }).then(() => {
             // console.log(`User review posted`);
-          }).catch(error => this.setState({ serverError: error.message }));
+          }).catch(err => this.setState({ serverError: err.message }));
 
           let bookReviews_num = this.state.bookReviews_num;
           let userReviews_num = this.state.user.stats.reviews_num;
@@ -149,14 +150,14 @@ export default class UserReview extends React.Component {
             reviews_num: bookReviews_num
           }).then(() => {
             this.setState({ bookReviews_num });
-            console.log(`Book reviews increased to ${bookReviews_num}`);
-          }).catch(error => this.setState({ serverError: error.message }));
+            // console.log(`Book reviews increased to ${bookReviews_num}`);
+          }).catch(err => this.setState({ serverError: err.message }));
 
           userRef(authid).update({
             'stats.reviews_num': userReviews_num
           }).then(() => {
             // console.log(`User reviews increased to ${userReviews_num}`);
-          }).catch(error => this.setState({ serverError: error.message }));
+          }).catch(err => this.setState({ serverError: err.message }));
 
           this.setState({ 
             changes: false,

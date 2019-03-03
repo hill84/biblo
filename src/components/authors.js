@@ -2,7 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorsRef } from '../config/firebase';
-import { numberType } from '../config/types';
+import { numberType, boolType } from '../config/types';
 import { getInitials } from '../config/shared';
 import { icon } from '../config/icons';
 import { skltn_bubbleRow } from './skeletons';
@@ -16,16 +16,20 @@ export default class Authors extends React.Component {
     loading: true,
     page: 1,
     pagination: false,
-    scrollable: true,
-    size: this.props.size
+    scrollable: true
   }
 
   static propTypes = {
+    inView: boolType,
     limit: numberType,
     size: numberType
   }
 
-  componentDidMount(prevState) {
+  static defaultProps = {
+    inView: true
+  }
+
+  componentDidMount() {
     this._isMounted = true;
     this.fetch();
   }
@@ -34,33 +38,45 @@ export default class Authors extends React.Component {
     this._isMounted = false;
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { limit, inView } = this.props;
+    if (inView !== prevProps.inView || limit !== prevState.limit) {
+      this.fetch();
+    } 
+  }
+
   fetch = () => { 
+    const { inView } = this.props;
     const { desc, limit } = this.state;
-    authorsRef.orderBy('photoURL', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
-      if (!snap.empty) {
-        const items = [];
-        snap.forEach(item => items.push(item.data()));
-        if (this._isMounted) {
-          this.setState({ 
-            count: snap.docs.length,
-            items,
-            loading: false
-          });
+
+    if (inView) {
+      authorsRef.orderBy('photoURL', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+        if (!snap.empty) {
+          const items = [];
+          snap.forEach(item => items.push(item.data()));
+          if (this._isMounted) {
+            this.setState({ 
+              count: snap.docs.length,
+              items,
+              loading: false
+            });
+          }
+        } else {
+          if (this._isMounted) {
+            this.setState({ 
+              count: 0,
+              items: null,
+              loading: false
+            });
+          }
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({ 
-            count: 0,
-            items: null,
-            loading: false
-          });
-        }
-      }
-    }).catch(error => console.warn(error));
+      }).catch(error => console.warn(error));
+    }
   }
 	
 	render() {
-    const { count, desc, items, limit, loading, page, pagination, scrollable, size } = this.state;
+    const { size } = this.props;
+    const { count, desc, items, limit, loading, page, pagination, scrollable } = this.state;
 
     if (!loading && !items) {
       return <div className="info-row empty text-center">Non ci sono ancora autori.</div>;

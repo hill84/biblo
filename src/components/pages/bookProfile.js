@@ -75,7 +75,7 @@ export default class BookProfile extends React.Component {
   onRemoveBookFromWishlist = () => this.props.removeBookFromWishlist(this.state.book.bid);
 
   onRateBook = rate => {
-    if(rate.type === 'click') {
+    if (rate.type === 'click') {
       this.props.rateBook(this.state.book.bid, rate.rating);
       this.setState({
         userBook: {
@@ -109,7 +109,7 @@ export default class BookProfile extends React.Component {
         <div id="BookProfileComponent">
           <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
 
-          {isOpenReadingState && <ReadingStateForm bid={book.bid} readingState={userBook.readingState} onToggle={this.onToggleReadingState} />}
+          {isOpenReadingState && <ReadingStateForm bid={book.bid} readingState={userBook.readingState} onToggle={this.onToggleReadingState} openSnackbar={openSnackbar} />}
 
           <div className="container top">
             <div className="card main text-center-md">
@@ -217,7 +217,15 @@ export default class BookProfile extends React.Component {
             {book.bid &&
               <React.Fragment>
                 {isAuthenticated() && hasRole('editor') && userBook.bookInShelf &&
-                  <UserReview addReview={addReview} bid={book.bid} bookReviews_num={book.reviews_num} removeReview={removeReview} user={user} userBook={userBook} /> 
+                  <UserReview 
+                    addReview={addReview} 
+                    bid={book.bid} 
+                    bookReviews_num={book.reviews_num} 
+                    openSnackbar={openSnackbar}
+                    removeReview={removeReview} 
+                    user={user} 
+                    userBook={userBook} 
+                  /> 
                 }
                 <Reviews bid={book.bid} user={user} />
               </React.Fragment>

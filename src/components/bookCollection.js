@@ -29,10 +29,15 @@ export default class BookCollection extends React.Component {
     bcid: stringType,
     booksPerRow: numberType,
     desc: boolType,
+    inView: boolType,
     limit: numberType,
     pagination: boolType,
     scrollable: boolType,
     stacked: boolType
+  }
+
+  static defaultProps = {
+    inView: true
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -57,15 +62,17 @@ export default class BookCollection extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { inView } = this.props;
     const { bcid, cid, desc } = this.state;
     if (this._isMounted) {
-      if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc) {
+      if (bcid !== prevState.bcid || cid !== prevState.cid || desc !== prevState.desc || inView !== prevProps.inView) {
         this.fetch();
       }
     }
   }
   
 	fetch = direction => {
+    const { inView } = this.props;
     const { bcid, cid, count, desc, /* firstVisible, lastVisible,  */limit, page } = this.state;
     // console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
     const prev = direction === 'prev';
@@ -77,48 +84,50 @@ export default class BookCollection extends React.Component {
     
     this.setState({ loading: true });
 
-    const fetcher = () => {
-      ref.get().then(snap => {
-        if (!snap.empty) {
-          const books = [];
-          snap.forEach(book => books.push(book.data()));
-          if (this._isMounted) {
-            this.setState(prevState => ({ 
-              collection: books,
-              loading: false,
-              page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
-              // lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
-            }));
-          }
-          // console.log({'direction': direction, 'page': page});
-        } else {
-          if (this._isMounted) {
-            this.setState({ 
-              count: 0,
-              collection: [],
-              loading: false,
-              page: null,
-              // lastVisible: null
-            });
-          }
-        }
-      }).catch(error => console.warn(error));
-    }
-
-    if (cid === 'Top') {
-      this.setState({ count: limit });
-      fetcher();
-    } else {
-      if (!direction) {
-        collectionBooksRef(cid).get().then(fullSnap => {
-          if (!fullSnap.empty) { 
+    if (inView) {
+      const fetcher = () => {
+        ref.get().then(snap => {
+          if (!snap.empty) {
+            const books = [];
+            snap.forEach(book => books.push(book.data()));
             if (this._isMounted) {
-              this.setState({ count: fullSnap.docs.length });
+              this.setState(prevState => ({ 
+                collection: books,
+                loading: false,
+                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
+                // lastVisible: snap.docs[snap.docs.length-1] || prevState.lastVisible
+              }));
             }
-            fetcher();
+            // console.log({'direction': direction, 'page': page});
+          } else {
+            if (this._isMounted) {
+              this.setState({ 
+                count: 0,
+                collection: [],
+                loading: false,
+                page: null,
+                // lastVisible: null
+              });
+            }
           }
         }).catch(error => console.warn(error));
-      } else fetcher();
+      }
+    
+      if (cid === 'Top') {
+        this.setState({ count: limit });
+        fetcher();
+      } else {
+        if (!direction) {
+          collectionBooksRef(cid).get().then(fullSnap => {
+            if (!fullSnap.empty) { 
+              if (this._isMounted) {
+                this.setState({ count: fullSnap.docs.length });
+              }
+              fetcher();
+            }
+          }).catch(error => console.warn(error));
+        } else fetcher();
+      }
     }
   }
 

@@ -9,7 +9,7 @@ import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef/* , reviewRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { handleFirestoreError, timeSince } from '../../../config/shared';
+import { handleFirestoreError, imageZoomDefaultStyles, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -173,12 +173,9 @@ export default class BooksDash extends React.Component {
           <div className="col-auto">
             <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.covers[0]})`}}>
               <ImageZoom
-                defaultStyles={{ 
-                  zoomContainer: { zIndex: 1200 }, 
-                  overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } 
-                }}
+                defaultStyles={imageZoomDefaultStyles}
                 image={{ src: item.covers[0], className: 'thumb hidden' }}
-                zoomImage={{ className: 'magnified', maxheight: '400px' }}
+                zoomImage={{ className: 'magnified' }}
               />
             </div>
           </div>

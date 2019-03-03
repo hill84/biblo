@@ -5,7 +5,7 @@ import { Router, withRouter } from 'react-router-dom';
 import App from './app';
 import './css/grid.min.css';
 import './css/main.css';
-import registerServiceWorker from './registerServiceWorker';
+import * as serviceWorker from './serviceWorker';
 
 if (process.env.NODE_ENV === 'production') {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
@@ -37,4 +37,4 @@ ReactDOM.render(
 	</Router>,
 	document.getElementById('root')
 );
-registerServiceWorker();
+serviceWorker.register();

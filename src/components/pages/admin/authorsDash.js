@@ -237,7 +237,7 @@ export default class AuthorsDash extends React.Component {
               <ul className="table dense nolist font-sm">
                 <li className="avatar-row labels">
                   <div className="row">
-                    <div className="col-auto hide-xs"><div className="avatar" title="avatar" /></div>
+                    <div className="col-auto hide-xs"><div className="avatar hidden" title="avatar" /></div>
                     <div className="col-6 col-sm-4 col-lg-2">Nominativo</div>
                     <div className="col-1">Sesso</div>
                     <div className="col hide-lg">Bio</div>

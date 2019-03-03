@@ -128,7 +128,7 @@ ul.nolist li { display: block; }
   font-weight: 200;
 }
 
-.card .avatar { color: rgba(0,0,0,.5); }
+.card .avatar { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.5); }
 
 .table li, .avatar-row { 
   --pad: 7px;
@@ -936,6 +936,7 @@ html:not(.light) .card.primary, .primary .card {
   animation: popIn .25s ease-out backwards; 
   transition-property: background-color, color, transform;
 }
+.badge.dot svg { width: 11px; height: 11px; }
 .notes-btn .dot { font-size: 0; transform: scale(.45); }
 .notes-btn:hover .dot { font-size: .6rem; transform: scale(1); }
 
@@ -958,13 +959,12 @@ html:not(.light) .card.primary, .primary .card {
   text-transform: uppercase;
   line-height: 1;
   letter-spacing: .6px;
-  padding: 2px;
-  border-radius: 1px;
-  margin-left: -5px;
+  padding: 2px 4px;
+  border-radius: 9px;
+  margin-left: -7px;
   animation: fadeInSlideDown .8s ease-in-out 2.6s;
   animation-fill-mode: both;
 }
-#appBarComponent .title .version { font-size: .6rem; color: var(--lighterTextClr); font-weight: 200; }
 #appBarComponent svg { --iconSize: 24px; }
 #appBarComponent button { color: currentColor; }
 #appBarComponent .more-btn { margin-right: -12px; color: currentColor; padding: 7px; }
@@ -991,6 +991,9 @@ html:not(.light) .card.primary, .primary .card {
 .drawer .list { width: 256px; }
 .drawer .list li div { margin: 0; }
 .drawer .list li div, .drawer .list .svg-icon, .drawer .list li div span { color: inherit; }
+.drawer .list .bottom-item { position: absolute; bottom: 0; left: 0; right: 0; }
+.drawer .list .bottom-item:hover { background-color: initial; cursor: initial; }
+.drawer .list li .version { font-size: .75rem; font-weight: 200; color: var(--lighterTextClr); }
 
 /* CUSTOM */
 .hero .container { padding-top: 140px; padding-bottom: 95px; margin-top: 0; }
@@ -1102,6 +1105,13 @@ html.light .hero * { text-shadow: none; }
   height: var(--avatarSize);
   transition: all .2s ease-in-out;
 }
+.basic-profile .avatar .thumb { 
+  width: 100%;
+  min-height: 100%;
+  border-radius: 99px; 
+}
+.magnified.avatar { border-radius: 99px; background-color: var(--canvasLighterClr); box-shadow: 0 0.2px 0.6px rgba(0,0,0,.3); }
+
 
 /* author */
 #authorCard .avatar { 
@@ -1173,15 +1183,10 @@ html.light .hero * { text-shadow: none; }
 }
 .auth-header .avatar { margin-top: 10px; }
 .auth-header .avatar img { position: relative; vertical-align: middle; }
-.auth-header .user-info { 
-  position: relative;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden; 
-  margin-top: 10px;
-}
+.auth-header .user-info { position: relative; margin-top: 10px; }
+.auth-header .user-info div { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .auth-header .user-name { font-size: 1.15rem; }
-.auth-header .user-email { font-size: .75rem; color: rgba(255,255,255,.7); }
+.auth-header .user-email { font-size: .75rem; font-weight: 200; color: rgba(255,255,255,.7); }
 
 /* BASIC PROFILE */
 .basic-profile .username {
@@ -1193,7 +1198,7 @@ html.light .hero * { text-shadow: none; }
   overflow: hidden;
 }
 .basic-profile .email { color: var(--lightTextClr); }
-.basic-profile .role-badges { position: absolute; top: 10px; right: 10px; }
+.basic-profile .role-badges { position: absolute; top: 10px; right: 10px; z-index: 1; }
 .badge { 
   display: inline-block; 
   margin-left: 4px; 
@@ -1209,7 +1214,10 @@ html.light .hero * { text-shadow: none; }
   float: left; 
 }
 .badge.admin { color: var(--lightTextClr); }
-.badge.premium { color: var(--accentClr); }
+.badge.premium, .badge.secondary { color: var(--accentClr); }
+.badge.primary { background-color: var(--primaryClr); }
+.badge.green { background-color: var(--greenClr) }
+.badge.red { background-color: var(--redClr); }
 
 .counter:not(.btn) { line-height: 2; }
 .counter b { font-weight: 500; }
@@ -1725,6 +1733,7 @@ html.light .hero * { text-shadow: none; }
   top: 3px;
   right: -9px;
   border: 3px solid var(--cardBg);
+  background-color: #bdbdbd;
   font-size: .7rem; 
   will-change: opacity, transform;
   transition: all .2s ease-in-out;
@@ -2103,11 +2112,10 @@ progress[value='100'].stepper::-webkit-progress-bar {
   --avatarSize: 24px; 
   position: relative;
   display: inline-block;
-  margin-left: -2px;
+  margin-left: -3px;
   vertical-align: middle;
   height: var(--avatarSize); 
   box-shadow: 0 0 0 3px var(--cardBg); 
-  background-color: #bdbdbd;
   color: #333;
   font-size: 12px;
   animation-delay: .3s;
@@ -2115,9 +2123,11 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 .bubble-group .bubble:nth-child(2) { animation-delay: .4s; } 
 .bubble-group .bubble:nth-child(3) { animation-delay: .5s; } 
-.bubble-group .bubble:nth-child(4) { animation-delay: .6s; }
-.bubble-group.inline { margin-right: 4px; }
+.bubble-group .bubble .avatar { background-color: var(--canvasLightestClr); }
+.bubble-group .bubble.empty { padding-left: 5px; padding-right: 5px; }
+.bubble-group.inline { margin-right: 6px; }
 .bubble-group.inline .avatar { display: inline-flex; }
+.card .bubble-group .bubble { background-color: var(--cardBg); }
 
 .hoverable-items .bubble .avatar { overflow: hidden; transition: all .2s ease-in-out; will-change: transform; }
 .hoverable-items .bubble .avatar img { transition: all .3s ease-in-out; will-change: transform; }
@@ -2353,8 +2363,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
     overflow: hidden;
     padding: 0;
     /* border: 2px solid var(--canvasClr); */ 
-    background-color: var(--primaryClr);
   }
+  .basic-profile .badge.editor { background-color: var(--primaryClr); }
   .basic-profile .badge.admin { background-color: var(--lightTextClr); }
   .basic-profile .badge.premium { background-color: var(--accentClr); }
   .appbar.mobile { 
@@ -2428,6 +2438,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   #appBarComponent .hide-xs { display: none; }
   .text-center-xs { text-align: center; }
   .book-incipit p { font-size: .8rem; }
+  .minifiable { max-height: 650px; }
   .user.rating { height: 40px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
@@ -2435,6 +2446,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 @media (max-width: 359px) {
   :root { --bubblesPerRow-lg: 2; } 
+  .minifiable { max-height: 840px; }
 }
 @media (max-width: 320px) {
   .book-incipit p { text-align: left; }

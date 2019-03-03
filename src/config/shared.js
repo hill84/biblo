@@ -15,6 +15,7 @@ export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase(
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
 // UTILITY
+export const imageZoomDefaultStyles = { zoomContainer: { zIndex: 1200 }, overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } };
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {

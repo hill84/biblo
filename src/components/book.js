@@ -1,6 +1,7 @@
 import React from 'react';
-import { bookRef, collectionBookRef, isAuthenticated, reviewerRef, authid, userBookRef, userRef } from '../config/firebase';
-import { bookType, funcType, stringType, userBookType, userType, objectType } from '../config/types';
+import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
+import { handleFirestoreError } from '../config/shared';
+import { bookType, funcType, objectType, stringType, userBookType, userType } from '../config/types';
 import BookForm from './forms/bookForm';
 import NoMatch from './noMatch';
 import BookProfile from './pages/bookProfile';
@@ -144,6 +145,7 @@ export default class Book extends React.Component {
   
   addBookToShelf = bid => {
     const { openSnackbar } = this.props;
+
     if (isAuthenticated()) {
       let userWishlist_num = this.props.user.stats.wishlist_num;
       const bookReaders_num = this.state.book.readers_num + 1;
@@ -164,34 +166,32 @@ export default class Book extends React.Component {
             bookInShelf: true, 
             bookInWishlist: false 
           }
-        });
-        // console.log('Book added to user shelf');
-        openSnackbar('Libro aggiunto in libreria', 'success');
-      }).catch(error => console.warn(error));
-
-      bookRef(bid).update({
-        readers_num: bookReaders_num
-      }).then(() => {
-        this.setState({ 
-          book: { 
-            ...this.state.book, 
-            readers_num: bookReaders_num 
-          }
-        });
-        // console.log('Readers number increased');
-      }).catch(error => console.warn(error));
-
-      userRef(authid).update({
-        'stats.shelf_num': this.props.user.stats.shelf_num + 1,
-        'stats.wishlist_num': userWishlist_num
-      }).then(() => {
-        // console.log('User shelf number increased');
-      }).catch(error => console.warn(error));
+        }, () => openSnackbar('Libro aggiunto in libreria', 'success'));
+        bookRef(bid).update({
+          readers_num: bookReaders_num
+        }).then(() => {
+          this.setState({ 
+            book: { 
+              ...this.state.book, 
+              readers_num: bookReaders_num 
+            }
+          });
+          // console.log('Readers number increased');
+          
+          userRef(authid).update({
+            'stats.shelf_num': this.props.user.stats.shelf_num + 1,
+            'stats.wishlist_num': userWishlist_num
+          }).then(() => {
+            // console.log('User shelf number increased');
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`Cannot addBookToShelf. User not authenticated`);
 	}
 
 	addBookToWishlist = bid => {
     const { openSnackbar } = this.props;
+
     if (isAuthenticated()) {
       const userWishlist_num = this.props.user.stats.wishlist_num + 1;
       /* let userShelf_num = this.props.user.stats.shelf_num;
@@ -239,36 +239,34 @@ export default class Book extends React.Component {
         }); */
         // console.log('Book added to user wishlist');
         openSnackbar('Libro aggiunto in lista desideri', 'success');
-      }).catch(error => console.warn(error));
-
-      userRef(authid).update({
-        /* 'stats.shelf_num': userShelf_num, */
-        'stats.wishlist_num': userWishlist_num,
-        /* 'stats.ratings_num': userRatings_num,
-        'stats.reviews_num': userReviews_num */
-      }).then(() => {
-        // console.log('User wishlist number increased');
-      }).catch(error => console.warn(error));
-
-      /* bookRef(bid).update({
-        rating_num: bookRating_num,
-        ratings_num: bookRatings_num,
-        readers_num: bookReaders_num,
-        reviews_num: bookReviews_num
-      }).then(() => {
-        this.setState({ 
-          book: { 
-            ...this.state.book,
+        userRef(authid).update({
+          /* 'stats.shelf_num': userShelf_num, */
+          'stats.wishlist_num': userWishlist_num,
+          /* 'stats.ratings_num': userRatings_num,
+          'stats.reviews_num': userReviews_num */
+        }).then(() => {
+          // console.log('User wishlist number increased');
+          /* bookRef(bid).update({
+            rating_num: bookRating_num,
             ratings_num: bookRatings_num,
-            readers_num: bookReaders_num
-          },
-          userBook: { 
-            ...this.state.userBook, 
-            rating_num: userBookRating_num 
-          }
-        });
-        //console.log('Rating and reader removed');
-      }).catch(error => console.warn(error)); */
+            readers_num: bookReaders_num,
+            reviews_num: bookReviews_num
+          }).then(() => {
+            this.setState({ 
+              book: { 
+                ...this.state.book,
+                ratings_num: bookRatings_num,
+                readers_num: bookReaders_num
+              },
+              userBook: { 
+                ...this.state.userBook, 
+                rating_num: userBookRating_num 
+              }
+            });
+            //console.log('Rating and reader removed');
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`Cannot addBookToWishlist. User not authenticated`);
   }
 
@@ -277,7 +275,7 @@ export default class Book extends React.Component {
   removeBookFromWishlist = bid => this.removeBookFromUserBooks(bid, 'wishlist');
   
   removeBookFromUserBooks = (bid, bookshelf) => {
-    const { user } = this.props;
+    const { openSnackbar, user } = this.props;
     const { book, userBook } = this.state;
 
     if (isAuthenticated()) {
@@ -327,7 +325,7 @@ export default class Book extends React.Component {
           }
         });
         // console.log(`Book removed from user ${bookshelf}`);
-      }).catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   
       bookRef(bid).update({
         rating_num: bookRating_num,
@@ -346,7 +344,7 @@ export default class Book extends React.Component {
           }
         });
         // console.log('Rating and reader removed');
-      }).catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   
       if (bookshelf === 'shelf') {
         // console.log('will remove book and rating from user shelf stats');
@@ -360,7 +358,7 @@ export default class Book extends React.Component {
           }
         }).then(() => {
           // console.log('Book and rating removed from user shelf stats');
-        }).catch(error => console.warn(error));
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
         if (this.state.userBook.review.created_num) {
           reviewerRef(bid, authid).delete().then(() => {
@@ -371,7 +369,7 @@ export default class Book extends React.Component {
               }
             });
             // console.log(`Review removed from book`);
-          }).catch(error => console.warn(error));
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }
 
         if (this.state.book.collections) {
@@ -381,7 +379,7 @@ export default class Book extends React.Component {
               ratings_num: bookRatings_num
             }).then(() => {
               // console.log(`updated book rating in "${cid}" collection`)
-            }).catch(error => console.warn(error));
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
           });
         };
       } else if (bookshelf === 'wishlist') {
@@ -394,12 +392,14 @@ export default class Book extends React.Component {
           }
         }).then(() => {
           // console.log('Book removed from user wishlist stats');
-        }).catch(error => console.warn(error));
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       } else console.warn(`no bookshelf named "${bookshelf}"`);
     } else console.warn(`Cannot removeBookFromUserBooks. User not authenticated`);
   }
 
 	rateBook = (bid, rate) => {
+    const { openSnackbar } = this.props;
+
     if (isAuthenticated()) {
       let bookRating_num = this.state.book.rating_num;
       const userBookRating_num = this.state.userBook.rating_num;
@@ -434,37 +434,38 @@ export default class Book extends React.Component {
           }
         });
         // console.log(`Book rated with ${rate} stars`);
-      }).catch(error => console.warn(error));
 
-      if (this.state.book.collections) {
-        this.state.book.collections.forEach(cid => {
-          // console.log(cid);
-          collectionBookRef(cid, this.state.book.bid).update({
-            rating_num: bookRating_num, 
-            ratings_num: bookRatings_num
+        if (this.state.book.collections) {
+          this.state.book.collections.forEach(cid => {
+            // console.log(cid);
+            collectionBookRef(cid, this.state.book.bid).update({
+              rating_num: bookRating_num, 
+              ratings_num: bookRatings_num
+            }).then(() => {
+              // console.log(`updated book rating in "${cid}" collection`)
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          });
+        };
+  
+        userBookRef(authid, bid).update({
+          rating_num: rate
+        }).then(() => {
+          this.setState({ 
+            userBook: { 
+              ...this.state.userBook, 
+              rating_num: rate 
+            }
+          });
+          // console.log('User book rated with ' + rate + ' stars');
+
+          userRef(authid).update({
+            'stats.ratings_num': userRatings_num
           }).then(() => {
-            // console.log(`updated book rating in "${cid}" collection`)
-          }).catch(error => console.warn(error));
-        });
-      };
+            // console.log('User ratings number increased');
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-      userBookRef(authid, bid).update({
-        rating_num: rate
-      }).then(() => {
-        this.setState({ 
-          userBook: { 
-            ...this.state.userBook, 
-            rating_num: rate 
-          }
-        });
-        // console.log('User book rated with ' + rate + ' stars');
-      }).catch(error => console.warn(error));
-
-      userRef(authid).update({
-        'stats.ratings_num': userRatings_num
-      }).then(() => {
-        // console.log('User ratings number increased');
-      }).catch(error => console.warn(error));
     } else console.warn(`Cannot rateBook. User not authenticated`);
   }
   

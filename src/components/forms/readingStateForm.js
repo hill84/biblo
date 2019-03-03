@@ -13,6 +13,7 @@ import { authid, userBookRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
 import Stepper from '../stepper';
+import { handleFirestoreError } from '../../config/shared';
 
 export default class readingStateForm extends React.Component {
 	state = {
@@ -30,6 +31,7 @@ export default class readingStateForm extends React.Component {
   static propTypes = {
     bid: stringType.isRequired,
     onToggle: funcType.isRequired,
+    openSnackbar: funcType.isRequired,
     readingState: shapeType({
       state_num: numberType.isRequired,
       start_num: numberType,
@@ -111,22 +113,22 @@ export default class readingStateForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { changes, state_num } = this.state;
+    const { changes, end_num, progress_num, start_num, state_num } = this.state;
     if (changes) {
-      const errors = this.validate(this.state.start_num, this.state.end_num);
+      const errors = this.validate(start_num, end_num);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         userBookRef(authid, this.props.bid).update({
           'readingState.state_num': state_num,
-          'readingState.start_num': this.state.start_num,
-          'readingState.end_num': this.state.end_num,
-          'readingState.progress_num': this.state.progress_num
+          'readingState.start_num': start_num,
+          'readingState.end_num': end_num,
+          'readingState.progress_num': progress_num
         }).then(() => {
           // console.log(`UserBook readingState updated`);
           this.setState({ loading: false });
           this.props.onToggle();
-        }).catch(error => console.warn(error));
+        }).catch(err => this.setState({ loading: false }, () => this.props.openSnackbar(handleFirestoreError(err), 'error')));
       }
     } else this.props.onToggle();
   }
