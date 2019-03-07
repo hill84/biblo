@@ -128,18 +128,19 @@ export default class BooksDash extends React.Component {
   }
 
   onLock = e => {
+    const { openSnackbar } = this.props;
     const id = e.currentTarget.parentNode.dataset.id;
     const state = e.currentTarget.parentNode.dataset.state === 'true';
 
     if (state) {
       // console.log(`Locking ${id}`);
       bookRef(id).update({ 'EDIT.edit': false }).then(() => {
-        this.props.openSnackbar('Elemento bloccato', 'success');
+        openSnackbar('Elemento bloccato', 'success');
       }).catch(error => console.warn(error));
     } else {
       // console.log(`Unlocking ${id}`);
       bookRef(id).update({ 'EDIT.edit': true }).then(() => {
-        this.props.openSnackbar('Elemento sbloccato', 'success');
+        openSnackbar('Elemento sbloccato', 'success');
       }).catch(error => console.warn(error));
     }
   }

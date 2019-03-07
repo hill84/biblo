@@ -114,12 +114,13 @@ export default class readingStateForm extends React.Component {
   onSubmit = e => {
     e.preventDefault();
     const { changes, end_num, progress_num, start_num, state_num } = this.state;
+    const { bid, onToggle, openSnackbar } = this.props;
     if (changes) {
       const errors = this.validate(start_num, end_num);
       this.setState({ errors });
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
-        userBookRef(authid, this.props.bid).update({
+        userBookRef(authid, bid).update({
           'readingState.state_num': state_num,
           'readingState.start_num': start_num,
           'readingState.end_num': end_num,
@@ -127,10 +128,10 @@ export default class readingStateForm extends React.Component {
         }).then(() => {
           // console.log(`UserBook readingState updated`);
           this.setState({ loading: false });
-          this.props.onToggle();
-        }).catch(err => this.setState({ loading: false }, () => this.props.openSnackbar(handleFirestoreError(err), 'error')));
+          onToggle();
+        }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
       }
-    } else this.props.onToggle();
+    } else onToggle();
   }
 
   onNext = () => this.setState(state => ({ progress_num: state.progress_num + (100/state.steps) }));

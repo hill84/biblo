@@ -6,10 +6,11 @@ import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { isTouchDevice, screenSize } from '../../config/shared';
+import { handleFirestoreError, isTouchDevice, screenSize } from '../../config/shared';
 import Cover from '../cover';
 import Genres from '../genres';
 import PaginationControls from '../paginationControls';
+import { funcType } from '../../config/types';
 
 export default class Genre extends React.Component {
   state = {
@@ -28,6 +29,10 @@ export default class Genre extends React.Component {
     orderMenuAnchorEl: null,
     page: 1,
     screenSize: screenSize()
+  }
+
+  static propTypes = {
+    openSnackbar: funcType.isRequired
   }
 
   componentDidMount() {
@@ -55,6 +60,7 @@ export default class Genre extends React.Component {
 
   fetch = () => {
     const { desc, limit, orderBy, orderByIndex } = this.state;
+    const { openSnackbar } = this.props;
     const { gid } = this.props.match.params;
     const ref = booksRef.where('genres', 'array-contains', gid);
 
@@ -77,18 +83,19 @@ export default class Genre extends React.Component {
                 this.setState({ items: null, count: 0, loading: false, page: 1 });
               }
             }
-          }).catch(error => console.warn(error));
+          }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
         } else {
           if (this._isMounted) {
             this.setState({ items: null, count: 0, loading: false, page: 1 });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
     } else console.warn(`No gid`);
   }
 
   fetchNext = () => {
     const { desc, items, lastVisible, limit, orderBy, orderByIndex } = this.state;
+    const { openSnackbar } = this.props;
     const { gid } = this.props.match.params;
     const ref = booksRef.where('genres', 'array-contains', gid);
 
@@ -115,7 +122,7 @@ export default class Genre extends React.Component {
             });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
     } else console.warn(`No gid`);
   }
 

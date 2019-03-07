@@ -67,6 +67,7 @@ export default class AuthorsDash extends React.Component {
     
   fetch = e => {
     const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const { openSnackbar } = this.props;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
@@ -105,7 +106,7 @@ export default class AuthorsDash extends React.Component {
             this.setState({ count: 0 });
           }
         }
-      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
   }
 

@@ -42,7 +42,7 @@ export default class AddBook extends React.Component {
             </p>
             <div className="text-center pad-v fadeIn reveal" style={{animationDelay: '2s'}}>
               <p>Non hai trovato il libro che cercavi?</p>
-              <p><Link to="/new-book" className="btn primary">Crea la tua scheda libro</Link></p>
+              <p><Link to="/new-book" className="btn primary rounded">Crea la tua scheda libro</Link></p>
             </div>
           </React.Fragment>
 				}

@@ -6,8 +6,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { getInitials } from '../../config/shared';
-import { numberType } from '../../config/types';
+import { getInitials, handleFirestoreError } from '../../config/shared';
+import { numberType, funcType } from '../../config/types';
 import PaginationControls from '../paginationControls';
 
 export default class AuthorsPage extends React.Component {
@@ -29,10 +29,11 @@ export default class AuthorsPage extends React.Component {
   }
 
   static propTypes = {
-    limit: numberType
+    limit: numberType,
+    openSnackbar: funcType.isRequired
   }
 
-  componentDidMount(prevState) {
+  componentDidMount() {
     this._isMounted = true;
     this.fetch();
   }
@@ -51,6 +52,7 @@ export default class AuthorsPage extends React.Component {
   }
 
   fetch = e => { 
+    const { openSnackbar } = this.props;
     const { desc, firstVisible, lastVisible, limit, orderBy, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
@@ -81,7 +83,7 @@ export default class AuthorsPage extends React.Component {
             this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false, page: 1 });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
 
     if (!direction) {
@@ -93,7 +95,7 @@ export default class AuthorsPage extends React.Component {
         } else if (this._isMounted) {
           this.setState({ count: 0 });
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
   }
 
