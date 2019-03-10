@@ -1,22 +1,23 @@
 import React from 'react';
-import { appMainEmail, appName, appURL } from '../../config/shared';
+import { appName, appPrivacyEmail, appURL } from '../../config/shared';
 
 const PrivacyPage = props => (
   <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
     <div className="container pad-v">
       <h1>Privacy policy</h1>
-      <p className="lighter-text">Data di entrata in vigore: 20 Ottobre 2018</p>
-      <p>&nbsp;</p>
+      <p className="lighter-text">Data di entrata in vigore: 10 Marzo 2019</p>
+      <br />
+      
       <div className="text-justify text-left-sm">
         <p>{appName} gestisce il sito web {appURL} (di seguito il "Servizio").</p>
         <p>Questa pagina vi informa delle nostre politiche riguardanti la raccolta, l'uso e la divulgazione dei dati personali quando usate il nostro Servizio e le scelte che avete associato a quei dati.</p>
-        <p>Utilizziamo i vostri dati per fornire e migliorare il Servizio. Utilizzando il Servizio, accettate la raccolta e l'utilizzo delle informazioni in conformità con questa informativa. Se non diversamente definito nella presente Informativa sulla privacy, i termini utilizzati nella presente Informativa hanno la stessa valenza dei nostri Termini e condizioni, accessibili da {appURL}</p>
+        <p>Utilizziamo i vostri dati per fornire e migliorare il Servizio. Utilizzando il Servizio, accettate la raccolta e l'utilizzo delle informazioni in conformità con questa informativa. Se non diversamente definito nella presente Informativa sulla privacy, i termini utilizzati nella presente Informativa hanno la stessa valenza dei nostri <a href="/terms">Termini e condizioni</a>.</p>
         <h2>Definizioni</h2>
         <ul>
-          <li><p><b>Servizio</b>: Il Servizio è il sito {appURL} gestito da {appName}</p></li>
-          <li><p><b>Dati personali</b>: I Dati personali sono i dati di un individuo vivente che può essere identificato da quei dati (o da quelli e altre informazioni in nostro possesso o che potrebbero venire in nostro possesso).</p></li>
-          <li><p><b>Dati di utilizzo</b>: I dati di utilizzo sono i dati raccolti automaticamente generati dall'utilizzo del Servizio o dall'infrastruttura del Servizio stesso (ad esempio, la durata della visita di una pagina).</p></li>
-          <li><p><b>Cookies</b>: I cookie sono piccoli file memorizzati sul vostro dispositivo (computer o dispositivo mobile).</p></li>
+          <li><p><span className="accent-text">Servizio</span>: Il Servizio è il sito {appURL} gestito da {appName}</p></li>
+          <li><p><span className="accent-text">Dati personali</span>: I Dati personali sono i dati di un individuo vivente che può essere identificato da quei dati (o da quelli e altre informazioni in nostro possesso o che potrebbero venire in nostro possesso).</p></li>
+          <li><p><span className="accent-text">Dati di utilizzo</span>: I dati di utilizzo sono i dati raccolti automaticamente generati dall'utilizzo del Servizio o dall'infrastruttura del Servizio stesso (ad esempio, la durata della visita di una pagina).</p></li>
+          <li><p><span className="accent-text">Cookies</span>: I cookie sono piccoli file memorizzati sul vostro dispositivo (computer o dispositivo mobile).</p></li>
         </ul>
 
         <h2>Raccolta e uso delle informazioni</h2>
@@ -29,24 +30,25 @@ const PrivacyPage = props => (
 
         <ul>
           <li>Indirizzo email</li>
-          <li>Nome e cognome</li>
-          <li>Indirizzo, stato, provincia, codice postale, città</li>
+          <li>Nominativo (nome e cognome o nickname)</li>
+          <li>Indirizzo, stato, provincia, città</li>
           <li>Cookie e dati di utilizzo</li>
         </ul>
 
         <h4>Dati di utilizzo</h4>
         <p>Potremmo anche raccogliere informazioni su come l'utente accede e utilizza il Servizio ("Dati di utilizzo"). Questi Dati di utilizzo possono includere informazioni quali l'indirizzo del protocollo Internet del computer (ad es. Indirizzo IP), il tipo di browser, la versione del browser, le pagine del nostro servizio che si visita, l'ora e la data della visita, il tempo trascorso su tali pagine, identificatore unico del dispositivo e altri dati diagnostici.</p>
 
-        <h4>Tracciamento; dati dei cookie</h4>
+        <h4>Tracciamento: dati dei cookie</h4>
         <p>Utilizziamo cookie e tecnologie di tracciamento simili per tracciare l'attività sul nostro Servizio e conservare determinate informazioni.</p>
-        <p>I cookie sono file con una piccola quantità di dati che possono includere un identificatore univoco anonimo. I cookie vengono inviati al vostro browser da un sito web e memorizzati sul vostro dispositivo. Altre tecnologie di tracciamento utilizzate sono anche beacon, tag e script per raccogliere e tenere traccia delle informazioni e per migliorare e analizzare il nostro Servizio.</p>
+        <p>I cookie sono file con una piccola quantità di dati che possono includere un identificatore univoco anonimo. I cookie vengono inviati al vostro browser da un sito web e memorizzati sul vostro dispositivo. Altre tecnologie di tracciamento che potrebbero essere utilizzate sono anche beacon, tag e script per raccogliere e tenere traccia delle informazioni e per migliorare e analizzare il nostro Servizio.</p>
         <p>Potete chiedere al vostro browser di rifiutare tutti i cookie o di indicare quando viene inviato un cookie. Tuttavia, se non si accettano i cookie, potrebbe non essere possibile utilizzare alcune parti del nostro Servizio.</p>
         <p>Esempi di cookie che utilizziamo:</p>
         <ul>
-          <li><b>Cookie di sessione.</b> Utilizziamo i cookie di sessione per gestire il nostro servizio.</li>
-          <li><b>Cookie di preferenza.</b> Utilizziamo i cookie di preferenza per ricordare le vostre preferenze e varie impostazioni.</li>
-          <li><b>Cookie di sicurezza.</b> Utilizziamo i cookie di sicurezza per motivi di sicurezza.</li>
+          <li><span className="accent-text">Cookie di sessione.</span> Utilizziamo i cookie di sessione per gestire il nostro servizio.</li>
+          <li><span className="accent-text">Cookie di preferenza.</span> Utilizziamo i cookie di preferenza per ricordare le vostre preferenze e varie impostazioni.</li>
+          <li><span className="accent-text">Cookie di sicurezza.</span> Utilizziamo i cookie di sicurezza per motivi di sicurezza.</li>
         </ul>
+        <p>Per maggiori informazioni consulta la nostra pagina <a href="/cookie">Cookie policy</a></p>
 
         <h2>Uso dei dati</h2> 
         <p>{appName} utilizza i dati raccolti per vari scopi:</p>    
@@ -86,7 +88,7 @@ const PrivacyPage = props => (
         <p>Le terze parti hanno accesso ai vostri Dati personali solo per eseguire queste attività per nostro conto e sono obbligate a non rivelarle o utilizzarle per altri scopi.</p>
 
         <h2>Link ad altri siti</h2>
-        <p>OIl nostro servizio può contenere collegamenti ad altri siti non gestiti da noi. Cliccando su un link di terze parti, sarete indirizzati al sito di quella terza parte. Ti consigliamo vivamente di rivedere l'Informativa sulla privacy di ogni sito che visiti.</p>
+        <p>Il nostro servizio può contenere collegamenti ad altri siti non gestiti da noi. Cliccando su un link di terze parti, sarete indirizzati al sito di quella terza parte. Ti consigliamo vivamente di rivedere l'Informativa sulla privacy di ogni sito che visiti.</p>
         <p>Non abbiamo alcun controllo e non ci assumiamo alcuna responsabilità per il contenuto, le politiche sulla privacy o le pratiche di qualsiasi sito o servizio di terzi.</p>
 
         <h2>Privacy dei minori</h2>
@@ -101,7 +103,7 @@ const PrivacyPage = props => (
         <h2>Contattaci</h2>
         <p>In caso di domande sulla presente Informativa sulla privacy, si prega di contattarci:</p>
         <ul>
-          <li>Tramite e-mail: {appMainEmail}</li>
+          <li>Tramite e-mail: <a href={`mailto:${appPrivacyEmail}?subject=Biblo: Privacy`}>{appPrivacyEmail}</a></li>
         </ul>
       </div>
     </div>

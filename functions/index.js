@@ -94,12 +94,13 @@ exports.countCollectionBooks = functions.firestore.document('collections/{cid}/b
   let increment;
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
-  
+
   const { cid } = context.params;
   const countRef = admin.firestore().collection('collections').doc(cid);
-  const books_num = (change.after.data().books_num || 0) + increment;
-
-  return countRef.update({ books_num });  
+  return countRef.get().then(snap => {
+    const books_num = (snap.data().books_num || 0) + increment;
+    return countRef.update({ books_num });
+  });
 });
 
 // BOOKS
@@ -110,8 +111,8 @@ exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, 
   const item = snap.data();
 
   if ((item.collections || []).length > 0) {
-    item.collections.forEach(col => {
-      admin.firestore().collection('collections').doc(col).collection('books').doc(bid).delete(); // delete book from each collection
+    item.collections.forEach(cid => {
+      admin.firestore().collection('collections').doc(cid).collection('books').doc(bid).delete(); // delete book from each collection
     });
   }
 

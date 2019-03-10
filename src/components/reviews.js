@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { isAuthenticated, latestReviewsRef, reviewersRef } from '../config/firebase';
-import { stringType, userType } from '../config/types';
+import { stringType, userType, numberType, boolType } from '../config/types';
 import Review from './review';
 import PaginationControls from './paginationControls';
 import { handleFirestoreError } from '../config/shared';
@@ -13,15 +13,23 @@ export default class Reviews extends React.Component {
     items: null,
     count: 0,
     desc: true,
-    limit: 5,
+    limit: this.props.limit,
     loading: true,
     page: 1,
+    pagination: this.props.pagination,
     lastVisible: null
   }
 
   static propTypes = {
     bid: stringType,
+    limit: numberType,
+    pagination: boolType,
     user: userType
+  }
+
+  static defaultProps = {
+    limit: 5,
+    pagination: true
   }
 
   componentDidMount() {
@@ -99,7 +107,7 @@ export default class Reviews extends React.Component {
   }
 	
 	render() {
-    const { items, limit, loading, page, count } = this.state;
+    const { items, limit, loading, page, pagination, count } = this.state;
     const { bid, user } = this.props;
 
     if (!items || items.length === 0) {
@@ -143,7 +151,7 @@ export default class Reviews extends React.Component {
             />
           )}
         </div>
-        {count > 0 && items.length < count &&
+        {pagination && count > 0 && items.length < count &&
           <PaginationControls 
             count={count} 
             fetch={this.fetchNext} 

@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { appName, booksPerRow /* , isTouchDevice */ } from '../config/shared';
+import { genres } from '../config/lists';
+import { appName, booksPerRow, handleFirestoreError /* , isTouchDevice */ } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -71,18 +72,26 @@ export default class BookCollection extends React.Component {
     }
   }
   
-	fetch = direction => {
-    const { inView } = this.props;
+	fetch = e => {
+    const { inView, openSnackbar } = this.props;
     const { bcid, cid, count, desc, /* firstVisible, lastVisible,  */limit, page } = this.state;
-    // console.log({'direction': direction, 'firstVisible': firstVisible, 'lastVisible': lastVisible.id});
+    const direction = e && e.currentTarget.dataset.direction;
+    // console.log(direction, /* firstVisible, lastVisible.id */);
     const prev = direction === 'prev';
     // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
-    const baseRef = cid === 'Top' ? booksRef.orderBy('readers_num', 'desc').limit(limit) : collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title').limit(limit);
-    const paginatedRef = baseRef.startAfter(startAfter);
-    const ref = direction ? paginatedRef : baseRef;
+    const isGenre = genres.some(item => item.name === cid);
+    const baseRef = cid === 'Top' ? 
+      booksRef.orderBy('readers_num', 'desc') : isGenre ? 
+      booksRef.where('genres', 'array-contains', cid).orderBy('rating_num', desc ? 'desc' : 'asc') : 
+      collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title');
+    const lRef = baseRef.limit(limit);
+    const paginatedRef = lRef.startAfter(startAfter);
+    const ref = direction ? paginatedRef : lRef;
     
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
 
     if (inView) {
       const fetcher = () => {
@@ -110,22 +119,20 @@ export default class BookCollection extends React.Component {
               });
             }
           }
-        }).catch(error => console.warn(error));
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     
       if (cid === 'Top') {
-        this.setState({ count: limit });
-        fetcher();
+        this.setState({ count: limit }, () => fetcher());
       } else {
         if (!direction) {
           collectionBooksRef(cid).get().then(fullSnap => {
             if (!fullSnap.empty) { 
               if (this._isMounted) {
-                this.setState({ count: fullSnap.docs.length });
+                this.setState({ count: fullSnap.docs.length }, () => fetcher());
               }
-              fetcher();
             }
-          }).catch(error => console.warn(error));
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         } else fetcher();
       }
     }
@@ -170,14 +177,16 @@ export default class BookCollection extends React.Component {
                     type="button"
                     disabled={page < 2 && 'disabled'} 
                     className="btn sm flat icon rounded" 
-                    onClick={() => this.fetch('prev')} title="precedente">
+                    data-direction="prev"
+                    onClick={this.fetch} title="precedente">
                     {icon.chevronLeft()}
                   </button>
                   <button 
                     type="button"
                     disabled={page > (count / limit) && 'disabled'} 
                     className="btn sm flat icon rounded" 
-                    onClick={() => this.fetch('next')} title="successivo">
+                    data-direction="next"
+                    onClick={this.fetch} title="successivo">
                     {icon.chevronRight()}
                   </button>
                 </React.Fragment>

@@ -2154,6 +2154,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .lighter-text { color: var(--lighterTextClr); }
 .lightest-text { color: var(--lightestTextClr); }
 .primary-text { color: var(--primaryClr); }
+.accent-text { color: var(--accentClr); }
 .text-sm { font-size: 80%; }
 .text-xs { font-size: 70%; }
 .text-xxs { font-size: 60%; }

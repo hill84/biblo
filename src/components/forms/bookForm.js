@@ -18,7 +18,7 @@ import isbn from 'isbn-utils';
 import firebase, { bookRef, booksRef, collectionBookRef, storageRef, authid, collectionRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, hasRole, normalizeString, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, handleFirestoreError, hasRole, normalizeString, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 
@@ -184,10 +184,11 @@ export default class BookForm extends React.Component {
   }
 
   checkISBNnum = async num => {
+    const { openSnackbar } = this.props;
     const result = await booksRef.where('ISBN_13', '==', Number(num)).limit(1).get().then(snap => {
       if (!snap.empty) return true;
       return false;
-    }).catch(error => console.warn(error));
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     return result;
   }
 
@@ -219,10 +220,10 @@ export default class BookForm extends React.Component {
                 openSnackbar('Modifiche salvate', 'success');
               });
             }
-          }).catch(error => {
+          }).catch(err => {
             if (this._isMounted) {
-              this.setState({ authError: error.message, loading: false }, () => {
-                openSnackbar(error.message, 'error');
+              this.setState({ authError: err.message, loading: false }, () => {
+                openSnackbar(err.message, 'error');
               });
             }
           });
@@ -270,43 +271,45 @@ export default class BookForm extends React.Component {
                 // console.log(`New book created with bid ${newBid}`);
               });
             }
-          }).catch(error => {
+          }).catch(err => {
             if (this._isMounted) {
               this.setState({
-                authError: error.message,
+                authError: err.message,
                 loading: false
               }, () => {
-                openSnackbar(error.message, 'error');
+                openSnackbar(err.message, 'error');
               });
             }
           });
         }
         if (book.collections) {
           book.collections.forEach(cid => {
-            let bcid = 0;
-            collectionBookRef(cid, book.bid || newBid).get().then(collectionBook => {
-              if (collectionBook.exists) { 
-                bcid = collectionBook.data().bcid; 
+            collectionRef(cid, book.bid || newBid).get().then(collection => {
+              if (collection.exists) { 
+                collectionBookRef(cid, book.bid || newBid).get().then(collectionBook => {
+                  collectionBookRef(cid, book.bid || newBid).set({
+                    bid: book.bid || newBid, 
+                    bcid: collectionBook.exists ? collectionBook.data().bcid : (collection.data().books_num || 0) + 1,
+                    covers: (imgPreview && Array(imgPreview)) || (!!book.covers[0] && Array(book.covers[0])) || [],
+                    title: book.title,  
+                    subtitle: book.subtitle, 
+                    authors: book.authors, 
+                    publisher: book.publisher,
+                    publication: book.publication,
+                    rating_num: book.rating_num,
+                    ratings_num: book.ratings_num
+                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
               } else {
                 collectionRef(cid).set({
                   title: cid,
-                  books_num: 1,
-                  description: ''
-                }).catch(error => console.warn(error));
+                  books_num: 0,
+                  description: '',
+                  edit: true,
+                  genres: book.genres
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
               }
-              collectionBookRef(cid, book.bid || newBid).set({
-                bid: book.bid || newBid, 
-                bcid,
-                covers: (imgPreview && Array(imgPreview)) || (!!book.covers[0] && Array(book.covers[0])) || [],
-                title: book.title,  
-                subtitle: book.subtitle, 
-                authors: book.authors, 
-                publisher: book.publisher,
-                publication: book.publication,
-                rating_num: book.rating_num,
-                ratings_num: book.ratings_num
-              }).catch(error => console.warn(error));
-            }).catch(error => console.warn(error));
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
           });
         }
       } else {

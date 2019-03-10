@@ -51,6 +51,11 @@ class Home extends React.Component {
                   <p><small>Sei già registrato? <Link to="/login">Accedi</Link></small></p>
                 </React.Fragment>
               }
+              <p className="font-sm">
+                <Link className="counter" to="/about">Chi siamo</Link>
+                <Link className="counter" to="/donations">Donazioni</Link>
+                <Link className="counter last" to="/help">Aiuto</Link>
+              </p>
             </div>
           </div>
           <Background className="bg reveal fadeIn">
@@ -90,7 +95,7 @@ class Home extends React.Component {
           <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
               <div ref={ref}>
-                {inView && <Reviews />}
+                {inView && <Reviews limit={4} pagination={false} />}
               </div>
             }
           </InView>

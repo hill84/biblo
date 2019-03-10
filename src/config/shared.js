@@ -1,9 +1,10 @@
-import { badWords } from './lists';
+import { badWords, firestoreErrorMessages } from './lists';
 
 // APP
 export const appName = 'Biblo';
 export const appURL = 'https://delibris-4fa3b.firebaseapp.com';
-export const appMainEmail = 'giu.gerbino@gmail.com';
+export const appEmail = 'giu.gerbino@gmail.com';
+export const appPrivacyEmail = appEmail;
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
@@ -183,8 +184,9 @@ export const switchLanguages = string => {
 };
 
 export const handleFirestoreError = err => {
+  const lang = 'ita';
   // https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestoreException.Code
-  const firestoreErrors = [
+  /* const firestoreErrors = [
     { code: 'aborted', msg: "The operation was aborted." },
     { code: 'already-exists', msg: "Some document that we attempted to create already exists." },
     { code: 'cancelled', msg: "The operation was cancelled." },
@@ -203,5 +205,6 @@ export const handleFirestoreError = err => {
     { code: 'unknown', msg: "Unknown error." }
   ];
   const errorMsg = firestoreErrors.filter(e => e.code === err.code);
-  return errorMsg.length ? errorMsg[0].msg : 'Errore sconosciuto.';
+  return errorMsg.length ? errorMsg[0].msg : 'Errore sconosciuto.'; */
+  return firestoreErrorMessages[err.code] ? firestoreErrorMessages[err.code][lang] : firestoreErrorMessages['unknown'][lang];
 }
