@@ -8,41 +8,62 @@ import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 
 export default class PasswordResetForm extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			email: '',
-			loading: false,
-			authError: null,
-			errors: {}
-		};
-	}
+  state = {
+    email: '',
+    loading: false,
+    authError: null,
+    errors: {}
+  }
+  
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
 	onChange = e => {
-		this.setState({ email: e.target.value, errors: { ...this.state.errors, [e.target.name]: null } });
+    if (this._isMounted) {
+      this.setState({ email: e.target.value, errors: { ...this.state.errors, [e.target.name]: null } });
+    }
 	};
 
 	onSubmit = e => {
-		e.preventDefault();
-		this.setState({ loading: true });
-		const errors = this.validate(this.state.email);
-		this.setState({ errors });
-		if(Object.keys(errors).length === 0) {
-			auth.sendPasswordResetEmail(this.state.email).then(() => {
-				this.setState({ redirectToReferrer: true });
-			}).catch(error => {
-				this.setState({
-					authError: error.message,
-					loading: false
-				});
-			});
-		}
+    e.preventDefault();
+    const { openSnackbar } = this.props;
+    const { email } = this.state;
+    const errors = this.validate(email);
+
+    if (this._isMounted) {
+      this.setState({ errors });
+    }
+    if (Object.keys(errors).length === 0) {
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
+      auth.sendPasswordResetEmail(email).then(() => {
+        if (this._isMounted) {
+          this.setState({ loading: false });
+          openSnackbar(`Ti abbiamo inviato un'email per reimpostare la password.`, 'success');
+        }
+      }).catch(err => {
+        if (this._isMounted) {
+          this.setState({
+            authError: err.message,
+            loading: false
+          });
+        }
+      });
+    }
 	};
 
-	validate = data => {
-		const errors = {};
-		if(this.state.email) {
-			if(!isEmail(this.state.email)) errors.email = "Email non valida";
+	validate = () => {
+    const { email } = this.state;
+    const errors = {};
+    
+		if (email) {
+			if (!isEmail(email)) errors.email = "Email non valida";
 		} else {
 			errors.email = "Inserisci un indirizzo email";
 		}
@@ -50,10 +71,10 @@ export default class PasswordResetForm extends React.Component {
 	};
 
 	render() {
-		const { authError, email, errors } = this.state;
+		const { authError, email, errors, loading } = this.state;
 
 		return (
-			<div className="card-container" id="passwordResetFormComponent">
+			<div className="card-container pad-v" id="passwordResetFormComponent">
 				<h2>Recupero password</h2>
 				<div className="card">
 					<p>Per favore, inserisci la tua email per recuperare la password.</p>
@@ -80,7 +101,7 @@ export default class PasswordResetForm extends React.Component {
               <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
             </div>
           </form>
-          {this.props.loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         </div>
 			</div>
 		);

@@ -53,8 +53,8 @@ class Home extends React.Component {
               }
               <p className="font-sm">
                 <Link className="counter" to="/about">Chi siamo</Link>
-                <Link className="counter" to="/donations">Donazioni</Link>
-                <Link className="counter last" to="/help">Aiuto</Link>
+                <Link className="counter" to="/help">Aiuto</Link>
+                <Link className="counter last" to="/donations">Donazioni</Link>
               </p>
             </div>
           </div>

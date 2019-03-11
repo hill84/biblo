@@ -1,4 +1,4 @@
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import PasswordResetForm from './components/forms/passwordResetForm';
@@ -16,6 +16,7 @@ import CookiePage from './components/pages/cookiePage';
 import Dashboard from './components/pages/dashboard';
 import DonationsPage from './components/pages/donationsPage';
 import Genre from './components/pages/genre';
+import genresPage from './components/pages/genresPage';
 import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
 import IconsPage from './components/pages/iconsPage';
@@ -26,6 +27,7 @@ import PrivacyPage from './components/pages/privacyPage';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
+import VerifyEmailPage from './components/pages/verifyEmailPage';
 // import Challenges from './components/pages/challenges';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { handleFirestoreError } from './config/shared';
@@ -37,13 +39,14 @@ export const UserContext = React.createContext();
 export default class App extends React.Component {
 	state = {
     error: null,
+    lang: 'ita',
 		user: null
 	}
 
 	componentDidMount() {
     this._isMounted = true;
 		auth.onAuthStateChanged(user => {
-			if (user) {
+			if (user && user.emailVerified) {
 				window.localStorage.setItem(storageKey_uid, user.uid);
 				this.unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
           // console.log(snap);
@@ -51,7 +54,9 @@ export default class App extends React.Component {
 						this.setState({ user: snap.data(), error: null });
 					} else console.warn(`User not found in database`);
         }, err => {
-          this.setState({ error: handleFirestoreError(err) });
+          if (this._isMounted) {
+            this.setState({ error: handleFirestoreError(err) });
+          }
         });
 			} else {
 				window.localStorage.removeItem(storageKey_uid);
@@ -71,7 +76,7 @@ export default class App extends React.Component {
 		const { error, user } = this.state;
 
 		return (
-			<MuiThemeProvider theme={defaultTheme}>
+			<ThemeProvider theme={defaultTheme}>
 				<UserContext.Provider value={user}>
           <SharedSnackbarProvider>
             <SharedSnackbarConsumer>
@@ -80,15 +85,17 @@ export default class App extends React.Component {
                   <Switch>
                     <Route path="/" exact component={Home} />
                     <Route path="/login" component={Login} />
-                    <Route path="/password-reset" component={PasswordResetForm} />
-                    <Route path="/signup" component={Signup} />
                     <Route path="/about" component={AboutPage} />
                     <Route path="/cookie" component={CookiePage} />
                     <Route path="/donations" component={DonationsPage} />
                     <Route path="/help" component={HelpPage} />
                     <Route path="/privacy" component={PrivacyPage} />
                     <Route path="/terms" component={TermsPage} />
+                    <Route path="/verify-email" component={VerifyEmailPage} />
+                    <RouteWithProps path="/password-reset" component={PasswordResetForm} openSnackbar={openSnackbar} />
+                    <RouteWithProps path="/signup" component={Signup} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
+                    <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />
                     <RouteWithProps path="/genre/:gid" component={Genre} user={user} openSnackbar={openSnackbar} />
@@ -112,7 +119,7 @@ export default class App extends React.Component {
             </SharedSnackbarConsumer>
           </SharedSnackbarProvider>
 				</UserContext.Provider>
-			</MuiThemeProvider>
+			</ThemeProvider>
 		);
 	}
 }

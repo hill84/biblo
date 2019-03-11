@@ -1936,6 +1936,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   margin: 0 auto;
   width: 100%;
   height: var(--shelf-rowHeight);
+  border-radius: 0;
   background-image: radial-gradient(circle var(--avatarSize), var(--skltnBg) 50%, transparent 0), linear-gradient(var(--skltnBg), var(--skltnBg));
   background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
   background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
@@ -2106,6 +2107,17 @@ progress[value='100'].stepper::-webkit-progress-bar {
   white-space: nowrap;
   max-width: 100%;
   transition: all .2s ease-in-out; 
+}
+.bubble.icon {
+  background-color: rgba(0,0,0,.07);
+  width: var(--avatarSize);
+  height: var(--avatarSize);
+  line-height: var(--avatarSize);
+  text-align: center;
+}
+.bubble.icon svg {
+  --iconSize: 42px;
+  color: var(--primaryClr);
 }
 
 .bubble-group .bubble { 

@@ -9,7 +9,8 @@ import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
-import { appName } from '../../config/shared';
+import { appName, handleFirestoreError } from '../../config/shared';
+import { funcType } from '../../config/types';
 
 export default class SignupForm extends React.Component {
 	state = {
@@ -37,38 +38,71 @@ export default class SignupForm extends React.Component {
     redirectTo: null
   };
 
+  static propTypes = {
+    openSnackbar: funcType.isRequired
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   toggleCheckbox = name => event => this.setState({ [name]: event.target.checked });
 
 	onChange = e => {
 		this.setState({ 
-			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
+      data: { ...this.state.data, [e.target.name]: e.target.value }, 
+      errors: { ...this.state.errors, [e.target.name]: null }
 		});
 	};
 
 	onSubmit = e => {
     e.preventDefault();
     const { data } = this.state;
-		const errors = this.validate(data);
-		this.setState({ authError: '', loading: true, errors });
-		if(Object.keys(errors).length === 0) {
-			auth.createUserWithEmailAndPassword(data.email, data.password).catch(error => {
-				this.setState({
-					authError: error.message,
-					loading: false
-				});
-			});
+    const { openSnackbar } = this.props;
+    const errors = this.validate(data);
+    
+    if (this._isMounted) {
+      this.setState({ authError: '', loading: true, errors });
+    }
+    
+		if (Object.keys(errors).length === 0) {
+      auth.createUserWithEmailAndPassword(data.email, data.password).then(user => {
+        if (!user) console.warn('No user is signed in');
+      }).catch(err => {
+        if (this._isMounted) {
+          this.setState({
+            authError: handleFirestoreError(err),
+            loading: false
+          });
+        }
+      });
+
 			auth.onAuthStateChanged(user => {
 				if (user) {
-					userRef(user.uid).set({
-						uid: user.uid,
-						displayName: data.displayName,
-						email: user.email,
-						creationTime: user.metadata.creationTime,
-						photoURL: '',
-						roles: data.roles,
-						stats: data.stats
-					});
-					this.setState({ redirectTo: user.uid });
+          // console.log(user);
+          if (this._isMounted) {
+            userRef(user.uid).set({
+              uid: user.uid,
+              displayName: data.displayName,
+              email: user.email,
+              creationTime: user.metadata.creationTime,
+              photoURL: '',
+              roles: data.roles,
+              stats: data.stats
+            }).then(() => {
+              // this.setState({ redirectTo: `/dashboard/${user.uid}` });
+              if (user.emailVerified === false) {
+                user.sendEmailVerification().then(() => {
+                  // openSnackbar(`Ti abbiamo inviato un'email di conferma`, 'success');
+                  this.setState({ redirectTo: '/verify-email' });
+                });
+              } else console.log('Email verified');
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          }
 				} else console.warn('No user is signed in');
 			});
 		}
@@ -88,7 +122,7 @@ export default class SignupForm extends React.Component {
 	render() {
     const { authError, checkedTerms, data, errors, redirectTo } = this.state;
 
-		if (redirectTo) return <Redirect to={`/dashboard/${redirectTo}`} />
+		if (redirectTo) return <Redirect to={redirectTo} />
 
 		return (
 			<React.Fragment>
