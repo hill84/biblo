@@ -1,4 +1,4 @@
-import createBrowserHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, withRouter } from 'react-router-dom';
