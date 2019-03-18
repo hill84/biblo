@@ -1,6 +1,6 @@
-<!-- <p align="center">
-  <a href="https://material-ui.com/" rel="noopener" target="_blank"><img width="150" src="https://material-ui.com/static/images/material-ui-logo.svg" alt="Material-UI logo"></a></p>
-</p> -->
+<p align="center">
+  <a href="https://delibris-4fa3b.firebaseapp.com/" rel="noopener" target="_blank"><img width="100" src="https://firebasestorage.googleapis.com/v0/b/delibris-4fa3b.appspot.com/o/assets%2Flogo-biblo.png?alt=media&token=5c7d3558-49bc-493d-a466-508ca444cd49" alt="Biblo logo"></a></p>
+</p>
 
 <h1 align="center">Biblo</h1>
 
@@ -11,13 +11,13 @@
 [![Dependencies](https://img.shields.io/david/hill84/biblo.svg)](https://david-dm.org/hill84/biblo)
 [![DevDependencies](https://img.shields.io/david/dev/hill84/biblo.svg)](https://david-dm.org/hill84/biblo?type=dev)
 
-</div>
-
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+
+</div>
 
 ## Preview this App
 
-You can preview this app from this page on [delibris-4fa3b.firebaseapp.com](https://delibris-4fa3b.firebaseapp.com)
+You can preview this app from this page on [delibris-4fa3b.firebaseapp.com](https://delibris-4fa3b.firebaseapp.com).
 
 ## Setup the Project
 
