@@ -2,6 +2,74 @@ export const roles = ['admin', 'editor', 'premium', 'public'];
 export const dashboardTabs = ['shelf', 'wishlist', 'activity', 'contacts'];
 export const profileKeys = ['displayName', 'email', 'birth_date', 'continent', 'country', 'city', 'languages', 'photoURL', 'sex'];
 
+export const firestoreErrorMessages = {
+  // https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestoreException.Code
+  'aborted': {
+    eng: "The operation was aborted.",
+    ita: "L'operazione è stata abortita."
+  }, 
+  'already-exists': {
+    eng: "Some document that we attempted to create already exists.",
+    ita: "Alcuni documenti che abbiamo provato a creare esistono già"
+  },
+  'cancelled': {
+    eng: "The operation was cancelled.",
+    ita: "L'operazione è stata cancellata."
+  },
+  'data-loss': {
+    eng: "Unrecoverable data loss or corruption.",
+    ita: "Perdita di dati."
+  },
+  'deadline-exceeded': { 
+    eng: "Deadline expired before operation could complete.",
+    ita: "Deadline scaduta."
+  },
+  'failed-precondition': { 
+    eng: "Operation was rejected because of a failed precondition.",
+    ita: "Operazione rifiutata a causa di una precondizione fallita." 
+  },
+  'internal': { 
+    eng: "Internal error.",
+    ita: "Errore interno." 
+  },
+  'invalid-argument': { 
+    eng: "Client specified an invalid argument.",
+    ita: "Argomento non valido." 
+  }, 
+  'not-found': { 
+    eng: "Some requested document was not found.",
+    ita: "Documento non trovato." 
+  }, 
+  'out-of-range': { 
+    eng: "Operation was attempted past the valid range.",
+    ita: "Operazione fuori range massimo." 
+  }, 
+  'permission-denied': { 
+    eng: "The caller does not have permission to execute the specified operation.",
+    ita: "Utente non autorizzato." 
+  }, 
+  'resource-exhausted': { 
+    eng: "Some resource has been exhausted, perhaps a per-user quota.",
+    ita: "Quota esaurita."
+  },
+  'unauthenticated': { 
+    eng: "The request does not have valid authentication credentials for the operation.",
+    ita: "Utente non autorizzato." 
+  },
+  'unavailable': { 
+    eng: "The service is currently unavailable.",
+    ita: "Servizio temporaneamente non disponibile." 
+  },
+  'unimplemented': { 
+    eng: "Operation is not implemented or not supported/enabled.",
+    ita: "Operazione non implementata o supportata." 
+  },
+  'unknown': { 
+    eng: "Unknown error.",
+    ita: "Errore sconosciuto." 
+  }
+};
+
 export const ratingLabels = { 
   0: "Nessun voto", 
   '0.5': "Orrendo", 

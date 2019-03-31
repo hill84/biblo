@@ -20,7 +20,7 @@ export default class UsersDash extends React.Component {
  	state = {
     user: this.props.user,
     count: 0,
-    desc: true,
+    desc: false,
     firstVisible: null,
     isOpenDeleteDialog: false,
     items: null,
@@ -63,10 +63,8 @@ export default class UsersDash extends React.Component {
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
-    if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-        this.fetch();
-      }
+    if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      this.fetch();
     }
   }
     

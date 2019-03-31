@@ -27,19 +27,13 @@ export default class Layout extends React.Component {
     drawerIsOpen: false,
     moreAnchorEl: null,
     notes: null,
-    notesAnchorEl: null,
-    user: this.props.user
+    notesAnchorEl: null
   }
 
   static propTypes = {
     error: stringType,
     openSnackbar: funcType.isRequired,
     user: userType
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.user !== state.user) { return { user: props.user }}
-    return null;
   }
   
   componentDidMount() {
@@ -52,11 +46,10 @@ export default class Layout extends React.Component {
     this.unsubNotesFetch && this.unsubNotesFetch();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { user } = this.state;
-    const { error, openSnackbar } = this.props;
+  componentDidUpdate(prevProps) {
+    const { error, openSnackbar, user } = this.props;
     if(this._isMounted) {
-      if (user !== prevState.user){
+      if (user !== prevProps.user){
         this.timer = setTimeout(() => {
           this.fetchNotes()
         }, 1000);
@@ -68,7 +61,8 @@ export default class Layout extends React.Component {
   }
 
   fetchNotes = () => {
-    const { user } = this.state;
+    const { user } = this.props;
+
     if (user) {
       const notes = [];
       roles.forEach(role => {
@@ -100,7 +94,9 @@ export default class Layout extends React.Component {
   onCloseMore = () => this.setState({ moreAnchorEl: null });
 
   onOpenNotes = e => {
-    const { notes, user } = this.state;
+    const { notes } = this.state;
+    const { user } = this.props;
+
     this.setState({ notesAnchorEl: e.currentTarget });
     notes && notes.filter(note => note.read !== true && !note.role).forEach(note => {
       /* this.setState({
@@ -115,8 +111,8 @@ export default class Layout extends React.Component {
   onCloseDialog = () => this.setState({ dialogIsOpen: false });
   
   render() {
-    const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl, user } = this.state;
-    const { children } = this.props;
+    const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = this.state;
+    const { children, user } = this.props;
     const toRead = notes => notes && notes.filter(note => !note.read || note.role);
 
     return (

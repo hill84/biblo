@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
-import { skltn_rows } from './skeletons';
+import { skltn_quote } from './skeletons';
 
 export default class RandomQuote extends React.Component {
   state = {
@@ -74,7 +74,7 @@ export default class RandomQuote extends React.Component {
   render() {
     const { author, bid, bookTitle, className, coverURL, loading, quote, skeleton } = this.state;
 
-    if (loading) return skeleton ? skltn_rows : null;
+    if (loading) return skeleton ? skltn_quote : null;
     if (!quote) return null;
 
     return (

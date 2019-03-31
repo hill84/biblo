@@ -3,7 +3,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { Close } from '@material-ui/icons';
 import React from 'react';
-import { SharedSnackbarConsumer } from '../context/sharedSnackbar';
+import { SharedSnackbarConsumer } from '../context/snackbarContext';
 
 const SharedSnackbar = () => (
   <SharedSnackbarConsumer>

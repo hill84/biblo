@@ -9,7 +9,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, reviewerRef, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { abbrNum, getInitials, timeSince } from '../config/shared';
+import { abbrNum, getInitials, hasRole, timeSince } from '../config/shared';
 import { reviewType, stringType, userType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
@@ -123,8 +123,8 @@ export default class Review extends React.Component {
     const { bid, review, user } = this.props;
 
     const isOwner = review.createdByUid === authid;
-    const isAdmin = user && user.roles.admin;
-    const isEditor = user && user.roles.editor;
+    const isAdmin = hasRole(user, 'admin');
+    const isEditor = hasRole(user, 'editor');
 
     return (
       <React.Fragment>
@@ -175,35 +175,35 @@ export default class Review extends React.Component {
                       <button 
                         type="button"
                         className={`btn flat thumb up ${like}`} 
-                        disabled={!isAuthenticated() || isOwner} 
+                        disabled={!isAuthenticated() || !isEditor || isOwner} 
                         onClick={this.onThumbChange}
                         title={like ? 'Annulla mi piace' : 'Mi piace'}>
-                        {icon.thumbUp()} {likes_num > 0 || isOwner ? abbrNum(likes_num) : ''}
+                        {icon.thumbUp()} {abbrNum(likes_num)}
                       </button>
                     </div>
                     {/* <div className="counter">
                       <button 
                         type="button"
                         className={`btn flat thumb down ${dislike}`} 
-                        disabled={!isAuthenticated() || isOwner} 
+                        disabled={!isAuthenticated() || !isEditor || isOwner} 
                         onClick={this.onThumbChange}
                         title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
-                        {icon.thumbDown()} {dislikes_num > 0 || isOwner ? abbrNum(dislikes_num) : ''}
+                        {icon.thumbDown()} {abbrNum(dislikes_num)}
                       </button>
                     </div> */}
-                    {!isOwner && 
-                      <div className="counter">
-                        <button type="button" className="btn sm flat" disabled={!isAuthenticated() || !isEditor || isOwner || true} onClick={this.onAddResponse}>
-                          <span className="show-sm">{icon.pencil()}</span> <span className="hide-sm">Rispondi</span>
-                        </button>
-                      </div>
-                    }
                     {isAuthenticated() && isEditor && !isOwner && 
-                      <div className="counter show-on-hover">
-                        <button type="button" className="btn sm flat" onClick={this.onFlagRequest}>
-                          <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala</span>
-                        </button>
-                      </div>
+                      <React.Fragment>
+                        <div className="counter">
+                          <button type="button" className="btn sm flat" disabled={true} onClick={this.onAddResponse}>
+                            <span className="show-sm">{icon.pencil()}</span> <span className="hide-sm">Rispondi</span>
+                          </button>
+                        </div>
+                        <div className="counter show-on-hover">
+                          <button type="button" className="btn sm flat" onClick={this.onFlagRequest}>
+                            <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala</span>
+                          </button>
+                        </div>
+                      </React.Fragment>
                     }
                     {isAuthenticated() && isEditor && (isOwner || isAdmin) && 
                       <div className="counter show-on-hover">
@@ -235,9 +235,9 @@ export default class Review extends React.Component {
               Cancellando la recensione perderai tutti i like e i commenti ricevuti.
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button className="btn primary" onClick={this.onDelete}>Elimina</button>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
           </DialogActions>
         </Dialog>
 

@@ -10,6 +10,7 @@
 
 [![Dependencies](https://img.shields.io/david/hill84/biblo.svg)](https://david-dm.org/hill84/biblo)
 [![DevDependencies](https://img.shields.io/david/dev/hill84/biblo.svg)](https://david-dm.org/hill84/biblo?type=dev)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hill84/biblo.svg)
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 

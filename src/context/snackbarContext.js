@@ -11,12 +11,24 @@ export class SharedSnackbarProvider extends React.Component {
     variant: null
   };
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   openSnackbar = (message, variant, autoHideDuration) => {
-    this.setState({ message, isOpen: true, variant, autoHideDuration });
+    if (this._isMounted) {
+      this.setState({ message, isOpen: true, variant, autoHideDuration });
+    }
   };
 
   closeSnackbar = () => {
-    this.setState({ isOpen: false, autoHideDuration: 5000 });
+    if (this._isMounted) {
+      this.setState({ isOpen: false, autoHideDuration: 5000 });
+    }
   };
 
   render() {

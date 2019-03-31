@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:300,400|Roboto+Slab:300,400');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400|Roboto+Slab:300,400|Heebo:500');
+
 :root {
   /* http://www.material-ui.com/#/customization/colors */
   --primaryLighterClr: rgb(0, 188, 212);  /* cyan500 */
@@ -79,6 +80,7 @@ body {
   line-height: 1.5;
   text-align: left;
   padding-bottom: 4rem;
+  padding-right: 0 !important;
   display: flex; 
   flex-direction: column;
 }
@@ -329,7 +331,13 @@ hr.line {
   margin-bottom: calc(-1 * var(--pad));
   padding: var(--pad);
 }
-.card .footer.no-gutter, .dialog .footer.no-gutter, .tab .footer.no-gutter { padding: 0; }
+.card .footer.no-gutter, .dialog .footer.no-gutter, .tab .footer.no-gutter, .dialog-footer.no-gutter { 
+  padding: 0; 
+  overflow: hidden;
+  border-bottom-left-radius: var(--radius); 
+  border-bottom-right-radius: var(--radius);
+}
+.dialog-footer.no-gutter { margin: 0; }
 .card-container { margin: auto; text-align: center; }
 .card-container .card { max-width: 340px; }
 .card-container .form-group { text-align: left; }
@@ -561,8 +569,8 @@ html:not(.light) .card.primary, .primary .card {
 .btn + .counter { margin-left: 14px; }
 .btn.centered, .link.centered { display: block; }
 .btn-footer {
-  -ms-flex: 0 0 100%;
-  flex: 0 0 100%;
+  -ms-flex: 1;
+  flex: 1;
   max-width: 100%;
   margin: 0;
   margin-top: 20px;
@@ -571,8 +579,10 @@ html:not(.light) .card.primary, .primary .card {
   font-size: 1.15rem;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  border-radius: 0;
 }
 .btn-footer, .btn-footer:hover, .btn-footer:active { box-shadow: none; transform: none; }
+.btn.btn-footer + .btn.btn-footer { margin-left: 0; }
 .btn a, .btn:active a { color: inherit; }
 
 .btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; }
@@ -609,6 +619,8 @@ html:not(.light) .card.primary, .primary .card {
 .btn.lg.rounded, .btns.lg .btn.rounded { --btnPad: 1.4rem; }
 .btn.sm.rounded, .btns.sm .btn.rounded { --btnPad: .8rem; }
 .btn.xs.rounded, .btns.xs .btn.rounded { --btnPad: .55rem; }
+
+.btn.loading svg { will-change: transform; animation: rotate .3s infinite; }
 
 .btn.primary { background-color: var(--primaryClr); }
 .btn.primary:hover { background-color: var(--primaryLightClr); }
@@ -1002,9 +1014,10 @@ html:not(.light) .card.primary, .primary .card {
   margin: 0;
   margin-bottom: .3rem;
   color: var(--accentClr);
-  font-family: 'Roboto Slab', serif;
-  font-size: 2.4em;
+  font-family: 'Heebo', sans-serif;
+  font-size: 2.8em;
   line-height: 125%;
+  font-weight: 500;
   text-shadow: 0 0 50px rgb(38, 50, 56), 0 0 5px rgba(38, 50, 56, .3);
   animation-delay: .4s;
 }
@@ -1069,7 +1082,7 @@ html.light .hero * { text-shadow: none; }
 }
 #BookContainerComponent .content-background { 
   --stickyBgHeight: 250px;
-  position: sticky; 
+  position: fixed; 
   top: 60px; 
   left: 0; 
   width: 100%; 
@@ -1285,9 +1298,11 @@ html.light .hero * { text-shadow: none; }
 .book-incipit p { 
   padding-left: 35px; 
   padding-right: 35px;
+  padding-bottom: 20px;
+  line-height: 150%;
+}
+.book-incipit p.incipit { 
   padding-top: var(--faderHeight);
-  padding-bottom: var(--faderHeight);
-  line-height: 150%; 
   text-indent: 40px; 
   text-align: justify;     
   font-family: 'Roboto Slab', 'Bookerly', Georgia, Arial;
@@ -1297,8 +1312,10 @@ html.light .hero * { text-shadow: none; }
   transition: font .4s ease-in-out;
   /* user-select: none; */
 }
-.book-incipit .big { font-size: 1.1rem; }
-.book-incipit p::first-letter { font-size: 2.5rem; }
+.book-incipit p.incipit.big { font-size: 1.1rem; }
+.book-incipit p.incipit::first-letter { font-size: 2.5rem; }
+.book-incipit p.copyright { color: var(--lighterTextClr); font-size: .8rem; font-weight: 200; text-align: right; }
+.book-incipit p:last-child { padding-bottom: var(--faderHeight); }
 
 .book-profile .title, .book-profile .subtitle { margin-top: 0; margin-left: auto; margin-right: auto; line-height: 130%; }
 .book-profile.dark .title, .book-profile.dark .subtitle { font-weight: 300; }
@@ -1718,7 +1735,8 @@ html.light .hero * { text-shadow: none; }
 .reviews .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
 .review + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(0,0,0,.05); }
 .review.flagged {
-  background-color: rgba(255,0,0,.08);
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,0,0,.08) 10px, rgba(255,0,0,.08) 20px);
+  background-repeat: no-repeat;
   margin-left: calc(var(--pad) * -1);
   margin-right: calc(var(--pad) * -1);
   margin-bottom: -14px;
@@ -1884,7 +1902,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   height: var(--shelf-rowHeight);
   overflow: hidden;
 }
-.skltn.shelf-row:before, .skltn.rows:before {
+.skltn.shelf-row:before, .skltn.rows:before, .skltn.review:before, .skltn.quote:before {
   content: "";
   position: absolute;
   top: 0;
@@ -1895,8 +1913,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
   background: linear-gradient(90deg, transparent, var(--cardBg), transparent) calc(-1 * var(--coverWidth)) 0;
   background-size: 150px 100%;
   background-repeat: no-repeat;
-  background-origin: content-box;
-  animation: skltn_shelfRow 2.5s infinite ease-in-out;
+  background-position: -150px 0;
+  animation: skltn_shelfRow 2.5s infinite linear;
   z-index: 1;
 }
 .skltn.book {
@@ -1910,7 +1928,6 @@ progress[value='100'].stepper::-webkit-progress-bar {
     linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnTitleX) var(--skltnAuthorY);
   background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, calc(var(--coverWidth) * .8) 11px;
   background-repeat: no-repeat;
-  background-origin: content-box;
 }
 .skltn.stacked {
   --bookWidth: 100px;
@@ -1937,22 +1954,51 @@ progress[value='100'].stepper::-webkit-progress-bar {
   width: 100%;
   height: var(--shelf-rowHeight);
   border-radius: 0;
-  background-image: radial-gradient(circle var(--avatarSize), var(--skltnBg) 50%, transparent 0), linear-gradient(var(--skltnBg), var(--skltnBg));
+  background-image: 
+    radial-gradient(circle var(--avatarSize), var(--skltnBg) 50%, transparent 0), 
+    linear-gradient(var(--skltnBg), var(--skltnBg));
   background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
   background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
   background-repeat: no-repeat;
-  background-origin: content-box;
 }
 
-.skltn.rows {
+.skltn.rows, .skltn.review, .skltn.quote {
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 100px;
   max-height: 100%;
-  background-image: linear-gradient(var(--skltnBg) 50%, transparent 50%);
-  background-position: 0 0;
-  background-size: 100% 22px;
+  margin-bottom: 10px;
+  background-repeat: no-repeat;
+}
+
+.skltn.rows {
+  height: 100px;
+  background-image: 
+    repeating-linear-gradient(var(--skltnBg), var(--skltnBg) 11px, transparent 11px, transparent 22px),
+    linear-gradient(var(--skltnBg) 50%, transparent 50%);
+  background-position: 0 0, 0 88px;
+  background-size: 100% 88px,  calc(100% - 100px) 22px;
+}
+
+.skltn.review {
+  height: 118px;
+  background-image: 
+    radial-gradient(circle 16px, var(--skltnBg) 99%, transparent 0), 
+    linear-gradient(var(--skltnBg) 50%, transparent 50%),
+    repeating-linear-gradient(var(--skltnBg), var(--skltnBg) 11px, transparent 11px, transparent 22px),
+    linear-gradient(var(--skltnBg) 50%, transparent 50%);
+  background-position: 0 14px, 46px 22px, 46px 56px, 46px 100px;
+  background-size: 32px 32px, 200px 32px, 100% 44px, calc(100% - 100px) 22px;
+}
+
+.skltn.quote {
+  height: 124px;
+  background-image: 
+    linear-gradient(var(--skltnBg) 50%, transparent 50%),
+    repeating-linear-gradient(var(--skltnBg), var(--skltnBg) 11px, transparent 11px, transparent 22px),
+    linear-gradient(var(--skltnBg) 50%, transparent 50%);
+  background-position: 0 0, 54px 0, 54px 110px;
+  background-size: 40px 138px, 100% 110px, calc(100% - 100px) 22px;
 }
 
 /* MESSAGE */
@@ -2252,7 +2298,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   from { opacity: 0; transform: perspective(950) scale(.12) rotateX(90deg); } 
   to { opacity: 1; transform: perspective(950) scale(1) rotateX(0deg); }
 }
-@keyframes skltn_shelfRow { to { background-position: 120% 0; } }
+@keyframes skltn_shelfRow { to { background-position: calc(100% + 150px) 0; } }
 @keyframes maxheightIn { to { max-height: 600px; } }
 
 /* MEDIA QUERIES */
@@ -2260,7 +2306,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .btn.asc:hover svg { transform: rotate(0deg); }
   .btn.desc:hover svg { transform: rotate(180deg); }
 
-  .review .foot .btn:hover, .thumb.up.false:hover { color: var(--primaryClr); }
+  .card:not(.primary).review .foot .btn:hover, .thumb.up.false:hover { color: var(--primaryClr); }
   .review .foot .btn:active, .review .foot .thumb:active { color: rgba(0, 0, 0, .3); }
   .thumb.false, .thumb.true:hover { color: var(--lightTextClr); }
   .thumb.down.true, .thumb.down.false:hover { color: var(--errorClr); }

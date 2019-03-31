@@ -2,6 +2,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
+import { handleFirestoreError } from '../config/shared';
+import { funcType } from '../config/types';
 
 export default class SocialAuth extends React.Component {
 	state = {
@@ -22,30 +24,44 @@ export default class SocialAuth extends React.Component {
     redirectToReferrer: false
   }
 
+  static propTypes = {
+    openSnackbar: funcType.isRequired
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
 	socialAuth = provider => {
-		auth.signInWithPopup(provider).then(result => {
-			this.setState({ loading: true });
-			if (result) {
-				const user = result.user;
-				this.setState({ user });
-				if (result.additionalUserInfo.isNewUser) {
+    const { openSnackbar } = this.props;
+    const { roles, stats } = this.state;
+
+		auth.signInWithPopup(provider).then(res => {
+			this._isMounted && this.setState({ loading: true });
+			if (res) {
+        const user = res.user;
+        this._isMounted && this.setState({ user });
+				if (res.additionalUserInfo.isNewUser) {
 					userRef(user.uid).set({
-						uid: user.uid,
-						displayName: user.displayName,
-						email: user.email,
+						creationTime: Number((new Date(user.metadata.creationTime)).getTime()),
+            displayName: user.displayName,
+            email: user.email,
 						photoURL: user.photoURL,
-						creationTime: user.metadata.creationTime,
-						roles: this.state.roles,
-						stats: this.state.stats
+						roles,
+						stats,
+            uid: user.uid,
 					});
 				}
 			}
 		}).then(() => {
-			this.setState({ redirectToReferrer: true });
-		}).catch(error => {
-			console.warn(error);
-			this.setState({ loading: false });
-		});
+      this._isMounted && this.setState({ loading: false, redirectToReferrer: true });
+		}).catch(err => {
+      this._isMounted && this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'))
+    });
 	}
 	googleAuth = () => this.socialAuth(GoogleAuthProvider);
 	facebookAuth = () => this.socialAuth(FacebookAuthProvider);

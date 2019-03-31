@@ -1,5 +1,5 @@
 export const user = {
-  creationTime: '123456789',
+  creationTime: 123456789,
   uid: 'abc',
   displayName: 'Mario Rossi',
   email: 'giu.gerbino@gmail.com',

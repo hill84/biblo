@@ -2,11 +2,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { isAuthenticated, latestReviewsRef, reviewersRef } from '../config/firebase';
-import { stringType, userType, numberType, boolType } from '../config/types';
-import Review from './review';
-import PaginationControls from './paginationControls';
 import { handleFirestoreError } from '../config/shared';
-/* import InfiniteScroll from 'react-infinite-scroller'; */
+import { boolType, numberType, stringType, userType } from '../config/types';
+import PaginationControls from './paginationControls';
+import Review from './review';
+import { skltn_review } from './skeletons';
 
 export default class Reviews extends React.Component {
 	state = {
@@ -24,12 +24,14 @@ export default class Reviews extends React.Component {
     bid: stringType,
     limit: numberType,
     pagination: boolType,
+    skeleton: boolType,
     user: userType
   }
 
   static defaultProps = {
     limit: 5,
-    pagination: true
+    pagination: true,
+    skeleton: false
   }
 
   componentDidMount() {
@@ -56,7 +58,7 @@ export default class Reviews extends React.Component {
   
     this.reviewersFetch = ref.onSnapshot(fullSnap => { // TODO: remove fullSnap
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.docs.length });
+        this.setState({ count: fullSnap.size });
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
           const items = [];
           if (!snap.empty) {
@@ -108,12 +110,14 @@ export default class Reviews extends React.Component {
 	
 	render() {
     const { items, limit, loading, page, pagination, count } = this.state;
-    const { bid, user } = this.props;
-
-    if (!items || items.length === 0) {
+    const { bid, skeleton, user } = this.props;
+    
+    if (!items) {
       if (loading) { 
-        return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
-      } else { 
+        if (!skeleton) {
+          return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
+        }
+      } else {
         return (
           <div className="card dark reviews">
             <div className="info-row empty text-center">
@@ -128,28 +132,30 @@ export default class Reviews extends React.Component {
       <React.Fragment>
         <div className="card dark reviews">
           {!bid && <h2>Ultime recensioni</h2>}
-          {items.map((item, index) => 
-            <Review 
-              key={`${index}_${item.createdByUid}`} 
-              bid={bid}
-              user={user}
-              review={{
-                bid: item.bid || '',
-                photoURL: item.photoURL || '',
-                displayName: item.displayName || '',
-                bookTitle: item.bookTitle,
-                covers: item.covers || [],
-                createdByUid: item.createdByUid || '',
-                created_num: item.created_num || 0,
-                flag: item.flag,
-                dislikes: item.dislikes || {},
-                likes: item.likes || {},
-                rating_num: item.rating_num || 0,
-                text: item.text || '',
-                title: item.title || '',
-              }} 
-            />
-          )}
+          {loading && skeleton ? [...Array(limit)].map((e, i) => <React.Fragment key={i}>{skltn_review}</React.Fragment>) :
+            items.map((item, index) => 
+              <Review 
+                key={`${index}_${item.createdByUid}`} 
+                bid={bid}
+                user={user}
+                review={{
+                  bid: item.bid || '',
+                  photoURL: item.photoURL || '',
+                  displayName: item.displayName || '',
+                  bookTitle: item.bookTitle,
+                  covers: item.covers || [],
+                  createdByUid: item.createdByUid || '',
+                  created_num: item.created_num || 0,
+                  flag: item.flag,
+                  dislikes: item.dislikes || {},
+                  likes: item.likes || {},
+                  rating_num: item.rating_num || 0,
+                  text: item.text || '',
+                  title: item.title || '',
+                }} 
+              />
+            )
+          }
         </div>
         {pagination && count > 0 && items.length < count &&
           <PaginationControls 

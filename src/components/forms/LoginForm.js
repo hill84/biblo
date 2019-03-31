@@ -6,7 +6,8 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
-import { appName } from '../../config/shared';
+import { appName, handleFirestoreError } from '../../config/shared';
+import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
 export default class LoginForm extends React.Component {
@@ -21,6 +22,18 @@ export default class LoginForm extends React.Component {
     redirectToReferrer: false
   }
 
+  static propTypes = {
+    openSnackbar : funcType.isRequired
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
 	handleChange = e => {
 		this.setState({ 
 			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
@@ -28,42 +41,50 @@ export default class LoginForm extends React.Component {
 	};
 
 	handleSubmit = e => {
-		e.preventDefault();
-		this.setState({ loading: true });
-		const errors = this.validate(this.state.data);
-		this.setState({ authError: '', errors });
-		if(Object.keys(errors).length === 0) {
-			auth.signInWithEmailAndPassword(this.state.data.email, this.state.data.password).then(() => {
-				this.setState({
-					redirectToReferrer: true
-				});
-			}).catch(error => {
-				this.setState({
-					authError: error.message,
-					loading: false
-				});
+    e.preventDefault();
+    const { data } = this.state;
+		this._isMounted && this.setState({ loading: true });
+		const errors = this.validate(data);
+		this._isMounted && this.setState({ authError: '', errors });
+		if (Object.keys(errors).length === 0) {
+			auth.signInWithEmailAndPassword(data.email, data.password).then(() => {
+        if (this._isMounted) {
+          this.setState({
+            loading: false,
+            redirectToReferrer: true
+          });
+        }
+			}).catch(err => {
+        console.warn(err);
+        if (this._isMounted) {
+          this.setState({
+            authError: handleFirestoreError(err),
+            loading: false
+          });
+        }
 			});
 		}
 	};
 
 	validate = data => {
 		const errors = {};
-		if(data.email) {
-			if(!isEmail(data.email)) errors.email = "Email non valida";
-		} else { errors.email = "Inserisci un indirizzo email"; }
-		if (!data.password) { errors.password = "Inserisci una password"; } 
+		if (data.email) {
+			if (!isEmail(data.email)) errors.email = "Email non valida";
+		} else errors.email = "Inserisci un indirizzo email";
+		if (!data.password) errors.password = "Inserisci una password";
 		return errors;
 	};
 
 	render() {
-		const { authError, data, errors, redirectToReferrer } = this.state;
-    const { from } = {from: { pathname: '/' }};
+    const { authError, data, errors, redirectToReferrer } = this.state;
+    const { openSnackbar } = this.props;
+    const { from } = { from: { pathname: '/' } };
 
 		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
 			<div id="loginFormComponent">
-				<SocialAuth />
+				<SocialAuth openSnackbar={openSnackbar} />
 
         <div className="light-text pad-v-xs">
           <small>Effettuando il login confermi la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</small>

@@ -30,95 +30,103 @@ import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
 // import Challenges from './components/pages/challenges';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
-import { handleFirestoreError } from './config/shared';
+import { handleFirestoreError, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
-import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/sharedSnackbar';
-
-export const UserContext = React.createContext();
+import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
 
 export default class App extends React.Component {
 	state = {
     error: null,
-    lang: 'ita',
 		user: null
 	}
 
 	componentDidMount() {
-    this._isMounted = true;
-		auth.onAuthStateChanged(user => {
-			if (user && user.emailVerified) {
-				window.localStorage.setItem(storageKey_uid, user.uid);
-				this.unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
-          // console.log(snap);
-					if (snap.exists) {
-						this.setState({ user: snap.data(), error: null });
-					} else console.warn(`User not found in database`);
-        }, err => {
-          if (this._isMounted) {
-            this.setState({ error: handleFirestoreError(err) });
-          }
-        });
-			} else {
-				window.localStorage.removeItem(storageKey_uid);
-				if (this._isMounted) {
-          this.setState({ user: null });
-        }
-			}
-		});
+    this._isMounted = true; 
+    this.initUser();
   }
-  
+
   componentWillUnmount() {
     this._isMounted = false;
     this.unsubUserFetch && this.unsubUserFetch();
   }
 
+  initUser = () => {
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // console.log(user);
+        if (needsEmailVerification(user)) {
+          this.clearUser();
+        } else {
+          this.setUser(user);
+        }
+      } else {
+        this.clearUser();
+      }
+		});
+  }
+
+  clearUser = () => {
+    window.localStorage.removeItem(storageKey_uid);
+    this._isMounted && this.setState({ user: null });
+  }
+
+  setUser = user => {
+    window.localStorage.setItem(storageKey_uid, user.uid);
+    this.unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
+      // console.log(snap);
+      if (snap.exists) {
+        this.setState({ user: snap.data(), error: null });
+      } else console.warn(`User not found in database`);
+    }, err => {
+      this._isMounted && this.setState({ error: handleFirestoreError(err) });
+    });
+  }
+
 	render() {
-		const { error, user } = this.state;
+    const { error, user } = this.state;
 
 		return (
 			<ThemeProvider theme={defaultTheme}>
-				<UserContext.Provider value={user}>
-          <SharedSnackbarProvider>
-            <SharedSnackbarConsumer>
-              {({ openSnackbar }) => (
-                <Layout user={user} error={error} openSnackbar={openSnackbar}>
-                  <Switch>
-                    <Route path="/" exact component={Home} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/about" component={AboutPage} />
-                    <Route path="/cookie" component={CookiePage} />
-                    <Route path="/donations" component={DonationsPage} />
-                    <Route path="/help" component={HelpPage} />
-                    <Route path="/privacy" component={PrivacyPage} />
-                    <Route path="/terms" component={TermsPage} />
-                    <Route path="/verify-email" component={VerifyEmailPage} />
-                    <RouteWithProps path="/password-reset" component={PasswordResetForm} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/signup" component={Signup} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
-                    <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/genre/:gid" component={Genre} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
-                    <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/notifications" component={NewFeature} /* user={user} openSnackbar={openSnackbar} */ />
-                    <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
-                    <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
-                    <PrivateRoute path="/challenges" component={NewFeature} user={user} openSnackbar={openSnackbar} />
-                    <Redirect from="/home" to="/" />
-                    <Route component={NoMatchPage} />
-                  </Switch>
-                </Layout>
-              )}
-            </SharedSnackbarConsumer>
-          </SharedSnackbarProvider>
-				</UserContext.Provider>
+        <SharedSnackbarProvider>
+          <SharedSnackbarConsumer>
+            {({ openSnackbar }) => (
+              <Layout user={user} error={error} openSnackbar={openSnackbar}>
+                <Switch>
+                  <Route path="/" exact component={Home} />
+                  <Route path="/about" component={AboutPage} />
+                  <Route path="/cookie" component={CookiePage} />
+                  <Route path="/donations" component={DonationsPage} />
+                  <Route path="/help" component={HelpPage} />
+                  <Route path="/privacy" component={PrivacyPage} />
+                  <Route path="/terms" component={TermsPage} />
+                  <RouteWithProps path="/verify-email" component={VerifyEmailPage} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/password-reset" component={PasswordResetForm} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/login" component={Login} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/signup" component={Signup} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
+                  <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/genre/:gid" component={Genre} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                  <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
+                  <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
+                  <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
+                  <PrivateRoute path="/notifications" component={NewFeature} /* user={user} openSnackbar={openSnackbar} */ />
+                  <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
+                  <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
+                  <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />
+                  <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
+                  <PrivateRoute path="/challenges" component={NewFeature} user={user} openSnackbar={openSnackbar} />
+                  <Redirect from="/home" to="/" />
+                  <Route component={NoMatchPage} />
+                </Switch>
+              </Layout>
+            )}
+          </SharedSnackbarConsumer>
+        </SharedSnackbarProvider>
 			</ThemeProvider>
 		);
 	}

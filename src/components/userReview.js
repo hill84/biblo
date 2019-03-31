@@ -6,16 +6,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import Grow from '@material-ui/core/Grow';
 import React from 'react';
-import { bookRef, reviewerRef, authid, userBookRef, userRef } from '../config/firebase';
+import { authid, bookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { abbrNum, getInitials, timeSince } from '../config/shared';
-import { stringType, userBookType, funcType } from '../config/types';
+import { abbrNum, getInitials, handleFirestoreError, timeSince } from '../config/shared';
+import { funcType, stringType, userBookType } from '../config/types';
 import Rating from './rating';
-
 
 export default class UserReview extends React.Component {
 	state = {
@@ -125,7 +124,7 @@ export default class UserReview extends React.Component {
             rating_num: this.state.userBook.rating_num
           }).then(() => {
             // console.log(`Book review created`);
-          }).catch(err => this.setState({ serverError: err.message }));
+          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
 
           userBookRef(authid, this.state.bid).update({
             ...this.state.userBook,
@@ -135,7 +134,7 @@ export default class UserReview extends React.Component {
             }
           }).then(() => {
             // console.log(`User review posted`);
-          }).catch(err => this.setState({ serverError: err.message }));
+          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
 
           let bookReviews_num = this.state.bookReviews_num;
           let userReviews_num = this.state.user.stats.reviews_num;
@@ -151,13 +150,13 @@ export default class UserReview extends React.Component {
           }).then(() => {
             this.setState({ bookReviews_num });
             // console.log(`Book reviews increased to ${bookReviews_num}`);
-          }).catch(err => this.setState({ serverError: err.message }));
+          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
 
           userRef(authid).update({
             'stats.reviews_num': userReviews_num
           }).then(() => {
             // console.log(`User reviews increased to ${userReviews_num}`);
-          }).catch(err => this.setState({ serverError: err.message }));
+          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
 
           this.setState({ 
             changes: false,
@@ -384,9 +383,9 @@ export default class UserReview extends React.Component {
               Cancellando la recensione perderai tutti i like e i commenti ricevuti.
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <button className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button className="btn primary" onClick={this.onDelete}>Procedi</button>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
           </DialogActions>
         </Dialog>
       </React.Fragment>

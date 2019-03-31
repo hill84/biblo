@@ -9,24 +9,22 @@ export default class Incipit extends React.Component {
   }
 
   static propTypes = {
-    title: stringType.isRequired,
+    copyrightHolder: stringType,
     incipit: stringType.isRequired,
-    onToggle: funcType.isRequired
+    onToggle: funcType.isRequired,
+    publication: stringType,
+    title: stringType.isRequired
   }
 
   onToggle = () => this.props.onToggle();
 
-  onToggleDarkTheme = () => {
-    this.setState(prevState => ({ isDark: !prevState.isDark })); 
-  }
+  onToggleDarkTheme = () => this.setState(prevState => ({ isDark: !prevState.isDark }));
 
-  onToggleSize = () => {
-    this.setState(prevState => ({ isBig: !prevState.isBig })); 
-  }
+  onToggleSize = () => this.setState(prevState => ({ isBig: !prevState.isBig }));
 
   render() {
     const { isBig, isDark } = this.state;
-    const { incipit, title } = this.props;
+    const { copyrightHolder, incipit, publication, title } = this.props;
 
 		return (
       <React.Fragment>
@@ -35,12 +33,13 @@ export default class Incipit extends React.Component {
             <div role="navigation" className="head nav row">
               <strong className="col title">{title}</strong>
               <div className="col-auto btn-row">
-                <button type="button" className="btn icon flat" onClick={this.onToggleSize} title="Formato">{icon.formatSize()}</button> 
-                <button type="button" className="btn icon flat" onClick={this.onToggleDarkTheme} title="Tema">{icon.lamp()}</button> 
-                <button type="button" className="btn icon flat" onClick={this.onToggle} title="Chiudi">{icon.close()}</button>
+                <button type="button" className="btn rounded icon flat" onClick={this.onToggleSize} title="Formato">{icon.formatSize()}</button> 
+                <button type="button" className="btn rounded icon flat" onClick={this.onToggleDarkTheme} title="Tema">{icon.lamp()}</button> 
+                <button type="button" className="btn rounded icon flat" onClick={this.onToggle} title="Chiudi">{icon.close()}</button>
               </div>
             </div>
-            <p id="incipit" className={isBig ? 'big' : 'regular'}>{incipit}</p>
+            <p className={`incipit ${isBig ? 'big' : 'regular'}`}>{incipit}</p>
+            {copyrightHolder && <p className="copyright">&copy; {publication && new Date(publication).getFullYear()} {copyrightHolder}</p>}
           </div>
         </div>
         <div className="overlay" onClick={this.onToggle} />

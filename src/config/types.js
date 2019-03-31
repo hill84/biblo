@@ -14,7 +14,7 @@ export const _oneOf = props => oneOf(props);
 export const _oneOfType = props => oneOfType(props);
 
 export const userType = shape({
-  creationTime: string.isRequired,
+  creationTime: oneOfType([number, string]).isRequired,
   uid: string.isRequired,
   displayName: string.isRequired,
   email: string.isRequired,

@@ -53,10 +53,12 @@ export default class SignupForm extends React.Component {
   toggleCheckbox = name => event => this.setState({ [name]: event.target.checked });
 
 	onChange = e => {
-		this.setState({ 
-      data: { ...this.state.data, [e.target.name]: e.target.value }, 
-      errors: { ...this.state.errors, [e.target.name]: null }
-		});
+    if (this._isMounted) {
+      this.setState({ 
+        data: { ...this.state.data, [e.target.name]: e.target.value }, 
+        errors: { ...this.state.errors, [e.target.name]: null }
+      });
+    }
 	};
 
 	onSubmit = e => {
@@ -65,14 +67,13 @@ export default class SignupForm extends React.Component {
     const { openSnackbar } = this.props;
     const errors = this.validate(data);
     
-    if (this._isMounted) {
-      this.setState({ authError: '', loading: true, errors });
-    }
+    this._isMounted && this.setState({ authError: '', loading: true, errors });
     
 		if (Object.keys(errors).length === 0) {
       auth.createUserWithEmailAndPassword(data.email, data.password).then(user => {
         if (!user) console.warn('No user is signed in');
       }).catch(err => {
+        console.warn(err);
         if (this._isMounted) {
           this.setState({
             authError: handleFirestoreError(err),
@@ -81,46 +82,54 @@ export default class SignupForm extends React.Component {
         }
       });
 
-			auth.onAuthStateChanged(user => {
-				if (user) {
-          // console.log(user);
-          if (this._isMounted) {
-            userRef(user.uid).set({
-              uid: user.uid,
-              displayName: data.displayName,
-              email: user.email,
-              creationTime: user.metadata.creationTime,
-              photoURL: '',
-              roles: data.roles,
-              stats: data.stats
-            }).then(() => {
-              // this.setState({ redirectTo: `/dashboard/${user.uid}` });
-              if (user.emailVerified === false) {
-                user.sendEmailVerification().then(() => {
-                  // openSnackbar(`Ti abbiamo inviato un'email di conferma`, 'success');
-                  this.setState({ redirectTo: '/verify-email' });
-                });
-              } else console.log('Email verified');
-            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-          }
-				} else console.warn('No user is signed in');
-			});
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          userRef(user.uid).set({
+            creationTime: Number((new Date(user.metadata.creationTime)).getTime()),
+            displayName: data.displayName,
+            email: user.email,
+            photoURL: '',
+            roles: data.roles,
+            stats: data.stats,
+            uid: user.uid,
+          }).then(() => {
+            if (user.emailVerified === false) {
+              user.sendEmailVerification().then(() => {
+                this._isMounted && this.setState({ redirectTo: '/verify-email' });
+              }).catch(err => {
+                console.warn(err);
+                openSnackbar(handleFirestoreError(err), 'error')
+              });
+            }
+          }).catch(err => {
+            console.warn(err);
+            openSnackbar(handleFirestoreError(err), 'error')
+          });
+        }
+      });
 		}
 	};
 
 	validate = data => {
 		const errors = {};
-		if (!data.displayName) { errors.displayName = "Inserisci un nome utente"; }
-		if(data.email) { 
-			if(!isEmail(data.email)) errors.email = "Email non valida";
+		if (!data.displayName) { 
+      errors.displayName = "Inserisci un nome utente"; 
+    } else if (data.displayName.toLowerCase() === 'admin') {
+      errors.displayName = "Nome utente non permesso"; 
+      // TODO: check further forbidden names
+    }
+		if (data.email) { 
+			if (!isEmail(data.email)) errors.email = "Email non valida";
 		} else { errors.email = "Inserisci un indirizzo email"; }
 		if (!data.password) { errors.password = "Inserisci una password"; 
-		} else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
+    } else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
+    // TODO: check password strength
 		return errors;
 	};
 
 	render() {
     const { authError, checkedTerms, data, errors, redirectTo } = this.state;
+    const { openSnackbar } = this.props;
 
 		if (redirectTo) return <Redirect to={redirectTo} />
 
@@ -134,7 +143,7 @@ export default class SignupForm extends React.Component {
           } />
         :
           <form onSubmit={this.onSubmit} noValidate>
-            <SocialAuth />
+            <SocialAuth openSnackbar={openSnackbar} />
             <div className="form-group">
               <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome</InputLabel>

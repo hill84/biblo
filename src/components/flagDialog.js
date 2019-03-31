@@ -52,7 +52,7 @@ export default class FlagDialog extends React.Component {
         aria-labelledby="flag-dialog-title"
         aria-describedby="flag-dialog-description">
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-        <DialogTitle id="falg-dialog-title">
+        <DialogTitle id="flag-dialog-title">
           Segnala commento
         </DialogTitle>
         <DialogContent>
@@ -69,9 +69,9 @@ export default class FlagDialog extends React.Component {
             </RadioGroup>
           </FormControl>
         </DialogContent>
-        <DialogActions>
-          <button className="btn flat" onClick={this.onClose}>Annulla</button>
-          <button className="btn primary" onClick={this.onFlag} disabled={!value}>Segnala</button>
+        <DialogActions className="dialog-footer flex no-gutter">
+          <button type="button" className="btn btn-footer flat" onClick={this.onClose}>Annulla</button>
+          <button type="button" className="btn btn-footer primary" onClick={this.onFlag} disabled={!value}>Segnala</button>
         </DialogActions>
       </Dialog>
     );

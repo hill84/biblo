@@ -199,6 +199,6 @@ export default class BookCollection extends React.Component {
           {loading ? stacked ? skltn_shelfStack : skltn_shelfRow : covers}
         </div>
       </React.Fragment>
-		)
+		);
 	}
 }

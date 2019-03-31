@@ -55,12 +55,10 @@ export default class QuotesDash extends React.Component {
     this.unsubQuotesFetch && this.unsubQuotesFetch();
   }
   
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
-    if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-        this.fetch();
-      }
+    if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      this.fetch();
     }
   }
     

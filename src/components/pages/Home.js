@@ -1,8 +1,8 @@
 import React from 'react';
 import { Background, Parallax } from 'react-parallax';
-import { Link } from 'react-router-dom';
-import { authid, isAuthenticated } from '../../config/firebase';
-import { isTouchDevice, screenSize } from '../../config/shared';
+import { Link, Redirect } from 'react-router-dom';
+import { auth, authid, isAuthenticated } from '../../config/firebase';
+import { isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
@@ -13,23 +13,36 @@ import { InView } from 'react-intersection-observer';
 
 class Home extends React.Component {
   state = {
+    redirectTo: null,
     screenSize: screenSize()
   }
 
   componentDidMount() {
+    this._isMounted = true;
     window.addEventListener('resize', this.updateScreenSize);
+
+		auth.onAuthStateChanged(user => {
+      if (needsEmailVerification(user)) {
+        if (this._isMounted) {
+          this.setState({ redirectTo: '/verify-email' });
+        }
+      }
+    });
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     window.removeEventListener('resize', this.updateScreenSize);
   }
 
-  updateScreenSize = () => this.setState({ screenSize: screenSize() });
+  updateScreenSize = () => this._isMounted && this.setState({ screenSize: screenSize() });
   
   render() { 
-    const { screenSize } = this.state;
+    const { redirectTo, screenSize } = this.state;
     const isScrollable = isTouchDevice() || screenSize === 'sm' || screenSize === 'xs';
     const rootMargin = '200px';
+
+    if (redirectTo) return <Redirect to={redirectTo} />
 
     return (
       <div id="homeComponent">
@@ -38,24 +51,26 @@ class Home extends React.Component {
           disabled={isScrollable}
           strength={400}>
           <div className="container text-center">
-            <h1 className="title reveal fadeIn slideUp">Scopriamo nuovi libri, insieme</h1>
+            <h1 className="title reveal fadeIn slideUp">scopriamo nuovi libri, insieme</h1>
             <p className="subtitle reveal fadeIn slideUp">
               <big className="hide-sm">Crea la tua libreria, scrivi una recensione, scopri cosa leggono i tuoi amici</big>
             </p>
             <div className="btns reveal fadeIn slideUp">
               {isAuthenticated() ? 
-                <Link to={`/dashboard/${authid}`} className="btn primary lg rounded">La mia libreria</Link> 
+                <React.Fragment>
+                  <Link to={`/dashboard/${authid}`} className="btn primary lg rounded">La mia libreria</Link> 
+                  <p className="font-sm">
+                    <Link className="counter" to="/about">Chi siamo</Link>
+                    <Link className="counter" to="/help">Aiuto</Link>
+                    <Link className="counter last" to="/donations">Donazioni</Link>
+                  </p>
+                </React.Fragment>
               : 
                 <React.Fragment>
                   <Link to="/signup" className="btn primary lg rounded">Registrati</Link>
                   <p><small>Sei già registrato? <Link to="/login">Accedi</Link></small></p>
                 </React.Fragment>
               }
-              <p className="font-sm">
-                <Link className="counter" to="/about">Chi siamo</Link>
-                <Link className="counter" to="/help">Aiuto</Link>
-                <Link className="counter last" to="/donations">Donazioni</Link>
-              </p>
             </div>
           </div>
           <Background className="bg reveal fadeIn">
@@ -65,9 +80,13 @@ class Home extends React.Component {
         </Parallax>
     
         <div className="container" style={{ marginTop: '-56px' }}>
-          <div className="card dark card-fullwidth-sm">
-            <BookCollection cid="Best seller" pagination={false} limit={7} scrollable />
-          </div>
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
+                <BookCollection cid="Best seller" pagination={false} limit={7} inView={inView} scrollable />
+              </div>
+            }
+          </InView>
     
           <div className="row flex">
             <div className="col-12 col-lg-5 flex">
@@ -95,7 +114,7 @@ class Home extends React.Component {
           <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
               <div ref={ref}>
-                {inView && <Reviews limit={4} pagination={false} />}
+                {inView && <Reviews limit={4} pagination={false} skeleton />}
               </div>
             }
           </InView>

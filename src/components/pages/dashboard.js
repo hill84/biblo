@@ -116,8 +116,8 @@ export default class Dashboard extends React.Component {
     
   fetchUser = () => {
     const { luid, uid } = this.state;
+
     if (this._isMounted) {
-      // console.log('fetching user');
       this.setState({ loading: true });
     }
     this.unsubUserFetch && this.unsubUserFetch();
@@ -360,7 +360,7 @@ export default class Dashboard extends React.Component {
 					<div className="col-md col-12">
 						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
-                <div className="role-badges">{Roles} {!user.roles.editor && <div className="badge red">Modifiche disabilitate</div>}</div>
+                <div className="role-badges">{Roles} {!user.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
 								<div className="row">
 									<div className="col-auto">
                     <Avatar className="avatar" /* src={user.photoURL} */ alt={user.displayName}>
@@ -384,7 +384,7 @@ export default class Dashboard extends React.Component {
 												{user.continent && <span className="counter">{user.continent}</span>}
 											</span>
 											{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
-											{user.creationTime && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
+											{creationYear && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
 											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">

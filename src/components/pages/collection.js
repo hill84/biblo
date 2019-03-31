@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
 import { userType, funcType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
@@ -123,6 +123,7 @@ export default class Collection extends React.Component {
 
     const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
     const isTextMinified = screenSize === 'xs' || screenSize === 'sm' || screenSize === 'md';
+    const isEditor = hasRole(user, 'editor');
 
     if (!collection && !loading) {
       return <NoMatch title="Collezione non trovata" history={history} location={location} />
@@ -146,7 +147,7 @@ export default class Collection extends React.Component {
                         type="button" 
                         className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
                         onClick={this.onFollow} 
-                        disabled={!user}>
+                        disabled={!user || !isEditor}>
                         {follow ? 
                           <React.Fragment>
                             <span className="hide-on-hover">{icon.check()} Segui</span>

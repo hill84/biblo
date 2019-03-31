@@ -1,3 +1,4 @@
+import MomentUtils from '@date-io/moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -5,17 +6,16 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import DatePicker from 'material-ui-pickers/DatePicker';
-import MomentUtils from '@date-io/moment';
 import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
-import isbn from 'isbn-utils';
-import firebase, { bookRef, booksRef, collectionBookRef, storageRef, authid, collectionRef } from '../../config/firebase';
+import firebase, { authid, bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, handleFirestoreError, hasRole, normalizeString, validateImg } from '../../config/shared';
@@ -65,7 +65,6 @@ export default class BookForm extends React.Component {
     incipit_maxChars: 2500,
     loading: false,
     errors: {},
-    authError: '',
     changes: false,
     prevProps: this.props,
     redirectToBook: null
@@ -222,9 +221,7 @@ export default class BookForm extends React.Component {
             }
           }).catch(err => {
             if (this._isMounted) {
-              this.setState({ authError: err.message, loading: false }, () => {
-                openSnackbar(err.message, 'error');
-              });
+              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
             }
           });
         } else {
@@ -273,12 +270,7 @@ export default class BookForm extends React.Component {
             }
           }).catch(err => {
             if (this._isMounted) {
-              this.setState({
-                authError: err.message,
-                loading: false
-              }, () => {
-                openSnackbar(err.message, 'error');
-              });
+              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
             }
           });
         }
