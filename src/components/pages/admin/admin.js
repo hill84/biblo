@@ -71,7 +71,7 @@ export default class Admin extends React.Component {
     window.removeEventListener('resize', this.updateScreenSize);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevState) {
     if (this._isMounted) {
       if (this.state.aid !== prevState.aid) {
         this.fetchUser();
