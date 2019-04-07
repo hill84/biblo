@@ -27,7 +27,7 @@ const count = (doc, change) => {
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
 
   const countRef = admin.firestore().collection('counters').doc(doc);
-  return countRef.update({ count: admin.firestore().FieldValue.increment(increment) });
+  return countRef.update({ count: admin.firestore.FieldValue.increment(increment) });
 }
 
 // REVIEWS
@@ -72,7 +72,7 @@ exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{ni
   
   const { uid } = context.params;
   const countRef = admin.firestore().collection('notifications').doc(uid);
-  return countRef.update({ count: admin.firestore().FieldValue.increment(increment) });
+  return countRef.update({ count: admin.firestore.FieldValue.increment(increment) });
 });
 
 exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDelete((snap, context) => {
@@ -92,7 +92,7 @@ exports.countCollectionBooks = functions.firestore.document('collections/{cid}/b
 
   const { cid } = context.params;
   const countRef = admin.firestore().collection('collections').doc(cid);
-  return countRef.update({ books_num: admin.firestore().FieldValue.increment(increment) });
+  return countRef.update({ books_num: admin.firestore.FieldValue.increment(increment) });
 });
 
 // BOOKS
