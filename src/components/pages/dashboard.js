@@ -444,7 +444,7 @@ export default class Dashboard extends React.Component {
           </Tabs>
         </AppBar>
         <SwipeableViews
-          className="card tabs-container bottompend mobile"
+          className="card light tabs-container bottompend mobile"
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>

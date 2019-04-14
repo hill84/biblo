@@ -3,6 +3,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
@@ -13,6 +14,7 @@ import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
 import { arrToObj, capitalizeFirstLetter, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
@@ -359,9 +361,15 @@ export default class SearchBookForm extends React.Component {
             </FormHelperText>
           }
 
-          <Menu anchorEl={searchByAnchorEl} open={Boolean(searchByAnchorEl)} onClose={this.onCloseSearchByMenu}>
-            {options}
-          </Menu>
+          <MuiThemeProvider theme={defaultTheme}>
+            <Menu 
+              className="dropdown-menu" 
+              anchorEl={searchByAnchorEl} 
+              open={Boolean(searchByAnchorEl)} 
+              onClose={this.onCloseSearchByMenu}>
+              {options}
+            </Menu>
+          </MuiThemeProvider>
         </div>
       </div>
     )

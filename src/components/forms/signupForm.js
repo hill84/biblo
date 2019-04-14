@@ -137,7 +137,7 @@ export default class SignupForm extends React.Component {
 			<React.Fragment>
 				{!checkedTerms ? 
           <FormControlLabel className="text-left" label={
-            <span>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</span>
+            <span style={{fontSize: '0.875rem'}}>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</span>
           } control={
             <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
           } />

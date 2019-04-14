@@ -44,7 +44,7 @@ export default class VerifyEmailPage extends React.Component {
     return (
       <div className="card-container pad-v reveal fadeIn" id="verifyEmailPageComponent">
         <h2>Conferma la tua registrazione</h2>
-        <div className="card" style={{maxWidth: 360}}>
+        <div className="card light" style={{maxWidth: 360}}>
           <div className="bubble icon popIn" style={{marginBottom: 15}}>{icon.email()}</div>
           <p><big>Ti abbiamo inviato un'email di conferma.</big> Per favore, clicca sul link di verifica e poi torna qui per effettuare il <Link to="/login">login</Link>.</p>
         </div>

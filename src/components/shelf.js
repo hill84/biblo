@@ -228,6 +228,7 @@ export default class Shelf extends React.Component {
                         {filterBy[filterByIndex]}
                       </button>
                       <Menu 
+                        className="dropdown-menu"
                         anchorEl={filterMenuAnchorEl} 
                         open={Boolean(filterMenuAnchorEl)} 
                         onClose={this.onCloseFilterMenu}>
@@ -247,6 +248,7 @@ export default class Shelf extends React.Component {
                     <span className="show-sm">{orderBy[orderByIndex].icon}</span>
                   </button>
                   <Menu 
+                    className="dropdown-menu"
                     anchorEl={orderMenuAnchorEl} 
                     open={Boolean(orderMenuAnchorEl)} 
                     onClose={this.onCloseOrderMenu}>

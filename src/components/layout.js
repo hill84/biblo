@@ -154,8 +154,8 @@ export default class Layout extends React.Component {
                   {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
                 </IconButton>
                 <Menu
-                  className="notes"
                   id="notes-menu"
+                  className="dropdown-menu notes"
                   anchorEl={notesAnchorEl}
                   onClick={this.onCloseNotes}
                   open={Boolean(notesAnchorEl)}
@@ -190,6 +190,7 @@ export default class Layout extends React.Component {
                 </IconButton>
                 <Menu
                   id="more-menu"
+                  className="dropdown-menu"
                   anchorEl={moreAnchorEl}
                   onClick={this.onCloseMore}
                   open={Boolean(moreAnchorEl)}

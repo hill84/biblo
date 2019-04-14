@@ -6,7 +6,7 @@ import { funcType, objectType } from '../../config/types';
 const Login = props => (
 	<div className="card-container pad-v" id="loginComponent">
 		<h2>Login</h2>
-		<div className="card">
+		<div className="card light">
 			<LoginForm location={props.location} openSnackbar={props.openSnackbar} />
 		</div>
 		<Link to="/password-reset" className="sub-footer">Non ricordi la password?</Link>

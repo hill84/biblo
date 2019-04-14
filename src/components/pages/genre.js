@@ -176,7 +176,7 @@ export default class Genre extends React.Component {
         </div>
 
         {items ? 
-          <div className="card">
+          <div className="card light">
             <div className="shelf">
               <div className="collection hoverable-items">
                 <div className="head nav">
@@ -195,6 +195,7 @@ export default class Genre extends React.Component {
                       <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                       <button type="button" className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
                       <Menu 
+                        className="dropdown-menu"
                         anchorEl={orderMenuAnchorEl} 
                         open={Boolean(orderMenuAnchorEl)} 
                         onClose={this.onCloseOrderMenu}>

@@ -267,7 +267,7 @@ export default class UserReview extends React.Component {
     return (
       <React.Fragment>
         {isEditing && <div className="overlay" onClick={this.onExitEditing} />}
-        <div className={`card user-review ${isEditing ? 'edit-review' : 'primary'}`}>
+        <div className={`card light user-review ${isEditing ? 'edit-review' : 'primary'}`}>
           {!loading &&        
             !isEditing ? (
               !review.text ? 

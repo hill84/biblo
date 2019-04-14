@@ -109,7 +109,7 @@ export default class AuthorPage extends React.Component {
         :
           <React.Fragment>
             {books ? 
-              <div className="card">
+              <div className="card light">
                 <div className="shelf">
                   <div className="collection hoverable-items">
                     <div className="head nav">

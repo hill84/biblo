@@ -166,7 +166,7 @@ export default class Profile extends React.Component {
 
 		return (
       <div className="container" id="profileComponent">
-        <div className="card">
+        <div className="card light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="container sm">
             <div className="row basic-profile">

@@ -134,6 +134,7 @@ export default class AuthorsPage extends React.Component {
                     <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                     <button type="button" className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
                     <Menu 
+                      className="dropdown-menu"
                       anchorEl={orderMenuAnchorEl} 
                       open={Boolean(orderMenuAnchorEl)} 
                       onClose={this.onCloseOrderMenu}>

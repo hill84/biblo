@@ -77,7 +77,7 @@ export default class PasswordResetForm extends React.Component {
 		return (
 			<div className="card-container pad-v" id="passwordResetFormComponent">
 				<h2>Recupero password</h2>
-				<div className="card">
+				<div className="card light">
 					<p>Per favore, inserisci la tua email per recuperare la password.</p>
           <form noValidate>
             <div className="form-group">

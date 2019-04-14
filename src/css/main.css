@@ -49,12 +49,12 @@
   --skltnCoverX: center;
   --skltnTitleX: center;
   --skltnBg: rgba(0,10,20,.15);
-  --contrastedTextClr: #fff;
-  --mainTextClr: rgba(230,250,255,.7);
-  --lightTextClr: rgba(230,250,255,.5);
-  --lighterTextClr: rgba(230,250,255,.3);
-  --lightestTextClr: rgba(230,250,255,.15);
-  --ultraLightestTextClr: rgba(230,250,255,.05);
+  --contrastedTextClr: #000;
+  --mainTextClr: #212529;
+  --lightTextClr: #aaa;
+  --lighterTextClr: #ccc;
+  --lightestTextClr: #e9e9e9;
+  --ultraLightestTextClr: #ececec;
   --linkClr: var(--primaryLightClr);
   --linkClrHover: var(--primaryLighterClr);
   --linkClrActive: var(--primaryClr);
@@ -62,7 +62,7 @@
 
 html {
   background: var(--mainBg);
-  color: #eee;
+  color: var(--mainTextClr);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: overlay;
@@ -283,7 +283,7 @@ hr.line {
 }
 
 /* CARDS */
-.light, html.light .dark, html:not(.dark) .card:not(.dark):not(.primary):not(.flat) {
+.light, .light-theme .dark {
   --mainBg: #f7f7f7;
   --cardBg: #fff;
   --contrastedTextClr: #000;
@@ -341,7 +341,7 @@ hr.line {
 .card-container { margin: auto; text-align: center; }
 .card-container .card { max-width: 340px; }
 .card-container .form-group { text-align: left; }
-.card-container .sub-footer { font-size: .8rem; }
+.card-container .sub-footer { font-size: .8rem; color: var(--mainTextClr); }
 .card .edit-info { 
   position: absolute; 
   top: var(--pad); 
@@ -398,8 +398,7 @@ hr.line {
 /* DIALOG */
 .dialog {
   position: fixed;
-  top: 0;
-  bottom: 0;
+  top: 50%;
   left: 0;
   right: 0;
   margin: auto;
@@ -418,6 +417,7 @@ hr.line {
   will-change: opacity, transform;
   transition: all .4s ease-in-out;
   transform-origin: top center;
+  transform: translateY(-50%);
   animation: flipInX .4s ease-in-out;
   z-index: 1201;
 }
@@ -464,14 +464,12 @@ hr.line {
 }
 
 /* DARK */
-.dark, .dark .primary, html.dark .light {
+.dark, .dark-theme .light, .mixed-theme main {
   --skltnBg: rgba(0,10,20,.15);
   --contrastedTextClr: #fff;
-
   --cardDarkBg: rgba(0,0,0,.2);
   --cardDarkerBg: rgba(0,0,0,.3);
   --cardDarkestBg: rgba(0,0,0,.4);
-
   --mainTextClr: rgba(230,250,255,.7);
   --lightTextClr: rgba(230,250,255,.5);
   --lighterTextClr: rgba(230,250,255,.3);
@@ -483,8 +481,7 @@ hr.line {
   /* --btnDisabledBg: var(--canvasLighterClr); */
   --cardBg: var(--canvasLightClr);
 }
-html:not(.light) .card.dark, .dark .card,
-html:not(.light) .card.primary, .primary .card { 
+.card.dark, .dark-theme .card, .card.primary { 
   font-weight: 200; 
 }
 
@@ -506,7 +503,7 @@ html:not(.light) .card.primary, .primary .card {
 }
 
 .dark .react-autosuggest__suggestions-container, 
-.primary .react-autosuggest__suggestions-container { background-color: #fff; }
+.primary .react-autosuggest__suggestions-container { background-color: #fff; } /* WARNING */
 
 /* BUTTONS */
 .btn {
@@ -909,7 +906,6 @@ html:not(.light) .card.primary, .primary .card {
 }
 
 /* NOTIFICATIONS */
-.notes { --mainTextClr: #666; --lightTextClr: #aaa; --lighterTextClr: #ccc; }
 .notes *::-webkit-scrollbar { display: none; }
 .notes ul { padding: 0; max-width: 320px; min-width: 260px; }
 .notes li { animation: fadeInSlideUp .2s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
@@ -1035,7 +1031,7 @@ html:not(.light) .card.primary, .primary .card {
   background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 75%);
   animation: none;
 }
-html.light .hero * { text-shadow: none; }
+.light-theme .hero * { text-shadow: none; }
 
 .form-group label + div:before {
   border-color: rgba(0,0,0,.15);
@@ -1047,7 +1043,7 @@ html.light .hero * { text-shadow: none; }
 .search-book label + div:after {
   border-color: transparent !important;
 }
-.search-book .react-autosuggest__container {
+.search-book .react-autosuggest__container { /* WARNING */
   background-color: rgba(10,15,20,.15);
   border-radius: var(--radius);
   padding-top: 5px;
@@ -1252,7 +1248,7 @@ html.light .hero * { text-shadow: none; }
   white-space: nowrap;
 }
 .counter.comma .counter:nth-last-child(2):after { content: "e"; margin-left: .15rem; }
-.counter.comma a.counter:after { color: initial; }
+.counter.comma a.counter:after { color: var(--mainTextClr); }
 .counter:last-child:after, .counter.comma .counter:last-child:after, .counter.last:after, .counter.btn:after { content: none; }
 .counter.last + .counter { margin-left: 6px; }
 .counter.btn, .btn-row .btn { margin-top: 0; margin-bottom: 0; }
@@ -1263,7 +1259,6 @@ html.light .hero * { text-shadow: none; }
   height: 680px;
   padding: 0;
   transform-origin: top left;
-  will-change: opacity, transform;
   animation: flipInY .4s ease-in-out;
 }
 .book-incipit::-webkit-scrollbar {
@@ -1667,9 +1662,9 @@ html.light .hero * { text-shadow: none; }
 .user.rating .react-rater-star.will-be-active { color: var(--primaryLightClr); }
 .user.rating .react-rater-star.is-active, .user.rating .react-rater-star.is-active-half:before { color: var(--primaryClr); }
 
-.react-autosuggest__suggestions-container { position: absolute; width: 100%; z-index: 2; }
+.react-autosuggest__suggestions-container { position: absolute; width: 100%; z-index: 2; } /* WARNING */
 
-.form-group ul, .react-autosuggest__suggestions-list {
+.form-group ul, .react-autosuggest__suggestions-list { /* WARNING */
   list-style: none;
   padding: 10px 0;
   margin-top: 0;
@@ -2291,12 +2286,12 @@ progress[value='100'].stepper::-webkit-progress-bar {
 @keyframes fadeIn { from { opacity: 0; } }
 @keyframes fadeOut { to { opacity: 0; } }
 @keyframes flipInY {
-  from { opacity: 0; transform: perspective(950) scale(.12) rotateY(90deg); } 
-  to { opacity: 1; transform: perspective(950) scale(1) rotateY(0deg); }
+  from { opacity: 0; transform: perspective(950) scale(.12) rotateY(90deg) translateY(-50%); } 
+  to { opacity: 1; transform: perspective(950) scale(1) rotateY(0deg) translateY(-50%); }
 }
 @keyframes flipInX {
-  from { opacity: 0; transform: perspective(950) scale(.12) rotateX(90deg); } 
-  to { opacity: 1; transform: perspective(950) scale(1) rotateX(0deg); }
+  from { opacity: 0; transform: perspective(950) scale(.12) rotateX(90deg) translateY(-50%); } 
+  to { opacity: 1; transform: perspective(950) scale(1) rotateX(0deg) translateY(-50%); }
 }
 @keyframes skltn_shelfRow { to { background-position: calc(100% + 150px) 0; } }
 @keyframes maxheightIn { to { max-height: 600px; } }

@@ -212,6 +212,7 @@ export default class collectionsDash extends React.Component {
                 <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
                 <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
+                  className="dropdown-menu"
                   anchorEl={limitMenuAnchorEl} 
                   open={Boolean(limitMenuAnchorEl)} 
                   onClose={this.onCloseLimitMenu}>
@@ -221,6 +222,7 @@ export default class collectionsDash extends React.Component {
               <div className="col-auto">
                 <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
                 <Menu 
+                  className="dropdown-menu"
                   anchorEl={orderMenuAnchorEl} 
                   open={Boolean(orderMenuAnchorEl)} 
                   onClose={this.onCloseOrderMenu}>

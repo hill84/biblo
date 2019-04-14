@@ -121,7 +121,7 @@ export default class BookProfile extends React.Component {
           {isOpenReadingState && <ReadingStateForm bid={book.bid} readingState={userBook.readingState} onToggle={this.onToggleReadingState} openSnackbar={openSnackbar} />}
 
           <div className="container top">
-            <div className="card main text-center-md">
+            <div className="card light main text-center-md">
               <div className="row">
                 <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
                   {book.incipit ? 

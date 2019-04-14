@@ -468,7 +468,7 @@ export default class BookForm extends React.Component {
       <React.Fragment>
         <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
         <div className="container top">
-          <form className="card">
+          <form className="card light">
             {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
             <div className="container md">
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
