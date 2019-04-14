@@ -56,12 +56,10 @@ export default class AuthorsDash extends React.Component {
     this.unsubAuthorsFetch && this.unsubAuthorsFetch();
   }
   
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
-    if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-        this.fetch();
-      }
+    if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      this.fetch();
     }
   }
     

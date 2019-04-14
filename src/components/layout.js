@@ -48,7 +48,7 @@ export default class Layout extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { error, openSnackbar, user } = this.props;
-    if(this._isMounted) {
+    if (this._isMounted) {
       if (user !== prevProps.user){
         this.timer = setTimeout(() => {
           this.fetchNotes()

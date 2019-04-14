@@ -71,11 +71,9 @@ export default class Admin extends React.Component {
     window.removeEventListener('resize', this.updateScreenSize);
   }
 
-  componentDidUpdate(prevState) {
-    if (this._isMounted) {
-      if (this.state.aid !== prevState.aid) {
-        this.fetchUser();
-      }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.aid !== prevState.aid) {
+      this.fetchUser();
     }
   }
   
@@ -91,7 +89,9 @@ export default class Admin extends React.Component {
           user: snap.data(),
           loadingUser: false
         });
-      } else this.setState({ isAdmin: false, user: null, loadingUser: false });
+      } else {
+        this.setState({ isAdmin: false, user: null, loadingUser: false });
+      }
     });
   }
   

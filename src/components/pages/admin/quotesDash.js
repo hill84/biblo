@@ -18,6 +18,7 @@ export default class QuotesDash extends React.Component {
     user: this.props.user,
     count: 0,
     desc: true,
+    firstVisible: null,
     isOpenDeleteDialog: false,
     isOpenFormDialog: false,
     items: null,
@@ -55,7 +56,7 @@ export default class QuotesDash extends React.Component {
     this.unsubQuotesFetch && this.unsubQuotesFetch();
   }
   
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
       this.fetch();

@@ -44,10 +44,8 @@ export default class NotesDash extends React.Component {
   
   componentDidUpdate(prevProps, prevState) {
     const { limitByIndex } = this.state;
-    if (this._isMounted) {
-      if (limitByIndex !== prevState.limitByIndex) {
-        this.fetch();
-      }
+    if (limitByIndex !== prevState.limitByIndex) {
+      this.fetch();
     }
   }
 

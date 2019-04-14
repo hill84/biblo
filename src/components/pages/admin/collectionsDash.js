@@ -53,10 +53,8 @@ export default class collectionsDash extends React.Component {
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
-    if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-        this.fetch();
-      }
+    if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      this.fetch();
     }
   }
     

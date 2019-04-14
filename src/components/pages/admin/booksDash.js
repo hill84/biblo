@@ -19,6 +19,7 @@ export default class BooksDash extends React.Component {
     user: this.props.user,
     count: 0,
     desc: true,
+    firstVisible: null,
     isOpenDeleteDialog: false,
     items: null,
     lastVisible: null,
@@ -56,10 +57,8 @@ export default class BooksDash extends React.Component {
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, limitByIndex, orderByIndex } = this.state;
-    if (this._isMounted) {
-      if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-        this.fetch();
-      }
+    if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
+      this.fetch();
     }
   }
     
