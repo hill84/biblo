@@ -997,7 +997,7 @@ hr.line {
 
 /* DRAWER */
 .drawer .list { width: 256px; }
-.drawer .list li div { margin: 0; }
+.drawer .list li div { margin: 0; padding: 0; min-width: 36px; }
 .drawer .list li div, .drawer .list .svg-icon, .drawer .list li div span { color: inherit; }
 .drawer .list .bottom-item { position: absolute; bottom: 0; left: 0; right: 0; }
 .drawer .list .bottom-item:hover { background-color: initial; cursor: initial; }

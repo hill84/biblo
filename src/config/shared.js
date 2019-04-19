@@ -1,10 +1,10 @@
 import { badWords, firestoreErrorMessages } from './lists';
 
 // APP
-export const appName = 'Biblo';
-export const appURL = 'https://delibris-4fa3b.firebaseapp.com';
-export const appEmail = 'giu.gerbino@gmail.com';
-export const appPrivacyEmail = appEmail;
+export const appName = 'Biblo.space';
+export const appURL = 'https://biblo.space';
+export const appEmail = 'info@biblo.space';
+export const appPrivacyEmail = 'privacy@biblo.space';
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
