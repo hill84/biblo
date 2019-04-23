@@ -463,6 +463,41 @@ hr.line {
   z-index: 1200;
 }
 
+.react-cookie-banner {
+  position: fixed;
+  bottom: 0;
+  background-color: rgba(50, 67, 78, .96);
+  box-shadow: 0 -1px 12px rgba(0,0,0,.15);
+  color: rgba(255,255,255,.8);
+  font-weight: 200;
+  width: 100%;
+  line-height: 28px;
+  padding: 11px 100px 11px 15px;
+  animation: fadeInSlideUp .6s cubic-bezier(0.215, 0.61, 0.355, 1) both 1s;
+  z-index: 10000;
+}
+.react-cookie-banner .button-close {
+  -webkit-appearance: none;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  line-height: 28px;
+  margin-top: -14px;
+  padding: 0 12px;
+  background-color: var(--primaryClr);
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  border: none;
+  border-radius: 99px;
+  box-shadow: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 400;
+  cursor: pointer;
+  outline: none;
+}
+
 /* DARK */
 .dark, .dark-theme .light, .mixed-theme main {
   --skltnBg: rgba(0,10,20,.15);

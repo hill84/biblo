@@ -1,7 +1,7 @@
 import { badWords, firestoreErrorMessages } from './lists';
 
 // APP
-export const appName = 'Biblo.space';
+export const appName = 'Biblo';
 export const appURL = 'https://biblo.space';
 export const appEmail = 'info@biblo.space';
 export const appPrivacyEmail = 'privacy@biblo.space';

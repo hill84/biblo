@@ -20,6 +20,7 @@ import { roles } from '../config/lists';
 import { appName, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { funcType, stringType, userType } from '../config/types';
+import CookieBanner from 'react-cookie-banner';
 import Footer from './footer';
 
 export default class Layout extends React.Component {
@@ -123,16 +124,16 @@ export default class Layout extends React.Component {
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
             <Typography className="title" variant="h6" color="inherit">
-              <Link to="/">{appName}<sup>Alpha</sup></Link>
+              <Link to="/">{appName}<sup>Beta</sup></Link>
             </Typography>
             {user ? 
               <React.Fragment>
                 {user.roles.admin && 
                   <IconButton
-                    className="search-btn popIn reveal delay6 hide-xs"
-                    component={Link} 
-                    to="/new-book"
-                    aria-label="New book">
+                  className="search-btn popIn reveal delay6 hide-xs"
+                  component={Link} 
+                  to="/new-book"
+                  aria-label="New book">
                     {icon.plus()}
                   </IconButton>
                 }
@@ -171,7 +172,7 @@ export default class Layout extends React.Component {
                         </div>
                       </MenuItem>
                     ))
-                  : 
+                    : 
                     <MenuItem className="text"><span className="icon">{icon.bellOff()}</span> Non ci sono nuove notifiche</MenuItem>
                   }
                   <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
@@ -201,7 +202,7 @@ export default class Layout extends React.Component {
                 </Menu>
               </React.Fragment>
             : 
-              <React.Fragment>
+            <React.Fragment>
                 <NavLink to="/login" className="btn flat">Accedi</NavLink>
                 <NavLink to="/signup" className="btn primary">Registrati</NavLink>
               </React.Fragment>
@@ -243,7 +244,7 @@ export default class Layout extends React.Component {
                   </NavLink>
                 </React.Fragment>
               :
-                <div className="auth-header-buttons">
+              <div className="auth-header-buttons">
                   <NavLink to="/login">
                     <MenuItem>
                       <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
@@ -278,6 +279,15 @@ export default class Layout extends React.Component {
         </main>
 
         <Footer />
+
+        <CookieBanner
+          disableStyle
+          message="Questo sito utilizza i cookie per monitorare e personalizzare l'esperienza di navigazione degli utenti. Per saperne di più o modificare le tue preferenze "
+          buttonMessage="Accetto"
+          link={<Link to="/cookie">clicca qui</Link>}
+          dismissOnScrollThreshold={100}
+          onAccept={() => {}}
+          cookie="user-has-accepted-cookies" />
       </div> 
     );
   }
