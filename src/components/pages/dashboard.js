@@ -6,10 +6,10 @@ import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
-import { followersRef, followingsRef, isAuthenticated, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { appName, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince } from '../../config/shared';
+import { appName, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
@@ -212,6 +212,8 @@ export default class Dashboard extends React.Component {
 			let computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
 			// console.log({ luid, fuid, computedFollowers, computedFollowings, followers, followings, lfollowers, lfollowings });
       let snackbarMsg = '';
+      let noteMsg = '';
+      let followerDisplayName = '';
       const lindex = Object.keys(computedFollowers).indexOf(luid);
 			const findex = Object.keys(computedFollowings).indexOf(fuid);			
 			// console.log({ fuid, fuser, lindex, findex });
@@ -237,12 +239,28 @@ export default class Dashboard extends React.Component {
             timestamp: (new Date()).getTime()
           }
         };
-				snackbarMsg = `Segui ${fuser.displayName}`;
+        snackbarMsg = `Segui ${fuser.displayName}`;
+        const followerName = this.props.user.displayName.split(' ')[0];
+        followerDisplayName = truncateString(followerName, 12);
+        noteMsg = `<a href="/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
 			}
       // console.log({ computedFollowers, computedFollowings });
 	
 			// VISITED
 			followersRef(fuid).set(computedFollowers).then(() => {
+        // Send notification to the followed user    
+        if (noteMsg) {
+          const newNoteRef = notesRef(fuid).doc();
+          newNoteRef.set({
+            nid: newNoteRef.id,
+            text: noteMsg,
+            created_num: Number((new Date()).getTime()),
+            createdBy: this.props.user.displayName,
+            createdByUid: luid,
+            photoURL: this.props.user.photoURL,
+            read: false
+          }).catch(err => console.warn(err));
+        }
         // VISITOR
         followingsRef(luid).set(computedFollowings).then(() => {
           openSnackbar(snackbarMsg, 'success');

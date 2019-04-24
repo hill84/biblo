@@ -268,9 +268,9 @@ export default class QuotesDash extends React.Component {
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
-          <DialogActions>
-            <button type="button" className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn primary" onClick={this.onDelete}>Procedi</button>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
 			</div>

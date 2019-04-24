@@ -270,9 +270,9 @@ export default class collectionsDash extends React.Component {
               Ricordati di rimuovere il riferimento alla collezione nei singoli libri.
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <button type="button" className="btn flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn primary" onClick={this.onDelete}>Procedi</button>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
 			</div>

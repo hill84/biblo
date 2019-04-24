@@ -35,6 +35,7 @@ export const arrToObj = (arr, fn) => {
   return obj;
 };
 // example: const obj = arrToObj(arr, function(item) { return { key: item, value: 'author' }});
+export const truncateString = (string, limit) => string && string.length > limit ? `${string.substr(0, limit)}…` : string;
 
 /* export const arrayToObj = array => { 
   const obj = {}; 

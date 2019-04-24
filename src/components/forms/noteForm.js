@@ -90,7 +90,7 @@ export default class noteForm extends React.Component {
     const { nid, openSnackbar, uid, user } = this.props;
 		const errors = this.validate(data);
 		this.setState({ authError: '', errors });
-		if(Object.keys(errors).length === 0) {
+		if (Object.keys(errors).length === 0) {
       this.setState({ loading: true });
       // console.log(`Sending notification to ${uid}`);
       const newNoteRef = notesRef(uid).doc();
@@ -109,7 +109,7 @@ export default class noteForm extends React.Component {
         this.onToggle();
         this.setState({ loading: false, data: { text: '' } });
         openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
 		}
 	};
 

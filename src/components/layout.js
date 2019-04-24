@@ -165,6 +165,7 @@ export default class Layout extends React.Component {
                     toRead(notes).map((note, i) => (
                       <MenuItem key={note.nid} style={{animationDelay: `${(i + 1) / 10  }s`}}> 
                         <div className="row">
+                          {note.photoURL && <div className="col-auto image"><img src={note.photoURL} className="avatar" alt="avatar" /></div>}
                           <div className="col text">
                             <div dangerouslySetInnerHTML={{__html: note.text}} />
                           </div>
