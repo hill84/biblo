@@ -26,13 +26,18 @@ export default class VerifyEmailPage extends React.Component {
   sendEmailVerification = () => {
     const { openSnackbar } = this.props;
 
-    this._isMounted && this.setState({ loading: true });
+    if (this._isMounted) this.setState({ loading: true });
 
-    auth.onAuthStateChanged(user => {
+    auth.onIdTokenChanged(user => {
       user.sendEmailVerification().then(() => {
-        this._isMounted && this.setState({ emailSent: true, loading: false });
+        if (this._isMounted) this.setState({ emailSent: true, loading: false });
+        // FORCE USER RELOAD
+        auth.currentUser.reload().then(res => {
+          console.log(res);
+          auth.currentUser.getToken(true);
+        }).catch(err => console.warn(err));
       }).catch(err => {
-        this._isMounted && this.setState({ loading: false });
+        if (this._isMounted) this.setState({ loading: false });
         openSnackbar(handleFirestoreError(err), 'error');
       });
     });

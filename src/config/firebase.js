@@ -6,7 +6,7 @@ import { needsEmailVerification } from './shared';
 
 const config = {
 	apiKey: "AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0",
-	authDomain: "delibris-4fa3b.firebaseapp.com",
+	authDomain: "biblo.space", // delibris-4fa3b.firebaseapp.com
 	databaseURL: "https://delibris-4fa3b.firebaseio.com",
 	projectId: "delibris-4fa3b",
 	storageBucket: "delibris-4fa3b.appspot.com",
@@ -25,8 +25,8 @@ export const signOut = () => auth.signOut();
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => (!!auth.currentUser && !needsEmailVerification(auth.currentUser)) /* || !!localStorage.getItem(storageKey_uid) */;
 export let authid = (auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid);
-auth.onAuthStateChanged(user => user ? authid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
-// auth.onAuthStateChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
+auth.onIdTokenChanged(user => user ? authid = ((auth.currentUser && auth.currentUser.uid) || localStorage.getItem(storageKey_uid)) : null);
+// auth.onIdTokenChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */
 const db = firebase.firestore();

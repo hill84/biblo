@@ -43,9 +43,9 @@ export default class LoginForm extends React.Component {
 	handleSubmit = e => {
     e.preventDefault();
     const { data } = this.state;
-		this._isMounted && this.setState({ loading: true });
+		if (this._isMounted) this.setState({ loading: true });
 		const errors = this.validate(data);
-		this._isMounted && this.setState({ authError: '', errors });
+		if (this._isMounted) this.setState({ authError: '', errors });
 		if (Object.keys(errors).length === 0) {
 			auth.signInWithEmailAndPassword(data.email, data.password).then(() => {
         if (this._isMounted) {

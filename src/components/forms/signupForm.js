@@ -67,7 +67,7 @@ export default class SignupForm extends React.Component {
     const { openSnackbar } = this.props;
     const errors = this.validate(data);
     
-    this._isMounted && this.setState({ authError: '', loading: true, errors });
+    if (this._isMounted) this.setState({ authError: '', loading: true, errors });
     
 		if (Object.keys(errors).length === 0) {
       auth.createUserWithEmailAndPassword(data.email, data.password).then(user => {
@@ -82,28 +82,31 @@ export default class SignupForm extends React.Component {
         }
       });
 
-      auth.onAuthStateChanged(user => {
+      auth.onIdTokenChanged(user => {
         if (user) {
+          const timestamp = Number((new Date(user.metadata.creationTime)).getTime());
           userRef(user.uid).set({
-            creationTime: Number((new Date(user.metadata.creationTime)).getTime()),
+            creationTime: timestamp,
             displayName: data.displayName,
             email: user.email,
             photoURL: '',
             roles: data.roles,
             stats: data.stats,
+            termsAgreement: timestamp, 
+            privacyAgreement: timestamp,
             uid: user.uid,
           }).then(() => {
             if (user.emailVerified === false) {
               user.sendEmailVerification().then(() => {
-                this._isMounted && this.setState({ redirectTo: '/verify-email' });
+                if (this._isMounted) this.setState({ redirectTo: '/verify-email' });
               }).catch(err => {
                 console.warn(err);
-                openSnackbar(handleFirestoreError(err), 'error')
+                openSnackbar(handleFirestoreError(err), 'error');
               });
             }
           }).catch(err => {
             console.warn(err);
-            openSnackbar(handleFirestoreError(err), 'error')
+            openSnackbar(handleFirestoreError(err), 'error');
           });
         }
       });
@@ -135,14 +138,13 @@ export default class SignupForm extends React.Component {
 
 		return (
 			<React.Fragment>
-				{!checkedTerms ? 
-          <FormControlLabel className="text-left" label={
-            <span style={{fontSize: '0.875rem'}}>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</span>
-          } control={
-            <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
-          } />
-        :
-          <form onSubmit={this.onSubmit} noValidate>
+        <FormControlLabel className="text-left" style={{ marginRight: 0 }} label={
+          <span style={{ fontSize: '0.875rem' }}>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</span>
+        } control={
+          <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
+        } />
+        {checkedTerms &&
+          <form onSubmit={this.onSubmit} noValidate style={{ marginTop: 15 }}>
             <SocialAuth openSnackbar={openSnackbar} />
             <div className="form-group">
               <FormControl className="input-field" margin="normal" fullWidth>

@@ -188,3 +188,15 @@ export const handleFirestoreError = err => {
   const lang = 'ita';
   return firestoreErrorMessages[err.code] ? firestoreErrorMessages[err.code][lang] : err.message;
 }
+
+export const slowImport = (value, ms = 1000) => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(value), ms);
+  });
+}
+
+export const fakeImportComponent = (value, ms = 1000, bool) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => bool ? resolve({ default: value }) : reject('Server error'), ms);
+  });
+}

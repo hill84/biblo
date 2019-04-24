@@ -93,40 +93,42 @@ export default class Dashboard extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this._isMounted) {
-      if (this.props.match.params.tab !== prevProps.match.params.tab) {
-        if (tabs.indexOf(this.props.match.params.tab) !== -1) {
-          if (tabs.indexOf(this.props.match.params.tab) !== this.state.tabSelected) {
+    if (this.props.match.params.tab !== prevProps.match.params.tab) {
+      if (tabs.indexOf(this.props.match.params.tab) !== -1) {
+        if (tabs.indexOf(this.props.match.params.tab) !== this.state.tabSelected) {
+          if (this._isMounted) {
             this.setState({ tabSelected: tabs.indexOf(this.props.match.params.tab) });
           }
         }
       }
-      if (this.state.uid !== prevState.uid || this.state.luid !== prevState.luid) {
-        this.fetchUser();
-        this.fetchFollowers();
-        this.fetchFollowings();
-        if (this.state.luid !== prevState.luid) {
-          this.fetchUserChallenges();
-        }
+    }
+    if (this.state.uid !== prevState.uid || this.state.luid !== prevState.luid) {
+      this.fetchUser();
+      this.fetchFollowers();
+      this.fetchFollowings();
+      if (this.state.luid !== prevState.luid) {
+        this.fetchUserChallenges();
       }
     }
   }
   
-  updateScreenSize = () => this.setState({ screenSize: screenSize() });
+  updateScreenSize = () => {
+    if (this._isMounted) {
+      this.setState({ screenSize: screenSize() });
+    };
+  }
     
   fetchUser = () => {
     const { luid, uid } = this.state;
 
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    if (this._isMounted) this.setState({ loading: true });
     this.unsubUserFetch && this.unsubUserFetch();
     this.unsubUserFetch = userRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         let count = 0;
         const keys = Object.keys(snap.data()).filter(item => profileKeys.includes(item));
-        const tot = keys.length;
-        
+        const tot = profileKeys.length;
+        // console.log(keys, profileKeys);
         keys.forEach(i => { 
           // console.log(i + ': ' + typeof snap.data()[i] + ' - ' + snap.data()[i]);
           if (typeof snap.data()[i] === 'string') {
@@ -252,8 +254,8 @@ export default class Dashboard extends React.Component {
   }
   
   onTabSelect = (e, value) => {
-    if (this._isMounted) {
-      if (value !== -1) {
+    if (value !== -1) {
+      if (this._isMounted) {
         this.setState({ tabSelected: value }, () => {
           this.historyPushTabIndex(value);
         });
@@ -262,8 +264,8 @@ export default class Dashboard extends React.Component {
   };
 
   onTabSelectIndex = (index, indexLatest, meta) => {
-    if (this._isMounted) {
-      if (index !== -1) {
+    if (index !== -1) {
+      if (this._isMounted) {
         this.setState({ tabSelected: index }, () => {
           this.historyPushTabIndex(index);
         });

@@ -1,6 +1,6 @@
 export const roles = ['admin', 'editor', 'premium', 'public'];
 export const dashboardTabs = ['shelf', 'wishlist', 'activity', 'contacts'];
-export const profileKeys = ['displayName', 'email', 'birth_date', 'continent', 'country', 'city', 'languages', 'photoURL', 'sex'];
+export const profileKeys = ['displayName', 'birth_date', 'continent', 'city', 'languages', 'photoURL', 'sex'];
 
 export const firestoreErrorMessages = {
   // https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestoreException.Code

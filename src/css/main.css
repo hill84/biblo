@@ -338,7 +338,7 @@ hr.line {
   border-bottom-right-radius: var(--radius);
 }
 .dialog-footer.no-gutter { margin: 0; }
-.card-container { margin: auto; text-align: center; }
+.card-container { margin: auto; max-width: calc(100% - 30px); text-align: center; }
 .card-container .card { max-width: 340px; }
 .card-container .form-group { text-align: left; }
 .card-container .sub-footer { font-size: .8rem; color: var(--mainTextClr); }
@@ -711,9 +711,19 @@ hr.line {
 #socialAuthComponent > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
 #socialAuthComponent > [class*="col-"]:first-child { padding-left: 7px; }
 #socialAuthComponent > [class*="col-"]:last-child { padding-right: 7px; }
-#socialAuthComponent button { float: left; width: 100%; margin: 3px 0; }
+#socialAuthComponent button { float: left; width: 100%; margin: 3px 0; text-transform: initial; font-size: .85rem; letter-spacing: .03rem; }
 .btn.facebook { background-color: #39569C; }
-.btn.google { background-color: #E24929; }
+.btn.google { 
+  background-color: #4285F4; 
+  background-color: #fff;
+  background-image: url('../images/g-logo.png');
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: 8px center;
+  padding-left: 32px;
+  color: #aaa;
+
+}
 .btn.twitter { background-color: #00ACED; }
 
 .btn .stepper { min-width: 90px; }
@@ -2243,6 +2253,11 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .lightest-text { color: var(--lightestTextClr); }
 .primary-text { color: var(--primaryClr); }
 .accent-text { color: var(--accentClr); }
+.error-text { color: var(--errorClr); }
+.success-text { color: var(--successClr); }
+.text-xxl { font-size: 150%; }
+.text-xl { font-size: 125%; }
+.text-lg { font-size: 110%; }
 .text-sm { font-size: 80%; }
 .text-xs { font-size: 70%; }
 .text-xxs { font-size: 60%; }
@@ -2303,6 +2318,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .fadeIn.slideUp { animation-name: fadeInSlideUp; }
 .fadeIn.slideDown { animation-name: fadeInSlideDown; }
 .popIn { animation-name: popIn; }
+.shake { animation-name: shake; animation-duration: .8s; }
 
 .delay2 { animation-delay: .2s; }
 .delay4 { animation-delay: .4s; }
@@ -2313,7 +2329,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 @keyframes rotate { to { transform: rotate(360deg); } }
 @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInSlideDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes ripple {  from { transform: scale(0); } to { opacity: 0; transform: scale(1); }}
+@keyframes ripple { from { transform: scale(0); } to { opacity: 0; transform: scale(1); }}
 @keyframes slideDown { from { opacity: 0; max-height: 36px; } to { opacity: 1; }}
 @keyframes scaleX { from { transform: scaleX(0); } to { transform: scaleX(1); }}
 @keyframes popIn { 0% { opacity: 0; transform: scale(0); } 80% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); }}
@@ -2330,6 +2346,12 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 @keyframes skltn_shelfRow { to { background-position: calc(100% + 150px) 0; } }
 @keyframes maxheightIn { to { max-height: 600px; } }
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
 
 /* MEDIA QUERIES */
 @media (pointer: fine) {

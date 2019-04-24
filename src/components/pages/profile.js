@@ -31,6 +31,7 @@ export default class Profile extends React.Component {
   }
 
 	componentDidMount() {
+    this._isMounted = true;
 		this.unsubUserFetch = userRef(authid).onSnapshot(snap => {
 			if (snap.exists) {
 				this.setState({ 
@@ -45,39 +46,46 @@ export default class Profile extends React.Component {
   }
   
   componentWillUnmount() {
+    this._isMounted = false;
     this.unsubUserFetch && this.unsubUserFetch();
   }
 
 	onChange = e => {
-		this.setState({ 
-      success: false, changes: true, 
-      user: { ...this.state.user, [e.target.name]: e.target.value }, 
-      errors: { ...this.state.errors, [e.target.name]: null } 
-    });
+    if (this._isMounted) {
+      this.setState({ 
+        success: false, changes: true, 
+        user: { ...this.state.user, [e.target.name]: e.target.value }, 
+        errors: { ...this.state.errors, [e.target.name]: null } 
+      });
+    }
 	};
 
 	onChangeDate = key => date => {
-		this.setState({ 
-      success: false, changes: true, 
-      user: { ...this.state.user, [key]: String(date) }, 
-      errors: { ...this.state.errors, [key]: null } 
-    });
+    if (this._isMounted) {
+      this.setState({ 
+        success: false, changes: true, 
+        user: { ...this.state.user, [key]: String(date) }, 
+        errors: { ...this.state.errors, [key]: null } 
+      });
+    }
   };
 
 	onChangeSelect = key => e => {
-		this.setState({ 
-      success: false, changes: true, 
-      user: { ...this.state.user, [key]: e.target.value },
-      errors: { ...this.state.errors, [key]: null } 
-    });
+    if (this._isMounted) {
+      this.setState({ 
+        success: false, changes: true, 
+        user: { ...this.state.user, [key]: e.target.value },
+        errors: { ...this.state.errors, [key]: null } 
+      });
+    }
 	};
 
 	onSubmit = e => {
 		e.preventDefault();
 		const errors = this.validate(this.state.user);
-		this.setState({ errors });
-		if(Object.keys(errors).length === 0) {
-      this.setState({ loading: true });
+		if (this._isMounted) this.setState({ errors });
+		if (Object.keys(errors).length === 0) {
+      if (this._isMounted) this.setState({ loading: true });
 			userRef(authid).set({
 				...this.state.user,
 				photoURL: this.state.imgPreview || '',
@@ -86,20 +94,22 @@ export default class Profile extends React.Component {
 				city: this.state.user.city || '',
 				country: this.state.user.country || ''
 			}).then(() => {
-				this.setState({ 
-					imgProgress: 0,
-					loading: false,
-					changes: false,
-					success: true
-        });
-        this.props.openSnackbar('Modifiche salvate', 'success');
+        if (this._isMounted) {
+          this.setState({ 
+            imgProgress: 0,
+            loading: false,
+            changes: false,
+            success: true
+          }, () => this.props.openSnackbar('Modifiche salvate', 'success'));
+        }
 				// this.setState({ redirectToReferrer: true });
-			}).catch(error => {
-				this.setState({
-					authError: error.message,
-					loading: false
-        });
-        this.props.openSnackbar(error.message);
+			}).catch(err => {
+        if (this._isMounted) {
+          this.setState({
+            authError: err.message,
+            loading: false
+          }, () => this.props.openSnackbar(err.message));
+        }
 			});
 		} else this.props.openSnackbar('Ricontrolla i dati inseriti', 'error');
 	};
@@ -124,28 +134,34 @@ export default class Profile extends React.Component {
 		const file = e.target.files[0];
 		// console.log(file);
     const errors = validateImg(file, 1);
-    this.setState({ errors });
-		if(Object.keys(errors).length === 0) {
+    if (this._isMounted) this.setState({ errors });
+		if (Object.keys(errors).length === 0) {
       const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
       // console.log(uploadTask);
 			uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
-				this.setState({
-					imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
-				});
+        if (this._isMounted) {
+          this.setState({
+            imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
+          });
+        }
 			}, error => {
         console.warn(`Upload error: ${error.message}`);
-        this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
+        if (this._isMounted) {
+          this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
+        }
 			}, () => {
         // console.log('upload completed');
-        uploadTask.then(snap => 
-          snap.ref.getDownloadURL().then(url => 
-            this.setState({
-              imgPreview: url,
-              changes: true,
-              success: false
-            }, () => openSnackbar('Immagine caricata', 'success'))
-          )
-        );
+        uploadTask.then(snap => {
+          snap.ref.getDownloadURL().then(url => {
+            if (this._isMounted) {
+              this.setState({
+                imgPreview: url,
+                changes: true,
+                success: false
+              }, () => openSnackbar('Immagine caricata', 'success'));
+            }
+          });
+        });
 			});
 		} else openSnackbar(errors.upload, 'error');
 	};

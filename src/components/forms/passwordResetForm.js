@@ -36,13 +36,9 @@ export default class PasswordResetForm extends React.Component {
     const { email } = this.state;
     const errors = this.validate(email);
 
-    if (this._isMounted) {
-      this.setState({ errors });
-    }
+    if (this._isMounted) this.setState({ errors });
     if (Object.keys(errors).length === 0) {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
+      if (this._isMounted) this.setState({ loading: true });
       auth.sendPasswordResetEmail(email).then(() => {
         if (this._isMounted) {
           this.setState({ loading: false });

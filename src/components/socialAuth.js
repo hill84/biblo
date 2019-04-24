@@ -41,26 +41,28 @@ export default class SocialAuth extends React.Component {
     const { roles, stats } = this.state;
 
 		auth.signInWithPopup(provider).then(res => {
-			this._isMounted && this.setState({ loading: true });
+			if (this._isMounted) this.setState({ loading: true });
 			if (res) {
         const user = res.user;
-        this._isMounted && this.setState({ user });
+        if (this._isMounted) this.setState({ user });
 				if (res.additionalUserInfo.isNewUser) {
+          const timestamp = Number((new Date(user.metadata.creationTime)).getTime());
 					userRef(user.uid).set({
-						creationTime: Number((new Date(user.metadata.creationTime)).getTime()),
+						creationTime: timestamp,
             displayName: user.displayName,
             email: user.email,
 						photoURL: user.photoURL,
 						roles,
-						stats,
+            stats,
+            privacyAgreement: timestamp,
             uid: user.uid,
 					});
 				}
 			}
 		}).then(() => {
-      this._isMounted && this.setState({ loading: false, redirectToReferrer: true });
+      if (this._isMounted) this.setState({ loading: false, redirectToReferrer: true });
 		}).catch(err => {
-      this._isMounted && this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'))
+      if (this._isMounted) this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'))
     });
 	}
 	googleAuth = () => this.socialAuth(GoogleAuthProvider);

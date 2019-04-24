@@ -21,7 +21,7 @@ class Home extends React.Component {
     this._isMounted = true;
     window.addEventListener('resize', this.updateScreenSize);
 
-		auth.onAuthStateChanged(user => {
+		auth.onIdTokenChanged(user => {
       if (needsEmailVerification(user)) {
         if (this._isMounted) {
           this.setState({ redirectTo: '/verify-email' });

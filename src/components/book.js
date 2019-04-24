@@ -1,10 +1,11 @@
-import React from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import React, { lazy, Suspense } from 'react';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { bookType, funcType, objectType, stringType, userBookType, userType } from '../config/types';
-import BookForm from './forms/bookForm';
 import NoMatch from './noMatch';
-import BookProfile from './pages/bookProfile';
+const BookForm = lazy(() => import('./forms/bookForm'));
+const BookProfile = lazy(() => import('./pages/bookProfile'));
 
 export default class Book extends React.Component {
   state = {
@@ -60,7 +61,7 @@ export default class Book extends React.Component {
     const { book, userBook } = this.state;
 
     if (this._isMounted) {
-      if(this.props.bid !== prevProps.bid){
+      if (this.props.bid !== prevProps.bid){
         this.setState({ loading: true });
         this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
           if (snap.exists) {
@@ -495,6 +496,7 @@ export default class Book extends React.Component {
 
 		return (
       <React.Fragment>
+        <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
         {isEditing && isAuthenticated() ?
           <BookForm 
             openSnackbar={openSnackbar}
@@ -519,6 +521,7 @@ export default class Book extends React.Component {
             user={user}
           />
         }
+        </Suspense>
       </React.Fragment>
 		);
 	}
