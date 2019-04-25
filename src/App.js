@@ -2,6 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
 import React, { lazy, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import ErrorBoundary from './components/errorBoundary';
 import PasswordResetForm from './components/forms/passwordResetForm';
 import Layout from './components/layout';
 import NewFeature from './components/newFeature';
@@ -26,7 +27,7 @@ import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebas
 import { handleFirestoreError, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
-import ErrorBoundary from './components/errorBoundary';
+
 const Admin = lazy(() => import('./components/pages/admin/admin'));
 const Challenge = lazy(() => import('./components/pages/challenge'));
 // const Challenges = lazy(() => import('./components/pages/challenges'));
@@ -80,7 +81,7 @@ export default class App extends React.Component {
         this.setState({ user: snap.data(), error: null });
       } else console.warn(`User not found in database`);
     }, err => {
-      this._isMounted && this.setState({ error: handleFirestoreError(err) });
+      if (this._isMounted) this.setState({ error: handleFirestoreError(err) });
     });
   }
 
@@ -145,7 +146,7 @@ const PrivateRoute = ({component: Component, ...rest}) => (
 		:
 			<Redirect to={{ pathname: '/login', state: {from: props.location} }} />
 	)} />
-)
+);
 
 const RouteWithProps = ({ path, exact, strict, component:Component, location, ...rest }) => (
   <Route
@@ -155,4 +156,4 @@ const RouteWithProps = ({ path, exact, strict, component:Component, location, ..
     location={location}
     render={(props) => <Component {...props} {...rest} />} 
 	/>
-)
+);

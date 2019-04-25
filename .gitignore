@@ -35,3 +35,8 @@ node_modules
 *.cache
 
 \.firebase/
+
+# Environment variables
+.env
+.env.development
+.env.production

@@ -77,7 +77,13 @@ export default class Dashboard extends React.Component {
       this.fetchFollowers();
       this.fetchFollowings();
       this.fetchUserChallenges();
-      if (this.state.tabSelected === 0) this.props.history.replace(`/dashboard/${this.state.uid}/${tabs[0]}`, null);
+
+      if (this.state.tabSelected === 0) {
+        const newPath = `/dashboard/${this.state.uid}/${tabs[0]}`;
+        if (this.props.history !== newPath) {
+          this.props.history.replace(newPath, null);
+        }
+      }
     }
   }
 
@@ -291,7 +297,12 @@ export default class Dashboard extends React.Component {
     }
   }
 
-  historyPushTabIndex = index => this.props.history.push(`/dashboard/${this.state.uid}/${tabs[index]}`, null);
+  historyPushTabIndex = index => {
+    const newPath = `/dashboard/${this.state.uid}/${tabs[index]}`;
+    if (this.props.history !== newPath) {
+      this.props.history.push(newPath, null);
+    }
+  }
 
   fetchUserChallenges = () => {
     const { luid } = this.state;
