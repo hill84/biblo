@@ -19,6 +19,7 @@ import HelpPage from './components/pages/helpPage';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
 import NoMatchPage from './components/pages/noMatchPage';
+import Notifications from './components/pages/notifications';
 import PrivacyPage from './components/pages/privacyPage';
 import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
@@ -119,7 +120,7 @@ export default class App extends React.Component {
                       <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/notifications" component={NewFeature} /* user={user} openSnackbar={openSnackbar} */ />
+                      <PrivateRoute path="/notifications" component={Notifications} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
                       <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />

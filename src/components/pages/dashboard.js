@@ -9,7 +9,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { appName, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
+import { appName, appURL, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
@@ -211,7 +211,7 @@ export default class Dashboard extends React.Component {
 
 	onFollowUser = (e, fuid = this.state.user.uid, fuser = this.state.user) => {
     e.preventDefault();
-    const { openSnackbar } = this.props;
+    const { openSnackbar, user } = this.props;
 		if (isAuthenticated()) {
 			const { followers, followings, lfollowers, lfollowings, luid, uid } = this.state;
 			let computedFollowers = luid !== fuid ? { ...followers } : { ...lfollowers };
@@ -232,8 +232,8 @@ export default class Dashboard extends React.Component {
         computedFollowers = { 
           ...computedFollowers,
           [luid]: {
-            displayName: this.props.user.displayName,
-            photoURL: this.props.user.photoURL,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
             timestamp: (new Date()).getTime()
           }
         };
@@ -246,9 +246,9 @@ export default class Dashboard extends React.Component {
           }
         };
         snackbarMsg = `Segui ${fuser.displayName}`;
-        const followerName = this.props.user.displayName.split(' ')[0];
+        const followerName = user.displayName.split(' ')[0];
         followerDisplayName = truncateString(followerName, 12);
-        noteMsg = `<a href="/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
+        noteMsg = `<a href="${appURL}/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
 			}
       // console.log({ computedFollowers, computedFollowings });
 	
@@ -261,9 +261,9 @@ export default class Dashboard extends React.Component {
             nid: newNoteRef.id,
             text: noteMsg,
             created_num: Number((new Date()).getTime()),
-            createdBy: this.props.user.displayName,
+            createdBy: user.displayName,
             createdByUid: luid,
-            photoURL: this.props.user.photoURL,
+            photoURL: user.photoURL,
             read: false
           }).catch(err => console.warn(err));
         }

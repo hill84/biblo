@@ -953,7 +953,8 @@ hr.line {
 /* NOTIFICATIONS */
 .notes *::-webkit-scrollbar { display: none; }
 .notes ul { padding: 0; max-width: 380px; min-width: 260px; }
-.notes li { animation: fadeInSlideUp .2s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
+.notes li { animation: fadeInSlideUp .2s cubic-bezier(0.215, 0.61, 0.355, 1) both; cursor: inherit; }
+.notes li:not(.footer):hover { background-color: inherit; }
 .notes li, .notes .footer { padding-left: 8px; padding-right: 8px; height: auto; }
 .notes li:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,.03); }
 .notes li .row { align-items: center; width: 100%; margin-left: 0; margin-right: 0; line-height: 125%; }

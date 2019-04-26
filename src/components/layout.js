@@ -68,7 +68,7 @@ export default class Layout extends React.Component {
       const notes = [];
       roles.forEach(role => {
         if (hasRole(user, role)) {
-          this.unsubNotesFetch = notesRef(`__${role}`).onSnapshot(snap => {
+          this.unsubNotesFetch = notesRef(`__${role}`).orderBy('created_num', 'desc').limit(5).onSnapshot(snap => {
             if (!snap.empty) {
               snap.forEach(note => {
                 notes.push({ ...note.data(), role })
@@ -77,15 +77,17 @@ export default class Layout extends React.Component {
           });
         }
       });
-      notesRef(user.uid).get().then(snap => {
+      notesRef(user.uid).orderBy('created_num', 'desc').limit(10).get().then(snap => {
         if (!snap.empty) {
           snap.forEach(note => {
             notes.push(note.data());
           });
-          this.setState({ notes });
+          if (this._isMounted) this.setState({ notes });
         }
       }).catch(error => console.warn(error));
-    } else this.setState({ notes: null });
+    } else {
+      if (this._isMounted) this.setState({ notes: null });
+    }
   }
   
   onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
@@ -98,11 +100,13 @@ export default class Layout extends React.Component {
     const { notes } = this.state;
     const { user } = this.props;
 
-    this.setState({ notesAnchorEl: e.currentTarget });
+    if (this._isMounted) this.setState({ notesAnchorEl: e.currentTarget });
     notes && notes.filter(note => note.read !== true && !note.role).forEach(note => {
-      /* this.setState({
-        notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
-      }); */
+      /* if (this._isMounted) {
+        this.setState({
+          notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
+        }); 
+      } */
       noteRef(user.uid, note.nid).update({ read: true }).then().catch(error => console.warn(error));
     });
   }
