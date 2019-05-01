@@ -14,7 +14,7 @@ export default class AuthorsPage extends React.Component {
 	state = {
     items: null,
     count: 0,
-    desc: true,
+    desc: false,
     lastVisible: null,
     limit: this.props.limit || 27,
     loading: true,
@@ -24,7 +24,7 @@ export default class AuthorsPage extends React.Component {
       { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
       { type: 'sex', label: 'Sesso' }
     ],
-    orderByIndex: 0,
+    orderByIndex: 1,
     page: 1
   }
 

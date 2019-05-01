@@ -50,7 +50,7 @@ export default class Authors extends React.Component {
     const { desc, limit } = this.state;
 
     if (inView) {
-      authorsRef.orderBy('photoURL', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+      authorsRef.orderBy('displayName', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));

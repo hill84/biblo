@@ -517,9 +517,9 @@ export default class BookForm extends React.Component {
                     <ChipInput
                       id="authors"
                       name="authors"
+                      label="Autore"
                       placeholder="es: Arthur Conan Doyle"
                       error={Boolean(errors.authors)}
-                      label="Autore"
                       value={Object.keys(book.authors)}
                       onAdd={chip => this.onAddChipToObj("authors", chip)}
                       onDelete={chip => this.onDeleteChipFromObj("authors", chip)}
@@ -681,9 +681,9 @@ export default class BookForm extends React.Component {
                     <FormControl className="chip-input" margin="normal" fullWidth>
                       <ChipInput
                         name="collections"
+                        label="Collezione (max 5)"
                         placeholder="es: Sherlock Holmes"
                         error={Boolean(errors.collections)}
-                        label="Collezione (max 5)"
                         value={book.collections}
                         onAdd={chip => this.onAddChip("collections", chip)}
                         onDelete={chip => this.onDeleteChip("collections", chip)}

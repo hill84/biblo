@@ -6,7 +6,7 @@
 
 <div align="center">
 
-**Biblo.space** is a social network for book lovers, developed with [React](http://facebook.github.io/react/) and [Firebase](https://github.com/firebase) (Auth, [Firestore](https://github.com/firebase/firebase-js-sdk), [Functions](https://github.com/firebase/firebase-functions), Hosting and Storage).
+**Biblo** is a social network for book lovers, developed with [React](http://facebook.github.io/react/) and [Firebase](https://github.com/firebase) (Auth, [Firestore](https://github.com/firebase/firebase-js-sdk), [Functions](https://github.com/firebase/firebase-functions), Hosting and Storage).
 
 [![Dependencies](https://img.shields.io/david/hill84/biblo.svg)](https://david-dm.org/hill84/biblo)
 [![DevDependencies](https://img.shields.io/david/dev/hill84/biblo.svg)](https://david-dm.org/hill84/biblo?type=dev)
