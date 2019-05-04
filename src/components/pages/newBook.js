@@ -1,4 +1,4 @@
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
 import { icon } from '../../config/icons';
 import { darkTheme } from '../../config/themes';
@@ -25,11 +25,11 @@ export default class NewBook extends React.Component {
 		return (
 			<div className="container" id="newBookComponent">
         {!book && <h2 className="text-center">{icon.plus()} Crea la tua scheda libro</h2>}
-        <MuiThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={darkTheme}>
           <div className="card sm dark search-book">
             <SearchBookForm onBookSelect={this.onBookSelect} user={user} newBook />
           </div>
-        </MuiThemeProvider>
+        </ThemeProvider>
 				{book ? <Book book={book} user={user} openSnackbar={openSnackbar} isEditing />
         : <p className="text-sm lighter-text text-center">Powered by <a href="https://books.google.com/">Google Books</a></p>}
 			</div>

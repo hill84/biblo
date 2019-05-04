@@ -5,6 +5,7 @@ export const appName = 'Biblo';
 export const appURL = 'https://biblo.space';
 export const appEmail = 'info@biblo.space';
 export const appPrivacyEmail = 'privacy@biblo.space';
+export const appDesc = `${appName} è un social network dedicato a chi ama i libri e la lettura. La nostra missione è aiutare i lettori a trovare e condividere i libri che amano.`
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;

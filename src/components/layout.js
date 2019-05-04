@@ -6,7 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
@@ -201,13 +201,13 @@ export default class Layout extends React.Component {
                   onClick={this.onCloseMore}
                   open={Boolean(moreAnchorEl)}
                   onClose={this.onCloseMore}>
-                  <NavLink to="/profile"><MenuItem>Profilo</MenuItem></NavLink>
-                  <NavLink to={`/dashboard/${authid}`}><MenuItem>Dashboard</MenuItem></NavLink>
+                  <MenuItem component={NavLink} to="/profile">Profilo</MenuItem>
+                  <MenuItem component={NavLink} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
                   <MenuItem onClick={signOut}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>
             : 
-            <React.Fragment>
+              <React.Fragment>
                 <NavLink to="/login" className="btn flat">Accedi</NavLink>
                 <NavLink to="/signup" className="btn primary">Registrati</NavLink>
               </React.Fragment>
@@ -215,7 +215,7 @@ export default class Layout extends React.Component {
           </Toolbar>
         </AppBar>
         
-        <MuiThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={darkTheme}>
           <Drawer
             className="drawer"
             open={drawerIsOpen}
@@ -271,13 +271,13 @@ export default class Layout extends React.Component {
                 </MenuItem>
               </NavLink>
 
-              <MenuItem className="bottom-item">
+              <MenuItem disableRipple className="bottom-item">
                 <div className="version">v {version}</div>
               </MenuItem>
               
             </nav>
           </Drawer>
-        </MuiThemeProvider>
+        </ThemeProvider>
         
         <main>
           {children}
@@ -292,7 +292,8 @@ export default class Layout extends React.Component {
           link={<Link to="/cookie">clicca qui</Link>}
           dismissOnScrollThreshold={100}
           onAccept={() => {}}
-          cookie="user-has-accepted-cookies" />
+          cookie="user-has-accepted-cookies" 
+        />
       </div> 
     );
   }

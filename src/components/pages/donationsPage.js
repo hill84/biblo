@@ -1,9 +1,19 @@
 import React from 'react';
-import { appName } from '../../config/shared';
+import { Helmet } from 'react-helmet';
+import { appDesc, appName } from '../../config/shared';
 import DonationButtons from '../donationButtons';
 
-const DonationsPage = props => (
-  <div id="DonationsPageComponent" className="reveal fadeIn slideUp">
+const seo = {
+  title: `${appName} | Donazioni`,
+  description: appDesc
+}
+
+const DonationsPage = React.forwardRef((props, ref) => (
+  <div id="DonationsPageComponent" className="reveal fadeIn slideUp" ref={ref}>
+    <Helmet>
+      <title>{seo.title}</title>
+      <meta name="description" content={seo.description} />
+    </Helmet>
     <div className="container pad-v">
       <h1>Donazioni</h1>
       <div className="text-justify text-left-sm">
@@ -18,6 +28,6 @@ const DonationsPage = props => (
       </div>
     </div>
   </div>
-);
+));
 
 export default DonationsPage;

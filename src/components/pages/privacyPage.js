@@ -1,8 +1,12 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { appName, appPrivacyEmail, appURL } from '../../config/shared';
 
 const PrivacyPage = props => (
   <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
+    <Helmet>
+      <title>{appName} | Privacy policy</title>
+    </Helmet>
     <div className="container pad-v">
       <h1>Privacy policy</h1>
       <p className="lighter-text">Data di entrata in vigore: 10 Marzo 2019</p>

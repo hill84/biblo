@@ -4,11 +4,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { getInitials, normalizeString } from '../../config/shared';
+import { appDesc, appName, getInitials, normalizeString, truncateString } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
 import RandomQuote from '../randomQuote';
+import { Helmet } from 'react-helmet';
 
 export default class AuthorPage extends React.Component {
   state = {
@@ -82,6 +83,10 @@ export default class AuthorPage extends React.Component {
 
     return (
       <div className="container" id="authorComponent">
+        <Helmet>
+          <title>{appName} | {author.displayName || 'Autore'}</title>
+          <meta name="description" content={author.bio ? truncateString(author.bio, 155) : appDesc} />
+        </Helmet>
         <div className="card dark" id="authorCard">
           <div className="row text-center-md">
             <div className="col-md-auto col-sm-12">

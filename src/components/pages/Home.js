@@ -1,15 +1,21 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
+import { InView } from 'react-intersection-observer';
 import { Background, Parallax } from 'react-parallax';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, authid, isAuthenticated } from '../../config/firebase';
-import { isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
+import { appDesc, appName, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
 import heroImage from '../../images/covers-dark.jpg';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
 import Genres from '../genres';
 import RandomQuote from '../randomQuote';
 import Reviews from '../reviews';
-import { InView } from 'react-intersection-observer';
+
+const seo = {
+  title: `${appName} | Home`,
+  description: appDesc
+}
 
 class Home extends React.Component {
   state = {
@@ -46,6 +52,10 @@ class Home extends React.Component {
 
     return (
       <div id="homeComponent">
+        <Helmet>
+          <title>{seo.title}</title>
+          <meta name="description" content={seo.description} />
+        </Helmet>
         <Parallax
           className="hero"
           disabled={isScrollable}

@@ -1,8 +1,8 @@
 import React from 'react';
 import Book from '../book';
 
-const BookContainer = props => (
-  <div id="BookContainerComponent">
+const BookContainer = React.forwardRef((props, ref) => (
+  <div id="BookContainerComponent" ref={ref}>
     <Book 
       bid={props.match.params.bid} 
       user={props.user} 
@@ -11,6 +11,6 @@ const BookContainer = props => (
       location={props.location} 
     />
   </div>
-);
+));
 
 export default BookContainer;

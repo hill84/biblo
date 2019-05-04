@@ -2,9 +2,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { notesRef, notificationsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { handleFirestoreError, timeSince } from '../../config/shared';
+import { appName, handleFirestoreError, timeSince } from '../../config/shared';
 import { funcType } from '../../config/types';
 import PaginationControls from '../paginationControls';
 
@@ -106,6 +107,9 @@ export default class Notifications extends React.Component {
 
     return (
       <div className="container" id="notificationsComponent">
+        <Helmet>
+          <title>{appName} | Notifiche</title>
+        </Helmet>
         {items ? 
           <div className="card light">
             <div className="shelf">

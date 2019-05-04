@@ -9,12 +9,12 @@ const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
   console.warn('Async: Could not copy text: ', error);
 });
 
-const CopyToClipboard = props => (
-  <span className="copy tt" onClick={() => copy(props.text, props)}>
+const CopyToClipboard = React.forwardRef((props, ref) => (
+  <span className="copy tt" onClick={() => copy(props.text, props)} ref={ref}>
     {props.text}
     <span className="tip">Copia</span>
   </span>
-);
+));
 
 CopyToClipboard.propTypes = {
   text: _oneOfType([stringType, numberType]),

@@ -3,12 +3,18 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { getInitials, handleFirestoreError } from '../../config/shared';
-import { numberType, funcType } from '../../config/types';
+import { appDesc, appName, getInitials, handleFirestoreError } from '../../config/shared';
+import { funcType, numberType } from '../../config/types';
 import PaginationControls from '../paginationControls';
+
+const seo = {
+  title: `${appName} | Autori`,
+  description: appDesc
+}
 
 export default class AuthorsPage extends React.Component {
 	state = {
@@ -122,6 +128,10 @@ export default class AuthorsPage extends React.Component {
 
 		return (
       <div className="container" id="authorsComponent">
+        <Helmet>
+          <title>{seo.title}</title>
+          <meta name="description" content={seo.description} />
+        </Helmet>
         <div className="card dark">
           {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : !items ? <div className="empty text-center">Nessun elemento</div> :
             <React.Fragment>

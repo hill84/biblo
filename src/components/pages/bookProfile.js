@@ -6,11 +6,12 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, calcReadingTime, hasRole, timeSince } from '../../config/shared';
+import { abbrNum, appDesc, appName, calcReadingTime, hasRole, timeSince, truncateString } from '../../config/shared';
 import { funcType, userBookType, userType } from '../../config/types';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -116,9 +117,20 @@ export default class BookProfile extends React.Component {
         }
       
         <div id="BookProfileComponent">
+          <Helmet>
+            <title>{appName} | {book.title || 'Libro'}</title>
+            <meta name="description" content={book.description ? truncateString(book.description, 155) : appDesc} />
+          </Helmet>
           <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
 
-          {isOpenReadingState && <ReadingStateForm bid={book.bid} readingState={userBook.readingState} onToggle={this.onToggleReadingState} openSnackbar={openSnackbar} />}
+          {isOpenReadingState && 
+            <ReadingStateForm 
+              bid={book.bid} 
+              readingState={userBook.readingState} 
+              onToggle={this.onToggleReadingState} 
+              openSnackbar={openSnackbar} 
+            />
+          }
 
           <div className="container top">
             <div className="card light main text-center-md">
@@ -269,4 +281,4 @@ export default class BookProfile extends React.Component {
 	}
 }
 
-const Transition = props => <Grow {...props} />;
+const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );

@@ -253,4 +253,4 @@ export default class Review extends React.Component {
   }
 }
 
-const Transition = props => <Grow {...props} />;
+const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );

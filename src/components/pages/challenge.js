@@ -1,7 +1,8 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
-import { booksPerRow } from '../../config/shared';
+import { appName, booksPerRow } from '../../config/shared';
 import Cover from '../cover';
 import { skltn_shelfRow } from '../skeletons';
 
@@ -88,6 +89,9 @@ class Challenge extends React.Component {
 
     return (
       <div className="container">
+        <Helmet>
+          <title>{appName} | Sfida</title>
+        </Helmet>
         <h2>Sfida</h2>
         {loading ? skltn : (!challenge || !userChallenges) ? empty : userChallenges.map(item =>
           <div className="card dark card-fullwidth-sm" key={item.cid}>

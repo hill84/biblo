@@ -3,7 +3,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import TextField from '@material-ui/core/TextField';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
@@ -69,7 +69,7 @@ export default class SearchBookForm extends React.Component {
     const { containerProps, children } = options;
   
     return (
-      <Paper {...containerProps}>{children}</Paper>
+      <Paper {...containerProps} elevation={2}>{children}</Paper>
     );
   }
 
@@ -361,7 +361,7 @@ export default class SearchBookForm extends React.Component {
             </FormHelperText>
           }
 
-          <MuiThemeProvider theme={defaultTheme}>
+          <ThemeProvider theme={defaultTheme}>
             <Menu 
               className="dropdown-menu" 
               anchorEl={searchByAnchorEl} 
@@ -369,7 +369,7 @@ export default class SearchBookForm extends React.Component {
               onClose={this.onCloseSearchByMenu}>
               {options}
             </Menu>
-          </MuiThemeProvider>
+          </ThemeProvider>
         </div>
       </div>
     )

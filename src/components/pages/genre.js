@@ -2,15 +2,16 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { handleFirestoreError, isTouchDevice, screenSize } from '../../config/shared';
+import { appDesc, appName, handleFirestoreError, isTouchDevice, screenSize } from '../../config/shared';
+import { funcType } from '../../config/types';
 import Cover from '../cover';
 import Genres from '../genres';
 import PaginationControls from '../paginationControls';
-import { funcType } from '../../config/types';
 
 export default class Genre extends React.Component {
   state = {
@@ -140,6 +141,7 @@ export default class Genre extends React.Component {
 
   render() {
     const { count, coverview, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
+    const { match } = this.props;
 
     const covers = items && items.map((item, i) => <Link key={item.bid} to={`/book/${item.bid}`}><Cover book={item} index={i} page={page} /></Link>);
 
@@ -153,7 +155,7 @@ export default class Genre extends React.Component {
       </MenuItem>
     ));
 
-    const genreColor = genres.filter(genre => genre.name === this.props.match.params.gid)[0].color;
+    const genreColor = genres.filter(genre => genre.name === match.params.gid)[0].color;
 
     const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 
@@ -163,10 +165,14 @@ export default class Genre extends React.Component {
 
     return (
       <div className="container" id="genreComponent">
+        <Helmet>
+          <title>{appName} | {match ? match.params.gid : 'Genere'}</title>
+          <meta name="description" content={appDesc} />
+        </Helmet>
         <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
           <div className="row">
             <div className="col">
-              <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {this.props.match.params.gid}</h2>
+              <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {match.params.gid}</h2>
             </div>
             <div className="col-auto text-right">
               <Link to="/genres" className="btn sm flat" style={{color: !isScrollable ? 'white' : ''}}>Generi</Link>

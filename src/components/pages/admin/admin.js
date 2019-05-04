@@ -3,11 +3,13 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
+import { bindKeyboard } from 'react-swipeable-views-utils';
 import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { screenSize } from '../../../config/shared';
+import { appName, screenSize } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
 /* import CollectionForm from '../../forms/collectionForm'; */
@@ -20,6 +22,7 @@ import NotesDash from './notesDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
 
+const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
 
 export default class Admin extends React.Component {
@@ -127,6 +130,9 @@ export default class Admin extends React.Component {
 
 		return (
 			<div className="container" id="adminComponent">
+        <Helmet>
+          <title>{appName} | Amministrazione</title>
+        </Helmet>
         <div className="actions btns text-center pad-v-sm">
           <button type="button" title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>
           <button type="button" onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn primary">{icon.plus()} autore</button>
@@ -148,7 +154,9 @@ export default class Admin extends React.Component {
             <Tab label={<React.Fragment><span className="show-md">{icon.bell()}</span><span className="hide-md">Notifiche</span></React.Fragment>} />
           </Tabs>
         </AppBar>
-        <SwipeableViews
+        <BindKeyboardSwipeableViews
+          enableMouseEvents
+          resistance
           className="tabs-container"
           axis="x"
           index={tabSelected}
@@ -195,7 +203,7 @@ export default class Admin extends React.Component {
               </div>
             }
           </React.Fragment>
-        </SwipeableViews>
+        </BindKeyboardSwipeableViews>
 
         {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} />}
         {/* isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} /> */}

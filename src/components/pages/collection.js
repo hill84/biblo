@@ -1,10 +1,11 @@
 import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, screenSize } from '../../config/shared';
-import { userType, funcType } from '../../config/types';
+import { abbrNum, appDesc, appName, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, screenSize, truncateString } from '../../config/shared';
+import { funcType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
@@ -131,6 +132,10 @@ export default class Collection extends React.Component {
 
     return (
       <div id="CollectionComponent" className="container">
+        <Helmet>
+          <title>{appName} | {collection ? collection.title : 'Collezione'}</title>
+          <meta name="description" content={collection && collection.description ? truncateString(collection.description, 155) : appDesc} />
+        </Helmet>
         <div className="row">
           <div className="col">
             <div className="sticky no-sticky-md">

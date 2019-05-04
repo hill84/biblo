@@ -4,16 +4,15 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import DatePicker from 'material-ui-pickers/DatePicker';
-import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
+import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
 import { authid, userBookRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
+import { handleFirestoreError } from '../../config/shared';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
 import Stepper from '../stepper';
-import { handleFirestoreError } from '../../config/shared';
 
 export default class readingStateForm extends React.Component {
 	state = {

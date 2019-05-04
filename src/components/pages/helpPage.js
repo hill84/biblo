@@ -1,8 +1,13 @@
 import React from 'react';
-import { appEmail } from '../../config/shared';
+import { Helmet } from 'react-helmet';
+import { appDesc, appEmail, appName } from '../../config/shared';
 
 const HelpPage = props => (
   <div id="HelpPageComponent" className="reveal fadeIn slideUp">
+    <Helmet>
+      <title>{appName} | Aiuto</title>
+      <meta name="description" content={appDesc} />
+    </Helmet>
     <div className="container pad-v">
       <h1>Aiuto</h1>
       <div className="text-justify text-left-sm">

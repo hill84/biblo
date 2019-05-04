@@ -4,18 +4,22 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import React from 'react';
+import { Helmet } from 'react-helmet';
+import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
+import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { appName, appURL, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
+import { appDesc, appName, appURL, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
-import ImageZoom from 'react-medium-image-zoom';
+
+const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
 export default class Dashboard extends React.Component {
  	state = {
@@ -387,6 +391,10 @@ export default class Dashboard extends React.Component {
 
 		return (
 			<div className="container" id="dashboardComponent">
+        <Helmet>
+          <title>{appName} | {user ? `La libreria di ${user.displayName}` : 'Libreria utente'}</title>
+          <meta name="description" content={appDesc} />
+        </Helmet>
 				<div className="row">
 					<div className="col-md col-12">
 						<div className="card dark basic-profile-card">
@@ -474,7 +482,9 @@ export default class Dashboard extends React.Component {
             <Tab label={TabLabel(icon.account(), 'Contatti')} />
           </Tabs>
         </AppBar>
-        <SwipeableViews
+        <BindKeyboardSwipeableViews 
+          enableMouseEvents
+          resistance
           className="card light tabs-container bottompend mobile"
           axis="x"
           index={tabSelected}
@@ -502,7 +512,7 @@ export default class Dashboard extends React.Component {
               </div>
             }
           </div>
-        </SwipeableViews>
+        </BindKeyboardSwipeableViews>
         <ShelfDetails />
 			</div>
 		);

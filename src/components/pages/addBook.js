@@ -1,4 +1,4 @@
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { icon } from '../../config/icons';
@@ -6,6 +6,13 @@ import { primaryTheme } from '../../config/themes';
 import { funcType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
+import { appDesc, appName } from '../../config/shared';
+import { Helmet } from 'react-helmet';
+
+const seo = {
+  title: `${appName} | Aggiungi libro`,
+  description: appDesc
+}
 
 export default class AddBook extends React.Component {
 	state = {
@@ -25,12 +32,16 @@ export default class AddBook extends React.Component {
 
 		return (
 			<div className="container" id="addBookComponent">
+        <Helmet>
+          <title>{seo.title}</title>
+          <meta name="description" content={seo.description} />
+        </Helmet>
         {!book && <h2 className="text-center">{icon.magnify()} Cerca un libro</h2>}
-        <MuiThemeProvider theme={primaryTheme}>
+        <ThemeProvider theme={primaryTheme}>
           <div className="card sm primary search-book">
             <SearchBookForm onBookSelect={this.onBookSelect} user={user} />
           </div>
-        </MuiThemeProvider>
+        </ThemeProvider>
 				{book ?
 					<Book bid={book.bid} book={book} user={user} openSnackbar={openSnackbar} />
         :

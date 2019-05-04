@@ -25,9 +25,10 @@ import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
-import { handleFirestoreError, needsEmailVerification } from './config/shared';
+import { appDesc, appName, handleFirestoreError, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
+import { Helmet } from 'react-helmet';
 
 const Admin = lazy(() => import('./components/pages/admin/admin'));
 const Challenge = lazy(() => import('./components/pages/challenge'));
@@ -37,6 +38,11 @@ const Dashboard = lazy(() => import('./components/pages/dashboard'));
 const IconsPage = lazy(() => import('./components/pages/iconsPage'));
 const NewBook = lazy(() => import('./components/pages/newBook'));
 const Profile = lazy(() => import('./components/pages/profile'));
+
+const seo = {
+  title: appName,
+  description: appDesc
+}
 
 export default class App extends React.Component {
 	state = {
@@ -91,6 +97,10 @@ export default class App extends React.Component {
 
 		return (
 			<ThemeProvider theme={defaultTheme}>
+        <Helmet>
+          <title>{seo.title}</title>
+          <meta name="description" content={seo.description} />
+        </Helmet>
         <SharedSnackbarProvider>
           <SharedSnackbarConsumer>
             {({ openSnackbar }) => (

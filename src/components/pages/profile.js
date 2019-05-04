@@ -7,16 +7,16 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import DatePicker from 'material-ui-pickers/DatePicker';
-import MuiPickersUtilsProvider from 'material-ui-pickers/MuiPickersUtilsProvider';
+import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import firebase, { authid, storageRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
-import { calcAge, getInitials, validateImg } from '../../config/shared';
+import { appName, calcAge, getInitials, validateImg } from '../../config/shared';
 
 export default class Profile extends React.Component {
 	state = {
@@ -182,6 +182,9 @@ export default class Profile extends React.Component {
 
 		return (
       <div className="container" id="profileComponent">
+        <Helmet>
+          <title>{appName} | Profilo</title>
+        </Helmet>
         <div className="card light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="container sm">
