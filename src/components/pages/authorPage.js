@@ -135,7 +135,7 @@ export default class AuthorPage extends React.Component {
             :
               <div className="info-row empty text-center pad-sm">
                 <p>Non ci sono ancora libri di {author.displayName}</p>
-                <Link to="/new-book" className="btn primary">Aggiungi libro</Link>
+                <Link to="/new-book" className="btn primary rounded">Aggiungi libro</Link>
               </div>
             }
           </React.Fragment>
