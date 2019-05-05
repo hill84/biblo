@@ -1,5 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { lazy, Suspense } from 'react';
+import { Helmet } from 'react-helmet';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { bookType, funcType, objectType, stringType, userBookType, userType } from '../config/types';
@@ -496,6 +497,14 @@ export default class Book extends React.Component {
 
 		return (
       <React.Fragment>
+        {book && 
+          <Helmet>
+            <meta property="og:type" content="book" />
+            <meta property="book:author" content={Object.keys(book.authors)} />
+            <meta property="book:isbn" content={String(book.ISBN_13)} />
+            {book.publication && <meta property="book:release_date" content={new Date(book.publication).toLocaleDateString()} />}
+          </Helmet>
+        }
         <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
         {isEditing && isAuthenticated() ?
           <BookForm 

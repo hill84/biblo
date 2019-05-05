@@ -31,7 +31,7 @@ export default class NoMatch extends React.Component {
         </div>
 
         <div className="card flat col-md-8">
-          <RandomQuote className="quote-container" />
+          <RandomQuote className="quote-container" skeleton={false} />
         </div>
 
       </div>
