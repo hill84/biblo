@@ -1,5 +1,6 @@
 import React from 'react';
 import { stringType, shapeType, funcType } from '../config/types';
+import RandomQuote from './randomQuote';
 
 export default class NoMatch extends React.Component {
   static propTypes = {
@@ -28,6 +29,11 @@ export default class NoMatch extends React.Component {
             <button type="button" onClick={this.goBack} className="btn flat rounded">Torna indietro</button>
           </div>
         </div>
+
+        <div className="card flat col-md-8">
+          <RandomQuote className="quote-container" />
+        </div>
+
       </div>
     );
   }

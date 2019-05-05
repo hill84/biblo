@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { appName } from '../config/shared';
+import { app } from '../config/shared';
 import DonationButtons from './donationButtons';
 
 export default class NewFeature extends React.Component {
@@ -22,7 +22,7 @@ export default class NewFeature extends React.Component {
         <div className="text-center">
           <div className="pad-v">
             <h2>Questa funzionalità non è ancora pronta</h2>
-            <p>Aiutami a far crescere {appName}. <span className="hide-sm">Contribuisci con una donazione.</span></p>
+            <p>Aiutami a far crescere {app.name}. <span className="hide-sm">Contribuisci con una donazione.</span></p>
             
             <div className="pad-v">
               <DonationButtons />

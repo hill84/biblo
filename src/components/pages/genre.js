@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { appDesc, appName, handleFirestoreError, isTouchDevice, screenSize } from '../../config/shared';
+import { app, handleFirestoreError, isTouchDevice, screenSize } from '../../config/shared';
 import { funcType } from '../../config/types';
 import Cover from '../cover';
 import Genres from '../genres';
@@ -166,8 +166,8 @@ export default class Genre extends React.Component {
     return (
       <div className="container" id="genreComponent">
         <Helmet>
-          <title>{appName} | {match ? match.params.gid : 'Genere'}</title>
-          <meta name="description" content={appDesc} />
+          <title>{app.name} | {match ? match.params.gid : 'Genere'}</title>
+          <meta name="description" content={app.desc} />
         </Helmet>
         <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
           <div className="row">

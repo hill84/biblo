@@ -1,14 +1,14 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { appName } from '../../config/shared';
+import { app } from '../../config/shared';
 import { funcType, objectType } from '../../config/types';
 import SignupForm from '../forms/signupForm';
 
 const Signup = React.forwardRef((props, ref) => (
   <div className="card-container pad-v" id="signupComponent" ref={ref}>
     <Helmet>
-      <title>{appName} | Signup</title>
+      <title>{app.name} | Signup</title>
     </Helmet>
     <h2>Registrati</h2>
     <div className="card light">

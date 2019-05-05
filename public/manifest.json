@@ -6,8 +6,50 @@
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "48x48",
       "type": "image/x-icon"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-57x57.png",
+      "sizes": "57x57",
+      "type": "image\/png",
+      "density": "1.0"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image\/png",
+      "density": "1.5"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-76x76.png",
+      "sizes": "76x76",
+      "type": "image\/png",
+      "density": "2.0"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-114x114.png",
+      "sizes": "114x114",
+      "type": "image\/png",
+      "density": "2.5"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image\/png",
+      "density": "3.0"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image\/png",
+      "density": "3.5"
+    },
+    {
+      "src": "\/img\/apple-touch-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image\/png",
+      "density": "4.0"
     }
   ],
   "start_url": "/?utm_source=pwa_homescreen",

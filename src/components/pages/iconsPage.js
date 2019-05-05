@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { icon } from '../../config/icons';
-import { appName } from '../../config/shared';
+import { app } from '../../config/shared';
 import { funcType } from '../../config/types';
 
 const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
@@ -14,7 +14,7 @@ const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
 const IconsPage = props => (
   <div className="container" id="iconsPageComponent">
     <Helmet>
-      <title>{appName} | Icone</title>
+      <title>{app.name} | Icone</title>
     </Helmet>
     <div className="card dark">
       <h2>Icone di sistema</h2>

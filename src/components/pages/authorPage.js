@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { appDesc, appName, getInitials, normalizeString, truncateString } from '../../config/shared';
+import { app, getInitials, normalizeString, truncateString } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
@@ -84,8 +84,8 @@ export default class AuthorPage extends React.Component {
     return (
       <div className="container" id="authorComponent">
         <Helmet>
-          <title>{appName} | {author.displayName || 'Autore'}</title>
-          <meta name="description" content={author.bio ? truncateString(author.bio, 155) : appDesc} />
+          <title>{app.name} | {author.displayName || 'Autore'}</title>
+          <meta name="description" content={author.bio ? truncateString(author.bio, 155) : app.desc} />
         </Helmet>
         <div className="card dark" id="authorCard">
           <div className="row text-center-md">
@@ -98,16 +98,17 @@ export default class AuthorPage extends React.Component {
                   <h2 className="title">{author.displayName}</h2>
                 </div>
                 <div className="col-auto text-right hide-md">
-                  <Link to="/authors" className="btn sm flat">Autori</Link>
+                  <Link to="/authors" className="btn sm primary">Autori</Link>
                 </div>
               </div>
-              <RandomQuote author={author.displayName} skeleton={false} className="fadeIn slideUp reveal" />
               <div className="info-row bio">
-                <MinifiableText text={author.bio} maxChars={500} />
+                <MinifiableText text={author.bio} source={author.source} maxChars={500} />
               </div>
             </div>
           </div>
         </div>
+
+        <RandomQuote author={author.displayName} skeleton={false} className="card flat col-md-8 fadeIn slideUp reveal" />
         
         {loadingBooks ? 
           <div aria-hidden="true" className="loader relative"><CircularProgress /></div>

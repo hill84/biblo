@@ -4,19 +4,14 @@ import { boolType, numberType, stringType } from '../config/types';
 export default class MinifiableText extends React.Component {
 	state = {
     isTextMinified: this.props.textMinified === false ? this.props.textMinified : (this.props.text && this.props.text.length > (this.props.maxChars || 700)),
-    maxChars: this.props.maxChars || 700,
-    text: this.props.text
+    maxChars: this.props.maxChars || 700
   }
 
   static propTypes = {
     textMinified: boolType,
     maxChars: numberType,
-    text: stringType.isRequired
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.text !== state.text) { return { text: props.text }}
-    return null;
+    text: stringType.isRequired,
+    source: stringType
   }
 
   componentDidMount() {
@@ -28,7 +23,7 @@ export default class MinifiableText extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.text && this.state.text.length !== prevState.text.length) {
+    if (this.props.text && this.props.text.length !== prevProps.text.length) {
       if (this._isMounted) {
         this.minifyText();
       }
@@ -43,7 +38,7 @@ export default class MinifiableText extends React.Component {
   }
 
   minifyText = () => {
-    this.setState({ isTextMinified: this.state.text.length > this.state.maxChars });
+    this.setState({ isTextMinified: this.props.text.length > this.state.maxChars });
   }
 
   onMinify = () => {
@@ -51,13 +46,15 @@ export default class MinifiableText extends React.Component {
   }
   
 	render() {
-    const { isTextMinified, text } = this.state;
+    const { isTextMinified } = this.state;
+    const { text, source } = this.props;
 
     if (!text) return null;
 
 		return (
       <React.Fragment>
         <span className={`minifiable ${isTextMinified ? 'minified' : 'expanded'}`}>{text}</span>
+        {source && <a href={source} target="_blank" rel="noopener noreferrer" className="text-sm pull-right">{source.indexOf('wikipedia') > -1 ? 'Wikipedia' : 'Fonte'}</a>}
         {isTextMinified && <React.Fragment><br/><button type="button" className="link" onClick={this.onMinify}>Mostra tutto</button></React.Fragment>}
       </React.Fragment>
 		);

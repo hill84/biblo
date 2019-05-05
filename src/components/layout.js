@@ -17,7 +17,7 @@ import { version } from '../../package.json';
 import { authid, noteRef, notesRef, signOut } from '../config/firebase';
 import { icon } from '../config/icons';
 import { roles } from '../config/lists';
-import { appName, getInitials, hasRole, timeSince } from '../config/shared';
+import { app, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { funcType, stringType, userType } from '../config/types';
 import CookieBanner from 'react-cookie-banner';
@@ -128,7 +128,7 @@ export default class Layout extends React.Component {
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
             <Typography className="title" variant="h6" color="inherit">
-              <Link to="/">{appName}<sup>Beta</sup></Link>
+              <Link to="/">{app.name}<sup>Beta</sup></Link>
             </Typography>
             {user ? 
               <React.Fragment>

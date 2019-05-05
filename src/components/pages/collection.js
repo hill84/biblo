@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, appDesc, appName, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, screenSize, truncateString } from '../../config/shared';
+import { abbrNum, app, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, screenSize, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
@@ -120,7 +120,7 @@ export default class Collection extends React.Component {
 
   render() {
     const { cid, collection, collections, followers, follow, loading, loadingCollections, screenSize } = this.state;
-    const { history, location, user } = this.props;
+    const { history, location, openSnackbar, user } = this.props;
 
     const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
     const isTextMinified = screenSize === 'xs' || screenSize === 'sm' || screenSize === 'md';
@@ -133,8 +133,8 @@ export default class Collection extends React.Component {
     return (
       <div id="CollectionComponent" className="container">
         <Helmet>
-          <title>{appName} | {collection ? collection.title : 'Collezione'}</title>
-          <meta name="description" content={collection && collection.description ? truncateString(collection.description, 155) : appDesc} />
+          <title>{app.name} | {collection ? collection.title : 'Collezione'}</title>
+          <meta name="description" content={collection && collection.description ? truncateString(collection.description, 155) : app.desc} />
         </Helmet>
         <div className="row">
           <div className="col">
@@ -202,7 +202,7 @@ export default class Collection extends React.Component {
           </div>
           <div className="col-md-6">
             <div className="card light">
-              <BookCollection cid={cid} pagination={false} booksPerRow={1} stacked />
+              <BookCollection cid={cid} openSnackbar={openSnackbar} pagination={false} booksPerRow={1} stacked />
             </div>
           </div>
         </div>

@@ -1051,8 +1051,8 @@ hr.line {
 .drawer .list li .version { font-size: .75rem; font-weight: 200; color: var(--lighterTextClr); }
 
 /* CUSTOM */
-.hero .container { padding-top: 140px; padding-bottom: 95px; margin-top: 0; }
-.hero .bg img { animation: fadeIn .4s ease-in-out 0; }
+.hero .container { padding-top: 100px; padding-bottom: 120px; margin-top: 0; }
+
 .hero .title {
   margin: 0;
   margin-bottom: .3rem;
@@ -1062,16 +1062,15 @@ hr.line {
   line-height: 125%;
   font-weight: 500;
   text-shadow: 0 0 50px rgb(38, 50, 56), 0 0 5px rgba(38, 50, 56, .3);
-  animation-delay: .4s;
 }
 .hero .subtitle { 
-  font-size: 1.1em; 
+  font-size: 1.3em; 
   margin-bottom: 1.2rem; 
   text-shadow: 0 0 10px rgb(38, 50, 56); 
-  animation-delay: .6s; 
+  animation-delay: .2s; 
 }
 .hero .btns {
-  animation-delay: .8s;
+  animation-delay: .4s;
 }
 .hero .overlay {
   background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
@@ -1177,8 +1176,10 @@ hr.line {
   box-shadow: inset 1px 1px 1px rgba(0,0,0,.05);
 }
 #authorCard .title { line-height: var(--avatarSize); }
-#authorCard .blockquote { 
-  margin-top: 10px; 
+#authorCard .loader, #authorComponent .coverview .book .info .author { display: none; }
+#authorComponent .randomquote { --pad: 10px; }
+#authorComponent .blockquote { 
+  /* margin-top: 10px; */
   overflow: hidden; 
   max-height: 0; 
   animation-name: maxheightIn;
@@ -1186,7 +1187,6 @@ hr.line {
   animation-timing-function: ease-in;
   animation-fill-mode: both;
 }
-#authorCard .loader, #authorComponent .coverview .book .info .author { display: none; }
 
 /* randomquote */
 .randomquote {

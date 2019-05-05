@@ -9,7 +9,7 @@ import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
 import SocialAuth from '../socialAuth';
-import { appName, handleFirestoreError } from '../../config/shared';
+import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 
 export default class SignupForm extends React.Component {
@@ -139,7 +139,7 @@ export default class SignupForm extends React.Component {
 		return (
 			<React.Fragment>
         <FormControlLabel className="text-left" style={{ marginRight: 0 }} label={
-          <span style={{ fontSize: '0.875rem' }}>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</span>
+          <span style={{ fontSize: '0.875rem' }}>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {app.name}</span>
         } control={
           <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
         } />

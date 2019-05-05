@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom';
 import firebase, { authid, storageRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
-import { appName, calcAge, getInitials, validateImg } from '../../config/shared';
+import { app, calcAge, getInitials, validateImg } from '../../config/shared';
 
 export default class Profile extends React.Component {
 	state = {
@@ -183,7 +183,7 @@ export default class Profile extends React.Component {
 		return (
       <div className="container" id="profileComponent">
         <Helmet>
-          <title>{appName} | Profilo</title>
+          <title>{app.name} | Profilo</title>
         </Helmet>
         <div className="card light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}

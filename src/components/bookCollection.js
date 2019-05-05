@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { genres } from '../config/lists';
-import { appName, booksPerRow, handleFirestoreError /* , isTouchDevice */ } from '../config/shared';
-import { boolType, numberType, stringType } from '../config/types';
+import { app, booksPerRow, handleFirestoreError /* , isTouchDevice */ } from '../config/shared';
+import { boolType, numberType, stringType, funcType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
@@ -32,6 +32,7 @@ export default class BookCollection extends React.Component {
     desc: boolType,
     inView: boolType,
     limit: numberType,
+    openSnackbar: funcType.isRequired,
     pagination: boolType,
     scrollable: boolType,
     stacked: boolType
@@ -161,7 +162,7 @@ export default class BookCollection extends React.Component {
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?
-                cid === 'Top' ? `I ${limit} libri più letti su ${appName}` : <button className="btn sm flat counter"><Link to={`/collection/${cid}`}>Vedi tutti</Link></button>
+                cid === 'Top' ? `I ${limit} libri più letti su ${app.name}` : <button className="btn sm flat counter"><Link to={`/collection/${cid}`}>Vedi tutti</Link></button>
               :
                 <button 
                   type="button"

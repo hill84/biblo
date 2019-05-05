@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { appName, handleFirestoreError } from '../../config/shared';
+import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 
 export default class VerifyEmailPage extends React.Component {
@@ -50,7 +50,7 @@ export default class VerifyEmailPage extends React.Component {
     return (
       <div className="card-container pad-v reveal fadeIn" id="verifyEmailPageComponent">
         <Helmet>
-          <title>{appName} | Conferma registrazione</title>
+          <title>{app.name} | Conferma registrazione</title>
         </Helmet>
         <h2>Conferma la tua registrazione</h2>
         <div className="card light" style={{maxWidth: 360}}>

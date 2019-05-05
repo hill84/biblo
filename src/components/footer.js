@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { appName } from '../config/shared';
+import { app } from '../config/shared';
 
 const Footer = () => (
   <footer>
     <div className="footer dark" id="FooterComponent">
       <div className="container bottompend pad-v-xs">
         <div className="row">
-          <div className="col hide-md"><p>© {appName} 2018</p></div>
+          <div className="col hide-md"><p>© {app.name} 2018</p></div>
           <div className="col-md-auto col-12 text-center-md text-right">
             <ul className="nolist inline-items info-row">
               <li className="counter"><Link to="/about">Chi siamo</Link></li>

@@ -1,5 +1,7 @@
 User-agent: Googlebot
 Disallow: /admin/
+Disallow: /404/
+Disallow: /icons/
 
 User-agent: *
 Allow: /

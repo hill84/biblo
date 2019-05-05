@@ -1,11 +1,11 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { appName, appPrivacyEmail, appURL } from '../../config/shared';
+import { app } from '../../config/shared';
 
 const PrivacyPage = props => (
   <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
     <Helmet>
-      <title>{appName} | Privacy policy</title>
+      <title>{app.name} | Privacy policy</title>
     </Helmet>
     <div className="container pad-v">
       <h1>Privacy policy</h1>
@@ -13,12 +13,12 @@ const PrivacyPage = props => (
       <br />
       
       <div className="text-justify text-left-sm">
-        <p>{appName} gestisce il sito web {appURL} (di seguito il "Servizio").</p>
+        <p>{app.name} gestisce il sito web {app.url} (di seguito il "Servizio").</p>
         <p>Questa pagina vi informa delle nostre politiche riguardanti la raccolta, l'uso e la divulgazione dei dati personali quando usate il nostro Servizio e le scelte che avete associato a quei dati.</p>
         <p>Utilizziamo i vostri dati per fornire e migliorare il Servizio. Utilizzando il Servizio, accettate la raccolta e l'utilizzo delle informazioni in conformità con questa informativa. Se non diversamente definito nella presente Informativa sulla privacy, i termini utilizzati nella presente Informativa hanno la stessa valenza dei nostri <a href="/terms">Termini e condizioni</a>.</p>
         <h2>Definizioni</h2>
         <ul>
-          <li><p><span className="accent-text">Servizio</span>: Il Servizio è il sito {appURL} gestito da {appName}</p></li>
+          <li><p><span className="accent-text">Servizio</span>: Il Servizio è il sito {app.url} gestito da {app.name}</p></li>
           <li><p><span className="accent-text">Dati personali</span>: I Dati personali sono i dati di un individuo vivente che può essere identificato da quei dati (o da quelli e altre informazioni in nostro possesso o che potrebbero venire in nostro possesso).</p></li>
           <li><p><span className="accent-text">Dati di utilizzo</span>: I dati di utilizzo sono i dati raccolti automaticamente generati dall'utilizzo del Servizio o dall'infrastruttura del Servizio stesso (ad esempio, la durata della visita di una pagina).</p></li>
           <li><p><span className="accent-text">Cookies</span>: I cookie sono piccoli file memorizzati sul vostro dispositivo (computer o dispositivo mobile).</p></li>
@@ -55,7 +55,7 @@ const PrivacyPage = props => (
         <p>Per maggiori informazioni consulta la nostra pagina <a href="/cookie">Cookie policy</a></p>
 
         <h2>Uso dei dati</h2> 
-        <p>{appName} utilizza i dati raccolti per vari scopi:</p>    
+        <p>{app.name} utilizza i dati raccolti per vari scopi:</p>    
         <ul>
           <li>Per fornire e mantenere il nostro Servizio</li>
           <li>Per comunicare agli utenti variazioni apportate al servizio che offriamo</li>
@@ -68,17 +68,17 @@ const PrivacyPage = props => (
 
         <h2>Trasferimento dei dati</h2>
         <p>Le vostre informazioni, compresi i Dati personali, possono essere trasferite a - e mantenute su - computer situati al di fuori del vostro stato, provincia, nazione o altra giurisdizione governativa dove le leggi sulla protezione dei dati possono essere diverse da quelle della vostra giurisdizione.</p>
-        <p>Se ci si trova al di fuori dell'Italia e si sceglie di fornire informazioni a {appName}, si ricorda che trasferiamo i dati, compresi i dati personali, in Italia e li elaboriamo lì.</p>
+        <p>Se ci si trova al di fuori dell'Italia e si sceglie di fornire informazioni a {app.name}, si ricorda che trasferiamo i dati, compresi i dati personali, in Italia e li elaboriamo lì.</p>
         <p>Il vostro consenso alla presente Informativa sulla privacy seguito dall'invio di tali informazioni rappresenta il vostro consenso al trasferimento.</p>
-        <p>{appName} adotterà tutte le misure ragionevolmente necessarie per garantire che i vostri dati siano trattati in modo sicuro e in conformità con la presente Informativa sulla privacy e nessun trasferimento dei vostri Dati Personali sarà effettuato a un'organizzazione o a un paese a meno che non vi siano controlli adeguati dei vostri dati e altre informazioni personali.</p>
+        <p>{app.name} adotterà tutte le misure ragionevolmente necessarie per garantire che i vostri dati siano trattati in modo sicuro e in conformità con la presente Informativa sulla privacy e nessun trasferimento dei vostri Dati Personali sarà effettuato a un'organizzazione o a un paese a meno che non vi siano controlli adeguati dei vostri dati e altre informazioni personali.</p>
 
         <h2>Divulgazione di dati</h2>
 
         <h3>Prescrizioni di legge</h3>
-        <p>{appName} può divulgare i vostri Dati personali in buona fede, ritenendo che tale azione sia necessaria per:</p>
+        <p>{app.name} può divulgare i vostri Dati personali in buona fede, ritenendo che tale azione sia necessaria per:</p>
         <ul>
           <li>Rispettare un obbligo legale</li>
-          <li>Proteggere e difendere i diritti o la proprietà di {appName}</li>
+          <li>Proteggere e difendere i diritti o la proprietà di {app.name}</li>
           <li>Prevenire o investigare possibili illeciti in relazione al Servizio</li>
           <li>Proteggere la sicurezza personale degli utenti del Servizio o del pubblico</li>
           <li>Proteggere contro la responsabilità legale</li>
@@ -107,7 +107,7 @@ const PrivacyPage = props => (
         <h2>Contattaci</h2>
         <p>In caso di domande sulla presente Informativa sulla privacy, si prega di contattarci:</p>
         <ul>
-          <li>Tramite e-mail: <a href={`mailto:${appPrivacyEmail}?subject=Biblo: Privacy`}>{appPrivacyEmail}</a></li>
+          <li>Tramite e-mail: <a href={`mailto:${app.privacyEmail}?subject=Biblo: Privacy`}>{app.privacyEmail}</a></li>
         </ul>
       </div>
     </div>

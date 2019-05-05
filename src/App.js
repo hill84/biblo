@@ -25,7 +25,7 @@ import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
-import { appDesc, appName, handleFirestoreError, needsEmailVerification } from './config/shared';
+import { app, handleFirestoreError, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
 import { Helmet } from 'react-helmet';
@@ -40,8 +40,8 @@ const NewBook = lazy(() => import('./components/pages/newBook'));
 const Profile = lazy(() => import('./components/pages/profile'));
 
 const seo = {
-  title: appName,
-  description: appDesc
+  title: app.name,
+  description: app.desc
 }
 
 export default class App extends React.Component {
@@ -108,7 +108,7 @@ export default class App extends React.Component {
                 <ErrorBoundary>
                   <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
                     <Switch>
-                      <Route path="/" exact component={Home} />
+                      <RouteWithProps path="/" exact component={Home} openSnackbar={openSnackbar} />
                       <Route path="/about" component={AboutPage} />
                       <Route path="/cookie" component={CookiePage} />
                       <Route path="/donations" component={DonationsPage} />
@@ -137,7 +137,10 @@ export default class App extends React.Component {
                       <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/challenges" component={NewFeature} user={user} openSnackbar={openSnackbar} />
                       <Redirect from="/home" to="/" />
-                      <Route component={NoMatchPage} />
+                      <Redirect from="/webmaster/*" to="/" />
+                      <Redirect from="/chi-siamo" to="/about" />
+                      <Redirect from="/aiuto" to="/help" />
+                      <Route component={NoMatchPage} status={404} />
                     </Switch>
                   </Suspense>
                 </ErrorBoundary>

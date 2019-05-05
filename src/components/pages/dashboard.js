@@ -12,7 +12,7 @@ import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { appDesc, appName, appURL, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
+import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
@@ -252,7 +252,7 @@ export default class Dashboard extends React.Component {
         snackbarMsg = `Segui ${fuser.displayName}`;
         const followerName = user.displayName.split(' ')[0];
         followerDisplayName = truncateString(followerName, 12);
-        noteMsg = `<a href="${appURL}/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
+        noteMsg = `<a href="${app.url}/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
 			}
       // console.log({ computedFollowers, computedFollowings });
 	
@@ -392,8 +392,8 @@ export default class Dashboard extends React.Component {
 		return (
 			<div className="container" id="dashboardComponent">
         <Helmet>
-          <title>{appName} | {user ? `La libreria di ${user.displayName}` : 'Libreria utente'}</title>
-          <meta name="description" content={appDesc} />
+          <title>{app.name} | {user ? `La libreria di ${user.displayName}` : 'Libreria utente'}</title>
+          <meta name="description" content={app.desc} />
         </Helmet>
 				<div className="row">
 					<div className="col-md col-12">
@@ -423,7 +423,7 @@ export default class Dashboard extends React.Component {
 												{user.continent && <span className="counter">{user.continent}</span>}
 											</span>
 											{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
-											{creationYear && <span className="counter">Su {appName} dal <b>{creationYear}</b></span>}
+											{creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
 											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">

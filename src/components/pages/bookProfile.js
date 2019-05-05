@@ -11,7 +11,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, appDesc, appName, calcReadingTime, hasRole, timeSince, truncateString } from '../../config/shared';
+import { abbrNum, app, calcReadingTime, hasRole, timeSince, truncateString } from '../../config/shared';
 import { funcType, userBookType, userType } from '../../config/types';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -118,8 +118,8 @@ export default class BookProfile extends React.Component {
       
         <div id="BookProfileComponent">
           <Helmet>
-            <title>{appName} | {book.title || 'Libro'}</title>
-            <meta name="description" content={book.description ? truncateString(book.description, 155) : appDesc} />
+            <title>{app.name} | {book.title || 'Libro'}</title>
+            <meta name="description" content={book.description ? truncateString(book.description, 155) : app.desc} />
           </Helmet>
           <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
 

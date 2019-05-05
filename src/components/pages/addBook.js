@@ -6,12 +6,12 @@ import { primaryTheme } from '../../config/themes';
 import { funcType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
-import { appDesc, appName } from '../../config/shared';
+import { app } from '../../config/shared';
 import { Helmet } from 'react-helmet';
 
 const seo = {
-  title: `${appName} | Aggiungi libro`,
-  description: appDesc
+  title: `${app.name} | Aggiungi libro`,
+  description: app.desc
 }
 
 export default class AddBook extends React.Component {

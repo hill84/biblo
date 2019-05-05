@@ -1,11 +1,15 @@
 import { badWords, firestoreErrorMessages } from './lists';
 
 // APP
-export const appName = 'Biblo';
-export const appURL = 'https://biblo.space';
-export const appEmail = 'info@biblo.space';
-export const appPrivacyEmail = 'privacy@biblo.space';
-export const appDesc = `${appName} è un social network dedicato a chi ama i libri e la lettura. La nostra missione è aiutare i lettori a trovare e condividere i libri che amano.`
+export const app = {
+  name: 'Biblo',
+  url: 'https://biblo.space',
+  fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space/' },
+  tw: { name: '', url: '' },
+  email: 'info@biblo.space',
+  privacyEmail: 'privacy@biblo.space',
+  desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
+};
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;

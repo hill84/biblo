@@ -9,7 +9,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import { userRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { appName, screenSize } from '../../../config/shared';
+import { app, screenSize } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
 /* import CollectionForm from '../../forms/collectionForm'; */
@@ -131,7 +131,7 @@ export default class Admin extends React.Component {
 		return (
 			<div className="container" id="adminComponent">
         <Helmet>
-          <title>{appName} | Amministrazione</title>
+          <title>{app.name} | Amministrazione</title>
         </Helmet>
         <div className="actions btns text-center pad-v-sm">
           <button type="button" title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>

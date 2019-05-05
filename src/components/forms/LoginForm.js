@@ -6,7 +6,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
-import { appName, handleFirestoreError } from '../../config/shared';
+import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
@@ -87,7 +87,7 @@ export default class LoginForm extends React.Component {
 				<SocialAuth openSnackbar={openSnackbar} />
 
         <div className="light-text pad-v-xs">
-          <small>Effettuando il login confermi la presa visione della <Link to="/privacy">Privacy policy</Link> di {appName}</small>
+          <small>Effettuando il login confermi la presa visione della <Link to="/privacy">Privacy policy</Link> di {app.name}</small>
         </div>
 
 				<form onSubmit={this.onSubmit} noValidate>
