@@ -39,11 +39,6 @@ const IconsPage = lazy(() => import('./components/pages/iconsPage'));
 const NewBook = lazy(() => import('./components/pages/newBook'));
 const Profile = lazy(() => import('./components/pages/profile'));
 
-const seo = {
-  title: app.name,
-  description: app.desc
-}
-
 export default class App extends React.Component {
 	state = {
     error: null,
@@ -76,16 +71,16 @@ export default class App extends React.Component {
   }
 
   clearUser = () => {
-    window.localStorage.removeItem(storageKey_uid);
-    if (this._isMounted) this.setState({ user: null });
+    if (this._isMounted) {
+      this.setState({ user: null }, () => localStorage.removeItem(storageKey_uid));
+    }
   }
 
   setUser = user => {
-    window.localStorage.setItem(storageKey_uid, user.uid);
     this.unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
       // console.log(snap);
       if (snap.exists) {
-        this.setState({ user: snap.data(), error: null });
+        this.setState({ user: snap.data(), error: null }, () => localStorage.setItem(storageKey_uid, user.uid));
       } else console.warn(`User not found in database`);
     }, err => {
       if (this._isMounted) this.setState({ error: handleFirestoreError(err) });
@@ -98,8 +93,12 @@ export default class App extends React.Component {
 		return (
 			<ThemeProvider theme={defaultTheme}>
         <Helmet>
-          <title>{seo.title}</title>
-          <meta name="description" content={seo.description} />
+          <title>{app.name}</title>
+          <meta property="og:title" content={app.name} />
+          <meta property="og:url" content={app.url} />
+          <meta property="og:image" content={`${app.url}/img/og-image.jpg`} />
+          <meta property="og:description" content={app.desc} />
+          <meta name="description" content={app.desc} />
         </Helmet>
         <SharedSnackbarProvider>
           <SharedSnackbarConsumer>

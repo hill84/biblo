@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
-import { handleFirestoreError } from '../config/shared';
+import { app, handleFirestoreError } from '../config/shared';
 import { bookType, funcType, objectType, stringType, userBookType, userType } from '../config/types';
 import NoMatch from './noMatch';
 const BookForm = lazy(() => import('./forms/bookForm'));
@@ -492,17 +492,36 @@ export default class Book extends React.Component {
 	render() {
     const { book, isEditing, loading, user, userBook } = this.state;
     const { history, location, openSnackbar } = this.props;
+    const seo = book && book.isbn_13 && {
+      author: Object.keys(book.authors),
+      description: `Scopri su ${app.name} la trama e le recensioni di ${book.title}, scritto da ${Object.keys(book.authors)[0]}, pubblicato da ${book.publisher}`,
+      image: book.covers.length && book.covers[0],
+      isbn: book.ISBN_13,
+      rating: { scale: '5', value: book.rating_num },
+      release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
+      title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
+      url: `${app.url}/book/${book.bid}`,
+    };
 
     if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
 		return (
       <React.Fragment>
-        {book && 
+        {seo && 
           <Helmet>
-            <meta property="og:type" content="book" />
-            <meta property="book:author" content={Object.keys(book.authors)} />
-            <meta property="book:isbn" content={String(book.ISBN_13)} />
-            {book.publication && <meta property="book:release_date" content={new Date(book.publication).toLocaleDateString()} />}
+            <title>{app.name} | {book.title || 'Libro'}</title>
+            <link rel="canonical" href={seo.url} />
+            <meta name="description" content={seo.description} />
+            <meta property="og:description" content={seo.description} />
+            <meta property="og:type" content="books.book" />
+            <meta property="og:url" content={seo.url} />
+            <meta property="og:title" content={seo.title} />
+            {book.covers.length && <meta property="og:image" content={seo.image} />}
+            <meta property="book:author" content={seo.author} />
+            <meta property="book:isbn" content={seo.isbn} />
+            <meta property="book:release_date" content={seo.release_date} />
+            <meta property="books:rating:value" content={seo.rating.value} />
+            <meta property="books:rating:scale" content={seo.rating.scale} />
           </Helmet>
         }
         <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>

@@ -81,11 +81,24 @@ export default class AuthorPage extends React.Component {
       return <NoMatch title="Autore non trovato" history={history} location={location} />
     }
 
+    const seo = author && author.displayName && {
+      description: `Scopri su ${app.name} i libri di ${author.displayName}`,
+      image: author.photoURL,
+      title: `${author.displayName} - ${app.name}`,
+      url: `${app.url}/author/${author.displayName}`,
+    };
+
     return (
       <div className="container" id="authorComponent">
         <Helmet>
           <title>{app.name} | {author.displayName || 'Autore'}</title>
-          <meta name="description" content={author.bio ? truncateString(author.bio, 155) : app.desc} />
+          <link rel="canonical" href={seo.url} />
+          <meta name="description" content={seo.description} />
+          <meta property="og:type" content="books.author" />
+          <meta property="og:title" content={seo.title} />
+          <meta property="og:url" content={seo.url} />
+          <meta property="og:description" content={seo.description} />
+          {seo.image && <meta property="og:image" content={seo.image} />}
         </Helmet>
         <div className="card dark" id="authorCard">
           <div className="row text-center-md">
@@ -101,7 +114,7 @@ export default class AuthorPage extends React.Component {
                   <Link to="/authors" className="btn sm primary">Autori</Link>
                 </div>
               </div>
-              <div className="info-row bio">
+              <div className="info-row bio text-left">
                 <MinifiableText text={author.bio} source={author.source} maxChars={500} />
               </div>
             </div>

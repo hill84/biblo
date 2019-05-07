@@ -117,10 +117,6 @@ export default class BookProfile extends React.Component {
         }
       
         <div id="BookProfileComponent">
-          <Helmet>
-            <title>{app.name} | {book.title || 'Libro'}</title>
-            <meta name="description" content={book.description ? truncateString(book.description, 155) : app.desc} />
-          </Helmet>
           <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
 
           {isOpenReadingState && 

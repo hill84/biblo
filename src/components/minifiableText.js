@@ -54,7 +54,15 @@ export default class MinifiableText extends React.Component {
 		return (
       <React.Fragment>
         <span className={`minifiable ${isTextMinified ? 'minified' : 'expanded'}`}>{text}</span>
-        {source && <a href={source} target="_blank" rel="noopener noreferrer" className="text-sm pull-right">{source.indexOf('wikipedia') > -1 ? 'Wikipedia' : 'Fonte'}</a>}
+        {source && 
+          <span className="text-sm pull-right">
+            <a href="https://it.wikipedia.org/wiki/Licenze_Creative_Commons">
+              <span className="show-sm">&copy;</span>
+              <span className="hide-sm">CC BY-SA</span>
+            </a>&nbsp;
+            <a href={source} target="_blank" rel="noopener noreferrer">{source.indexOf('wikipedia') > -1 ? 'Wikipedia' : 'Fonte'}</a>
+          </span>
+        }
         {isTextMinified && <React.Fragment><br/><button type="button" className="link" onClick={this.onMinify}>Mostra tutto</button></React.Fragment>}
       </React.Fragment>
 		);

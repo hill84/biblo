@@ -2280,8 +2280,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .btn .show-on-hover, .btn:hover .hide-on-hover { transform: scaleY(0); }
 .btn .hide-on-hover, .btn:hover .show-on-hover { transform: scaleY(1); display: block; }
 .show-on-hover, .hide-on-hover { will-change: opacity, transform; transition: all .2s ease-in-out; }
-.show-on-hover, .btn:hover .hide-on-hover, .avatar-row:hover .hide-on-hover { opacity: 0; }
-.hide-on-hover, .btn:hover .show-on-hover, .avatar-row:hover .show-on-hover { opacity: 1; }
+.show-on-hover, .btn:hover .hide-on-hover, .avatar-row:hover .hide-on-hover, .hoverable-items:hover .hide-on-hover { opacity: 0; }
+.hide-on-hover, .btn:hover .show-on-hover, .avatar-row:hover .show-on-hover, .hoverable-items:hover .show-on-hover { opacity: 1; }
 .hidden { opacity: 0; }
 
 .nolist {

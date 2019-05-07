@@ -201,8 +201,8 @@ export default class Layout extends React.Component {
                   onClick={this.onCloseMore}
                   open={Boolean(moreAnchorEl)}
                   onClose={this.onCloseMore}>
-                  <MenuItem component={NavLink} to="/profile">Profilo</MenuItem>
-                  <MenuItem component={NavLink} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
+                  <MenuItem><NavLink to="/profile">Profilo</NavLink></MenuItem>
+                  <MenuItem><NavLink to={`/dashboard/${authid}`}>Dashboard</NavLink></MenuItem>
                   <MenuItem onClick={signOut}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>
@@ -249,7 +249,7 @@ export default class Layout extends React.Component {
                   </NavLink>
                 </React.Fragment>
               :
-              <div className="auth-header-buttons">
+                <div className="auth-header-buttons">
                   <NavLink to="/login">
                     <MenuItem>
                       <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
