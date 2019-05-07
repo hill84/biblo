@@ -163,11 +163,24 @@ export default class Genre extends React.Component {
       return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
     }
 
+    const seo = {
+      canonical_name: genres.filter(genre => genre.name === match.params.gid)[0].canonical,
+      description: `Scopri su ${app.name} i libri di genere ${match.params.gid}`,
+      image: null,
+      title: match.params.gid,
+      url: `${app.url}/genre/${match.params.gid}`
+    };
+
     return (
       <div className="container" id="genreComponent">
         <Helmet>
-          <title>{app.name} | {match ? match.params.gid : 'Genere'}</title>
-          <meta name="description" content={app.desc} />
+          <title>{app.name} | {match.params.gid || 'Genere'}</title>
+          <meta name="description" content={seo.description} />
+          <meta property="og:type" content="books.genre" />
+          <meta property="og:title" content={seo.title} />
+          <meta property="og:url" content={seo.url} />
+          {seo.image && <meta property="og:image" content={seo.image} />}
+          <meta property="books:canonical_name" content={seo.canonical_name} />
         </Helmet>
         <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
           <div className="row">
