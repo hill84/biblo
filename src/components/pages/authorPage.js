@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { app, getInitials, normalizeString, truncateString } from '../../config/shared';
+import { app, getInitials, normalizeString } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
