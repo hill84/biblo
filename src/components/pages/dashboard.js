@@ -389,11 +389,22 @@ export default class Dashboard extends React.Component {
       </React.Fragment>
     );
 
+    const tabSeoTitle = () => {
+      switch (tabSelected) {
+        case 0: return 'La libreria';
+        case 1: return 'La lista dei desideri';
+        case 2: return 'Le attività';
+        case 3: return 'I contatti';
+        default: return 'La dashboard';
+      }
+    }
+
 		return (
 			<div className="container" id="dashboardComponent">
         <Helmet>
-          <title>{app.name} | {user ? `La libreria di ${user.displayName}` : 'Libreria utente'}</title>
+          <title>{app.name} | {user ? `${tabSeoTitle()} di ${user.displayName}` : 'Dashboard utente'}</title>
           <meta name="description" content={app.desc} />
+          {tabSelected && <link rel="canonical" href={`${app.url}/dashboard/${user.uid}/shelf`} />}
         </Helmet>
 				<div className="row">
 					<div className="col-md col-12">

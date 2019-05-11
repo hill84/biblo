@@ -8,7 +8,7 @@ import SignupForm from '../forms/signupForm';
 const Signup = React.forwardRef((props, ref) => (
   <div className="card-container pad-v" id="signupComponent" ref={ref}>
     <Helmet>
-      <title>{app.name} | Signup</title>
+      <title>{app.name} | Registrazione</title>
     </Helmet>
     <h2>Registrati</h2>
     <div className="card light">

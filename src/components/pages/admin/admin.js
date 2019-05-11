@@ -132,6 +132,7 @@ export default class Admin extends React.Component {
 			<div className="container" id="adminComponent">
         <Helmet>
           <title>{app.name} | Amministrazione</title>
+          <link rel="canonical" href={`${app.url}/admin`} />
         </Helmet>
         <div className="actions btns text-center pad-v-sm">
           <button type="button" title="Crea libro" className="btn primary"><Link to="/new-book">{icon.plus()} libro</Link></button>

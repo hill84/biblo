@@ -25,6 +25,16 @@ export default class Book extends React.Component {
       bookInShelf: false,
       bookInWishlist: false 
     },
+    seo: this.props.book && {
+      author: Object.keys(this.props.book.authors),
+      description: `Scopri su ${app.name} la trama e le recensioni di ${this.props.book.title}, scritto da ${Object.keys(this.props.book.authors)[0]}, pubblicato da ${this.props.book.publisher}`,
+      image: this.props.book.covers.length && this.props.book.covers[0],
+      isbn: this.props.book.ISBN_13,
+      rating: { scale: '5', value: this.props.book.rating_num },
+      release_date: this.props.book.publication ? new Date(this.props.book.publication).toLocaleDateString() : '',
+      title: `${this.props.book.title} di ${Object.keys(this.props.book.authors)[0]} - ${this.props.book.publisher} - ${app.name}`,
+      url: `${app.url}/book/${this.props.book.bid}`,
+    },
     isEditing: this.props.isEditing || false,
     loading: false
   }
@@ -44,6 +54,16 @@ export default class Book extends React.Component {
     if (props.book && (props.book !== state.book)) { 
       return { 
         book: props.book,
+        seo: {
+          author: Object.keys(props.book.authors),
+          description: `Scopri su ${app.name} la trama e le recensioni di ${props.book.title}, scritto da ${Object.keys(props.book.authors)[0]}, pubblicato da ${props.book.publisher}`,
+          image: props.book.covers.length && props.book.covers[0],
+          isbn: props.book.ISBN_13,
+          rating: { scale: '5', value: props.book.rating_num },
+          release_date: props.book.publication ? new Date(props.book.publication).toLocaleDateString() : '',
+          title: `${props.book.title} di ${Object.keys(props.book.authors)[0]} - ${props.book.publisher} - ${app.name}`,
+          url: `${app.url}/book/${props.book.bid}`,
+        },
         userBook: {
           ...state.userBook,
           bid: props.book.bid,
@@ -71,6 +91,16 @@ export default class Book extends React.Component {
               book: {
                 ...book,
                 ...snap.data()
+              },
+              seo: {
+                author: Object.keys(book.authors),
+                description: `Scopri su ${app.name} la trama e le recensioni di ${book.title}, scritto da ${Object.keys(book.authors)[0]}, pubblicato da ${book.publisher}`,
+                image: book.covers.length && book.covers[0],
+                isbn: book.ISBN_13,
+                rating: { scale: '5', value: book.rating_num },
+                release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
+                title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
+                url: `${app.url}/book/${book.bid}`,
               },
               userBook: {
                 ...userBook,
@@ -110,6 +140,16 @@ export default class Book extends React.Component {
             book: {
               ...book,
               ...snap.data()
+            },
+            seo: {
+              author: Object.keys(snap.data().authors),
+              description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,
+              image: snap.data().covers.length && snap.data().covers[0],
+              isbn: snap.data().ISBN_13,
+              rating: { scale: '5', value: snap.data().rating_num },
+              release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
+              title: `${snap.data().title} di ${Object.keys(snap.data().authors)[0]} - ${snap.data().publisher} - ${app.name}`,
+              url: `${app.url}/book/${snap.data().bid}`,
             },
             userBook: {
               ...userBook,
@@ -490,24 +530,14 @@ export default class Book extends React.Component {
   }
 	
 	render() {
-    const { book, isEditing, loading, user, userBook } = this.state;
+    const { book, isEditing, loading, seo, user, userBook } = this.state;
     const { history, location, openSnackbar } = this.props;
-    const seo = book && book.isbn_13 && {
-      author: Object.keys(book.authors),
-      description: `Scopri su ${app.name} la trama e le recensioni di ${book.title}, scritto da ${Object.keys(book.authors)[0]}, pubblicato da ${book.publisher}`,
-      image: book.covers.length && book.covers[0],
-      isbn: book.ISBN_13,
-      rating: { scale: '5', value: book.rating_num },
-      release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
-      title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
-      url: `${app.url}/book/${book.bid}`,
-    };
 
     if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
 		return (
       <React.Fragment>
-        {seo && 
+        {seo &&
           <Helmet>
             <title>{app.name} | {book.title || 'Libro'}</title>
             <link rel="canonical" href={seo.url} />

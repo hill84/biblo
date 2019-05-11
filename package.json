@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "private": true,
   "devDependencies": {
     "babel-cli": "^6.26.0",

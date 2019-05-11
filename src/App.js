@@ -167,6 +167,6 @@ const RouteWithProps = ({ path, exact, strict, component:Component, location, ..
     exact={exact}
     strict={strict}
     location={location}
-    render={(props) => <Component {...props} {...rest} />} 
+    render={props => <Component {...props} {...rest} />} 
 	/>
 );
