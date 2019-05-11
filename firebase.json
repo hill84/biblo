@@ -10,6 +10,16 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "headers": [
+      {
+        "source": "**/*.@(eot|otf|ttf|ttc|woff|font.css)",
+        "headers": [ {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        } ]
+      },
+      { "source":"/service-worker.js", "headers": [{"key": "Cache-Control", "value": "no-cache"}] }
+    ],
     "redirects": [
       {
         "source": "/sitemap",
