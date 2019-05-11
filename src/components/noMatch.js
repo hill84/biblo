@@ -1,5 +1,7 @@
 import React from 'react';
-import { stringType, shapeType, funcType } from '../config/types';
+import { Helmet } from 'react-helmet';
+import { app } from '../config/shared';
+import { funcType, shapeType, stringType } from '../config/types';
 import RandomQuote from './randomQuote';
 
 export default class NoMatch extends React.Component {
@@ -21,6 +23,10 @@ export default class NoMatch extends React.Component {
 
     return (
       <div className="container empty" id="noMatchComponent">
+        <Helmet>
+          <title>{app.name} | {title || 'Pagina non trovata'}</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
         <div className="card dark empty">
           <div className="text-center">
             <h1>{title || 'Pagina non trovata'}</h1>
@@ -33,7 +39,6 @@ export default class NoMatch extends React.Component {
         <div className="card flat col-md-8">
           <RandomQuote className="quote-container" skeleton={false} />
         </div>
-
       </div>
     );
   }

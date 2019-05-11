@@ -9,7 +9,7 @@
   <url> <loc>https://biblo.space/</loc> </url>
   <url> <loc>https://biblo.space/about</loc> </url>
   <url> <loc>https://biblo.space/authors</loc> </url>
-    <url> <loc>https://biblo.space/author/Adrian%20Fartade</loc> </url>
+  <url> <loc>https://biblo.space/author/Adrian%20Fartade</loc> </url>
   <url> <loc>https://biblo.space/author/Agatha%20Christie</loc> </url>
   <url> <loc>https://biblo.space/author/Alessandro%20Baricco</loc> </url>
   <url> <loc>https://biblo.space/author/Alice%20Munro</loc> </url>
@@ -173,6 +173,4 @@
   <url> <loc>https://biblo.space/notifications</loc> </url>
   <url> <loc>https://biblo.space/profile</loc> </url>
   <url> <loc>https://biblo.space/verify-email</loc> </url>
-  <url> <loc>https://biblo.space/admin</loc> </url>
-  <url> <loc>https://biblo.space/admin/:tab</loc> </url>
 </urlset>
