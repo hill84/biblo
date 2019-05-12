@@ -27,8 +27,6 @@ export default (
     <Route path="/new-book" />
     <Route path="/notifications" />
     <Route path="/profile" exact />
-    <Route path="/admin" exact />
-    <Route path="/admin/:tab" />
     <Route path="/challenge" />
     <Route path="/challenges" />
   </Switch>

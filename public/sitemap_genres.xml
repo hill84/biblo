@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset 
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" 
+  xmlns:xhtml="http://www.w3.org/1999/xhtml" 
+  xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" 
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
+  xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url> <loc>https://biblo.space/genre/Architettura</loc> </url>
+  <url> <loc>https://biblo.space/genre/Arte</loc> </url>
+  <url> <loc>https://biblo.space/genre/Avventura</loc> </url>
+  <url> <loc>https://biblo.space/genre/Biografie%20e%20autobiografie</loc> </url>
+  <url> <loc>https://biblo.space/genre/Cucina</loc> </url>
+  <url> <loc>https://biblo.space/genre/Economia%20e%20finanza</loc> </url>
+  <url> <loc>https://biblo.space/genre/Erotico</loc> </url>
+  <url> <loc>https://biblo.space/genre/Famiglia%20e%20relazioni</loc> </url>
+  <url> <loc>https://biblo.space/genre/Fantascienza</loc> </url>
+  <url> <loc>https://biblo.space/genre/Fantasy</loc> </url>
+  <url> <loc>https://biblo.space/genre/Filosofia</loc> </url>
+  <url> <loc>https://biblo.space/genre/Fumetti%20e%20Graphic novel</loc> </url>
+  <url> <loc>https://biblo.space/genre/Giallo</loc> </url>
+  <url> <loc>https://biblo.space/genre/Horror</loc> </url>
+  <url> <loc>https://biblo.space/genre/Informatica</loc> </url>
+  <url> <loc>https://biblo.space/genre/Per%20ragazzi</loc> </url>
+  <url> <loc>https://biblo.space/genre/Medicina%20e%20salute</loc> </url>
+  <url> <loc>https://biblo.space/genre/Mistero</loc> </url>
+  <url> <loc>https://biblo.space/genre/Musica</loc> </url>
+  <url> <loc>https://biblo.space/genre/Narrativa</loc> </url>
+  <url> <loc>https://biblo.space/genre/Poesia</loc> </url>
+  <url> <loc>https://biblo.space/genre/Politica</loc> </url>
+  <url> <loc>https://biblo.space/genre/Psicologia</loc> </url>
+  <url> <loc>https://biblo.space/genre/Religione%20e%20spiritualità</loc> </url>
+  <url> <loc>https://biblo.space/genre/Rosa</loc> </url>
+  <url> <loc>https://biblo.space/genre/Saggistica</loc> </url>
+  <url> <loc>https://biblo.space/genre/Satira%20e%20umorismo</loc> </url>
+  <url> <loc>https://biblo.space/genre/Scienza</loc> </url>
+  <url> <loc>https://biblo.space/genre/Scienze%20sociali</loc> </url>
+  <url> <loc>https://biblo.space/genre/Storico</loc> </url>
+  <url> <loc>https://biblo.space/genre/Teatro</loc> </url>
+  <url> <loc>https://biblo.space/genre/Thriller</loc> </url>
+  <url> <loc>https://biblo.space/genre/Viaggi</loc> </url>
+</urlset>

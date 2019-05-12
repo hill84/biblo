@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://biblo.space/sitemap_base.xml</loc>
+    <lastmod>2019-05-12</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://biblo.space/sitemap_authors.xml</loc>
+    <lastmod>2019-05-12</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://biblo.space/sitemap_books.xml</loc>
+    <lastmod>2019-05-12</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://biblo.space/sitemap_collections.xml</loc>
+    <lastmod>2019-05-12</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://biblo.space/sitemap_genres.xml</loc>
+    <lastmod>2019-05-12</lastmod>
+  </sitemap>
+</sitemapindex>
