@@ -55,7 +55,6 @@ export default class LoginForm extends React.Component {
           });
         }
 			}).catch(err => {
-        console.warn(err);
         if (this._isMounted) {
           this.setState({
             authError: handleFirestoreError(err),

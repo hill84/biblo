@@ -261,7 +261,6 @@ export default class Profile extends React.Component {
                       onChange={this.onChangeDate("birth_date")}
                       margin="normal"
                       animateYearScrolling
-                      openTo="year"
                       fullWidth
                     />
                   </MuiPickersUtilsProvider>

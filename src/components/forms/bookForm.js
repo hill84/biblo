@@ -610,7 +610,6 @@ export default class BookForm extends React.Component {
                         onChange={this.onChangeDate("publication")}
                         margin="normal"
                         animateYearScrolling
-                        openTo="year"
                         fullWidth
                       />
                     </MuiPickersUtilsProvider>

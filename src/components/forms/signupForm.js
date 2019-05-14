@@ -73,7 +73,6 @@ export default class SignupForm extends React.Component {
       auth.createUserWithEmailAndPassword(data.email, data.password).then(user => {
         if (!user) console.warn('No user is signed in');
       }).catch(err => {
-        console.warn(err);
         if (this._isMounted) {
           this.setState({
             authError: handleFirestoreError(err),
@@ -99,15 +98,9 @@ export default class SignupForm extends React.Component {
             if (user.emailVerified === false) {
               user.sendEmailVerification().then(() => {
                 if (this._isMounted) this.setState({ redirectTo: '/verify-email' });
-              }).catch(err => {
-                console.warn(err);
-                openSnackbar(handleFirestoreError(err), 'error');
-              });
+              }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
             }
-          }).catch(err => {
-            console.warn(err);
-            openSnackbar(handleFirestoreError(err), 'error');
-          });
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }
       });
 		}

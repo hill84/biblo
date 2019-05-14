@@ -122,12 +122,12 @@ export default class BookCollection extends React.Component {
           }
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
-    
+
       if (cid === 'Top') {
         this.setState({ count: limit }, () => fetcher());
       } else {
         if (!direction) {
-          collectionBooksRef(cid).get().then(fullSnap => {
+          lRef.get().then(fullSnap => {
             if (!fullSnap.empty) { 
               if (this._isMounted) {
                 this.setState({ count: fullSnap.docs.length }, () => fetcher());
