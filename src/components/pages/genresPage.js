@@ -15,7 +15,7 @@ class GenresPage extends React.Component {
   
   render() { 
     const { openSnackbar } = this.props;
-    const rootMargin = '200px';
+    const rootMargin = '300px';
 
     return (
       <div id="GenresPageComponent">
@@ -26,8 +26,8 @@ class GenresPage extends React.Component {
           {genres.map(item =>
             <InView key={item.id} triggerOnce rootMargin={rootMargin}>
               {({ inView, ref }) => 
-                <div className="card dark card-fullwidth-sm" style={{'--cardBg': item.color}} ref={ref}>
-                  <BookCollection cid={item.name} openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+                <div className="card dark card-fullwidth-sm" /* style={{'--cardBg': item.color}} */ ref={ref}>
+                  <BookCollection cid={item.name} openSnackbar={openSnackbar} desc={true} pagination={false} limit={7} inView={inView} scrollable />
                 </div>
               }
             </InView>

@@ -84,7 +84,7 @@ export default class BookCollection extends React.Component {
     const isGenre = genres.some(item => item.name === cid);
     const baseRef = cid === 'Top' ? 
       booksRef.orderBy('readers_num', 'desc') : isGenre ? 
-      booksRef.where('genres', 'array-contains', cid).orderBy('rating_num', desc ? 'desc' : 'asc') : 
+      booksRef.where('genres', 'array-contains', cid).orderBy('rating_num', desc ? 'desc' : 'asc').orderBy('EDIT.created_num', desc ? 'desc' : 'asc') : 
       collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title');
     const lRef = baseRef.limit(limit);
     const paginatedRef = lRef.startAfter(startAfter);
