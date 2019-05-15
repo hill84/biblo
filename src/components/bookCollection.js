@@ -4,7 +4,7 @@ import { booksRef, collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { genres } from '../config/lists';
 import { app, booksPerRow, handleFirestoreError /* , isTouchDevice */ } from '../config/shared';
-import { boolType, numberType, stringType, funcType } from '../config/types';
+import { boolType, funcType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 

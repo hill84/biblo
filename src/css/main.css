@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:300,400|Roboto+Slab:300,400|Heebo:500');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab:300,400');
 
 :root {
   /* http://www.material-ui.com/#/customization/colors */
@@ -89,6 +89,87 @@ h1, h2, h3, h4, h5, h6 { margin-top: .5rem; margin-bottom: .5rem; font-weight: 4
 p { margin-top: 0; margin-bottom: .5rem; }
 p:last-child { margin-bottom: 0; }
 p, ul, ol { color: var(--mainTextClr); font-weight: 300; }
+
+/* APPBAR */
+#layoutComponent { padding-top: 60px; flex-grow: 1; }
+#appBarComponent { 
+  position: fixed !important; 
+  top: 0; 
+  background-color: var(--cardBg); 
+  color: var(--contrastedTextClr); 
+  box-shadow: 0 1px 10px -2px rgba(0,0,0,.2); 
+}
+#appBarComponent .toolbar { min-height: 60px; }
+#appBarComponent .title { 
+  flex: 1; 
+  margin-left: 10px; 
+  margin-right: 10px; 
+  font-family: 'Boogaloo', sans-serif; 
+  text-transform: uppercase; 
+}
+#appBarComponent .title sup {
+  display: inline-block;
+  background: var(--accentClr);
+  font-size: .5rem;
+  color: #333;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: .6px;
+  padding: 2px 4px;
+  border-radius: 9px;
+  margin-left: -7px;
+  animation: fadeInSlideDown .8s ease-in-out 2.6s;
+  animation-fill-mode: both;
+}
+#appBarComponent svg { --iconSize: 24px; }
+#appBarComponent button { color: currentColor; }
+#appBarComponent .more-btn { margin-right: -12px; color: currentColor; padding: 7px; }
+#appBarComponent .drawer-btn { margin-left: -12px; color: currentColor; }
+#appBarComponent button .dot { box-shadow: 0 0 0 3px var(--cardBg); }
+#appBarComponent a { color: currentColor; }
+#appBarComponent a:active { color: rgba(0,0,0,.3); }
+#appBarComponent .reveal { animation-duration: .3s; }
+#appBarComponent .avatar { --avatarSize: 34px; width: var(--avatarSize); height: var(--avatarSize); font-size: 1rem; }
+#appBarComponent .search-book { 
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  max-width: 420px; 
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+  width: 100%;
+  z-index: 1;
+}
+
+/* HERO */
+.hero .container { padding-top: 100px; padding-bottom: 120px; margin-top: 0; }
+.hero .title {
+  margin: 0;
+  margin-bottom: .3rem;
+  color: var(--accentClr);
+  font-family: 'Boogaloo', sans-serif;
+  font-size: 3.2em;
+  line-height: 125%;
+  font-weight: 500;
+  text-shadow: 0 0 50px rgb(38, 50, 56), 0 0 5px rgba(38, 50, 56, .3);
+}
+.hero .subtitle { 
+  font-size: 1.3em; 
+  margin-bottom: 1.2rem; 
+  text-shadow: 0 0 10px rgb(38, 50, 56); 
+  animation-delay: .2s; 
+}
+.hero .btns {
+  animation-delay: .4s;
+}
+.hero .overlay {
+  background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
+  background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 75%);
+  animation: none;
+}
+.light-theme .hero * { text-shadow: none; }
 
 ul.nolist { list-style-image: none; margin: 0; padding: 0; }
 ul.nolist li { display: block; }
@@ -995,53 +1076,6 @@ hr.line {
 .notes-btn .dot { font-size: 0; transform: scale(.45); }
 .notes-btn:hover .dot { font-size: .6rem; transform: scale(1); }
 
-/* APPBAR */
-#layoutComponent { padding-top: 60px; flex-grow: 1; }
-#appBarComponent { 
-  position: fixed !important; 
-  top: 0; 
-  background-color: var(--cardBg); 
-  color: var(--contrastedTextClr); 
-  box-shadow: 0 1px 10px -2px rgba(0,0,0,.2); 
-}
-#appBarComponent .toolbar { min-height: 60px; }
-#appBarComponent .title { flex: 1; margin-left: 10px; margin-right: 10px; }
-#appBarComponent .title sup {
-  display: inline-block;
-  background: var(--accentClr);
-  font-size: .5rem;
-  color: #333;
-  text-transform: uppercase;
-  line-height: 1;
-  letter-spacing: .6px;
-  padding: 2px 4px;
-  border-radius: 9px;
-  margin-left: -7px;
-  animation: fadeInSlideDown .8s ease-in-out 2.6s;
-  animation-fill-mode: both;
-}
-#appBarComponent svg { --iconSize: 24px; }
-#appBarComponent button { color: currentColor; }
-#appBarComponent .more-btn { margin-right: -12px; color: currentColor; padding: 7px; }
-#appBarComponent .drawer-btn { margin-left: -12px; color: currentColor; }
-#appBarComponent button .dot { box-shadow: 0 0 0 3px var(--cardBg); }
-#appBarComponent a { color: currentColor; }
-#appBarComponent a:active { color: rgba(0,0,0,.3); }
-#appBarComponent .reveal { animation-duration: .3s; }
-#appBarComponent .avatar { --avatarSize: 34px; width: var(--avatarSize); height: var(--avatarSize); font-size: 1rem; }
-#appBarComponent .search-book { 
-  position: absolute;
-  top: 4px;
-  left: 0;
-  right: 0;
-  max-width: 420px; 
-  margin-left: auto;
-  margin-right: auto;
-  float: none;
-  width: 100%;
-  z-index: 1;
-}
-
 /* DRAWER */
 .drawer .list { width: 256px; }
 .drawer .list li div { margin: 0; padding: 0; min-width: 36px; }
@@ -1051,34 +1085,6 @@ hr.line {
 .drawer .list li .version { font-size: .75rem; font-weight: 200; color: var(--lighterTextClr); }
 
 /* CUSTOM */
-.hero .container { padding-top: 100px; padding-bottom: 120px; margin-top: 0; }
-
-.hero .title {
-  margin: 0;
-  margin-bottom: .3rem;
-  color: var(--accentClr);
-  font-family: 'Heebo', sans-serif;
-  font-size: 2.8em;
-  line-height: 125%;
-  font-weight: 500;
-  text-shadow: 0 0 50px rgb(38, 50, 56), 0 0 5px rgba(38, 50, 56, .3);
-}
-.hero .subtitle { 
-  font-size: 1.3em; 
-  margin-bottom: 1.2rem; 
-  text-shadow: 0 0 10px rgb(38, 50, 56); 
-  animation-delay: .2s; 
-}
-.hero .btns {
-  animation-delay: .4s;
-}
-.hero .overlay {
-  background: -moz-linear-gradient(top, transparent 0%, var(--mainBg) 75%);
-  background: linear-gradient(to bottom, transparent 0%,var(--mainBg) 75%);
-  animation: none;
-}
-.light-theme .hero * { text-shadow: none; }
-
 .form-group label + div:before {
   border-color: rgba(0,0,0,.15);
 }
@@ -1347,7 +1353,7 @@ hr.line {
   padding-top: var(--faderHeight);
   text-indent: 40px; 
   text-align: justify;     
-  font-family: 'Roboto Slab', 'Bookerly', Georgia, Arial;
+  font-family: 'Roboto Slab', serif;
   font-size: .9rem; 
   white-space: pre-line;
   word-wrap: break-word;

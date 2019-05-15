@@ -1,8 +1,9 @@
 import React from 'react';
-import { boolType, coverType, numberType } from '../config/types';
-import { abbrNum, joinObj } from '../config/shared';
-import Rating from './rating';
+import { InView } from 'react-intersection-observer';
 import { icon } from '../config/icons';
+import { abbrNum, joinObj } from '../config/shared';
+import { boolType, coverType, numberType } from '../config/types';
+import Rating from './rating';
 
 export default class Cover extends React.Component {
   state = {
@@ -12,13 +13,15 @@ export default class Cover extends React.Component {
   }
 
   static propTypes = {
+    animationDelay: boolType,
     bcid: numberType,
     book: coverType,
+    full: boolType,
+    index: numberType,
     info: boolType,
     page: numberType,
     rating: boolType,
-    showReaders: boolType,
-    full: boolType
+    showReaders: boolType
   }
 
   static defaultProps = {
@@ -60,24 +63,28 @@ export default class Cover extends React.Component {
 
 		return (
       <div className="book"> 
-        <div className="cover" title={book.title} style={{animationDelay: (animationDelay !== false) ? `${delay}s` : '', backgroundImage: cover ? `url(${cover})` : null}}>
-          {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
-          {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
-          {book.review && book.review.text && <div className="cover-review">Recensione</div>}
-          {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account()}</div> : ''}
-          <div className="overlay" />
-          {/* (book.covers && book.covers.length > 1) && 
-            <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
-          */}
-          {!cover &&
-            <React.Fragment>
-              <h2 className="title">{book.title}</h2>
-              {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
-              <span className="author">{joinObj(book.authors)}</span>
-              {book.publisher && <span className="publisher">{book.publisher}</span>}
-            </React.Fragment>
+        <InView triggerOnce rootMargin="130px">
+          {({ inView, ref }) =>
+            <div ref={ref} className="cover" title={book.title} style={{ animationDelay: (animationDelay !== false) ? `${delay}s` : '', backgroundImage: inView ? cover ? `url(${cover})` : null : null }}>
+              {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
+              {book.readingState && book.readingState.state_num === 2 && <div className="bookmark"></div>}
+              {book.review && book.review.text && <div className="cover-review">Recensione</div>}
+              {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account()}</div> : ''}
+              <div className="overlay" />
+              {/* (book.covers && book.covers.length > 1) && 
+                <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
+              */}
+              {!cover &&
+                <React.Fragment>
+                  <h2 className="title">{book.title}</h2>
+                  {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
+                  <span className="author">{joinObj(book.authors)}</span>
+                  {book.publisher && <span className="publisher">{book.publisher}</span>}
+                </React.Fragment>
+              }
+            </div>
           }
-        </div>
+        </InView>
         {info !== false && 
           <div className="info">
             <strong className="title">{book.title}</strong>
