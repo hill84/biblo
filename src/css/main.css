@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Slab:300,400');
-
 :root {
   /* http://www.material-ui.com/#/customization/colors */
   --primaryLighterClr: rgb(0, 188, 212);  /* cyan500 */
@@ -95,6 +93,7 @@ p, ul, ol { color: var(--mainTextClr); font-weight: 300; }
 #appBarComponent { 
   position: fixed !important; 
   top: 0; 
+  opacity: .99;
   background-color: var(--cardBg); 
   color: var(--contrastedTextClr); 
   box-shadow: 0 1px 10px -2px rgba(0,0,0,.2); 
