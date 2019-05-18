@@ -10,7 +10,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { handleFirestoreError, timeSince } from '../../../config/shared';
+import { handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
@@ -121,7 +121,7 @@ export default class collectionsDash extends React.Component {
   onChangeLimitBy = (e, i) => this.setState({ limitByIndex: i, limitMenuAnchorEl: null, page: 1 });
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
-  onView = id => this.setState({ redirectTo: id });
+  onView = id => this.setState({ redirectTo: normURL(id) });
   
   onEdit = id => {
     console.log(`Editing ${id}`);
@@ -163,7 +163,7 @@ export default class collectionsDash extends React.Component {
       items.map(item => 
         <li key={item.title} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
-            <Link to={`/collection/${item.title}`} className="col">
+            <Link to={`/collection/${normURL(item.title)}`} className="col">
               {item.title}
             </Link>
             <div className="col">{item.books.length}</div>

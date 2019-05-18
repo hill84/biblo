@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, app, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, screenSize, truncateString } from '../../config/shared';
+import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
@@ -61,9 +61,9 @@ export default class Collection extends React.Component {
     const { cid } = this.state;
     const { openSnackbar, user } = this.props;
 
-    collectionRef(cid).get().then(snap => {
+    collectionRef(denormURL(cid)).get().then(snap => {
       if (!snap.empty) {
-        this.unsubCollectionFollowersFetch = collectionFollowersRef(cid).onSnapshot(snap => {
+        this.unsubCollectionFollowersFetch = collectionFollowersRef(denormURL(cid)).onSnapshot(snap => {
           if (!snap.empty) {
             const followers = [];
             snap.forEach(follower => followers.push(follower.data()));
@@ -90,7 +90,7 @@ export default class Collection extends React.Component {
     collectionsRef.get().then(snap => {
       if (!snap.empty) {
         const collections = [];
-        snap.forEach(collection => collection.id !== (cid) && collections.push(collection.data()));
+        snap.forEach(collection => collection.id !== (denormURL(cid)) && collections.push(collection.data()));
         if (this._isMounted) {
           this.setState({ collections, loadingCollections: false });
         }
@@ -107,9 +107,9 @@ export default class Collection extends React.Component {
     const { openSnackbar, user } = this.props;
 
     if (follow) {
-      collectionFollowersRef(cid).doc(user.uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      collectionFollowersRef(denormURL(cid)).doc(user.uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
-      collectionFollowersRef(cid).doc(user.uid).set({
+      collectionFollowersRef(denormURL(cid)).doc(user.uid).set({
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
@@ -141,7 +141,7 @@ export default class Collection extends React.Component {
             <div className="sticky no-sticky-md">
               
               <div className="card dark collection-profile">
-                <h2>{cid}</h2>
+                <h2>{denormURL(cid)}</h2>
                 {loading ? skltn_rows : 
                   <React.Fragment>
                     <div className="info-row description">
@@ -188,7 +188,7 @@ export default class Collection extends React.Component {
                   <div className="content">
                     {loadingCollections ? skltn_rows : collections.map(collection => 
                       <Link 
-                        to={`/collection/${collection.title}`} 
+                        to={`/collection/${normURL(collection.title)}`} 
                         key={normalizeString(collection.title)} 
                         className="badge">
                         {collection.title}
@@ -202,7 +202,7 @@ export default class Collection extends React.Component {
           </div>
           <div className="col-md-6">
             <div className="card light">
-              <BookCollection cid={cid} openSnackbar={openSnackbar} pagination={false} booksPerRow={1} stacked />
+              <BookCollection cid={denormURL(cid)} openSnackbar={openSnackbar} pagination={false} booksPerRow={1} stacked />
             </div>
           </div>
         </div>

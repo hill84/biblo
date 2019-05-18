@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, handleFirestoreError, isTouchDevice, normURL, screenSize } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, isTouchDevice, normURL, screenSize } from '../../config/shared';
 import { funcType } from '../../config/types';
 import Cover from '../cover';
 import Genres from '../genres';
@@ -63,7 +63,7 @@ export default class Genre extends React.Component {
     const { desc, limit, orderBy, orderByIndex } = this.state;
     const { openSnackbar } = this.props;
     const { gid } = this.props.match.params;
-    const ref = booksRef.where('genres', 'array-contains', gid);
+    const ref = booksRef.where('genres', 'array-contains', denormURL(gid));
 
     if (gid) {
       ref.get().then(fullSnap => {
@@ -98,7 +98,7 @@ export default class Genre extends React.Component {
     const { desc, items, lastVisible, limit, orderBy, orderByIndex } = this.state;
     const { openSnackbar } = this.props;
     const { gid } = this.props.match.params;
-    const ref = booksRef.where('genres', 'array-contains', gid);
+    const ref = booksRef.where('genres', 'array-contains', denormURL(gid));
 
     if (gid) {
       this.setState({ loading: true });
@@ -155,7 +155,7 @@ export default class Genre extends React.Component {
       </MenuItem>
     ));
 
-    const genreColor = genres.filter(genre => genre.name === match.params.gid)[0].color;
+    const genreColor = genres.filter(genre => genre.name === denormURL(match.params.gid))[0].color;
 
     const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 
@@ -164,11 +164,11 @@ export default class Genre extends React.Component {
     }
 
     const seo = {
-      canonical_name: genres.filter(genre => genre.name === match.params.gid)[0].canonical,
-      description: `Scopri su ${app.name} i libri di genere ${match.params.gid}`,
+      canonical_name: genres.filter(genre => genre.name === denormURL(match.params.gid))[0].canonical,
+      description: `Scopri su ${app.name} i libri di genere ${denormURL(match.params.gid)}`,
       image: null,
-      title: match.params.gid,
-      url: `${app.url}/genre/${match.params.gid}`
+      title: denormURL(match.params.gid),
+      url: `${app.url}/genre/${normURL(match.params.gid)}`
     };
 
     return (
@@ -185,7 +185,7 @@ export default class Genre extends React.Component {
         <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
           <div className="row">
             <div className="col">
-              <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {match.params.gid}</h2>
+              <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {denormURL(match.params.gid)}</h2>
             </div>
             <div className="col-auto text-right">
               <Link to="/genres" className="btn sm flat" style={{color: !isScrollable ? 'white' : ''}}>Generi</Link>

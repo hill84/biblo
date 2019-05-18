@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { genres } from '../config/lists';
-import { app, booksPerRow, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
+import { app, booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
 import { boolType, funcType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -84,7 +84,7 @@ export default class BookCollection extends React.Component {
     const isGenre = genres.some(item => item.name === cid);
     const baseRef = cid === 'Top' ? 
       booksRef.orderBy('readers_num', 'desc') : isGenre ? 
-      booksRef.where('genres', 'array-contains', cid).orderBy('rating_num', desc ? 'desc' : 'asc').orderBy('EDIT.created_num', desc ? 'desc' : 'asc') : 
+      booksRef.where('genres', 'array-contains', denormURL(cid)).orderBy('rating_num', desc ? 'desc' : 'asc').orderBy('EDIT.created_num', desc ? 'desc' : 'asc') : 
       collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title');
     const lRef = baseRef.limit(limit);
     const paginatedRef = lRef.startAfter(startAfter);
@@ -154,6 +154,7 @@ export default class BookCollection extends React.Component {
     : 
       <div className="info-row empty">Non ci sono libri in questa collezione.</div>
     );
+    const isGenre = genres.some(item => item.name === cid);
 
 		return (
       <React.Fragment>
@@ -162,7 +163,7 @@ export default class BookCollection extends React.Component {
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?
-                cid === 'Top' ? `I ${limit} libri più letti su ${app.name}` : <button className="btn sm flat counter"><Link to={`/collection/${cid}`}>Vedi tutti</Link></button>
+                cid === 'Top' ? `I ${limit} libri più letti su ${app.name}` : <button className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
               :
                 <button 
                   type="button"
