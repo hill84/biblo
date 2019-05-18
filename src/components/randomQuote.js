@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
+import { normURL } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
 import { skltn_quote } from './skeletons';
@@ -82,7 +83,7 @@ export default class RandomQuote extends React.Component {
         <div className="row">
           {coverURL && !this.props.author &&
             <div className="col-auto">
-              <Link to={`/book/${bid}`} className="hoverable-items">
+              <Link to={`/book/${bid}/${normURL(bookTitle)}`} className="hoverable-items">
                 <div className="book">
                   <div className="cover" style={{backgroundImage: `url(${coverURL})`}} title={bookTitle}>
                     <div className="overlay" />
@@ -94,7 +95,7 @@ export default class RandomQuote extends React.Component {
           <div className="col">
             <blockquote className="blockquote">
               <div className="q"><MinifiableText text={quote} limit={500} /></div>
-                <p>– {this.props.author ? author : <Link to={`/author/${author}`}>{author}</Link>}{bookTitle && <em>, {bid ? <Link to={`/book/${bid}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
+                <p>– {this.props.author ? author : <Link to={`/author/${normURL(author)}`}>{author}</Link>}{bookTitle && <em>, {bid ? <Link to={`/book/${bid}/${normURL(bookTitle)}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
             </blockquote>
           </div>
         </div>

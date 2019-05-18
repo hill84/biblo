@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
-import { app, handleFirestoreError } from '../config/shared';
+import { app, handleFirestoreError, normURL } from '../config/shared';
 import { bookType, funcType, objectType, stringType, userBookType, userType } from '../config/types';
 import NoMatch from './noMatch';
 const BookForm = lazy(() => import('./forms/bookForm'));
@@ -33,7 +33,7 @@ export default class Book extends React.Component {
       rating: { scale: '5', value: this.props.book.rating_num },
       release_date: this.props.book.publication ? new Date(this.props.book.publication).toLocaleDateString() : '',
       title: `${this.props.book.title} di ${Object.keys(this.props.book.authors)[0]} - ${this.props.book.publisher} - ${app.name}`,
-      url: `${app.url}/book/${this.props.book.bid}`,
+      url: `${app.url}/book/${this.props.book.bid}/${normURL(this.props.book.title)}`,
     },
     isEditing: this.props.isEditing || false,
     loading: false
@@ -62,7 +62,7 @@ export default class Book extends React.Component {
           rating: { scale: '5', value: props.book.rating_num },
           release_date: props.book.publication ? new Date(props.book.publication).toLocaleDateString() : '',
           title: `${props.book.title} di ${Object.keys(props.book.authors)[0]} - ${props.book.publisher} - ${app.name}`,
-          url: `${app.url}/book/${props.book.bid}`,
+          url: `${app.url}/book/${props.book.bid}/${normURL(props.book.title)}`,
         },
         userBook: {
           ...state.userBook,
@@ -100,7 +100,7 @@ export default class Book extends React.Component {
                 rating: { scale: '5', value: book.rating_num },
                 release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
                 title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
-                url: `${app.url}/book/${book.bid}`,
+                url: `${app.url}/book/${book.bid}/${normURL(book.title)}`,
               },
               userBook: {
                 ...userBook,
@@ -149,7 +149,7 @@ export default class Book extends React.Component {
               rating: { scale: '5', value: snap.data().rating_num },
               release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
               title: `${snap.data().title} di ${Object.keys(snap.data().authors)[0]} - ${snap.data().publisher} - ${app.name}`,
-              url: `${app.url}/book/${snap.data().bid}`,
+              url: `${app.url}/book/${snap.data().bid}/${normURL(snap.data().title)}`,
             },
             userBook: {
               ...userBook,

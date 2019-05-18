@@ -27,9 +27,9 @@ export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
-}, error => console.warn('Async: Could not copy text: ', error));
+}, err => console.warn('Async: Could not copy text: ', err));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
-export const getInitials = text => text && text.split(" ").map(w => w.charAt(0)).join('');
+export const getInitials = text => text && text.split(' ').map(w => w.charAt(0)).join('');
 export const objToArr = obj => Object.keys(obj);
 export const arrToObj = (arr, fn) => {
   const obj = {};
@@ -40,7 +40,9 @@ export const arrToObj = (arr, fn) => {
   return obj;
 };
 // example: const obj = arrToObj(arr, function(item) { return { key: item, value: 'author' }});
-export const truncateString = (string, limit) => string && string.length > limit ? `${string.substr(0, limit)}…` : string;
+export const truncateString = (str, limit) => str && str.length > limit ? `${str.substr(0, limit)}…` : str;
+export const normURL = str => str && str.replace(/ /g, '_');
+export const denormURL = str => str && str.replace(/_/g, ' ');
 
 /* export const arrayToObj = array => { 
   const obj = {}; 
@@ -86,7 +88,14 @@ export const normalizeString = str => String(str).toLowerCase()
   .replace(/^-+/, '')         // Trim - from start of text
   .replace(/-+$/, '');        // Trim - from end of text
 export const normalizeCover = str => str && String(str).replace('http:', '').replace('&edge=curl', '');
-export const capitalizeFirstLetter = str => str && String(str).charAt(0).toUpperCase() + String(str).slice(1);
+export const capitalizeInitial = str => str && String(str).charAt(0).toUpperCase() + String(str).slice(1);
+export const capitalizeInitials = str => {
+  str = str.split(' ');
+  for (let i = 0, x = str.length; i < x; i++) {
+    str[i] = str[i][0].toUpperCase() + str[i].substr(1);
+  }
+  return str.join(' ');
+}
 
 // CALCULATION
 const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) ? `${Math.floor(minutes%60)} minuti` : ''}`;
@@ -136,9 +145,9 @@ export const abbrNum = (number, decPlaces = 0) => {
 }
 
 // MAP
-export const switchGenres = array => array.map(string => {
+export const switchGenres = array => array.map(str => {
   let g;
-  switch (string) {
+  switch (str) {
     case "Architecture":                g = "Architettura"; break;
     case "Art":                         
     case "Performing Arts":             g = "Arte"; break;
@@ -170,9 +179,9 @@ export const switchGenres = array => array.map(string => {
   return g;
 });
 
-export const switchLanguages = string => {
+export const switchLanguages = str => {
   let l;
-  switch (string) {
+  switch (str) {
     case "ar": l = "Arabo"; break;
     case "zh": l = "Cinese"; break;
     case "ko": l = "Coreano"; break;

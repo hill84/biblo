@@ -9,7 +9,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, reviewerRef, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { abbrNum, getInitials, hasRole, timeSince } from '../config/shared';
+import { abbrNum, getInitials, hasRole, normURL, timeSince } from '../config/shared';
 import { reviewType, stringType, userType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
@@ -132,7 +132,7 @@ export default class Review extends React.Component {
           <div className="row">
             <div className="col-auto left">
               {!bid ?
-                <Link to={`/book/${review.bid}`} className="hoverable-items">
+                <Link to={`/book/${review.bid}/${normURL(review.bookTitle)}`} className="hoverable-items">
                   <Cover info={false} book={{
                     bid: review.bid,
                     title: review.bookTitle,

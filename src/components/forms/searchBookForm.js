@@ -13,7 +13,7 @@ import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { arrToObj, capitalizeFirstLetter, normalizeCover, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
+import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 
@@ -219,7 +219,7 @@ export default class SearchBookForm extends React.Component {
 
               let referrer;
               snap.forEach(doc => {
-                referrer = `/book/${doc.data().bid}`
+                referrer = `/book/${doc.data().bid}/${normURL(doc.data().title)}`
               });
 
               this.setState({ redirectToReferrer: referrer });
@@ -274,7 +274,7 @@ export default class SearchBookForm extends React.Component {
         // console.log(searchBy.key);
         let query;
         let optionLabel = searchBy.key;
-        const capitalizedSearchTextType = capitalizeFirstLetter(searchTextType);
+        const capitalizedSearchTextType = capitalizeInitial(searchTextType);
         switch (searchBy.key) {
           case 'ISBN_13':
             query = booksRef.where(searchBy.where, '==', searchTextType); break;
@@ -282,7 +282,7 @@ export default class SearchBookForm extends React.Component {
             query = booksRef.where(`${searchBy.where}.${capitalizedSearchTextType}`, '==', true); 
             optionLabel = String(searchBy.where); break;
           case 'publisher':
-            query = booksRef.where(searchBy.where, '>=', capitalizeFirstLetter(searchTextType)); break;
+            query = booksRef.where(searchBy.where, '>=', capitalizeInitial(searchTextType)); break;
           default:
             query = booksRef.where(searchBy.where, '>=', searchTextType); break;
         };

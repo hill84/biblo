@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorsRef } from '../config/firebase';
 import { numberType, boolType } from '../config/types';
-import { getInitials } from '../config/shared';
+import { getInitials, normURL } from '../config/shared';
 import { icon } from '../config/icons';
 import { skltn_bubbleRow } from './skeletons';
 
@@ -124,7 +124,7 @@ export default class Authors extends React.Component {
           {loading ? skltn_bubbleRow :
             <div className="shelf-row hoverable-items avatars-row">
               {items.map((item, index) => 
-                <Link to={`/author/${item.displayName}`} key={item.displayName} style={{'--avatarSize': size, animationDelay: `${index/10}s`}} className="bubble col">
+                <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{'--avatarSize': size, animationDelay: `${index/10}s`}} className="bubble col">
                   <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
                   <div className="title">{item.displayName}</div>
                 </Link>

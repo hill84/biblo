@@ -6,7 +6,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { booksPerRow, handleFirestoreError } from '../config/shared';
+import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
 import { numberType, stringType, funcType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
@@ -181,7 +181,7 @@ export default class Shelf extends React.Component {
   render() {
     const { booksPerRow, coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
     const covers = items && items.length > 0 && items.map((book, i) => (
-      <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
+      <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
     ));
     const filterByOptions = filterBy.map((option, i) => (
       <MenuItem

@@ -9,7 +9,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials, handleFirestoreError, normalizeString, timeSince } from '../../../config/shared';
+import { getInitials, handleFirestoreError, normalizeString, normURL, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -168,7 +168,7 @@ export default class AuthorsDash extends React.Component {
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(item.displayName)}>{icon.eye()}</button>
+              <button type="button" className="btn icon green" onClick={() => this.onView(normURL(item.displayName))}>{icon.eye()}</button>
               <button type="button" className="btn icon primary" onClick={() => this.onEdit(normalizeString(item.displayName))}>{icon.pencil()}</button>
               <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(normalizeString(item.displayName), item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(normalizeString(item.displayName))}>{icon.close()}</button>

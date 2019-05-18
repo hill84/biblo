@@ -260,7 +260,7 @@ export default class BookForm extends React.Component {
             title_sort: book.title_sort
           }).then(() => {
             if (this._isMounted) {
-              this.setState({ redirectToBook: newBid }, () => {
+              this.setState({ redirectToBook: `${newBid}/${book.title}` }, () => {
                 /* this.setState({ loading: false, changes: false });
                 this.props.isEditing(); */
                 openSnackbar('Nuovo libro creato', 'success');

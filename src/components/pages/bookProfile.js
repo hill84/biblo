@@ -10,7 +10,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, calcReadingTime, hasRole, timeSince } from '../../config/shared';
+import { abbrNum, calcReadingTime, hasRole, normURL, timeSince } from '../../config/shared';
 import { funcType, userBookType, userType } from '../../config/types';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -99,7 +99,7 @@ export default class BookProfile extends React.Component {
     const isAdmin = hasRole(user, 'admin');
     const isEditor = hasRole(user, 'editor');
     const isLocked = book && !book.EDIT.edit && !isAdmin;
-    // const authors = book && <Link to={`/author/${Object.keys(book.authors)[0]}`}>{Object.keys(book.authors)[0]}</Link>;
+    // const authors = book && <Link to={`/author/${normURL(Object.keys(book.authors)[0])}`}>{Object.keys(book.authors)[0]}</Link>;
 
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 
@@ -144,7 +144,9 @@ export default class BookProfile extends React.Component {
                   <h2 className="title">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
-                  {book.authors && <span className="counter comma">di {Object.keys(book.authors).map(author => <Link to={`/author/${author}`} className="counter" key={author}>{author}</Link> )}</span>}
+                  {book.authors && <span className="counter comma">di {Object.keys(book.authors).map(author => 
+                    <Link to={`/author/${normURL(author)}`} className="counter" key={author}>{author}</Link> 
+                  )}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && isEditor && hasBid &&
                       <button type="button" className="btn sm flat counter" disabled={isLocked} onClick={this.onEditing} title={book.EDIT.edit ? null : 'Solo gli amministratori possono modificare'}>

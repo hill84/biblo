@@ -9,7 +9,7 @@ import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef/* , reviewRef */ } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { handleFirestoreError, imageZoomDefaultStyles, timeSince } from '../../../config/shared';
+import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -118,12 +118,14 @@ export default class BooksDash extends React.Component {
 
   onView = e => {
     const id = e.currentTarget.parentNode.dataset.id;
-    this.setState({ redirectTo: id });
+    const title = e.currentTarget.parentNode.dataset.title;
+    this.setState({ redirectTo: title ? `${id}/${title}` : id });
   }
   
   onEdit = e => {
     const id = e.currentTarget.parentNode.dataset.id;
-    this.setState({ redirectTo: id }); // TODO
+    const title = e.currentTarget.parentNode.dataset.title;
+    this.setState({ redirectTo: title ? `${id}/${title}` : id }); // TODO
   }
 
   onLock = e => {
@@ -179,10 +181,10 @@ export default class BooksDash extends React.Component {
               />
             </div>
           </div>
-          <Link to={`/book/${item.bid}`} className="col">
+          <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">
             {item.title}
           </Link>
-          <Link to={`/author/${Object.keys(item.authors)[0]}`} className="col">
+          <Link to={`/author/${normURL(Object.keys(item.authors)[0])}`} className="col">
             {Object.keys(item.authors)[0]}
           </Link>
           <div className="col hide-md monotype" title={item.bid}>
@@ -206,7 +208,7 @@ export default class BooksDash extends React.Component {
           <div className="col col-sm-2 col-lg-1 text-right">
             <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
           </div>
-          <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit}>
+          <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit} data-title={item.title}>
             <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye()}</button>
             <button type="button" className="btn icon primary" onClick={this.onEdit} title="Modifica">{icon.pencil()}</button>
             <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>

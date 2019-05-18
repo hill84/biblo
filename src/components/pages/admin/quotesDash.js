@@ -8,7 +8,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { handleFirestoreError, timeSince } from '../../../config/shared';
+import { handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -159,8 +159,8 @@ export default class QuotesDash extends React.Component {
             <div className="col-auto">
               <div className="mock-cover xs" style={{backgroundImage: `url(${item.coverURL})`}} />
             </div>
-            {item.bid ? <Link to={`/book/${item.bid}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
-            <Link to={`/author/${item.author}`} className="col">{item.author}</Link>
+            {item.bid ? <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
+            <Link to={`/author/${normURL(item.author)}`} className="col">{item.author}</Link>
             <div className="col-5 hide-sm">{item.quote}</div>
             <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.qid}/></div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col hide-sm">
@@ -170,7 +170,7 @@ export default class QuotesDash extends React.Component {
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(item.author)}>{icon.eye()}</button>
+              <button type="button" className="btn icon green" onClick={() => this.onView(normURL(item.author))}>{icon.eye()}</button>
               <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.qid)}>{icon.pencil()}</button>
               <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.qid, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.qid)}>{icon.close()}</button>

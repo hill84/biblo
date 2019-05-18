@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorRef, booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { app, getInitials, normalizeString } from '../../config/shared';
+import { app, denormURL, getInitials, normalizeString, normURL } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
@@ -15,7 +15,7 @@ export default class AuthorPage extends React.Component {
   state = {
     author: {
       bio: '',
-      displayName: this.props.match.params.aid || '',
+      displayName: denormURL(this.props.match.params.aid) || '',
       edit: null,
       followers: {},
       languages: [],
@@ -35,6 +35,7 @@ export default class AuthorPage extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     const { author } = this.state;
+    
 		authorRef(`${normalizeString(author.displayName)}`).get().then(snap => {
 			if (snap.exists) {
         if (this._isMounted) {
@@ -46,6 +47,7 @@ export default class AuthorPage extends React.Component {
         }
 			}
     }).catch(error => console.warn(error));
+
     booksRef.where(`authors.${author.displayName}`, '==', true).get().then(snap => {
       if (!snap.empty) {
         const books = [];
@@ -72,7 +74,7 @@ export default class AuthorPage extends React.Component {
     const { author, books, coverview, loading, loadingBooks } = this.state;
     const { history, location } = this.props;
 
-    const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}`}><Cover book={book} /></Link>);
+    const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
     if (loading) {
       return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -84,14 +86,14 @@ export default class AuthorPage extends React.Component {
     const seo = author && author.displayName && {
       description: `Scopri su ${app.name} i libri di ${author.displayName}`,
       image: author.photoURL,
-      title: `${author.displayName} - ${app.name}`,
-      url: `${app.url}/author/${author.displayName}`,
+      title: `${app.name} | ${author.displayName}`,
+      url: `${app.url}/author/${normURL(author.displayName)}`,
     };
 
     return (
       <div className="container" id="authorComponent">
         <Helmet>
-          <title>{app.name} | {author.displayName || 'Autore'}</title>
+          <title>{seo.title || `${app.name} | Autore`}</title>
           <link rel="canonical" href={seo.url} />
           <meta name="description" content={seo.description} />
           <meta property="og:type" content="books.author" />

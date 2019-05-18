@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { booksRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, handleFirestoreError, isTouchDevice, screenSize } from '../../config/shared';
+import { app, handleFirestoreError, isTouchDevice, normURL, screenSize } from '../../config/shared';
 import { funcType } from '../../config/types';
 import Cover from '../cover';
 import Genres from '../genres';
@@ -143,7 +143,7 @@ export default class Genre extends React.Component {
     const { count, coverview, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
     const { match } = this.props;
 
-    const covers = items && items.map((item, i) => <Link key={item.bid} to={`/book/${item.bid}`}><Cover book={item} index={i} page={page} /></Link>);
+    const covers = items && items.map((item, i) => <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}><Cover book={item} index={i} page={page} /></Link>);
 
     const orderByOptions = orderBy.map((option, i) => (
       <MenuItem

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { genres } from '../config/lists';
-import { app, booksPerRow, handleFirestoreError /* , isTouchDevice */ } from '../config/shared';
+import { app, booksPerRow, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
 import { boolType, funcType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -146,7 +146,7 @@ export default class BookCollection extends React.Component {
     const covers = (collection && collection.length ?
       <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
         {collection.map((book, i) => 
-          <Link key={book.bid} to={`/book/${book.bid}`}>
+          <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}>
             <Cover book={book} rating full={stacked} index={i} bcid={book.bcid} showReaders={cid === 'Top'} />
           </Link>
         )}
