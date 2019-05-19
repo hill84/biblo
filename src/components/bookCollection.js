@@ -159,7 +159,7 @@ export default class BookCollection extends React.Component {
 		return (
       <React.Fragment>
         <div className="head nav" role="navigation">
-          <span className="counter last title"><span className="primary-text hide-sm">Collezione:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
+          <span className="counter last title"><span className="primary-text hide-sm">{isGenre ? 'Genere' : 'Collezione'}:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?

@@ -174,7 +174,7 @@ export default class Genre extends React.Component {
     return (
       <div className="container" id="genreComponent">
         <Helmet>
-          <title>{app.name} | {match.params.gid || 'Genere'}</title>
+          <title>{app.name} | {denormURL(match.params.gid) || 'Genere'}</title>
           <meta name="description" content={seo.description} />
           <meta property="og:type" content="books.genre" />
           <meta property="og:title" content={seo.title} />
