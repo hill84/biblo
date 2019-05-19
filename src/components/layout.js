@@ -270,6 +270,30 @@ export default class Layout extends React.Component {
                   <ListItemText inset primary="Home" />
                 </MenuItem>
               </NavLink>
+              <NavLink to="/genres" exact>
+                <MenuItem>
+                  <ListItemIcon>{icon.libraryShelves()}</ListItemIcon>
+                  <ListItemText inset primary="Generi" />
+                </MenuItem>
+              </NavLink>
+              <NavLink to="/collections" exact>
+                <MenuItem>
+                  <ListItemIcon>{icon.home()}</ListItemIcon>
+                  <ListItemText inset primary="Collezioni" />
+                </MenuItem>
+              </NavLink>
+              <NavLink to="/authors" exact>
+                <MenuItem>
+                  <ListItemIcon>{icon.accountEdit()}</ListItemIcon>
+                  <ListItemText inset primary="Autori" />
+                </MenuItem>
+              </NavLink>
+              <NavLink to="/donations" exact>
+                <MenuItem>
+                  <ListItemIcon>{icon.bitcoin()}</ListItemIcon>
+                  <ListItemText inset primary="Donazioni" />
+                </MenuItem>
+              </NavLink>
 
               <MenuItem disableRipple className="bottom-item">
                 <div className="version">v {version}</div>
