@@ -157,7 +157,7 @@ export const switchGenres = array => array.map(str => {
     case "Business & Economics":        g = "Economia e finanza"; break;
     case "Comics & Graphic Novels":     g = "Fumetti e Graphic novel"; break;
     case "Cooking":                     g = "Cucina"; break;
-    case "Family & Relationships":      g = "Famigliae relazioni"; break;
+    case "Family & Relationships":      g = "Famiglia e relazioni"; break;
     case "Fiction":                     g = "Narrativa"; break;
     case "History":                     g = "Storico"; break;
     case "Humor":                       g = "Satira e umorismo"; break;
