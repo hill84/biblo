@@ -102,7 +102,18 @@ service cloud.firestore {
         allow delete: if isEditor() && isAdmin();
       }
 
-      match /followers/{bid} {
+      match /followers/{uid} {
+        allow read;
+        allow write: if isEditor();
+      }
+    }
+
+    match /genres/{gid} {
+      allow read;
+      allow create, update: if isEditor();
+      allow delete: if isEditor() && isAdmin();
+
+      match /followers/{uid} {
         allow read;
         allow write: if isEditor();
       }
