@@ -175,7 +175,7 @@ export default class Collection extends React.Component {
                             </div>
                             {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
                           </React.Fragment>
-                        : `${abbrNum(followers.length)} ${isScrollable ? icon.account() : 'follower'}` : ''}
+                        : abbrNum(followers.length) + isScrollable ? icon.account() : 'follower' : ''}
                       </div>
                     </div>
                   </React.Fragment>

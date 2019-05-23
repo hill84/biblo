@@ -41,8 +41,8 @@ export const arrToObj = (arr, fn) => {
 };
 // example: const obj = arrToObj(arr, function(item) { return { key: item, value: 'author' }});
 export const truncateString = (str, limit) => str && str.length > limit ? `${str.substr(0, limit)}…` : str;
-export const normURL = str => str && str.replace(/ /g, '_');
-export const denormURL = str => str && str.replace(/_/g, ' ');
+export const normURL = str => str && encodeURI(str.replace(/ /g, '_'));
+export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
 
 /* export const arrayToObj = array => { 
   const obj = {}; 

@@ -241,10 +241,10 @@ export default class Layout extends React.Component {
                       </MenuItem>
                     </NavLink>
                   }
-                  <NavLink to={`/dashboard/${authid}`}>
+                  <NavLink to={`/dashboard/${authid}/shelf`}>
                     <MenuItem>
                       <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
-                      <ListItemText inset primary="Dashboard" />
+                      <ListItemText inset primary="La mia libreria" />
                     </MenuItem>
                   </NavLink>
                 </React.Fragment>
@@ -274,12 +274,6 @@ export default class Layout extends React.Component {
                 <MenuItem>
                   <ListItemIcon>{icon.libraryShelves()}</ListItemIcon>
                   <ListItemText inset primary="Generi" />
-                </MenuItem>
-              </NavLink>
-              <NavLink to="/collections" exact>
-                <MenuItem>
-                  <ListItemIcon>{icon.home()}</ListItemIcon>
-                  <ListItemText inset primary="Collezioni" />
                 </MenuItem>
               </NavLink>
               <NavLink to="/authors" exact>

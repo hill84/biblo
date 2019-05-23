@@ -36,7 +36,7 @@ export default class AuthorPage extends React.Component {
     this._isMounted = true;
     const { author } = this.state;
     
-		authorRef(`${normalizeString(author.displayName)}`).get().then(snap => {
+		authorRef(normalizeString(author.displayName)).get().then(snap => {
 			if (snap.exists) {
         if (this._isMounted) {
           this.setState({ author: snap.data(), loading: false });
