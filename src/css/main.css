@@ -194,6 +194,7 @@ ul.nolist li { display: block; }
 
 .info-row { margin-bottom: .2rem; }
 .info-row:last-child { margin-bottom: 0; }
+.info-row:last-child .btn { margin-bottom: 0; }
 .info-row.centered { text-align: center; }
 .card .info-row.footer { display: block; }
 /* .info-row .btn { margin-top: 0; margin-bottom: 0; } */

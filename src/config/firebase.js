@@ -36,42 +36,45 @@ export const timestamp = FieldValue.serverTimestamp();
 // export const timestamp = firebase.ServerValue;
 
 export const usersRef = db.collection('users');
-export const userRef = uid => db.collection('users').doc(uid);
+export const userRef = uid => usersRef.doc(uid);
 export const userShelfRef = uid => db.collection('shelves').doc(uid);
-export const userBooksRef = uid => db.collection('shelves').doc(uid).collection('books');
-export const userBookRef = (uid, bid) => db.collection('shelves').doc(uid).collection('books').doc(bid);
+export const userBooksRef = uid => userShelfRef(uid).collection('books');
+export const userBookRef = (uid, bid) => userBooksRef(uid).doc(bid);
 export const followersRef = uid => db.collection('followers').doc(uid);
 export const followingsRef = uid => db.collection('followings').doc(uid);
 
 export const booksRef = db.collection('books');
-export const bookRef = bid => db.collection('books').doc(bid);
+export const bookRef = bid => booksRef.doc(bid);
 
 export const collectionsRef = db.collection('collections');
-export const collectionRef = cid => db.collection('collections').doc(cid);
-export const collectionBooksRef = cid => db.collection('collections').doc(cid).collection('books');
-export const collectionFollowersRef = cid => db.collection('collections').doc(cid).collection('followers');
-export const collectionBookRef = (cid, bid) => db.collection('collections').doc(cid).collection('books').doc(bid);
+export const collectionRef = cid => collectionsRef.doc(cid);
+export const collectionBooksRef = cid => collectionRef(cid).collection('books');
+export const collectionFollowersRef = cid => collectionRef(cid).collection('followers');
+export const collectionBookRef = (cid, bid) => collectionBooksRef(cid).doc(bid);
 
 export const reviewsRef = db.collection('reviews');
-export const reviewRef = bid => db.collection('reviews').doc(bid);
-export const reviewersRef = bid => db.collection('reviews').doc(bid).collection('reviewers');
-export const reviewerRef = (bid, uid) => db.collection('reviews').doc(bid).collection('reviewers').doc(uid);
+export const reviewRef = bid => reviewsRef.doc(bid);
+export const reviewersRef = bid => reviewRef(bid).collection('reviewers');
+export const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
 export const latestReviewsRef = db.collection('feeds').doc('latestReviews').collection('reviews');
 
 export const authorsRef = db.collection('authors');
-export const authorRef = aid => db.collection('authors').doc(aid);
+export const authorRef = aid => authorsRef.doc(aid);
 
 export const quotesRef = db.collection('quotes');
-export const quoteRef = qid => db.collection('quotes').doc(qid);
+export const quoteRef = qid => quotesRef.doc(qid);
 
 export const notificationsRef = db.collection('notifications');
-export const notesRef = uid => db.collection('notifications').doc(uid).collection('notes');
-export const noteRef = (uid, nid) => db.collection('notifications').doc(uid).collection('notes').doc(nid);
+export const notesRef = uid => notificationsRef.doc(uid).collection('notes');
+export const noteRef = (uid, nid) => notesRef(uid).doc(nid);
 
 export const challengesRef = db.collection('challenges');
-export const challengeRef = cid => db.collection('challenges').doc(cid);
+export const challengeRef = cid => challengesRef.doc(cid);
 export const userChallengesRef = uid => db.collection('users').doc(uid).collection('challenges');
-export const userChallengeRef = (uid, cid) => db.collection('users').doc(uid).collection('challenges').doc(cid);
+export const userChallengeRef = (uid, cid) => userChallengesRef(uid).doc(cid);
+
+export const genreRef = gid => db.collection('genres').doc(gid);
+export const genreFollowersRef = gid => genreRef(gid).collection('followers');
 
 export const countRef = cid => db.collection('counters').doc(cid);
 

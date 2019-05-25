@@ -129,19 +129,21 @@ export const booksPerRow = () => {
   return w <= 359 ? 2 : w <= 768 ? 3 : w <= 992 ? 4 : w <= 1200 ? 6 : 7;
 }
 
-export const abbrNum = (number, decPlaces = 0) => {
-  decPlaces = Math.pow(10,decPlaces);
+export const abbrNum = (num, decPlaces = 0) => {
+  decPlaces = Math.pow(10, decPlaces);
   const abbrev = [ "k", "m", "b", "t" ];
-  for (let i=3; i>=0; i--) {
+  for (let i = 3; i >= 0; i--) {
     const size = Math.pow(10,(i+1)*3);
-    if (size <= number) {
-      number = Math.round(number*decPlaces/size)/decPlaces;
-      if ((number === 1000) && (i < abbrev.length - 1)) { number = 1; i++; }
-      number += abbrev[i];
+    if (size <= num) {
+      num = Math.round(num * decPlaces / size) / decPlaces;
+      if ((num === 1000) && (i < abbrev.length - 1)) { 
+        num = 1; i++; 
+      }
+      num += abbrev[i];
       break;
     }
   }
-  return number;
+  return num;
 }
 
 // MAP

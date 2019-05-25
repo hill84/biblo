@@ -122,6 +122,7 @@ export default class App extends React.Component {
                       <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />
+                      <RouteWithProps path="/collections" component={NewFeature} user={user} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/genre/:gid" component={Genre} user={user} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />

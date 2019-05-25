@@ -150,7 +150,7 @@ export default class Collection extends React.Component {
                     <div className="info-row">
                       <button 
                         type="button" 
-                        className={`btn ${follow ? 'success error-on-hover' : 'primary'}`} 
+                        className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
                         onClick={this.onFollow} 
                         disabled={!user || !isEditor}>
                         {follow ? 
@@ -162,7 +162,7 @@ export default class Collection extends React.Component {
                       </button>
                       <div className="counter last inline">
                         {/* followers ? abbrNum(followers.length) : 0} {isScrollable ? icon.account() : 'follower' */}
-                        {followers ? followers.length > 3 && followers.length < 13 ? 
+                        {followers ? followers.length > 2 && followers.length < 100 ? 
                           <React.Fragment>
                             <div className="bubble-group inline">
                               {followers.slice(0,3).map(item => (
@@ -175,7 +175,7 @@ export default class Collection extends React.Component {
                             </div>
                             {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
                           </React.Fragment>
-                        : abbrNum(followers.length) + isScrollable ? icon.account() : 'follower' : ''}
+                        : `${abbrNum(followers.length)} follower` : ''}
                       </div>
                     </div>
                   </React.Fragment>
@@ -197,6 +197,12 @@ export default class Collection extends React.Component {
                   </div>
                 </div>
               </div>
+
+              <ul className="nolist inline-items info-row hide-md">
+                <li className="counter"><Link to="/collections">Collezioni</Link></li>
+                <li className="counter"><Link to="/genres">Generi</Link></li>
+                <li className="counter"><Link to="/authors">Autori</Link></li>
+              </ul>
               
             </div>
           </div>
