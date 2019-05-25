@@ -1,16 +1,18 @@
+import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { booksRef } from '../../config/firebase';
+import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, isTouchDevice, normURL, screenSize } from '../../config/shared';
-import { funcType } from '../../config/types';
+import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
+import { funcType, userType } from '../../config/types';
 import Cover from '../cover';
 import Genres from '../genres';
+import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 
 export default class Genre extends React.Component {
@@ -18,6 +20,9 @@ export default class Genre extends React.Component {
     count: 0,
     coverview: true,
     desc: true,
+    follow: false,
+    followers: null,
+    genre: null,
     items: null,
     lastVisible: null,
     limit: 28,
@@ -33,7 +38,8 @@ export default class Genre extends React.Component {
   }
 
   static propTypes = {
-    openSnackbar: funcType.isRequired
+    openSnackbar: funcType.isRequired,
+    user: userType
   }
 
   componentDidMount() {
@@ -45,6 +51,7 @@ export default class Genre extends React.Component {
   componentWillUnmount() {
     this._isMounted = false;
     window.removeEventListener('resize', this.updateScreenSize);
+    this.unsubGenreFollowersFetch && this.unsubGenreFollowersFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -54,23 +61,55 @@ export default class Genre extends React.Component {
       if (gid !== prevProps.match.params.gid || desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
         this.fetch();
       }
+      if (this.props.user !== prevProps.user) {
+        this.fetchFollowers();
+      }
     }
   }
 
   updateScreenSize = () => this.setState({ screenSize: screenSize() });
 
+  fetchFollowers = () => {
+    const { user } = this.props;
+    const { gid } = this.props.match.params;
+    
+    if (user) {
+      const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
+      this.unsubGenreFollowersFetch = genreFollowersRef(id).onSnapshot(snap => {
+        if (!snap.empty) {
+          const followers = [];
+          snap.forEach(follower => followers.push(follower.data()));
+          this.setState({ followers, follow: user && followers.filter(follower => follower.uid === user.uid).length > 0 });
+        } else {
+          this.setState({ followers: 0, follow: false });
+        }
+      });
+    }
+  }
+
   fetch = () => {
     const { desc, limit, orderBy, orderByIndex } = this.state;
     const { openSnackbar } = this.props;
     const { gid } = this.props.match.params;
-    const ref = booksRef.where('genres', 'array-contains', denormURL(gid));
-
+    
     if (gid) {
+      const ref = booksRef.where('genres', 'array-contains', denormURL(gid));
+      const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
+
       ref.get().then(fullSnap => {
         if (!fullSnap.empty) {
+          this.fetchFollowers();
           if (this._isMounted) {
             this.setState({ count: fullSnap.docs.length });
           }
+          genreRef(id).get().then(snap => {
+            if (snap.exists) {
+              // console.log(snap.data());
+              if (this._isMounted) {
+                this.setState({ genre: snap.data() });
+              }
+            }
+          });
           ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
             if (!snap.empty) {
               const items = [];
@@ -87,10 +126,10 @@ export default class Genre extends React.Component {
           }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
         } else {
           if (this._isMounted) {
-            this.setState({ items: null, count: 0, loading: false, page: 1 });
+            this.setState({ genre: null, loading: false, followers: 0, follow: false });
           }
         }
-      }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`No gid`);
   }
 
@@ -139,12 +178,41 @@ export default class Genre extends React.Component {
 
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 
+  onFollow = () => {
+    const { follow } = this.state;
+    const { openSnackbar, user } = this.props;
+    const { gid } = this.props.match.params;
+    const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
+
+    if (follow) {
+      // console.log('unfollow', gid);
+      genreFollowersRef(id).doc(user.uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    } else {
+      // console.log('follow', gid);
+      genreFollowersRef(id).doc(user.uid).set({
+        uid: user.uid,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        timestamp: (new Date()).getTime()
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    }
+  }
+
   render() {
-    const { count, coverview, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
-    const { match } = this.props;
+    const { coverview, desc, follow, followers, genre, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
+    const { match, user } = this.props;
 
-    const covers = items && items.map((item, i) => <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}><Cover book={item} index={i} page={page} /></Link>);
+    if ((!items || items.length === 0) && loading) {
+      return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
+    }
 
+    const genreColor = genres.filter(genre => genre.name === denormURL(match.params.gid))[0].color;
+    const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
+    const isTextMinified = screenSize === 'xs' || screenSize === 'sm' || screenSize === 'md';
+    const isEditor = hasRole(user, 'editor');
+    const covers = items && items.map((item, i) => (
+      <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}><Cover book={item} index={i} page={page} /></Link>
+    ));
     const orderByOptions = orderBy.map((option, i) => (
       <MenuItem
         key={option.type}
@@ -155,19 +223,11 @@ export default class Genre extends React.Component {
       </MenuItem>
     ));
 
-    const genreColor = genres.filter(genre => genre.name === denormURL(match.params.gid))[0].color;
-
-    const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
-
-    if ((!items || items.length === 0) && loading) {
-      return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>; 
-    }
-
     const seo = {
       canonical_name: genres.filter(genre => genre.name === denormURL(match.params.gid))[0].canonical,
-      description: `Scopri su ${app.name} i libri di genere ${denormURL(match.params.gid)}`,
+      description: `Scopri su ${app.name} i migliori libri di genere ${denormURL(match.params.gid).toLowerCase()}: nuove uscite e best seller`,
       image: null,
-      title: denormURL(match.params.gid),
+      title: `Libri di genere ${denormURL(match.params.gid).toLowerCase()}`,
       url: `${app.url}/genre/${normURL(match.params.gid)}`
     };
 
@@ -176,22 +236,58 @@ export default class Genre extends React.Component {
         <Helmet>
           <title>{app.name} | {denormURL(match.params.gid) || 'Genere'}</title>
           <meta name="description" content={seo.description} />
+          <meta property="og:description" content={seo.description} />
           <meta property="og:type" content="books.genre" />
           <meta property="og:title" content={seo.title} />
           <meta property="og:url" content={seo.url} />
           {seo.image && <meta property="og:image" content={seo.image} />}
           <meta property="books:canonical_name" content={seo.canonical_name} />
         </Helmet>
-        <div className="card dark" style={{ backgroundColor: !isScrollable ? genreColor : null }}>
+        <div className="card dark" style={{ background: !isScrollable ? `linear-gradient(to bottom, ${genreColor} 0%, var(--cardBg) 70%)` : null }}>
           <div className="row">
             <div className="col">
               <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {denormURL(match.params.gid)}</h2>
             </div>
             <div className="col-auto text-right">
-              <Link to="/genres" className="btn sm flat" style={{color: !isScrollable ? 'white' : ''}}>Generi</Link>
+              <Link to="/genres" className="btn sm flat" style={{color: !isScrollable ? 'white' : ''}}>Vedi tutti</Link>
             </div>
           </div>
           <Genres scrollable={isScrollable} />
+          {genre && genre.description && 
+            <div className="info-row text" style={{ marginTop: '.5rem' }}>
+              <MinifiableText text={genre.description} maxChars={500} textMinified={isTextMinified} />
+            </div>
+          }
+          <div className="info-row">
+            <button 
+              type="button" 
+              className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
+              onClick={this.onFollow} 
+              disabled={!user || !isEditor}>
+              {follow ? 
+                <React.Fragment>
+                  <span className="hide-on-hover">{icon.check()} Segui</span>
+                  <span className="show-on-hover">Smetti</span>
+                </React.Fragment> 
+              : <span>{icon.plus()} Segui</span> }
+            </button>
+            <div className="counter last inline">
+              {followers ? followers.length > 2 && followers.length < 100 ? 
+                <React.Fragment>
+                  <div className="bubble-group inline">
+                    {followers.slice(0,3).map(item => (
+                      <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
+                        <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
+                          {!item.photoURL && getInitials(item.displayName)}
+                        </Avatar>
+                      </Link>
+                    ))}
+                  </div>
+                  {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
+                </React.Fragment>
+              : `${abbrNum(followers.length)} follower` : ''}
+            </div>
+          </div>
         </div>
 
         {items ? 
@@ -208,7 +304,7 @@ export default class Genre extends React.Component {
                         onClick={this.onToggleView}>
                         {coverview ? icon.viewSequential() : icon.viewGrid()}
                       </button>
-                      <span className="counter">{items.length || 0} libr{items.length === 1 ? 'o' : 'i'} {count > items.length ? `di ${count}` : ''}</span>
+                      <span className="counter">{items.length || 0} libr{items.length === 1 ? 'o' : 'i'} {genre.count > items.length ? `di ${genre.count}` : ''}</span>
                     </div>
                     <div className="col-auto">
                       <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
@@ -236,9 +332,9 @@ export default class Genre extends React.Component {
           </div>
         }
 
-        {count > 0 && items && items.length < count &&
+        {genre && genre.count > 0 && items && items.length < genre.count &&
           <PaginationControls 
-            count={count} 
+            count={genre.count} 
             fetch={this.fetchNext} 
             limit={limit}
             loading={loading}

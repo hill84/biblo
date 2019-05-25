@@ -21,17 +21,21 @@ admin.initializeApp();
 // });
 
 // HELPERS
-const count = (doc, change) => {
+const count = (doc, change, collection, field) => {
   let increment;
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
+  const countRef = admin.firestore().collection(collection || 'counters').doc(doc);
 
-  const countRef = admin.firestore().collection('counters').doc(doc);
-  return countRef.update({ count: admin.firestore.FieldValue.increment(increment) });
+  return countRef.update({ [field || 'count']: admin.firestore.FieldValue.increment(increment) });
 }
 
 // REVIEWS
 exports.countReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite(change => count('reviews', change));
+
+exports.countUserReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.uid, change, 'users', 'stats.reviews_num'));
+
+exports.countBookReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.bid, change, 'books', 'reviews_num'));
 
 exports.feedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const { bid } = context.params;
@@ -65,15 +69,7 @@ exports.truncateFeedReviews = functions.firestore.document('reviews/{bid}/review
 // NOTIFICATIONS
 exports.countNotifications = functions.firestore.document('notifications/{nid}').onWrite(change => count('notifications', change));
 
-exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => {
-  let increment;
-  if (change.after.exists && !change.before.exists) { increment = 1 } else 
-  if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
-  
-  const { uid } = context.params;
-  const countRef = admin.firestore().collection('notifications').doc(uid);
-  return countRef.update({ count: admin.firestore.FieldValue.increment(increment) });
-});
+exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => count(context.params.uid, change, 'notifications'));
 
 exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDelete((snap, context) => {
   const { uid } = context.params;
@@ -85,15 +81,7 @@ exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDe
 // COLLECTIONS
 exports.countCollections = functions.firestore.document('collections/{cid}').onWrite(change => count('collections', change));
 
-exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => {
-  let increment;
-  if (change.after.exists && !change.before.exists) { increment = 1 } else 
-  if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
-
-  const { cid } = context.params;
-  const countRef = admin.firestore().collection('collections').doc(cid);
-  return countRef.update({ books_num: admin.firestore.FieldValue.increment(increment) });
-});
+exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => count(context.params.cid, change, 'collections', 'books_num'));
 
 // BOOKS
 exports.countBooks = functions.firestore.document('books/{bid}').onWrite(change => count('books', change));
@@ -117,7 +105,7 @@ exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, 
       });
     } else { ReviewsRef.delete(); } // delete book from reviews
   });
-  return firebase.storage().bucket().deleteFiles({ prefix: `books/${bid}` }); // delete folder in storage
+  return admin.storage().bucket().deleteFiles({ prefix: `books/${bid}` }); // delete folder in storage
 });
 
 // USERS
@@ -126,7 +114,7 @@ exports.countUsers = functions.firestore.document('users/{uid}').onWrite(change 
 exports.clearUser = functions.firestore.document('users/{uid}').onDelete((snap, context) => {
   const { uid } = context.params;
 
-  return firebase.storage().bucket().deleteFiles({ prefix: `users/${uid}` }); // delete folder in storage
+  return admin.storage().bucket().deleteFiles({ prefix: `users/${uid}` }); // delete folder in storage
 });
 
 // AUTHORS

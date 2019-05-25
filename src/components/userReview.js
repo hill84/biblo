@@ -10,7 +10,7 @@ import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
-import { authid, bookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
+import { authid, reviewerRef, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, timeSince } from '../config/shared';
 import { funcType, stringType, userBookType } from '../config/types';
@@ -108,7 +108,9 @@ export default class UserReview extends React.Component {
     e.preventDefault();
     if (this.state.changes) {
       const errors = this.validate(this.state.review);
-      this.setState({ errors });
+      if (this._isMounted) {
+        this.setState({ errors });
+      }
       if (Object.keys(errors).length === 0) {
         this.setState({ loading: true });
         if (this.state.bid) {
@@ -124,7 +126,7 @@ export default class UserReview extends React.Component {
             rating_num: this.state.userBook.rating_num
           }).then(() => {
             // console.log(`Book review created`);
-          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
+          }).catch(err => this._isMounted && this.setState({ serverError: handleFirestoreError(err) }));
 
           userBookRef(authid, this.state.bid).update({
             ...this.state.userBook,
@@ -134,37 +136,22 @@ export default class UserReview extends React.Component {
             }
           }).then(() => {
             // console.log(`User review posted`);
-          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
+          }).catch(err => this._isMounted && this.setState({ serverError: handleFirestoreError(err) }));
 
           let bookReviews_num = this.state.bookReviews_num;
-          let userReviews_num = this.state.user.stats.reviews_num;
 
           if (!this.state.review.created_num) {
             bookReviews_num += 1;
-            userReviews_num += 1;
-            this.props.addReview();
           }
-
-          bookRef(this.state.bid).update({
-            reviews_num: bookReviews_num
-          }).then(() => {
-            this.setState({ bookReviews_num });
-            // console.log(`Book reviews increased to ${bookReviews_num}`);
-          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
-
-          userRef(authid).update({
-            'stats.reviews_num': userReviews_num
-          }).then(() => {
-            // console.log(`User reviews increased to ${userReviews_num}`);
-          }).catch(err => this.setState({ serverError: handleFirestoreError(err) }));
-
-          this.setState({ 
-            changes: false,
-            serverError: '',
-            isEditing: false, 
-            loading: false 
-          });
-
+          if (this._isMounted) {
+            this.setState({ 
+              bookReviews_num, 
+              changes: false,
+              serverError: '',
+              isEditing: false, 
+              loading: false 
+            });
+          }
         } else console.warn(`No bid`);
       }
     } else this.setState({ isEditing: false });
@@ -191,44 +178,33 @@ export default class UserReview extends React.Component {
       }).catch(error => this.setState({ serverError: error.message }));
 
       const bookReviews_num = this.state.bookReviews_num - 1;
-      const userReviews_num = this.state.user.stats.reviews_num - 1;
 
-      bookRef(this.state.bid).update({
-        reviews_num: bookReviews_num
-      }).then(() => {
-        this.setState({ bookReviews_num });
-        this.props.removeReview();
-        console.log(`Book reviews decreased to ${bookReviews_num}`);
-      }).catch(error => this.setState({ serverError: error.message }));
-
-      userRef(authid).update({
-        'stats.reviews_num': userReviews_num
-      }).then(() => {
-        // console.log(`User reviews decreased to ${userReviews_num}`);
-      }).catch(error => this.setState({ serverError: error.message }));
-
-      this.setState({ serverError: '' });
+      if (this._isMounted) {
+        this.setState({ bookReviews_num, serverError: '' });
+      }
 
     } else console.warn(`No bid`);
   }
 
   onExitEditing = () => {
-    if (!this.state.review.created_num) {
-      this.setState({ 
-        review: {
-          ...this.state.review,
-          bid: '',
-          bookTitle: '',
-          covers: [],
-          created_num: 0,
-          likes: [],
-          rating_num: 0,
-          text: '',
-          title: ''
-        } 
-      });
+    if (this._isMounted) {
+      if (!this.state.review.created_num) {
+        this.setState({ 
+          review: {
+            ...this.state.review,
+            bid: '',
+            bookTitle: '',
+            covers: [],
+            created_num: 0,
+            likes: [],
+            rating_num: 0,
+            text: '',
+            title: ''
+          } 
+        });
+      }
+      this.setState({ isEditing: false });
     }
-    this.setState({ isEditing: false });
   }
 
   onChangeMaxChars = e => {

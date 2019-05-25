@@ -242,7 +242,6 @@ export default class Book extends React.Component {
       let bookRatings_num = this.state.book.ratings_num;
       let userRatings_num = this.props.user.stats.ratings_num;
       let userBookRating_num = this.state.userBook.rating_num;
-      let userReviews_num = this.props.user.stats.reviews_num;
       let bookReviews_num = this.state.book.reviews_num;
       let userBookReview = this.state.userBook.review; 
       
@@ -258,7 +257,6 @@ export default class Book extends React.Component {
       }
 
       if (this.state.userBook.review !== {}) {
-        userReviews_num -= 1;
         bookReviews_num -= 1;
         userBookReview = {};
       } */
@@ -284,15 +282,13 @@ export default class Book extends React.Component {
         userRef(authid).update({
           /* 'stats.shelf_num': userShelf_num, */
           'stats.wishlist_num': userWishlist_num,
-          /* 'stats.ratings_num': userRatings_num,
-          'stats.reviews_num': userReviews_num */
+          /* 'stats.ratings_num': userRatings_num
         }).then(() => {
           // console.log('User wishlist number increased');
           /* bookRef(bid).update({
             rating_num: bookRating_num,
             ratings_num: bookRatings_num,
-            readers_num: bookReaders_num,
-            reviews_num: bookReviews_num
+            readers_num: bookReaders_num
           }).then(() => {
             this.setState({ 
               book: { 
@@ -327,7 +323,6 @@ export default class Book extends React.Component {
       let bookRatings_num = book.ratings_num;
       let bookReaders_num = book.readers_num;
       let bookReviews_num = book.reviews_num;
-      let userReviews_num = user.stats.reviews_num;
       let userRatings_num = user.stats.ratings_num;
       let userBookRating_num = userBook.rating_num;
       let review = userBook.review;
@@ -348,7 +343,6 @@ export default class Book extends React.Component {
   
       if (book.reviews_num !== 0) {
         bookReviews_num -= 1;
-        userReviews_num -= 1;
       }
 
       if (userBook.review.created_num) {
@@ -372,8 +366,7 @@ export default class Book extends React.Component {
       bookRef(bid).update({
         rating_num: bookRating_num,
         ratings_num: bookRatings_num,
-        readers_num: bookReaders_num,
-        reviews_num: bookReviews_num
+        readers_num: bookReaders_num
       }).then(() => {
         this.setState({ 
           book: { 
@@ -395,7 +388,6 @@ export default class Book extends React.Component {
           stats: {
             ...this.props.user.stats,
             shelf_num: userShelf_num,
-            reviews_num: userReviews_num,
             ratings_num: userRatings_num
           }
         }).then(() => {
