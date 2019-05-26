@@ -23,11 +23,19 @@ export default class LoginForm extends React.Component {
   }
 
   static propTypes = {
-    openSnackbar : funcType.isRequired
+    openSnackbar: funcType.isRequired
   }
 
   componentDidMount() {
     this._isMounted = true;
+    const search = this.props.location.search;
+    const params = new URLSearchParams(search);
+    const email = params.get('email');
+    if (this._isMounted && email) {
+      this.setState(prevState => ({
+        data: { ...prevState.data, email }
+      }));
+    }
   }
 
   componentWillUnmount() {

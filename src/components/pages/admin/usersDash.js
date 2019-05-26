@@ -9,7 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { countRef, noteRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
+import { countRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
 import { getInitials, handleFirestoreError } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
@@ -148,17 +148,29 @@ export default class UsersDash extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
+    const { openSnackbar } = this.props;
+    
     // console.log(`Deleting ${selectedId}`);
+    this.setState({ isOpenDeleteDialog: false });
+
+    userShelfRef(selectedId).delete().then(() => {
+      console.log(`User reviews deleted`);
+      openSnackbar('Recensioni cancellate', 'success');
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+
+    /* notesRef(selectedId).delete().then(() => {
+      console.log(`User notifications deleted`);
+      openSnackbar('Notifiche cancellate', 'success');
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
+    
+    // TODO: delete all user notifications and users, genres, authors and collections followed.
+    
     userRef(selectedId).delete().then(() => {
-      userShelfRef(selectedId).delete().then(() => {
-        console.log(`User reviews deleted`);
-      }).catch(err => console.warn(err));
-      noteRef(selectedId).delete().then(() => {
-        console.log(`User notifications deleted`);
-      }).catch(err => console.warn(err));
-      this.setState({ isOpenDeleteDialog: false });
-      this.props.openSnackbar('Elemento cancellato', 'success');
-    }).catch(err => console.warn(err));
+      console.log(`User deleted`);
+      openSnackbar('Elemento cancellato', 'success');
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+
+    this.onCloseDeleteDialog();
   }
 
   onChangeRole = e => {

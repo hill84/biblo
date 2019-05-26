@@ -3,7 +3,7 @@ import { badWords, firestoreErrorMessages } from './lists';
 // APP
 export const app = {
   name: 'Biblo',
-  url: 'https://biblo.space',
+  url: process.env.NODE_ENV === 'production' ? 'https://biblo.space' : 'http://localhost:3000',
   fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space/' },
   tw: { name: '', url: '' },
   email: 'info@biblo.space',
@@ -51,6 +51,17 @@ export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
 }; */
 
 export const hasRole = (user, role) => user && user.roles && user.roles[role] === true;
+
+export const isLocalStorage = () => {
+  const test = 'test';
+  try {
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
 
 // VALIDATION
 export const validateImg = (file, maxSize) => {

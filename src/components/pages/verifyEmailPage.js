@@ -29,12 +29,16 @@ export default class VerifyEmailPage extends React.Component {
 
     if (this._isMounted) this.setState({ loading: true });
 
+    const actionCodeSettings = {
+      url: `${app.url}/login/?email=${auth.currentUser.email}`
+    };
+
     auth.onIdTokenChanged(user => {
-      user.sendEmailVerification().then(() => {
+      user.sendEmailVerification(actionCodeSettings).then(() => {
         if (this._isMounted) this.setState({ emailSent: true, loading: false });
         // FORCE USER RELOAD
         auth.currentUser.reload().then(res => {
-          console.log(res);
+          // console.log(res);
           auth.currentUser.getToken(true);
         }).catch(err => console.warn(err));
       }).catch(err => {

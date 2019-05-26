@@ -96,7 +96,10 @@ export default class SignupForm extends React.Component {
             uid: user.uid,
           }).then(() => {
             if (user.emailVerified === false) {
-              user.sendEmailVerification().then(() => {
+              const actionCodeSettings = {
+                url: `${app.url}/login/?email=${auth.currentUser.email}`
+              };
+              user.sendEmailVerification(actionCodeSettings).then(() => {
                 if (this._isMounted) this.setState({ redirectTo: '/verify-email' });
               }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
             }

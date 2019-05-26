@@ -25,7 +25,7 @@ import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
-import { app, handleFirestoreError, needsEmailVerification } from './config/shared';
+import { app, handleFirestoreError, isLocalStorage, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
 import { Helmet } from 'react-helmet';
@@ -72,7 +72,7 @@ export default class App extends React.Component {
 
   clearUser = () => {
     if (this._isMounted) {
-      this.setState({ user: null }, () => localStorage.removeItem(storageKey_uid));
+      this.setState({ user: null }, () => isLocalStorage() && localStorage.removeItem(storageKey_uid));
     }
   }
 
@@ -80,7 +80,7 @@ export default class App extends React.Component {
     this.unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
       // console.log(snap);
       if (snap.exists) {
-        this.setState({ user: snap.data(), error: null }, () => localStorage.setItem(storageKey_uid, user.uid));
+        this.setState({ user: snap.data(), error: null }, () => isLocalStorage() && localStorage.setItem(storageKey_uid, user.uid));
       } else console.warn(`User not found in database`);
     }, err => {
       if (this._isMounted) this.setState({ error: handleFirestoreError(err) });

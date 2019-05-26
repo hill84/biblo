@@ -67,6 +67,19 @@ export const firestoreErrorMessages = {
   'unknown': { 
     eng: "Unknown error.",
     ita: "Errore sconosciuto." 
+  },
+  // AUTH
+  'auth/email-already-in-use': {
+    eng: "The email address is already in use by another account.",
+    ita: "Indirizzo email già usato da un altro account."
+  },
+  'auth/user-not-found': {
+    eng: "There is no user record corresponding to this identifier. The user may have been deleted.",
+    ita: "Utente non trovato. Potrebbe essere stato cancellato."
+  },
+  'auth/too-many-requests': {
+    eng: "We have blocked all requests from this device due to unusual activity. Try again later.",
+    ita: "Abbiamo rilevato attività sospette provenienti da questo dispositivo. Riprova più tardi."
   }
 };
 
