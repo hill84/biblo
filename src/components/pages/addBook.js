@@ -22,9 +22,17 @@ export default class AddBook extends React.Component {
 	static propTypes = {
     openSnackbar: funcType,
 		user: userType
-	}
+  }
+  
+  componentDidMount() {
+    this._isMounted = true;
+  }
 
-	onBookSelect = book => this.setState({ book });
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+	onBookSelect = book => this._isMounted && this.setState({ book });
 	
 	render() {
     const { book } = this.state;

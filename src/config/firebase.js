@@ -16,10 +16,11 @@ const config = {
 if (!firebase.apps.length) firebase.initializeApp(config);
 
 /* AUTH */
-export const GoogleAuthProvider = new firebase.auth.GoogleAuthProvider();
-export const FacebookAuthProvider = new firebase.auth.FacebookAuthProvider();
-export const TwitterAuthProvider = new firebase.auth.TwitterAuthProvider();
+export const GoogleAuthProvider = firebase.auth && new firebase.auth.GoogleAuthProvider();
+export const FacebookAuthProvider = firebase.auth && new firebase.auth.FacebookAuthProvider();
+export const TwitterAuthProvider = firebase.auth && new firebase.auth.TwitterAuthProvider();
 export const auth = firebase.auth();
+auth.useDeviceLanguage();
 export const signOut = () => auth.signOut();
 
 export const storageKey_uid = 'uid';
@@ -65,7 +66,8 @@ export const quotesRef = db.collection('quotes');
 export const quoteRef = qid => quotesRef.doc(qid);
 
 export const notificationsRef = db.collection('notifications');
-export const notesRef = uid => notificationsRef.doc(uid).collection('notes');
+export const userNotificationsRef = uid => notificationsRef.doc(uid);
+export const notesRef = uid => userNotificationsRef(uid).collection('notes');
 export const noteRef = (uid, nid) => notesRef(uid).doc(nid);
 
 export const challengesRef = db.collection('challenges');

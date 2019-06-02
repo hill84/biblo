@@ -122,8 +122,6 @@ export default class AuthorPage extends React.Component {
             </div>
           </div>
         </div>
-
-        <RandomQuote author={author.displayName} skeleton={false} className="card flat col-md-8 fadeIn slideUp reveal" />
         
         {loadingBooks ? 
           <div aria-hidden="true" className="loader relative"><CircularProgress /></div>
@@ -161,7 +159,7 @@ export default class AuthorPage extends React.Component {
             }
           </React.Fragment>
         }
-
+        <RandomQuote author={author.displayName} skeleton={false} className="card flat fadeIn slideUp reveal" />
       </div>
     );
   }

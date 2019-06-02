@@ -61,11 +61,13 @@ export default class VerifyEmailPage extends React.Component {
           <div className="bubble icon popIn" style={{marginBottom: 15}}>{icon.email()}</div>
           <p><big>Ti abbiamo inviato un'email di conferma.</big> Per favore, clicca sul link di verifica e poi torna qui per effettuare il <Link to="/login">login</Link>.</p>
         </div>
-        <p className="sub-footer">Non trovi l'email? Controlla nella posta indesiderata.</p>
-        <p>{emailSent ? 
-          <span className="btn rounded success reveal fadeIn">Email inviata</span> : 
-          <button type="button" onClick={this.sendEmailVerification} className={`btn btn primary rounded ${loading ? 'loading icon' : 'toload'}`}>{loading ? icon.loading() : 'Invia di nuovo'}</button>
-        }</p>
+        <div className="fadeIn reveal" style={{ animationDelay: '2s' }}>
+          <p className="sub-footer">Non trovi l'email? Controlla nella posta indesiderata.</p>
+          <p>{emailSent ? 
+            <span className="btn rounded success reveal fadeIn">Email inviata</span> : 
+            <button type="button" onClick={this.sendEmailVerification} className={`btn btn primary rounded ${loading ? 'loading icon' : 'toload'}`}>{loading ? icon.loading() : 'Invia di nuovo'}</button>
+          }</p>
+        </div>
       </div>
     );
   }

@@ -80,44 +80,44 @@ export default class Book extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { book, userBook } = this.state;
-
-    if (this._isMounted) {
-      if (this.props.bid !== prevProps.bid){
+    
+    if (this.props.bid !== prevProps.bid) {
+      if (this._isMounted) {
         this.setState({ loading: true });
-        this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
-          if (snap.exists) {
-            // console.log(snap.data());
-            this.setState({
-              book: {
-                ...book,
-                ...snap.data()
-              },
-              seo: {
-                author: Object.keys(book.authors),
-                description: `Scopri su ${app.name} la trama e le recensioni di ${book.title}, scritto da ${Object.keys(book.authors)[0]}, pubblicato da ${book.publisher}`,
-                image: book.covers.length && book.covers[0],
-                isbn: book.ISBN_13,
-                rating: { scale: '5', value: book.rating_num },
-                release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
-                title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
-                url: `${app.url}/book/${book.bid}/${normURL(book.title)}`,
-              },
-              userBook: {
-                ...userBook,
-                bid: snap.data().bid || '',
-                authors: snap.data().authors || {},
-                covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
-                publisher: snap.data().publisher || '',
-                title: snap.data().title || '',
-                subtitle: snap.data().subtitle || ''
-              }
-            });
-          } else console.warn(`No book with bid ${this.props.bid}`);
-          this.setState({ loading: false }, () => {
-            this.fetchUserBook(this.props.bid);
-          });
-        })
       }
+      this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
+        if (snap.exists) {
+          // console.log(snap.data());
+          this.setState({
+            book: {
+              ...book,
+              ...snap.data()
+            },
+            seo: {
+              author: Object.keys(book.authors),
+              description: `Scopri su ${app.name} la trama e le recensioni di ${book.title}, scritto da ${Object.keys(book.authors)[0]}, pubblicato da ${book.publisher}`,
+              image: book.covers.length && book.covers[0],
+              isbn: book.ISBN_13,
+              rating: { scale: '5', value: book.rating_num },
+              release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
+              title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
+              url: `${app.url}/book/${book.bid}/${normURL(book.title)}`,
+            },
+            userBook: {
+              ...userBook,
+              bid: snap.data().bid || '',
+              authors: snap.data().authors || {},
+              covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
+              publisher: snap.data().publisher || '',
+              title: snap.data().title || '',
+              subtitle: snap.data().subtitle || ''
+            }
+          });
+        } else console.warn(`No book with bid ${this.props.bid}`);
+        this.setState({ loading: false }, () => {
+          this.fetchUserBook(this.props.bid);
+        });
+      });
       if (this.props.book !== prevProps.book) {
         this.fetchUserBook(this.props.book.bid);
       }
@@ -125,15 +125,16 @@ export default class Book extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     const { book, userBook } = this.state;
     const { bid } = this.props;
 
-    this._isMounted = true;
     if (bid) {
       if (this._isMounted) {
         this.setState({ loading: true });
       }
       this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
+        // console.log(snap);
         if (snap.exists) {
           // console.log(snap.data());
           this.setState({
@@ -191,7 +192,7 @@ export default class Book extends React.Component {
     if (isAuthenticated()) {
       let userWishlist_num = this.props.user.stats.wishlist_num;
       const bookReaders_num = this.state.book.readers_num + 1;
-
+      // console.log('Book added to user shelf');
       if (this.state.userBook.bookInWishlist) {
         userWishlist_num -= 1;
       }
@@ -202,23 +203,16 @@ export default class Book extends React.Component {
         bookInShelf: true,
         bookInWishlist: false
       }).then(() => {
-        this.setState({ 
-          userBook: { 
-            ...this.state.userBook, 
-            bookInShelf: true, 
-            bookInWishlist: false 
-          }
-        }, () => openSnackbar('Libro aggiunto in libreria', 'success'));
+        openSnackbar('Libro aggiunto in libreria', 'success');
+
         bookRef(bid).update({
           readers_num: bookReaders_num
         }).then(() => {
-          this.setState({ 
-            book: { 
-              ...this.state.book, 
-              readers_num: bookReaders_num 
-            }
-          });
-          // console.log('Readers number increased');
+          if (this._isMounted) {
+            this.setState(prevState => ({ 
+              book: { ...prevState.book, readers_num: bookReaders_num } 
+            }), () => console.log('Readers number increased'));
+          }
           
           userRef(authid).update({
             'stats.shelf_num': this.props.user.stats.shelf_num + 1,
@@ -250,7 +244,7 @@ export default class Book extends React.Component {
         bookReaders_num -= 1;
       }
 
-      if (this.state.book.rating_num !== 0) {
+      if (this.state.book.rating_num > 0) {
         bookRating_num -= userBookRating_num;
         bookRatings_num -= 1;
         userRatings_num -= 1;
@@ -334,18 +328,15 @@ export default class Book extends React.Component {
         userWishlist_num -= 1;
       }
   
-      if (book.rating_num !== 0) {
+      if (userBook.rating_num > 0) {
         bookRating_num -= userBookRating_num;
         bookRatings_num -= 1;
         userRatings_num -= 1;
         userBookRating_num = 0;
       }
-  
-      if (book.reviews_num !== 0) {
-        bookReviews_num -= 1;
-      }
-
+      
       if (userBook.review.created_num) {
+        bookReviews_num -= 1;
         review = {};
       }
       
@@ -448,8 +439,8 @@ export default class Book extends React.Component {
         'userBookRating_num': userBookRating_num
       }); */
 
-      if (userBookRating_num === 0) { 
-        bookRating_num = (bookRating_num === 0) ? rate : (bookRating_num + rate) / bookRatings_num;
+      if (userBookRating_num === 0) {
+        bookRating_num = (bookRating_num === 0) ? rate : (bookRating_num + rate);
         bookRatings_num += 1; 
         userRatings_num += 1; 
       } else {

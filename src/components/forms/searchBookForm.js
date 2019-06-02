@@ -78,8 +78,8 @@ export default class SearchBookForm extends React.Component {
   shouldRenderSuggestions = value => value && this.state.searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
 
   onSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); //this.setState({ suggestions: this.getSuggestions(value) });
-/* 
-  getSuggestions = value => {
+
+  /* getSuggestions = value => {
     const inputValue = value.normalize();
     const inputLength = inputValue.length;
     let count = 0;
@@ -89,8 +89,8 @@ export default class SearchBookForm extends React.Component {
       if (keep) { count += 1; }
       return keep;
     });
-  }
-*/
+  } */
+
   renderSuggestion = (b, { query, isHighlighted }) => {
     const { searchBy } = this.state; 
     if (b.value) return b.value;

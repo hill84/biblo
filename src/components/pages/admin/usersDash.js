@@ -9,9 +9,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { countRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
+import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials, handleFirestoreError } from '../../../config/shared';
+import { asyncForEach, getInitials, handleFirestoreError } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -41,7 +41,7 @@ export default class UsersDash extends React.Component {
     ],
     orderByIndex: 0,
     page: 1,
-    selectedId: null,
+    selected: null,
     loading: true
 	}
 
@@ -132,44 +132,76 @@ export default class UsersDash extends React.Component {
     this.props.onToggleDialog(id);
   }
 
+  onSendReset = e => {
+    const email = e.currentTarget.parentNode.dataset.email;
+    auth.sendPasswordResetEmail(email).then(() => {
+      this.props.openSnackbar(`Email inviata`, 'success');
+    }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+  }
+
+  onSendVerification = e => {
+    // TODO
+  }
+
   onLock = e => {
     const id = e.currentTarget.parentNode.dataset.id;
     const state = e.currentTarget.parentNode.dataset.state === 'true';
     // console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
     userRef(id).update({ 'roles.editor': !state }).then(() => {
       this.props.openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
-    }).catch(err => console.warn(err));
+    }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
   }
 
   onDeleteRequest = e => {
     const id = e.currentTarget.parentNode.dataset.id;
-    this.setState({ isOpenDeleteDialog: true, selectedId: id });
+    const displayName = e.currentTarget.parentNode.dataset.name;
+    this.setState({ isOpenDeleteDialog: true, selected: { displayName, id } });
   }
-  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selected: null });
   onDelete = () => {
-    const { selectedId } = this.state;
+    const { selected } = this.state;
     const { openSnackbar } = this.props;
     
-    // console.log(`Deleting ${selectedId}`);
     this.setState({ isOpenDeleteDialog: false });
-
-    userShelfRef(selectedId).delete().then(() => {
-      console.log(`User reviews deleted`);
-      openSnackbar('Recensioni cancellate', 'success');
-    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
-    /* notesRef(selectedId).delete().then(() => {
-      console.log(`User notifications deleted`);
-      openSnackbar('Notifiche cancellate', 'success');
-    }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
     
-    // TODO: delete all user notifications and users, genres, authors and collections followed.
-    
-    userRef(selectedId).delete().then(() => {
-      console.log(`User deleted`);
+    userRef(selected.id).delete().then(() => {
+      console.log(`✔ user db deleted`);
       openSnackbar('Elemento cancellato', 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
+    userShelfRef(selected.id).delete().then(() => {
+      console.log(`✔ user reviews deleted`);
+      openSnackbar('Recensioni cancellate', 'success');
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+
+    userNotificationsRef(selected.id).get().then(snap => {
+      if (!snap.empty) {
+        notesRef(selected.id).get().then(snap => {
+          if (!snap.empty) {
+            if (snap.docs.length < 500) {
+              const notes = [];
+              snap.forEach(item => notes.push(item.id));
+              // console.log(notes);
+              const deleteUserNotes = async () => {
+                await asyncForEach(snap, item => {
+                  noteRef(selected.id, item.id).delete().then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                });
+                console.log(`✔ ${snap.docs.length} notes deleted`);
+                openSnackbar(`${snap.docs.length} note cancellate`, 'success');
+                userNotificationsRef(selected.id).delete().then(() => {
+                  console.log(`✔ notifications collection deleted`);
+                  // openSnackbar(`Collezione notifiche cancellata`, 'success');
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+              }
+              deleteUserNotes();
+            } else console.warn('Operation aborted: too many docs');
+          } else console.log('No notes');
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      } else console.log('No notifications collection');
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    
+    // TODO: delete all users, genres, authors and collections followed.
+    
     this.onCloseDeleteDialog();
   }
 
@@ -181,26 +213,26 @@ export default class UsersDash extends React.Component {
   }
 
 	render() {
-    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo, selected } = this.state;
     const { openSnackbar } = this.props;
 
     const itemsList = (items && items.length &&
       items.map(item => 
         <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
           <div className="row">
-            <div className="col-auto hide-xs avatar-container">
+            <div className="col-auto avatar-container">
               <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
             </div>
-            <Link to={`/dashboard/${item.uid}`} className="col hide-sm" title={item.displayName}>
+            <Link to={`/dashboard/${item.uid}`} className="col" title={item.displayName}>
               {item.displayName}
             </Link>
-            <div className="col monotype" title={item.uid}>
+            <div className="col monotype hide-sm" title={item.uid}>
               <CopyToClipboard openSnackbar={openSnackbar} text={item.uid} />
             </div>
             <div className="col monotype hide-sm" title={item.email}>
               <CopyToClipboard openSnackbar={openSnackbar} text={item.email} />
             </div>
-            <div className="col col-sm-3 col-lg-2">
+            <div className="col col-sm-3 col-lg-2 hide-xs">
               <div className="row text-center">
                 <div className="col">{item.stats.shelf_num}</div>
                 <div className="col">{item.stats.wishlist_num}</div>
@@ -208,17 +240,21 @@ export default class UsersDash extends React.Component {
                 <div className="col hide-md">{item.stats.ratings_num}</div>
               </div>
             </div>
-            <div className="col col-sm-2 btns xs text-center" data-id={item.uid}>
+            <div className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
               <div className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={this.onChangeRole} title="editor">E</div>
               <div className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={this.onChangeRole} title="premium">P</div>
               <div className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={this.onChangeRole} title="admin">A</div>
             </div>
-            <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{new Date(item.creationTime).toLocaleDateString()}</div>
+            <div className="col col-sm-2 col-lg text-right">
+              <div className="timestamp">
+                <span className="date">{new Date(item.creationTime).toLocaleDateString()}</span><span className="time hide-lg"> - {new Date(item.creationTime).toLocaleTimeString()}</span>
+              </div>
             </div>
-            <div className="absolute-row right btns xs" data-id={item.uid} data-state={item.roles.editor}>
+            <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
               <button type="button" className="btn icon green" onClick={this.onView} title="anteprima">{icon.eye()}</button>
               <button type="button" className="btn icon primary" onClick={this.onNote} title="Invia notifica">{icon.bell()}</button>
+              {/* <button type="button" className="btn icon primary" onClick={this.onSendVerification} title="Invia email di verifica">{icon.email()}</button> */}
+              <button type="button" className="btn icon primary" onClick={this.onSendReset} title="Invia email di reset password">{icon.textboxPassword()}</button>
               <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button type="button" className="btn icon red" onClick={this.onDeleteRequest} title="elimina">{icon.close()}</button>
             </div>
@@ -287,11 +323,11 @@ export default class UsersDash extends React.Component {
               <ul className="table dense nolist font-sm">
                 <li className="avatar-row labels">
                   <div className="row">
-                    <div className="col-auto hide-xs"><div className="avatar hidden" title="avatar" /></div>
-                    <div className="col hide-sm">Nominativo</div>
-                    <div className="col">Uid</div>
+                    <div className="col-auto"><div className="avatar hidden" title="avatar" /></div>
+                    <div className="col">Nominativo</div>
+                    <div className="col hide-sm">Uid</div>
                     <div className="col hide-sm">Email</div>
-                    <div className="col col-sm-3 col-lg-2">
+                    <div className="col col-sm-3 col-lg-2 hide-xs">
                       <div className="row text-center">
                         <div className="col" title="Libri">{icon.book()}</div>
                         <div className="col" title="Desideri">{icon.heart()}</div>
@@ -299,8 +335,8 @@ export default class UsersDash extends React.Component {
                         <div className="col hide-md" title="Voti">{icon.star()}</div>
                       </div>
                     </div>
-                    <div className="col col-sm-2 text-center">Ruoli</div>
-                    <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
+                    <div className="col col-md-2 col-lg-1 text-center">Ruoli</div>
+                    <div className="col col-sm-2 col-lg text-right">Creato</div>
                   </div>
                 </li>
                 {itemsList}
@@ -315,23 +351,25 @@ export default class UsersDash extends React.Component {
           }
         </div>
 
-        <Dialog
-          open={isOpenDeleteDialog}
-          keepMounted
-          onClose={this.onCloseDeleteDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="delete-dialog-description">
-              Cancellando l'utente verranno rimosse anche la sua libreria e la cronologia delle sue notifiche.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
-          </DialogActions>
-        </Dialog>
+        {selected && 
+          <Dialog
+            open={isOpenDeleteDialog}
+            keepMounted
+            onClose={this.onCloseDeleteDialog}
+            aria-labelledby="delete-dialog-title"
+            aria-describedby="delete-dialog-description">
+            <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="delete-dialog-description">
+                Cancellando l'utente <b>{selected.displayName}</b> <small className="monotype">({selected.id})</small> verranno rimosse anche la sua libreria e le sue notifiche.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions className="dialog-footer flex no-gutter">
+              <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+              <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
+            </DialogActions>
+          </Dialog>
+        }
 			</div>
 		);
 	}

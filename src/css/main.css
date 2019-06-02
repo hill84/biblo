@@ -14,7 +14,15 @@
   --redLightClr: rgb(229, 57, 53);        /* red400 */
   --redClr: rgb(244, 67, 54);             /* red500 */
   --redDarkClr: rgb(229, 57, 53);         /* red600 */
-  --orangeClr: rgb(251, 140, 0);          /* orange600 */
+  --orangeLightClr: rgb(255, 167, 38);    /* orange400 */
+  --orangeClr: rgb(255, 152, 0);          /* orange500 */
+  --orangeDarkClr: rgb(251, 140, 0);      /* orange600 */
+  --deepPurpleLightClr: rgb(125, 86, 194);/* deeppurple400 */
+  --deepPurpleClr: rgb(103, 58, 183);     /* deeppurple500 */
+  --deepPurpleDarkClr: rgb(94, 53, 177);  /* deeppurple600 */
+  --purpleLightClr: rgb(171, 71, 188);    /* purple400 */
+  --purpleClr: rgb(156, 39, 176);         /* purple500 */
+  --purpleDarkClr: rgb(142, 36, 170);     /* purple600 */
   --successClr: var(--greenClr);
   --errorClr: var(--redClr);
   --alertClr: var(--orangeClr);
@@ -751,6 +759,18 @@ hr.line {
 .btn.red:hover { background-color: var(--redLightClr); }
 .btn.red:active, .btn.red.selected { background-color: var(--redDarkClr); }
 
+.btn.orange { background-color: var(--orangeClr); }
+.btn.orange:hover { background-color: var(--orangeLightClr); }
+.btn.orange:active, .btn.orange.selected { background-color: var(--orangeDarkClr); }
+
+.btn.purple { background-color: var(--purpleClr); }
+.btn.purple:hover { background-color: var(--purpleLightClr); }
+.btn.purple:active, .btn.purple.selected { background-color: var(--purpleDarkClr); }
+
+.btn.deeppurple { background-color: var(--deepPurpleClr); }
+.btn.deeppurple:hover { background-color: var(--deepPurpleLightClr); }
+.btn.deeppurple:active, .btn.deeppurple.selected { background-color: var(--deepPurpleDarkClr); }
+
 .btn.neutral { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.4); }
 
 .btn.clear { 
@@ -1203,6 +1223,7 @@ hr.line {
 .randomquote .cover { --pad: 7px; font-size: 7px; }
 
 .randomquote + .bio { margin-top: 10px; }
+.bio .randomquote { margin-top: 30px; }
 
 /* FooterComponent */
 #FooterComponent { 
@@ -2050,7 +2071,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 
 /* MESSAGE */
-.message { font-size: 12px; line-height: 12px; color: var(--lightTextClr); }
+.message { font-size: 12px; line-height: 1.5; color: var(--lightTextClr); }
 .message.error { color: var(--errorClr); }
 .message.info { color: var(--primaryClr); }
 .message.success { color: var(--successClr); }

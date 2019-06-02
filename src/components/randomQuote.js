@@ -81,7 +81,7 @@ export default class RandomQuote extends React.Component {
     return (
       <div className={`randomquote ${className}`}>
         <div className="row">
-          {coverURL && !this.props.author &&
+          {coverURL &&
             <div className="col-auto">
               <Link to={`/book/${bid}/${normURL(bookTitle)}`} className="hoverable-items">
                 <div className="book">
@@ -95,7 +95,10 @@ export default class RandomQuote extends React.Component {
           <div className="col">
             <blockquote className="blockquote">
               <div className="q"><MinifiableText text={quote} limit={500} /></div>
-                <p>– {this.props.author ? author : <Link to={`/author/${normURL(author)}`}>{author}</Link>}{bookTitle && <em>, {bid ? <Link to={`/book/${bid}/${normURL(bookTitle)}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
+              <p>
+                {this.props.author ? '' : <span>– <Link to={`/author/${normURL(author)}`}>{author}</Link></span>}
+                {!this.props.author && bookTitle && ', '}
+                {bookTitle && <em>{bid ? <Link to={`/book/${bid}/${normURL(bookTitle)}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
             </blockquote>
           </div>
         </div>

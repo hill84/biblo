@@ -40,10 +40,8 @@ export default class PasswordResetForm extends React.Component {
     if (Object.keys(errors).length === 0) {
       if (this._isMounted) this.setState({ loading: true });
       auth.sendPasswordResetEmail(email).then(() => {
-        if (this._isMounted) {
-          this.setState({ loading: false });
-          openSnackbar(`Ti abbiamo inviato un'email per reimpostare la password.`, 'success');
-        }
+        if (this._isMounted) this.setState({ emailSent: true, loading: false });
+        openSnackbar(`Ti abbiamo inviato un'email per reimpostare la password.`, 'success');
       }).catch(err => {
         if (this._isMounted) {
           this.setState({
@@ -60,7 +58,7 @@ export default class PasswordResetForm extends React.Component {
     const errors = {};
     
 		if (email) {
-			if (!isEmail(email)) errors.email = "Email non valida";
+			if (!isEmail(email)) errors.email = "Formato email non valido";
 		} else {
 			errors.email = "Inserisci un indirizzo email";
 		}
@@ -68,7 +66,7 @@ export default class PasswordResetForm extends React.Component {
 	};
 
 	render() {
-		const { authError, email, errors, loading } = this.state;
+		const { authError, email, emailSent, errors, loading } = this.state;
 
 		return (
 			<div className="card-container pad-v" id="passwordResetFormComponent">
@@ -95,7 +93,10 @@ export default class PasswordResetForm extends React.Component {
             {authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
             <div className="footer no-gutter">
-              <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
+              {emailSent ? 
+                <span className="btn btn-footer success">Email inviata</span> :
+                <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Recupera password</button>
+              }
             </div>
           </form>
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}

@@ -81,7 +81,7 @@ export default class SignupForm extends React.Component {
         }
       });
 
-      auth.onIdTokenChanged(user => {
+      auth.onAuthStateChanged(user => {
         if (user) {
           const timestamp = Number((new Date(user.metadata.creationTime)).getTime());
           userRef(user.uid).set({
@@ -94,16 +94,20 @@ export default class SignupForm extends React.Component {
             termsAgreement: timestamp, 
             privacyAgreement: timestamp,
             uid: user.uid,
-          }).then(() => {
-            if (user.emailVerified === false) {
-              const actionCodeSettings = {
-                url: `${app.url}/login/?email=${auth.currentUser.email}`
-              };
-              user.sendEmailVerification(actionCodeSettings).then(() => {
-                if (this._isMounted) this.setState({ redirectTo: '/verify-email' });
-              }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-            }
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+        }
+      });
+
+      auth.onIdTokenChanged(user => {
+        if (user) {
+          if (user.emailVerified === false) {
+            const actionCodeSettings = {
+              url: `${app.url}/login/?email=${auth.currentUser.email}`
+            };
+            user.sendEmailVerification(actionCodeSettings).then(() => {
+              if (this._isMounted) this.setState({ redirectTo: '/verify-email' });
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          }
         }
       });
 		}

@@ -11,6 +11,9 @@ export const app = {
   desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
 };
 
+// DEVICE
+const lang = navigator && (navigator.language || navigator.userLanguage).split('-')[0];
+
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
 export const joinObj = obj => {
@@ -60,6 +63,12 @@ export const isLocalStorage = () => {
     return true;
   } catch(e) {
     return false;
+  }
+}
+
+export const asyncForEach = async (array, callback) => {
+  for (let i = 0; i < array.length; i++) {
+    await callback(array[i], i, array);
   }
 }
 
@@ -213,9 +222,9 @@ export const switchLanguages = str => {
 };
 
 export const handleFirestoreError = err => {
+  console.log(lang);
   if (process.env.NODE_ENV !== 'production') console.warn(err);
-  const lang = 'ita';
-  return firestoreErrorMessages[err.code] ? firestoreErrorMessages[err.code][lang] : err.message;
+  return firestoreErrorMessages[err.code] && (lang === 'it' || lang === 'en') ? firestoreErrorMessages[err.code][lang] : err.message;
 }
 
 export const slowImport = (value, ms = 1000) => {

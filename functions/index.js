@@ -71,12 +71,12 @@ exports.countNotifications = functions.firestore.document('notifications/{nid}')
 
 exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => count(context.params.uid, change, 'notifications'));
 
-exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDelete((snap, context) => {
+/* exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDelete((snap, context) => {
   const { uid } = context.params;
   const collectionRef = admin.firestore().collection('notifications').doc(uid).collection('notes');
 
   return collectionRef.delete();
-});
+}); */
 
 // COLLECTIONS
 exports.countCollections = functions.firestore.document('collections/{cid}').onWrite(change => count('collections', change));
@@ -111,11 +111,9 @@ exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, 
 // USERS
 exports.countUsers = functions.firestore.document('users/{uid}').onWrite(change => count('users', change));
 
-exports.clearUser = functions.firestore.document('users/{uid}').onDelete((snap, context) => {
-  const { uid } = context.params;
+exports.clearUserAuth = functions.firestore.document('users/{uid}').onDelete((snap, context) => admin.auth().deleteUser(context.params.uid));
 
-  return admin.storage().bucket().deleteFiles({ prefix: `users/${uid}` }); // delete folder in storage
-});
+exports.clearUserFiles = functions.firestore.document('users/{uid}').onDelete((snap, context) => admin.storage().bucket().deleteFiles({ prefix: `users/${context.params.uid}` }));
 
 // AUTHORS
 exports.countAuthors = functions.firestore.document('authors/{aid}').onWrite(change => count('authors', change));

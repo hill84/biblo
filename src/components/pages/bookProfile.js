@@ -59,38 +59,49 @@ export default class BookProfile extends React.Component {
     return null;
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   onAddBookToShelf = () => this.props.addBookToShelf(this.state.book.bid);
 
   onAddBookToWishlist = () => this.props.addBookToWishlist(this.state.book.bid);
 
   onRemoveBookFromShelf = () => {
-    this.setState({ isOpenRemoveDialog: false });
-    this.props.removeBookFromShelf(this.state.book.bid);
+    if (this._isMounted) {
+      this.setState({ isOpenRemoveDialog: false }, () => this.props.removeBookFromShelf(this.state.book.bid));
+    }
   }
 
-  onRemoveBookFromShelfRequest = () => this.setState({ isOpenRemoveDialog: true });
+  onRemoveBookFromShelfRequest = () => this._isMounted && this.setState({ isOpenRemoveDialog: true });
 
-  onCloseRemoveDialog = () => this.setState({ isOpenRemoveDialog: false });
+  onCloseRemoveDialog = () => this._isMounted && this.setState({ isOpenRemoveDialog: false });
 
   onRemoveBookFromWishlist = () => this.props.removeBookFromWishlist(this.state.book.bid);
 
   onRateBook = rate => {
     if (rate.type === 'click') {
       this.props.rateBook(this.state.book.bid, rate.rating);
-      this.setState({
-        userBook: {
-          ...this.state.userBook,
-          rating_num: rate.rating
-        }
-      });
+      if (this._isMounted) {
+        this.setState({
+          userBook: {
+            ...this.state.userBook,
+            rating_num: rate.rating
+          }
+        });
+      }
     }
   }
 
-  onToggleIncipit = () => this.setState(prevState => ({ isOpenIncipit: !prevState.isOpenIncipit })); 
+  onToggleIncipit = () => this._isMounted && this.setState(prevState => ({ isOpenIncipit: !prevState.isOpenIncipit })); 
 
   onEditing = () => this.props.isEditing();
 
-  onToggleReadingState = () => this.setState(prevState => ({ isOpenReadingState: !prevState.isOpenReadingState })); 
+  onToggleReadingState = () => this._isMounted && this.setState(prevState => ({ isOpenReadingState: !prevState.isOpenReadingState })); 
   
 	render() {
     const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
@@ -194,7 +205,7 @@ export default class BookProfile extends React.Component {
                         }
                       </div>
                       {userBook.bookInShelf &&
-                        <div className="info-row">
+                        <div className="info-row fadeIn reveal">
                           <div className="user rating">
                             <Rater total={5} onRate={rate => this.onRateBook(rate)} rating={userBook.rating_num || 0} />
                             {/* <span className="rating-num">{userBook.rating_num || 0}</span> */}

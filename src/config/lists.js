@@ -5,81 +5,93 @@ export const profileKeys = ['displayName', 'birth_date', 'continent', 'city', 'l
 export const firestoreErrorMessages = {
   // https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestoreException.Code
   'aborted': {
-    eng: "The operation was aborted.",
-    ita: "L'operazione è stata abortita."
+    en: "The operation was aborted.",
+    it: "L'operazione è stata abortita."
   }, 
   'already-exists': {
-    eng: "Some document that we attempted to create already exists.",
-    ita: "Alcuni documenti che abbiamo provato a creare esistono già"
+    en: "Some document that we attempted to create already exists.",
+    it: "Alcuni documenti che abbiamo provato a creare esistono già"
   },
   'cancelled': {
-    eng: "The operation was cancelled.",
-    ita: "L'operazione è stata cancellata."
+    en: "The operation was cancelled.",
+    it: "L'operazione è stata cancellata."
   },
   'data-loss': {
-    eng: "Unrecoverable data loss or corruption.",
-    ita: "Perdita di dati."
+    en: "Unrecoverable data loss or corruption.",
+    it: "Perdita di dati."
   },
   'deadline-exceeded': { 
-    eng: "Deadline expired before operation could complete.",
-    ita: "Deadline scaduta."
+    en: "Deadline expired before operation could complete.",
+    it: "Deadline scaduta."
   },
   'failed-precondition': { 
-    eng: "Operation was rejected because of a failed precondition.",
-    ita: "Operazione rifiutata a causa di una precondizione fallita." 
+    en: "Operation was rejected because of a failed precondition.",
+    it: "Operazione rifiutata a causa di una precondizione fallita." 
   },
   'internal': { 
-    eng: "Internal error.",
-    ita: "Errore interno." 
+    en: "Internal error.",
+    it: "Errore interno." 
   },
   'invalid-argument': { 
-    eng: "Client specified an invalid argument.",
-    ita: "Argomento non valido." 
+    en: "Client specified an invalid argument.",
+    it: "Argomento non valido." 
   }, 
   'not-found': { 
-    eng: "Some requested document was not found.",
-    ita: "Documento non trovato." 
+    en: "Some requested document was not found.",
+    it: "Documento non trovato." 
   }, 
   'out-of-range': { 
-    eng: "Operation was attempted past the valid range.",
-    ita: "Operazione fuori range massimo." 
+    en: "Operation was attempted past the valid range.",
+    it: "Operazione fuori range massimo." 
   }, 
   'permission-denied': { 
-    eng: "The caller does not have permission to execute the specified operation.",
-    ita: "Utente non autorizzato." 
+    en: "The caller does not have permission to execute the specified operation.",
+    it: "Utente non autorizzato." 
   }, 
   'resource-exhausted': { 
-    eng: "Some resource has been exhausted, perhaps a per-user quota.",
-    ita: "Quota esaurita."
+    en: "Some resource has been exhausted, perhaps a per-user quota.",
+    it: "Quota esaurita."
   },
   'unauthenticated': { 
-    eng: "The request does not have valid authentication credentials for the operation.",
-    ita: "Utente non autorizzato." 
+    en: "The request does not have valid authentication credentials for the operation.",
+    it: "Utente non autorizzato." 
   },
   'unavailable': { 
-    eng: "The service is currently unavailable.",
-    ita: "Servizio temporaneamente non disponibile." 
+    en: "The service is currently unavailable.",
+    it: "Servizio temporaneamente non disponibile." 
   },
   'unimplemented': { 
-    eng: "Operation is not implemented or not supported/enabled.",
-    ita: "Operazione non implementata o supportata." 
+    en: "Operation is not implemented or not supported/enabled.",
+    it: "Operazione non implementata o supportata." 
   },
   'unknown': { 
-    eng: "Unknown error.",
-    ita: "Errore sconosciuto." 
+    en: "Unknown error.",
+    it: "Errore sconosciuto." 
   },
   // AUTH
   'auth/email-already-in-use': {
-    eng: "The email address is already in use by another account.",
-    ita: "Indirizzo email già usato da un altro account."
+    en: "The email address is already in use by another account.",
+    it: "Indirizzo email già usato da un altro account."
   },
   'auth/user-not-found': {
-    eng: "There is no user record corresponding to this identifier. The user may have been deleted.",
-    ita: "Utente non trovato. Potrebbe essere stato cancellato."
+    en: "There is no user record corresponding to this identifier. The user may have been deleted.",
+    it: "Utente non trovato. Potrebbe essere stato cancellato."
   },
   'auth/too-many-requests': {
-    eng: "We have blocked all requests from this device due to unusual activity. Try again later.",
-    ita: "Abbiamo rilevato attività sospette provenienti da questo dispositivo. Riprova più tardi."
+    en: "We have blocked all requests from this device due to unusual activity. Try again later.",
+    it: "Abbiamo rilevato attività sospette provenienti da questo dispositivo. Riprova più tardi."
+  },
+  'auth/popup-closed-by-user': {
+    en: "The popup has been closed by the user before finalizing the operation.",
+    it: "Il popup è stato chiuso dall'utente prima di finalizzare l'operazione."
+  },
+  'auth/wrong-password': {
+    en: "The password is invalid or the user does not have a password.",
+    it: "La password è sbagliata o l'utente non ha una password. Forse ti sei registrato con un social?"
+  },
+  'auth/user-disabled': {
+    en: "The user account has been disabled by an administrator.",
+    it: "L'account utente è stato disabilitato da un amministratore."
   }
 };
 
