@@ -54,6 +54,7 @@ export const bookType = shape({
   bid: string.isRequired,
   covers: arrayOf(string),
   description: string,
+  duration: number, // milliseconds
   edition_num: number,
   format: string,
   genres: arrayOf(string),

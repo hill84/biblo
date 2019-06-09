@@ -1655,12 +1655,13 @@ hr.line {
 } 
 .read .book .cover .overlay { background: none; background-color: rgba(0, 151, 167, .86); opacity: 1; }
 
-.audio .book .cover {
-  width: var(--coverHeight);
+.audio-format .book .cover {
+  /* width: var(--coverHeight); */
+  height: var(--coverWidth);
   border-radius: 999px;
   text-align: center;
 }
-.audio .book .cover .overlay {
+.audio-format .book .cover .overlay {
   background: var(--cardBg);
   width: 25%;
   height: 25%;
@@ -1670,8 +1671,8 @@ hr.line {
   box-shadow: inset 0 1px 3px rgba(0,0,0,.2), 0 0 0 15px rgba(0,0,0,.2);
   transition: all .2s ease-in-out;
 }
-.audio .book:hover .overlay { box-shadow: inset 0 3px 8px rgba(0,0,0,.25), 0 0 0 15px rgba(0,0,0,.2); }
-.audio .book:active .overlay { box-shadow: 0 0 0 15px rgba(0,0,0,.2); }
+.audio-format .book:hover .overlay { box-shadow: inset 0 3px 8px rgba(0,0,0,.25), 0 0 0 15px rgba(0,0,0,.2); }
+.audio-format .book:active .overlay { box-shadow: 0 0 0 15px rgba(0,0,0,.2); }
 
 .shelf-row.stacked { grid-template-columns: 1fr; }
 .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }

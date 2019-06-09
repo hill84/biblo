@@ -10,7 +10,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { handleFirestoreError, normURL, timeSince } from '../../../config/shared';
+import { handleFirestoreError, normURL } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
@@ -157,7 +157,6 @@ export default class collectionsDash extends React.Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    // const { openSnackbar } = this.props;
 
     const itemsList = (items && items.length &&
       items.map(item => 
@@ -166,13 +165,11 @@ export default class collectionsDash extends React.Component {
             <Link to={`/collection/${normURL(item.title)}`} className="col">
               {item.title}
             </Link>
-            <div className="col">{item.books.length}</div>
-            <div className="col col-sm-2 col-lg-1 text-right">
-              <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
-            </div>
+            <div className="col-5 col-lg-8" title={item.description}>{item.description}</div>
+            <div className="col-1 text-right">{item.books.length}</div>
             <div className="absolute-row right btns xs">
               <button type="button" className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
+              <button type="button" className="btn icon primary" disabled onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
               <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close()}</button>
             </div>
@@ -242,8 +239,8 @@ export default class collectionsDash extends React.Component {
                 <li className="labels">
                   <div className="row">
                     <div className="col">Titolo</div>
-                    <div className="col">Libri</div>
-                    <div className="col col-sm-2 col-lg-1 text-right">Modificata</div>
+                    <div className="col-5 col-lg-8">Descrizione</div>
+                    <div className="col-1 text-right">Libri</div>
                   </div>
                 </li>
                 {itemsList}

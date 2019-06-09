@@ -161,7 +161,7 @@ export default class QuotesDash extends React.Component {
             </div>
             {item.bid ? <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
             <Link to={`/author/${normURL(item.author)}`} className="col">{item.author}</Link>
-            <div className="col-5 hide-sm">{item.quote}</div>
+            <div className="col-5 hide-sm" title={item.quote}>{item.quote}</div>
             <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.qid}/></div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col hide-sm">
               {item.lastEditBy}

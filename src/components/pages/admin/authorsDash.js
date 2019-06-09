@@ -162,7 +162,7 @@ export default class AuthorsDash extends React.Component {
             </div>
             <div className="col-6 col-sm-4 col-lg-2" title={item.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={item.displayName}/></div>
             <div className="col-1"><button className="btn xs flat" title={item.sex === 'm' ? 'uomo' : 'donna'}>{item.sex}</button></div>
-            <div className="col hide-lg">{item.bio}</div>
+            <div className="col hide-lg" title={item.bio}>{item.bio}</div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col col-sm-2 col-lg-1">{item.lastEditBy}</Link>
             <div className="col col-sm-2 col-lg-1 text-right">
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>

@@ -59,8 +59,9 @@ export default class readingStateForm extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { progress_num, state_num, steps } = this.state;
-    if (this._isMounted) {
-      if (state_num !== prevState.state_num) {
+    
+    if (state_num !== prevState.state_num) {
+      if (this._isMounted) {
         switch (state_num) {
           case 1: this.setState({ progress_num: 0 }); break;
           case 2: this.setState({ progress_num: (100 / steps) }); break;
@@ -71,7 +72,9 @@ export default class readingStateForm extends React.Component {
         }
         this.setState({ changes: true });
       }
-      if (progress_num !== prevState.progress_num) {
+    }
+    if (progress_num !== prevState.progress_num) {
+      if (this._isMounted) {
         if (progress_num === 0) this.setState({ state_num: 1 });
         if (progress_num === (100 / steps)) this.setState({ state_num: 2 });
         if (progress_num === 100) this.setState({ state_num: 3 });
@@ -83,30 +86,28 @@ export default class readingStateForm extends React.Component {
   onToggle = () => this.props.onToggle();
 
   onChangeSelect = key => e => {
-    this.setState({ [key]: e.target.value, changes: true });
+    if (this._isMounted) {
+      this.setState({ [key]: e.target.value, changes: true });
+    }
 	};
 
   onChangeDate = key => date => {
     // console.log(date);
-		this.setState({ 
-      [key]: new Date(date).getTime(), 
-      changes: true,
-      errors: { ...this.state.errors, [key]: null }
-    });
+    if (this._isMounted) {
+      this.setState(prevState => ({ 
+        [key]: new Date(date).getTime(), 
+        changes: true,
+        errors: { ...prevState.errors, [key]: null }
+      }));
+    }
   };
 
   validate = (start, end) => {
     const errors = {};
     const today = new Date().getTime();
-    if (start > today) {
-      errors.start_num = "Data futura non valida";
-    }
-    if (end > today) {
-      errors.end_num = "Data futura non valida";
-    }
-    if (end && start > end) {
-      errors.end_num = "Data non valida";
-    }
+    if (start > today) { errors.start_num = "Data futura non valida"; }
+    if (end > today) { errors.end_num = "Data futura non valida"; }
+    if (end && start > end) { errors.end_num = "Data non valida"; }
     return errors;
   }
 
@@ -116,19 +117,25 @@ export default class readingStateForm extends React.Component {
     const { bid, onToggle, openSnackbar } = this.props;
     if (changes) {
       const errors = this.validate(start_num, end_num);
-      this.setState({ errors });
+      if (this._isMounted) {
+        this.setState({ errors });
+      }
       if (Object.keys(errors).length === 0) {
-        this.setState({ loading: true });
-        userBookRef(authid, bid).update({
-          'readingState.state_num': state_num,
-          'readingState.start_num': start_num,
-          'readingState.end_num': end_num,
-          'readingState.progress_num': progress_num
-        }).then(() => {
-          // console.log(`UserBook readingState updated`);
-          this.setState({ loading: false });
-          onToggle();
-        }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
+        if (this._isMounted) {
+          this.setState({ loading: true }, () => {
+            userBookRef(authid, bid).update({
+              'readingState.state_num': state_num,
+              'readingState.start_num': start_num,
+              'readingState.end_num': end_num,
+              'readingState.progress_num': progress_num
+            }).then(() => {
+              // console.log(`UserBook readingState updated`);
+              if (this._isMounted) {
+                this.setState({ loading: false }, () => onToggle());
+              }
+            }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
+          });
+        }
       }
     } else onToggle();
   }

@@ -10,7 +10,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, calcReadingTime, hasRole, normURL, timeSince } from '../../config/shared';
+import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
 import { funcType, userBookType, userType } from '../../config/types';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -102,17 +102,27 @@ export default class BookProfile extends React.Component {
   onEditing = () => this.props.isEditing();
 
   onToggleReadingState = () => this._isMounted && this.setState(prevState => ({ isOpenReadingState: !prevState.isOpenReadingState })); 
+
+  setFormatClass = format => {
+    switch (format) {
+      case 'Audiolibro': return 'audio';
+      case 'Rivista': return 'magazine';
+      case 'Ebook': return 'ebook';
+      default: return 'book';
+    }
+  }
   
 	render() {
     const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
     const { addReview, loading, openSnackbar, removeReview } = this.props;
+    
+    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
+    
     const hasBid = book && Boolean(book.bid);
     const isAdmin = hasRole(user, 'admin');
     const isEditor = hasRole(user, 'editor');
     const isLocked = book && !book.EDIT.edit && !isAdmin;
     // const authors = book && <Link to={`/author/${normURL(Object.keys(book.authors)[0])}`}>{Object.keys(book.authors)[0]}</Link>;
-
-    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 
 		return (
       <React.Fragment>
@@ -143,7 +153,7 @@ export default class BookProfile extends React.Component {
               <div className="row">
                 <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
                   {book.incipit ? 
-                    <div role="button" className={`hoverable-items ${book.format === 'Audiolibro' ? 'audio' : ''}`} onClick={this.onToggleIncipit}>
+                    <div role="button" className={`hoverable-items ${this.setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
                       <button type="button" className="btn xs rounded flat centered" style={{'marginTop': '10px'}}>Leggi incipit</button>
                     </div>
@@ -167,10 +177,11 @@ export default class BookProfile extends React.Component {
                   </div>
                   <div className="info-row hide-sm">
                     <span className="counter">ISBN-13: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/></span>
-                    {(book.ISBN_10 !== 0) && <span className="counter">ISBN-10: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></span>}
+                    {book.ISBN_10 !== 0 && <span className="counter">ISBN-10: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></span>}
                     {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
-                    {/* (book.edition_num !== 0) && <span className="counter">Edizione: {book.edition_num}</span> */}
-                    {(book.pages_num !== 0) && <span className="counter">Pagine: {book.pages_num}</span>}
+                    {/* book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span> */}
+                    {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
+                    {book.format === 'Audiolibro' && book.duration && <span className="counter">Durata: {msToTime(book.duration)}</span>}
                     {book.format !== 'Libro' && <span className="counter">Formato: {book.format}</span>}
                     {book.genres && book.genres[0] && <span className="counter comma">Gener{book.genres[1] ? 'i' : 'e'}: {book.genres.map(genre => <Link to={`/genre/${normURL(genre)}`} className="counter" key={genre}>{genre}</Link> )}</span>}
                     {book.collections && book.collections[0] && <span className="counter comma">Collezion{book.collections[1] ? 'i' : 'e'}: {book.collections.map(collection => <Link to={`/collection/${normURL(collection)}`} className="counter" key={collection}>{collection}</Link> )}</span>}

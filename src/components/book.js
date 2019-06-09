@@ -53,7 +53,7 @@ export default class Book extends React.Component {
     if (props.user !== state.user) { return { user: props.user }; }
     if (props.book && (props.book !== state.book)) { 
       return { 
-        book: props.book,
+        /* book: props.book,
         seo: {
           author: Object.keys(props.book.authors),
           description: `Scopri su ${app.name} la trama e le recensioni di ${props.book.title}, scritto da ${Object.keys(props.book.authors)[0]}, pubblicato da ${props.book.publisher}`,
@@ -63,7 +63,7 @@ export default class Book extends React.Component {
           release_date: props.book.publication ? new Date(props.book.publication).toLocaleDateString() : '',
           title: `${props.book.title} di ${Object.keys(props.book.authors)[0]} - ${props.book.publisher} - ${app.name}`,
           url: `${app.url}/book/${props.book.bid}/${normURL(props.book.title)}`,
-        },
+        }, */
         userBook: {
           ...state.userBook,
           bid: props.book.bid,
@@ -79,8 +79,6 @@ export default class Book extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { book, userBook } = this.state;
-    
     if (this.props.bid !== prevProps.bid) {
       if (this._isMounted) {
         this.setState({ loading: true });
@@ -90,21 +88,21 @@ export default class Book extends React.Component {
           // console.log(snap.data());
           this.setState({
             book: {
-              ...book,
+              ...prevState.book,
               ...snap.data()
             },
             seo: {
-              author: Object.keys(book.authors),
-              description: `Scopri su ${app.name} la trama e le recensioni di ${book.title}, scritto da ${Object.keys(book.authors)[0]}, pubblicato da ${book.publisher}`,
-              image: book.covers.length && book.covers[0],
-              isbn: book.ISBN_13,
-              rating: { scale: '5', value: book.rating_num },
-              release_date: book.publication ? new Date(book.publication).toLocaleDateString() : '',
-              title: `${book.title} di ${Object.keys(book.authors)[0]} - ${book.publisher} - ${app.name}`,
-              url: `${app.url}/book/${book.bid}/${normURL(book.title)}`,
+              author: Object.keys(prevState.book.authors),
+              description: `Scopri su ${app.name} la trama e le recensioni di ${prevState.book.title}, scritto da ${Object.keys(prevState.book.authors)[0]}, pubblicato da ${prevState.book.publisher}`,
+              image: prevState.book.covers.length && prevState.book.covers[0],
+              isbn: prevState.book.ISBN_13,
+              rating: { scale: '5', value: prevState.book.rating_num },
+              release_date: prevState.book.publication ? new Date(prevState.book.publication).toLocaleDateString() : '',
+              title: `${prevState.book.title} di ${Object.keys(prevState.book.authors)[0]} - ${prevState.book.publisher} - ${app.name}`,
+              url: `${app.url}/book/${prevState.book.bid}/${normURL(prevState.book.title)}`,
             },
             userBook: {
-              ...userBook,
+              ...prevState.userBook,
               bid: snap.data().bid || '',
               authors: snap.data().authors || {},
               covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
@@ -118,17 +116,13 @@ export default class Book extends React.Component {
           this.fetchUserBook(this.props.bid);
         });
       });
-      if (this.props.book !== prevProps.book) {
-        this.fetchUserBook(this.props.book.bid);
-      }
     }
   }
 
   componentDidMount() {
     this._isMounted = true;
-    const { book, userBook } = this.state;
     const { bid } = this.props;
-
+    
     if (bid) {
       if (this._isMounted) {
         this.setState({ loading: true });
@@ -137,9 +131,9 @@ export default class Book extends React.Component {
         // console.log(snap);
         if (snap.exists) {
           // console.log(snap.data());
-          this.setState({
+          this.setState(prevState => ({
             book: {
-              ...book,
+              ...prevState.book,
               ...snap.data()
             },
             seo: {
@@ -153,7 +147,7 @@ export default class Book extends React.Component {
               url: `${app.url}/book/${snap.data().bid}/${normURL(snap.data().title)}`,
             },
             userBook: {
-              ...userBook,
+              ...prevState.userBook,
               bid: snap.data().bid || '',
               authors: snap.data().authors,
               covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
@@ -161,9 +155,9 @@ export default class Book extends React.Component {
               title: snap.data().title,
               subtitle: snap.data().subtitle
             }
-          });
+          }));
         } else console.warn(`No book with bid ${bid}`);
-        this.setState({ loading: false }, () => this.fetchUserBook(bid || book.bid));
+        this.setState({ loading: false }, () => this.fetchUserBook(bid || this.state.book.bid));
       });
     }
   }
@@ -176,11 +170,22 @@ export default class Book extends React.Component {
   }
   
   fetchUserBook = bid => {
+    // console.log('fetchUserBook');
     if (isAuthenticated() && bid) {
       this.unsubUserBookFetch = userBookRef(authid, bid).onSnapshot(snap => {
         if (snap.exists) {
           this.setState({ userBook: snap.data() });
-          // console.log(snap.data());
+        } else {
+          this.setState(prevState => ({
+            userBook: { 
+              ...prevState.userBook,
+              review: {},
+              readingState: { state_num: 1 },
+              rating_num: 0,
+              bookInShelf: false,
+              bookInWishlist: false 
+            }
+          }));
         }
       });
     }
@@ -208,11 +213,7 @@ export default class Book extends React.Component {
         bookRef(bid).update({
           readers_num: bookReaders_num
         }).then(() => {
-          if (this._isMounted) {
-            this.setState(prevState => ({ 
-              book: { ...prevState.book, readers_num: bookReaders_num } 
-            }), () => console.log('Readers number increased'));
-          }
+          // console.log(`Readers number increased to ${this.state.book.readers_num}`);
           
           userRef(authid).update({
             'stats.shelf_num': this.props.user.stats.shelf_num + 1,
@@ -262,15 +263,15 @@ export default class Book extends React.Component {
         bookInShelf: false,
         bookInWishlist: true
       }).then(() => {
-        /* this.setState({ 
+        /* this.setState(prevState => ({ 
           userBook: { 
-            ...this.state.userBook, 
+            ...prevState.userBook, 
             rating_num: userBookRating_num,
             review: userBookReview,
             bookInShelf: false,
             bookInWishlist: true 
           }
-        }); */
+        })); */
         // console.log('Book added to user wishlist');
         openSnackbar('Libro aggiunto in lista desideri', 'success');
         userRef(authid).update({
@@ -284,17 +285,17 @@ export default class Book extends React.Component {
             ratings_num: bookRatings_num,
             readers_num: bookReaders_num
           }).then(() => {
-            this.setState({ 
+            this.setState(prevState => ({ 
               book: { 
-                ...this.state.book,
+                ...prevState.book,
                 ratings_num: bookRatings_num,
                 readers_num: bookReaders_num
               },
               userBook: { 
-                ...this.state.userBook, 
+                ...prevState.userBook, 
                 rating_num: userBookRating_num 
               }
-            });
+            }));
             //console.log('Rating and reader removed');
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -341,16 +342,16 @@ export default class Book extends React.Component {
       }
       
       userBookRef(authid, bid).delete().then(() => {
-        this.setState({ 
+        this.setState(prevState => ({ 
           userBook: { 
-            ...this.state.userBook, 
+            ...prevState.userBook, 
             bookInShelf: false, 
             bookInWishlist: false,
             rating_num: userBookRating_num,
             readingState: { state_num: 1 },
             review
           }
-        });
+        }));
         // console.log(`Book removed from user ${bookshelf}`);
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   
@@ -359,16 +360,16 @@ export default class Book extends React.Component {
         ratings_num: bookRatings_num,
         readers_num: bookReaders_num
       }).then(() => {
-        this.setState({ 
+        this.setState(prevState => ({ 
           book: { 
-            ...this.state.book, 
+            ...prevState.book, 
             rating_num: bookRating_num, 
             ratings_num: bookRatings_num,
             readers_num: bookReaders_num,
             review,
             reviews_num: bookReviews_num
           }
-        });
+        }));
         // console.log('Rating and reader removed');
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   
@@ -451,13 +452,13 @@ export default class Book extends React.Component {
         rating_num: bookRating_num,
         ratings_num: bookRatings_num
       }).then(() => {
-        this.setState({ 
+        this.setState(prevState => ({ 
           book: { 
-            ...this.state.book, 
+            ...prevState.book, 
             rating_num: bookRating_num, 
             ratings_num: bookRatings_num
           }
-        });
+        }));
         // console.log(`Book rated with ${rate} stars`);
 
         if (this.state.book.collections) {
@@ -475,12 +476,12 @@ export default class Book extends React.Component {
         userBookRef(authid, bid).update({
           rating_num: rate
         }).then(() => {
-          this.setState({ 
+          this.setState(prevState => ({ 
             userBook: { 
-              ...this.state.userBook, 
+              ...prevState.userBook, 
               rating_num: rate 
             }
-          });
+          }));
           // console.log('User book rated with ' + rate + ' stars');
 
           userRef(authid).update({

@@ -139,6 +139,21 @@ export const timeSince = date => {
   return 'poco fa'; // `${Math.floor(seconds)} secondi fa`;
 };
 
+export const msToTime = s => {
+  if (s && s > 59999) {
+    const ms = s % 1000;
+    s = (s - ms) / 1000;
+    const secs = s % 60;
+    s = (s - secs) / 60;
+    const mins = s % 60;
+    const hrs = (s - mins) / 60;
+    const hours = hrs ? `${hrs} or${hrs === 1 ? 'a' : 'e'}` : '';
+    const minutes = mins ? `${mins} minut${mins === 1 ? 'o' : 'i'}` : '';
+    return `${hours}${hours && minutes ? ' e ' : ''}${minutes}`;
+  }
+  return 'non disponibile';
+}
+
 export const screenSize = () => {
   const w = window.innerWidth;
   return w <= 359 ? 'xs' : w <= 768 ? 'sm' : w <= 992 ? 'md' : w <= 1200 ? 'lg' : 'xl';
