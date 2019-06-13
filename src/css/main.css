@@ -2580,6 +2580,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .text-center-xs { text-align: center; }
   .book-incipit p { font-size: .8rem; }
   .minifiable { max-height: 650px; }
+  .review .head h3 .date { display: none; }
   .user.rating { height: 40px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }

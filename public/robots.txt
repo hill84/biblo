@@ -6,4 +6,4 @@ Disallow: /icons/
 User-agent: *
 Allow: /
 
-Sitemap: https://biblo.space/sitemap.xml
+Sitemap: https://biblo.space/sitemapindex.xml

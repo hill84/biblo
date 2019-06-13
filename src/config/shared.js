@@ -237,7 +237,6 @@ export const switchLanguages = str => {
 };
 
 export const handleFirestoreError = err => {
-  console.log(lang);
   if (process.env.NODE_ENV !== 'production') console.warn(err);
   return firestoreErrorMessages[err.code] && (lang === 'it' || lang === 'en') ? firestoreErrorMessages[err.code][lang] : err.message;
 }
