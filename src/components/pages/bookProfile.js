@@ -137,7 +137,7 @@ export default class BookProfile extends React.Component {
         }
       
         <div id="BookProfileComponent">
-          <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
+          <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${book.covers[0]})` }} /></div>
 
           {isOpenReadingState && 
             <ReadingStateForm 
@@ -151,14 +151,17 @@ export default class BookProfile extends React.Component {
           <div className="container top">
             <div className="card light main text-center-md">
               <div className="row">
-                <div className="col-md-auto col-sm-12" style={{marginBottom: 15}}>
+                <div className="col-md-auto col-sm-12" style={{ marginBottom: 15 }}>
                   {book.incipit ? 
                     <div role="button" className={`hoverable-items ${this.setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
-                      <button type="button" className="btn xs rounded flat centered" style={{'marginTop': '10px'}}>Leggi incipit</button>
+                      <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>
                     </div>
                   :
                     <Cover book={book} rating={false} info={false} />
+                  }
+                  {book.trailerURL && 
+                    <button onClick={() => window.open(book.trailerURL,'_blank')} className="btn xs rounded flat centered btn-trailer">Trailer</button>
                   }
                 </div>
                 <div className="col book-profile">

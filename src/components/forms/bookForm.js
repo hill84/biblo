@@ -14,6 +14,7 @@ import 'moment/locale/it';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
+import isURL from 'validator/lib/isURL';
 import firebase, { authid, bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
@@ -54,7 +55,8 @@ export default class BookForm extends React.Component {
       reviews_num: this.props.book.reviews_num || 0,
       subtitle: this.props.book.subtitle || '', 
       title: this.props.book.title || '', 
-      title_sort: this.props.book.title_sort || ''
+      title_sort: this.props.book.title_sort || '',
+      trailerURL: this.props.book.trailerURL || ''
     },
     imgPreview: null,
     imgProgress: 0,
@@ -62,6 +64,7 @@ export default class BookForm extends React.Component {
     isEditingIncipit: false,
     description_maxChars: 2000,
     incipit_maxChars: 2500,
+    URL_maxChars: 1000,
     loading: false,
     errors: {},
     changes: false,
@@ -257,7 +260,8 @@ export default class BookForm extends React.Component {
             reviews_num: book.reviews_num,
             subtitle: book.subtitle, 
             title: book.title, 
-            title_sort: book.title_sort
+            title_sort: book.title_sort,
+            trailerURL: book.trailerURL
           }).then(() => {
             if (this._isMounted) {
               this.setState({ redirectToBook: `${newBid}/${book.title}` }, () => {
@@ -401,6 +405,14 @@ export default class BookForm extends React.Component {
       errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
       if (this._isMounted) { this.setState({ isEditingIncipit: true }) }
     }
+    if (book.trailerURL) {
+      if (!isURL(book.trailerURL)) {
+        errors.trailerURL = `Formato URL non valido`;
+      } 
+      if (book.trailerURL.length > this.state.URL_maxChars) {
+        errors.trailerURL = `Lunghezza massima ${this.state.URL_maxChars} caratteri`;
+      }
+    } 
     ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
       if (checkBadWords(book[text])) errors[text] = "Niente volgarità"
     });
@@ -675,22 +687,40 @@ export default class BookForm extends React.Component {
                   </FormControl>
                 </div>
                 {isAdmin &&
-                  <div className="form-group">
-                    <FormControl className="chip-input" margin="normal" fullWidth>
-                      <ChipInput
-                        name="collections"
-                        label="Collezione (max 5)"
-                        placeholder="es: Sherlock Holmes"
-                        error={Boolean(errors.collections)}
-                        value={book.collections}
-                        onAdd={chip => this.onAddChip("collections", chip)}
-                        onDelete={chip => this.onDeleteChip("collections", chip)}
-                        disabled={!isAdmin}
-                        onKeyPress={e => this.onPreventDefault(e)}
-                      />
-                      {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}
-                    </FormControl>
-                  </div>
+                  <React.Fragment>
+                    <div className="form-group">
+                      <FormControl className="chip-input" margin="normal" fullWidth>
+                        <ChipInput
+                          name="collections"
+                          label="Collezione (max 5)"
+                          placeholder="es: Sherlock Holmes"
+                          error={Boolean(errors.collections)}
+                          value={book.collections}
+                          onAdd={chip => this.onAddChip("collections", chip)}
+                          onDelete={chip => this.onDeleteChip("collections", chip)}
+                          disabled={!isAdmin}
+                          onKeyPress={e => this.onPreventDefault(e)}
+                        />
+                        {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}
+                      </FormControl>
+                    </div>
+                    <div className="form-group">
+                      <FormControl className="input-field" margin="normal" fullWidth>
+                        <InputLabel error={Boolean(errors.trailerURL)} htmlFor="trailerURL">Video trailer</InputLabel>
+                        <Input
+                          id="trailerURL"
+                          name="trailerURL"
+                          type="url"
+                          placeholder="es: https://www.youtube.com/..."
+                          error={Boolean(errors.trailerURL)}
+                          value={book.trailerURL}
+                          disabled={!isAdmin}
+                          onChange={this.onChange}
+                        />
+                        {errors.trailerURL && <FormHelperText className="message error">{errors.trailerURL}</FormHelperText>}
+                      </FormControl>
+                    </div>
+                  </React.Fragment>
                 }
                 {isEditingDescription /* || book.description */ ?
                   <div className="form-group">

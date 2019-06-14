@@ -54,7 +54,7 @@ export const bookType = shape({
   bid: string.isRequired,
   covers: arrayOf(string),
   description: string,
-  duration: number, // milliseconds
+  duration: number, // audio book duration in milliseconds
   edition_num: number,
   format: string,
   genres: arrayOf(string),
@@ -69,7 +69,8 @@ export const bookType = shape({
   rating_num: number.isRequired,
   subtitle: string,
   title: string.isRequired,
-  title_sort: string.isRequired
+  title_sort: string.isRequired,
+  trailerURL: string
 });
 
 export const coverType = shape({
