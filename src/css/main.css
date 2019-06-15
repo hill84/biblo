@@ -371,6 +371,10 @@ hr.line {
   margin: 8px 8px 8px 0;
 }
 
+.MuiTooltip-popper .MuiTooltip-tooltip {
+  background-color: var(--canvasLightClr);
+}
+
 /* CARDS */
 .light, .light-theme .dark {
   --mainBg: #f7f7f7;
@@ -1172,10 +1176,11 @@ hr.line {
   top: 0;
 }
 #BookContainerComponent .container.top { margin-top: 60px; }
-#BookContainerComponent .container.top .book { margin-top: -60px; margin-bottom: 10px; }
+#BookContainerComponent .container.top .book { margin-top: -60px; }
 
 /* bookProfile */
 #BookProfileComponent { position: relative; z-index: 1; }
+#BookProfileComponent .card .book { margin-bottom: 10px; }
 
 /* dashboard */
 .basic-profile .avatar { 

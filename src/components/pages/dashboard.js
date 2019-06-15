@@ -18,6 +18,7 @@ import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
@@ -410,7 +411,9 @@ export default class Dashboard extends React.Component {
 					<div className="col-md col-12">
 						<div className="card dark basic-profile-card">
 							<div className="basic-profile">
-                <div className="role-badges">{Roles} {!user.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
+                <Tooltip title="Ruolo utente" placement="left">
+                  <div className="role-badges">{Roles} {!user.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
+                </Tooltip>
 								<div className="row">
 									<div className="col-auto">
                     <Avatar className="avatar" /* src={user.photoURL} */ alt={user.displayName}>

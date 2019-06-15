@@ -6,12 +6,14 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { ThemeProvider } from '@material-ui/styles';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
+import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
+import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
 import { authid, noteRef, notesRef, signOut } from '../config/firebase';
@@ -20,7 +22,6 @@ import { roles } from '../config/lists';
 import { app, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { funcType, stringType, userType } from '../config/types';
-import CookieBanner from 'react-cookie-banner';
 import Footer from './footer';
 
 export default class Layout extends React.Component {
@@ -124,40 +125,47 @@ export default class Layout extends React.Component {
       <div id="layoutComponent">
         <AppBar id="appBarComponent" className="dark" position="static">
           <Toolbar className="toolbar">
-            <IconButton className="drawer-btn" aria-label="Menu" onClick={this.onToggleDrawer}> 
-              {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
-            </IconButton>
+            <Tooltip title="Menu" placement="bottom">
+              <IconButton className="drawer-btn" aria-label="Menu" onClick={this.onToggleDrawer}> 
+                {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
+              </IconButton>
+            </Tooltip>
             <Typography className="title" variant="h6" color="inherit">
               <Link to="/">{app.name}<sup>Beta</sup></Link>
             </Typography>
             {user ? 
               <React.Fragment>
                 {user.roles.admin && 
-                  <IconButton
-                  className="search-btn popIn reveal delay6 hide-xs"
-                  component={Link} 
-                  to="/new-book"
-                  aria-label="New book">
-                    {icon.plus()}
-                  </IconButton>
+                  <Tooltip title="Aggiungi libro" placement="bottom">
+                    <IconButton
+                    className="search-btn popIn reveal delay6 hide-xs"
+                    component={Link} 
+                    to="/new-book"
+                    aria-label="New book">
+                      {icon.plus()}
+                    </IconButton>
+                  </Tooltip>
                 }
-                <IconButton
-                  className="search-btn popIn reveal delay4"
-                  component={Link} 
-                  to="/books/add"
-                  aria-label="Search">
-                  {icon.magnify()}
-                </IconButton>
-                <IconButton
-                  className="notes-btn popIn reveal delay2"
-                  aria-label="Notifications"
-                  aria-owns={notesAnchorEl ? 'notes-menu' : null}
-                  aria-haspopup="true"
-                  onClick={this.onOpenNotes}
-                  title={`${notes ? toRead(notes).length : 0} notifiche`}>
-                  {icon.bell()}
-                  {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
-                </IconButton>
+                <Tooltip title="Cerca libro" placement="bottom">
+                  <IconButton
+                    className="search-btn popIn reveal delay4"
+                    component={Link} 
+                    to="/books/add"
+                    aria-label="Search">
+                    {icon.magnify()}
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={`${notes ? toRead(notes).length : 0} notifiche`} placement="bottom">
+                  <IconButton
+                    className="notes-btn popIn reveal delay2"
+                    aria-label="Notifications"
+                    aria-owns={notesAnchorEl ? 'notes-menu' : null}
+                    aria-haspopup="true"
+                    onClick={this.onOpenNotes}>
+                    {icon.bell()}
+                    {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
+                  </IconButton>
+                </Tooltip>
                 <Menu
                   id="notes-menu"
                   className="dropdown-menu notes"
@@ -183,17 +191,19 @@ export default class Layout extends React.Component {
                   <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
                 </Menu>
 
-                <IconButton
-                  className="more-btn"
-                  aria-label="More"
-                  aria-owns={moreAnchorEl ? 'more-menu' : null}
-                  aria-haspopup="true"
-                  onClick={this.onOpenMore}>
-                  <Avatar className="avatar popIn reveal" src={user.photoURL} alt={user.displayName}>
-                    {!user.photoURL && getInitials(user.displayName)}
-                  </Avatar>
-                  {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
-                </IconButton>
+                <Tooltip title={user.displayName} placement="bottom">
+                  <IconButton
+                    className="more-btn"
+                    aria-label="More"
+                    aria-owns={moreAnchorEl ? 'more-menu' : null}
+                    aria-haspopup="true"
+                    onClick={this.onOpenMore}>
+                    <Avatar className="avatar popIn reveal" src={user.photoURL} alt={user.displayName}>
+                      {!user.photoURL && getInitials(user.displayName)}
+                    </Avatar>
+                    {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
+                  </IconButton>
+                </Tooltip>
                 <Menu
                   id="more-menu"
                   className="dropdown-menu"

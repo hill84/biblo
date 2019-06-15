@@ -1,5 +1,6 @@
+import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
-import { numberType, _oneOfType, stringType, funcType } from '../config/types';
+import { funcType, numberType, stringType, _oneOfType } from '../config/types';
 
 const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
@@ -10,10 +11,11 @@ const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
 });
 
 const CopyToClipboard = React.forwardRef((props, ref) => (
-  <span className="copy tt" onClick={() => copy(props.text, props)} ref={ref}>
-    {props.text}
-    <span className="tip">Copia</span>
-  </span>
+  <Tooltip title="Copia">
+    <span className="copy" onClick={() => copy(props.text, props)} ref={ref}>
+      {props.text}
+    </span>
+  </Tooltip>
 ));
 
 CopyToClipboard.propTypes = {

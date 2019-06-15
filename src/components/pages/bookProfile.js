@@ -5,6 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
+import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
@@ -173,9 +174,11 @@ export default class BookProfile extends React.Component {
                   )}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && isEditor && hasBid &&
-                      <button type="button" className="btn sm flat counter" disabled={isLocked} onClick={this.onEditing} title={book.EDIT.edit ? null : 'Solo gli amministratori possono modificare'}>
-                        {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
-                      </button>
+                      <Tooltip disableHoverListener={book.EDIT.edit} disableFocusListener={book.EDIT.edit} disableTouchListener={book.EDIT.edit} title="Solo gli amministratori possono modificare">
+                        <button type="button" className="btn sm flat counter" disabled={isLocked} onClick={this.onEditing}>
+                          {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
+                        </button>
+                      </Tooltip>
                     }
                   </div>
                   <div className="info-row hide-sm">
