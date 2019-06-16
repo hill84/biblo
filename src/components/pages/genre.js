@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
+import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { genres } from '../../config/lists';
 import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
@@ -199,7 +199,7 @@ export default class Genre extends React.Component {
   }
 
   render() {
-    const { coverview, desc, follow, followers, genre, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
+    const { count, coverview, desc, follow, followers, genre, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, screenSize } = this.state;
     const { match, user } = this.props;
 
     if ((!items || items.length === 0) && loading) {
@@ -258,36 +258,38 @@ export default class Genre extends React.Component {
               <MinifiableText text={genre.description} maxChars={isTextMinified ? 300 : 500} textMinified={isTextMinified} />
             </div>
           }
-          <div className="info-row">
-            <button 
-              type="button" 
-              className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
-              onClick={this.onFollow} 
-              disabled={!user || !isEditor}>
-              {follow ? 
-                <React.Fragment>
-                  <span className="hide-on-hover">{icon.check()} Segui</span>
-                  <span className="show-on-hover">Smetti</span>
-                </React.Fragment> 
-              : <span>{icon.plus()} Segui</span> }
-            </button>
-            <div className="counter last inline">
-              {followers ? followers.length > 2 && followers.length < 100 ? 
-                <React.Fragment>
-                  <div className="bubble-group inline">
-                    {followers.slice(0,3).map(item => (
-                      <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
-                        <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
-                          {!item.photoURL && getInitials(item.displayName)}
-                        </Avatar>
-                      </Link>
-                    ))}
-                  </div>
-                  {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
-                </React.Fragment>
-              : `${abbrNum(followers.length)} follower` : ''}
+          {isAuthenticated() && 
+            <div className="info-row">
+              <button 
+                type="button" 
+                className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
+                onClick={this.onFollow} 
+                disabled={!user || !isEditor}>
+                {follow ? 
+                  <React.Fragment>
+                    <span className="hide-on-hover">{icon.check()} Segui</span>
+                    <span className="show-on-hover">Smetti</span>
+                  </React.Fragment> 
+                : <span>{icon.plus()} Segui</span> }
+              </button>
+              <div className="counter last inline">
+                {followers ? followers.length > 2 && followers.length < 100 ? 
+                  <React.Fragment>
+                    <div className="bubble-group inline">
+                      {followers.slice(0,3).map(item => (
+                        <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
+                          <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
+                            {!item.photoURL && getInitials(item.displayName)}
+                          </Avatar>
+                        </Link>
+                      ))}
+                    </div>
+                    {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
+                  </React.Fragment>
+                : `${abbrNum(followers.length)} follower` : ''}
+              </div>
             </div>
-          </div>
+          }
         </div>
 
         {items ? 
@@ -304,7 +306,7 @@ export default class Genre extends React.Component {
                         onClick={this.onToggleView}>
                         {coverview ? icon.viewSequential() : icon.viewGrid()}
                       </button>
-                      <span className="counter">{items.length || 0} libr{items.length === 1 ? 'o' : 'i'} {genre.count > items.length ? `di ${genre.count}` : ''}</span>
+                      <span className="counter">{items.length || 0} libr{items.length === 1 ? 'o' : 'i'} {count > items.length ? `di ${count}` : ''}</span>
                     </div>
                     <div className="col-auto">
                       <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
@@ -332,9 +334,9 @@ export default class Genre extends React.Component {
           </div>
         }
 
-        {genre && genre.count > 0 && items && items.length < genre.count &&
+        {genre && count > 0 && items && items.length < count &&
           <PaginationControls 
-            count={genre.count} 
+            count={count} 
             fetch={this.fetchNext} 
             limit={limit}
             loading={loading}

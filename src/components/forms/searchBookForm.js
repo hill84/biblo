@@ -126,6 +126,9 @@ export default class SearchBookForm extends React.Component {
     this.setState({ suggestions: [] });
   }
 
+  // strAsNum = str => Number(str.replace(/-|\s/g,"").trim());
+  // numAsISBN_13 = num => String(num).length === 10 ? String(`978${num}`) : String(num);
+
   fetchOptions = value => {
     const { maxSearchResults, searchBy } = this.state;
     const { newBook, user } = this.props;
