@@ -73,6 +73,7 @@ function registerValidSW(swUrl, config) {
                 'New content is available and will be used when all ' +
                   'tabs for this page are closed. See http://bit.ly/CRA-PWA.'
               );
+              displayUpdateNotification();
 
               // Execute callback
               if (config && config.onUpdate) {
@@ -123,6 +124,7 @@ function checkValidServiceWorker(swUrl, config) {
       console.log(
         'No internet connection found. App is running in offline mode.'
       );
+      displayOfflineNotification();
     });
 }
 
@@ -132,4 +134,30 @@ export function unregister() {
       registration.unregister();
     });
   }
+}
+
+function displayUpdateNotification() {
+  const link = document.createElement('a');
+  
+  link.classList.add(['snackbar', 'update-notification']);
+  link.setAttribute('href', '#');
+  link.innerHTML = 'Nuova versione disponibile. Clicca qui per installarla.';
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    window.location.reload();
+  });
+  document.querySelector('body').appendChild(link);
+}
+
+function displayOfflineNotification() {
+  const link = document.createElement('a');
+  
+  link.classList.add(['snackbar', 'offline-notification']);
+  link.setAttribute('href', '#');
+  link.innerHTML = 'Connessione internet assente.';
+  document.querySelector('body').appendChild(link);
+  const snackbar = document.querySelector('.offline-notification');
+  setTimeout(() => {
+    snackbar.remove();
+  }, 5000);
 }
