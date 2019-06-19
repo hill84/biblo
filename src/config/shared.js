@@ -12,7 +12,7 @@ export const app = {
 };
 
 // DEVICE
-const lang = navigator && (navigator.language || navigator.userLanguage).split('-')[0];
+const lang = typeof window !== "undefined" && (navigator.language || navigator.userLanguage).split('-')[0];
 
 // JUNCTION
 export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
@@ -28,7 +28,7 @@ export const needsEmailVerification = user => user && !user.emailVerified && use
 export const imageZoomDefaultStyles = { zoomContainer: { zIndex: 1200 }, overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } };
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
-export const copyToClipboard = text => navigator.clipboard.writeText(text).then(() => {
+export const copyToClipboard = text => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
 }, err => console.warn('Async: Could not copy text: ', err));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);

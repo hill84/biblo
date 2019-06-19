@@ -124,7 +124,6 @@ function checkValidServiceWorker(swUrl, config) {
       console.log(
         'No internet connection found. App is running in offline mode.'
       );
-      displayOfflineNotification();
     });
 }
 
@@ -147,17 +146,4 @@ function displayUpdateNotification() {
     window.location.reload();
   });
   document.querySelector('body').appendChild(link);
-}
-
-function displayOfflineNotification() {
-  const link = document.createElement('a');
-  
-  link.classList.add(['snackbar', 'offline-notification']);
-  link.setAttribute('href', '#');
-  link.innerHTML = 'Connessione internet assente.';
-  document.querySelector('body').appendChild(link);
-  const snackbar = document.querySelector('.offline-notification');
-  setTimeout(() => {
-    snackbar.remove();
-  }, 5000);
 }

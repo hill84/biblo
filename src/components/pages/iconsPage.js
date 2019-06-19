@@ -4,7 +4,7 @@ import { icon } from '../../config/icons';
 import { app } from '../../config/shared';
 import { funcType } from '../../config/types';
 
-const copy = (text, props) => navigator.clipboard.writeText(text).then(() => {
+const copy = (text, props) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
   props.openSnackbar('Copiato negli appunti', 'success');
 }, error => {
   props.openSnackbar('Errore interno', 'error');
