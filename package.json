@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.7.9",
+  "version": "0.7.10",
   "private": true,
   "devDependencies": {
     "firebase": "^6.2.0",
