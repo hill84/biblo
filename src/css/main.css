@@ -1064,6 +1064,12 @@ hr.line {
   background-color: rgba(244,67,54,.5);
   transform: rotate(45deg);
 }
+.upload-avatar.error .progress { 
+  background-color: rgba(244,67,54,.5);
+}
+.upload-avatar.success .progress {
+  background-color: rgba(67,160,71,.5);
+}
 .upload { 
   appearance: none;
   position: absolute;
@@ -1074,21 +1080,19 @@ hr.line {
   height: 100%;
   cursor: pointer;
 }
-.progress { appearance: none; }
 .upload-avatar .progress { 
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
+  opacity: 0;
   z-index: 1;
 }
-.upload-avatar progress[value]::-webkit-progress-bar {
-  background-color: transparent;
-}
-.upload-avatar progress[value]::-webkit-progress-value {
-  background-color: rgba(67,160,71,.5);
-}
+.upload-avatar.loading .progress, .upload-avatar.success .progress, .upload-avatar.error .progress { opacity: 1; }
 
 /* NOTIFICATIONS */
 .notes *::-webkit-scrollbar { display: none; }
@@ -2345,8 +2349,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
   white-space: nowrap;
   max-width: calc(100% - var(--btnPad)); 
 }
-.btn .show-on-hover, .btn:hover .hide-on-hover { transform: scaleY(0); }
-.btn .hide-on-hover, .btn:hover .show-on-hover { transform: scaleY(1); display: block; }
+.btn .show-on-hover, .btn:hover .hide-on-hover { transform: perspective(150px) scaleY(0); }
+.btn .hide-on-hover, .btn:hover .show-on-hover { transform: perspective(150px) scaleY(1); display: block; }
 .show-on-hover, .hide-on-hover { will-change: opacity, transform; transition: all .2s ease-in-out; }
 .show-on-hover, .btn:hover .hide-on-hover, .avatar-row:hover .hide-on-hover, .hoverable-items:hover .hide-on-hover { opacity: 0; }
 .hide-on-hover, .btn:hover .show-on-hover, .avatar-row:hover .show-on-hover, .hoverable-items:hover .show-on-hover { opacity: 1; }
@@ -2407,12 +2411,12 @@ progress[value='100'].stepper::-webkit-progress-bar {
 @keyframes fadeIn { from { opacity: 0; } }
 @keyframes fadeOut { to { opacity: 0; } }
 @keyframes flipInY {
-  from { opacity: 0; transform: perspective(950) scale(.12) rotateY(90deg) translateY(-50%); } 
-  to { opacity: 1; transform: perspective(950) scale(1) rotateY(0deg) translateY(-50%); }
+  from { opacity: 0; transform: perspective(950px) scale(.12) rotateY(90deg) translateY(-50%); } 
+  to { opacity: 1; transform: perspective(950px) scale(1) rotateY(0deg) translateY(-50%); }
 }
 @keyframes flipInX {
-  from { opacity: 0; transform: perspective(950) scale(.12) rotateX(90deg) translateY(-50%); } 
-  to { opacity: 1; transform: perspective(950) scale(1) rotateX(0deg) translateY(-50%); }
+  from { opacity: 0; transform: perspective(950px) scale(.12) rotateX(90deg) translateY(-50%); } 
+  to { opacity: 1; transform: perspective(950px) scale(1) rotateX(0deg) translateY(-50%); }
 }
 @keyframes skltn_shelfRow { to { background-position: calc(100% + 150px) 0; } }
 @keyframes maxheightIn { to { max-height: 600px; } }
@@ -2477,7 +2481,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
     user-select: none;
     opacity: 0;
     transform-origin: bottom center;
-    transform: perspective(150) scale(.8) rotateX(-90deg);
+    transform: perspective(150px) scale(.8) rotateX(-90deg);
     will-change: opacity, transform;
     transition: all .2s ease-in-out;
     z-index: 1;
@@ -2496,7 +2500,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   }
   .tt:hover .tip {
     opacity: .95;
-    transform: perspective(150) scale(1) rotateX(0deg);
+    transform: perspective(150px) scale(1) rotateX(0deg);
     box-shadow: 0 1px 4px rgba(0,10,15,.15);
   }
   .review .show-on-hover { opacity: 0; will-change: opacity; }

@@ -191,13 +191,13 @@ export default class Profile extends React.Component {
             <div className="row basic-profile">
               
               <div className="col-auto">
-                <div className={`upload-avatar ${errors.upload ? 'error' : ''}`}>
+                <div className={`upload-avatar ${errors.upload ? 'error' : imgProgress === 100 ? 'success' : imgProgress > 0 ? 'loading' : ''}`}>
                   <Avatar className="avatar" src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
                   <div className="overlay">
                     <span title="Carica un'immagine">+</span>
                     <input type="file" accept="image/*" className="upload" onChange={this.onImageChange}/>
                   </div>
-                  <progress type="progress" value={imgProgress} max="100" className="progress">0%</progress>
+                  <div className="progress"></div>
                 </div>
               </div>
               <div className="col">

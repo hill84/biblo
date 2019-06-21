@@ -1,13 +1,13 @@
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import { icon } from '../config/icons';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
-import { numberType, stringType, funcType } from '../config/types';
+import { funcType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -200,7 +200,7 @@ export default class Shelf extends React.Component {
         selected={i === orderByIndex}
         onClick={e => this.onChangeOrderBy(e, i)}>
         <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
-        <ListItemText inset primary={orderBy[i].label} />
+        <Typography variant="inherit">{orderBy[i].label}</Typography>
       </MenuItem>
     ));
 

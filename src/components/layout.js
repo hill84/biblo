@@ -3,7 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -211,8 +210,8 @@ export default class Layout extends React.Component {
                   onClick={this.onCloseMore}
                   open={Boolean(moreAnchorEl)}
                   onClose={this.onCloseMore}>
-                  <MenuItem><NavLink to="/profile">Profilo</NavLink></MenuItem>
-                  <MenuItem><NavLink to={`/dashboard/${authid}`}>Dashboard</NavLink></MenuItem>
+                  <MenuItem component={NavLink} to="/profile">Profilo</MenuItem>
+                  <MenuItem component={NavLink} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
                   <MenuItem onClick={signOut}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>
@@ -247,14 +246,14 @@ export default class Layout extends React.Component {
                     <NavLink to={`/admin`}>
                       <MenuItem>
                         <ListItemIcon>{icon.gauge()}</ListItemIcon>
-                        <ListItemText inset primary="Amministrazione" />
+                        <Typography variant="inherit">Amministrazione</Typography>
                       </MenuItem>
                     </NavLink>
                   }
                   <NavLink to={`/dashboard/${authid}/shelf`}>
                     <MenuItem>
                       <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
-                      <ListItemText inset primary="La mia libreria" />
+                      <Typography variant="inherit">La mia libreria</Typography>
                     </MenuItem>
                   </NavLink>
                 </React.Fragment>
@@ -263,13 +262,13 @@ export default class Layout extends React.Component {
                   <NavLink to="/login">
                     <MenuItem>
                       <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
-                      <ListItemText inset primary="Accedi" />
+                      <Typography variant="inherit">Accedi</Typography>
                     </MenuItem>
                   </NavLink>
                   <NavLink to="/signup">
                     <MenuItem>
                       <ListItemIcon>{icon.accountPlus()}</ListItemIcon>
-                      <ListItemText inset primary="Registrati" />
+                      <Typography variant="inherit">Registrati</Typography>
                     </MenuItem>
                   </NavLink>
                 </div>
@@ -277,25 +276,25 @@ export default class Layout extends React.Component {
               <NavLink to="/" exact>
                 <MenuItem>
                   <ListItemIcon>{icon.home()}</ListItemIcon>
-                  <ListItemText inset primary="Home" />
+                  <Typography variant="inherit">Home</Typography>
                 </MenuItem>
               </NavLink>
               <NavLink to="/genres" exact>
                 <MenuItem>
                   <ListItemIcon>{icon.libraryShelves()}</ListItemIcon>
-                  <ListItemText inset primary="Generi" />
+                  <Typography variant="inherit">Generi</Typography>
                 </MenuItem>
               </NavLink>
               <NavLink to="/authors" exact>
                 <MenuItem>
                   <ListItemIcon>{icon.accountEdit()}</ListItemIcon>
-                  <ListItemText inset primary="Autori" />
+                  <Typography variant="inherit">Autori</Typography>
                 </MenuItem>
               </NavLink>
               <NavLink to="/donations" exact>
                 <MenuItem>
                   <ListItemIcon>{icon.bitcoin()}</ListItemIcon>
-                  <ListItemText inset primary="Donazioni" />
+                  <Typography variant="inherit">Donazioni</Typography>
                 </MenuItem>
               </NavLink>
 
