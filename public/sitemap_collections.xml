@@ -7,12 +7,15 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
   xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url> <loc>https://biblo.space/collection/After</loc> </url>
+  <url> <loc>https://biblo.space/collection/Alla_ricerca_del_tempo_perduto</loc </url>>
   <url> <loc>https://biblo.space/collection/Best_seller</loc> </url>
   <url> <loc>https://biblo.space/collection/Ciclo_dello_Spazio_conosciuto</loc> </url>
   <url> <loc>https://biblo.space/collection/Cronache_del_ghiaccio_e_del_fuoco</loc> </url>
   <url> <loc>https://biblo.space/collection/Fenoglio</loc> </url>
   <url> <loc>https://biblo.space/collection/Fjällbacka</loc> </url>
   <url> <loc>https://biblo.space/collection/Harry_Potter</loc> </url>
+  <url> <loc>https://biblo.space/collection/I_casi_di_Girolamo_Svampa</loc> </url>
+  <url> <loc>https://biblo.space/collection/Il_ciclo_di_Malauss%C3%A8ne</loc></url>
   <url> <loc>https://biblo.space/collection/Il_cimitero_dei_libri_dimenticati</loc> </url>
   <url> <loc>https://biblo.space/collection/Il_problema_dei_tre_corpi</loc> </url>
   <url> <loc>https://biblo.space/collection/Indomite</loc> </url>

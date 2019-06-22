@@ -314,7 +314,7 @@ export default class Layout extends React.Component {
 
         <CookieBanner
           disableStyle
-          message="Questo sito utilizza i cookie per monitorare e personalizzare l'esperienza di navigazione degli utenti. Per saperne di più o modificare le tue preferenze "
+          message="Usiamo i cookie 🍪 Per saperne di più "
           buttonMessage="Accetto"
           link={<Link to="/cookie">clicca qui</Link>}
           dismissOnScrollThreshold={100}

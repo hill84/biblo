@@ -3,7 +3,7 @@ import { badWords, firestoreErrorMessages } from './lists';
 // APP
 export const app = {
   name: 'Biblo',
-  url: process.env.NODE_ENV === 'production' ? 'https://biblo.space' : 'http://localhost:3000',
+  url: 'https://biblo.space',
   fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space/' },
   tw: { name: '', url: '' },
   email: 'info@biblo.space',

@@ -135,8 +135,16 @@ class Home extends React.Component {
             </div>
             <div className="col-12 col-lg-7 flex">
               <div className="card dark card-fullwidth-sm">
-                <h2>Generi</h2>
-                <Genres scrollable={isScrollable} />
+                <div className="head nav">
+                  <span className="counter last title">Generi</span>
+                  <div className="pull-right">
+                    <button className="btn sm flat counter">
+                      <Link to="/genres">Vedi tutti</Link>
+                    </button>
+                  </div>
+                </div>
+                
+                <Genres className="table" scrollable={isScrollable} />
               </div>
             </div>
           </div>
