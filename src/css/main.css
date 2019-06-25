@@ -225,15 +225,23 @@ ul.nolist li { display: block; }
   z-index: 999;
 }
 .snackbar:hover { color: #222; }
-.snackbar-message { display: block; padding: 8px 0; }
-.snackbar-action { 
+.snackbar .snackbar-message { display: block; padding: 8px 0; }
+.snackbar .snackbar-action { 
   display: flex;
   align-items: center;
   margin-left: auto;
   margin-right: -8px;
   padding-left: 16px; 
 }
-.snackbar-action .btn { color: inherit; font-weight: bold; }
+.snackbar .snackbar-action .btn.flat { color: inherit; font-weight: bold; }
+
+.container-divider {
+  height: 70px;
+  width: 100%; 
+  background-size: auto 70px;
+  background-position: center; 
+  background-repeat: repeat-x;
+}
 
 .info-row { margin-bottom: .2rem; }
 .info-row:last-child { margin-bottom: 0; }

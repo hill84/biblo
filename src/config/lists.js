@@ -92,6 +92,14 @@ export const firestoreErrorMessages = {
   'auth/user-disabled': {
     en: "The user account has been disabled by an administrator.",
     it: "L'account utente è stato disabilitato da un amministratore."
+  }, 
+  'auth/internal-error': {
+    en: "Internal error.",
+    it: "Errore interno."
+  },
+  'auth/account-exists-with-different-credential': {
+    en: "An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
+    it: "L'email con cui hai provato ad accedere risulta già associata a un altro account. Fai login con un altro provider."
   }
 };
 

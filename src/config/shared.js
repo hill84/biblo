@@ -1,9 +1,11 @@
 import { badWords, firestoreErrorMessages } from './lists';
+import logo from '../images/logo.png';
 
 // APP
 export const app = {
   name: 'Biblo',
   url: 'https://biblo.space',
+  logo,
   fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space/' },
   tw: { name: '', url: '' },
   email: 'info@biblo.space',
@@ -11,7 +13,7 @@ export const app = {
   desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
 };
 
-// DEVICE
+// NAVIGATOR
 const lang = typeof window !== "undefined" && (navigator.language || navigator.userLanguage).split('-')[0];
 
 // JUNCTION

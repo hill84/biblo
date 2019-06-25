@@ -137,10 +137,10 @@ export default class Layout extends React.Component {
                 {user.roles.admin && 
                   <Tooltip title="Aggiungi libro" placement="bottom">
                     <IconButton
-                    className="search-btn popIn reveal delay6 hide-xs"
-                    component={Link} 
-                    to="/new-book"
-                    aria-label="New book">
+                      className="search-btn popIn reveal delay6 hide-xs"
+                      component={Link} 
+                      to="/new-book"
+                      aria-label="New book">
                       {icon.plus()}
                     </IconButton>
                   </Tooltip>
@@ -210,8 +210,8 @@ export default class Layout extends React.Component {
                   onClick={this.onCloseMore}
                   open={Boolean(moreAnchorEl)}
                   onClose={this.onCloseMore}>
-                  <MenuItem component={NavLink} to="/profile">Profilo</MenuItem>
-                  <MenuItem component={NavLink} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
+                  <MenuItem component={Link} to="/profile">Profilo</MenuItem>
+                  <MenuItem component={Link} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
                   <MenuItem onClick={signOut}>Esci</MenuItem>
                 </Menu>
               </React.Fragment>

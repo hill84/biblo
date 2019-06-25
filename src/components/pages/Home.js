@@ -5,14 +5,15 @@ import { Background, Parallax } from 'react-parallax';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, authid, isAuthenticated } from '../../config/firebase';
 import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
-import bgHerojpg from '../../images/covers-dark.jpg';
+import { funcType } from '../../config/types';
+import bgHerojpeg from '../../images/covers-dark.jpg';
 import bgHerowebp from '../../images/covers-dark.webp';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
 import Genres from '../genres';
+import Picture from '../picture';
 import RandomQuote from '../randomQuote';
 import Reviews from '../reviews';
-import { funcType } from '../../config/types';
 
 const seo = {
   title: `${app.name} | Home`,
@@ -90,11 +91,7 @@ class Home extends React.Component {
           </div>
           <Background className="bg reveal fadeIn">
             <div className="overlay" />
-            <picture>
-              <source srcSet={bgHerowebp} type="image/webp" />
-              <source srcSet={bgHerojpg} type="image/jpeg" /> 
-              <img src={bgHerojpg} alt="Biblo, condividi la tua passione per i libri e per la lettura" />
-            </picture>
+            <Picture webp={bgHerowebp} jpeg={bgHerojpeg} alt="Biblo, condividi la tua passione per i libri e per la lettura" />
           </Background>
         </Parallax>
     

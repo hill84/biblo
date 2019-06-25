@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
+import booksRowImage from '../../images/books-row.webp';
 
 const PrivacyPage = props => (
   <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
@@ -10,7 +11,10 @@ const PrivacyPage = props => (
     <div className="container pad-v">
       <h1>Privacy policy</h1>
       <p className="lighter-text">Data di entrata in vigore: 10 Marzo 2019</p>
-      <br />
+      
+      <div className="pad-v hide-sm">
+        <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})` }} />
+      </div>
       
       <div className="text-justify text-left-sm">
         <p>{app.name} gestisce il sito web {app.url} (di seguito il "Servizio").</p>
@@ -18,7 +22,7 @@ const PrivacyPage = props => (
         <p>Utilizziamo i vostri dati per fornire e migliorare il Servizio. Utilizzando il Servizio, accettate la raccolta e l'utilizzo delle informazioni in conformità con questa informativa. Se non diversamente definito nella presente Informativa sulla privacy, i termini utilizzati nella presente Informativa hanno la stessa valenza dei nostri <a href="/terms">Termini e condizioni</a>.</p>
         <h2>Definizioni</h2>
         <ul>
-          <li><p><span className="accent-text">Servizio</span>: Il Servizio è il sito {app.url} gestito da {app.name}</p></li>
+          <li><p><span className="accent-text">Servizio</span>: Il Servizio &egrave; il sito {app.url} gestito da {app.name}</p></li>
           <li><p><span className="accent-text">Dati personali</span>: I Dati personali sono i dati di un individuo vivente che può essere identificato da quei dati (o da quelli e altre informazioni in nostro possesso o che potrebbero venire in nostro possesso).</p></li>
           <li><p><span className="accent-text">Dati di utilizzo</span>: I dati di utilizzo sono i dati raccolti automaticamente generati dall'utilizzo del Servizio o dall'infrastruttura del Servizio stesso (ad esempio, la durata della visita di una pagina).</p></li>
           <li><p><span className="accent-text">Cookies</span>: I cookie sono piccoli file memorizzati sul vostro dispositivo (computer o dispositivo mobile).</p></li>
@@ -85,7 +89,7 @@ const PrivacyPage = props => (
         </ul>
 
         <h2>Sicurezza dei dati</h2>
-        <p>La sicurezza dei vostri dati è importante per noi, ma ricordate che nessun metodo di trasmissione su Internet o metodo di archiviazione elettronica è sicuro al 100%. Pertanto, anche se adotteremo ogni mezzo commercialmente accettabile per proteggere i vostri Dati personali, non possiamo garantirne la sicurezza assoluta.</p>
+        <p>La sicurezza dei vostri dati &egrave; importante per noi, ma ricordate che nessun metodo di trasmissione su Internet o metodo di archiviazione elettronica &egrave; sicuro al 100%. Pertanto, anche se adotteremo ogni mezzo commercialmente accettabile per proteggere i vostri Dati personali, non possiamo garantirne la sicurezza assoluta.</p>
 
         <h2>Fornitori di servizi</h2>
         <p>Potremmo impiegare società e individui di terze parti per facilitare il nostro Servizio ("Fornitori di servizi"), per fornire il Servizio per nostro conto, per eseguire servizi relativi ai Servizi o per aiutarci ad analizzare come viene utilizzato il nostro Servizio.</p>
@@ -104,11 +108,8 @@ const PrivacyPage = props => (
         <p>Vi informeremo via e-mail e / o un avviso di rilievo sul nostro Servizio, prima che la modifica diventi effettiva e aggiorneremo la "data di validità" nella parte superiore di questa Informativa sulla privacy.</p>
         <p>Si consiglia di rivedere periodicamente la presente Informativa sulla privacy per eventuali modifiche. Le modifiche a tale informativa sulla privacy entrano in vigore nel momento in cui vengono pubblicate su questa pagina.</p>
 
-        <h2>Contattaci</h2>
-        <p>In caso di domande sulla presente Informativa sulla privacy, si prega di contattarci:</p>
-        <ul>
-          <li>Tramite e-mail: <a href={`mailto:${app.privacyEmail}?subject=Biblo: Privacy`}>{app.privacyEmail}</a></li>
-        </ul>
+        <h2>Contatti</h2>
+        <p>Email: <a href={`mailto:${app.privacyEmail}?subject=Biblo: Privacy`}>{app.privacyEmail}</a></p>
       </div>
     </div>
   </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
+import booksRowImage from '../../images/books-row.webp';
 
 const CookiePage = props => (
   <div id="CookiePageComponent" className="reveal fadeIn slideUp">
@@ -11,17 +12,38 @@ const CookiePage = props => (
     <div className="container pad-v">
       <h1>Cookie policy</h1>
       <p className="lighter-text">Data di entrata in vigore: 10 Marzo 2019</p>
-      <p>&nbsp;</p>
+    
+      <div className="pad-v hide-sm">
+        <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})` }} />
+      </div>
+
       <div className="text-justify text-left-sm">
-        <p>{app.name} utilizza cookie e tecnologie di tracciamento simili per tracciare l'attività e conservare determinate informazioni.</p>
-        <p>I cookie sono file con una piccola quantità di dati che possono includere un identificatore univoco anonimo. I cookie vengono inviati al vostro browser da un sito web e memorizzati sul vostro dispositivo. Altre tecnologie di tracciamento che potrebbero essere utilizzate sono anche beacon, tag e script per raccogliere e tenere traccia delle informazioni e per migliorare e analizzare il nostro Servizio.</p>
-        <p>Potete chiedere al vostro browser di rifiutare tutti i cookie o di indicare quando viene inviato un cookie. Tuttavia, se non si accettano i cookie, potrebbe non essere possibile utilizzare alcune parti del nostro Servizio.</p>
-        <p>Esempi di cookie che utilizziamo:</p>
+        <h2>Cosa sono i cookie?</h2>
+        <p>I cookie sono informazioni che vengono archiviate sul tuo dispositivo attraverso il browser e possono includere un identificativo univoco anonimo. Questi dati permettono ai proprietari dei siti di conservare le tue preferenze e mostrarti informazioni personalizzate durante le visite successive sulle pagine web.</p>
+        <p>{app.name} utilizza cookie e tecnologie di tracciamento simili per conservare alcune informazioni.</p>
+
+        <h3>Cookie tecnici e per fini statistici</h3>
+        <p>Questi cookie vengono utilizzati per tracciare la sessione utente e svolgere altre attività strettamente necessarie al funzionamento del sito, ad esempio in relazione alla distribuzione del traffico. Tali cookie sono installati senza l’obbligo del tuo consenso preventivo. Bloccandoli potresti incorrere in errori e visualizzare il sito in maniera non ottimale.</p>
+
+        <h3>Cookie di terze parti</h3>
+        <p>Durante la navigazione sul sito potresti memorizzare cookie di terze parti, come altri servizi, siti e piattaforme di social network. Questi cookie sono da intendersi per fini statistici e di marketing, oltre che per monitorare la tua interazione con i social network. Di seguito troverai una lista di tali servizi forniti da terze parti. Se continui la navigazione sul sito e usi i nostri servizi senza cambiare le impostazioni del browser, darai tacito consenso per la memorizzazione di tali cookie.</p>
+
+        <p><b>Google Analytics</b> &egrave; un servizio di analisi web fornito da Google che permette di tracciare in maniera anonima l'attività online dei nostri utenti e il loro comportamento durante la navigazione sul sito. Luogo di elaborazione: US – <a href="https://www.google.com/intl/en/policies/privacy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a></p>
+
+        <h2>Come gestire l'installazione dei Cookie</h2>
+        <p>Per gestire le tue preferenze sui cookie, puoi agire sulle impostazioni del tuo browser, ad esempio, chiedendogli di evitare l'installazione dei cookie di terze parti. Attraverso le impostazione del browser &egrave; anche possibile cancellare i cookie installati in precedenza. &egrave; importante ricordare che disabilitando tutti i cookie, il funzionamento del sito potrebbe risultarne compromesso. Puoi trovare maggiori informazioni sulla gestione dei cookie nel browser ai seguenti link:</p>
         <ul>
-          <li><span className="accent-text">Cookie di sessione.</span> Utilizziamo i cookie di sessione per gestire il nostro servizio.</li>
-          <li><span className="accent-text">Cookie di preferenza.</span> Utilizziamo i cookie di preferenza per ricordare le vostre preferenze e varie impostazioni.</li>
-          <li><span className="accent-text">Cookie di sicurezza.</span> Utilizziamo i cookie di sicurezza per motivi di sicurezza.</li>
+          <li>Google Chrome - <a href="https://support.google.com/chrome/answer/95647?hl=en&amp;p=cpn_cookies" target="_blank" rel="noopener noreferrer">Info</a></li>
+          <li>Mozilla Firefox - <a href="https://support.mozilla.org/en-US/kb/enable-and-disable-cookies-website-preferences" target="_blank" rel="noopener noreferrer">Info</a></li>
+          <li>Safari - <a href="https://support.apple.com/en-us/HT201265" target="_blank" rel="noopener noreferrer">Info</a></li>
+          <li>Microsoft Windows Explorer - <a href="https://windows.microsoft.com/en-us/windows-vista/block-or-allow-cooki%3Ees" target="_blank" rel="noopener noreferrer">Info</a></li>
         </ul>
+
+        <h2>I tuoi diritti</h2>
+        <p>Hai il diritto di conoscere in qualsiasi momento se i tuoi dati personali sono stati conservati e puoi rivolgerti al Titolare per conoscere il contenuto e l'origine dei dati, verificarne l'esattezza o chiederne l'integrazione, la cancellazione, l'aggiornamento, la rettifica, la trasformazione in forma anonima o il blocco dei dati trattati in violazione di legge, nonché di opporti al loro trattamento per qualsiasi motivo legittimo. Le richieste vanno rivolte al Titolare del trattamento presso l'indirizzo indicato. Se ritieni che i tuoi diritti siano stati violati, ha il diritto di presentare un reclamo all'Autorità di Vigilanza italiana o a qualsiasi altra autorità di vigilanza nell'Unione Europea. Data l'oggettiva complessità legata all'identificazione di tecnologie basate su cookie e la loro strettissima integrazione con il funzionamento del sito, sei invitato a contattare il Titolare qualora desideri ricevere ulteriori informazioni sull'utilizzo dei cookie stessi e sull'eventuale utilizzo degli stessi - ad esempio da parte di terzi - effettuato attraverso il Sito.</p>
+
+        <h2>Contatti</h2>
+        <p>Email: <a href={`mailto:${app.privacyEmail}?subject=Biblo: Cookie`}>{app.privacyEmail}</a></p>
       </div>
     </div>
   </div>

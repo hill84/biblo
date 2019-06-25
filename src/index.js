@@ -10,6 +10,23 @@ import { readCookie } from './config/shared';
 import './css/grid.min.css';
 import './css/main.css';
 import * as serviceWorker from './serviceWorker';
+import BrowserNotSupported from './components/browser-not-supported';
+
+function getInternetExplorerVersion() {
+  var rv = -1;
+  var ua;
+  var re
+  if (navigator.appName === 'Microsoft Internet Explorer') {
+    ua = navigator.userAgent;
+    re = new RegExp("MSIE ([0-9]{1,}[\\.0-9]{0,})");
+    if (re.exec(ua) != null) rv = parseFloat( RegExp.$1 );
+  } else if (navigator.appName === 'Netscape') {
+    ua = navigator.userAgent;
+    re  = new RegExp("Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})");
+    if (re.exec(ua) != null) rv = parseFloat( RegExp.$1 );
+  }
+  return rv;
+}
 
 if (process.env.NODE_ENV === 'production') {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
@@ -47,7 +64,7 @@ export default withRouter(ScrollToTop);
 ReactDOM.render(
 	<Router history={history}>
 		<ScrollToTop>
-      <App/>
+      {getInternetExplorerVersion() !== -1 ? <BrowserNotSupported /> : <App/>}
     </ScrollToTop>
 	</Router>,
 	document.getElementById('root')

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
+import booksRowImage from '../../images/books-row.webp';
 
 const HelpPage = props => (
   <div id="HelpPageComponent" className="reveal fadeIn slideUp">
@@ -11,8 +12,12 @@ const HelpPage = props => (
     <div className="container pad-v">
       <h1>Aiuto</h1>
       <div className="text-justify text-left-sm">
-        <p>Questa pagina è in preparazione...</p>
-        <br/>
+        <p>Questa pagina &egrave; in preparazione...</p>
+        
+        <div className="pad-v hide-sm">
+          <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})` }} />
+        </div>
+
         <p>Se hai bisogno di aiuto scrivici all'indirizzo <a href={`mailto:${app.email}?subject=Biblo: aiuto`}>{app.email}</a>.</p>
       </div>
     </div>
