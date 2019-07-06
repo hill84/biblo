@@ -7,7 +7,7 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
   xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url> <loc>https://biblo.space/collection/After</loc> </url>
-  <url> <loc>https://biblo.space/collection/Alla_ricerca_del_tempo_perduto</loc </url>>
+  <url> <loc>https://biblo.space/collection/Alla_ricerca_del_tempo_perduto</loc> </url>
   <url> <loc>https://biblo.space/collection/Best_seller</loc> </url>
   <url> <loc>https://biblo.space/collection/Ciclo_dello_Spazio_conosciuto</loc> </url>
   <url> <loc>https://biblo.space/collection/Cronache_del_ghiaccio_e_del_fuoco</loc> </url>
@@ -30,6 +30,7 @@
   <url> <loc>https://biblo.space/collection/Montalbano</loc> </url>
   <url> <loc>https://biblo.space/collection/Outlander</loc> </url>
   <url> <loc>https://biblo.space/collection/Premio_Strega</loc> </url>
+  <url> <loc>https://biblo.space/collection/Stranger_Things</loc> </url>
   <url> <loc>https://biblo.space/collection/The_Expanse</loc> </url>
   <url> <loc>https://biblo.space/collection/The_Wicked_+_The_Divine</loc> </url>
   <url> <loc>https://biblo.space/collection/Trilogia_dell'Area_X</loc> </url>
