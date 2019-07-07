@@ -1,20 +1,21 @@
 // https://css-tricks.com/using-webp-images/
 
-var imagemin = require("imagemin"),    // The imagemin module.
-  webp = require("imagemin-webp"),   // imagemin's WebP plugin.
-  outputFolder = "./src/images",            // Output folder
-  PNGImages = "./src/images/*.png",         // PNG images
-  JPEGImages = "./src/images/*.jpg";        // JPEG images
+var imagemin = require("imagemin"),   // The imagemin module.
+  webp = require("imagemin-webp"),    // imagemin's WebP plugin.
+  PNGImages = "./src/images/*.png",   // PNG images
+  JPEGImages = "./src/images/*.jpg";  // JPEG images
 
-imagemin([PNGImages], outputFolder, {
+imagemin([PNGImages], {
+  destination: "./src/images",
   plugins: [webp({
-    lossless: true
+    lossless: true,
   })]
 });
 
-imagemin([JPEGImages], outputFolder, {
+imagemin([JPEGImages], {
+  destination: "./src/images",
   plugins: [webp({
-    quality: 65
+    quality: 65,
   })]
 });
 
