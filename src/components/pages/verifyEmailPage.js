@@ -55,6 +55,7 @@ export default class VerifyEmailPage extends React.Component {
       <div className="card-container pad-v reveal fadeIn" id="verifyEmailPageComponent">
         <Helmet>
           <title>{app.name} | Conferma registrazione</title>
+          <link rel="canonical" href={app.url} />
         </Helmet>
         <h2>Conferma la tua registrazione</h2>
         <div className="card light" style={{maxWidth: 360}}>

@@ -184,6 +184,7 @@ export default class Profile extends React.Component {
       <div className="container" id="profileComponent">
         <Helmet>
           <title>{app.name} | Profilo</title>
+          <link rel="canonical" href={app.url} />
         </Helmet>
         <div className="card light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}

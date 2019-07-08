@@ -9,6 +9,7 @@ const Login = React.forwardRef((props, ref) => (
 	<div className="card-container pad-v" id="loginComponent" ref={ref}>
     <Helmet>
       <title>{app.name} | Login</title>
+      <link rel="canonical" href={app.url} />
     </Helmet>
 		<h2>Login</h2>
 		<div className="card light">

@@ -43,6 +43,7 @@ export default class AddBook extends React.Component {
         <Helmet>
           <title>{seo.title}</title>
           <meta name="description" content={seo.description} />
+          <link rel="canonical" href={app.url} />
         </Helmet>
         {!book && <h2 className="text-center">{icon.magnify()} Cerca un libro</h2>}
         <ThemeProvider theme={primaryTheme}>

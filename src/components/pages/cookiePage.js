@@ -8,6 +8,7 @@ const CookiePage = props => (
     <Helmet>
       <title>{app.name} | Cookie policy</title>
       <meta name="description" content={app.desc} />
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <div className="container pad-v">
       <h1>Cookie policy</h1>

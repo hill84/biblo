@@ -8,6 +8,7 @@ const AboutPage = props => (
   <div id="AboutPageComponent" className="reveal fadeIn slideUp">
     <Helmet>
       <title>{app.name} | Chi siamo</title>
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <div className="container pad-v">
       <h1>Chi siamo</h1>

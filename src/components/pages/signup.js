@@ -9,6 +9,7 @@ const Signup = React.forwardRef((props, ref) => (
   <div className="card-container pad-v" id="signupComponent" ref={ref}>
     <Helmet>
       <title>{app.name} | Registrazione</title>
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <h2>Registrati</h2>
     <div className="card light">

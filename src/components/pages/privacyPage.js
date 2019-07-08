@@ -7,6 +7,7 @@ const PrivacyPage = props => (
   <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
     <Helmet>
       <title>{app.name} | Privacy policy</title>
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <div className="container pad-v">
       <h1>Privacy policy</h1>

@@ -524,7 +524,7 @@ export default class Book extends React.Component {
         {seo &&
           <Helmet>
             <title>{app.name} | {book.title || 'Libro'}</title>
-            <link rel="canonical" href={seo.url} />
+            <link rel="canonical" href={`${app.url}/genres`} />
             <meta name="description" content={seo.description} />
             <meta property="og:description" content={seo.description} />
             <meta property="og:type" content="books.book" />

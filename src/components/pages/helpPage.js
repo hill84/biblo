@@ -8,6 +8,7 @@ const HelpPage = props => (
     <Helmet>
       <title>{app.name} | Aiuto</title>
       <meta name="description" content={app.desc} />
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <div className="container pad-v">
       <h1>Aiuto</h1>

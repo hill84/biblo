@@ -8,6 +8,7 @@ const DonationsPage = React.forwardRef((props, ref) => (
     <Helmet>
       <title>{app.name} | Donazioni</title>
       <meta name="description" content={app.desc} />
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <div className="container pad-v">
       <h1>Donazioni</h1>

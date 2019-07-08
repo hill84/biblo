@@ -134,6 +134,7 @@ export default class Collection extends React.Component {
       <div id="CollectionComponent" className="container">
         <Helmet>
           <title>{app.name} | {collection ? collection.title : 'Collezione'}</title>
+          <link rel="canonical" href={`${app.url}/collections`} />
           <meta name="description" content={collection && collection.description ? truncateString(collection.description, 155) : app.desc} />
         </Helmet>
         <div className="row">

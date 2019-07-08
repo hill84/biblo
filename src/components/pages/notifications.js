@@ -109,6 +109,7 @@ export default class Notifications extends React.Component {
       <div className="container" id="notificationsComponent">
         <Helmet>
           <title>{app.name} | Notifiche</title>
+          <link rel="canonical" href={app.url} />
         </Helmet>
         {items ? 
           <div className="card light">

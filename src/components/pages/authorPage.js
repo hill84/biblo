@@ -94,7 +94,7 @@ export default class AuthorPage extends React.Component {
       <div className="container" id="authorComponent">
         <Helmet>
           <title>{seo.title || `${app.name} | Autore`}</title>
-          <link rel="canonical" href={seo.url} />
+          <link rel="canonical" href={`${app.url}/authors`} />
           <meta name="description" content={seo.description} />
           <meta property="og:type" content="books.author" />
           <meta property="og:title" content={seo.title} />

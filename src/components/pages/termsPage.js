@@ -7,6 +7,7 @@ const TermsPage = props => (
   <div id="TermsPageComponent" className="reveal fadeIn slideUp">
     <Helmet>
       <title>{app.name} | Termini e condizioni d'uso</title>
+      <link rel="canonical" href={app.url} />
     </Helmet>
     <div className="container pad-v">
       <h1>Termini e condizioni d'uso</h1>

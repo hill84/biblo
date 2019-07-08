@@ -404,6 +404,7 @@ export default class Dashboard extends React.Component {
 			<div className="container" id="dashboardComponent">
         <Helmet>
           <title>{app.name} | {user ? `${tabSeoTitle()} di ${user.displayName}` : 'Dashboard utente'}</title>
+          <link rel="canonical" href={app.url} />
           <meta name="description" content={app.desc} />
           {tabSelected && <link rel="canonical" href={`${app.url}/dashboard/${user.uid}/shelf`} />}
         </Helmet>
