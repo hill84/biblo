@@ -8,10 +8,11 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { handleFirestoreError, normURL, timeSince } from '../../../config/shared';
+import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
+import ImageZoom from 'react-medium-image-zoom';
 
 export default class QuotesDash extends React.Component {
  	state = {
@@ -157,7 +158,13 @@ export default class QuotesDash extends React.Component {
         <li key={item.qid} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs" style={{backgroundImage: `url(${item.coverURL})`}} />
+              <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.coverURL})`}}>
+                <ImageZoom
+                  defaultStyles={imageZoomDefaultStyles}
+                  image={{ src: item.coverURL, className: 'thumb hidden' }}
+                  zoomImage={{ className: 'magnified' }}
+                />
+              </div>
             </div>
             {item.bid ? <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
             <Link to={`/author/${normURL(item.author)}`} className="col">{item.author}</Link>

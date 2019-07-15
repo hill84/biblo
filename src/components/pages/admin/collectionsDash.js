@@ -59,56 +59,55 @@ export default class collectionsDash extends React.Component {
   }
     
   fetch = e => {
-    const { /* desc,  */lastVisible, limitBy, limitByIndex, /* orderBy, orderByIndex,  */page } = this.state;
+    const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
+    const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
-    const startAt = direction ? (direction === 'prev') ? ((page - 1) * limit) - limit : page * limit : 0;
-    const lRef = collectionsRef/* .orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc') */.limit(limit);
-    // console.log('fetching items');
+    const ref = collectionsRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
+    const lRef = direction ? paginatedRef : ref;
+    
     if (this._isMounted) {
       this.setState({ loading: true });
     }
-    
-    countRef('collections').get().then(fullSnap => {
-      // console.log(fullSnap);
-      if (fullSnap.exists) {
-        if (this._isMounted) {
-          this.setState({ count: fullSnap.data().count });
-        }
-        // console.log({startAt, lastVisible_id: lastVisible ? lastVisible.id : fullSnap.docs[startAt].id, limit, direction, page});
-        const dRef = direction ? lRef.startAt(lastVisible || fullSnap.docs[startAt]) : lRef;
 
-        this.unsubCollectionsFetch = dRef.onSnapshot(snap => {
-          if (!snap.empty) {
-            const items = [];
-            snap.forEach(item => {
-              const books = [];
-              collectionBooksRef(item.id).orderBy('bcid', 'desc').get().then(snap => {
-                if (!snap.empty) {
-                  snap.forEach(book => books.push(book.data().bid));
-                }
-              });
-              items.push({ ...item.data(), title: item.id, books });
+    const fetcher = () => {
+      this.unsubCollectionsFetch = lRef.onSnapshot(snap => {
+        if (!snap.empty) {
+          const items = [];
+          snap.forEach(item => {
+            const books = [];
+            collectionBooksRef(item.id).orderBy('bcid', 'desc').get().then(snap => {
+              if (!snap.empty) {
+                snap.forEach(book => books.push(book.data().bid));
+              }
             });
-            
-            this.timer && clearTimeout(this.timer);
+            items.push({ ...item.data(), title: item.id, books });
+          });
+          this.setState(prevState => ({
+            firstVisible: snap.docs[prev ? snap.size -1 : 0],
+            items: prev ? items.reverse() : items,
+            lastVisible: snap.docs[prev ? 0 : snap.size -1],
+            loading: false,
+            page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+          }));
+        } else this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false });
+      });
+    }
 
-            this.timer = setTimeout(() => {
-              this.setState(prevState => ({
-                items,
-                lastVisible: snap.docs[startAt],
-                loading: false,
-                page: direction ? (direction === 'prev') ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-              }));
-            }, 1000);
-          } else this.setState({ items: null, lastVisible: null, loading: false });
-        });
-      } else {
-        if (this._isMounted) {
-          this.setState({ count: 0 });
+    if (!direction) {
+      countRef('collections').get().then(fullSnap => {
+        if (fullSnap.exists) {
+          if (this._isMounted) {
+            this.setState({ count: fullSnap.data().count }, () => fetcher());
+          }
+        } else {
+          if (this._isMounted) {
+            this.setState({ count: 0 });
+          }
         }
-      }
-    }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
+    } else fetcher();
   }
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -166,7 +165,7 @@ export default class collectionsDash extends React.Component {
               {item.title}
             </Link>
             <div className="col-5 col-lg-8" title={item.description}>{item.description}</div>
-            <div className="col-1 text-right">{item.books.length}</div>
+            <div className="col-1 text-right">{item.books_num}</div>
             <div className="absolute-row right btns xs">
               <button type="button" className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
               <button type="button" className="btn icon primary" disabled onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>

@@ -1239,13 +1239,12 @@ hr.line {
   height: var(--avatarSize);
   transition: all .2s ease-in-out;
 }
-.basic-profile .avatar .thumb { 
+.basic-profile .avatar .thumb, .avatar-container .avatar .thumb { 
   width: 100%;
   min-height: 100%;
   border-radius: 99px; 
 }
 .magnified.avatar { border-radius: 99px; background-color: var(--canvasLighterClr); box-shadow: 0 0.2px 0.6px rgba(0,0,0,.3); }
-
 
 /* author */
 #authorCard .avatar { 

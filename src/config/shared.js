@@ -1,3 +1,4 @@
+import 'regenerator-runtime/runtime';
 import { badWords, firestoreErrorMessages } from './lists';
 import logo from '../images/logo.png';
 
@@ -24,6 +25,10 @@ export const joinObj = obj => {
 };
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
+
+//OPTIONS
+export const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' };
+export const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
 // UTILITY
 export const needsEmailVerification = user => user && !user.emailVerified && user.providerData.length === 0;

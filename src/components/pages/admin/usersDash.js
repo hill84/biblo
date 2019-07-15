@@ -8,10 +8,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { asyncForEach, getInitials, handleFirestoreError } from '../../../config/shared';
+import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -20,7 +21,7 @@ export default class UsersDash extends React.Component {
  	state = {
     user: this.props.user,
     count: 0,
-    desc: false,
+    desc: true,
     firstVisible: null,
     isOpenDeleteDialog: false,
     items: null,
@@ -221,7 +222,15 @@ export default class UsersDash extends React.Component {
         <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto avatar-container">
-              <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
+              <Avatar className="avatar" /* src={item.photoURL} */ alt={item.displayName}>
+                {item.photoURL ? 
+                  <ImageZoom
+                    defaultStyles={imageZoomDefaultStyles}
+                    image={{ src: item.photoURL, className: 'thumb' }}
+                    zoomImage={{ className: 'magnified avatar' }}
+                  />
+                : getInitials(item.displayName)}
+              </Avatar>
             </div>
             <Link to={`/dashboard/${item.uid}`} className="col" title={item.displayName}>
               {item.displayName}
@@ -234,10 +243,10 @@ export default class UsersDash extends React.Component {
             </div>
             <div className="col col-sm-3 col-lg-2 hide-xs">
               <div className="row text-center">
-                <div className="col">{item.stats.shelf_num}</div>
-                <div className="col">{item.stats.wishlist_num}</div>
-                <div className="col">{item.stats.reviews_num}</div>
-                <div className="col hide-md">{item.stats.ratings_num}</div>
+                <div className={`col ${!item.stats.shelf_num && 'lightest-text'}`}>{item.stats.shelf_num}</div>
+                <div className={`col ${!item.stats.wishlist_num && 'lightest-text'}`}>{item.stats.wishlist_num}</div>
+                <div className={`col ${!item.stats.reviews_num && 'lightest-text'}`}>{item.stats.reviews_num}</div>
+                <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
               </div>
             </div>
             <div className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
@@ -247,7 +256,7 @@ export default class UsersDash extends React.Component {
             </div>
             <div className="col col-sm-2 col-lg text-right">
               <div className="timestamp">
-                <span className="date">{new Date(item.creationTime).toLocaleDateString()}</span><span className="time hide-lg"> - {new Date(item.creationTime).toLocaleTimeString()}</span>
+                <span className="date">{new Date(item.creationTime).toLocaleDateString('it-IT', dateOptions)}</span><span className="time hide-lg"> - {new Date(item.creationTime).toLocaleTimeString('it-IT', timeOptions)}</span>
               </div>
             </div>
             <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>

@@ -6,10 +6,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import { icon } from '../../../config/icons';
-import { getInitials, handleFirestoreError, normalizeString, normURL, timeSince } from '../../../config/shared';
+import { getInitials, handleFirestoreError, imageZoomDefaultStyles, normalizeString, normURL, timeSince } from '../../../config/shared';
 import { funcType, userType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -158,7 +159,15 @@ export default class AuthorsDash extends React.Component {
         <li key={item.displayName} className={`avatar-row ${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto hide-xs avatar-container">
-              <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
+              <Avatar className="avatar" /* src={item.photoURL} */ alt={item.displayName}>
+                {item.photoURL ? 
+                  <ImageZoom
+                    defaultStyles={imageZoomDefaultStyles}
+                    image={{ src: item.photoURL, className: 'thumb' }}
+                    zoomImage={{ className: 'magnified avatar' }}
+                  />
+                : getInitials(item.displayName)}
+              </Avatar>
             </div>
             <div className="col-6 col-sm-4 col-lg-2" title={item.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={item.displayName}/></div>
             <div className="col-1"><button className="btn xs flat" title={item.sex === 'm' ? 'uomo' : 'donna'}>{item.sex}</button></div>

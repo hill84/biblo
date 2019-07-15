@@ -29,7 +29,8 @@ node_modules
 
 \.vscode/settings\.json
 
-/Build/*
+/build/*
+/server-build/*
 \.vscode/launch\.json
 
 *.cache
