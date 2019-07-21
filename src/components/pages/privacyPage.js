@@ -1,7 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
-import booksRowImage from '../../images/books-row.webp';
+import booksRowImage from '../../images/books-row.png';
+import withScrollToTop from '../hocs/withScrollToTop';
 
 const PrivacyPage = props => (
   <div id="PrivacyPageComponent" className="reveal fadeIn slideUp">
@@ -116,4 +117,4 @@ const PrivacyPage = props => (
   </div>
 );
 
-export default PrivacyPage;
+export default withScrollToTop(PrivacyPage);

@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
+import withScrollToTop from '../hocs/withScrollToTop';
 
 const TermsPage = props => (
   <div id="TermsPageComponent" className="reveal fadeIn slideUp">
@@ -32,4 +33,4 @@ const TermsPage = props => (
   </div>
 );
 
-export default TermsPage;
+export default withScrollToTop(TermsPage);

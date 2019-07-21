@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
-import { funcType, userBookType, userType } from '../../config/types';
+import { funcType, userBookType, userType, objectType } from '../../config/types';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
 import ReadingStateForm from '../forms/readingStateForm';
@@ -21,6 +21,8 @@ import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
 import UserReview from '../userReview';
+import { InView } from 'react-intersection-observer';
+import BookCollection from '../bookCollection';
 
 export default class BookProfile extends React.Component {
 	state = {
@@ -28,19 +30,21 @@ export default class BookProfile extends React.Component {
       ...this.props.book,
       bid: (this.props.book && this.props.book.bid) || ''
     },
-    user: this.props.user || {},
-    userBook: this.props.userBook,
     errors: {},
     isOpenRemoveDialog: false,
     isOpenReadingState: false,
-    isOpenIncipit: false,
-    prevProps: this.props
+    isOpenIncipit: this.props.location ? this.props.location.pathname.indexOf('/incipit') !== -1 : false,
+    prevProps: this.props,
+    user: this.props.user || {},
+    userBook: this.props.userBook
   }
 
   static propTypes = {
     addReview: funcType.isRequired,
     addBookToShelf: funcType.isRequired,
     addBookToWishlist: funcType.isRequired,
+    history: objectType.isRequired,
+    location: objectType.isRequired,
     openSnackbar: funcType.isRequired,
     removeBookFromShelf: funcType.isRequired,
     removeBookFromWishlist: funcType.isRequired,
@@ -66,6 +70,18 @@ export default class BookProfile extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { location } = this.props;
+    if (location !== prevProps.location) {
+      window.scrollTo(0, 0);
+      if (prevProps.location.pathname !== location.pathname) {
+        if (this._isMounted) {
+          this.setState({ isOpenIncipit: location.pathname.indexOf('/incipit') !== -1 });
+        }
+      }
+    }
   }
 
   onAddBookToShelf = () => this.props.addBookToShelf(this.state.book.bid);
@@ -98,11 +114,25 @@ export default class BookProfile extends React.Component {
     }
   }
 
-  onToggleIncipit = () => this._isMounted && this.setState(prevState => ({ isOpenIncipit: !prevState.isOpenIncipit })); 
+  onToggleIncipit = () => {
+    const { history, location } = this.props;
+    
+    history.push(location.pathname.indexOf('/incipit') === -1 
+    ? `${location.pathname}/incipit` 
+    : location.pathname.replace('/incipit', ''), null);
+
+    if (this._isMounted) {
+      this.setState(prevState => ({ isOpenIncipit: !prevState.isOpenIncipit })); 
+    }
+  }
 
   onEditing = () => this.props.isEditing();
 
-  onToggleReadingState = () => this._isMounted && this.setState(prevState => ({ isOpenReadingState: !prevState.isOpenReadingState })); 
+  onToggleReadingState = () => {
+    if (this._isMounted) {
+      this.setState(prevState => ({ isOpenReadingState: !prevState.isOpenReadingState })); 
+    }
+  }
 
   setFormatClass = format => {
     switch (format) {
@@ -259,7 +289,9 @@ export default class BookProfile extends React.Component {
                 }
               </div>
             </div>
+          </div>
 
+          <div className="container">
             {book.bid &&
               <React.Fragment>
                 {isAuthenticated() && isEditor && userBook.bookInShelf &&
@@ -274,6 +306,15 @@ export default class BookProfile extends React.Component {
                   /> 
                 }
                 <Reviews bid={book.bid} user={user} />
+                {book.collections[0] && 
+                  <InView triggerOnce rootMargin="200px">
+                    {({ inView, ref }) => 
+                      <div className="card dark card-fullwidth-sm" ref={ref} style={{ marginBottom: 0 }}>
+                        <BookCollection cid={book.collections[0]} openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+                      </div>
+                    }
+                  </InView>
+                }
               </React.Fragment>
             }
 

@@ -42,8 +42,8 @@ export default class Book extends React.Component {
   static propTypes = {
     bid: stringType,
     book: bookType,
-    history: objectType,
-    location: objectType,
+    history: objectType.isRequired,
+    location: objectType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType,
     userBook: userBookType
@@ -552,6 +552,8 @@ export default class Book extends React.Component {
             addBookToShelf={this.addBookToShelf} 
             addBookToWishlist={this.addBookToWishlist} 
             addReview={this.addReview}
+            history={history}
+            location={location}
             removeBookFromShelf={this.removeBookFromShelf} 
             removeBookFromWishlist={this.removeBookFromWishlist} 
             removeReview={this.removeReview}

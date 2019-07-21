@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
 import DonationButtons from '../donationButtons';
+import withScrollToTop from '../hocs/withScrollToTop';
 
 const DonationsPage = React.forwardRef((props, ref) => (
   <div id="DonationsPageComponent" className="reveal fadeIn slideUp" ref={ref}>
@@ -26,4 +27,4 @@ const DonationsPage = React.forwardRef((props, ref) => (
   </div>
 ));
 
-export default DonationsPage;
+export default withScrollToTop(DonationsPage);

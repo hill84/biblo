@@ -1,7 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
-import booksRowImage from '../../images/books-row.webp';
+import booksRowImage from '../../images/books-row.png';
+import withScrollToTop from '../hocs/withScrollToTop';
 
 const HelpPage = props => (
   <div id="HelpPageComponent" className="reveal fadeIn slideUp">
@@ -25,4 +26,4 @@ const HelpPage = props => (
   </div>
 );
 
-export default HelpPage;
+export default withScrollToTop(HelpPage);

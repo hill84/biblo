@@ -1,12 +1,12 @@
 {
   "name": "biblo",
-  "version": "0.7.19",
+  "version": "0.7.20",
   "private": true,
   "devDependencies": {
-    "firebase": "^6.3.0",
+    "firebase": "^6.3.1",
     "firebase-admin": "^8.2.0",
     "firebase-functions": "^3.1.0",
-    "firebase-tools": "^7.1.0",
+    "firebase-tools": "^7.1.1",
     "imagemin": "^7.0.0",
     "imagemin-webp": "^5.1.0"
   },

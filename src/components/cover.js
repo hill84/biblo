@@ -1,3 +1,4 @@
+import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 import { icon } from '../config/icons';
@@ -91,11 +92,13 @@ export default class Cover extends React.Component {
             <span className="author"><span className="hide-sm">di</span> {joinObj(book.authors)}</span>
             {full && book.publisher && <span className="publisher">{book.publisher}</span>}
             {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ?
-              <div className="stepper">
-                <div className="bar" style={{width: `${book.readingState.progress_num}%`}} title={`${book.readingState.progress_num}%`}></div>
-              </div>
+              <Tooltip title={`${book.readingState.progress_num}%`} placement="top">
+                <div className="stepper">
+                  <div className="bar" style={{ width: `${book.readingState.progress_num}%` }}></div>
+                </div>
+              </Tooltip>
             : book.rating_num > 0 && rating !== false && 
-              <Rating ratings={{rating_num: book.rating_num, ratings_num: book.ratings_num}} />
+              <Rating ratings={{ rating_num: book.rating_num, ratings_num: book.ratings_num }} />
             }
           </div>
         }

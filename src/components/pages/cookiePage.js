@@ -1,7 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
-import booksRowImage from '../../images/books-row.webp';
+import booksRowImage from '../../images/books-row.png';
+import withScrollToTop from '../hocs/withScrollToTop';
 
 const CookiePage = props => (
   <div id="CookiePageComponent" className="reveal fadeIn slideUp">
@@ -50,4 +51,4 @@ const CookiePage = props => (
   </div>
 );
 
-export default CookiePage;
+export default withScrollToTop(CookiePage);
