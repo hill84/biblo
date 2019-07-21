@@ -194,8 +194,11 @@ class Home extends React.Component {
           </InView>
 
           <div className="card flat col-md-6 text-center">
-            <p className="text-xl">Siamo anche su Facebook</p>
-            <div><a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer">Segui {app.fb.name}</a></div>
+            <p className="text-xl">Siamo anche su Facebook e Twitter</p>
+            <div>
+              <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer">Seguici su Facebook</a>
+              <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer">Seguici su Twitter</a>
+            </div>
           </div>
         </div>
       </div>

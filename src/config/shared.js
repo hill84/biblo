@@ -7,8 +7,8 @@ export const app = {
   name: 'Biblo',
   url: 'https://biblo.space',
   logo,
-  fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space/' },
-  tw: { name: '', url: '' },
+  fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space' },
+  tw: { name: 'Biblo.space', url: 'https://twitter.com/BibloSpace' },
   email: 'info@biblo.space',
   privacyEmail: 'privacy@biblo.space',
   desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
