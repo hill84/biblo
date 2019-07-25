@@ -679,10 +679,22 @@ hr.line {
 .primary .react-autosuggest__suggestions-container { background-color: #fff; } /* WARNING */
 
 /* BUTTONS */
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  outline: none !important;
+  user-select: none;
+  cursor: pointer;
+}
 .btn {
   position: relative;
   display: inline-block;
-  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   overflow: hidden;
   outline: none !important;
   padding: 0 var(--btnPad);
@@ -754,6 +766,7 @@ hr.line {
 .btn-footer, .btn-footer:hover, .btn-footer:active { box-shadow: none; transform: none; }
 .btn.btn-footer + .btn.btn-footer { margin-left: 0; }
 .btn a, .btn:active a { color: inherit; }
+button .btn { display: block; }
 
 .btn.flat, .btn.flat.xs, .btn.flat.sm, .btn.flat.lg { background-color: transparent; box-shadow: none; }
 .btn.flat { color: var(--linkClr); }
@@ -830,7 +843,7 @@ hr.line {
 .btn.clear:hover { background-color: rgba(0,151,167,.07); }
 .btn.clear:active, .btn.clear.active { background-color: rgba(0,0,0,.05); color: rgba(0,0,0,.3); }
 
-.btn:disabled, .btn:disabled:hover, .btn:disabled:active, .btn.disabled { 
+.btn:disabled, .btn:disabled:hover, .btn:disabled:active, .btn.disabled, button:disabled .btn { 
   background-color: var(--btnDisabledBg);
   border-color: transparent;
   color: rgba(0,0,0,.15); 
@@ -846,6 +859,8 @@ hr.line {
 .btn.error, .btn.error:hover, .btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: var(--errorClr); color: #fff; }
 /* .btn.error-on-hover { min-width: 175px; } */
 .btn.flat:disabled { --btnDisabledBg: transparent; }
+button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
+@keyframes audioPulse { 50% { box-shadow: 0 0 0 2px var(--btnDisabledBg); }}
 
 .btn.sm svg, .btns.sm .btn svg { --iconSize: 15px; }
 .btn.xs svg, .btns.xs .btn svg { --iconSize: 14px; }
@@ -1442,6 +1457,7 @@ hr.line {
 .book-profile .title, .book-profile .subtitle { margin-top: 0; margin-left: auto; margin-right: auto; line-height: 130%; }
 .book-profile.dark .title, .book-profile.dark .subtitle { font-weight: 300; }
 .book-profile .title { font-size: 2.2rem; }
+.book-profile .title.flex { align-items: center; }
 .book-profile .subtitle { font-size: 1.35rem; color: var(--lightTextClr); }
 .book-profile .rating { height: var(--btnHeight); line-height: var(--btnHeight); }
 .book-profile .description { margin-top: .6rem; white-space: pre-line; word-wrap: break-word; }
@@ -2544,6 +2560,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .hero .container { padding-top: 65px; }
   .snackbar { --distance: 8px }
   .book-profile .title { font-size: 1.6rem; }
+  .book-profile .title.flex { justify-content: center; }
   .book-incipit { transform-origin: top center; animation-name: flipInX; }
   .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr; }
   /* #dashboardComponent .basic-profile-card { margin-top: 60px; }

@@ -7,12 +7,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
+import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
+import { Composer, SayButton } from 'react-say';
 import { isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
-import { funcType, userBookType, userType, objectType } from '../../config/types';
+import { funcType, objectType, userBookType, userType } from '../../config/types';
+import BookCollection from '../bookCollection';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
 import ReadingStateForm from '../forms/readingStateForm';
@@ -21,8 +24,6 @@ import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
 import UserReview from '../userReview';
-import { InView } from 'react-intersection-observer';
-import BookCollection from '../bookCollection';
 
 export default class BookProfile extends React.Component {
 	state = {
@@ -156,7 +157,7 @@ export default class BookProfile extends React.Component {
     // const authors = book && <Link to={`/author/${normURL(Object.keys(book.authors)[0])}`}>{Object.keys(book.authors)[0]}</Link>;
 
 		return (
-      <React.Fragment>
+      <React.Fragment><Composer>
         {isOpenIncipit && 
           <Incipit 
             title={book.title} 
@@ -168,7 +169,9 @@ export default class BookProfile extends React.Component {
         }
       
         <div id="BookProfileComponent">
-          <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${book.covers[0]})` }} /></div>
+          <div className="content-background">
+            <div className="bg" style={{ backgroundImage: `url(${book.covers[0]})` }} />
+          </div>
 
           {isOpenReadingState && 
             <ReadingStateForm 
@@ -184,7 +187,7 @@ export default class BookProfile extends React.Component {
               <div className="row">
                 <div className="col-md-auto col-sm-12" style={{ marginBottom: 15 }}>
                   {book.incipit ? 
-                    <div role="button" className={`hoverable-items ${this.setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit}>
+                    <div role="button" className={`hoverable-items text-center ${this.setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
                       <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>
                     </div>
@@ -192,11 +195,18 @@ export default class BookProfile extends React.Component {
                     <Cover book={book} rating={false} info={false} />
                   }
                   {book.trailerURL && 
-                    <button onClick={() => window.open(book.trailerURL,'_blank')} className="btn xs rounded flat centered btn-trailer">Trailer</button>
+                    <button onClick={() => window.open(book.trailerURL, '_blank')} className="btn xs rounded flat centered btn-trailer">Trailer</button>
                   }
                 </div>
                 <div className="col book-profile">
-                  <h2 className="title">{book.title}</h2>
+                  <h2 className="title flex">
+                    {book.title}&nbsp;
+                    {book.description && 
+                      <SayButton speak={book.description}>
+                        <div className="btn rounded icon flat audio">{icon.voice()}</div>
+                      </SayButton>
+                    }
+                  </h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
                   {book.authors && <span className="counter comma">di {Object.keys(book.authors).map(author => 
@@ -205,7 +215,7 @@ export default class BookProfile extends React.Component {
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && isEditor && hasBid &&
                       <Tooltip disableHoverListener={book.EDIT.edit} disableFocusListener={book.EDIT.edit} disableTouchListener={book.EDIT.edit} title="Solo gli amministratori possono modificare">
-                        <button type="button" className="btn sm flat counter" disabled={isLocked} onClick={this.onEditing}>
+                        <button type="button" className="btn sm rounded flat counter" disabled={isLocked} onClick={this.onEditing}>
                           {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
                         </button>
                       </Tooltip>
@@ -232,23 +242,25 @@ export default class BookProfile extends React.Component {
                       <div className="info-row">
                         {userBook.bookInShelf ? 
                           <React.Fragment>
-                            <button type="button" className="btn success error-on-hover" onClick={this.onRemoveBookFromShelfRequest}>
+                            <button type="button" className="btn success rounded error-on-hover" onClick={this.onRemoveBookFromShelfRequest}>
                               <span className="hide-on-hover">{icon.check()} libreria</span>
                               <span className="show-on-hover">{icon.close()} libreria</span>
                             </button>
-                            <button type="button" className="btn" onClick={this.onToggleReadingState}><span className="hide-xs">Stato</span> lettura</button>
+                            <button type="button" className="btn rounded" onClick={this.onToggleReadingState}>
+                              <span className="hide-xs">Stato</span> lettura
+                            </button>
                           </React.Fragment>
                         :
-                          <button type="button" className="btn primary" disabled={!hasBid || !isEditor} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
+                          <button type="button" className="btn primary rounded" disabled={!hasBid || !isEditor} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
                         }
                         {userBook.bookInWishlist && 
-                          <button type="button" className="btn success error-on-hover" onClick={this.onRemoveBookFromWishlist}>
+                          <button type="button" className="btn success rounded error-on-hover" onClick={this.onRemoveBookFromWishlist}>
                             <span className="hide-on-hover">{icon.check()} desideri</span>
                             <span className="show-on-hover">{icon.close()} desideri</span>
                           </button>
                         }
                         {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                          <button type="button" className="btn flat" disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
+                          <button type="button" className="btn flat rounded" disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
                         }
                       </div>
                       {userBook.bookInShelf &&
@@ -341,7 +353,7 @@ export default class BookProfile extends React.Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onRemoveBookFromShelf}>Procedi</button>
           </DialogActions>
         </Dialog>
-
+        </Composer>
       </React.Fragment>
 		);
 	}

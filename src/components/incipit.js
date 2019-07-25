@@ -1,4 +1,5 @@
 import React from 'react';
+import { SayButton } from 'react-say';
 import { icon } from '../config/icons';
 import { funcType, stringType } from '../config/types';
 
@@ -33,6 +34,11 @@ export default class Incipit extends React.Component {
             <div role="navigation" className="head nav row">
               <strong className="col title">{title}</strong>
               <div className="col-auto btn-row">
+                <SayButton speak={incipit}>
+                  <div className="btn rounded icon flat audio">
+                    {icon.voice()}
+                  </div>
+                </SayButton>
                 <button type="button" className="btn rounded icon flat" onClick={this.onToggleSize} title="Formato">{icon.formatSize()}</button> 
                 <button type="button" className="btn rounded icon flat" onClick={this.onToggleDarkTheme} title="Tema">{icon.lamp()}</button> 
                 <button type="button" className="btn rounded icon flat" onClick={this.onToggle} title="Chiudi">{icon.close()}</button>
