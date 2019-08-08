@@ -18,7 +18,7 @@ export default class collectionsDash extends React.Component {
  	state = {
     user: this.props.user,
     count: 0,
-    desc: true,
+    desc: false,
     isOpenDeleteDialog: false,
     items: null,
     lastVisible: null,
