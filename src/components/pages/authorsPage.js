@@ -133,7 +133,7 @@ export default class AuthorsPage extends React.Component {
               <div className="head nav" role="navigation">
                 <div className="row">
                   <div className="col">
-                    <span className="counter last title primary-text">Autori</span> {count !== 0 && <span className="count hide-xs">({count})</span>} 
+                    <span className="counter last title primary-text">Autori</span> {count !== 0 && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
                   </div>
                   <div className="col-auto">
                     <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>

@@ -7,7 +7,7 @@ const buymeacoffeeURL = 'https://buymeacoffee.com/biblo';
 
 const DonationButtons = React.forwardRef((props, ref) => (
   <div className="donation-btns" ref={ref}>
-    <button type="button" className="btn primary rounded"><a href={buymeacoffeeURL}>{icon.coffee()} Buy me a coffee</a></button>
+    <button type="button" className="btn primary rounded"><a target="_blank" rel="noopener noreferrer" href={buymeacoffeeURL}>{icon.coffee()} Buy me a coffee</a></button>
     <button type="button" className="btn primary rounded"><a target="_blank" rel="noopener noreferrer" href={coinbaseURL}>{icon.bitcoin()} Coinbase</a></button>
     <button type="button" className="btn primary rounded"><a target="_blank" rel="noopener noreferrer" href={paypalURL}>{icon.paypal()} Paypal</a></button>
     {/* <button type="button" className="btn primary rounded" disabled><a href="/">{icon.creditCard()} Bonifico</a></button> */}

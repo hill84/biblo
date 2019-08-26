@@ -1,3 +1,5 @@
+rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -66,12 +68,12 @@ service cloud.firestore {
     match /reviews/{bid} {
     	allow read;
       allow write: if isEditor();
-      
-      match /reviewers/{uid} {
-      	allow read;
-        allow create, update: if isEditor();
-        allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
-      }
+    }
+
+    match /{path=**}/reviewers/{uid} {
+      allow read;
+      allow create, update: if isEditor();
+      allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
     }
 
     match /feeds/latestReviews {

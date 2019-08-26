@@ -1593,6 +1593,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   transition: all .2s ease-in-out;
   z-index: 11;
 }
+.head.nav .title { font-weight: 400; }
 .card .head.nav, .dialog .head.nav, .tab .head.nav {
   background-color: var(--cardBg);
   border-top-left-radius: var(--radius);
@@ -1863,6 +1864,14 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 
 /* REVIEWS */
 .card.user-review, .card.reviews { padding-top: 14px; padding-bottom: 14px; }
+.card.reviews .head h2 { margin-bottom: 1rem; }
+.card.reviews .head .counter { 
+  line-height: inherit; 
+  font-size: .82rem; 
+  color: var(--lighterTextClr); 
+  margin-left: 10px; 
+  font-weight: 200; 
+}
 .card.user-review .footer { margin-bottom: -14px; }
 .review { 
   --avatarSize: 32px; 

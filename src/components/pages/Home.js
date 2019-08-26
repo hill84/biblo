@@ -9,6 +9,7 @@ import { funcType } from '../../config/types';
 import bgHerojpeg from '../../images/covers-dark.jpg';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
+import DonationButtons from '../donationButtons';
 import Genres from '../genres';
 import Picture from '../picture';
 import RandomQuote from '../randomQuote';
@@ -148,18 +149,31 @@ class Home extends React.Component {
           <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
               <div className="card dark card-fullwidth-sm" ref={ref}>
+                <Authors pagination={false} limit={9} inView={inView} scrollable />
+              </div>
+            }
+          </InView>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div ref={ref}>
+                {inView && <Reviews limit={5} openSnackbar={openSnackbar} pagination skeleton />}
+              </div>
+            }
+          </InView>
+
+          <InView triggerOnce rootMargin={rootMargin}>
+            {({ inView, ref }) => 
+              <div className="card dark card-fullwidth-sm" ref={ref}>
                 <BookCollection cid="Libri proibiti" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
               </div>
             }
           </InView>
-    
-          <InView triggerOnce rootMargin={rootMargin}>
-            {({ inView, ref }) => 
-              <div ref={ref}>
-                {inView && <Reviews limit={4} pagination={false} skeleton />}
-              </div>
-            }
-          </InView>
+
+          <div className="card flat col-md-6 text-center">
+            <p className="text-xl">Biblo.space è un progetto completamente gratuito e indipendente.<br /> Se vuoi, puoi aiutarci a crescere con una donazione:</p>
+            <DonationButtons />
+          </div>
 
           <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
@@ -169,21 +183,21 @@ class Home extends React.Component {
             }
           </InView>
 
-          <InView triggerOnce rootMargin={rootMargin}>
-            {({ inView, ref }) => 
-              <div className="card dark card-fullwidth-sm" ref={ref}>
-                <Authors pagination={false} limit={9} inView={inView} scrollable />
-              </div>
-            }
-          </InView>
-
-          <InView triggerOnce rootMargin={rootMargin}>
+          {/* <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
               <div className="card dark card-fullwidth-sm" ref={ref}>
                 <BookCollection cid="Harry Potter" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
               </div>
             }
-          </InView>
+          </InView> */}
+
+          <div className="card flat col-md-6 text-center">
+            <p className="text-xl">Siamo anche su Facebook e Twitter:</p>
+            <div>
+              <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer">Seguici su Facebook</a>
+              <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer">Seguici su Twitter</a>
+            </div>
+          </div>
 
           <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
@@ -193,13 +207,6 @@ class Home extends React.Component {
             }
           </InView>
 
-          <div className="card flat col-md-6 text-center">
-            <p className="text-xl">Siamo anche su Facebook e Twitter</p>
-            <div>
-              <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer">Seguici su Facebook</a>
-              <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer">Seguici su Twitter</a>
-            </div>
-          </div>
         </div>
       </div>
     );

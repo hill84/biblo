@@ -293,7 +293,7 @@ export default class Layout extends React.Component {
               </NavLink>
               <NavLink to="/donations" exact>
                 <MenuItem>
-                  <ListItemIcon>{icon.bitcoin()}</ListItemIcon>
+                  <ListItemIcon>{icon.heart()}</ListItemIcon>
                   <Typography variant="inherit">Donazioni</Typography>
                 </MenuItem>
               </NavLink>

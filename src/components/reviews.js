@@ -57,6 +57,7 @@ export default class Reviews extends React.Component {
     const ref = bid ? reviewersRef(bid) : latestReviewsRef;
   
     this.reviewersFetch = ref.onSnapshot(fullSnap => { // TODO: remove fullSnap
+      // console.log(fullSnap);
       if (!fullSnap.empty) {
         this.setState({ count: fullSnap.size });
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
@@ -111,6 +112,7 @@ export default class Reviews extends React.Component {
 	render() {
     const { items, limit, loading, page, pagination, count } = this.state;
     const { bid, skeleton, user } = this.props;
+    const skeletons = [...Array(limit)].map((e, i) => <React.Fragment key={i}>{skltn_review}</React.Fragment>);
     
     if (!items) {
       if (loading) { 
@@ -121,7 +123,7 @@ export default class Reviews extends React.Component {
         return (
           <div className="card dark reviews">
             <div className="info-row empty text-center">
-              Non ci sono ancora recensioni<span className="hide-xs"> per questo libro</span>. {!isAuthenticated() && <span><Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
+              Nessuna recensione trovata <span className="hide-xs">trovata</span>. {!isAuthenticated() && <span><Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
             </div>
           </div>
         );
@@ -131,33 +133,34 @@ export default class Reviews extends React.Component {
 		return (
       <React.Fragment>
         <div className="card dark reviews">
-          {!bid && <h2>Ultime recensioni</h2>}
-          {loading && skeleton ? [...Array(limit)].map((e, i) => <React.Fragment key={i}>{skltn_review}</React.Fragment>) :
-            items.map((item, index) => 
-              <Review 
-                key={`${index}_${item.createdByUid}`} 
-                bid={bid}
-                user={user}
-                review={{
-                  bid: item.bid || '',
-                  photoURL: item.photoURL || '',
-                  displayName: item.displayName || '',
-                  bookTitle: item.bookTitle,
-                  covers: item.covers || [],
-                  createdByUid: item.createdByUid || '',
-                  created_num: item.created_num || 0,
-                  flag: item.flag,
-                  dislikes: item.dislikes || {},
-                  likes: item.likes || {},
-                  rating_num: item.rating_num || 0,
-                  text: item.text || '',
-                  title: item.title || '',
-                }} 
-              />
-            )
-          }
+          <div className="head">
+            {!bid && <h2>Ultime recensioni<span className="counter">({items ? items.length : limit} di {count || limit})</span></h2>}
+          </div>
+          {items && items.map((item, index) => (
+            <Review 
+              key={`${index}_${item.createdByUid}`} 
+              bid={bid}
+              user={user}
+              review={{
+                bid: item.bid || '',
+                photoURL: item.photoURL || '',
+                displayName: item.displayName || '',
+                bookTitle: item.bookTitle,
+                covers: item.covers || [],
+                createdByUid: item.createdByUid || '',
+                created_num: item.created_num || 0,
+                flag: item.flag,
+                dislikes: item.dislikes || {},
+                likes: item.likes || {},
+                rating_num: item.rating_num || 0,
+                text: item.text || '',
+                title: item.title || '',
+              }} 
+            />
+          ))}
+          {loading && skeleton && skeletons}
         </div>
-        {pagination && count > 0 && items.length < count &&
+        {pagination && count > 0 && items && items.length < count &&
           <PaginationControls 
             count={count} 
             fetch={this.fetchNext} 

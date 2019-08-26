@@ -37,7 +37,7 @@ exports.countUserReviews = functions.firestore.document('reviews/{bid}/reviewers
 
 exports.countBookReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.bid, change, 'books', 'reviews_num'));
 
-exports.feedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
+/* exports.feedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const { bid } = context.params;
   const feedRef = admin.firestore().collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
   const item = change.after.data();
@@ -64,7 +64,7 @@ exports.truncateFeedReviews = functions.firestore.document('reviews/{bid}/review
     const data = { count, lastActivity };
     return latestReviewsRef.update(data);
   }).catch(err => console.log(err));
-});
+}); */
 
 // NOTIFICATIONS
 exports.countNotifications = functions.firestore.document('notifications/{nid}').onWrite(change => count('notifications', change));

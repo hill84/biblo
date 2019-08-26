@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { authorsRef } from '../config/firebase';
+import { authorsRef, countRef } from '../config/firebase';
 import { numberType, boolType } from '../config/types';
 import { getInitials, normURL } from '../config/shared';
 import { icon } from '../config/icons';
@@ -50,17 +50,24 @@ export default class Authors extends React.Component {
     const { desc, limit } = this.state;
 
     if (inView) {
-      authorsRef.orderBy('displayName', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+      authorsRef.orderBy('lastEdit_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           if (this._isMounted) {
             this.setState({ 
-              count: snap.docs.length,
+              //count: snap.docs.length,
               items,
               loading: false
             });
           }
+          countRef('authors').get().then(fullSnap => {
+            if (fullSnap.exists) { 
+              if (this._isMounted) {
+                this.setState({ count: fullSnap.data().count });
+              }
+            }
+          }).catch(err => console.warn(err));
         } else {
           if (this._isMounted) {
             this.setState({ 
@@ -70,7 +77,7 @@ export default class Authors extends React.Component {
             });
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
     }
   }
 	
@@ -85,7 +92,7 @@ export default class Authors extends React.Component {
 		return (
       <React.Fragment>
         <div className="head nav" role="navigation">
-          <span className="counter last title primary-text">Autori</span> {count !== 0 && <span className="count hide-xs">({count})</span>} 
+          <span className="counter last title primary-text">Autori</span> {items && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?
