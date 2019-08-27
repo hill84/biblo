@@ -60,7 +60,7 @@ export default class AuthorForm extends React.Component {
             loading: false
           });
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
     }
   }
 
@@ -93,14 +93,14 @@ export default class AuthorForm extends React.Component {
     const { openSnackbar, user } = this.props;
 		const errors = this.validate(this.state.data);
 		this.setState({ authError: '', errors });
-		if(Object.keys(errors).length === 0) {
+		if (Object.keys(errors).length === 0) {
       this.setState({ loading: true });
       const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
       ref.set({
         bio: data.bio || '',
         displayName: data.displayName || '',
         edit: data.edit || true,
-        followers: data.followers || {},
+        // followers: data.followers || {},
         lastEdit_num: Number((new Date()).getTime()),
         lastEditBy: user.displayName,
         lastEditByUid: user.uid,
@@ -111,7 +111,7 @@ export default class AuthorForm extends React.Component {
         this.onToggle();
         this.setState({ loading: false });
         openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
 		}
 	};
 

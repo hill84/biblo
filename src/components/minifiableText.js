@@ -55,7 +55,7 @@ export default class MinifiableText extends React.Component {
       <React.Fragment>
         <span className={`minifiable ${isTextMinified ? 'minified' : 'expanded'}`}>{text}</span>
         {source && 
-          <span className="text-sm pull-right">
+          <span className="text-sm pull-right m-b-negative">
             <a href="https://it.wikipedia.org/wiki/Licenze_Creative_Commons">
               <span className="show-sm">&copy;</span>
               <span className="hide-sm">CC BY-SA</span>

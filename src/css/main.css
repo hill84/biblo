@@ -2370,6 +2370,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .text-xs { font-size: 70%; }
 .text-xxs { font-size: 60%; }
 .overflow-hidden { overflow: hidden; }
+.m-b-negative { margin-bottom: -100%; }
 
 .btn .show-on-hover { 
   position: absolute; 

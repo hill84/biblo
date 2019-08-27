@@ -57,13 +57,11 @@ export default class Genre extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const { desc, limit, orderByIndex } = this.state;
     const { gid } = this.props.match.params;
-    if (this._isMounted) {
-      if (gid !== prevProps.match.params.gid || desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
-        this.fetch();
-      }
-      if (this.props.user !== prevProps.user) {
-        this.fetchFollowers();
-      }
+    if (gid !== prevProps.match.params.gid || desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
+      this.fetch();
+    }
+    if (this.props.user !== prevProps.user) {
+      this.fetchFollowers();
     }
   }
 

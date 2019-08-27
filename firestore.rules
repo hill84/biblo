@@ -91,6 +91,11 @@ service cloud.firestore {
       allow read;
       allow create, update: if isEditor();
       allow delete: if isEditor() && isAdmin();
+
+      match /followers/{uid} {
+        allow read;
+        allow write: if isEditor();
+      }
     }
     
     match /collections/{cid} {

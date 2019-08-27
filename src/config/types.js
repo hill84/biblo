@@ -138,7 +138,7 @@ export const authorType = shape({
   bio: string,
   displayName: string.isRequired,
   edit: bool.isRequired,
-  followers: objectOf(bool).isRequired,
+  // followers: objectOf(bool).isRequired,
   lastEditBy: string.isRequired,
   lastEditByUid: string.isRequired,
   lastEdit_num: number.isRequired,

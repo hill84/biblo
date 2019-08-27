@@ -118,7 +118,7 @@ export default class App extends React.Component {
                       <RouteWithProps path="/password-reset" component={PasswordResetForm} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/login" component={Login} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/signup" component={Signup} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} />
+                      <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
                       <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />

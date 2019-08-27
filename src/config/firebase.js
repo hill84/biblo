@@ -61,6 +61,7 @@ export const latestReviewsRef = db.collectionGroup('reviewers');
 
 export const authorsRef = db.collection('authors');
 export const authorRef = aid => authorsRef.doc(aid);
+export const authorFollowersRef = aid => authorRef(aid).collection('followers');
 
 export const quotesRef = db.collection('quotes');
 export const quoteRef = qid => quotesRef.doc(qid);

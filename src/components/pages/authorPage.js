@@ -2,9 +2,9 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { authorRef, booksRef } from '../../config/firebase';
+import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { app, denormURL, getInitials, normalizeString, normURL } from '../../config/shared';
+import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
@@ -17,7 +17,8 @@ export default class AuthorPage extends React.Component {
       bio: '',
       displayName: denormURL(this.props.match.params.aid) || '',
       edit: null,
-      followers: {},
+      follow: false,
+      followers: null,
       languages: [],
       lastEditBy: '',
       lastEditByUid: '',
@@ -29,15 +30,19 @@ export default class AuthorPage extends React.Component {
     books: null,
     coverview: true,
     loading: true,
-    loadingBooks: true
+    loadingBooks: true,
+    screenSize: screenSize()
   }
 
   componentDidMount() {
     this._isMounted = true;
     const { author } = this.state;
+
+    window.addEventListener('resize', this.updateScreenSize);
     
 		authorRef(normalizeString(author.displayName)).get().then(snap => {
 			if (snap.exists) {
+        this.fetchFollowers();
         if (this._isMounted) {
           this.setState({ author: snap.data(), loading: false });
         }
@@ -61,19 +66,70 @@ export default class AuthorPage extends React.Component {
           this.setState({ books: null, loadingBooks: false });
         }
       }
-		}).catch(error => console.warn(error));
+    }).catch(error => console.warn(error));
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.user !== prevProps.user) {
+      this.fetchFollowers();
+    }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+
+    window.removeEventListener('resize', this.updateScreenSize);
+    this.unsubAuthorFollowersFetch && this.unsubAuthorFollowersFetch();
   }
-  
+
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));
+  
+  updateScreenSize = () => this.setState({ screenSize: screenSize() });
+  
+  fetchFollowers = () => {
+    const { user } = this.props;
+    const { aid } = this.props.match.params;
+    
+    if (user) {
+      const id = decodeURI(aid.replace(/_/g, '-')).toLowerCase();
+      this.unsubAuthorFollowersFetch = authorFollowersRef(id).onSnapshot(snap => {
+        if (!snap.empty) {
+          const followers = [];
+          snap.forEach(follower => followers.push(follower.data()));
+          this.setState({ followers, follow: user && followers.filter(follower => follower.uid === user.uid).length > 0 });
+        } else {
+          this.setState({ followers: 0, follow: false });
+        }
+      });
+    }
+  }
+
+  onFollow = () => {
+    const { follow } = this.state;
+    const { openSnackbar, user } = this.props;
+    const { aid } = this.props.match.params;
+    const id = decodeURI(aid.replace(/_/g, '-')).toLowerCase();
+
+    if (follow) {
+      // console.log('unfollow', aid);
+      authorFollowersRef(id).doc(user.uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    } else {
+      // console.log('follow', aid);
+      authorFollowersRef(id).doc(user.uid).set({
+        uid: user.uid,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        timestamp: (new Date()).getTime()
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    }
+  }
 
   render() {
-    const { author, books, coverview, loading, loadingBooks } = this.state;
-    const { history, location } = this.props;
+    const { author, books, coverview, follow, followers, loading, loadingBooks, screenSize } = this.state;
+    const { history, location, user } = this.props;
 
+    const isEditor = hasRole(user, 'editor');
+    const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
     const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
     if (loading) {
@@ -119,6 +175,40 @@ export default class AuthorPage extends React.Component {
               <div className="info-row bio text-left">
                 <MinifiableText text={author.bio} source={author.source} maxChars={500} />
               </div>
+
+              {isAuthenticated() && 
+                <div className="info-row">
+                  <button 
+                    type="button" 
+                    className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
+                    onClick={this.onFollow} 
+                    disabled={!user || !isEditor}>
+                    {follow ? 
+                      <React.Fragment>
+                        <span className="hide-on-hover">{icon.check()} Segui</span>
+                        <span className="show-on-hover">Smetti</span>
+                      </React.Fragment> 
+                    : <span>{icon.plus()} Segui</span> }
+                  </button>
+                  <div className="counter last inline">
+                    {followers ? followers.length > 2 && followers.length < 100 ? 
+                      <React.Fragment>
+                        <div className="bubble-group inline">
+                          {followers.slice(0,3).map(item => (
+                            <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
+                              <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
+                                {!item.photoURL && getInitials(item.displayName)}
+                              </Avatar>
+                            </Link>
+                          ))}
+                        </div>
+                        {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
+                      </React.Fragment>
+                    : `${abbrNum(followers.length)} follower` : ''}
+                  </div>
+                </div>
+              }
+
             </div>
           </div>
         </div>
