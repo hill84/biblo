@@ -26,8 +26,9 @@ const count = (doc, change, collection, field) => {
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
   const countRef = admin.firestore().collection(collection || 'counters').doc(doc);
+  const data = { [field || 'count']: admin.firestore.FieldValue.increment(increment) };
 
-  return countRef.update({ [field || 'count']: admin.firestore.FieldValue.increment(increment) });
+  return countRef.set(data, { merge: true });
 }
 
 // REVIEWS
