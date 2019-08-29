@@ -41,14 +41,13 @@ export default class AuthorPage extends React.Component {
     window.addEventListener('resize', this.updateScreenSize);
     
 		authorRef(normalizeString(author.displayName)).get().then(snap => {
-			if (snap.exists) {
-        this.fetchFollowers();
+      if (snap.exists) {
         if (this._isMounted) {
-          this.setState({ author: snap.data(), loading: false });
+          this.setState({ author: snap.data(), loading: false }, () => this.fetchFollowers());
         }
 			} else {
         if (this._isMounted) {
-          this.setState({ loading: false });
+          this.setState({ loading: false }, () => this.fetchFollowers());
         }
 			}
     }).catch(error => console.warn(error));
