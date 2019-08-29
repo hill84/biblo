@@ -516,11 +516,11 @@ export default class Dashboard extends React.Component {
           <div className="card tab contacts-tab" dir={tabDir}>
             {tabSelected === 3 && 
               <div className="row">
-                <div className="col-md-6 cols-12">
+                <div className="col-md-6 cols-12 contacts-tab-col">
                   <h4>Seguito da:</h4>
                   {Object.keys(followers).length ? usersList(followers) : <EmptyRow />}
                 </div>
-                <div className="col-md-6 col-12">
+                <div className="col-md-6 col-12 contacts-tab-col">
                   <h4>Segue:</h4>
                   {Object.keys(followings).length ? usersList(followings) : <EmptyRow />}
                 </div>

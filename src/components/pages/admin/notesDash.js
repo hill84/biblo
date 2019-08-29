@@ -122,7 +122,7 @@ export default class NotesDash extends React.Component {
   onToggleExpansion = id => {
     this.setState({ selectedId: id });
     const selectedObj = this.state.items.findIndex(obj => obj.id === id);
-    this.unsubNotesFetch = notesRef(id).onSnapshot(snap => {
+    this.unsubNotesFetch = notesRef(id).orderBy('created_num', 'desc').limit(200).onSnapshot(snap => {
       if (!snap.empty) {
         const notes = [];
         snap.forEach(note => notes.push(note.data()));

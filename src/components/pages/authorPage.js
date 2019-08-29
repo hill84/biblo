@@ -112,7 +112,7 @@ export default class AuthorPage extends React.Component {
 
     if (follow) {
       // console.log('unfollow', aid);
-      authorFollowersRef(id).doc(user.uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      authorFollowersRef(id).doc(user.uid).delete().then(() => this.setState({ follow: false })).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       // console.log('follow', aid);
       authorFollowersRef(id).doc(user.uid).set({
@@ -120,7 +120,7 @@ export default class AuthorPage extends React.Component {
         displayName: user.displayName,
         photoURL: user.photoURL,
         timestamp: (new Date()).getTime()
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).then(() => this.setState({ follow: true })).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   }
 

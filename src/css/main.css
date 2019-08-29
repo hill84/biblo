@@ -330,6 +330,32 @@ ul.nolist li { display: block; }
   user-select: none;
 }
 .table li .btn, .avatar-row .btn { margin-top: 0; margin-bottom: 0; }
+.contacts-tab-col { overflow: auto; min-height: 240px; }
+.contacts-tab-col:before, .contacts-tab-col:after {
+  --faderHeight: 14px;
+  content: "";
+  display: block;
+  position: sticky;
+  left: 0;
+  width: 100%;
+  height: var(--faderHeight);
+  transition: all 4s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+.contacts-tab-col:after {
+  top: calc(100% - var(--faderHeight));
+  bottom: 0;
+  background: -moz-linear-gradient(top, transparent 0%, var(--cardBg) 90%);
+  background: linear-gradient(to bottom, transparent 0%,var(--cardBg) 90%);
+  margin-top: calc(-1 * var(--faderHeight));
+}
+.contacts-tab-col:before {
+  top: 0;
+  background: -moz-linear-gradient(bottom, transparent 0%, var(--cardBg) 90%);
+  background: linear-gradient(to top, transparent 0%,var(--cardBg) 90%);
+  margin-bottom: calc(-1 * var(--faderHeight));
+}
 .contacts-tab .avatar-row { 
   margin-bottom: 0; 
   padding-top: .4rem; 
@@ -2678,7 +2704,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 
 @media (min-width: 1201px) { .show-xl { display: none; } }
 @media (min-width: 993px) { .show-lg { display: none; } }
-@media (min-width: 769px) { .show-md { display: none; } }
+@media (min-width: 769px) { .show-md { display: none; } .contacts-tab-col { max-height: calc(100vh - 450px); } }
 @media (min-width: 577px) { .show-sm { display: none; } }
 @media (min-width: 421px) { .show-xs { display: none; } }
 
