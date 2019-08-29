@@ -10,7 +10,7 @@ import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { Composer, SayButton } from 'react-say';
-import { isAuthenticated } from '../../config/firebase';
+import { bookRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
 import { funcType, objectType, userBookType, userType } from '../../config/types';
@@ -142,6 +142,25 @@ export default class BookProfile extends React.Component {
       default: return 'book';
     }
   }
+
+  onLock = () => {
+    const { openSnackbar } = this.props;
+    const { book } = this.state;
+    const id = book.bid;
+    const state = book.EDIT.edit;
+
+    if (state) {
+      // console.log(`Locking ${id}`);
+      bookRef(id).update({ 'EDIT.edit': false }).then(() => {
+        openSnackbar('Elemento bloccato', 'success');
+      }).catch(error => console.warn(error));
+    } else {
+      // console.log(`Unlocking ${id}`);
+      bookRef(id).update({ 'EDIT.edit': true }).then(() => {
+        openSnackbar('Elemento sbloccato', 'success');
+      }).catch(error => console.warn(error));
+    }
+  }
   
 	render() {
     const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
@@ -212,10 +231,15 @@ export default class BookProfile extends React.Component {
                     <Link to={`/author/${normURL(author)}`} className="counter" key={author}>{author}</Link> 
                   )}</span>}
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
-                    {isAuthenticated() && isEditor && hasBid &&
-                      <button type="button" className="btn sm rounded flat counter" disabled={isLocked} onClick={this.onEditing} title="Modifica disabilitata">
-                        {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
-                      </button>
+                    {isAuthenticated() && hasBid && isEditor && 
+                      <React.Fragment>
+                        <button type="button" onClick={this.onEditing} className="btn sm rounded flat counter" disabled={isLocked} title="Modifica disabilitata">
+                          {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
+                        </button>
+                        {isAdmin && 
+                          <button type="button" onClick={this.onLock} className={`btn sm rounded counter ${book.EDIT.edit ? 'flat' : 'secondary'}`}>{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</button>
+                        }
+                      </React.Fragment>
                     }
                   </div>
                   <div className="info-row hide-sm">
