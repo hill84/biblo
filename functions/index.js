@@ -21,12 +21,13 @@ admin.initializeApp();
 // });
 
 // HELPERS
-const count = (doc, change, collection, field) => {
+const count = (doc, change, collection, field, nestedField) => {
   let increment;
   if (change.after.exists && !change.before.exists) { increment = 1 } else 
   if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
   const countRef = admin.firestore().collection(collection || 'counters').doc(doc);
-  const data = { [field || 'count']: admin.firestore.FieldValue.increment(increment) };
+  const value = admin.firestore.FieldValue.increment(increment);
+  const data = { [field || 'count']: nestedField ? { [nestedField]: value } : value };
 
   return countRef.set(data, { merge: true });
 }
@@ -34,7 +35,7 @@ const count = (doc, change, collection, field) => {
 // REVIEWS
 exports.countReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite(change => count('reviews', change));
 
-exports.countUserReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.uid, change, 'users', 'stats.reviews_num'));
+exports.countUserReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.uid, change, 'users', 'stats', 'reviews_num'));
 
 exports.countBookReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.bid, change, 'books', 'reviews_num'));
 
