@@ -321,6 +321,7 @@ export default class BookForm extends React.Component {
   validate = async book => {
     const errors = {};
     const isDuplicate = await this.checkISBNnum(book.ISBN_13);
+    const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
     
     if (!book.title) {
       errors.title = "Inserisci il titolo";
@@ -367,7 +368,7 @@ export default class BookForm extends React.Component {
     } else if (book.ISBN_10 && !isISBN(String(book.ISBN_10), 10)) {
       errors.ISBN_10 = "Codice non valido";
     }
-    if (new Date(book.publication).getTime() > new Date().getTime()) {
+    if (new Date(book.publication).getTime() > maxPublication) {
       errors.publication = "Data di pubblicazione non valida";
     }
     if (book.edition_num && book.edition_num < 1) {
@@ -462,6 +463,7 @@ export default class BookForm extends React.Component {
     const { book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading, redirectToBook } = this.state;
     const { user } = this.props;
     const isAdmin = hasRole(user, 'admin');
+    const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
     
     const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
@@ -613,9 +615,9 @@ export default class BookForm extends React.Component {
                         leftArrowIcon={icon.chevronLeft()}
                         rightArrowIcon={icon.chevronRight()}
                         format="D MMMM YYYY"
-                        disableFuture
-                        maxDate={new Date()}
-                        maxDateMessage="Data non valida"
+                        // disableFuture
+                        maxDate={maxPublication}
+                        maxDateMessage={<span>Data non valida</span>}
                         error={Boolean(errors.publication)}
                         label="Data di pubblicazione"
                         value={book.publication ? new Date(book.publication) : null}
