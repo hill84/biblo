@@ -163,10 +163,10 @@ export const quoteType = shape({
 export const challengesType = arrayOf(shape({
   cid: string.isRequired,
   title: string.isRequired,
-  books: arrayOf(PropTypes.bool).isRequired
+  books: arrayOf(bool).isRequired
 }));
 
-export const challengeType = arrayOf(shape({
+export const challengeType = shape({
   cid: string.isRequired,
   title: string.isRequired,
   description: string,
@@ -177,4 +177,15 @@ export const challengeType = arrayOf(shape({
     title: string.isRequired
   })),
   followers: array
-}));
+});
+
+export const noteType = shape({
+  nid: string.isRequired,
+  text: string.isRequired,
+  created_num: number.isRequired,
+  createdBy: string.isRequired,
+  createdByUid: string.isRequired,
+  photoURL: string,
+  tag: arrayOf(_oneOf(['welcome', 'follow', 'like', 'test'])).isRequired,
+  read: bool.isRequired
+});

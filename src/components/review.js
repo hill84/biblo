@@ -7,9 +7,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { authid, isAuthenticated, reviewerRef, userBookRef } from '../config/firebase';
+import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { abbrNum, getInitials, hasRole, normURL, timeSince } from '../config/shared';
+import { abbrNum, app, getInitials, hasRole, normURL, timeSince, truncateString } from '../config/shared';
 import { reviewType, stringType, userType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
@@ -46,7 +46,7 @@ export default class Review extends React.Component {
 
   onThumbChange = () => {
     const { like } = this.state;
-    const { bid, review } = this.props;
+    const { bid, review, user } = this.props;
     let likes = review.likes;
     
     if (this._isMounted) {
@@ -60,17 +60,31 @@ export default class Review extends React.Component {
         this.setState({ like: true, likes_num: likes.length });
         // console.log(`User ${authid} add like on review ${bid}/${review.createdByUid}`);
         // console.log(`User likes increased to ${likes.length}`);
+
+        const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
+        const noteMsg = `<a href="${app.url}/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="${app.url}/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 30)}</a>`;
+        const newNoteRef = notesRef(review.createdByUid).doc();
+        newNoteRef.set({
+          nid: newNoteRef.id,
+          text: noteMsg,
+          created_num: Number((new Date()).getTime()),
+          createdBy: user.displayName,
+          createdByUid: user.uid,
+          photoURL: user.photoURL,
+          tag: ['like'],
+          read: false
+        }).catch(err => console.warn(err));
       }
     }
     // console.log({likes, 'likes_num': likes.length});
     if (bid && review.createdByUid) {
       reviewerRef(bid, review.createdByUid).update({ likes }).then(() => {
         // console.log(`Book review likes updated`);
-      }).catch(error => console.warn(error.message));
+      }).catch(err => console.warn(err.message));
 
       userBookRef(review.createdByUid, bid).update({ likes }).then(() => {
         // console.log(`User book review likes updated`);
-      }).catch(error => console.warn(error.message));
+      }).catch(err => console.warn(err.message));
     } else console.warn('No bid or ruid');
   }
 
@@ -106,7 +120,7 @@ export default class Review extends React.Component {
             this.onCloseFlagDialog();
             // console.log(`Flagged review for ${value}`);
           });
-        }).catch(error => console.warn(error.message));
+        }).catch(err => console.warn(err.message));
       }
     } else console.warn('Cannot flag');
   }

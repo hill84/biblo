@@ -269,6 +269,7 @@ export default class Dashboard extends React.Component {
             createdBy: user.displayName,
             createdByUid: luid,
             photoURL: user.photoURL,
+            tag: ['follow'],
             read: false
           }).catch(err => console.warn(err));
         }
