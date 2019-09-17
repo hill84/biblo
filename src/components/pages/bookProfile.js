@@ -9,7 +9,6 @@ import React from 'react';
 import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
-import { Composer, SayButton } from 'react-say';
 import { bookRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
@@ -175,7 +174,7 @@ export default class BookProfile extends React.Component {
     // const authors = book && <Link to={`/author/${normURL(Object.keys(book.authors)[0])}`}>{Object.keys(book.authors)[0]}</Link>;
 
 		return (
-      <React.Fragment><Composer>
+      <React.Fragment>
         {isOpenIncipit && 
           <Incipit 
             title={book.title} 
@@ -367,7 +366,6 @@ export default class BookProfile extends React.Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onRemoveBookFromShelf}>Procedi</button>
           </DialogActions>
         </Dialog>
-        </Composer>
       </React.Fragment>
 		);
 	}
