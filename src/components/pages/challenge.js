@@ -44,21 +44,31 @@ class Challenge extends React.Component {
                   challengeRef(item.data().cid).get().then(snap => {
                     if (snap.exists) {
                       if (this._isMounted) {
-                        this.setState({ challenge: snap.data() });
+                        this.setState({ challenge: snap.data(), loading: false });
                       }
                     }
-                  }).catch(error => console.warn(error));
+                  }).catch(err => {
+                    console.warn(err);
+                    if (this._isMounted) {
+                      this.setState({ challenge: null, loading: false });
+                    }
+                  });
                 }
               });
               if (this._isMounted) {
-                this.setState({ userChallenges, loading: false });
+                this.setState({ userChallenges });
               }
             } else {
               if (this._isMounted) {
                 this.setState({ challenge: null, userChallenges: null, loading: false });
               }
             }
-          }).catch(error => console.warn(error));
+          }).catch(err => {
+            console.warn(err);
+            if (this._isMounted) {
+              this.setState({ challenge: null, userChallenges: null, loading: false });
+            }
+          });
         });
       }
     }

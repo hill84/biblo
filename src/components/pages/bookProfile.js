@@ -217,14 +217,7 @@ export default class BookProfile extends React.Component {
                   }
                 </div>
                 <div className="col book-profile">
-                  <h2 className="title flex">
-                    {book.title}&nbsp;
-                    {book.description && 
-                      <SayButton speak={book.description}>
-                        <div className="btn rounded icon flat audio">{icon.voice()}</div>
-                      </SayButton>
-                    }
-                  </h2>
+                  <h2 className="title flex">{book.title}</h2>
                   {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                   <div className="info-row">
                   {book.authors && <span className="counter comma">di {Object.keys(book.authors).map(author => 

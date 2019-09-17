@@ -440,7 +440,7 @@ export default class Dashboard extends React.Component {
 											</span>
 											{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 											{creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
-											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm flat counter">{icon.pencil()} Modifica</button></Link>}
+											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil()} Modifica</button></Link>}
 										</div>
 										<div className="info-row">
 											{!isOwner && isAuthenticated() &&
