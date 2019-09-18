@@ -90,9 +90,9 @@ exports.countCollections = functions.firestore.document('collections/{cid}').onW
 exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => count(context.params.cid, change, 'collections', 'books_num'));
 
 // BOOKS
-exports.incrementBooks = functions.firestore.document('users/{bid}').onCreate((snap, context) => count('books', 1));
+exports.incrementBooks = functions.firestore.document('books/{bid}').onCreate((snap, context) => count('books', 1));
 
-exports.decrementBooks = functions.firestore.document('users/{bid}').onDelete((snap, context) => count('books', -1));
+exports.decrementBooks = functions.firestore.document('books/{bid}').onDelete((snap, context) => count('books', -1));
 
 exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, context) => {
   const { bid } = context.params;
