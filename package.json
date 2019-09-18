@@ -1,10 +1,10 @@
 {
   "name": "biblo",
-  "version": "0.8.11",
+  "version": "0.8.12",
   "private": true,
   "devDependencies": {
     "firebase": "^6.6.1",
-    "firebase-admin": "^8.5.0",
+    "firebase-admin": "^8.6.0",
     "firebase-functions": "^3.2.0",
     "firebase-tools": "^7.3.2",
     "imagemin": "^7.0.0",
@@ -34,7 +34,7 @@
     "react-intersection-observer": "^8.24.2",
     "react-medium-image-zoom": "^3.1.1",
     "react-parallax": "^2.2.3",
-    "react-rater": "^5.1.0",
+    "react-rater": "^5.1.1",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-router-sitemap": "^1.2.0",

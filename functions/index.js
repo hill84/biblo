@@ -23,8 +23,12 @@ admin.initializeApp();
 // HELPERS
 const count = (doc, change, collection, field, nestedField) => {
   let increment;
-  if (change.after.exists && !change.before.exists) { increment = 1 } else 
-  if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
+  if (change == 1 || change == -1) {
+    increment = change;
+  } else {
+    if (change.after.exists && !change.before.exists) { increment = 1 } else 
+    if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
+  }
   const countRef = admin.firestore().collection(collection || 'counters').doc(doc);
   const value = admin.firestore.FieldValue.increment(increment);
   const data = { [field || 'count']: nestedField ? { [nestedField]: value } : value };
@@ -86,7 +90,9 @@ exports.countCollections = functions.firestore.document('collections/{cid}').onW
 exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => count(context.params.cid, change, 'collections', 'books_num'));
 
 // BOOKS
-exports.countBooks = functions.firestore.document('books/{bid}').onWrite(change => count('books', change));
+exports.incrementBooks = functions.firestore.document('users/{bid}').onCreate((snap, context) => count('books', 1));
+
+exports.decrementBooks = functions.firestore.document('users/{bid}').onDelete((snap, context) => count('books', -1));
 
 exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, context) => {
   const { bid } = context.params;
@@ -111,7 +117,9 @@ exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, 
 });
 
 // USERS
-exports.countUsers = functions.firestore.document('users/{uid}').onWrite(change => count('users', change));
+exports.incrementUsers = functions.firestore.document('users/{uid}').onCreate((snap, context) => count('users', 1));
+
+exports.decrementUsers = functions.firestore.document('users/{uid}').onDelete((snap, context) => count('users', -1));
 
 exports.clearUserAuth = functions.firestore.document('users/{uid}').onDelete((snap, context) => admin.auth().deleteUser(context.params.uid));
 
