@@ -840,7 +840,7 @@ button .btn { display: block; }
 .btn.secondary:hover { background-color: rgb(var(--accentLightClr)); }
 .btn.secondary:active, .btn.secondary.selected { background-color: rgb(var(--accentDarkClr)); }
 
-.btn.green { background-color: var(--greenClr) }
+.btn.green { background-color: rgb(var(--greenClr)); }
 .btn.green:hover { background-color: rgb(var(--greenLightClr)) }
 .btn.green:active, .btn.green.selected { background-color: var(--greenDarkClr) }
 
@@ -1396,7 +1396,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 .badge.admin { color: var(--lightTextClr); }
 .badge.premium, .badge.secondary { color: rgb(var(--accentClr)); }
 .badge.primary { background-color: rgb(var(--primaryClr)); }
-.badge.green { background-color: var(--greenClr) }
+.badge.green { background-color: rgb(var(--greenClr)); }
 .badge.red { background-color: rgb(var(--redClr)); }
 
 .counter:not(.btn) { line-height: 2; }
