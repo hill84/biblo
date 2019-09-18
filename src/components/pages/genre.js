@@ -242,7 +242,7 @@ export default class Genre extends React.Component {
           {seo.image && <meta property="og:image" content={seo.image} />}
           <meta property="books:canonical_name" content={seo.canonical_name} />
         </Helmet>
-        <div className="card dark" style={{ background: !isScrollable ? `linear-gradient(to bottom, ${genreColor} 0%, var(--cardBg) 70%)` : null }}>
+        <div className="card dark" style={{ background: !isScrollable ? `linear-gradient(to bottom, ${genreColor} 0%, rgb(var(--cardBg)) 70%)` : null }}>
           <div className="row">
             <div className="col">
               <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {denormURL(match.params.gid)}</h2>
