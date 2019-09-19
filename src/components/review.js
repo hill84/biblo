@@ -128,8 +128,21 @@ export default class Review extends React.Component {
   onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
   onDelete = () => {
-    // TODO
-    console.log('Deleted');
+    const { bid, review} = this.props;
+
+    if (this._isMounted) {
+      this.setState({ isOpenDeleteDialog: false });
+    }
+    // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
+    if (bid) {
+      reviewerRef(bid, review.createdByUid).delete().then(() => {
+        // console.log(`Book review deleted`);
+      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
+
+      userBookRef(review.createdByUid, bid).update({ review: {} }).then(() => {
+        // console.log(`User review deleted`);
+      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
+    } else console.warn(`No bid`);
   }
 
   render() {
