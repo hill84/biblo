@@ -9,7 +9,6 @@ import { funcType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
-import { skltn_rows } from '../skeletons';
 
 export default class Collection extends React.Component {
   state = {
@@ -143,7 +142,7 @@ export default class Collection extends React.Component {
               
               <div className="card dark collection-profile">
                 <h2>{denormURL(cid)}</h2>
-                {loading ? skltn_rows : 
+                {loading ? <div className="skltn rows" /> : 
                   <React.Fragment>
                     <div className="info-row description">
                       <MinifiableText text={collection.description} maxChars={700} textMinified={isTextMinified} />
@@ -187,7 +186,7 @@ export default class Collection extends React.Component {
                 <h2>Altre collezioni</h2>
                 <div className={`badges ${isScrollable ? 'scrollable' : 'fullview'}`}>
                   <div className="content">
-                    {loadingCollections ? skltn_rows : collections.map(collection => 
+                    {loadingCollections ? <div className="skltn rows" /> : collections.map(collection => 
                       <Link 
                         to={`/collection/${normURL(collection.title)}`} 
                         key={normalizeString(collection.title)} 

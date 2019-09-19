@@ -6,7 +6,6 @@ import { handleFirestoreError } from '../config/shared';
 import { boolType, numberType, stringType, userType } from '../config/types';
 import PaginationControls from './paginationControls';
 import Review from './review';
-import { skltn_review } from './skeletons';
 
 export default class Reviews extends React.Component {
 	state = {
@@ -112,7 +111,7 @@ export default class Reviews extends React.Component {
 	render() {
     const { items, limit, loading, page, pagination, count } = this.state;
     const { bid, skeleton, user } = this.props;
-    const skeletons = [...Array(limit)].map((e, i) => <React.Fragment key={i}>{skltn_review}</React.Fragment>);
+    const skeletons = [...Array(limit)].map((e, i) => <div key={i} className="skltn review" />);
     
     if (!items) {
       if (loading) { 

@@ -4,7 +4,6 @@ import { quotesRef } from '../config/firebase';
 import { normURL } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
-import { skltn_quote } from './skeletons';
 
 export default class RandomQuote extends React.Component {
   state = {
@@ -75,7 +74,7 @@ export default class RandomQuote extends React.Component {
   render() {
     const { author, bid, bookTitle, className, coverURL, loading, quote, skeleton } = this.state;
 
-    if (loading) return skeleton ? skltn_quote : null;
+    if (loading) return skeleton ? <div className="skltn quote" /> : null;
     if (!quote) return null;
 
     return (

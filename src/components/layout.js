@@ -173,19 +173,35 @@ export default class Layout extends React.Component {
                   open={Boolean(notesAnchorEl)}
                   onClose={this.onCloseNotes}>
                   {notes && toRead(notes).length ?
-                    toRead(notes).map((note, i) => (
-                      <MenuItem key={note.nid} style={{animationDelay: `${(i + 1) / 10  }s`}}> 
+                    toRead(notes).map((item, i) => (
+                      <MenuItem key={item.nid} style={{animationDelay: `${(i + 1) / 10  }s`}}> 
                         <div className="row">
-                          {note.photoURL && <div className="col-auto image"><img src={note.photoURL} className="avatar" alt="avatar" /></div>}
-                          <div className="col text">
-                            <div dangerouslySetInnerHTML={{__html: note.text}} />
+                          <div className="col-auto">
+                            {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
+                              <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
+                                <Avatar className="image avatar" alt={item.createdBy}>
+                                  {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
+                                </Avatar>
+                              </Link>
+                              : <span className="icon">{icon.bell()}</span>
+                            }
                           </div>
-                          <div className="col-auto date">{timeSince(note.created_num)}</div>
+                          <div className="col text">
+                            <div dangerouslySetInnerHTML={{__html: item.text}} />
+                          </div>
+                          <div className="col-auto date">{timeSince(item.created_num)}</div>
                         </div>
                       </MenuItem>
                     ))
                     : 
-                    <MenuItem className="text"><span className="icon">{icon.bellOff()}</span> Non ci sono nuove notifiche</MenuItem>
+                    <MenuItem>
+                      <div className="row">
+                        <div className="col-auto">
+                          <span className="icon">{icon.bellOff()}</span>
+                        </div>
+                        <div className="col text">Non ci sono nuove notifiche</div>
+                      </div>
+                    </MenuItem>
                   }
                   <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
                 </Menu>

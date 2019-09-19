@@ -54,7 +54,9 @@
   --skltnStarsY: 228px;
   --skltnCoverX: center;
   --skltnTitleX: center;
-  --skltnBg: rgba(0, 10, 20, .15);
+  --skltn: 0, 10, 20;
+  --skltnClr: rgba(var(--skltn), .15);
+  --skltnLightClr: rgba(var(--skltn), .04);
   --contrastedTextClr: #000;
   --mainTextClr: #212529;
   --lightTextClr: #aaa;
@@ -458,7 +460,7 @@ hr.line {
   --linkClr: rgb(var(--primaryClr));
   --linkClrHover: rgb(var(--primaryLightClr));
   --linkClrActive: rgb(var(--primaryDarkClr));
-  --skltnBg: rgba(0,10,20,.06);
+  --skltnClr: rgba(0,10,20,.06);
 }
 .card {
   position: relative;
@@ -665,7 +667,7 @@ hr.line {
 
 /* DARK */
 .dark, .dark-theme .light, .mixed-theme main {
-  --skltnBg: rgba(0,10,20,.15);
+  --skltnClr: rgba(0,10,20,.15);
   --contrastedTextClr: #fff;
   --cardDarkBg: rgba(0,0,0,.2);
   --cardDarkerBg: rgba(0,0,0,.3);
@@ -687,7 +689,7 @@ hr.line {
 
 /* PRIMARY */
 .primary {
-  --skltnBg: rgba(0,10,20,.15);
+  --skltnClr: rgba(0,10,20,.15);
   --contrastedTextClr: #fff;
   --mainTextClr: rgba(230,250,255,.7);
   --lightTextClr: rgba(230,250,255,.5);
@@ -1154,13 +1156,17 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 .notes li, .notes .footer { padding-left: 8px; padding-right: 8px; height: auto; }
 .notes li:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,.03); }
 .notes li .row { align-items: center; width: 100%; margin-left: 0; margin-right: 0; line-height: 125%; }
-.notes li img { width: 24px; border-radius: 99px; vertical-align: middle; }
-.notes li img.avatar { height: 24px; }
-.notes li img.book { height: 34px; }
+.notes li .image { width: 24px; border-radius: 99px; vertical-align: middle; font-size: .7rem }
+.notes li .image.avatar { height: 24px; }
+.notes li .image.book { height: 34px; }
+.notes li .image img { width: inherit; height: inherit; }
+.notes li .icon svg { --iconSize: 24px; color: var(--lighterTextClr); }
 .notes .text { color: var(--mainTextClr); font-size: .8rem; white-space: normal; }
 .notes .text .icon { margin-right: 10px; }
 .notes .date { color: var(--lighterTextClr); font-size: .7rem; font-weight: 200; text-align: right; float: right; }
 .notes .footer { justify-content: center; }
+.notes:not(.hoverable-items) .MuiTouchRipple-root { display: none; }
+.card .notes li { padding: 0; }
 .dot {
   --dotSize: 8px;
   display: block;
@@ -2114,9 +2120,9 @@ progress[value='100'].stepper::-webkit-progress-bar {
   width: 100%;
   height: var(--shelf-rowHeight);
   background: 
-    linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnCoverX) top, 
-    linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnTitleX) var(--skltnTitleY),
-    linear-gradient(var(--skltnBg), var(--skltnBg)) var(--skltnTitleX) var(--skltnAuthorY);
+    linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnCoverX) top, 
+    linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnTitleY),
+    linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnAuthorY);
   background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, calc(var(--coverWidth) * .8) 11px;
   background-repeat: no-repeat;
 }
@@ -2146,14 +2152,14 @@ progress[value='100'].stepper::-webkit-progress-bar {
   height: var(--shelf-rowHeight);
   border-radius: 0;
   background-image: 
-    radial-gradient(circle var(--avatarSize), var(--skltnBg) 50%, transparent 0), 
-    linear-gradient(var(--skltnBg), var(--skltnBg));
+    radial-gradient(circle var(--avatarSize), var(--skltnClr) 50%, transparent 0), 
+    linear-gradient(var(--skltnClr), var(--skltnClr));
   background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
   background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
   background-repeat: no-repeat;
 }
 
-.skltn.rows, .skltn.review, .skltn.quote {
+.skltn.rows, .skltn.review, .skltn.quote, .skltn.notification {
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -2165,8 +2171,8 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .skltn.rows {
   height: 100px;
   background-image: 
-    repeating-linear-gradient(var(--skltnBg), var(--skltnBg) 11px, transparent 11px, transparent 22px),
-    linear-gradient(var(--skltnBg) 50%, transparent 50%);
+    repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+    linear-gradient(var(--skltnClr) 50%, transparent 50%);
   background-position: 0 0, 0 88px;
   background-size: 100% 88px,  calc(100% - 100px) 22px;
 }
@@ -2174,10 +2180,10 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .skltn.review {
   height: 118px;
   background-image: 
-    radial-gradient(circle 16px, var(--skltnBg) 99%, transparent 0), 
-    linear-gradient(var(--skltnBg) 50%, transparent 50%),
-    repeating-linear-gradient(var(--skltnBg), var(--skltnBg) 11px, transparent 11px, transparent 22px),
-    linear-gradient(var(--skltnBg) 50%, transparent 50%);
+    radial-gradient(circle 16px, var(--skltnClr) 99%, transparent 0), 
+    linear-gradient(var(--skltnClr) 50%, transparent 50%),
+    repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+    linear-gradient(var(--skltnClr) 50%, transparent 50%);
   background-position: 0 14px, 46px 22px, 46px 56px, 46px 100px;
   background-size: 32px 32px, 200px 32px, 100% 44px, calc(100% - 100px) 22px;
 }
@@ -2185,11 +2191,23 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .skltn.quote {
   height: 124px;
   background-image: 
-    linear-gradient(var(--skltnBg) 50%, transparent 50%),
-    repeating-linear-gradient(var(--skltnBg), var(--skltnBg) 11px, transparent 11px, transparent 22px),
-    linear-gradient(var(--skltnBg) 50%, transparent 50%);
+    linear-gradient(var(--skltnClr) 50%, transparent 50%),
+    repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+    linear-gradient(var(--skltnClr) 50%, transparent 50%);
   background-position: 0 0, 54px 0, 54px 110px;
   background-size: 40px 138px, 100% 110px, calc(100% - 100px) 22px;
+}
+
+.skltn.notification {
+  height: 48px;
+  margin-bottom: 0;
+  background-image: 
+    radial-gradient(circle 12px, var(--skltnClr) 99%, transparent 0), 
+    linear-gradient(var(--skltnClr) 50%, transparent 50%),
+    linear-gradient(var(--skltnClr) 50%, transparent 50%),
+    linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
+  background-position: 7px 12px, 45px 18px, 100% 18px, 0 47px;
+  background-size: 24px 24px, 240px 22px, 65px 22px, 100% 2px;
 }
 
 /* MESSAGE */
