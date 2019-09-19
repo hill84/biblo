@@ -23,7 +23,7 @@ export default class Shelf extends React.Component {
     filterByIndex: 0,
     filterMenuAnchorEl: null,
     isOwner: this.props.luid === this.props.uid,
-    limit: booksPerRow() * 2 - 1,
+    limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0),
     loading: true,
     orderBy: [ 
       { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar() }, 
