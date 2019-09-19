@@ -127,7 +127,6 @@ export default class UserReview extends React.Component {
           }).catch(err => this._isMounted && this.setState({ serverError: handleFirestoreError(err) }));
 
           userBookRef(authid, this.state.bid).update({
-            ...this.state.userBook,
             review: {
               ...this.state.review,
               created_num: (new Date()).getTime()
@@ -154,30 +153,29 @@ export default class UserReview extends React.Component {
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
 
   onDelete = () => {
+    const { bid } = this.state;
+
     this.setState({ isOpenDeleteDialog: false });
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
-    if (this.state.bid) {
-          
-      reviewerRef(this.state.bid, authid).delete().then(() => {
+    if (bid) {        
+      reviewerRef(bid, authid).delete().then(() => {
         // console.log(`Book review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
 
-      userBookRef(authid, this.state.bid).update({
-        ...this.state.userBook,
-        review: {}
-      }).then(() => {
+      userBookRef(authid, bid).update({ review: {} }).then(() => {
         // console.log(`User review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
-
     } else console.warn(`No bid`);
   }
 
   onExitEditing = () => {
+    const { review } = this.state;
+
     if (this._isMounted) {
-      if (!this.state.review.created_num) {
+      if (!review.created_num) {
         this.setState({ 
           review: {
-            ...this.state.review,
+            ...review,
             bid: '',
             bookTitle: '',
             covers: [],
