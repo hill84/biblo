@@ -82,25 +82,33 @@ export default class UserReview extends React.Component {
   fetchUserReview = () => {
     // console.log('Fetching user review');
     this.unsubReviewerFetch = reviewerRef(this.state.bid, authid).onSnapshot(snap => {
-      this.setState({ loading: true });
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
       if (snap.exists) {
         // console.log(snap.data());
-        this.setState({ review: snap.data() });
+        if (this._isMounted) {
+          this.setState({ review: snap.data() });
+        }
       } else {
-        this.setState({ review: {
-          ...this.state.review,
-          created_num: 0,
-          likes: [],
-          rating_num: 0,
-          text: '',
-          title: ''
-        }});
+        if (this._isMounted) {
+          this.setState({ review: {
+            ...this.state.review,
+            created_num: 0,
+            likes: [],
+            rating_num: 0,
+            text: '',
+            title: ''
+          }});
+        }
       };
-      this.setState({ loading: false, changes: false });
+      if (this._isMounted) {
+        this.setState({ loading: false, changes: false });
+      }
     });
   }
 
-  onEditing = () => this.setState({ isEditing: true });
+  onEditing = () => this._isMounted && this.setState({ isEditing: true });
 
   onSubmit = e => {
     e.preventDefault();
@@ -110,7 +118,9 @@ export default class UserReview extends React.Component {
         this.setState({ errors });
       }
       if (Object.keys(errors).length === 0) {
-        this.setState({ loading: true });
+        if (this._isMounted) {
+          this.setState({ loading: true });
+        }
         if (this.state.bid) {
           reviewerRef(this.state.bid, authid).set({
             ...this.state.review,
@@ -145,26 +155,32 @@ export default class UserReview extends React.Component {
           }
         } else console.warn(`No bid`);
       }
-    } else this.setState({ isEditing: false });
+    } else {
+      if (this._isMounted) {
+        this.setState({ isEditing: false });
+      } 
+    }
   }
 
-  onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
+  onDeleteRequest = () => this._isMounted && this.setState({ isOpenDeleteDialog: true });
 
-  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
+  onCloseDeleteDialog = () => this._isMounted && this.setState({ isOpenDeleteDialog: false });
 
   onDelete = () => {
     const { bid } = this.state;
 
-    this.setState({ isOpenDeleteDialog: false });
+    if (this._isMounted) {
+      this.setState({ isOpenDeleteDialog: false });
+    }
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {        
       reviewerRef(bid, authid).delete().then(() => {
         // console.log(`Book review deleted`);
-      }).catch(error => this.setState({ serverError: error.message }));
+      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
 
       userBookRef(authid, bid).update({ review: {} }).then(() => {
         // console.log(`User review deleted`);
-      }).catch(error => this.setState({ serverError: error.message }));
+      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
     } else console.warn(`No bid`);
   }
 
@@ -194,13 +210,14 @@ export default class UserReview extends React.Component {
   onChangeMaxChars = e => {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
-    this.setState({
-      ...this.state, 
-      review: { ...this.state.review, [e.target.name]: e.target.value },
-      errors: { ...this.state.errors, [e.target.name]: null } , 
-      [leftChars]: this.state[maxChars] - e.target.value.length, 
-      changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        review: { ...this.state.review, [e.target.name]: e.target.value },
+        errors: { ...this.state.errors, [e.target.name]: null } , 
+        [leftChars]: this.state[maxChars] - e.target.value.length, 
+        changes: true
+      });
+    } 
   };
 
   validate = review => {
