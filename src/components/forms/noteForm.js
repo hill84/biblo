@@ -50,16 +50,20 @@ export default class noteForm extends React.Component {
 
   fetch = () => {
     const { nid, uid } = this.props;
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
     if (nid && uid) {
       // console.log({ nid, uid });
       noteRef(uid, nid).get().then(snap => {
         if (!snap.empty) {
           // console.log(snap.data());
-          this.setState({ 
-            data: snap.data(),
-            loading: false
-          });
+          if (this._isMounted) {
+            this.setState({ 
+              data: snap.data(),
+              loading: false
+            });
+          }
         }
       }).catch(error => console.warn(error));
     }
@@ -68,20 +72,23 @@ export default class noteForm extends React.Component {
   onToggle = () => this.props.onToggle(this.state.selectedId);
 
 	onChange = e => {
-		this.setState({ 
-			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
-		});
+    if (this._isMounted) {
+      this.setState({ 
+        data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
+      });
+    }
   };
   
   onChangeMaxChars = e => {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
-    this.setState({
-      ...this.state, 
-      data: { ...this.state.data, [e.target.name]: e.target.value }, 
-      [leftChars]: this.state[maxChars] - e.target.value.length, 
-      changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        data: { ...this.state.data, [e.target.name]: e.target.value }, 
+        [leftChars]: this.state[maxChars] - e.target.value.length, 
+        changes: true
+      });
+    }
   };
 
 	onSubmit = e => {
@@ -89,9 +96,13 @@ export default class noteForm extends React.Component {
     const { data } = this.state;
     const { nid, openSnackbar, uid, user } = this.props;
 		const errors = this.validate(data);
-		this.setState({ authError: '', errors });
+		if (this._isMounted) {
+      this.setState({ authError: '', errors });
+    }
 		if (Object.keys(errors).length === 0) {
-      this.setState({ loading: true });
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
       // console.log(`Sending notification to ${uid}`);
       const newNoteRef = notesRef(uid).doc();
       const ref = nid ? noteRef(uid, nid) : newNoteRef;
@@ -107,7 +118,9 @@ export default class noteForm extends React.Component {
         read: false
       }).then(() => {
         this.onToggle();
-        this.setState({ loading: false, data: { text: '' } });
+        if (this._isMounted) {
+          this.setState({ loading: false, data: { text: '' } });
+        }
         openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
       }).catch(err => console.warn(err));
 		}

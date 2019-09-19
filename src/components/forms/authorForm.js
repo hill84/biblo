@@ -52,13 +52,17 @@ export default class AuthorForm extends React.Component {
 
   fetch = () => {
     if (typeof this.props.id === 'string') {
-      this.setState({ loading: true });
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
       authorRef(this.props.id).get().then(snap => {
         if (!snap.empty) {
-          this.setState({ 
-            data: snap.data(),
-            loading: false
-          });
+          if (this._isMounted) {
+            this.setState({ 
+              data: snap.data(),
+              loading: false
+            });
+          }
         }
       }).catch(err => console.warn(err));
     }
@@ -67,24 +71,29 @@ export default class AuthorForm extends React.Component {
   onToggle = () => this.props.onToggle(this.state.selectedId);
 
 	onChange = e => {
-		this.setState({ 
-			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
-		});
+    if (this._isMounted) {
+      this.setState({ 
+        data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
+      });
+    }
   };
   
   onChangeMaxChars = e => {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
-    this.setState({
-      ...this.state, 
-      data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
+      });
+    }
   };
 
   onChangeSelect = key => e => {
-		this.setState({ 
-      data: { ...this.state.data, [key]: e.target.value }, errors: { ...this.state.errors, [key]: null } 
-    });
+    if (this._isMounted) {
+      this.setState({ 
+        data: { ...this.state.data, [key]: e.target.value }, errors: { ...this.state.errors, [key]: null } 
+      });
+    }
 	};
 
 	onSubmit = e => {
@@ -92,9 +101,13 @@ export default class AuthorForm extends React.Component {
     const { data } = this.state;
     const { openSnackbar, user } = this.props;
 		const errors = this.validate(this.state.data);
-		this.setState({ authError: '', errors });
+		if (this._isMounted) {
+      this.setState({ authError: '', errors });
+    }
 		if (Object.keys(errors).length === 0) {
-      this.setState({ loading: true });
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
       const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
       ref.set({
         bio: data.bio || '',
@@ -109,7 +122,9 @@ export default class AuthorForm extends React.Component {
         source: data.source || ''
       }).then(() => {
         this.onToggle();
-        this.setState({ loading: false });
+        if (this._isMounted) {
+          this.setState({ loading: false });
+        }
         openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
       }).catch(err => console.warn(err));
 		}

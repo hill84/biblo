@@ -50,13 +50,17 @@ export default class QuoteForm extends React.Component {
   }
 
   fetch = () => {
-    this.setState({ loading: true });
+    if (this._isMounted) {
+      this.setState({ loading: true });
+    }
     quoteRef(this.props.id).get().then(snap => {
       if (!snap.empty) {
-        this.setState({ 
-          data: snap.data(),
-          loading: false
-        });
+        if (this._isMounted) {
+          this.setState({ 
+            data: snap.data(),
+            loading: false
+          });
+        }
       }
     }).catch(error => console.warn(error));
   }
@@ -64,18 +68,21 @@ export default class QuoteForm extends React.Component {
   onToggle = () => this.props.onToggle(this.state.selectedId);
 
 	onChange = e => {
-		this.setState({ 
-			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
-		});
+    if (this._isMounted) {
+      this.setState({ 
+        data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
+      });
+    }
   };
   
   onChangeMaxChars = e => {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
-    this.setState({
-      ...this.state, 
-      data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
+      });
+    }
   };
 
 	onSubmit = e => {
@@ -83,9 +90,13 @@ export default class QuoteForm extends React.Component {
     const { data } = this.state;
     const { openSnackbar, user } = this.props;
 		const errors = this.validate(this.state.data);
-		this.setState({ authError: '', errors });
-		if(Object.keys(errors).length === 0) {
-      this.setState({ loading: true });
+		if (this._isMounted) {
+      this.setState({ authError: '', errors });
+    }
+		if (Object.keys(errors).length === 0) {
+      if (this._isMounted) {
+        this.setState({ loading: true });
+      }
       const ref = data.qid ? quoteRef(data.qid) : quotesRef.doc();
       ref.set({
         author: data.author || '',
@@ -100,7 +111,9 @@ export default class QuoteForm extends React.Component {
         quote: data.quote || ''
       }).then(() => {
         this.onToggle();
-        this.setState({ loading: false });
+        if (this._isMounted) {
+          this.setState({ loading: false });
+        }
         openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
       }).catch(error => console.warn(error));
 		}

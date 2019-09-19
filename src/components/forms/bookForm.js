@@ -93,9 +93,9 @@ export default class BookForm extends React.Component {
     this._isMounted = true;
     /* if (this.props.book.bid) {
       bookRef(this.props.book.bid).onSnapshot(snap => {
-        this.setState({
-          book: snap.data()
-        });
+        if (this._isMounted) {
+          this.setState({ book: snap.data() });
+        }
       });
     } */
   }
@@ -106,78 +106,99 @@ export default class BookForm extends React.Component {
 
   onToggleDescription = e => {
     e.preventDefault();
-    this.setState(prevState => ({
-      isEditingDescription: !prevState.isEditingDescription
-    }));
+    if (this._isMounted) {
+      this.setState(prevState => ({
+        isEditingDescription: !prevState.isEditingDescription
+      }));
+    }
   }
 
   onToggleIncipit = e => {
     e.preventDefault();
-    this.setState(prevState => ({
-      isEditingIncipit: !prevState.isEditingIncipit
-    }));
+    if (this._isMounted) {
+      this.setState(prevState => ({
+        isEditingIncipit: !prevState.isEditingIncipit
+      }));
+    }
   }
   
   onChange = e => {
-    this.setState({
-      book: { ...this.state.book, [e.target.name]: e.target.value }, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        book: { ...this.state.book, [e.target.name]: e.target.value }, changes: true
+      });
+    }
   };
 
   onChangeNumber = e => {
-    this.setState({
-      book: { ...this.state.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        book: { ...this.state.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
+      });
+    }
   };
 
   onChangeSelect = key => e => {
-		this.setState({ 
-      book: { ...this.state.book, [key]: e.target.value }, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({ 
+        book: { ...this.state.book, [key]: e.target.value }, changes: true
+      });
+    }
   };
 
   onChangeDate = key => date => {
-		this.setState({ 
-      book: { ...this.state.book, [key]: String(date) }, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({ 
+        book: { ...this.state.book, [key]: String(date) }, changes: true
+      });
+    }
   };
 
   onAddChip = (key, chip) => { 
-    this.setState({ 
-      book: { ...this.state.book, [key]: [...this.state.book[key], chip] }, changes: true 
-    }); 
+    if (this._isMounted) {
+      this.setState({ 
+        book: { ...this.state.book, [key]: [...this.state.book[key], chip] }, changes: true 
+      }); 
+    }
   }; 
 
   onDeleteChip = (key, chip) => { 
-    this.setState({ 
-      // chips: this.state.chips.filter((c) => c !== chip) 
-      book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true 
-    }); 
+    if (this._isMounted) {
+      this.setState({ 
+        // chips: this.state.chips.filter((c) => c !== chip) 
+        book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true 
+      }); 
+    }
   }; 
   
-  onAddChipToObj = (key, chip) => {
-    this.setState({
-      book: { ...this.state.book, [key]: { ...this.state.book[key], [chip.split('.').join('')]: true }}, changes: true
-    });
+  onAddChipToObj = (key, chip) => { 
+    if (this._isMounted) {
+      this.setState({
+        book: { ...this.state.book, [key]: { ...this.state.book[key], [chip.split('.').join('')]: true }}, changes: true
+      });
+    }
   };
 
-  onDeleteChipFromObj = (key, chip) => {
-    this.setState({
-      // chips: this.state.chips.filter((c) => c !== chip)
-      book: { 
-        ...this.state.book, 
-        [key]: arrToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
-      }, changes: true
-    });
+  onDeleteChipFromObj = (key, chip) => { 
+    if (this._isMounted) {
+      this.setState({
+        // chips: this.state.chips.filter((c) => c !== chip)
+        book: { 
+          ...this.state.book, 
+          [key]: arrToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
+        }, changes: true
+      });
+    }
   };
   
   onChangeMaxChars = e => {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
-    this.setState({
-      ...this.state, 
-      book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
-    });
+    if (this._isMounted) {
+      this.setState({
+        book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
+      });
+    }
   };
 
   onPreventDefault = e => { 
@@ -199,7 +220,9 @@ export default class BookForm extends React.Component {
     const { openSnackbar } = this.props;
     if (changes || !book.bid) {
       const errors = await this.validate(book);
-      this.setState({ errors, loading: true });
+      if (this._isMounted) {
+        this.setState({ errors, loading: true });
+      }
       if (Object.keys(errors).length === 0) {
         let newBid = '';
         if (this.props.book.bid) {
@@ -443,14 +466,16 @@ export default class BookForm extends React.Component {
 			}, () => {
         // console.log('upload completed');
         uploadTask.then(snap => 
-          snap.ref.getDownloadURL().then(url => 
-            this.setState({
-              imgPreview: url,
-              book: { ...this.state.book, covers: [url]},
-              changes: true,
-              success: false
-            }/* , () => console.log(url) && openSnackbar('Immagine caricata', 'success') */)
-          )
+          snap.ref.getDownloadURL().then(url => {
+            if (this._isMounted) {
+              this.setState({
+                imgPreview: url,
+                book: { ...this.state.book, covers: [url]},
+                changes: true,
+                success: false
+              }/* , () => console.log(url) && openSnackbar('Immagine caricata', 'success') */)
+            }
+          })
         );
         unsubUploadTask();
 			});
