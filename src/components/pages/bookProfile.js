@@ -322,8 +322,7 @@ export default class BookProfile extends React.Component {
                 {isAuthenticated() && isEditor && userBook.bookInShelf &&
                   <UserReview 
                     addReview={addReview} 
-                    bid={book.bid} 
-                    bookReviews_num={book.reviews_num} 
+                    bid={book.bid}
                     openSnackbar={openSnackbar}
                     removeReview={removeReview} 
                     user={user} 

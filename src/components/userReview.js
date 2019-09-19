@@ -19,7 +19,6 @@ import Rating from './rating';
 export default class UserReview extends React.Component {
 	state = {
     bid: this.props.bid || '',
-    bookReviews_num: this.props.bookReviews_num || 0,
     user: this.props.user || {},
     userBook: this.props.userBook || {},
     review: {
@@ -35,7 +34,7 @@ export default class UserReview extends React.Component {
       text: '',
       title: ''
     },
-    text_minChars: 20,
+    text_minChars: 120,
     text_maxChars: 1500,
     title_maxChars: 255,
     isOpenDeleteDialog: false,
@@ -56,7 +55,6 @@ export default class UserReview extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (props.bid !== state.bid) { return { bid: props.bid }}
-    if (props.bookReviews_num !== state.bookReviews_num) { return { bookReviews_num: props.bookReviews_num }}
     if (props.user !== state.user) { return { user: props.user }}
     if (props.userBook !== state.userBook) { return { userBook: props.userBook }}
     return null;
@@ -138,14 +136,8 @@ export default class UserReview extends React.Component {
             // console.log(`User review posted`);
           }).catch(err => this._isMounted && this.setState({ serverError: handleFirestoreError(err) }));
 
-          let bookReviews_num = this.state.bookReviews_num;
-
-          if (!this.state.review.created_num) {
-            bookReviews_num += 1;
-          }
           if (this._isMounted) {
             this.setState({ 
-              bookReviews_num, 
               changes: false,
               serverError: '',
               isEditing: false, 
@@ -176,12 +168,6 @@ export default class UserReview extends React.Component {
       }).then(() => {
         // console.log(`User review deleted`);
       }).catch(error => this.setState({ serverError: error.message }));
-
-      const bookReviews_num = this.state.bookReviews_num - 1;
-
-      if (this._isMounted) {
-        this.setState({ bookReviews_num, serverError: '' });
-      }
 
     } else console.warn(`No bid`);
   }
