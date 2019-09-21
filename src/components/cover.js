@@ -38,7 +38,7 @@ export default class Cover extends React.Component {
     if (props.book !== state.book) { 
       return { 
         book: props.book, 
-        cover: (props.book && props.book.covers[0]) || '', 
+        cover: (props.book && props.book.covers && props.book.covers[0]) || '', 
         // index: 0
       }; 
     }
