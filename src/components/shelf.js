@@ -16,7 +16,6 @@ export default class Shelf extends React.Component {
   state = {
     luid: this.props.luid,
     uid: this.props.uid,
-    booksPerRow: this.props.booksPerRow || 4,
     coverview: true,
     desc: true,
     filterBy: [ 'Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consulatazione'],
@@ -41,7 +40,6 @@ export default class Shelf extends React.Component {
   }
 
   static propTypes = {
-    booksPerRow: numberType,
     limit: numberType,
     openSnackbar: funcType.isRequired,
     shelf: stringType,
@@ -79,17 +77,16 @@ export default class Shelf extends React.Component {
     }
   }
 
-  updateLimit = () => this.setState({ limit: booksPerRow() * 2 - 1 });
+  updateLimit = () => this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
 
   fetchUserBooks = e => {
-    const { desc, filterByIndex, isOwner, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
+    const { desc, filterByIndex, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
     const { openSnackbar } = this.props;
     const direction = e && e.currentTarget.dataset.direction;
-    const ulimit = isOwner ? limit : limit + 1;
 
     if (uid) {
       const prev = direction === 'prev';
-      const startAt = direction ? prev ? ((page - 1) * ulimit) - ulimit : page * ulimit : 0;
+      const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
       const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
       const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
       const empty = { 
@@ -110,7 +107,7 @@ export default class Shelf extends React.Component {
           
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
-          this.unsubUserBooksFetch = ref.limit(ulimit).onSnapshot(snap => {
+          this.unsubUserBooksFetch = ref.limit(limit).onSnapshot(snap => {
             this.setState({ loading: true });
             if (!snap.empty) {
               const items = [];
@@ -119,7 +116,7 @@ export default class Shelf extends React.Component {
                 isOwner: luid === uid,
                 items,
                 loading: false,
-                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.ulimit) > prevState.count ? prevState.page : prevState.page + 1 : 1
+                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
               }), () => {
                 // GET CHALLENGES
                 luid === uid && userRef(luid).collection('challenges').get().then(snap => {
@@ -179,7 +176,7 @@ export default class Shelf extends React.Component {
   onCloseFilterMenu = () => this.setState({ filterMenuAnchorEl: null });
 
   render() {
-    const { booksPerRow, coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
+    const { coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
     const covers = items && items.length > 0 && items.map((book, i) => (
       <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
     ));
@@ -266,7 +263,7 @@ export default class Shelf extends React.Component {
               </div>
             </div>
             {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
-              <div className={`shelf-row books-per-row-${booksPerRow} ${coverview ? 'coverview' : 'stacked'}`}>
+              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`}>
                 {isOwner &&
                   <Link to="/books/add">
                     <div className="book empty">

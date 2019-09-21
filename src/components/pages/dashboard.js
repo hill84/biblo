@@ -253,7 +253,7 @@ export default class Dashboard extends React.Component {
         snackbarMsg = `Segui ${fuser.displayName}`;
         const followerName = user.displayName.split(' ')[0];
         followerDisplayName = truncateString(followerName, 12);
-        noteMsg = `<a href="${app.url}/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
+        noteMsg = `<a href="/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
 			}
       // console.log({ computedFollowers, computedFollowings });
 	

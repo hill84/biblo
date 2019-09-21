@@ -1765,13 +1765,12 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 } 
 .not-read .book .cover .overlay { 
   background: none;
-  background-color: rgba(0, 151, 167, .5); 
-  backdrop-filter: saturate(180%) blur(10px); 
+  background-color: rgba(var(--primaryClr), .8); 
   opacity: 1; 
   overflow: hidden;
   transition: all .2s ease-out;
 }
-.not-read .book:hover .cover .overlay { backdrop-filter: saturate(90%) blur(0px); }
+.not-read .book:hover .cover .overlay { background-color: rgba(var(--primaryClr), .5); }
 .not-read .book:hover .cover .overlay:before { opacity: 0; }
 
 .audio-format .book .cover {

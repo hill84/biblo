@@ -9,7 +9,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { abbrNum, app, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
 import { reviewType, stringType, userType, funcType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
@@ -63,7 +63,7 @@ export default class Review extends React.Component {
         // console.log(`User likes increased to ${likes.length}`);
 
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-        const noteMsg = `<a href="${app.url}/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="${app.url}/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 30)}</a>`;
+        const noteMsg = `<a href="/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 30)}</a>`;
         const newNoteRef = notesRef(review.createdByUid).doc();
         newNoteRef.set({
           nid: newNoteRef.id,
@@ -81,10 +81,9 @@ export default class Review extends React.Component {
     if (bid && review.createdByUid) {
       reviewerRef(bid, review.createdByUid).update({ likes }).then(() => {
         // console.log(`Book review likes updated`);
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
-      userBookRef(review.createdByUid, bid).update({ likes }).then(() => {
-        // console.log(`User book review likes updated`);
+        userBookRef(review.createdByUid, bid).update({ likes }).then(() => {
+          // console.log(`User book review likes updated`);
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid or ruid');
   }
@@ -122,7 +121,9 @@ export default class Review extends React.Component {
   }
 
   onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
+
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
+
   onDelete = () => {
     const { bid, openSnackbar, review} = this.props;
 

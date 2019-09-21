@@ -40,7 +40,6 @@ export default class UserReview extends React.Component {
     isOpenDeleteDialog: false,
     changes: false,
     loading: false,
-    serverError: '',
     errors: {},
     isEditing: false
   }
@@ -80,8 +79,10 @@ export default class UserReview extends React.Component {
   }
 
   fetchUserReview = () => {
+    const { bid, review} = this.state;
+
     // console.log('Fetching user review');
-    this.unsubReviewerFetch = reviewerRef(this.state.bid, authid).onSnapshot(snap => {
+    this.unsubReviewerFetch = reviewerRef(bid, authid).onSnapshot(snap => {
       if (this._isMounted) {
         this.setState({ loading: true });
       }
@@ -93,7 +94,7 @@ export default class UserReview extends React.Component {
       } else {
         if (this._isMounted) {
           this.setState({ review: {
-            ...this.state.review,
+            ...review,
             created_num: 0,
             likes: [],
             rating_num: 0,
@@ -102,53 +103,52 @@ export default class UserReview extends React.Component {
           }});
         }
       };
-      if (this._isMounted) {
-        this.setState({ loading: false, changes: false });
-      }
+      if (this._isMounted) this.setState({ loading: false, changes: false });
     });
   }
 
-  onEditing = () => this._isMounted && this.setState({ isEditing: true });
+  onEditing = () => this.setState({ isEditing: true });
 
   onSubmit = e => {
+    const { openSnackbar } = this.props;
+    const { bid, changes, review, user, userBook } = this.state;
+
     e.preventDefault();
-    if (this.state.changes) {
-      const errors = this.validate(this.state.review);
-      if (this._isMounted) {
-        this.setState({ errors });
-      }
+
+    if (changes) {
+      const errors = this.validate(review);
+      if (this._isMounted) this.setState({ errors });
+
       if (Object.keys(errors).length === 0) {
-        if (this._isMounted) {
-          this.setState({ loading: true });
-        }
-        if (this.state.bid) {
-          reviewerRef(this.state.bid, authid).set({
-            ...this.state.review,
-            bid: this.state.userBook.bid,
-            bookTitle: this.state.userBook.title,
-            covers: this.state.userBook.covers,
-            createdByUid: this.state.user.uid,
+        if (this._isMounted) this.setState({ loading: true });
+
+        if (bid) {
+          reviewerRef(bid, authid).set({
+            ...review,
+            bid: userBook.bid,
+            bookTitle: userBook.title,
+            covers: userBook.covers,
+            createdByUid: user.uid,
             created_num: Number((new Date()).getTime()),
-            displayName: this.state.user.displayName,
-            photoURL: this.state.user.photoURL,
-            rating_num: this.state.userBook.rating_num
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            rating_num: userBook.rating_num
           }).then(() => {
             // console.log(`Book review created`);
-          }).catch(err => this._isMounted && this.setState({ serverError: handleFirestoreError(err) }));
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-          userBookRef(authid, this.state.bid).update({
+          userBookRef(authid, bid).update({
             review: {
-              ...this.state.review,
+              ...review,
               created_num: (new Date()).getTime()
             }
           }).then(() => {
             // console.log(`User review posted`);
-          }).catch(err => this._isMounted && this.setState({ serverError: handleFirestoreError(err) }));
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
           if (this._isMounted) {
             this.setState({ 
               changes: false,
-              serverError: '',
               isEditing: false, 
               loading: false 
             });
@@ -156,31 +156,29 @@ export default class UserReview extends React.Component {
         } else console.warn(`No bid`);
       }
     } else {
-      if (this._isMounted) {
-        this.setState({ isEditing: false });
-      } 
+      if (this._isMounted) this.setState({ isEditing: false });
     }
   }
 
-  onDeleteRequest = () => this._isMounted && this.setState({ isOpenDeleteDialog: true });
+  onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
 
-  onCloseDeleteDialog = () => this._isMounted && this.setState({ isOpenDeleteDialog: false });
+  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
 
   onDelete = () => {
     const { bid } = this.state;
+    const { openSnackbar } = this.props;
 
-    if (this._isMounted) {
-      this.setState({ isOpenDeleteDialog: false });
-    }
+    if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {        
       reviewerRef(bid, authid).delete().then(() => {
         // console.log(`Book review deleted`);
-      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
+        userBookRef(authid, bid).update({ review: {} }).then(() => {
+          // console.log(`User review deleted`);
+          openSnackbar('Recensione cancellata', 'success');
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-      userBookRef(authid, bid).update({ review: {} }).then(() => {
-        // console.log(`User review deleted`);
-      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
     } else console.warn(`No bid`);
   }
 
@@ -237,7 +235,7 @@ export default class UserReview extends React.Component {
   }
   
   render() {
-    const { errors, isEditing, isOpenDeleteDialog, loading, review, serverError, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
+    const { errors, isEditing, isOpenDeleteDialog, loading, review, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
 
     if (!user || !userBook) return null;
 
@@ -323,13 +321,6 @@ export default class UserReview extends React.Component {
                     {title_leftChars && <FormHelperText className={`message ${(title_leftChars) < 0 ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {title_leftChars}</FormHelperText>}
                   </FormControl>
                 </div>
-
-                {serverError && 
-                  <React.Fragment>
-                    <div>&nbsp;</div>
-                    <div className="info-row text-center"><div className="message error">{serverError}</div></div>
-                  </React.Fragment>
-                }
 
                 <div className="footer no-gutter">
                   <button type="button" className="btn btn-footer primary" onClick={this.onSubmit} disabled={!this.state.changes}>Pubblica</button>

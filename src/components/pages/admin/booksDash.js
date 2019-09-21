@@ -71,9 +71,7 @@ export default class BooksDash extends React.Component {
     const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
     const dRef = direction ? paginatedRef : ref;
     
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    if (this._isMounted) this.setState({ loading: true });
 
     const fetcher = () => {
       this.unsubBooksFetch = dRef.onSnapshot(snap => {
@@ -137,32 +135,33 @@ export default class BooksDash extends React.Component {
       // console.log(`Locking ${id}`);
       bookRef(id).update({ 'EDIT.edit': false }).then(() => {
         openSnackbar('Elemento bloccato', 'success');
-      }).catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       // console.log(`Unlocking ${id}`);
       bookRef(id).update({ 'EDIT.edit': true }).then(() => {
         openSnackbar('Elemento sbloccato', 'success');
-      }).catch(error => console.warn(error));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   }
 
   onDeleteRequest = e => {
     const id = e.currentTarget.parentNode.dataset.id;
-    this.setState({ isOpenDeleteDialog: true, selectedId: id });
+    if (this._isMounted) this.setState({ isOpenDeleteDialog: true, selectedId: id });
   }
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
+    const { openSnackbar } = this.props;
     // console.log(`Deleting ${selectedId}`);
     bookRef(selectedId).delete().then(() => {
       /* 
       reviewRef(selectedId).delete().then(() => {
         console.log(`Reviews deleted`);
-      }).catch(error => console.warn(error)); 
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       */
-      this.setState({ isOpenDeleteDialog: false });
-      this.props.openSnackbar('Elemento cancellato', 'success');
-    }).catch(error => console.warn(error));
+      if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
+      openSnackbar('Elemento cancellato', 'success');
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   }
 
 	render() {
