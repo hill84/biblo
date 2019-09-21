@@ -1280,6 +1280,8 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 /* bookProfile */
 #BookProfileComponent { position: relative; z-index: 1; }
 #BookProfileComponent .card .book { margin-bottom: 10px; }
+#BookProfileComponent .own.review .row { opacity: .3; transition: all .4s ease-in-out; }
+#BookProfileComponent .own.review:hover .row { opacity: 1; }
 
 /* dashboard */
 .basic-profile .avatar { 
@@ -1995,8 +1997,6 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   margin: -14px calc(var(--pad) * -1);
 }
 .review + .own.review { margin-top: 14px; } */
-.own.review .row { opacity: .3; transition: all .4s ease-in-out; }
-.own.review:hover .row { opacity: 1; }
 .own.review .head .badge { padding: 0; background-color: rgb(var(--primaryClr)); width: 6px; height: 6px; color: transparent; margin-left: 8px; }
 
 /* CIRCULAR PROGRESS BAR */

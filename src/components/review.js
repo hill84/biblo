@@ -150,7 +150,7 @@ export default class Review extends React.Component {
 
     return (
       <React.Fragment>
-        <div className={`${isAuthenticated() && isOwner ? 'own review' : 'review'} ${(isAdmin && review.flag) || flaggedByUser ? `flagged ${review.flag.value}` : ''}`}>
+        <div className={`${isAuthenticated() && isOwner ? 'own review' : 'review'} ${(isAdmin || flaggedByUser) && review.flag ? `flagged ${review.flag.value}` : ''}`}>
           <div className="row">
             <div className="col-auto left">
               {!bid ?
@@ -269,7 +269,7 @@ export default class Review extends React.Component {
           onClose={this.onCloseFlagDialog} 
           onFlag={this.onFlag} 
           TransitionComponent={Transition} 
-          value={flaggedByUser ? review.flag.value : ''}
+          value={flaggedByUser ? review.flag && review.flag.value : ''}
         />
       </React.Fragment>
     );
