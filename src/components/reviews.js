@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { isAuthenticated, latestReviewsRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { boolType, numberType, stringType, userType } from '../config/types';
+import { boolType, numberType, stringType, userType, funcType } from '../config/types';
 import PaginationControls from './paginationControls';
 import Review from './review';
 
@@ -22,6 +22,7 @@ export default class Reviews extends React.Component {
   static propTypes = {
     bid: stringType,
     limit: numberType,
+    openSnackbar: funcType.isRequired,
     pagination: boolType,
     skeleton: boolType,
     user: userType
@@ -110,7 +111,7 @@ export default class Reviews extends React.Component {
 	
 	render() {
     const { items, limit, loading, page, pagination, count } = this.state;
-    const { bid, skeleton, user } = this.props;
+    const { bid, openSnackbar, skeleton, user } = this.props;
     const skeletons = [...Array(limit)].map((e, i) => <div key={i} className="skltn review" />);
     
     if (!items) {
@@ -139,6 +140,7 @@ export default class Reviews extends React.Component {
             <Review 
               key={`${index}_${item.createdByUid}`} 
               bid={bid}
+              openSnackbar={openSnackbar}
               user={user}
               review={{
                 bid: item.bid || '',

@@ -8,17 +8,22 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import React from 'react';
-import { boolType, funcType, objectType } from '../config/types';
+import { boolType, funcType, objectType, stringType } from '../config/types';
 
 export default class FlagDialog extends React.Component {
   state = {
-    value: null
+    value: this.props.value
   }
 
   static propTypes = {
     onClose: funcType.isRequired,
     open: boolType.isRequired,
-    TransitionComponent: objectType
+    TransitionComponent: objectType,
+    value: stringType
+  }
+
+  static defaultProps = {
+    value: ''
   }
 
   componentDidMount() {
@@ -71,7 +76,7 @@ export default class FlagDialog extends React.Component {
         </DialogContent>
         <DialogActions className="dialog-footer flex no-gutter">
           <button type="button" className="btn btn-footer flat" onClick={this.onClose}>Annulla</button>
-          <button type="button" className="btn btn-footer primary" onClick={this.onFlag} disabled={!value}>Segnala</button>
+          {value && <button type="button" className="btn btn-footer primary" onClick={this.onFlag}>Segnala</button>}
         </DialogActions>
       </Dialog>
     );

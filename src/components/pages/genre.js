@@ -160,7 +160,11 @@ export default class Genre extends React.Component {
             });
           }
         }
-      }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
+      }).catch(err => {
+        if (this._isMounted) {
+          this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+        }
+      });
     } else console.warn(`No gid`);
   }
 

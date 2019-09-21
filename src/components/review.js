@@ -9,8 +9,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import { icon } from '../config/icons';
-import { abbrNum, app, getInitials, hasRole, normURL, timeSince, truncateString } from '../config/shared';
-import { reviewType, stringType, userType } from '../config/types';
+import { abbrNum, app, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
+import { reviewType, stringType, userType, funcType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
@@ -27,6 +27,7 @@ export default class Review extends React.Component {
 
   static propTypes = {
     bid: stringType,
+    openSnackbar: funcType.isRequired,
     review: reviewType.isRequired,
     user: userType
   }
@@ -46,7 +47,7 @@ export default class Review extends React.Component {
 
   onThumbChange = () => {
     const { like } = this.state;
-    const { bid, review, user } = this.props;
+    const { bid, openSnackbar, review, user } = this.props;
     let likes = review.likes;
     
     if (this._isMounted) {
@@ -73,18 +74,18 @@ export default class Review extends React.Component {
           photoURL: user.photoURL,
           tag: ['like'],
           read: false
-        }).catch(err => console.warn(err));
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }
     // console.log({likes, 'likes_num': likes.length});
     if (bid && review.createdByUid) {
       reviewerRef(bid, review.createdByUid).update({ likes }).then(() => {
         // console.log(`Book review likes updated`);
-      }).catch(err => console.warn(err.message));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
       userBookRef(review.createdByUid, bid).update({ likes }).then(() => {
         // console.log(`User book review likes updated`);
-      }).catch(err => console.warn(err.message));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid or ruid');
   }
 
@@ -96,16 +97,12 @@ export default class Review extends React.Component {
     // TODO
   }
 
-  onFlagRequest = () => this.setState({ isOpenFlagDialog: true });
+  onFlagRequest = () => this._isMounted && this.setState({ isOpenFlagDialog: true });
 
-  onCloseFlagDialog = () => {
-    if (this._isMounted) {
-      this.setState({ isOpenFlagDialog: false });
-    }
-  }
+  onCloseFlagDialog = () => this._isMounted && this.setState({ isOpenFlagDialog: false });
 
   onFlag = value => {
-    const { bid, review, user} = this.props;
+    const { bid, openSnackbar, review, user} = this.props;
     const flag = {
       value,
       flaggedByUid: user.uid,
@@ -113,35 +110,32 @@ export default class Review extends React.Component {
     };
 
     if (bid && review && user) {
-      if (this._isMounted) {
-        this.setState({ flagLoading: true });
-        reviewerRef(bid, review.createdByUid).update({ flag }).then(() => {
-          this.setState({ flagLoading: false }, () => {
-            this.onCloseFlagDialog();
-            // console.log(`Flagged review for ${value}`);
+      if (this._isMounted) this.setState({ flagLoading: true });
+      reviewerRef(bid, review.createdByUid).update({ flag }).then(() => {
+        if (this._isMounted) {
+          this.setState({ flagLoading: false, isOpenFlagDialog: false }, () => {
+            openSnackbar('Recensione segnalata agli amministratori', 'success');
           });
-        }).catch(err => console.warn(err.message));
-      }
+        }
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('Cannot flag');
   }
 
   onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
   onDelete = () => {
-    const { bid, review} = this.props;
+    const { bid, openSnackbar, review} = this.props;
 
-    if (this._isMounted) {
-      this.setState({ isOpenDeleteDialog: false });
-    }
+    if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {
       reviewerRef(bid, review.createdByUid).delete().then(() => {
         // console.log(`Book review deleted`);
-      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
-
-      userBookRef(review.createdByUid, bid).update({ review: {} }).then(() => {
-        // console.log(`User review deleted`);
-      }).catch(err => this._isMounted && this.setState({ serverError: err.message }));
+        userBookRef(review.createdByUid, bid).update({ review: {} }).then(() => {
+          // console.log(`User review deleted`);
+          openSnackbar('Recensione cancellata', 'success');
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`No bid`);
   }
 
@@ -152,10 +146,11 @@ export default class Review extends React.Component {
     const isOwner = review.createdByUid === authid;
     const isAdmin = hasRole(user, 'admin');
     const isEditor = hasRole(user, 'editor');
+    const flaggedByUser = (review.flag && review.flag.flaggedByUid) === (user && user.uid);
 
     return (
       <React.Fragment>
-        <div className={`${isAuthenticated() && isOwner ? 'own review' : 'review'} ${isAdmin && review.flag ? `flagged ${review.flag.value}` : ''}`}>
+        <div className={`${isAuthenticated() && isOwner ? 'own review' : 'review'} ${(isAdmin && review.flag) || flaggedByUser ? `flagged ${review.flag.value}` : ''}`}>
           <div className="row">
             <div className="col-auto left">
               {!bid ?
@@ -226,8 +221,8 @@ export default class Review extends React.Component {
                           </button>
                         </div>
                         <div className="counter show-on-hover">
-                          <button type="button" className="btn sm flat" onClick={this.onFlagRequest}>
-                            <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala</span>
+                          <button type="button" className="btn sm flat" onClick={this.onFlagRequest} disabled={flaggedByUser}>
+                            <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
                           </button>
                         </div>
                       </React.Fragment>
@@ -274,6 +269,7 @@ export default class Review extends React.Component {
           onClose={this.onCloseFlagDialog} 
           onFlag={this.onFlag} 
           TransitionComponent={Transition} 
+          value={flaggedByUser ? review.flag.value : ''}
         />
       </React.Fragment>
     );
