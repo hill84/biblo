@@ -122,7 +122,7 @@ export default class Reviews extends React.Component {
         return (
           <div className="card dark reviews">
             <div className="info-row empty text-center">
-              Nessuna recensione trovata <span className="hide-xs">trovata</span>. {!isAuthenticated() && <span><Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
+              Nessuna recensione<span className="hide-xs"> trovata</span>. {!isAuthenticated() && <span><Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
             </div>
           </div>
         );
