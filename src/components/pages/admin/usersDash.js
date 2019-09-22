@@ -27,7 +27,7 @@ export default class UsersDash extends React.Component {
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
+    limitBy: [ 15, 25, 50, 100, 250, 500 ],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
@@ -70,7 +70,7 @@ export default class UsersDash extends React.Component {
   }
     
   fetch = e => {
-    const { desc, firstVisible, lastVisible,  limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
@@ -78,9 +78,7 @@ export default class UsersDash extends React.Component {
     const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
     const dRef = direction ? paginatedRef : ref;
 
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    if (this._isMounted) this.setState({ loading: true });
 
     const fetcher = () => {
       this.unsubUsersFetch = dRef.onSnapshot(snap => {
@@ -156,24 +154,27 @@ export default class UsersDash extends React.Component {
   onDeleteRequest = e => {
     const id = e.currentTarget.parentNode.dataset.id;
     const displayName = e.currentTarget.parentNode.dataset.name;
-    this.setState({ isOpenDeleteDialog: true, selected: { displayName, id } });
+    if (this._isMounted) {
+      this.setState({ isOpenDeleteDialog: true, selected: { displayName, id } });
+    }
   }
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selected: null });
   onDelete = () => {
     const { selected } = this.state;
     const { openSnackbar } = this.props;
     
-    this.setState({ isOpenDeleteDialog: false });
+    if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
     
     userRef(selected.id).delete().then(() => {
       console.log(`✔ user db deleted`);
       openSnackbar('Elemento cancellato', 'success');
+
+      userShelfRef(selected.id).delete().then(() => {
+        console.log(`✔ user reviews deleted`);
+        openSnackbar('Recensioni cancellate', 'success');
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-    userShelfRef(selected.id).delete().then(() => {
-      console.log(`✔ user reviews deleted`);
-      openSnackbar('Recensioni cancellate', 'success');
-    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
     userNotificationsRef(selected.id).get().then(snap => {
       if (!snap.empty) {
@@ -217,67 +218,65 @@ export default class UsersDash extends React.Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo, selected } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && items.length &&
-      items.map(item => 
-        <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
-          <div className="row">
-            <div className="col-auto avatar-container">
-              <Avatar className="avatar" /* src={item.photoURL} */ alt={item.displayName}>
-                {item.photoURL ? 
-                  <ImageZoom
-                    defaultStyles={imageZoomDefaultStyles}
-                    image={{ src: item.photoURL, className: 'thumb' }}
-                    zoomImage={{ className: 'magnified avatar' }}
-                  />
-                : getInitials(item.displayName)}
-              </Avatar>
-            </div>
-            <Link to={`/dashboard/${item.uid}`} className="col" title={item.displayName}>
-              {item.displayName}
-            </Link>
-            <div className="col monotype hide-sm" title={item.uid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.uid} />
-            </div>
-            <div className="col monotype hide-sm" title={item.email}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.email} />
-            </div>
-            <div className="col col-sm-3 col-lg-2 hide-xs">
-              <div className="row text-center">
-                <div className={`col ${!item.stats.shelf_num && 'lightest-text'}`}>{item.stats.shelf_num}</div>
-                <div className={`col ${!item.stats.wishlist_num && 'lightest-text'}`}>{item.stats.wishlist_num}</div>
-                <div className={`col ${!item.stats.reviews_num && 'lightest-text'}`}>{item.stats.reviews_num}</div>
-                <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
-              </div>
-            </div>
-            <div className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
-              <div className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={this.onChangeRole} title="editor">E</div>
-              <div className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={this.onChangeRole} title="premium">P</div>
-              <div className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={this.onChangeRole} title="admin">A</div>
-            </div>
-            <div className="col col-sm-2 col-lg text-right">
-              <div className="timestamp">
-                <span className="date">{new Date(item.creationTime).toLocaleDateString('it-IT', dateOptions)}</span><span className="time hide-lg"> - {new Date(item.creationTime).toLocaleTimeString('it-IT', timeOptions)}</span>
-              </div>
-            </div>
-            <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
-              <button type="button" className="btn icon green" onClick={this.onView} title="anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={this.onNote} title="Invia notifica">{icon.bell()}</button>
-              {/* <button type="button" className="btn icon primary" onClick={this.onSendVerification} title="Invia email di verifica">{icon.email()}</button> */}
-              <button type="button" className="btn icon primary" onClick={this.onSendReset} title="Invia email di reset password">{icon.textboxPassword()}</button>
-              <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={this.onDeleteRequest} title="elimina">{icon.close()}</button>
+    const itemsList = (items && items.length && items.map(item => 
+      <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
+        <div className="row">
+          <div className="col-auto avatar-container">
+            <Avatar className="avatar" /* src={item.photoURL} */ alt={item.displayName}>
+              {item.photoURL ? 
+                <ImageZoom
+                  defaultStyles={imageZoomDefaultStyles}
+                  image={{ src: item.photoURL, className: 'thumb' }}
+                  zoomImage={{ className: 'magnified avatar' }}
+                />
+              : getInitials(item.displayName)}
+            </Avatar>
+          </div>
+          <Link to={`/dashboard/${item.uid}`} className="col" title={item.displayName}>
+            {item.displayName}
+          </Link>
+          <div className="col monotype hide-sm" title={item.uid}>
+            <CopyToClipboard openSnackbar={openSnackbar} text={item.uid} />
+          </div>
+          <div className="col monotype hide-sm" title={item.email}>
+            <CopyToClipboard openSnackbar={openSnackbar} text={item.email} />
+          </div>
+          <div className="col col-sm-3 col-lg-2 hide-xs">
+            <div className="row text-center">
+              <div className={`col ${!item.stats.shelf_num && 'lightest-text'}`}>{item.stats.shelf_num}</div>
+              <div className={`col ${!item.stats.wishlist_num && 'lightest-text'}`}>{item.stats.wishlist_num}</div>
+              <div className={`col ${!item.stats.reviews_num && 'lightest-text'}`}>{item.stats.reviews_num}</div>
+              <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
             </div>
           </div>
-        </li>
-      )
-    );
+          <div className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
+            <div className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={this.onChangeRole} title="editor">E</div>
+            <div className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={this.onChangeRole} title="premium">P</div>
+            <div className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={this.onChangeRole} title="admin">A</div>
+          </div>
+          <div className="col col-sm-2 col-lg text-right">
+            <div className="timestamp">
+              <span className="date">{new Date(item.creationTime).toLocaleDateString('it-IT', dateOptions)}</span><span className="time hide-lg"> - {new Date(item.creationTime).toLocaleTimeString('it-IT', timeOptions)}</span>
+            </div>
+          </div>
+          <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
+            <button type="button" className="btn icon green" onClick={this.onView} title="anteprima">{icon.eye()}</button>
+            <button type="button" className="btn icon primary" onClick={this.onNote} title="Invia notifica">{icon.bell()}</button>
+            {/* <button type="button" className="btn icon primary" onClick={this.onSendVerification} title="Invia email di verifica">{icon.email()}</button> */}
+            <button type="button" className="btn icon primary" onClick={this.onSendReset} title="Invia email di reset password">{icon.textboxPassword()}</button>
+            <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
+            <button type="button" className="btn icon red" onClick={this.onDeleteRequest} title="elimina">{icon.close()}</button>
+          </div>
+        </div>
+      </li>
+    ));
 
     const orderByOptions = orderBy.map((option, index) => (
       <MenuItem
         key={option.type}
         disabled={index === -1}
         selected={index === orderByIndex}
-        onClick={event => this.onChangeOrderBy(event, index)}>
+        onClick={e => this.onChangeOrderBy(e, index)}>
         {option.label}
       </MenuItem>
     ));
@@ -287,7 +286,7 @@ export default class UsersDash extends React.Component {
         key={option}
         disabled={index === -1}
         selected={index === limitByIndex}
-        onClick={event => this.onChangeLimitBy(event, index)}>
+        onClick={e => this.onChangeLimitBy(e, index)}>
         {option}
       </MenuItem>
     ));

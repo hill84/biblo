@@ -2210,7 +2210,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 }
 
 /* MESSAGE */
-.message { font-size: 12px; line-height: 1.5; color: var(--lightTextClr); backdrop-filter: saturate(180%) blur(10px); }
+.message { font-size: 12px; line-height: 1.5; color: var(--lightTextClr); }
 .message.error { color: rgba(var(--errorClr), .9); }
 .message.info { color: rgba(var(--primaryClr), .9); }
 .message.success { color: rgba(var(--successClr), .9); }

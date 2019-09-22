@@ -36,7 +36,7 @@ export default class AddBook extends React.Component {
 	
 	render() {
     const { book } = this.state;
-    const { openSnackbar, user } = this.props;
+    const { history, location, openSnackbar, user } = this.props;
 
 		return (
 			<div className="container" id="addBookComponent">
@@ -52,7 +52,7 @@ export default class AddBook extends React.Component {
           </div>
         </ThemeProvider>
 				{book ?
-					<Book bid={book.bid} book={book} user={user} openSnackbar={openSnackbar} />
+					<Book bid={book.bid} book={book} history={history} location={location} user={user} openSnackbar={openSnackbar} />
         :
           <React.Fragment>
             <p className="text-center">
@@ -60,7 +60,7 @@ export default class AddBook extends React.Component {
               <Link to="/collections" className="counter">Collezioni</Link>
               <Link to="/authors" className="counter">Autori</Link>
             </p>
-            <div className="text-center pad-v fadeIn reveal" style={{animationDelay: '2s'}}>
+            <div className="text-center pad-v fadeIn reveal" style={{ animationDelay: '2s' }}>
               <p>Non hai trovato il libro che cercavi?</p>
               <p><Link to="/new-book" className="btn primary rounded">Crea la tua scheda libro</Link></p>
             </div>

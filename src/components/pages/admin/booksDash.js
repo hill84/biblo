@@ -24,7 +24,7 @@ export default class BooksDash extends React.Component {
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
+    limitBy: [ 15, 25, 50, 100, 250, 500 ],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
     orderBy: [ 
@@ -146,20 +146,21 @@ export default class BooksDash extends React.Component {
 
   onDeleteRequest = e => {
     const id = e.currentTarget.parentNode.dataset.id;
-    if (this._isMounted) this.setState({ isOpenDeleteDialog: true, selectedId: id });
+    if (this._isMounted) {
+      this.setState({ isOpenDeleteDialog: true, selectedId: id });
+    }
   }
   onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false, selectedId: null });
   onDelete = () => {
     const { selectedId } = this.state;
     const { openSnackbar } = this.props;
-    // console.log(`Deleting ${selectedId}`);
+    
+    if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
+    
     bookRef(selectedId).delete().then(() => {
-      /* 
-      reviewRef(selectedId).delete().then(() => {
-        console.log(`Reviews deleted`);
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-      */
-      if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
+      /* reviewRef(selectedId).delete().then(() => {
+        console.log(`✔ Reviews deleted`);
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
       openSnackbar('Elemento cancellato', 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   }
