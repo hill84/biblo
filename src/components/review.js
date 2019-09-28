@@ -142,7 +142,7 @@ export default class Review extends React.Component {
 
   render() {
     const { flagLoading, isOpenDeleteDialog, isOpenFlagDialog, like, likes_num } = this.state;
-    const { bid, review, user } = this.props;
+    const { bid, review, uid, user } = this.props;
 
     const isOwner = review.createdByUid === authid;
     const isAdmin = hasRole(user, 'admin');
@@ -163,7 +163,7 @@ export default class Review extends React.Component {
                     covers: review.covers,
                     publisher: 'publisher'
                   }} />
-                  <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
+                  {!uid && <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>}
                 </Link>
               :
                 <Link to={`/dashboard/${review.createdByUid}`}>
@@ -173,9 +173,9 @@ export default class Review extends React.Component {
             </div>
             <div className="col right">
               <div className="head row">
-                <Link to={`/dashboard/${review.createdByUid}`} className="col-auto author">
+                <Link to={uid ? `/book/${review.bid}/${normURL(review.bookTitle)}` : `/dashboard/${review.createdByUid}`} className="col-auto author">
                   <h3>
-                    {review.displayName}
+                    {uid ? review.bookTitle : review.displayName}
                     {/* isAuthenticated() && isOwner && <span className="badge">TU</span> */}
                     {!bid && <span className="date">{timeSince(review.created_num)}</span>}
                   </h3>

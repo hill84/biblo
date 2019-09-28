@@ -3,6 +3,7 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import ImageZoom from 'react-medium-image-zoom';
@@ -14,11 +15,10 @@ import { icon } from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
-import NewFeature from '../newFeature';
 import NoMatch from '../noMatch';
+import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
-import Tooltip from '@material-ui/core/Tooltip';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
@@ -371,10 +371,10 @@ export default class Dashboard extends React.Component {
     const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const ShelfDetails = () => (
       <div className="info-row footer centered shelfdetails">
-        <span className="counter">{icon.book()} <span className="hide-sm">Libri:</span> <b>{user.stats.shelf_num}</b></span>
-        <span className="counter">{icon.heart()} <span className="hide-sm">Desideri:</span> <b>{user.stats.wishlist_num}</b></span>
-        <span className="counter">{icon.star()} <span className="hide-sm">Valutazioni:</span> <b>{user.stats.ratings_num}</b></span>
-        <span className="counter">{icon.messageText()} <span className="hide-sm">Recensioni:</span> <b>{user.stats.reviews_num}</b></span>
+        <span className="counter">{icon.book()} <b>{user.stats.shelf_num}</b> <span className="hide-sm">Libri</span></span>
+        <span className="counter">{icon.heart()} <b>{user.stats.wishlist_num}</b> <span className="hide-sm">Desideri</span></span>
+        <span className="counter">{icon.star()} <b>{user.stats.ratings_num}</b> <span className="hide-sm">Valutazioni</span></span>
+        <span className="counter">{icon.messageText()} <b>{user.stats.reviews_num}</b> <span className="hide-sm">Recensioni</span></span>
       </div>
     );
 		const EmptyRow = () => (
@@ -431,9 +431,9 @@ export default class Dashboard extends React.Component {
 									<div className="col">
 										<h2 className="username">{user.displayName}</h2>
 										<div className="info-row hide-xs">
-											{user.sex && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : 'Altro'}</span>}
+											{user.sex && user.sex !== 'x' && <span className="counter">{user.sex === 'm' ? 'Uomo' : user.sex === 'f' ? 'Donna' : ''}</span>}
 											{user.birth_date && <span className="counter">{calcAge(user.birth_date)} anni</span>}
-											<span className="counter comma">
+											<span className="counter comma strict">
 												{user.city && <span className="counter">{user.city}</span>}
 												{user.country && <span className="counter">{user.country}</span>}
 												{user.continent && <span className="counter">{user.continent}</span>}
@@ -457,8 +457,8 @@ export default class Dashboard extends React.Component {
 													: <span>{icon.plus()} Segui</span> }
 												</button>
 											}
-											<span className="counter">Follower: <b>{Object.keys(followers).length}</b></span>
-											{screenSize !== 'sm' && <span className="counter">Segu{isOwner ? 'i' : 'e'}: <b>{Object.keys(followings).length}</b></span>}
+											<span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">Follower</span></span>
+											{screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
 										</div>
 									</div>
 								</div>
@@ -512,7 +512,7 @@ export default class Dashboard extends React.Component {
             {tabSelected === 1 && <Shelf luid={luid} uid={uid} openSnackbar={openSnackbar} shelf="bookInWishlist" />}
           </div>
           <div className="card tab" dir={tabDir}>
-            {tabSelected === 2 && <NewFeature />}
+            {tabSelected === 2 && <Reviews uid={uid} limit={3} container={false} openSnackbar={openSnackbar} pagination />}
           </div>
           <div className="card tab contacts-tab" dir={tabDir}>
             {tabSelected === 3 && 

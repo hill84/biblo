@@ -173,9 +173,9 @@ export default class Collection extends React.Component {
                                 </Link>
                               ))}
                             </div>
-                            {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
+                            {abbrNum(followers.length)} <span className="light-text">follower</span>
                           </React.Fragment>
-                        : `${abbrNum(followers.length)} follower` : ''}
+                        : <><b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span></> : ''}
                       </div>
                     </div>
                   </React.Fragment>

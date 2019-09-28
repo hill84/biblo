@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize } from '../../config/shared';
+import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
 import Cover from '../cover';
 import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
@@ -30,15 +30,12 @@ export default class AuthorPage extends React.Component {
     books: null,
     coverview: true,
     loading: true,
-    loadingBooks: true,
-    screenSize: screenSize()
+    loadingBooks: true
   }
 
   componentDidMount() {
     this._isMounted = true;
     const { author } = this.state;
-
-    window.addEventListener('resize', this.updateScreenSize);
     
 		authorRef(normalizeString(author.displayName)).get().then(snap => {
       if (snap.exists) {
@@ -76,14 +73,10 @@ export default class AuthorPage extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
-
-    window.removeEventListener('resize', this.updateScreenSize);
     this.unsubAuthorFollowersFetch && this.unsubAuthorFollowersFetch();
   }
 
   onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview }));
-  
-  updateScreenSize = () => this.setState({ screenSize: screenSize() });
   
   fetchFollowers = () => {
     const { user } = this.props;
@@ -124,11 +117,10 @@ export default class AuthorPage extends React.Component {
   }
 
   render() {
-    const { author, books, coverview, follow, followers, loading, loadingBooks, screenSize } = this.state;
+    const { author, books, coverview, follow, followers, loading, loadingBooks } = this.state;
     const { history, location, user } = this.props;
 
     const isEditor = hasRole(user, 'editor');
-    const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
     const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
     if (loading) {
@@ -201,9 +193,9 @@ export default class AuthorPage extends React.Component {
                             </Link>
                           ))}
                         </div>
-                        {abbrNum(followers.length)} {isScrollable ? icon.account() : 'follower'}
+                        <b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span>
                       </React.Fragment>
-                    : `${abbrNum(followers.length)} follower` : ''}
+                    : <><b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span></> : ''}
                   </div>
                 </div>
               }

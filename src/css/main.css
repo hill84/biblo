@@ -11,7 +11,7 @@
   --greenLightClr: 76, 175, 80;           /* green500 */
   --greenClr: 67, 160, 71;                /* green600 */
   --greenDarkClr: 56, 142, 60;            /* green700 */
-  --redLightClr: 229, 57, 53;             /* red400 */
+  --redLightClr: 239, 83, 80;             /* red400 */
   --redClr: 244, 67, 54;                  /* red500 */
   --redDarkClr: 229, 57, 53;              /* red600 */
   --orangeLightClr: 255, 167, 38;         /* orange400 */
@@ -843,11 +843,11 @@ button .btn { display: block; }
 .btn.secondary:active, .btn.secondary.selected { background-color: rgb(var(--accentDarkClr)); }
 
 .btn.green { background-color: rgb(var(--greenClr)); }
-.btn.green:hover { background-color: rgb(var(--greenLightClr)) }
+.btn.green:hover { background-color: rgb(var(--greenLightClr)); }
 .btn.green:active, .btn.green.selected { background-color: var(--greenDarkClr) }
 
 .btn.red { background-color: rgb(var(--redClr)); }
-.btn.red:hover { background-color: var(--redLightClr); }
+.btn.red:hover { background-color: rgb(var(--redLightClr)); }
 .btn.red:active, .btn.red.selected { background-color: rgb(var(--redDarkClr)); }
 
 .btn.orange { background-color: rgb(var(--orangeClr)); }
@@ -1064,10 +1064,13 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   align-items: center;
   border-radius: var(--radius);
   border-radius: inherit;
-  background-color: rgba(38, 50, 56, 0.8);
   padding: 20px;
   text-align: center;
   z-index: 3;
+}
+
+.dialog.loading:after, .card.loading:after, .dark .loader {
+  background-color: rgba(38, 50, 56, 0.8);
 }
 
 /* UPLOAD */
@@ -1426,7 +1429,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   color: currentColor;
   white-space: nowrap;
 }
-.counter.comma .counter:nth-last-child(2):after { content: "e"; margin-left: .15rem; }
+.counter.comma:not(.strict) .counter:nth-last-child(2):after { content: "e"; margin-left: .15rem; }
 .counter.comma a.counter:after { color: var(--mainTextClr); }
 .counter:last-child:after, .counter.comma .counter:last-child:after, .counter.last:after, .counter.btn:after { content: none; }
 .counter.last + .counter { margin-left: 6px; }
@@ -1663,6 +1666,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   border-radius: 2px;
   color: rgba(0,0,0,.6);
   font-size: 9px;
+  text-align: left;
   line-height: 1.35;
   padding: var(--pad);
   margin: auto;
@@ -1912,8 +1916,8 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 
 /* REVIEWS */
 .card.user-review, .card.reviews { padding-top: 14px; padding-bottom: 14px; }
-.card.reviews .head h2 { margin-bottom: 1rem; }
-.card.reviews .head .counter { 
+.reviews .head h2 { margin-bottom: 1rem; }
+.reviews .head .counter { 
   line-height: inherit; 
   font-size: .82rem; 
   color: var(--lighterTextClr); 
