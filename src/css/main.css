@@ -884,7 +884,7 @@ button .btn { display: block; }
   will-change: none;
   pointer-events: none;
 }
-.btn.success, .btn.success:hover, .btn.success:active, .btn.success:disabled { background-color: rgb(var(--successClr)); color: #fff; }
+.btn.success, .btn.success:hover, .btn.success:active, .btn.success:disabled { background-color: var(--successClr); color: #fff; }
 .btn.error, .btn.error:hover, .btn.error:active, .btn.error:disabled, .btn.error-on-hover:hover { background-color: rgb(var(--errorClr)); color: #fff; }
 /* .btn.error-on-hover { min-width: 175px; } */
 .btn.flat:disabled { --btnDisabledBg: transparent; }
@@ -2103,7 +2103,7 @@ progress.stepper::-webkit-progress-value {
 }
 
 progress[value='100'].stepper::-webkit-progress-bar {
-  background-color: rgb(var(--successClr));
+  background-color: var(--successClr);
   border-radius: 99px;
 }
 
@@ -2438,7 +2438,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .primary-text { color: rgb(var(--primaryClr)); }
 .accent-text { color: rgb(var(--accentClr)); }
 .error-text { color: rgb(var(--errorClr)); }
-.success-text { color: rgb(var(--successClr)); }
+.success-text { color: var(--successClr); }
 .text-xxl { font-size: 150%; }
 .text-xl { font-size: 125%; }
 .text-lg { font-size: 110%; }
