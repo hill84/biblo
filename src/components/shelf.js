@@ -200,6 +200,11 @@ export default class Shelf extends React.Component {
         <Typography variant="inherit">{orderBy[i].label}</Typography>
       </MenuItem>
     ));
+    const EmptyState = () => (
+      <div className="info-row empty text-center">
+        Nessuna libro <span className="hide-xs">trovato</span>
+      </div>
+    );
 
     return (
       <React.Fragment>
@@ -216,11 +221,12 @@ export default class Shelf extends React.Component {
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential() : icon.viewGrid()}
                   </button>
-                  {shelf === 'bookInShelf' &&
+                  {shelf === 'bookInShelf' && count > 0 && 
                     <React.Fragment>
                       <button 
                         type="button"
                         className="btn sm flat counter" 
+                        disabled={!count}
                         onClick={this.onOpenFilterMenu}>
                         {filterBy[filterByIndex]}
                       </button>
@@ -263,7 +269,7 @@ export default class Shelf extends React.Component {
               </div>
             </div>
             {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
-              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`}>
+              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`} style={{ gridTemplateColumns: !count && '1fr' }}>
                 {isOwner &&
                   <Link to="/books/add">
                     <div className="book empty">
@@ -272,7 +278,7 @@ export default class Shelf extends React.Component {
                     </div>
                   </Link>
                 }
-                {covers}
+                {covers || (!isOwner && <EmptyState />)}
               </div>
             }
             {pagination && 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { funcType } from '../config/types';
+import { boolType, funcType } from '../config/types';
 
 export default class SocialAuth extends React.Component {
 	state = {
@@ -25,7 +25,12 @@ export default class SocialAuth extends React.Component {
   }
 
   static propTypes = {
+    disabled: boolType,
     openSnackbar: funcType.isRequired
+  }
+
+  static defaultProps = {
+    disabled: false
   }
 
   componentDidMount() {
@@ -71,6 +76,7 @@ export default class SocialAuth extends React.Component {
 
 	render() {
     const { loading, redirectToReferrer } = this.state;
+    const { disabled } = this.props;
     const { from } = {from: { pathname: '/' }};
 
 		if (redirectToReferrer) return <Redirect to={from} />
@@ -78,13 +84,13 @@ export default class SocialAuth extends React.Component {
 		return (
 			<div className="row" id="socialAuthComponent">
         <div className="col-4">
-          <button type="button" className="btn google" onClick={this.googleAuth}>Google</button>
+          <button type="button" disabled={disabled} className="btn google" onClick={this.googleAuth}>Google</button>
         </div>
         <div className="col-4">
-          <button type="button" className="btn facebook" onClick={this.facebookAuth}>Facebook</button>
+          <button type="button" disabled={disabled} className="btn facebook" onClick={this.facebookAuth}>Facebook</button>
         </div>
         <div className="col-4">
-          <button type="button" className="btn twitter" onClick={this.twitterAuth}>Twitter</button>
+          <button type="button" disabled={disabled} className="btn twitter" onClick={this.twitterAuth}>Twitter</button>
         </div>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
       </div>

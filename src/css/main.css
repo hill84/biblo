@@ -332,7 +332,7 @@ ul.nolist li { display: block; }
   user-select: none;
 }
 .table li .btn, .avatar-row .btn { margin-top: 0; margin-bottom: 0; }
-.contacts-tab-col { overflow: auto; min-height: 240px; }
+.contacts-tab-col { overflow: auto; }
 .contacts-tab-col:before, .contacts-tab-col:after {
   --faderHeight: 14px;
   content: "";
@@ -905,16 +905,27 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 #socialAuthComponent > [class*="col-"] { padding-left: 4px; padding-right: 4px; }
 #socialAuthComponent > [class*="col-"]:first-child { padding-left: 7px; }
 #socialAuthComponent > [class*="col-"]:last-child { padding-right: 7px; }
-#socialAuthComponent button { float: left; width: 100%; margin: 3px 0; text-transform: initial; font-size: .85rem; letter-spacing: .03rem; }
+#socialAuthComponent button { 
+  float: left; 
+  width: 100%; 
+  margin: 3px 0; 
+  text-transform: initial; 
+  font-size: .85rem; 
+  letter-spacing: .03rem; 
+}
+#socialAuthComponent button:disabled {
+  cursor: not-allowed;
+  opacity: .7;
+}
 .btn.facebook { background-color: #39569C; }
 .btn.google { 
   background-color: #4285F4; 
-  background-color: #fff;
-  background-image: url('../images/g-logo.png');
-  background-size: 16px;
+  background-color: #f0f0f0;
+  background-image: url('../images/g-logo.svg');
+  background-size: 14px;
   background-repeat: no-repeat;
-  background-position: 8px center;
-  padding-left: 32px;
+  background-position: 11px center;
+  padding-left: 30px;
   color: #aaa;
 
 }
@@ -1963,15 +1974,16 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   font-size: .8rem; 
 }
 .review .hoverable-items:hover .avatar.absolute { opacity: 0; transform: scale(0); user-select: none; }
-.review .right { padding-left: 14px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
-.review .head { line-height: var(--avatarSize); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-.review .head h3 { margin: 0 auto; color: inherit; transition: all .2s ease-in-out; }
+.review .right { padding-left: 14px; }
+.review .head { line-height: var(--avatarSize); }
+.review .head .author { max-width: calc(100% - 45px); }
+.review .head h3 { margin: 0 auto; color: inherit; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; transition: all .2s ease-in-out; }
 .review .head h3 .date { font-size: .82rem; color: var(--lighterTextClr); margin-left: 10px; font-weight: 200; }
-.review .title { color: var(--contrastedTextClr); }
+.review .title { color: var(--contrastedTextClr); margin-top: .2rem; }
 .review .rating { line-height: inherit; animation: none; }
 .review .rating .rating-num { margin-left: 7px; }
 .review .rating .ratings-num { display: none; }
-.review .text { margin-top: .5rem; white-space: pre-line; word-wrap: break-word; }
+.review .text { font-weight: 300; margin-top: .2rem; white-space: pre-line; word-wrap: break-word; }
 .review .foot { color: var(--lighterTextClr); font-size: .82rem; }
 .review .foot .counter { display: inline-block; }
 .review .foot .counter + .counter { margin-left: 3px; }
@@ -2462,7 +2474,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   margin-bottom: 0;
 }
 .inline, ul.inline-items li { display: inline; }
-.rounded { border-radius: 99px; }
+.rounded { --radius: 99px; }
 .pull-left { float: left; }
 .pull-right { float: right; }
 .flex { display: flex; }
@@ -2604,6 +2616,16 @@ progress[value='100'].stepper::-webkit-progress-bar {
   }
   .review .show-on-hover { opacity: 0; will-change: opacity; }
   .review:hover .show-on-hover { opacity: 1; }
+  .tabs-container.card .card.tab { min-height: 300px; }
+  .contacts-tab-col { min-height: 240px; }
+  .contacts-tab-col h4 {
+    position: sticky;
+    top: 0;
+    background-color: rgba(255,255,255,.94);
+    margin: 0 -7px;
+    padding: .5rem 7px;
+    z-index: 1;
+  }
 }
 
 .relative { position: relative; }
@@ -2666,7 +2688,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
     box-shadow: 0 -1px 10px -2px rgba(0,0,0,.2);
     animation: fadeInSlideUp .4s cubic-bezier(0.215, 0.61, 0.355, 1) .4s both;
   }
-  .appbar.mobile .label { display: block; height: 0; line-height: 20px; font-size: .6rem; font-weight: 200; opacity: 0; transition: all .2s ease-in-out; }
+  .appbar.mobile .label { display: block; height: 0; line-height: 16px; font-size: .5rem; font-weight: 200; opacity: 0; transition: all .2s ease-in-out; }
   .appbar.mobile button { height: 52px; margin-bottom: env(safe-area-inset-bottom); }
   .appbar.mobile button[aria-selected="true"] .label { height: 20px; opacity: .5; }
   .tabs-container.mobile { border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); }
@@ -2686,9 +2708,11 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .cover .title { font-weight: 300; }
   .cover .subtitle { display: none; }
   .text-center-sm { text-align: center; }
+  .btn.icon-sm { padding-left: 0; padding-right: 0; min-width: var(--btnHeight); }
   .card-fullwidth-sm { --pad: 14px; /* --cardBg: var(--canvasClr); border-radius: 0; margin-left: calc(var(--pad) * -1); margin-right: calc(var(--pad) * -1); box-shadow: none; */ }
   /* .card-fullwidth-sm .head.nav { box-shadow: none; } */
   .shelf-row:not(.stacked) .book .react-rater { font-size: 14px; }
+  .tabs-container.card .card.tab { min-height: 275px; }
   .book-profile .title { font-size: 1.2rem; }
   .book-profile .subtitle { font-size: 1rem; }
   .book-profile .description { max-height: 1300px; }
@@ -2714,7 +2738,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .hide-sm { display: none; }
 }
 @media (max-width: 420px) {
-  :root { --booksPerRow-lg: 2; --bubblesPerRow-lg: 3; } 
+  :root { --bubblesPerRow-lg: 3; } 
   .shelf-row:not(.stacked) { 
     --bookWidth: 84px;
     --coverWidth: 80px;
@@ -2728,13 +2752,13 @@ progress[value='100'].stepper::-webkit-progress-bar {
   .book-incipit p { font-size: .8rem; }
   .minifiable { max-height: 650px; }
   .review .head h3 .date { display: none; }
-  .user.rating { height: 40px; }
+  .book-profile .user.rating { --btnHeight: 44px; }
   .user.rating .react-rater { font-size: 36px; line-height: inherit; }
   .user.rating .label { display: none; }
   .hide-xs { display: none; }
 }
 @media (max-width: 359px) {
-  :root { --bubblesPerRow-lg: 2; } 
+  :root { --booksPerRow-lg: 2; --bubblesPerRow-lg: 2; } 
   .minifiable { max-height: 840px; }
 }
 @media (max-width: 320px) {

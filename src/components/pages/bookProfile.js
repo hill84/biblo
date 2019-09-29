@@ -225,12 +225,14 @@ export default class BookProfile extends React.Component {
                     {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
                     {isAuthenticated() && hasBid && isEditor && 
                       <React.Fragment>
-                        <button type="button" onClick={this.onEditing} className="btn sm rounded flat counter" disabled={isLocked} title="Modifica disabilitata">
-                          {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} Modifica
-                        </button>
                         {isAdmin && 
-                          <button type="button" onClick={this.onLock} className={`btn sm rounded counter ${book.EDIT.edit ? 'flat' : 'secondary'}`}>{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</button>
+                          <button type="button" onClick={this.onLock} className={`btn sm icon-sm rounded counter ${book.EDIT.edit ? 'flat' : 'secondary'}`}>
+                            {book.EDIT.edit ? icon.lock() : icon.lockOff()} <span className="hide-sm">{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</span>
+                          </button>
                         }
+                        <button type="button" onClick={this.onEditing} className="btn sm icon-sm rounded flat counter" disabled={isLocked} title="Modifica disabilitata">
+                          {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} <span className="hide-sm">Modifica</span>
+                        </button>
                       </React.Fragment>
                     }
                   </div>
@@ -295,9 +297,9 @@ export default class BookProfile extends React.Component {
                   }
 
                   <div className="info-row bookdetails">
-                    <span className="counter">{icon.reader()} <span className="hide-sm">Lettori:</span> {abbrNum(book.readers_num)}</span>
-                    <span className="counter">{icon.messageTextOutline()} <span className="hide-sm">Recensioni:</span> {abbrNum(book.reviews_num)}</span>
-                    {book.pages_num && <span className="counter">{icon.timer()} <span className="hide-sm">Lettura:</span>  {calcReadingTime(book.pages_num)}</span>}
+                    <span className="counter">{icon.reader()} <b>{abbrNum(book.readers_num)}</b> <span className="hide-sm">Lettori</span></span>
+                    <span className="counter">{icon.messageTextOutline()} <b>{abbrNum(book.reviews_num)}</b> <span className="hide-sm">Recensioni</span></span>
+                    {book.pages_num && <span className="counter">{icon.timer()} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                   </div>
                 </div>
                 {book.EDIT &&
