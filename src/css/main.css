@@ -558,7 +558,9 @@ hr.line {
   margin-bottom: 0;
   background-color: transparent;
   box-shadow: none;
+  border-radius: inherit;
 }
+.tabs-container.card .card.tab .loader { background-color: transparent; }
 
 /* DIALOG */
 .dialog {
@@ -1073,6 +1075,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   display: flex;
   justify-content: center; /* align horizontal */
   align-items: center;
+  background-color: rgba(38, 50, 56, 0.8);
   border-radius: var(--radius);
   border-radius: inherit;
   padding: 20px;
@@ -1080,19 +1083,16 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   z-index: 3;
 }
 
-.dialog.loading:after, .card.loading:after, .dark .loader {
-  background-color: rgba(38, 50, 56, 0.8);
-}
-
 /* UPLOAD */
 .upload-avatar { 
+  --size: 64px;
   position: relative; 
   display: grid;
   align-items: center;
   border-radius: 99px;
-  width: 70px;
-  height: 70px;
-  line-height: 70px;
+  width: var(--size);
+  height: var(--size);
+  line-height: var(--size);
   font-size: 2rem;
   text-align: center;
   overflow: hidden;
@@ -2239,6 +2239,7 @@ progress[value='100'].stepper::-webkit-progress-bar {
 .snackbar-content.info { background-color: rgba(var(--primaryClr), .9); }
 .snackbar-content.success { background-color: rgba(var(--successClr), .9); }
 .snackbar-content.warning { background-color: rgba(var(--accentClr), .9); }
+.snackbar-content .btn.flat { color: white; }
 
 /* MOCKS */
 .mock-cover { background-color: var(--bookBg); background-size: cover; }

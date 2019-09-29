@@ -219,11 +219,11 @@ export default class Profile extends React.Component {
                     type="text"
                     placeholder="es: Mario Rossi"
                     value={user.displayName || ''}
-                    disabled={user.displayName}
+                    disabled={Boolean(user.displayName)}
                     onChange={this.onChange}
                     error={Boolean(errors.displayName)}
                   />
-                  {user.displayName && <FormHelperText className="message">Per modificare il <span className="hide-sm">tuo nominativo</span><span className="show-sm">nome</span> scrivi a <a href={`mailto:${app.email}?subject=Biblo: modifica nominativo utente`}>{app.email}</a>.</FormHelperText>}
+                  {user.displayName && <FormHelperText className="message">Per modificare il <span className="hide-sm">nominativo</span><span className="show-sm">nome</span> scrivi a <a href={`mailto:${app.email}?subject=Biblo: modifica nominativo utente`}>{app.email}</a>.</FormHelperText>}
                   {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
                 </FormControl>
               </div>
@@ -342,7 +342,9 @@ export default class Profile extends React.Component {
                 }
               </div>
 
-              <FormHelperText className="message">Per cancellare il tuo account utente scrivi a <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.</FormHelperText>
+              <div>&nbsp;</div>
+
+              <FormHelperText className="message">Per cancellare l'account scrivi a <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.</FormHelperText>
 
               <div>&nbsp;</div>
 

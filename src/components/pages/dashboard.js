@@ -75,20 +75,31 @@ export default class Dashboard extends React.Component {
   }
 
 	componentDidMount() {
+    const { history, openSnackbar, user } = this.props;
+    const { isOwner, tabSelected, uid } = this.state;
+
     this._isMounted = true;
     window.addEventListener('resize', this.updateScreenSize);
-    if (this.state.uid) {
+    if (uid) {
       this.fetchUser();
       this.fetchFollowers();
       this.fetchFollowings();
       this.fetchUserChallenges();
 
-      if (this.state.tabSelected === 0) {
-        const newPath = `/dashboard/${this.state.uid}/${tabs[0]}`;
-        if (this.props.history !== newPath) {
-          this.props.history.replace(newPath, null);
+      if (tabSelected === 0) {
+        const newPath = `/dashboard/${uid}/${tabs[0]}`;
+        if (history !== newPath) {
+          history.replace(newPath, null);
         }
       }
+    }
+    if (user && isOwner && !user.photoURL) {
+      const action = (
+        <Link to="/profile" type="button" className="btn sm flat">Fallo adesso</Link>
+      );
+      setTimeout(() => {
+        openSnackbar('Non hai ancora caricato una foto profilo.', 'info', 6000, action);
+      }, 3000);
     }
   }
 

@@ -1,13 +1,17 @@
 import Checkbox from '@material-ui/core/Checkbox';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
+import { icon } from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
@@ -35,7 +39,8 @@ export default class SignupForm extends React.Component {
     loading: false,
     errors: {},
     authError: '',
-    redirectTo: null
+    redirectTo: null,
+    showPassword: false
   };
 
   static propTypes = {
@@ -131,16 +136,25 @@ export default class SignupForm extends React.Component {
     } else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
     // TODO: check password strength
 		return errors;
-	};
+  };
+  
+  handleClickShowPassword = () => {
+    if (this._isMounted) {
+      this.setState(prevState => ({ showPassword: !prevState.showPassword }));
+    }
+  };
+
+  handleMouseDownPassword = e => e.preventDefault();
 
 	render() {
-    const { authError, checkedTerms, data, errors, redirectTo } = this.state;
+    const { authError, checkedTerms, data, errors, loading, redirectTo, showPassword } = this.state;
     const { openSnackbar } = this.props;
 
 		if (redirectTo) return <Redirect to={redirectTo} />
 
 		return (
 			<React.Fragment>
+        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         <FormControlLabel 
           className="text-left" 
           style={{ marginRight: 0 }} 
@@ -194,11 +208,21 @@ export default class SignupForm extends React.Component {
               <Input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Almeno 8 caratteri"
                 value={data.password}
                 onChange={this.onChange}
                 error={Boolean(errors.password)}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                      onMouseDown={this.handleMouseDownPassword}>
+                      {showPassword ? icon.eye() : icon.eyeOff()}
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
               {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
             </FormControl>

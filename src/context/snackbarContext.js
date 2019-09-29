@@ -5,6 +5,7 @@ const SharedSnackbarContext = React.createContext();
 
 export class SharedSnackbarProvider extends React.Component {
   state = {
+    action: null,
     autoHideDuration: 5000,
     isOpen: false,
     message: '',
@@ -19,9 +20,9 @@ export class SharedSnackbarProvider extends React.Component {
     this._isMounted = false;
   }
 
-  openSnackbar = (message, variant, autoHideDuration) => {
+  openSnackbar = (message, variant, autoHideDuration, action) => {
     if (this._isMounted) {
-      this.setState({ message, isOpen: true, variant, autoHideDuration });
+      this.setState({ action, message, isOpen: true, variant, autoHideDuration });
     }
   };
 
@@ -32,7 +33,7 @@ export class SharedSnackbarProvider extends React.Component {
   };
 
   render() {
-    const { autoHideDuration, isOpen, message, variant } = this.state;
+    const { action, autoHideDuration, isOpen, message, variant } = this.state;
     const { children } = this.props;
 
     return (
@@ -41,6 +42,7 @@ export class SharedSnackbarProvider extends React.Component {
           openSnackbar: this.openSnackbar,
           closeSnackbar: this.closeSnackbar,
           snackbarIsOpen: isOpen,
+          action,
           message,
           variant,
           autoHideDuration

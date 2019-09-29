@@ -140,7 +140,7 @@ export default class Notifications extends React.Component {
 
     if (!items && !loading) { 
       return (
-        <div className="card dark reviews">
+        <div className="reviews">
           <div className="info-row empty text-center pad-v">
             <p>Non ci sono notifiche</p>
           </div>

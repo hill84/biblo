@@ -7,7 +7,7 @@ import { SharedSnackbarConsumer } from '../context/snackbarContext';
 
 const SharedSnackbar = () => (
   <SharedSnackbarConsumer>
-    {({ snackbarIsOpen, message, closeSnackbar, variant, autoHideDuration }) => (
+    {({ action, autoHideDuration, closeSnackbar, message, snackbarIsOpen, variant }) => (
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
@@ -15,12 +15,11 @@ const SharedSnackbar = () => (
         }}
         open={snackbarIsOpen}
         autoHideDuration={autoHideDuration || 5000}
-        onClose={closeSnackbar}
-        >
+        onClose={closeSnackbar}>
         <SnackbarContent
           message={message}
           className={`snackbar-content ${variant}`}
-          action={[
+          action={action || [
             <IconButton key="close" color="inherit" onClick={closeSnackbar}>
               <Close />
             </IconButton>,

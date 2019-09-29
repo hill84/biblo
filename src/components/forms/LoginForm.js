@@ -1,11 +1,15 @@
+import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
+import { icon } from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
@@ -19,7 +23,8 @@ export default class LoginForm extends React.Component {
     loading: false,
     errors: {},
     authError: '',
-    redirectToReferrer: false
+    redirectToReferrer: false,
+    showPassword: false
   }
 
   static propTypes = {
@@ -80,10 +85,18 @@ export default class LoginForm extends React.Component {
 		} else errors.email = "Inserisci un indirizzo email";
 		if (!data.password) errors.password = "Inserisci una password";
 		return errors;
-	};
+  };
+  
+  handleClickShowPassword = () => {
+    if (this._isMounted) {
+      this.setState(prevState => ({ showPassword: !prevState.showPassword }));
+    }
+  };
+
+  handleMouseDownPassword = e => e.preventDefault();
 
 	render() {
-    const { authError, data, errors, redirectToReferrer } = this.state;
+    const { authError, data, errors, loading, redirectToReferrer, showPassword } = this.state;
     const { openSnackbar } = this.props;
     const { from } = { from: { pathname: '/' } };
 
@@ -91,6 +104,7 @@ export default class LoginForm extends React.Component {
 
 		return (
 			<div id="loginFormComponent">
+        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
 				<SocialAuth openSnackbar={openSnackbar} />
 
         <div className="light-text pad-v-xs">
@@ -121,11 +135,21 @@ export default class LoginForm extends React.Component {
               <Input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Almeno 8 caratteri"
                 value={data.password}
                 onChange={this.handleChange}
                 error={Boolean(errors.password)}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                      onMouseDown={this.handleMouseDownPassword}>
+                      {showPassword ? icon.eye() : icon.eyeOff()}
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
               {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
             </FormControl>
