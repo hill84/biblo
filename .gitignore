@@ -37,6 +37,15 @@ node_modules
 
 \.firebase/
 
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
 # Environment variables
 .env
 .env.development
