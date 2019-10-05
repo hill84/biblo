@@ -233,7 +233,7 @@ export default class Layout extends React.Component {
               </React.Fragment>
             : 
               <React.Fragment>
-                <NavLink to="/login" className="btn flat">Accedi</NavLink>
+                <NavLink to="/login" className="btn flat hide-xs">Accedi</NavLink>
                 <NavLink to="/signup" className="btn primary">Registrati</NavLink>
               </React.Fragment>
             }

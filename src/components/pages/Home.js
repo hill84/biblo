@@ -170,8 +170,8 @@ class Home extends React.Component {
             }
           </InView>
 
-          <div className="card flat col-md-6 text-center">
-            <p className="text-xl">Biblo.space è un progetto completamente gratuito e indipendente.<br /> Se vuoi, puoi aiutarci a crescere con una donazione:</p>
+          <div className="card flat col-11 col-md-6 text-center">
+            <p className="text-xl">Biblo.space è un progetto gratuito e indipendente.<br className="hide-sm" /> Se vuoi, puoi supportarci con una donazione</p>
             <DonationButtons />
           </div>
 
@@ -191,11 +191,11 @@ class Home extends React.Component {
             }
           </InView> */}
 
-          <div className="card flat col-md-6 text-center">
-            <p className="text-xl">Siamo anche su Facebook e Twitter:</p>
+          <div className="card flat col-11 col-md-6 text-center">
+            <p className="text-xl">Siamo anche su Facebook e Twitter</p>
             <div>
-              <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer">Seguici su Facebook</a>
-              <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer">Seguici su Twitter</a>
+              <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer"><span className="hide-sm">Seguici su</span> Facebook</a>
+              <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer"><span className="hide-sm">Seguici su</span> Twitter</a>
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import logo from '../images/logo.png';
 
 // APP
 export const app = {
-  name: 'Biblo',
+  name: 'Biblo.space',
   url: 'https://biblo.space',
   logo,
   fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space' },
