@@ -38,6 +38,8 @@ export default class Book extends React.Component {
     isEditing: this.props.isEditing || false,
     loading: false
   }
+  addBookToShelfRef = React.createRef();
+  addBookToWishlistRef = React.createRef();
 	
   static propTypes = {
     bid: stringType,
@@ -195,6 +197,7 @@ export default class Book extends React.Component {
     const { openSnackbar } = this.props;
 
     if (isAuthenticated()) {
+      this.addBookToShelfRef.current.setAttribute('disabled', 'disabled');
       let userWishlist_num = this.props.user.stats.wishlist_num;
       const bookReaders_num = this.state.book.readers_num + 1;
       // console.log('Book added to user shelf');
@@ -220,6 +223,7 @@ export default class Book extends React.Component {
             'stats.wishlist_num': userWishlist_num
           }).then(() => {
             // console.log('User shelf number increased');
+            this.addBookToShelfRef.current && this.addBookToShelfRef.current.removeAttribute('disabled');
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -230,6 +234,7 @@ export default class Book extends React.Component {
     const { openSnackbar } = this.props;
 
     if (isAuthenticated()) {
+      this.addBookToWishlistRef.current.setAttribute('disabled', 'disabled');
       const userWishlist_num = this.props.user.stats.wishlist_num + 1;
       /* let userShelf_num = this.props.user.stats.shelf_num;
       let bookReaders_num = this.state.book.readers_num;
@@ -244,13 +249,13 @@ export default class Book extends React.Component {
         userShelf_num -= 1;
         bookReaders_num -= 1;
       }
-
+      
       if (this.state.book.rating_num > 0) {
         bookRating_num -= userBookRating_num;
         bookRatings_num -= 1;
         userRatings_num -= 1;
       }
-
+      
       if (this.state.userBook.review !== {}) {
         bookReviews_num -= 1;
         userBookReview = {};
@@ -273,6 +278,7 @@ export default class Book extends React.Component {
           }
         })); */
         // console.log('Book added to user wishlist');
+        this.addBookToWishlistRef.current && this.addBookToWishlistRef.current.removeAttribute('disabled');
         openSnackbar('Libro aggiunto in lista desideri', 'success');
         userRef(authid).update({
           /* 'stats.shelf_num': userShelf_num, */
@@ -550,7 +556,9 @@ export default class Book extends React.Component {
           <BookProfile 
             openSnackbar={openSnackbar}
             addBookToShelf={this.addBookToShelf} 
+            addBookToShelfRef={this.addBookToShelfRef} 
             addBookToWishlist={this.addBookToWishlist} 
+            addBookToWishlistRef={this.addBookToWishlistRef} 
             addReview={this.addReview}
             history={history}
             location={location}

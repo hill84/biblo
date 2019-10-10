@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { bookRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
 import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
-import { funcType, objectType, userBookType, userType } from '../../config/types';
+import { funcType, objectType, refType, userBookType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -41,7 +41,9 @@ export default class BookProfile extends React.Component {
   static propTypes = {
     addReview: funcType.isRequired,
     addBookToShelf: funcType.isRequired,
+    addBookToShelfRef: refType.isRequired,
     addBookToWishlist: funcType.isRequired,
+    addBookToWishlistRef: refType.isRequired,
     history: objectType.isRequired,
     location: objectType.isRequired,
     openSnackbar: funcType.isRequired,
@@ -163,7 +165,7 @@ export default class BookProfile extends React.Component {
   
 	render() {
     const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
-    const { addReview, loading, openSnackbar, removeReview } = this.props;
+    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, openSnackbar, removeReview } = this.props;
     
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     
@@ -266,7 +268,7 @@ export default class BookProfile extends React.Component {
                             </button>
                           </React.Fragment>
                         :
-                          <button type="button" className="btn primary rounded" disabled={!hasBid || !isEditor} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
+                          <button type="button" className="btn primary rounded" ref={addBookToShelfRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
                         }
                         {userBook.bookInWishlist && 
                           <button type="button" className="btn success rounded error-on-hover" onClick={this.onRemoveBookFromWishlist}>
@@ -275,7 +277,7 @@ export default class BookProfile extends React.Component {
                           </button>
                         }
                         {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                          <button type="button" className="btn flat rounded" disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
+                          <button type="button" className="btn flat rounded" ref={addBookToWishlistRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
                         }
                       </div>
                       {userBook.bookInShelf &&

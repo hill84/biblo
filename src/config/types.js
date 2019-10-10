@@ -189,3 +189,5 @@ export const noteType = shape({
   tag: arrayOf(_oneOf(['welcome', 'follow', 'like', 'test'])).isRequired,
   read: bool.isRequired
 });
+
+export const refType = PropTypes.oneOfType([PropTypes.func, PropTypes.object]);
