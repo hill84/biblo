@@ -40,6 +40,7 @@
     "react-router-sitemap": "^1.2.0",
     "react-say": "^1.2.0",
     "react-scripts": "^3.2.0",
+    "react-share": "^3.0.1",
     "react-swipeable-views": "^0.13.3",
     "validator": "^11.1.0"
   },

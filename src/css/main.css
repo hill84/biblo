@@ -825,7 +825,6 @@ button .btn { display: block; }
   --btnPad: .4rem;
   --btnHeight: 20px;
   --btnFontSize: .65rem;
-  --radius: 2px;
 }
 .btn.rounded, .btns .btn.rounded { --btnPad: 1rem; }
 .btn.xl.rounded, .btns.xl .btn.rounded { --btnPad: 1.6rem; }
@@ -934,6 +933,13 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 
 .btn .stepper { min-width: 90px; }
 .btn .stepper + span { display: none; }
+
+.btn-share-container {
+  display: inline-block; 
+  outline: none !important;
+  cursor: pointer;
+  margin: 4px 2px;
+}
 
 /* SELECTION */
 ::selection { background: rgba(0, 151, 167, .3); color: var(--mainTextClr); text-shadow: none; }

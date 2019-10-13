@@ -11,7 +11,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { bookRef, isAuthenticated } from '../../config/firebase';
 import { icon } from '../../config/icons';
-import { abbrNum, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
+import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
 import { funcType, objectType, refType, userBookType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import CopyToClipboard from '../copyToClipboard';
@@ -21,6 +21,7 @@ import Incipit from '../incipit';
 import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
+import ShareButtons from '../share-buttons';
 import UserReview from '../userReview';
 
 export default class BookProfile extends React.Component {
@@ -165,7 +166,7 @@ export default class BookProfile extends React.Component {
   
 	render() {
     const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
-    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, openSnackbar, removeReview } = this.props;
+    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, location, openSnackbar, removeReview } = this.props;
     
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     
@@ -216,6 +217,14 @@ export default class BookProfile extends React.Component {
                   {book.trailerURL && 
                     <button onClick={() => window.open(book.trailerURL, '_blank')} className="btn xs rounded flat centered btn-trailer">Trailer</button>
                   }
+                  <ShareButtons 
+                    className="btn-share-container"
+                    hashtags={['biblo', 'libri', 'twittalibro']}
+                    cover={book.covers && book.covers[0]}
+                    text={`Consiglio il libro "${book.title}" di ${Object.keys(book.authors)[0]}.`}
+                    url={`${app.url}${location.pathname}`}
+                    via="BibloSpace"
+                  />
                 </div>
                 <div className="col book-profile">
                   <h2 className="title flex">{book.title}</h2>
