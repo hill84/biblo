@@ -1,7 +1,8 @@
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
+import 'firebase/performance';
 import { isLocalStorage, needsEmailVerification } from './shared';
 
 const config = {
@@ -14,6 +15,8 @@ const config = {
 };
 
 if (!firebase.apps.length) firebase.initializeApp(config);
+
+const perf = firebase.performance();
 
 /* AUTH */
 export const GoogleAuthProvider = firebase.auth && new firebase.auth.GoogleAuthProvider();
