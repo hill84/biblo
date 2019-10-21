@@ -9,15 +9,15 @@ import React from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { getInitials, handleFirestoreError, imageZoomDefaultStyles, normalizeString, normURL, timeSince } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, /* userType */ } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 export default class AuthorsDash extends React.Component {
  	state = {
-    user: this.props.user,
+    // user: this.props.user,
     count: 0,
     desc: true,
     firstVisible: null,
@@ -44,17 +44,16 @@ export default class AuthorsDash extends React.Component {
 	static propTypes = {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
-    user: userType
+    // user: userType
+  }
+
+  static defaultProps = {
+    // user: null
   }
 
 	componentDidMount() { 
     this._isMounted = true;
     this.fetch();
-  }
-
-	componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubAuthorsFetch && this.unsubAuthorsFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -62,6 +61,11 @@ export default class AuthorsDash extends React.Component {
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubAuthorsFetch && this.unsubAuthorsFetch();
   }
     
   fetch = e => {
@@ -100,10 +104,8 @@ export default class AuthorsDash extends React.Component {
           if (this._isMounted) {
             this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ count: 0 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ count: 0 });
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
@@ -170,7 +172,7 @@ export default class AuthorsDash extends React.Component {
               </Avatar>
             </div>
             <div className="col-6 col-sm-4 col-lg-2" title={item.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={item.displayName}/></div>
-            <div className="col-1"><button className="btn xs flat" title={item.sex === 'm' ? 'uomo' : 'donna'}>{item.sex}</button></div>
+            <div className="col-1"><button type="button" className="btn xs flat" title={item.sex === 'm' ? 'uomo' : 'donna'}>{item.sex}</button></div>
             <div className="col hide-lg" title={item.bio}>{item.bio}</div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col col-sm-2 col-lg-1">{item.lastEditBy}</Link>
             <div className="col col-sm-2 col-lg-1 text-right">
@@ -211,12 +213,12 @@ export default class AuthorsDash extends React.Component {
 
 		return (
 			<div className="container" id="authorsDashComponent">
-        <div className="card dark" style={{ minHeight: 200 }}>
+        <div className="card dark" style={{ minHeight: 200, }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
                 <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
-                <button className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
+                <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
                 <Menu 
                   className="dropdown-menu"
                   anchorEl={limitMenuAnchorEl} 
@@ -243,7 +245,7 @@ export default class AuthorsDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <React.Fragment>
+            <>
               <ul className="table dense nolist font-sm">
                 <li className="avatar-row labels">
                   <div className="row">
@@ -263,7 +265,7 @@ export default class AuthorsDash extends React.Component {
                 limit={limitBy[limitByIndex]}
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
 
@@ -273,7 +275,7 @@ export default class AuthorsDash extends React.Component {
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className="dialog-footer flex no-gutter">
             <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
             <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>

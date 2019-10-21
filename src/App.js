@@ -1,6 +1,8 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
+import PropTypes from 'prop-types';
 import React, { lazy, Suspense } from 'react';
+import { Helmet } from 'react-helmet';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import ErrorBoundary from './components/errorBoundary';
 import PasswordResetForm from './components/forms/passwordResetForm';
@@ -27,8 +29,8 @@ import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
 import { app, handleFirestoreError, isLocalStorage, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
+import { locationType } from './config/types';
 import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
-import { Helmet } from 'react-helmet';
 
 const Admin = lazy(() => import('./components/pages/admin/admin'));
 const Challenge = lazy(() => import('./components/pages/challenge'));
@@ -131,7 +133,7 @@ export default class App extends React.Component {
                       <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/notifications" component={Notifications} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
+                      <PrivateRoute path="/profile" exact component={Profile} user={user} openSnackbar={openSnackbar}/>
                       <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />
                       <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
@@ -162,7 +164,19 @@ const PrivateRoute = ({component: Component, ...rest}) => (
 	)} />
 );
 
-const RouteWithProps = ({ path, exact, strict, component:Component, location, ...rest }) => (
+PrivateRoute.propTypes = {
+  component: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object
+  ]).isRequired,
+  location: locationType
+}
+
+PrivateRoute.defaultProps = {
+  location: { pathname: '' },
+};
+
+const RouteWithProps = ({ path, exact, strict, component: Component, location, ...rest }) => (
   <Route
     path={path}
     exact={exact}
@@ -171,3 +185,20 @@ const RouteWithProps = ({ path, exact, strict, component:Component, location, ..
     render={props => <Component {...props} {...rest} />} 
 	/>
 );
+
+RouteWithProps.propTypes = {
+  component: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object
+  ]).isRequired,
+  exact: PropTypes.bool,
+  location: locationType,
+  path: PropTypes.string.isRequired,
+  strict: PropTypes.bool
+};
+
+RouteWithProps.defaultProps = {
+  exact: false,
+  location: { pathname: '' },
+  strict: false
+};

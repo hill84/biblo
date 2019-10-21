@@ -73,19 +73,19 @@ class Home extends React.Component {
             <p className="subtitle reveal fadeIn slideUp hide-sm">Crea la tua libreria, scrivi una recensione, scopri cosa leggono i tuoi amici</p>
             <div className="btns reveal fadeIn slideUp">
               {isAuthenticated() ? 
-                <React.Fragment>
+                <>
                   <Link to={`/dashboard/${authid}`} className="btn primary lg rounded">La mia libreria</Link> 
                   <p className="font-sm">
                     <Link className="counter" to="/about">Chi siamo</Link>
                     <Link className="counter" to="/help">Aiuto</Link>
                     <Link className="counter last" to="/donations">Donazioni</Link>
                   </p>
-                </React.Fragment>
+                </>
               : 
-                <React.Fragment>
+                <>
                   <Link to="/signup" className="btn primary lg rounded">Registrati</Link>
                   <p><small>Sei già registrato? <Link to="/login">Accedi</Link></small></p>
-                </React.Fragment>
+                </>
               }
             </div>
           </div>
@@ -95,16 +95,16 @@ class Home extends React.Component {
           </Background>
         </Parallax>
     
-        <div className="container" style={{ marginTop: -56 }}>
+        <div className="container" style={{ marginTop: -56, }}>
           <InView triggerOnce rootMargin={rootMargin}>
             {({ inView, ref }) => 
-              <div className="card dark card-fullwidth-sm" ref={ref} style={{ marginBottom: 0 }}>
+              <div className="card dark card-fullwidth-sm" ref={ref} style={{ marginBottom: 0, }}>
                 <BookCollection cid="Best seller" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
               </div>
             }
           </InView>
 
-          <div className="row text-center" style={{ marginBottom: 14 }}>
+          <div className="row text-center" style={{ marginBottom: 14, }}>
             <div className="col-md col-sm-6 pad">
               <h3>Crea la tua libreria</h3>
               <p>Riempi la tua dashboard con i libri che hai letto o che vorresti leggere</p>
@@ -135,7 +135,7 @@ class Home extends React.Component {
                 <div className="head nav">
                   <span className="counter last title">Generi</span>
                   <div className="pull-right">
-                    <button className="btn sm flat counter">
+                    <button type="button" className="btn sm flat counter">
                       <Link to="/genres">Vedi tutti</Link>
                     </button>
                   </div>

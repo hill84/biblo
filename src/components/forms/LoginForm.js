@@ -9,9 +9,9 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { funcType } from '../../config/types';
+import { funcType, locationType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
 export default class LoginForm extends React.Component {
@@ -28,13 +28,18 @@ export default class LoginForm extends React.Component {
   }
 
   static propTypes = {
+    location: locationType,
     openSnackbar: funcType.isRequired
+  }
+
+  static defaultProps = {
+    location: null
   }
 
   componentDidMount() {
     this._isMounted = true;
-    const search = this.props.location.search;
-    const params = new URLSearchParams(search);
+    const { location } = this.props;
+    const params = new URLSearchParams(location.search);
     const email = params.get('email');
     if (this._isMounted && email) {
       this.setState(prevState => ({
@@ -48,18 +53,23 @@ export default class LoginForm extends React.Component {
   }
 
 	handleChange = e => {
-		this.setState({ 
-			data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
-		});
+    e.persist();
+
+    this.setState(prevState => ({ 
+      data: { ...prevState.data, [e.target.name]: e.target.value }, 
+      errors: { ...prevState.errors, [e.target.name]: null }
+    }));
 	};
 
 	handleSubmit = e => {
     e.preventDefault();
     const { data } = this.state;
-		if (this._isMounted) this.setState({ loading: true });
-		const errors = this.validate(data);
-		if (this._isMounted) this.setState({ authError: '', errors });
+    const errors = this.validate(data);
+    
+    if (this._isMounted) this.setState({ authError: '', errors });
+    
 		if (Object.keys(errors).length === 0) {
+      if (this._isMounted) this.setState({ loading: true });
 			auth.signInWithEmailAndPassword(data.email, data.password).then(() => {
         if (this._isMounted) {
           this.setState({
@@ -82,8 +92,10 @@ export default class LoginForm extends React.Component {
 		const errors = {};
 		if (data.email) {
 			if (!isEmail(data.email)) errors.email = "Email non valida";
-		} else errors.email = "Inserisci un indirizzo email";
-		if (!data.password) errors.password = "Inserisci una password";
+    } else errors.email = "Inserisci un indirizzo email";
+    if (data.password) {
+      if (data.password.length < 8) errors.password = "Password troppo corta";
+    } else errors.password = "Inserisci una password";
 		return errors;
   };
   
@@ -108,7 +120,7 @@ export default class LoginForm extends React.Component {
 				<SocialAuth openSnackbar={openSnackbar} />
 
         <div className="light-text pad-v-xs">
-          <small>Effettuando il login confermi la presa visione della <Link to="/privacy">Privacy policy</Link> di {app.name}</small>
+          <small>Effettuando il login confermi la presa visione della <Link to="/privacy">privacy</Link> di {app.name}</small>
         </div>
 
 				<form onSubmit={this.onSubmit} noValidate>

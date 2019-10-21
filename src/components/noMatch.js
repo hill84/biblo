@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../config/shared';
-import { funcType, shapeType, stringType } from '../config/types';
+import { funcType, locationType, shapeType, stringType } from '../config/types';
 import RandomQuote from './randomQuote';
 
 export default class NoMatch extends React.Component {
@@ -10,10 +10,14 @@ export default class NoMatch extends React.Component {
       goBack: funcType.isRequired
     }).isRequired,
     imgUrl: stringType,
-    location: shapeType({
-      pathname: stringType
-    }),
+    location: locationType,
     title: stringType,
+  }
+
+  static defaultProps = {
+    imgUrl: null,
+    location: null,
+    title: null
   }
 
   goBack = () => this.props.history.goBack();
@@ -30,7 +34,7 @@ export default class NoMatch extends React.Component {
         <div className="card dark empty">
           <div className="text-center">
             <h1>{title || 'Pagina non trovata'}</h1>
-            <p>Controlla di aver digitato correttamente l'indirizzo{location && <span className="hide-sm">: <big><code className="primary-text">{location.pathname}</code></big></span>}.</p>
+            <p>Controlla di aver digitato correttamente l&apos;indirizzo{location && <span className="hide-sm">: <big><code className="primary-text">{location.pathname}</code></big></span>}.</p>
             {imgUrl && <img src={imgUrl} alt="Pagina non trovata" />}
             <button type="button" onClick={this.goBack} className="btn flat rounded">Torna indietro</button>
           </div>

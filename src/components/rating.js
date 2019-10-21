@@ -16,6 +16,10 @@ export default class Rating extends React.Component {
     labels: boolType
   }
 
+  static defaultProps = {
+    labels: null
+  }
+
   static getDerivedStateFromProps(props, state) {
     if (props.ratings) {
       if (props.ratings.ratings_num !== state.ratings_num || props.ratings.rating_num !== state.rating_num) { 
@@ -43,6 +47,6 @@ export default class Rating extends React.Component {
           </div>
         }
       </div>
-    )
+    );
   }
 }

@@ -1,10 +1,7 @@
+import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  TwitterShareButton,
-  TwitterIcon
-} from 'react-share';
+import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } from 'react-share';
+import { arrayType, stringType } from '../config/types';
 
 const ShareButtons = props => {
   const IconProps = { size: 24, round: true };
@@ -13,15 +10,34 @@ const ShareButtons = props => {
   const twProps = { className, title: text, url, via, ...attrs };
 
   return (
-    <div className="text-center">
-      <FacebookShareButton {...fbProps}>
-        <FacebookIcon {...IconProps} />
-      </FacebookShareButton>
-      <TwitterShareButton {...twProps}>
-        <TwitterIcon {...IconProps} />
-      </TwitterShareButton>
-    </div>
+    <Tooltip title="Condividi" placement="bottom">
+      <div className="text-center">
+        <FacebookShareButton {...fbProps}>
+          <FacebookIcon {...IconProps} />
+        </FacebookShareButton>
+        <TwitterShareButton {...twProps}>
+          <TwitterIcon {...IconProps} />
+        </TwitterShareButton>
+      </div>
+    </Tooltip>
   );
+}
+
+ShareButtons.propTypes = {
+  className: stringType,
+  cover: stringType,
+  hashtags: arrayType,
+  text: stringType,
+  url: stringType.isRequired,
+  via: stringType
+}
+
+ShareButtons.defaultProps = {
+  className: null,
+  cover: null,
+  hashtags: null,
+  text: null,
+  via: null
 }
  
 export default ShareButtons;

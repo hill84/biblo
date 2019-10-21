@@ -1,4 +1,3 @@
-import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -6,14 +5,15 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
-import { funcType, userType } from '../../config/types';
+import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
+import { funcType, matchType, userType } from '../../config/types';
 import Cover from '../cover';
 import Genres from '../genres';
 import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
+import Bubbles from './bubbles';
 
 export default class Genre extends React.Component {
   state = {
@@ -38,20 +38,20 @@ export default class Genre extends React.Component {
   }
 
   static propTypes = {
+    match: matchType,
     openSnackbar: funcType.isRequired,
     user: userType
+  }
+
+  static defaultProps = {
+    match: null,
+    user: null
   }
 
   componentDidMount() {
     this._isMounted = true;
     window.addEventListener('resize', this.updateScreenSize);
     this.fetch();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    window.removeEventListener('resize', this.updateScreenSize);
-    this.unsubGenreFollowersFetch && this.unsubGenreFollowersFetch();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -63,6 +63,12 @@ export default class Genre extends React.Component {
     if (this.props.user !== prevProps.user) {
       this.fetchFollowers();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    window.removeEventListener('resize', this.updateScreenSize);
+    this.unsubGenreFollowersFetch && this.unsubGenreFollowersFetch();
   }
 
   updateScreenSize = () => this.setState({ screenSize: screenSize() });
@@ -79,7 +85,7 @@ export default class Genre extends React.Component {
           snap.forEach(follower => followers.push(follower.data()));
           this.setState({ followers, follow: user && followers.filter(follower => follower.uid === user.uid).length > 0 });
         } else {
-          this.setState({ followers: 0, follow: false });
+          this.setState({ followers: null, follow: false });
         }
       });
     }
@@ -116,16 +122,12 @@ export default class Genre extends React.Component {
               if (this._isMounted) {
                 this.setState({ items, lastVisible: snap.docs[snap.docs.length-1], loading: false, page: 1 });
               }
-            } else {
-              if (this._isMounted) {
-                this.setState({ items: null, count: 0, loading: false, page: 1 });
-              }
+            } else if (this._isMounted) {
+              this.setState({ items: null, count: 0, loading: false, page: 1 });
             }
           }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
-        } else {
-          if (this._isMounted) {
-            this.setState({ genre: null, loading: false, followers: 0, follow: false });
-          }
+        } else if (this._isMounted) {
+          this.setState({ genre: null, loading: false, followers: null, follow: false });
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`No gid`);
@@ -150,15 +152,13 @@ export default class Genre extends React.Component {
               lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
             }));
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ 
-              items: null,
-              loading: false,
-              page: null,
-              lastVisible: null
-            });
-          }
+        } else if (this._isMounted) {
+          this.setState({ 
+            items: null,
+            loading: false,
+            page: null,
+            lastVisible: null
+          });
         }
       }).catch(err => {
         if (this._isMounted) {
@@ -246,18 +246,18 @@ export default class Genre extends React.Component {
           {seo.image && <meta property="og:image" content={seo.image} />}
           <meta property="books:canonical_name" content={seo.canonical_name} />
         </Helmet>
-        <div className="card dark" style={{ background: !isScrollable ? `linear-gradient(to bottom, ${genreColor} 0%, rgb(var(--cardBg)) 70%)` : null }}>
+        <div className="card dark" style={{ background: !isScrollable ? `linear-gradient(to bottom, ${genreColor} 0%, rgb(var(--cardBg)) 70%)` : null, }}>
           <div className="row">
             <div className="col">
               <h2 className="title"><span className="primary-text hide-sm">Genere:</span> {denormURL(match.params.gid)}</h2>
             </div>
             <div className="col-auto text-right">
-              <Link to="/genres" className="btn sm flat" style={{color: !isScrollable ? 'white' : ''}}>Vedi tutti</Link>
+              <Link to="/genres" className="btn sm flat" style={{ color: !isScrollable ? 'white' : '', }}>Vedi tutti</Link>
             </div>
           </div>
           <Genres scrollable={isScrollable} />
           {genre && genre.description && 
-            <div className="info-row text" style={{ marginTop: '.5rem' }}>
+            <div className="info-row text" style={{ marginTop: '.5rem', }}>
               <MinifiableText text={genre.description} maxChars={isTextMinified ? 300 : 500} textMinified={isTextMinified} />
             </div>
           }
@@ -269,27 +269,14 @@ export default class Genre extends React.Component {
                 onClick={this.onFollow} 
                 disabled={!user || !isEditor}>
                 {follow ? 
-                  <React.Fragment>
+                  <>
                     <span className="hide-on-hover">{icon.check()} Segui</span>
                     <span className="show-on-hover">Smetti</span>
-                  </React.Fragment> 
+                  </> 
                 : <span>{icon.plus()} Segui</span> }
               </button>
               <div className="counter last inline">
-                {followers ? followers.length > 2 && followers.length < 100 ? 
-                  <React.Fragment>
-                    <div className="bubble-group inline">
-                      {followers.slice(0,3).map(item => (
-                        <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
-                          <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
-                            {!item.photoURL && getInitials(item.displayName)}
-                          </Avatar>
-                        </Link>
-                      ))}
-                    </div>
-                    <b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span>
-                  </React.Fragment>
-                : <><b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span></> : ''}
+                <Bubbles limit={3} items={followers} />
               </div>
             </div>
           }

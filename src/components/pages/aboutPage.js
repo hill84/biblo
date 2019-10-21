@@ -5,7 +5,7 @@ import { app } from '../../config/shared';
 import booksRowImage from '../../images/books-row.png';
 import withScrollToTop from '../hocs/withScrollToTop';
 
-const AboutPage = props => (
+const AboutPage = () => (
   <div id="AboutPageComponent" className="reveal fadeIn slideUp">
     <Helmet>
       <title>{app.name} | Chi siamo</title>
@@ -18,7 +18,7 @@ const AboutPage = props => (
         <p>La nostra missione &egrave; aiutare i lettori a trovare e condividere i libri che amano, diffondendo la passione per la lettura e la letteratura.</p>
         
         <div className="pad-v hide-sm">
-          <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})` }} />
+          <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})`, }} />
         </div>
 
         <h2>Alcune cose che puoi fare su {app.name}</h2>
@@ -28,7 +28,7 @@ const AboutPage = props => (
         <br />
 
         <h2>Alcune considerazioni sul progetto</h2>
-        <p>{app.name} &egrave; un progetto personale di <a href="http://www.giuseppegerbino.com" target="_blank" rel="noopener noreferrer">Giuseppe Gerbino</a>, nato dalla sua passione per i libri e sviluppato nel tempo libero, autofinaziandosi. Il progetto &egrave; attualmente in fase "beta", cio&egrave; aperto al pubblico ma ancora in una versione non definitiva: in questa fase il contributo degli utenti &egrave; indispensabile per testare l'applicazione, trovare e segnalare malfunzionamenti e bug e fornire commenti o pareri per migliorare l'esperienza utente. Se quindi {app.name} ti piace e vuoi partecipare alla sua crescita puoi inviare i tuoi messaggi all'indirizzo <a href={`mailto:${app.email}?subject=Biblo: commento utente`}>{app.email}</a> o contribuire con una <Link to="/donations">donazione</Link> (bastano pochi euro).</p>
+        <p>{app.name} &egrave; un progetto personale di <a href="http://www.giuseppegerbino.com" target="_blank" rel="noopener noreferrer">Giuseppe Gerbino</a>, nato dalla sua passione per i libri e sviluppato nel tempo libero, autofinaziandosi. Il progetto &egrave; attualmente in fase &quot;beta&quot;, cio&egrave; aperto al pubblico ma ancora in una versione non definitiva: in questa fase il contributo degli utenti &egrave; indispensabile per testare l&apos;applicazione, trovare e segnalare malfunzionamenti e bug e fornire commenti o pareri per migliorare l&apos;esperienza utente. Se quindi {app.name} ti piace e vuoi partecipare alla sua crescita puoi inviare i tuoi messaggi all&apos;indirizzo <a href={`mailto:${app.email}?subject=Biblo: commento utente`}>{app.email}</a> o contribuire con una <Link to="/donations">donazione</Link> (bastano pochi euro).</p>
       </div>
     </div>
   </div>

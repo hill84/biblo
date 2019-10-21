@@ -16,7 +16,7 @@ const config = {
 
 if (!firebase.apps.length) firebase.initializeApp(config);
 
-const perf = firebase.performance();
+firebase.performance();
 
 /* AUTH */
 export const GoogleAuthProvider = firebase.auth && new firebase.auth.GoogleAuthProvider();
@@ -35,7 +35,7 @@ auth.onIdTokenChanged(user => user ? authid = ((auth.currentUser && auth.current
 /* FIRESTORE */
 const db = firebase.firestore();
 db.settings({/* my settings... */});
-export const FieldValue = firebase.firestore.FieldValue;
+export const { FieldValue } = firebase.firestore;
 export const timestamp = FieldValue.serverTimestamp();
 // export const timestamp = firebase.ServerValue;
 

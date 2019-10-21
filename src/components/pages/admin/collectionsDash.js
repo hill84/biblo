@@ -9,14 +9,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { handleFirestoreError, normURL } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, /* userType */ } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
 export default class collectionsDash extends React.Component {
  	state = {
-    user: this.props.user,
+    // user: this.props.user,
     count: 0,
     desc: false,
     isOpenDeleteDialog: false,
@@ -37,18 +37,12 @@ export default class collectionsDash extends React.Component {
 
 	static propTypes = {
     openSnackbar: funcType.isRequired,
-    user: userType
+    // user: userType
   } 
 
 	componentDidMount() { 
     this._isMounted = true;
     this.fetch();
-  }
-
-	componentWillUnmount() {
-    this._isMounted = false;
-    this.timer && clearTimeout(this.timer);
-    this.unsubCollectionsFetch && this.unsubCollectionsFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -56,6 +50,12 @@ export default class collectionsDash extends React.Component {
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.timer && clearTimeout(this.timer);
+    this.unsubCollectionsFetch && this.unsubCollectionsFetch();
   }
     
   fetch = e => {
@@ -101,10 +101,8 @@ export default class collectionsDash extends React.Component {
           if (this._isMounted) {
             this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ count: 0 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ count: 0 });
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
@@ -201,7 +199,7 @@ export default class collectionsDash extends React.Component {
 
 		return (
 			<div className="container" id="collectionsDashComponent">
-        <div className="card dark" style={{ minHeight: 200 }}>
+        <div className="card dark" style={{ minHeight: 200, }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
@@ -233,7 +231,7 @@ export default class collectionsDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <React.Fragment>
+            <>
               <ul className="table dense nolist font-sm">
                 <li className="labels">
                   <div className="row">
@@ -250,7 +248,7 @@ export default class collectionsDash extends React.Component {
                 limit={limitBy[limitByIndex]}
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
 
@@ -260,7 +258,7 @@ export default class collectionsDash extends React.Component {
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogContent>
             <DialogContentText id="remove-dialog-description">
               Ricordati di rimuovere il riferimento alla collezione nei singoli libri.

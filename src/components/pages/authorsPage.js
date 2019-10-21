@@ -6,7 +6,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError, normURL } from '../../config/shared';
 import { funcType, numberType } from '../../config/types';
 import PaginationControls from '../paginationControls';
@@ -17,7 +17,7 @@ export default class AuthorsPage extends React.Component {
     count: 0,
     desc: false,
     lastVisible: null,
-    limit: this.props.limit || 27,
+    limit: this.props.limit,
     loading: true,
     orderBy: [ 
       { type: 'photoURL', label: 'Foto' },
@@ -34,13 +34,13 @@ export default class AuthorsPage extends React.Component {
     openSnackbar: funcType.isRequired
   }
 
+  static defaultProps = {
+    limit: 27
+  }
+
   componentDidMount() {
     this._isMounted = true;
     this.fetch();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -50,6 +50,10 @@ export default class AuthorsPage extends React.Component {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = e => { 
@@ -79,10 +83,8 @@ export default class AuthorsPage extends React.Component {
               page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
             }));
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false, page: 1 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false, page: 1 });
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
@@ -129,7 +131,7 @@ export default class AuthorsPage extends React.Component {
         </Helmet>
         <div className="card dark">
           {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : !items ? <div className="empty text-center">Nessun elemento</div> :
-            <React.Fragment>
+            <>
               <div className="head nav" role="navigation">
                 <div className="row">
                   <div className="col">
@@ -151,7 +153,7 @@ export default class AuthorsPage extends React.Component {
 
               <div className={`bubbles boxed shelf-row avatars-row ${loading ? 'skltns-row' : 'hoverable-items'}`}>
                 {items.map((item, index) => 
-                  <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{animationDelay: `${index/20}s`}} className="bubble">
+                  <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{ animationDelay: `${index/20}s`, }} className="bubble">
                     <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>
                       {!item.photoURL && getInitials(item.displayName)}
                     </Avatar>
@@ -168,7 +170,7 @@ export default class AuthorsPage extends React.Component {
                 // oneWay
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
       </div>

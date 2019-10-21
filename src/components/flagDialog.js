@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { boolType, funcType, objectType, stringType } from '../config/types';
 
@@ -16,13 +17,17 @@ export default class FlagDialog extends React.Component {
   }
 
   static propTypes = {
+    loading: PropTypes.bool,
     onClose: funcType.isRequired,
+    onFlag: funcType.isRequired,
     open: boolType.isRequired,
     TransitionComponent: objectType,
     value: stringType
   }
 
   static defaultProps = {
+    loading: false,
+    TransitionComponent: null,
     value: ''
   }
 

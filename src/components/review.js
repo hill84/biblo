@@ -8,13 +8,15 @@ import Grow from '@material-ui/core/Grow';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
-import { reviewType, stringType, userType, funcType } from '../config/types';
+import { funcType, reviewType, stringType, userType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
 import Rating from './rating';
+
+const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 export default class Review extends React.Component {
   state = {
@@ -29,7 +31,14 @@ export default class Review extends React.Component {
     bid: stringType,
     openSnackbar: funcType.isRequired,
     review: reviewType.isRequired,
-    user: userType
+    user: userType,
+    uid: stringType
+  }
+
+  static defaultProps = {
+    bid: null,
+    user: null,
+    uid: null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -48,7 +57,7 @@ export default class Review extends React.Component {
   onThumbChange = () => {
     const { like } = this.state;
     const { bid, openSnackbar, review, user } = this.props;
-    let likes = review.likes;
+    let { likes } = review;
     
     if (this._isMounted) {
       if (like) {
@@ -150,7 +159,7 @@ export default class Review extends React.Component {
     const flaggedByUser = (review.flag && review.flag.flaggedByUid) === (user && user.uid);
 
     return (
-      <React.Fragment>
+      <>
         <div className={`${isAuthenticated() && isOwner ? 'own review' : 'review'} ${(isAdmin || flaggedByUser) && review.flag ? `flagged ${review.flag.value}` : ''}`}>
           <div className="row">
             <div className="col-auto left">
@@ -215,9 +224,9 @@ export default class Review extends React.Component {
                       </button>
                     </div> */}
                     {isAuthenticated() && isEditor && !isOwner && 
-                      <React.Fragment>
+                      <>
                         <div className="counter">
-                          <button type="button" className="btn sm flat" disabled={true} onClick={this.onAddResponse}>
+                          <button type="button" className="btn sm flat" disabled onClick={this.onAddResponse}>
                             <span className="show-sm">{icon.pencil()}</span> <span className="hide-sm">Rispondi</span>
                           </button>
                         </div>
@@ -226,7 +235,7 @@ export default class Review extends React.Component {
                             <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
                           </button>
                         </div>
-                      </React.Fragment>
+                      </>
                     }
                     {isAuthenticated() && isEditor && (isOwner || isAdmin) && 
                       <div className="counter show-on-hover">
@@ -251,7 +260,7 @@ export default class Review extends React.Component {
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">
-            Procedere con l'eliminazione?
+            Procedere con l&apos;eliminazione?
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
@@ -259,8 +268,8 @@ export default class Review extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">
-            <button className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
+            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
           </DialogActions>
         </Dialog>
 
@@ -272,9 +281,7 @@ export default class Review extends React.Component {
           TransitionComponent={Transition} 
           value={flaggedByUser ? review.flag && review.flag.value : ''}
         />
-      </React.Fragment>
+      </>
     );
   }
 }
-
-const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );

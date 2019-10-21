@@ -5,6 +5,7 @@ import { challengeRef, userChallengesRef } from '../../config/firebase';
 import { app, booksPerRow } from '../../config/shared';
 import Cover from '../cover';
 import { skltn_shelfRow } from '../skeletons';
+import { userType } from '../../config/types';
 
 class Challenge extends React.Component {
   state = {
@@ -12,8 +13,16 @@ class Challenge extends React.Component {
     challenge: null,
     desc: true,
     loading: false,
-    activeUserChallenge: null,
+    // activeUserChallenge: null,
     userChallenges: null
+  }
+
+  static propTypes = {
+    user: userType
+  }
+
+  static defaultProps = {
+    user: null
   }
 
   componentDidMount() {
@@ -21,14 +30,14 @@ class Challenge extends React.Component {
     this.fetch();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   componentDidUpdate(prevProps) {
     if (prevProps.user !== this.props.user) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => {
@@ -66,10 +75,8 @@ class Challenge extends React.Component {
               if (this._isMounted) {
                 this.setState({ userChallenges });
               }
-            } else {
-              if (this._isMounted) {
-                this.setState({ challenge: null, userChallenges: null, loading: false });
-              }
+            } else if (this._isMounted) {
+              this.setState({ challenge: null, userChallenges: null, loading: false });
             }
           }).catch(err => {
             console.warn(err);
@@ -115,9 +122,9 @@ class Challenge extends React.Component {
                 <div className="col-4 col-sm-4 col-md-3 col-lg-2">
                   <div className="row">
                     <div className="col">
-                      <div className="stepper-wrapper" style={{ marginTop: 9 }}>
+                      <div className="stepper-wrapper" style={{ marginTop: 9, }}>
                         <div className="stepper">
-                          <div className="bar inprogress" style={{width: `${progress(userChallenge.books)}%`}}></div>
+                          <div className="bar inprogress" style={{ width: `${progress(userChallenge.books)}%`, }} />
                         </div>
                       </div>
                     </div>
@@ -146,7 +153,7 @@ class Challenge extends React.Component {
         </div>
 
         {!loading && userChallenges && 
-          <React.Fragment>
+          <>
             <h2>Sfide completate</h2>
             {userChallenges.map((item, i) =>
               <div className="card dark card-fullwidth-sm" key={item.cid || i}>
@@ -162,7 +169,7 @@ class Challenge extends React.Component {
                 </div>
               </div>
             )}
-          </React.Fragment>
+          </>
         }
       </div>
     );

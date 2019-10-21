@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
-import { funcType, objectType } from '../../config/types';
+import { funcType, locationType } from '../../config/types';
 import LoginForm from '../forms/loginForm';
 
 const Login = React.forwardRef((props, ref) => (
@@ -21,7 +21,7 @@ const Login = React.forwardRef((props, ref) => (
 
 export default Login;
 
-Login.protoTypes = {
-  location: objectType.isRequired,
+Login.propTypes = {
+  location: locationType.isRequired,
   openSnackbar: funcType.isRequired
 }

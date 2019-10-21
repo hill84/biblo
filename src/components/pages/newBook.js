@@ -1,8 +1,8 @@
 import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { darkTheme } from '../../config/themes';
-import { funcType, userType } from '../../config/types';
+import { funcType, historyType, locationType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
@@ -12,8 +12,17 @@ export default class NewBook extends React.Component {
 	}
 
 	static propTypes = {
+    history: historyType,
+    location: locationType,
     openSnackbar: funcType,
 		user: userType
+  }
+
+  static defaultProps = {
+    history: null,
+    location: null,
+    openSnackbar: null,
+    user: null
   }
   
   componentDidMount() {
@@ -28,7 +37,7 @@ export default class NewBook extends React.Component {
 	
 	render() {
 		const { book } = this.state;
-		const { history,  location, openSnackbar, user } = this.props;
+		const { history, location, openSnackbar, user } = this.props;
 
 		return (
 			<div className="container" id="newBookComponent">

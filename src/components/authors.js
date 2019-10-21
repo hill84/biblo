@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../config/firebase';
 import { numberType, boolType } from '../config/types';
 import { getInitials, normURL } from '../config/shared';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 import { skltn_bubbleRow } from './skeletons';
 
 export default class Authors extends React.Component {
@@ -12,7 +12,7 @@ export default class Authors extends React.Component {
     items: null,
     count: 0,
     desc: true,
-    limit: this.props.limit || 10,
+    limit: this.props.limit,
     loading: true,
     page: 1,
     pagination: false,
@@ -26,7 +26,9 @@ export default class Authors extends React.Component {
   }
 
   static defaultProps = {
-    inView: true
+    inView: true,
+    limit: 10,
+    size: 80
   }
 
   componentDidMount() {
@@ -34,15 +36,15 @@ export default class Authors extends React.Component {
     this.fetch();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { limit, inView } = this.props;
     if (inView !== prevProps.inView || limit !== prevState.limit) {
       this.fetch();
     } 
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => { 
@@ -56,7 +58,7 @@ export default class Authors extends React.Component {
           snap.forEach(item => items.push(item.data()));
           if (this._isMounted) {
             this.setState({ 
-              //count: snap.docs.length,
+              // count: snap.docs.length,
               items,
               loading: false
             });
@@ -68,14 +70,12 @@ export default class Authors extends React.Component {
               }
             }
           }).catch(err => console.warn(err));
-        } else {
-          if (this._isMounted) {
-            this.setState({ 
-              count: 0,
-              items: null,
-              loading: false
-            });
-          }
+        } else if (this._isMounted) {
+          this.setState({ 
+            count: 0,
+            items: null,
+            loading: false
+          });
         }
       }).catch(err => console.warn(err));
     }
@@ -90,7 +90,7 @@ export default class Authors extends React.Component {
     }
 
 		return (
-      <React.Fragment>
+      <>
         <div className="head nav" role="navigation">
           <span className="counter last title primary-text">Autori</span> {items && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
           {!loading && count > 0 &&
@@ -107,7 +107,7 @@ export default class Authors extends React.Component {
                 </button>
               }
               {pagination && count > limit &&
-                <React.Fragment>
+                <>
                   <button 
                     type="button"
                     disabled={page < 2 && 'disabled'} 
@@ -122,7 +122,7 @@ export default class Authors extends React.Component {
                     onClick={() => this.fetch('next')} title="successivo">
                     {icon.chevronRight()}
                   </button>
-                </React.Fragment>
+                </>
               }
             </div>
           }
@@ -131,7 +131,7 @@ export default class Authors extends React.Component {
           {loading ? skltn_bubbleRow :
             <div className="shelf-row hoverable-items avatars-row">
               {items.map((item, index) => 
-                <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{'--avatarSize': size, animationDelay: `${index/10}s`}} className="bubble col">
+                <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{ '--avatarSize': `${size}px`, animationDelay: `${index/10}s`, }} className="bubble col">
                   <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
                   <div className="title">{item.displayName}</div>
                 </Link>
@@ -139,7 +139,7 @@ export default class Authors extends React.Component {
             </div>
           }
         </div>
-      </React.Fragment>
+      </>
 		);
 	}
 }

@@ -5,9 +5,9 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { notesRef, notificationsRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError, timeSince } from '../../config/shared';
-import { funcType } from '../../config/types';
+import { funcType, userType } from '../../config/types';
 import PaginationControls from '../paginationControls';
 
 export default class Notifications extends React.Component {
@@ -29,7 +29,12 @@ export default class Notifications extends React.Component {
   }
 
   static propTypes = {
-    openSnackbar: funcType.isRequired
+    openSnackbar: funcType.isRequired,
+    user: userType
+  }
+
+  static defaultProps = {
+    user: null
   }
 
   componentDidMount() {
@@ -37,15 +42,15 @@ export default class Notifications extends React.Component {
     this.fetch();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { desc, limit, orderByIndex } = this.state;
     if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => {
@@ -176,8 +181,8 @@ export default class Notifications extends React.Component {
               </div>
             </div>
             <div className="shelf notes">
-              {items && items.map((item, i) => (
-                <MenuItem key={item.nid} style={{ animation: 'none' }}> 
+              {items && items.map(item => (
+                <MenuItem key={item.nid} style={{ animation: 'none', }}> 
                   <div className="row">
                     <div className="col-auto">
                       {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?

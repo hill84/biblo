@@ -11,10 +11,13 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import { authid, reviewerRef, userBookRef } from '../config/firebase';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, timeSince } from '../config/shared';
-import { funcType, stringType, userBookType } from '../config/types';
+import { funcType, stringType, userBookType, userType } from '../config/types';
 import Rating from './rating';
+import Overlay from './overlay';
+
+const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 export default class UserReview extends React.Component {
 	state = {
@@ -45,11 +48,17 @@ export default class UserReview extends React.Component {
   }
 
   static propTypes = {
-    addReview: funcType.isRequired,
+    // addReview: funcType.isRequired,
     bid: stringType.isRequired,
     openSnackbar: funcType.isRequired,
-    removeReview: funcType.isRequired,
+    // removeReview: funcType.isRequired,
+    user: userType,
     userBook: userBookType
+  }
+
+  static defaultProps = {
+    user: null,
+    userBook: null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -64,11 +73,6 @@ export default class UserReview extends React.Component {
     this.fetchUserReview();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubReviewerFetch && this.unsubReviewerFetch();
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { bid, changes, isEditing, user } = this.state;
     if (this._isMounted) {
@@ -76,6 +80,11 @@ export default class UserReview extends React.Component {
         this.fetchUserReview();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubReviewerFetch && this.unsubReviewerFetch();
   }
 
   fetchUserReview = () => {
@@ -91,18 +100,16 @@ export default class UserReview extends React.Component {
         if (this._isMounted) {
           this.setState({ review: snap.data() });
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({ review: {
-            ...review,
-            created_num: 0,
-            likes: [],
-            rating_num: 0,
-            text: '',
-            title: ''
-          }});
-        }
-      };
+      } else if (this._isMounted) {
+        this.setState({ review: {
+          ...review,
+          created_num: 0,
+          likes: [],
+          rating_num: 0,
+          text: '',
+          title: ''
+        }});
+      }
       if (this._isMounted) this.setState({ loading: false, changes: false });
     });
   }
@@ -155,9 +162,7 @@ export default class UserReview extends React.Component {
           }
         } else console.warn(`No bid`);
       }
-    } else {
-      if (this._isMounted) this.setState({ isEditing: false });
-    }
+    } else if (this._isMounted) this.setState({ isEditing: false });
   }
 
   onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
@@ -206,15 +211,17 @@ export default class UserReview extends React.Component {
   }
 
   onChangeMaxChars = e => {
+    e.persist();
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
+    
     if (this._isMounted) {
-      this.setState({
-        review: { ...this.state.review, [e.target.name]: e.target.value },
-        errors: { ...this.state.errors, [e.target.name]: null } , 
-        [leftChars]: this.state[maxChars] - e.target.value.length, 
+      this.setState(prevState => ({
+        review: { ...prevState.review, [e.target.name]: e.target.value },
+        errors: { ...prevState.errors, [e.target.name]: null } , 
+        [leftChars]: prevState[maxChars] - e.target.value.length, 
         changes: true
-      });
+      }));
     } 
   };
 
@@ -240,8 +247,8 @@ export default class UserReview extends React.Component {
     if (!user || !userBook) return null;
 
     return (
-      <React.Fragment>
-        {isEditing && <div className="overlay" onClick={this.onExitEditing} />}
+      <>
+        {isEditing && <Overlay onClick={this.onExitEditing} />}
         <div className={`card light user-review ${isEditing ? 'edit-review' : 'primary'}`}>
           {!loading &&        
             !isEditing ? (
@@ -344,7 +351,7 @@ export default class UserReview extends React.Component {
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">
-            Procedere con l'eliminazione?
+            Procedere con l&apos;eliminazione?
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
@@ -352,13 +359,11 @@ export default class UserReview extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">
-            <button className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
+            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
           </DialogActions>
         </Dialog>
-      </React.Fragment>
+      </>
     );
   }
 }
-
-const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );

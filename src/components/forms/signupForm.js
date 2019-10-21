@@ -11,7 +11,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
@@ -58,13 +58,35 @@ export default class SignupForm extends React.Component {
   toggleCheckbox = name => event => this.setState({ [name]: event.target.checked });
 
 	onChange = e => {
+    e.persist();
+
     if (this._isMounted) {
-      this.setState({ 
-        data: { ...this.state.data, [e.target.name]: e.target.value }, 
-        errors: { ...this.state.errors, [e.target.name]: null }
-      });
+      this.setState(prevState => ({ 
+        data: { ...prevState.data, [e.target.name]: e.target.value }, 
+        errors: { ...prevState.errors, [e.target.name]: null }
+      }));
     }
-	};
+  };
+  
+	validate = data => {
+    const errors = {};
+    if (!this.state.checkedTerms) {
+      errors.checkedTerms = "Spunta la casella obbligatoria"; 
+    }
+		if (!data.displayName) { 
+      errors.displayName = "Inserisci un nome utente"; 
+    } else if (data.displayName.toLowerCase() === 'admin' || data.displayName.toLowerCase() === 'amministratore' || data.displayName.toLowerCase() === 'biblo.space') {
+      errors.displayName = "Nome utente non permesso"; 
+      // TODO: check further forbidden names
+    }
+		if (data.email) { 
+			if (!isEmail(data.email)) errors.email = "Email non valida";
+		} else { errors.email = "Inserisci un indirizzo email"; }
+		if (!data.password) { errors.password = "Inserisci una password"; 
+    } else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
+    // TODO: check password strength
+		return errors;
+  };
 
 	onSubmit = e => {
     e.preventDefault();
@@ -72,11 +94,19 @@ export default class SignupForm extends React.Component {
     const { openSnackbar } = this.props;
     const errors = this.validate(data);
     
-    if (this._isMounted) this.setState({ authError: '', loading: true, errors });
+    if (this._isMounted) this.setState({ authError: '', errors });
     
 		if (Object.keys(errors).length === 0) {
+      if (this._isMounted) this.setState({ loading: true });
       auth.createUserWithEmailAndPassword(data.email, data.password).then(user => {
-        if (!user) console.warn('No user is signed in');
+        if (!user) {
+          if (this._isMounted) {
+            this.setState({
+              authError: 'No user is signed in',
+              loading: false
+            });
+          }
+        }
       }).catch(err => {
         if (this._isMounted) {
           this.setState({
@@ -118,26 +148,6 @@ export default class SignupForm extends React.Component {
 		}
 	};
 
-	validate = data => {
-    const errors = {};
-    if (!this.state.checkedTerms) {
-      errors.checkedTerms = "Spunta la casella obbligatoria"; 
-    }
-		if (!data.displayName) { 
-      errors.displayName = "Inserisci un nome utente"; 
-    } else if (data.displayName.toLowerCase() === 'admin' || data.displayName.toLowerCase() === 'amministratore' || data.displayName.toLowerCase() === 'biblo.space') {
-      errors.displayName = "Nome utente non permesso"; 
-      // TODO: check further forbidden names
-    }
-		if (data.email) { 
-			if (!isEmail(data.email)) errors.email = "Email non valida";
-		} else { errors.email = "Inserisci un indirizzo email"; }
-		if (!data.password) { errors.password = "Inserisci una password"; 
-    } else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
-    // TODO: check password strength
-		return errors;
-  };
-  
   handleClickShowPassword = () => {
     if (this._isMounted) {
       this.setState(prevState => ({ showPassword: !prevState.showPassword }));
@@ -153,21 +163,21 @@ export default class SignupForm extends React.Component {
 		if (redirectTo) return <Redirect to={redirectTo} />
 
 		return (
-			<React.Fragment>
+			<>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         <FormControlLabel 
           className="text-left" 
-          style={{ marginRight: 0 }} 
+          style={{ marginRight: 0, }} 
           error={Boolean(errors.checkedTerms)}
           required
           label={
-          <span style={{ fontSize: '0.875rem' }}>Accetto i <Link to="/terms">Termini</Link> e confermo la presa visione della <Link to="/privacy">Privacy policy</Link> di {app.name}</span>
+          <span style={{ fontSize: '.87rem', }}>Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}</span>
         } control={
           <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
         } />
         {errors.checkedTerms && <FormHelperText className="message error">{errors.checkedTerms}</FormHelperText>}
         
-        <form onSubmit={this.onSubmit} noValidate style={{ marginTop: 20 }}>
+        <form onSubmit={this.onSubmit} noValidate style={{ marginTop: 20, }}>
           <SocialAuth disabled={!checkedTerms} openSnackbar={openSnackbar} />
           <div className="form-group">
             <FormControl className="input-field" margin="normal" fullWidth>
@@ -235,7 +245,7 @@ export default class SignupForm extends React.Component {
           </div>
         </form>
       
-			</React.Fragment>
+			</>
 		);
 	}
 }

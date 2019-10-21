@@ -9,9 +9,10 @@ import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
 import { authid, userBookRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { handleFirestoreError } from '../../config/shared';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
+import Overlay from '../overlay';
 import Stepper from '../stepper';
 
 export default class readingStateForm extends React.Component {
@@ -44,17 +45,13 @@ export default class readingStateForm extends React.Component {
       if (props.readingState.state_num !== state.state_num) { return { prevProps: props, state_num: props.readingState.state_num }}
       if (props.readingState.start_num !== state.start_num) { return { prevProps: props, start_num: props.readingState.start_num }}
       if (props.readingState.end_num !== state.end_num) { return { prevProps: props, end_num: props.readingState.end_num }}
-      if (props.readingState.progress_num !== state.progress_num) { return { prevProps: props, progress_num: props.progress_num }}
+      if (props.readingState.progress_num !== state.progress_num) { return { prevProps: props, progress_num: props.readingState.progress_num }}
     }
     return null;
   }
 
   componentDidMount() {
     this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -81,6 +78,10 @@ export default class readingStateForm extends React.Component {
         this.setState({ changes: true });
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   onToggle = () => this.props.onToggle();
@@ -148,8 +149,8 @@ export default class readingStateForm extends React.Component {
     const { end_num, loading, progress_num, start_num, state_num, steps } = this.state;
 
 		return (
-      <React.Fragment>
-        <div className="overlay" onClick={this.onToggle} />
+      <>
+        <Overlay onClick={this.onToggle} />
         <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="content">
@@ -171,7 +172,7 @@ export default class readingStateForm extends React.Component {
               </div>
             </div>
             {(state_num === 2 || state_num === 3) &&
-              <React.Fragment>
+              <>
                 <div className="row">
                   <div className={`form-group ${state_num === 3 ? `col-6` : `col-12`}`}>
                     <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
@@ -234,14 +235,14 @@ export default class readingStateForm extends React.Component {
                     className="form-control" 
                   />
                 }
-              </React.Fragment>
+              </>
             }
           </div>
           <div className="footer no-gutter">
             <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
           </div>
         </div>
-      </React.Fragment>
+      </>
 		);
 	}
 }

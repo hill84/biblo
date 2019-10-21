@@ -5,9 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
-import { funcType, numberType, stringType } from '../config/types';
+import { funcType, /* numberType, */ stringType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -40,11 +40,17 @@ export default class Shelf extends React.Component {
   }
 
   static propTypes = {
-    limit: numberType,
+    // limit: numberType,
     openSnackbar: funcType.isRequired,
     shelf: stringType,
     luid: stringType,
     uid: stringType.isRequired
+  }
+
+  static defaultProps = {
+    // limit: null,
+    shelf: null,
+    luid: null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -59,13 +65,6 @@ export default class Shelf extends React.Component {
     window.addEventListener('resize', this.updateLimit);
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubUserBooksFullFetch && this.unsubUserBooksFullFetch();
-    this.unsubUserBooksFetch && this.unsubUserBooksFetch();
-    window.removeEventListener('resize', this.updateLimit);
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { /* coverview,  */desc, filterByIndex, limit, luid, orderByIndex, uid } = this.state;
     if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
@@ -75,6 +74,13 @@ export default class Shelf extends React.Component {
         this.setState({ isOwner: false });
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubUserBooksFullFetch && this.unsubUserBooksFullFetch();
+    this.unsubUserBooksFetch && this.unsubUserBooksFetch();
+    window.removeEventListener('resize', this.updateLimit);
   }
 
   updateLimit = () => this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
@@ -124,7 +130,7 @@ export default class Shelf extends React.Component {
                     const challenges = [];
                     snap.forEach(doc => challenges.push(doc.data()));
                     // UPDATE READING STATE OF CHALLENGE BOOKS 
-                    const cid = challenges[0].cid;
+                    const { cid } = challenges[0];
                     const cBooks = { ...challenges[0].books };
                     Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
                       fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
@@ -158,11 +164,11 @@ export default class Shelf extends React.Component {
   onChangeFilterBy = (e, i) => this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
 
   onChangeSelect = key => e => {
-		this.setState({ 
-      success: false, changes: true, 
-      user: { ...this.state.user, [key]: e.target.value },
-      errors: { ...this.state.errors, [key]: null } 
-    });
+		this.setState(prevState => ({ 
+      // success: false, changes: true, 
+      user: { ...prevState.user, [key]: e.target.value },
+      errors: { ...prevState.errors, [key]: null } 
+    }));
 	};
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
@@ -207,7 +213,7 @@ export default class Shelf extends React.Component {
     );
 
     return (
-      <React.Fragment>
+      <>
         <div className="shelf">
           <div className="collection hoverable-items">
             <div className="head nav">
@@ -222,7 +228,7 @@ export default class Shelf extends React.Component {
                     {coverview ? icon.viewSequential() : icon.viewGrid()}
                   </button>
                   {shelf === 'bookInShelf' && count > 0 && 
-                    <React.Fragment>
+                    <>
                       <button 
                         type="button"
                         className="btn sm flat counter" 
@@ -237,7 +243,7 @@ export default class Shelf extends React.Component {
                         onClose={this.onCloseFilterMenu}>
                         {filterByOptions}
                       </Menu>
-                    </React.Fragment>
+                    </>
                   }
                   <span className="counter last hide-sm">{count !== items.length ? `${items.length} di ` : ''}{count} libr{count !== 1 ? 'i' : 'o'}</span>
                 </div>
@@ -269,7 +275,7 @@ export default class Shelf extends React.Component {
               </div>
             </div>
             {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
-              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`} style={{ gridTemplateColumns: !count && '1fr' }}>
+              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`} style={{ gridTemplateColumns: !count && '1fr', }}>
                 {isOwner &&
                   <Link to="/books/add">
                     <div className="book empty">
@@ -291,7 +297,7 @@ export default class Shelf extends React.Component {
             }
           </div>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

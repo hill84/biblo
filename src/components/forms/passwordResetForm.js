@@ -7,6 +7,7 @@ import React from 'react';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import { handleFirestoreError } from '../../config/shared';
+import { funcType } from '../../config/types';
 
 export default class PasswordResetForm extends React.Component {
   state = {
@@ -14,6 +15,10 @@ export default class PasswordResetForm extends React.Component {
     loading: false,
     authError: null,
     errors: {}
+  }
+
+  static propTypes = {
+    openSnackbar: funcType.isRequired
   }
   
   componentDidMount() {
@@ -25,8 +30,12 @@ export default class PasswordResetForm extends React.Component {
   }
 
 	onChange = e => {
+    e.persist();
+
     if (this._isMounted) {
-      this.setState({ email: e.target.value, errors: { ...this.state.errors, [e.target.name]: null } });
+      this.setState(prevState => ({ 
+        email: e.target.value, errors: { ...prevState.errors, [e.target.name]: null } 
+      }));
     }
 	};
 

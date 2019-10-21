@@ -1,5 +1,6 @@
 import React from 'react';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
+import { childrenType } from '../config/types';
 
 export default class ErrorBoundary extends React.Component {
   state = { 
@@ -7,10 +8,18 @@ export default class ErrorBoundary extends React.Component {
     errorInfo: null 
   };
   
+  static propTypes = {
+    children: childrenType
+  }
+
+  static defaultProps = {
+    children: null
+  }
+
   componentDidCatch(error, errorInfo) {
     this.setState({
-      error: error,
-      errorInfo: errorInfo
+      error,
+      errorInfo
     });
     // You can also log error messages to an error reporting service here
   }
@@ -26,7 +35,7 @@ export default class ErrorBoundary extends React.Component {
               <div className="circle-icon popIn reveal">{icon.alert()}</div>
               <h1>Qualcosa &egrave; andato storto</h1>
               <p>Tranquillo, non &egrave; colpa tua... <a href="/">Torna alla home</a> per proseguire. Se hai bisogno di aiuto scrivi a <a href="mailto:info@biblo.space">info@biblo.space</a>.</p>
-              <details style={{ whiteSpace: 'pre-wrap' }}>
+              <details style={{ whiteSpace: 'pre-wrap', }}>
                 <summary className="btn flat rounded">Dettagli per nerd</summary>
                 <h2>{error && error.toString()}</h2>
                 {errorInfo.componentStack}

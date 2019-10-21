@@ -1,19 +1,28 @@
 import React from 'react';
-import { icon } from '../config/icons';
-import { numberType, funcType } from '../config/types';
+import icon from '../config/icons';
+import { funcType, numberType, stringType } from '../config/types';
 
 class Stepper extends React.Component {
   state = {
     activeStep: (this.props.percent && (this.props.steps || 4)/100 * (this.props.percent || 0)) || 0,
-    percent: this.props.percent || 0,
-    steps: this.props.steps || 4
+    percent: this.props.percent,
+    steps: this.props.steps
   }
 
   static propTypes = {
+    className: stringType,
     onNext: funcType,
     onPrev: funcType,
     percent: numberType,
     steps: numberType
+  }
+
+  static defaultProps = {
+    className: null,
+    onNext: null,
+    onPrev: null,
+    percent: 0,
+    steps: 4
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -27,10 +36,6 @@ class Stepper extends React.Component {
     this._isMounted = true;
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { activeStep, steps } = this.state;
 
@@ -39,6 +44,10 @@ class Stepper extends React.Component {
         this.setState({ percent: 100/steps * activeStep });
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   onNext = () => (this.props.onNext && this.props.onNext()) || this.setState(state => ({ activeStep: state.activeStep + 1 }));
@@ -61,7 +70,7 @@ class Stepper extends React.Component {
             <div className="label">Progresso: <b>{Math.round(percent)}%</b></div>
             <div className="stepper-wrapper">
               <div className="stepper">
-                <div className={`bar ${activeStep === steps ? 'success' : activeStep === 0 ? 'pristine' : 'inprogress'}`} style={{width: `${100/(steps/activeStep)}%`}}></div>
+                <div className={`bar ${activeStep === steps ? 'success' : activeStep === 0 ? 'pristine' : 'inprogress'}`} style={{ width: `${100/(steps/activeStep)}%`, }} />
               </div>
             </div>
           </div>

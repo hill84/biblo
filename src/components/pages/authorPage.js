@@ -1,15 +1,17 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
-import { icon } from '../../config/icons';
-import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
+import icon from '../../config/icons';
+import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
+import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import Cover from '../cover';
-import NoMatch from '../noMatch';
 import MinifiableText from '../minifiableText';
+import NoMatch from '../noMatch';
 import RandomQuote from '../randomQuote';
-import { Helmet } from 'react-helmet';
+import Bubbles from './bubbles';
 
 export default class AuthorPage extends React.Component {
   state = {
@@ -33,6 +35,21 @@ export default class AuthorPage extends React.Component {
     loadingBooks: true
   }
 
+  static propTypes = {
+    history: historyType,
+    location: locationType,
+    match: matchType,
+    openSnackbar: funcType.isRequired,
+    user: userType,
+  }
+
+  static defaultProps = {
+    history: null,
+    location: null,
+    match: null,
+    user: null
+  }
+
   componentDidMount() {
     this._isMounted = true;
     const { author } = this.state;
@@ -42,11 +59,9 @@ export default class AuthorPage extends React.Component {
         if (this._isMounted) {
           this.setState({ author: snap.data(), loading: false }, () => this.fetchFollowers());
         }
-			} else {
-        if (this._isMounted) {
-          this.setState({ loading: false }, () => this.fetchFollowers());
-        }
-			}
+			} else if (this._isMounted) {
+        this.setState({ loading: false }, () => this.fetchFollowers());
+      }
     }).catch(error => console.warn(error));
 
     booksRef.where(`authors.${author.displayName}`, '==', true).get().then(snap => {
@@ -57,15 +72,13 @@ export default class AuthorPage extends React.Component {
         if (this._isMounted) {
           this.setState({ books, loadingBooks: false });
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({ books: null, loadingBooks: false });
-        }
+      } else if (this._isMounted) {
+        this.setState({ books: null, loadingBooks: false });
       }
     }).catch(error => console.warn(error));
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, /* prevState */) {
     if (this.props.user !== prevProps.user) {
       this.fetchFollowers();
     }
@@ -90,7 +103,7 @@ export default class AuthorPage extends React.Component {
           snap.forEach(follower => followers.push(follower.data()));
           this.setState({ followers, follow: user && followers.filter(follower => follower.uid === user.uid).length > 0 });
         } else {
-          this.setState({ followers: 0, follow: false });
+          this.setState({ followers: null, follow: false });
         }
       });
     }
@@ -121,7 +134,7 @@ export default class AuthorPage extends React.Component {
     const { history, location, user } = this.props;
 
     const isEditor = hasRole(user, 'editor');
-    const covers = books && books.map((book, index) => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
+    const covers = books && books.map(book => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
     if (loading) {
       return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -175,31 +188,17 @@ export default class AuthorPage extends React.Component {
                     onClick={this.onFollow} 
                     disabled={!user || !isEditor}>
                     {follow ? 
-                      <React.Fragment>
+                      <>
                         <span className="hide-on-hover">{icon.check()} Segui</span>
                         <span className="show-on-hover">Smetti</span>
-                      </React.Fragment> 
+                      </> 
                     : <span>{icon.plus()} Segui</span> }
                   </button>
                   <div className="counter last inline">
-                    {followers ? followers.length > 2 && followers.length < 100 ? 
-                      <React.Fragment>
-                        <div className="bubble-group inline">
-                          {followers.slice(0,3).map(item => (
-                            <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
-                              <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
-                                {!item.photoURL && getInitials(item.displayName)}
-                              </Avatar>
-                            </Link>
-                          ))}
-                        </div>
-                        <b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span>
-                      </React.Fragment>
-                    : <><b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span></> : ''}
+                    <Bubbles limit={3} items={followers} />
                   </div>
                 </div>
               }
-
             </div>
           </div>
         </div>
@@ -207,7 +206,7 @@ export default class AuthorPage extends React.Component {
         {loadingBooks ? 
           <div aria-hidden="true" className="loader relative"><CircularProgress /></div>
         :
-          <React.Fragment>
+          <>
             {books ? 
               <div className="card light">
                 <div className="shelf">
@@ -238,7 +237,7 @@ export default class AuthorPage extends React.Component {
                 <Link to="/new-book" className="btn primary rounded">Aggiungi libro</Link>
               </div>
             }
-          </React.Fragment>
+          </>
         }
         <RandomQuote author={author.displayName} skeleton={false} className="card flat fadeIn slideUp reveal" />
       </div>

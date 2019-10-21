@@ -1,5 +1,5 @@
 // install the following packages:
-// npm install --save-dev eslint prettier eslint-config-airbnb@^16.1.0 eslint-config-prettier eslint-plugin-prettier eslint-plugin-react eslint-plugin-import eslint-plugin-jsx-a11y@^6.0.2
+// npm install --save-dev eslint prettier eslint-config-airbnb eslint-config-prettier eslint-plugin-prettier eslint-plugin-react eslint-plugin-import eslint-plugin-jsx-a11y
 
 {
 	"extends": ["airbnb", "prettier", "prettier/react"],
@@ -18,21 +18,33 @@
 		"node": true
 	},
 	"rules": {
-		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+		"camelcase": "off",
+		"declaration-block-trailing-semicolon": "off",
+    "import/prefer-default-export" : "warn",
 		"jsx-a11y/anchor-is-valid": ["error", { "specialLink": ["to"] }],
-    "linebreak-style": ["error", "windows"],
+		"linebreak-style": ["off", "windows"],
+    "lines-between-class-members" : "off",
+    "no-console" : "off",
     "no-nested-ternary" : "off",
     "no-underscore-dangle" : "off",
-    "no-console" : "off",
-    "camelcase": "off",
-    "lines-between-class-members" : "off",
-    "react/destructuring-assignment" : "off",
-    "react/require-default-props" : "warn",
-    "react/no-array-index-key" : "warn",
-    "react/no-danger" : "warn",
-    "import/prefer-default-export" : "warn",
+		"no-unused-vars": "warn",
+		"no-unused-expressions": "off",
+		"no-param-reassign": "off",
+		"no-plusplus": "off",
+		"no-restricted-globals": "warn",
+		"no-shadow": "off",
+		"no-else-return" : "off",
     "prefer-destructuring" : "warn",
-    "spaced-comment" : "warn",
-    "no-unused-vars": "warn"
+    "react/destructuring-assignment" : "off",
+		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+		"react/jsx-props-no-spreading": "off",
+		"react/no-access-state-in-setstate": "warn",
+    "react/no-array-index-key" : "off",
+    "react/no-danger" : "off",
+		"react/no-did-update-set-state": "off",
+    "react/require-default-props" : "warn",
+		"react/state-in-constructor": "off",
+		"react/static-property-placement": "off",
+    "spaced-comment" : "warn"
 	}
 }

@@ -19,7 +19,7 @@ import { boolType, funcType, userType } from '../../config/types';
 
 export default class SearchBookForm extends React.Component {
   state = {
-    searchAnchorEl: null,
+    // searchAnchorEl: null,
     searchByAnchorEl: null,
     searchBy: 
       { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
@@ -29,7 +29,7 @@ export default class SearchBookForm extends React.Component {
       { key: 'author', type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors' },
       { key: 'publisher', type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher' }
     ],
-    searchText: '',
+    // searchText: '',
     value: '',
     loading: false,
     maxSearchResults: 30,
@@ -39,8 +39,16 @@ export default class SearchBookForm extends React.Component {
 
   static propTypes = {
     new: boolType,
+    newBook: boolType,
     onBookSelect: funcType,
     user: userType
+  }
+
+  static defaultProps = {
+    new: null,
+    newBook: false,
+    onBookSelect: null,
+    user: null
   }
 
   componentWillUnmount() {
@@ -49,9 +57,9 @@ export default class SearchBookForm extends React.Component {
     this.unsubQuery && this.unsubQuery();
   }
 
-  onClickSearch = option => this.setState({ searchBy: option, searchAnchorEl: null });
-  onCloseSearchMenu = () => this.setState({ searchAnchorEl: null });
-  onOpenSearchMenu = e => this.setState({ searchAnchorEl: e.currentTarget });
+  onClickSearch = option => this.setState({ searchBy: option, /* searchAnchorEl: null */ });
+  // onCloseSearchMenu = () => this.setState({ searchAnchorEl: null });
+  // onOpenSearchMenu = e => this.setState({ searchAnchorEl: e.currentTarget });
 
   onClickSearchBy = option => this.setState(prevState => ({ searchBy: option, maxSearchResults: option.key === 'ISBN_13' ? 1 : prevState.maxSearchResults, searchByAnchorEl: null }));
   onCloseSearchByMenu = () => this.setState({ searchByAnchorEl: null });
@@ -77,7 +85,7 @@ export default class SearchBookForm extends React.Component {
 
   shouldRenderSuggestions = value => value && this.state.searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
 
-  onSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); //this.setState({ suggestions: this.getSuggestions(value) });
+  onSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); // this.setState({ suggestions: this.getSuggestions(value) });
 
   /* getSuggestions = value => {
     const inputValue = value.normalize();
@@ -308,7 +316,7 @@ export default class SearchBookForm extends React.Component {
     }, searchBy.key === 'ISBN_13' ? 500 : 1000);
   }
 
-  onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
+  onSuggestionSelected = (e, { suggestion, suggestionValue, suggestionIndex, /* sectionIndex, method */ }) => {
     if (suggestionIndex !== -1) {
       this.setState({ loading: false });
       clearTimeout(this.timer);
@@ -324,7 +332,7 @@ export default class SearchBookForm extends React.Component {
         key={option.type} 
         value={option}
         selected={option.type === searchBy.type}
-        onClick={e => this.onClickSearchBy(option)}>
+        onClick={() => this.onClickSearchBy(option)}>
         {option.label}
       </MenuItem>
     ));

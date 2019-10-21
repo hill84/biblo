@@ -1,6 +1,6 @@
 import React from 'react';
 
-function withScrollToTop(Component) {
+const withScrollToTop = Component => {
   return class extends React.Component {
     componentDidMount() {
       window.scrollTo(0, 0);

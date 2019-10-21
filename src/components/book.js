@@ -3,8 +3,9 @@ import React, { lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
-import { bookType, funcType, objectType, stringType, userBookType, userType } from '../config/types';
+import { boolType, bookType, funcType, objectType, stringType, /* userBookType, */ userType } from '../config/types';
 import NoMatch from './noMatch';
+
 const BookForm = lazy(() => import('./forms/bookForm'));
 const BookProfile = lazy(() => import('./pages/bookProfile'));
 
@@ -35,7 +36,7 @@ export default class Book extends React.Component {
       title: `${this.props.book.title} di ${Object.keys(this.props.book.authors)[0]} - ${this.props.book.publisher} - ${app.name}`,
       url: `${app.url}/book/${this.props.book.bid}/${normURL(this.props.book.title)}`,
     },
-    isEditing: this.props.isEditing || false,
+    isEditing: this.props.isEditing,
     loading: false
   }
   addBookToShelfRef = React.createRef();
@@ -45,10 +46,19 @@ export default class Book extends React.Component {
     bid: stringType,
     book: bookType,
     history: objectType.isRequired,
+    isEditing: boolType,
     location: objectType.isRequired,
     openSnackbar: funcType.isRequired,
     user: userType,
-    userBook: userBookType
+    // userBook: userBookType
+  }
+
+  static defaultProps = {
+    bid: null,
+    book: null,
+    isEditing: false,
+    user: null,
+    // userBook: null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -80,11 +90,52 @@ export default class Book extends React.Component {
     return null;
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+    const { bid } = this.props;
+
+    if (bid) {
+      if (this._isMounted) this.setState({ loading: true });
+      
+      this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
+        // console.log(snap);
+        if (snap.exists) {
+          // console.log(snap.data());
+          this.setState(prevState => ({
+            book: {
+              ...prevState.book,
+              ...snap.data()
+            },
+            seo: {
+              author: Object.keys(snap.data().authors),
+              description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,
+              image: snap.data().covers.length && snap.data().covers[0],
+              isbn: snap.data().ISBN_13,
+              rating: { scale: '5', value: snap.data().rating_num },
+              release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
+              title: `${snap.data().title} di ${Object.keys(snap.data().authors)[0]} - ${snap.data().publisher} - ${app.name}`,
+              url: `${app.url}/book/${snap.data().bid}/${normURL(snap.data().title)}`,
+            },
+            userBook: {
+              ...prevState.userBook,
+              bid: snap.data().bid || '',
+              authors: snap.data().authors,
+              covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
+              publisher: snap.data().publisher,
+              title: snap.data().title,
+              subtitle: snap.data().subtitle
+            }
+          }));
+        } else console.warn(`No book with bid ${bid}`);
+        this.setState({ loading: false }, () => this.fetchUserBook(bid || this.state.book.bid));
+      });
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.props.bid !== prevProps.bid) {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
+      if (this._isMounted) this.setState({ loading: true });
+      
       this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
         if (snap.exists) {
           // console.log(snap.data());
@@ -117,49 +168,6 @@ export default class Book extends React.Component {
         this.setState({ loading: false }, () => {
           this.fetchUserBook(this.props.bid);
         });
-      });
-    }
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-    const { bid } = this.props;
-    
-    if (bid) {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
-      this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
-        // console.log(snap);
-        if (snap.exists) {
-          // console.log(snap.data());
-          this.setState(prevState => ({
-            book: {
-              ...prevState.book,
-              ...snap.data()
-            },
-            seo: {
-              author: Object.keys(snap.data().authors),
-              description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,
-              image: snap.data().covers.length && snap.data().covers[0],
-              isbn: snap.data().ISBN_13,
-              rating: { scale: '5', value: snap.data().rating_num },
-              release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
-              title: `${snap.data().title} di ${Object.keys(snap.data().authors)[0]} - ${snap.data().publisher} - ${app.name}`,
-              url: `${app.url}/book/${snap.data().bid}/${normURL(snap.data().title)}`,
-            },
-            userBook: {
-              ...prevState.userBook,
-              bid: snap.data().bid || '',
-              authors: snap.data().authors,
-              covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
-              publisher: snap.data().publisher,
-              title: snap.data().title,
-              subtitle: snap.data().subtitle
-            }
-          }));
-        } else console.warn(`No book with bid ${bid}`);
-        this.setState({ loading: false }, () => this.fetchUserBook(bid || this.state.book.bid));
       });
     }
   }
@@ -326,7 +334,7 @@ export default class Book extends React.Component {
       let bookReviews_num = book.reviews_num;
       let userRatings_num = user.stats.ratings_num;
       let userBookRating_num = userBook.rating_num;
-      let review = userBook.review;
+      let { review } = userBook;
   
       if (userBook.bookInShelf) {
         userShelf_num -= 1;
@@ -394,12 +402,12 @@ export default class Book extends React.Component {
 
         if (this.state.userBook.review.created_num) {
           reviewerRef(bid, authid).delete().then(() => {
-            this.setState({ 
+            this.setState(prevState => ({ 
               userBook: { 
-                ...this.state.userBook, 
+                ...prevState.userBook, 
                 review
               }
-            });
+            }));
             // console.log(`Review removed from book`);
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }
@@ -526,7 +534,7 @@ export default class Book extends React.Component {
     if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
 		return (
-      <React.Fragment>
+      <>
         {seo &&
           <Helmet>
             <title>{app.name} | {book.title || 'Libro'}</title>
@@ -574,7 +582,7 @@ export default class Book extends React.Component {
           />
         }
         </Suspense>
-      </React.Fragment>
+      </>
 		);
 	}
 }

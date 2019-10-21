@@ -1,5 +1,5 @@
 import React from 'react';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 
 const coinbaseURL = 'https://commerce.coinbase.com/checkout/d54258df-5760-4663-909f-324ddfacc5b6';
 const paypalURL = 'https://paypal.me/bibloapp';

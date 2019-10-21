@@ -1,8 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { app } from '../../config/shared';
-import { funcType } from '../../config/types';
 
 const copy = (text, props) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
   props.openSnackbar('Copiato negli appunti', 'success');
@@ -19,8 +18,8 @@ const IconsPage = props => (
     <div className="card dark">
       <h2>Icone di sistema</h2>
       <div className="row">
-        { Object.keys(icon).map((item, i) => 
-          <div className="col tt" onClick={() => copy(item, props)} key={i}>
+        {Object.keys(icon).map((item, i) => 
+          <div role="button" tabIndex={0} className="col tt" onClick={() => copy(item, props)} onKeyDown={() => copy(item, props)} key={i}>
             <span className="tip">{item}</span>
             <button type="button" className="btn lg centered icon flat">
               {icon[item]()}
@@ -31,9 +30,5 @@ const IconsPage = props => (
     </div>   
   </div>
 );
-
-IconsPage.propTypes = {
-  openSnackbar: funcType.isRequired
-}
 
 export default IconsPage;
