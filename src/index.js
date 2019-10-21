@@ -15,7 +15,7 @@ import BrowserNotSupported from './components/browser-not-supported';
 function getInternetExplorerVersion() {
   var rv = -1;
   var ua;
-  var re
+  var re;
   if (navigator.appName === 'Microsoft Internet Explorer') {
     ua = navigator.userAgent;
     re = new RegExp("MSIE ([0-9]{1,}[\\.0-9]{0,})");

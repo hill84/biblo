@@ -8,15 +8,15 @@ import React from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef/* , reviewRef */ } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, /* userType */ } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 export default class BooksDash extends React.Component {
  	state = {
-    user: this.props.user,
+    // user: this.props.user,
     count: 0,
     desc: true,
     firstVisible: null,
@@ -42,17 +42,12 @@ export default class BooksDash extends React.Component {
 
 	static propTypes = {
     openSnackbar: funcType.isRequired,
-    user: userType
+    // user: userType
 	}
 
 	componentDidMount() { 
     this._isMounted = true;
     this.fetch();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubBooksFetch && this.unsubBooksFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -60,6 +55,11 @@ export default class BooksDash extends React.Component {
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubBooksFetch && this.unsubBooksFetch();
   }
     
   fetch = e => {
@@ -95,10 +95,8 @@ export default class BooksDash extends React.Component {
           if (this._isMounted) {
             this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ count: 0 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ count: 0 });
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
@@ -115,20 +113,18 @@ export default class BooksDash extends React.Component {
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
   onView = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
-    const title = e.currentTarget.parentNode.dataset.title;
+    const { id, title } = e.currentTarget.parentNode.dataset;
     this.setState({ redirectTo: title ? `${id}/${title}` : id });
   }
   
   onEdit = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
-    const title = e.currentTarget.parentNode.dataset.title;
+    const { id, title } = e.currentTarget.parentNode.dataset;
     this.setState({ redirectTo: title ? `${id}/${title}` : id }); // TODO
   }
 
   onLock = e => {
     const { openSnackbar } = this.props;
-    const id = e.currentTarget.parentNode.dataset.id;
+    const { id } = e.currentTarget.parentNode.dataset;
     const state = e.currentTarget.parentNode.dataset.state === 'true';
 
     if (state) {
@@ -145,7 +141,7 @@ export default class BooksDash extends React.Component {
   }
 
   onDeleteRequest = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
+    const { id } = e.currentTarget.parentNode.dataset;
     if (this._isMounted) {
       this.setState({ isOpenDeleteDialog: true, selectedId: id });
     }
@@ -173,7 +169,7 @@ export default class BooksDash extends React.Component {
       <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
         <div className="row">
           <div className="col-auto">
-            <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.covers[0]})`}}>
+            <div className="mock-cover xs overflow-hidden" style={{ position: 'relative', backgroundImage: `url(${item.covers[0]})`, }}>
               <ImageZoom
                 defaultStyles={imageZoomDefaultStyles}
                 image={{ src: item.covers[0], className: 'thumb hidden' }}
@@ -242,7 +238,7 @@ export default class BooksDash extends React.Component {
 
 		return (
 			<div className="container" id="booksDashComponent">
-        <div className="card dark" style={{ minHeight: 200 }}>
+        <div className="card dark" style={{ minHeight: 200, }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
@@ -274,7 +270,7 @@ export default class BooksDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <React.Fragment>
+            <>
               <ul className="table dense nolist font-sm">
                 <li className="labels">
                   <div className="row">
@@ -298,7 +294,7 @@ export default class BooksDash extends React.Component {
                 limit={limitBy[limitByIndex]}
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
 
@@ -308,7 +304,7 @@ export default class BooksDash extends React.Component {
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className="dialog-footer flex no-gutter">
             <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
             <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>

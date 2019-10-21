@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 
 const { array, arrayOf, bool, func, shape, number, object, objectOf, oneOf, oneOfType, string } = PropTypes;
 
+export const arrayType = array;
 export const arrayOfType = arrayOf;
 export const funcType = func;
 export const stringType = string;
@@ -12,6 +13,49 @@ export const objectOfType = objectOf;
 export const shapeType = props => shape(props);
 export const _oneOf = props => oneOf(props);
 export const _oneOfType = props => oneOfType(props);
+
+export const locationType = PropTypes.shape({
+  hash: PropTypes.string,
+  key: PropTypes.string, // only in createBrowserHistory and createMemoryHistory
+  pathname: PropTypes.string.isRequired,
+  search: PropTypes.string,
+  state: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool,
+    PropTypes.number,
+    PropTypes.object,
+    PropTypes.string,
+  ]), // only in createBrowserHistory and createMemoryHistory
+});
+
+export const childrenType = PropTypes.oneOfType([
+  PropTypes.arrayOf(PropTypes.node),
+  PropTypes.node
+]);
+
+export const matchType = PropTypes.shape({
+  isExact: PropTypes.bool,
+  params: PropTypes.object.isRequired,
+  path: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
+});
+
+export const historyType = PropTypes.shape({
+  action: PropTypes.oneOf(['PUSH', 'REPLACE', 'POP']).isRequired,
+  block: PropTypes.func.isRequired,
+  canGo: PropTypes.func, // only in createMemoryHistory
+  createHref: PropTypes.func.isRequired,
+  entries: PropTypes.arrayOf(locationType), // only in createMemoryHistory
+  go: PropTypes.func.isRequired,
+  goBack: PropTypes.func.isRequired,
+  goForward: PropTypes.func.isRequired,
+  index: PropTypes.number, // only in createMemoryHistory
+  length: PropTypes.number,
+  listen: PropTypes.func.isRequired,
+  location: locationType.isRequired,
+  push: PropTypes.func.isRequired,
+  replace: PropTypes.func.isRequired,
+});
 
 export const userType = shape({
   creationTime: number.isRequired,

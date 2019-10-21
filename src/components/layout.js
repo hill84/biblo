@@ -16,11 +16,11 @@ import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
 import { authid, noteRef, notesRef, signOut } from '../config/firebase';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 import { roles } from '../config/lists';
 import { app, getInitials, hasRole, timeSince } from '../config/shared';
 import { darkTheme } from '../config/themes';
-import { funcType, stringType, userType } from '../config/types';
+import { childrenType, funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
 
 export default class Layout extends React.Component {
@@ -32,19 +32,20 @@ export default class Layout extends React.Component {
   }
 
   static propTypes = {
+    children: childrenType,
     error: stringType,
     openSnackbar: funcType.isRequired,
     user: userType
   }
+
+  static defaultProps = {
+    children: null,
+    error: null,
+    user: null
+  }
   
   componentDidMount() {
     this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.timer && clearTimeout(this.timer);
-    this.unsubNotesFetch && this.unsubNotesFetch();
   }
 
   componentDidUpdate(prevProps) {
@@ -59,6 +60,12 @@ export default class Layout extends React.Component {
         openSnackbar(error, 'error', 9000);
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.timer && clearTimeout(this.timer);
+    this.unsubNotesFetch && this.unsubNotesFetch();
   }
 
   fetchNotes = () => {
@@ -85,9 +92,7 @@ export default class Layout extends React.Component {
           if (this._isMounted) this.setState({ notes });
         }
       }).catch(error => console.warn(error));
-    } else {
-      if (this._isMounted) this.setState({ notes: null });
-    }
+    } else if (this._isMounted) this.setState({ notes: null });
   }
   
   onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
@@ -112,8 +117,8 @@ export default class Layout extends React.Component {
   }
   onCloseNotes = () => this.setState({ notesAnchorEl: null });
 
-  onOpenDialog = () => this.setState({ dialogIsOpen: true });
-  onCloseDialog = () => this.setState({ dialogIsOpen: false });
+  // onOpenDialog = () => this.setState({ dialogIsOpen: true });
+  // onCloseDialog = () => this.setState({ dialogIsOpen: false });
   
   render() {
     const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = this.state;
@@ -133,11 +138,11 @@ export default class Layout extends React.Component {
               <Link to="/">{app.name}<sup>Beta</sup></Link>
             </Typography>
             {user ? 
-              <React.Fragment>
+              <>
                 {user.roles.admin && 
                   <Tooltip title="Aggiungi libro" placement="bottom">
                     <IconButton
-                      className="search-btn popIn reveal delay6 hide-xs"
+                      className="search-btn popIn reveal hide-xs"
                       component={Link} 
                       to="/new-book"
                       aria-label="New book">
@@ -147,7 +152,7 @@ export default class Layout extends React.Component {
                 }
                 <Tooltip title="Cerca libro" placement="bottom">
                   <IconButton
-                    className="search-btn popIn reveal delay4"
+                    className="search-btn popIn reveal delay1"
                     component={Link} 
                     to="/books/add"
                     aria-label="Search">
@@ -174,7 +179,7 @@ export default class Layout extends React.Component {
                   onClose={this.onCloseNotes}>
                   {notes && toRead(notes).length ?
                     toRead(notes).map((item, i) => (
-                      <MenuItem key={item.nid} style={{animationDelay: `${(i + 1) / 10  }s`}}> 
+                      <MenuItem key={item.nid} style={{ animationDelay: `${(i + 1) / 10  }s`, }}> 
                         <div className="row">
                           <div className="col-auto">
                             {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
@@ -213,7 +218,7 @@ export default class Layout extends React.Component {
                     aria-owns={moreAnchorEl ? 'more-menu' : null}
                     aria-haspopup="true"
                     onClick={this.onOpenMore}>
-                    <Avatar className="avatar popIn reveal" src={user.photoURL} alt={user.displayName}>
+                    <Avatar className="avatar popIn reveal delay3" src={user.photoURL} alt={user.displayName}>
                       {!user.photoURL && getInitials(user.displayName)}
                     </Avatar>
                     {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
@@ -230,12 +235,12 @@ export default class Layout extends React.Component {
                   <MenuItem component={Link} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
                   <MenuItem onClick={signOut}>Esci</MenuItem>
                 </Menu>
-              </React.Fragment>
+              </>
             : 
-              <React.Fragment>
+              <>
                 <NavLink to="/login" className="btn flat hide-xs">Accedi</NavLink>
                 <NavLink to="/signup" className="btn primary">Registrati</NavLink>
-              </React.Fragment>
+              </>
             }
           </Toolbar>
         </AppBar>
@@ -247,9 +252,9 @@ export default class Layout extends React.Component {
             onClick={this.onCloseDrawer}>
             <nav className="list">
               {user && authid ? 
-                <React.Fragment>
+                <>
                   <NavLink to="/profile" className="auth-header">
-                    <div className="background" style={{backgroundImage: `url(${user.photoURL})`}} />
+                    <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
                     <div className="user">
                       <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
                       <div className="user-info">
@@ -259,7 +264,7 @@ export default class Layout extends React.Component {
                     </div>
                   </NavLink>
                   {user.roles.admin && 
-                    <NavLink to={`/admin`}>
+                    <NavLink to="/admin">
                       <MenuItem>
                         <ListItemIcon>{icon.gauge()}</ListItemIcon>
                         <Typography variant="inherit">Amministrazione</Typography>
@@ -272,7 +277,7 @@ export default class Layout extends React.Component {
                       <Typography variant="inherit">La mia libreria</Typography>
                     </MenuItem>
                   </NavLink>
-                </React.Fragment>
+                </>
               :
                 <div className="auth-header-buttons">
                   <NavLink to="/login">

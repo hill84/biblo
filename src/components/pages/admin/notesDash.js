@@ -7,21 +7,21 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { countRef, noteRef, notesRef, notificationsRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, /* userType */ } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 export default class NotesDash extends React.Component {
  	state = {
-    user: this.props.user,
+    // user: this.props.user,
     count: 0,
     desc: true,
     isOpenDeleteDialog: false,
-    isOpenFormDialog: false,
+    // isOpenFormDialog: false,
     items: null,
-    lastVisible: null,
+    // lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
@@ -34,7 +34,7 @@ export default class NotesDash extends React.Component {
 	static propTypes = {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
-    user: userType
+    // user: userType
 	}
 
 	componentDidMount() { 
@@ -75,7 +75,7 @@ export default class NotesDash extends React.Component {
           snap.forEach(item => items.push({ id: item.id, count: item.data().count }));
           this.setState(prevState => ({
             items,
-            lastVisible: snap.docs[snap.size - 1],
+            // lastVisible: snap.docs[snap.size - 1],
             loading: false,
             page: direction ? prev ? (prevState.page > 1) ? (prevState.page - 1) : 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : (prevState.page + 1) : 1
           }));
@@ -90,10 +90,8 @@ export default class NotesDash extends React.Component {
             this.setState({ count: fullSnap.data().count });
           }
           fetcher();
-        } else {
-          if (this._isMounted) {
-            this.setState({ count: 0, page: 1 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ count: 0, page: 1 });
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
@@ -122,11 +120,12 @@ export default class NotesDash extends React.Component {
   onToggleExpansion = id => {
     this.setState({ selectedId: id });
     const selectedObj = this.state.items.findIndex(obj => obj.id === id);
+    const prevState = this.state;
     this.unsubNotesFetch = notesRef(id).orderBy('created_num', 'desc').limit(200).onSnapshot(snap => {
       if (!snap.empty) {
         const notes = [];
         snap.forEach(note => notes.push(note.data()));
-        const items = [ ...this.state.items ];
+        const items = [ ...prevState.items ];
         items[selectedObj] = { ...items[selectedObj], notes };
         this.setState({ items });
       }
@@ -139,7 +138,9 @@ export default class NotesDash extends React.Component {
     const itemsList = (items && items.length > 0 && items.map(item =>
       <li 
         key={item.id} 
+        role="treeitem"
         className={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
+        onKeyDown={() => this.onToggleExpansion(item.id)}
         onClick={() => this.onToggleExpansion(item.id)}>
         <div className="row">
           <div className="col-auto">{item.count || 0}</div>
@@ -188,7 +189,7 @@ export default class NotesDash extends React.Component {
 
 		return (
 			<div className="container" id="notesDashComponent">
-        <div className="card dark" style={{ minHeight: 200 }}>
+        <div className="card dark" style={{ minHeight: 200, }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
@@ -209,8 +210,8 @@ export default class NotesDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <React.Fragment>
-              <ul className="table dense nolist font-sm">
+            <>
+              <ul className="table dense nolist font-sm" role="tree">
                 <li className="labels">
                   <div className="row">
                     <div className="col-auto">#</div>
@@ -226,7 +227,7 @@ export default class NotesDash extends React.Component {
                 limit={limitBy[limitByIndex]}
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
 
@@ -236,7 +237,7 @@ export default class NotesDash extends React.Component {
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className="dialog-footer flex no-gutter">
             <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
             <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>

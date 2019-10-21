@@ -1,14 +1,15 @@
-import Avatar from '@material-ui/core/Avatar';
+
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
-import { abbrNum, app, denormURL, getInitials, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
-import { funcType, userType } from '../../config/types';
+import icon from '../../config/icons';
+import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
+import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
+import Bubbles from './bubbles';
 
 export default class Collection extends React.Component {
   state = {
@@ -23,8 +24,18 @@ export default class Collection extends React.Component {
   }
 
   static propTypes = {
+    history: historyType,
+    location: locationType,
+    match: matchType,
     openSnackbar: funcType.isRequired,
     user: userType
+  }
+
+  static defaultProps = {
+    history: null,
+    location: null,
+    match: null,
+    user: null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -40,18 +51,18 @@ export default class Collection extends React.Component {
     this.fetch();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    window.removeEventListener('resize', this.updateScreenSize);
-    this.unsubCollectionFollowersFetch && this.unsubCollectionFollowersFetch();
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (this._isMounted) {
       if (this.state.cid !== prevState.cid || this.props.user !== prevProps.user) {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    window.removeEventListener('resize', this.updateScreenSize);
+    this.unsubCollectionFollowersFetch && this.unsubCollectionFollowersFetch();
   }
 
   updateScreenSize = () => this.setState({ screenSize: screenSize() });
@@ -68,21 +79,19 @@ export default class Collection extends React.Component {
             snap.forEach(follower => followers.push(follower.data()));
             this.setState({ followers, follow: user && followers.filter(follower => follower.uid === user.uid).length > 0 });
           } else {
-            this.setState({ followers: 0, follow: false });
+            this.setState({ followers: null, follow: false });
           }
         });
         if (this._isMounted) {
           this.setState({ collection: snap.data(), loading: false });
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({ 
-            collection: null,
-            followers: null,
-            follow: false,
-            loading: false 
-          });
-        }
+      } else if (this._isMounted) {
+        this.setState({ 
+          collection: null,
+          followers: null,
+          follow: false,
+          loading: false 
+        });
       }
     }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
 
@@ -93,10 +102,8 @@ export default class Collection extends React.Component {
         if (this._isMounted) {
           this.setState({ collections, loadingCollections: false });
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({ collections: null, loadingCollections: false });
-        }
+      } else if (this._isMounted) {
+        this.setState({ collections: null, loadingCollections: false });
       }
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   }
@@ -143,7 +150,7 @@ export default class Collection extends React.Component {
               <div className="card dark collection-profile">
                 <h2>{denormURL(cid)}</h2>
                 {loading ? <div className="skltn rows" /> : 
-                  <React.Fragment>
+                  <>
                     <div className="info-row description">
                       <MinifiableText text={collection.description} maxChars={700} textMinified={isTextMinified} />
                     </div>
@@ -154,31 +161,17 @@ export default class Collection extends React.Component {
                         onClick={this.onFollow} 
                         disabled={!user || !isEditor}>
                         {follow ? 
-                          <React.Fragment>
+                          <>
                             <span className="hide-on-hover">{icon.check()} Segui</span>
                             <span className="show-on-hover">Smetti</span>
-                          </React.Fragment> 
+                          </> 
                         : <span>{icon.plus()} Segui</span> }
                       </button>
                       <div className="counter last inline">
-                        {/* followers ? abbrNum(followers.length) : 0} {isScrollable ? icon.account() : 'follower' */}
-                        {followers ? followers.length > 2 && followers.length < 100 ? 
-                          <React.Fragment>
-                            <div className="bubble-group inline">
-                              {followers.slice(0,3).map(item => (
-                                <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
-                                  <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
-                                    {!item.photoURL && getInitials(item.displayName)}
-                                  </Avatar>
-                                </Link>
-                              ))}
-                            </div>
-                            {abbrNum(followers.length)} <span className="light-text">follower</span>
-                          </React.Fragment>
-                        : <><b>{abbrNum(followers.length)}</b> <span className="light-text">follower</span></> : ''}
+                        <Bubbles limit={3} items={followers} />
                       </div>
                     </div>
-                  </React.Fragment>
+                  </>
                 }
               </div>
               

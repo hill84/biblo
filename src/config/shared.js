@@ -26,7 +26,7 @@ export const joinObj = obj => {
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
 export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
 
-//OPTIONS
+// OPTIONS
 export const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' };
 export const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
@@ -74,9 +74,11 @@ export const isLocalStorage = () => {
 }
 
 export const asyncForEach = async (array, callback) => {
+  const results = [];
   for (let i = 0; i < array.length; i++) {
-    await callback(array[i], i, array);
+    results.push(callback(array[i], i, array));
   }
+  await Promise.all(results);
 }
 
 // VALIDATION
@@ -172,10 +174,10 @@ export const booksPerRow = () => {
 }
 
 export const abbrNum = (num, decPlaces = 0) => {
-  decPlaces = Math.pow(10, decPlaces);
+  decPlaces = 10 ** decPlaces;
   const abbrev = [ "k", "m", "b", "t" ];
   for (let i = 3; i >= 0; i--) {
-    const size = Math.pow(10,(i+1)*3);
+    const size = 10 ** ((i + 1) * 3);
     if (size <= num) {
       num = Math.round(num * decPlaces / size) / decPlaces;
       if ((num === 1000) && (i < abbrev.length - 1)) { 
@@ -256,25 +258,25 @@ export const slowImport = (value, ms = 1000) => {
 
 export const fakeImportComponent = (value, ms = 1000, bool) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => bool ? resolve({ default: value }) : reject('Server error'), ms);
+    setTimeout(() => bool ? resolve({ default: value }) : reject(Error), ms);
   });
 }
 
 export const createCookie = (name, value, days) => {
   let expires = '';
 	if (days) {
-		let date = new Date();
+		const date = new Date();
 		date.setTime(date.getTime()+(days*24*60*60*1000));
-		expires = "; expires="+date.toGMTString();
+		expires = `; expires=${date.toGMTString()}`;
 	}
-	document.cookie = name+"="+value+expires+"; path=/";
+	document.cookie = `${name}=${value}${expires}; path=/`;
 }
 
 export const readCookie = name => {
-	const nameEQ = name + "=";
+	const nameEQ = `${name}=`;
 	const ca = document.cookie.split(';');
 	for (let i = 0; i < ca.length; i++) {
-		var c = ca[i];
+		let c = ca[i];
 		while (c.charAt(0) === ' ') c = c.substring(1,c.length);
 		if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
 	}

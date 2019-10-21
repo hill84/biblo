@@ -1,4 +1,5 @@
 import React from 'react';
+import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import Book from '../book';
 
 const BookContainer = React.forwardRef((props, ref) => (
@@ -12,5 +13,21 @@ const BookContainer = React.forwardRef((props, ref) => (
     />
   </div>
 ));
+
+BookContainer.propTypes = {
+  history: historyType,
+  location: locationType,
+  match: matchType,
+  openSnackbar: funcType,
+  user: userType
+}
+
+BookContainer.defaultProps = {
+  history: null,
+  location: null,
+  match: null,
+  openSnackbar: null,
+  user: null
+}
 
 export default BookContainer;

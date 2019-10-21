@@ -16,7 +16,7 @@ import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
 import firebase, { authid, bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, handleFirestoreError, hasRole, normalizeString, validateImg } from '../../config/shared';
 import { bookType, funcType, userType } from '../../config/types';
@@ -89,7 +89,7 @@ export default class BookForm extends React.Component {
     return null;
   }
 
-  componentDidMount(props) {
+  componentDidMount(/* props */) {
     this._isMounted = true;
     /* if (this.props.book.bid) {
       bookRef(this.props.book.bid).onSnapshot(snap => {
@@ -123,71 +123,73 @@ export default class BookForm extends React.Component {
   }
   
   onChange = e => {
+    e.persist();
+
     if (this._isMounted) {
-      this.setState({
-        book: { ...this.state.book, [e.target.name]: e.target.value }, changes: true
-      });
+      this.setState(prevState => ({
+        book: { ...prevState.book, [e.target.name]: e.target.value }, changes: true
+      }));
     }
   };
 
   onChangeNumber = e => {
     if (this._isMounted) {
-      this.setState({
-        book: { ...this.state.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
-      });
+      this.setState(prevState => ({
+        book: { ...prevState.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
+      }));
     }
   };
 
   onChangeSelect = key => e => {
     if (this._isMounted) {
-      this.setState({ 
-        book: { ...this.state.book, [key]: e.target.value }, changes: true
-      });
+      this.setState(prevState => ({ 
+        book: { ...prevState.book, [key]: e.target.value }, changes: true
+      }));
     }
   };
 
   onChangeDate = key => date => {
     if (this._isMounted) {
-      this.setState({ 
-        book: { ...this.state.book, [key]: String(date) }, changes: true
-      });
+      this.setState(prevState => ({ 
+        book: { ...prevState.book, [key]: String(date) }, changes: true
+      }));
     }
   };
 
   onAddChip = (key, chip) => { 
     if (this._isMounted) {
-      this.setState({ 
-        book: { ...this.state.book, [key]: [...this.state.book[key], chip] }, changes: true 
-      }); 
+      this.setState(prevState => ({ 
+        book: { ...prevState.book, [key]: [...prevState.book[key], chip] }, changes: true 
+      })); 
     }
   }; 
 
   onDeleteChip = (key, chip) => { 
     if (this._isMounted) {
-      this.setState({ 
-        // chips: this.state.chips.filter((c) => c !== chip) 
-        book: { ...this.state.book, [key]: this.state.book[key].filter((c) => c !== chip) }, changes: true 
-      }); 
+      this.setState(prevState => ({ 
+        // chips: prevState.chips.filter((c) => c !== chip) 
+        book: { ...prevState.book, [key]: prevState.book[key].filter((c) => c !== chip) }, changes: true 
+      })); 
     }
   }; 
   
   onAddChipToObj = (key, chip) => { 
     if (this._isMounted) {
-      this.setState({
-        book: { ...this.state.book, [key]: { ...this.state.book[key], [chip.split('.').join('')]: true }}, changes: true
-      });
+      this.setState(prevState => ({
+        book: { ...prevState.book, [key]: { ...prevState.book[key], [chip.split('.').join('')]: true }}, changes: true
+      }));
     }
   };
 
   onDeleteChipFromObj = (key, chip) => { 
     if (this._isMounted) {
-      this.setState({
-        // chips: this.state.chips.filter((c) => c !== chip)
+      this.setState(prevState => ({
+        // chips: prevState.chips.filter((c) => c !== chip)
         book: { 
-          ...this.state.book, 
-          [key]: arrToObj(Object.keys(this.state.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
+          ...prevState.book, 
+          [key]: arrToObj(Object.keys(prevState.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
         }, changes: true
-      });
+      }));
     }
   };
   
@@ -195,9 +197,9 @@ export default class BookForm extends React.Component {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
     if (this._isMounted) {
-      this.setState({
-        book: { ...this.state.book, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
-      });
+      this.setState(prevState => ({
+        book: { ...prevState.book, [e.target.name]: e.target.value }, [leftChars]: prevState[maxChars] - e.target.value.length, changes: true
+      }));
     }
   };
 
@@ -212,133 +214,6 @@ export default class BookForm extends React.Component {
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     return result;
-  }
-
-  onSubmit = async e => {
-    e.preventDefault();
-    const { book, changes, imgPreview } = this.state;
-    const { openSnackbar } = this.props;
-    if (changes || !book.bid) {
-      const errors = await this.validate(book);
-      if (this._isMounted) {
-        this.setState({ errors, loading: true });
-      }
-      if (Object.keys(errors).length === 0) {
-        let newBid = '';
-        if (this.props.book.bid) {
-          const { covers, EDIT, title_sort, ...restBook } = book;
-          bookRef(this.props.book.bid).set({
-            ...restBook,
-            covers: (imgPreview && Array(imgPreview)) || book.covers,
-            title_sort: normalizeString(book.title) || book.title_sort,
-            EDIT: {
-              ...EDIT,
-              lastEdit_num: Number((new Date()).getTime()),
-              lastEditBy: (this.props.user && this.props.user.displayName) || '',
-              lastEditByUid: authid || ''
-            }
-          }).then(() => {
-            if (this._isMounted) {
-              this.setState({ loading: false, changes: false }, () => {
-                this.props.isEditing();
-                openSnackbar('Modifiche salvate', 'success');
-              });
-            }
-          }).catch(err => {
-            if (this._isMounted) {
-              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
-            }
-          });
-        } else {
-          const newBookRef = booksRef.doc();
-          newBid = newBookRef.id;
-          newBookRef.set({
-            ISBN_10: book.ISBN_10,
-            ISBN_13: book.ISBN_13, 
-            authors: book.authors, 
-            bid: newBid,
-            collections: book.collections,
-            covers: (imgPreview && Array(imgPreview)) || book.covers, 
-            description: book.description, 
-            EDIT: {
-              created_num: Number((new Date()).getTime()),
-              createdBy: (this.props.user && this.props.user.displayName) || '',
-              createdByUid: authid || '',
-              edit: true,
-              lastEdit_num: Number((new Date()).getTime()),
-              lastEditBy: (this.props.user && this.props.user.displayName) || '',
-              lastEditByUid: authid || ''
-            },
-            edition_num: book.edition_num, 
-            format: book.format, 
-            genres: book.genres, 
-            incipit: book.incipit,
-            languages: book.languages, 
-            pages_num: book.pages_num, 
-            publisher: book.publisher, 
-            publication: book.publication, 
-            readers_num: book.readers_num,
-            rating_num: book.rating_num,
-            ratings_num: book.ratings_num,
-            reviews_num: book.reviews_num,
-            subtitle: book.subtitle, 
-            title: book.title, 
-            title_sort: book.title_sort,
-            trailerURL: book.trailerURL
-          }).then(() => {
-            if (this._isMounted) {
-              this.setState({ redirectToBook: `${newBid}/${book.title}` }, () => {
-                /* this.setState({ loading: false, changes: false });
-                this.props.isEditing(); */
-                openSnackbar('Nuovo libro creato', 'success');
-                // console.log(`New book created with bid ${newBid}`);
-              });
-            }
-          }).catch(err => {
-            if (this._isMounted) {
-              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
-            }
-          });
-        }
-        if (book.collections) {
-          book.collections.forEach(cid => {
-            collectionRef(cid, book.bid || newBid).get().then(collection => {
-              if (collection.exists) { 
-                collectionBookRef(cid, book.bid || newBid).get().then(collectionBook => {
-                  collectionBookRef(cid, book.bid || newBid).set({
-                    bid: book.bid || newBid, 
-                    bcid: collectionBook.exists ? collectionBook.data().bcid : (collection.data().books_num || 0) + 1,
-                    covers: (imgPreview && Array(imgPreview)) || (!!book.covers[0] && Array(book.covers[0])) || [],
-                    title: book.title,  
-                    subtitle: book.subtitle, 
-                    authors: book.authors, 
-                    publisher: book.publisher,
-                    publication: book.publication,
-                    rating_num: book.rating_num,
-                    ratings_num: book.ratings_num
-                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-              } else {
-                collectionRef(cid).set({
-                  title: cid,
-                  books_num: 0,
-                  description: '',
-                  edit: true,
-                  genres: book.genres
-                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-              }
-            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-          });
-        }
-      } else {
-        if (this._isMounted) {
-          this.setState({ loading: false });
-          if (errors.description) { this.setState({ isEditingDescription: true })}
-          if (errors.incipit) { this.setState({ isEditingIncipit: true })}
-          openSnackbar('Ricontrolla i dati inseriti', 'error');
-        }
-      }
-    } else this.props.isEditing();
   }
 
   validate = async book => {
@@ -468,19 +343,144 @@ export default class BookForm extends React.Component {
         uploadTask.then(snap => 
           snap.ref.getDownloadURL().then(url => {
             if (this._isMounted) {
-              this.setState({
+              this.setState(prevState => ({
                 imgPreview: url,
-                book: { ...this.state.book, covers: [url]},
+                book: { ...prevState.book, covers: [url]},
                 changes: true,
                 success: false
-              }/* , () => console.log(url) && openSnackbar('Immagine caricata', 'success') */)
+              }/* , () => console.log(url) && openSnackbar('Immagine caricata', 'success') */))
             }
           })
         );
         unsubUploadTask();
 			});
 		} else openSnackbar(errors.upload, 'error');
-	};
+  };
+  
+  onSubmit = async e => {
+    e.preventDefault();
+    const { book, changes, imgPreview } = this.state;
+    const { openSnackbar } = this.props;
+    if (changes || !book.bid) {
+      const errors = await this.validate(book);
+      if (this._isMounted) {
+        this.setState({ errors, loading: true });
+      }
+      if (Object.keys(errors).length === 0) {
+        let newBid = '';
+        if (this.props.book.bid) {
+          const { covers, EDIT, title_sort, ...restBook } = book;
+          bookRef(this.props.book.bid).set({
+            ...restBook,
+            covers: (imgPreview && Array(imgPreview)) || book.covers,
+            title_sort: normalizeString(book.title) || book.title_sort,
+            EDIT: {
+              ...EDIT,
+              lastEdit_num: Number((new Date()).getTime()),
+              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditByUid: authid || ''
+            }
+          }).then(() => {
+            if (this._isMounted) {
+              this.setState({ loading: false, changes: false }, () => {
+                this.props.isEditing();
+                openSnackbar('Modifiche salvate', 'success');
+              });
+            }
+          }).catch(err => {
+            if (this._isMounted) {
+              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+            }
+          });
+        } else {
+          const newBookRef = booksRef.doc();
+          newBid = newBookRef.id;
+          newBookRef.set({
+            ISBN_10: book.ISBN_10,
+            ISBN_13: book.ISBN_13, 
+            authors: book.authors, 
+            bid: newBid,
+            collections: book.collections,
+            covers: (imgPreview && Array(imgPreview)) || book.covers, 
+            description: book.description, 
+            EDIT: {
+              created_num: Number((new Date()).getTime()),
+              createdBy: (this.props.user && this.props.user.displayName) || '',
+              createdByUid: authid || '',
+              edit: true,
+              lastEdit_num: Number((new Date()).getTime()),
+              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditByUid: authid || ''
+            },
+            edition_num: book.edition_num, 
+            format: book.format, 
+            genres: book.genres, 
+            incipit: book.incipit,
+            languages: book.languages, 
+            pages_num: book.pages_num, 
+            publisher: book.publisher, 
+            publication: book.publication, 
+            readers_num: book.readers_num,
+            rating_num: book.rating_num,
+            ratings_num: book.ratings_num,
+            reviews_num: book.reviews_num,
+            subtitle: book.subtitle, 
+            title: book.title, 
+            title_sort: book.title_sort,
+            trailerURL: book.trailerURL
+          }).then(() => {
+            if (this._isMounted) {
+              this.setState({ redirectToBook: `${newBid}/${book.title}` }, () => {
+                /* this.setState({ loading: false, changes: false });
+                this.props.isEditing(); */
+                openSnackbar('Nuovo libro creato', 'success');
+                // console.log(`New book created with bid ${newBid}`);
+              });
+            }
+          }).catch(err => {
+            if (this._isMounted) {
+              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+            }
+          });
+        }
+        if (book.collections) {
+          book.collections.forEach(cid => {
+            collectionRef(cid, book.bid || newBid).get().then(collection => {
+              if (collection.exists) { 
+                collectionBookRef(cid, book.bid || newBid).get().then(collectionBook => {
+                  collectionBookRef(cid, book.bid || newBid).set({
+                    bid: book.bid || newBid, 
+                    bcid: collectionBook.exists ? collectionBook.data().bcid : (collection.data().books_num || 0) + 1,
+                    covers: (imgPreview && Array(imgPreview)) || (!!book.covers[0] && Array(book.covers[0])) || [],
+                    title: book.title,  
+                    subtitle: book.subtitle, 
+                    authors: book.authors, 
+                    publisher: book.publisher,
+                    publication: book.publication,
+                    rating_num: book.rating_num,
+                    ratings_num: book.ratings_num
+                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+              } else {
+                collectionRef(cid).set({
+                  title: cid,
+                  books_num: 0,
+                  description: '',
+                  edit: true,
+                  genres: book.genres
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+              }
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          });
+        }
+      } else if (this._isMounted) {
+        this.setState({ loading: false });
+        if (errors.description) { this.setState({ isEditingDescription: true })}
+        if (errors.incipit) { this.setState({ isEditingIncipit: true })}
+        openSnackbar('Ricontrolla i dati inseriti', 'error');
+      }
+    } else this.props.isEditing();
+  }
 
   onExitEditing = () => this.props.isEditing();
 	
@@ -503,8 +503,8 @@ export default class BookForm extends React.Component {
     if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
 
 		return (
-      <React.Fragment>
-        <div className="content-background"><div className="bg" style={{backgroundImage: `url(${book.covers[0]})`}} /></div>
+      <>
+        <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${book.covers[0]})`, }} /></div>
         <div className="container top">
           <form className="card light">
             {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
@@ -714,7 +714,7 @@ export default class BookForm extends React.Component {
                   </FormControl>
                 </div>
                 {isAdmin &&
-                  <React.Fragment>
+                  <>
                     <div className="form-group">
                       <FormControl className="chip-input" margin="normal" fullWidth>
                         <ChipInput
@@ -747,7 +747,7 @@ export default class BookForm extends React.Component {
                         {errors.trailerURL && <FormHelperText className="message error">{errors.trailerURL}</FormHelperText>}
                       </FormControl>
                     </div>
-                  </React.Fragment>
+                  </>
                 }
                 {isEditingDescription /* || book.description */ ?
                   <div className="form-group">
@@ -822,7 +822,7 @@ export default class BookForm extends React.Component {
             </div>
           }
         </div>
-      </React.Fragment>
+      </>
 		);
 	}
 }

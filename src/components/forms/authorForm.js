@@ -7,8 +7,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React from 'react';
 import { authorRef, authorsRef } from '../../config/firebase';
-import { normalizeString } from '../../config/shared';
-import { funcType, stringType } from '../../config/types';
+import { handleFirestoreError, normalizeString } from '../../config/shared';
+import { funcType, stringType, userType } from '../../config/types';
+import Overlay from '../overlay';
 
 export default class AuthorForm extends React.Component {
 	state = {
@@ -30,24 +31,30 @@ export default class AuthorForm extends React.Component {
   static propTypes = {
     onToggle: funcType.isRequired,
     openSnackbar: funcType.isRequired,
-    id: stringType
+    id: stringType,
+    user: userType
+  }
+
+  static defaultProps = {
+    id: null,
+    user: null
   }
 
   componentDidMount() {
     this.fetch();
     this._isMounted = true;
   }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
   
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, /* prevState */) {
     if (this._isMounted) {
       if (this.props.id !== prevProps.id) {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => {
@@ -71,43 +78,79 @@ export default class AuthorForm extends React.Component {
   onToggle = () => this.props.onToggle(this.state.selectedId);
 
 	onChange = e => {
+    e.persist();
+
     if (this._isMounted) {
-      this.setState({ 
-        data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
-      });
+      this.setState(prevState => ({ 
+        data: { ...prevState.data, [e.target.name]: e.target.value }, errors: { ...prevState.errors, [e.target.name]: null }
+      }));
     }
   };
   
   onChangeMaxChars = e => {
+    e.persist();
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
+
     if (this._isMounted) {
-      this.setState({
-        data: { ...this.state.data, [e.target.name]: e.target.value }, [leftChars]: this.state[maxChars] - e.target.value.length, changes: true
-      });
+      this.setState(prevState => ({
+        data: { ...prevState.data, [e.target.name]: e.target.value }, [leftChars]: prevState[maxChars] - e.target.value.length, changes: true
+      }));
     }
   };
 
   onChangeSelect = key => e => {
-    if (this._isMounted) {
-      this.setState({ 
-        data: { ...this.state.data, [key]: e.target.value }, errors: { ...this.state.errors, [key]: null } 
-      });
-    }
-	};
+    e.persist();
 
-	onSubmit = e => {
+    if (this._isMounted) {
+      this.setState(prevState => ({ 
+        data: { ...prevState.data, [key]: e.target.value }, errors: { ...prevState.errors, [key]: null } 
+      }));
+    }
+  };
+
+  checkDisplayName = async displayName => {
+    const { openSnackbar } = this.props;
+    const result = await authorsRef.where('displayName', '==', displayName).limit(1).get().then(snap => {
+      if (!snap.empty) return true;
+      return false;
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    return result;
+  }
+
+	validate = async data => {
+    const errors = {};
+    const isDuplicate = await this.checkDisplayName(data.displayName);
+
+    if (!data.displayName) { 
+      errors.displayName = "Inserisci il nominativo"; 
+    } else if (isDuplicate) {
+      errors.displayName = "Autore già presente";
+    }
+    if (!data.sex) {
+      errors.sex = "Sesso mancante";
+    }
+    if (!data.bio) { 
+      errors.bio = "Inserisci una biografia"; 
+    } else if (data.bio && data.bio.length > this.state.bio_maxChars) {
+      errors.bio = `Lunghezza massima ${this.state.bio_maxChars} caratteri`;
+    } else if (data.bio && data.bio.length < this.state.bio_minChars) {
+      errors.bio = `Lunghezza minima ${this.state.bio_minChars} caratteri`;
+    }
+		return errors;
+  };
+  
+	onSubmit = async e => {
     e.preventDefault();
     const { data } = this.state;
     const { openSnackbar, user } = this.props;
-		const errors = this.validate(this.state.data);
-		if (this._isMounted) {
-      this.setState({ authError: '', errors });
-    }
+    const prevState = this.state;
+    const errors = await this.validate(prevState.data);
+    
+    if (this._isMounted) this.setState({ authError: '', errors });
+    
 		if (Object.keys(errors).length === 0) {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
+      if (this._isMounted) this.setState({ loading: true });
       const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
       ref.set({
         bio: data.bio || '',
@@ -130,27 +173,14 @@ export default class AuthorForm extends React.Component {
 		}
 	};
 
-	validate = data => {
-		const errors = {};
-    if (!data.bio) { 
-      errors.bio = "Inserisci una biografia"; 
-    } else if (data.bio && data.bio.length > this.state.bio_maxChars) {
-      errors.bio = `Lunghezza massima ${this.state.bio_maxChars} caratteri`;
-    } else if (data.bio && data.bio.length < this.state.bio_minChars) {
-      errors.bio = `Lunghezza minima ${this.state.bio_minChars} caratteri`;
-    }
-    if (!data.displayName) { 
-      errors.displayName = "Inserisci il nominativo"; 
-    }
-		return errors;
-	};
+
 
 	render() {
 		const { authError, data, errors, loading, bio_leftChars, bio_maxChars } = this.state;
 
 		return (
-			<React.Fragment>
-        <div className="overlay" onClick={this.onToggle} />
+			<>
+        <Overlay onClick={this.onToggle} />
         <div role="dialog" aria-describedby="new author" className="dialog light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="content">
@@ -252,7 +282,7 @@ export default class AuthorForm extends React.Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
           </div>
         </div>
-      </React.Fragment>
+      </>
 		);
 	}
 }

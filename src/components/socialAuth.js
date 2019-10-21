@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { boolType, funcType } from '../config/types';
+import style from '../css/socialAuth.module.css';
 
 export default class SocialAuth extends React.Component {
 	state = {
@@ -48,8 +49,8 @@ export default class SocialAuth extends React.Component {
 		auth.signInWithPopup(provider).then(res => {
 			if (this._isMounted) this.setState({ loading: true });
 			if (res) {
-        const user = res.user;
-        if (this._isMounted) this.setState({ user });
+        const { user } = res;
+        // if (this._isMounted) this.setState({ user });
 				if (res.additionalUserInfo.isNewUser) {
           const timestamp = Number((new Date(user.metadata.creationTime)).getTime());
 					userRef(user.uid).set({
@@ -82,7 +83,7 @@ export default class SocialAuth extends React.Component {
 		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
-			<div className="row" id="socialAuthComponent">
+			<div className={`${style.component} row`}>
         <div className="col-4">
           <button type="button" disabled={disabled} className="col btn rounded google" onClick={this.googleAuth}>Google</button>
         </div>

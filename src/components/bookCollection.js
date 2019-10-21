@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
-import { icon } from '../config/icons';
+import icon from '../config/icons';
 import { genres } from '../config/lists';
 import { app, booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
 import { boolType, funcType, numberType, stringType } from '../config/types';
@@ -11,15 +11,15 @@ import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 export default class BookCollection extends React.Component {
 	state = {
     cid: this.props.cid,
-    bcid: this.props.bcid || 'bcid',
-    booksPerRow: this.props.booksPerRow || 1,
+    bcid: this.props.bcid,
+    booksPerRow: this.props.booksPerRow,
     limit:  this.props.limit || (this.props.pagination ? booksPerRow() : 98),
-    scrollable: /* isTouchDevice() ? ( */this.props.scrollable || false/* ) : false */,
-    pagination: /* isTouchDevice() ? ( */this.props.pagination || false/* ) : true */,
-    stacked: this.props.stacked || false,
+    scrollable: /* isTouchDevice() ? ( */ this.props.scrollable /* ) : false */,
+    pagination: /* isTouchDevice() ? ( */ this.props.pagination /* ) : true */,
+    stacked: this.props.stacked,
     collection: [],
     count: 0,
-    desc: this.props.desc || false,
+    desc: this.props.desc,
     loading: true,
     page: null,
     // lastVisible: null
@@ -39,7 +39,14 @@ export default class BookCollection extends React.Component {
   }
 
   static defaultProps = {
-    inView: true
+    bcid: 'bcid',
+    booksPerRow: 1,
+    desc: false,
+    inView: true,
+    limit: null,
+    pagination: false,
+    scrollable: false,
+    stacked: false
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -58,10 +65,6 @@ export default class BookCollection extends React.Component {
     this._isMounted = true;
     this.fetch();
   }
-  
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
 
   componentDidUpdate(prevProps, prevState) {
     const { inView } = this.props;
@@ -71,6 +74,10 @@ export default class BookCollection extends React.Component {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
   
 	fetch = e => {
@@ -109,33 +116,29 @@ export default class BookCollection extends React.Component {
               }));
             }
             // console.log({'direction': direction, 'page': page});
-          } else {
-            if (this._isMounted) {
-              this.setState({ 
-                count: 0,
-                collection: [],
-                loading: false,
-                page: null,
-                // lastVisible: null
-              });
-            }
+          } else if (this._isMounted) {
+            this.setState({ 
+              count: 0,
+              collection: [],
+              loading: false,
+              page: null,
+              // lastVisible: null
+            });
           }
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
 
       if (cid === 'Top') {
         this.setState({ count: limit }, () => fetcher());
-      } else {
-        if (!direction) {
-          lRef.get().then(fullSnap => {
-            if (!fullSnap.empty) { 
-              if (this._isMounted) {
-                this.setState({ count: fullSnap.docs.length }, () => fetcher());
-              }
+      } else if (!direction) {
+        lRef.get().then(fullSnap => {
+          if (!fullSnap.empty) { 
+            if (this._isMounted) {
+              this.setState({ count: fullSnap.docs.length }, () => fetcher());
             }
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-        } else fetcher();
-      }
+          }
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      } else fetcher();
     }
   }
 
@@ -157,13 +160,13 @@ export default class BookCollection extends React.Component {
     const isGenre = genres.some(item => item.name === cid);
 
 		return (
-      <React.Fragment>
+      <>
         <div className="head nav" role="navigation">
           <span className="counter last title"><span className="primary-text hide-sm">{isGenre ? 'Genere' : 'Collezione'}:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
           {!loading && count > 0 &&
             <div className="pull-right">
               {(pagination && count > limit) || scrollable ?
-                cid === 'Top' ? `I ${limit} libri più letti su ${app.name}` : <button className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
+                cid === 'Top' ? `I ${limit} libri più letti su ${app.name}` : <button type="button" className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
               :
                 <button 
                   type="button"
@@ -174,7 +177,7 @@ export default class BookCollection extends React.Component {
                 </button>
               }
               {pagination && count > limit &&
-                <React.Fragment>
+                <>
                   <button 
                     type="button"
                     disabled={page < 2 && 'disabled'} 
@@ -191,7 +194,7 @@ export default class BookCollection extends React.Component {
                     onClick={this.fetch} title="successivo">
                     {icon.chevronRight()}
                   </button>
-                </React.Fragment>
+                </>
               }
             </div>
           }
@@ -200,7 +203,7 @@ export default class BookCollection extends React.Component {
         <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>
           {loading ? stacked ? skltn_shelfStack : skltn_shelfRow : covers}
         </div>
-      </React.Fragment>
+      </>
 		);
 	}
 }

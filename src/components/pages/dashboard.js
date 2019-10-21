@@ -11,10 +11,10 @@ import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
-import { icon } from '../../config/icons';
+import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
-import { funcType, userType } from '../../config/types';
+import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import NoMatch from '../noMatch';
 import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
@@ -30,11 +30,11 @@ export default class Dashboard extends React.Component {
     user: null,
     challenges: [],
     followers: {},
-    followersCount: 0,
-    followersPage: 1,
+    // followersCount: 0,
+    // followersPage: 1,
     followings: {},
-    followingsCount: 0,
-    followingsPage: 1,
+    // followingsCount: 0,
+    // followingsPage: 1,
     follow: false,
     lfollowers: {},
     lfollowings: {},
@@ -45,8 +45,18 @@ export default class Dashboard extends React.Component {
 	}
 
 	static propTypes = {
+    history: historyType,
+    location: locationType,
+    match: matchType,
     openSnackbar: funcType.isRequired,
     user: userType
+  }
+
+  static defaultProps = {
+    history: null,
+    location: null,
+    match: null,
+    user: null
   }
 
 	static getDerivedStateFromProps(props, state) {
@@ -103,17 +113,6 @@ export default class Dashboard extends React.Component {
     }
   }
 
-	componentWillUnmount() {
-    this._isMounted = false;
-    window.removeEventListener('resize', this.updateScreenSize);
-    this.unsubUserFetch && this.unsubUserFetch();
-    this.unsubCollectionFetch && this.unsubCollectionFetch();
-    this.unsubLuidFollowersFetch && this.unsubLuidFollowersFetch();
-    this.unsubLuidFollowingsFetch && this.unsubLuidFollowingsFetch();
-    this.unsubUidFollowersFetch && this.unsubUidFollowersFetch();
-    this.unsubUidFollowingsFetch && this.unsubUidFollowingsFetch();
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (this.props.match.params.tab !== prevProps.match.params.tab) {
       if (tabs.indexOf(this.props.match.params.tab) !== -1) {
@@ -132,6 +131,17 @@ export default class Dashboard extends React.Component {
         this.fetchUserChallenges();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    window.removeEventListener('resize', this.updateScreenSize);
+    this.unsubUserFetch && this.unsubUserFetch();
+    this.unsubCollectionFetch && this.unsubCollectionFetch();
+    this.unsubLuidFollowersFetch && this.unsubLuidFollowersFetch();
+    this.unsubLuidFollowingsFetch && this.unsubLuidFollowingsFetch();
+    this.unsubUidFollowersFetch && this.unsubUidFollowersFetch();
+    this.unsubUidFollowingsFetch && this.unsubUidFollowingsFetch();
   }
   
   updateScreenSize = () => {
@@ -182,7 +192,7 @@ export default class Dashboard extends React.Component {
           // followersCount: 10, // TODO
           follow: luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false
         });
-      } else this.setState({ followers: {}, followersCount: 0, follow: false });
+      } else this.setState({ followers: {}, /* followersCount: 0, */ follow: false });
     });
     if (isAuthenticated()) {
       if (luid && luid !== uid) {
@@ -210,7 +220,7 @@ export default class Dashboard extends React.Component {
           // followingsCount: 10 // TODO
         });
         // console.log({ uid, followings: snap.data() });
-      } else this.setState({ followings: {}, followingsCount: 0 });
+      } else this.setState({ followings: {}, /* followingsCount: 0 */ });
     });
     
     if (luid && luid !== uid) {
@@ -304,7 +314,7 @@ export default class Dashboard extends React.Component {
     }
   };
 
-  onTabSelectIndex = (index, indexLatest, meta) => {
+  onTabSelectIndex = (index, /* indexLatest, meta */) => {
     if (index !== -1) {
       if (this._isMounted) {
         this.setState({ tabSelected: index }, () => {
@@ -348,7 +358,7 @@ export default class Dashboard extends React.Component {
     const challengeCompleted = challengeProgress === 100;
     const isMini = isTouchDevice() || screenSize === 'sm' || screenSize === 'xs';
 		const usersList = obj => (
-      <React.Fragment>
+      <>
         {Object.keys(obj).map(f => (
           <div key={f} className="avatar-row">
             <Link to={`/dashboard/${f}`} className="row ripple">
@@ -376,7 +386,7 @@ export default class Dashboard extends React.Component {
           oneWay
           page={obj === followers ? followersPage : followingsPage}
         /> */}
-      </React.Fragment>
+      </>
     );
     const Roles = Object.keys(user.roles).map((role, i) => user.roles[role] && <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>);
     const creationYear = user && String(new Date(user.creationTime).getFullYear());
@@ -396,10 +406,10 @@ export default class Dashboard extends React.Component {
       </div>
     );
     const TabLabel = (icon, label) => (
-      <React.Fragment>
+      <>
         <span className="icon show-md">{icon}</span>
         <span className="label">{label}</span>
-      </React.Fragment>
+      </>
     );
 
     const tabSeoTitle = () => {
@@ -461,14 +471,14 @@ export default class Dashboard extends React.Component {
 													// disabled={!isAuthenticated()}
 													onClick={this.onFollowUser}>
 													{follow ? 
-														<React.Fragment>
+														<>
 															<span className="hide-on-hover">{icon.check()} Segui</span>
 															<span className="show-on-hover">Smetti</span>
-														</React.Fragment> 
+														</> 
 													: <span>{icon.plus()} Segui</span> }
 												</button>
 											}
-											<span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">Follower</span></span>
+											<span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
 											{screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
 										</div>
 									</div>
@@ -487,7 +497,7 @@ export default class Dashboard extends React.Component {
                   </div>
                   <div className="info-row">
                     <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Nessuna sfida'}</div>
-                    <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded centered" style={{marginBottom: 0, display: 'inline-block'}}>{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
+                    <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded centered" style={{ marginBottom: 0, display: 'inline-block', }}>{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
                   </div>
                 </div>
               </div>

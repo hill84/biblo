@@ -5,7 +5,8 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
 import { noteRef, notesRef } from '../../config/firebase';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType, userType } from '../../config/types';
+import Overlay from '../overlay';
 
 export default class noteForm extends React.Component {
 	state = {
@@ -24,7 +25,13 @@ export default class noteForm extends React.Component {
     onToggle: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     nid: stringType,
-    uid: stringType.isRequired
+    uid: stringType.isRequired,
+    user: userType
+  }
+
+  static defaultProps = {
+    nid: null,
+    user: null
   }
 
   componentDidMount() {
@@ -34,18 +41,18 @@ export default class noteForm extends React.Component {
       this.fetch();
     }
   }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
   
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, /* prevState */) {
     const { nid, uid } = this.props;
     if (this._isMounted) {
       if (nid !== prevProps.nid || uid !== prevProps.uid) {
         this.fetch();
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => {
@@ -72,10 +79,12 @@ export default class noteForm extends React.Component {
   onToggle = () => this.props.onToggle(this.state.selectedId);
 
 	onChange = e => {
+    e.persist();
+    
     if (this._isMounted) {
-      this.setState({ 
-        data: { ...this.state.data, [e.target.name]: e.target.value }, errors: { ...this.state.errors, [e.target.name]: null }
-      });
+      this.setState(prevState => ({ 
+        data: { ...prevState.data, [e.target.name]: e.target.value }, errors: { ...prevState.errors, [e.target.name]: null }
+      }));
     }
   };
   
@@ -83,11 +92,11 @@ export default class noteForm extends React.Component {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
     if (this._isMounted) {
-      this.setState({
-        data: { ...this.state.data, [e.target.name]: e.target.value }, 
-        [leftChars]: this.state[maxChars] - e.target.value.length, 
+      this.setState(prevState => ({
+        data: { ...prevState.data, [e.target.name]: e.target.value }, 
+        [leftChars]: prevState[maxChars] - e.target.value.length, 
         changes: true
-      });
+      }));
     }
   };
 
@@ -142,8 +151,8 @@ export default class noteForm extends React.Component {
     const { authError, data, errors, loading, text_leftChars, text_maxChars } = this.state;
 
 		return (
-			<React.Fragment>
-        <div className="overlay" onClick={this.onToggle} />
+			<>
+        <Overlay onClick={this.onToggle} />
         <div role="dialog" aria-describedby="new note" className="dialog light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="content">
@@ -178,7 +187,7 @@ export default class noteForm extends React.Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
           </div>
         </div>
-      </React.Fragment>
+      </>
 		);
 	}
 }

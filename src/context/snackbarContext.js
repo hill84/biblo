@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import SharedSnackbar from '../components/sharedSnackbar';
 
 const SharedSnackbarContext = React.createContext();
@@ -10,7 +11,11 @@ export class SharedSnackbarProvider extends React.Component {
     isOpen: false,
     message: '',
     variant: null
-  };
+  }
+
+  static propTypes = {
+    children: PropTypes.element.isRequired
+  }
 
   componentDidMount() {
     this._isMounted = true;
@@ -24,13 +29,13 @@ export class SharedSnackbarProvider extends React.Component {
     if (this._isMounted) {
       this.setState({ action, message, isOpen: true, variant, autoHideDuration });
     }
-  };
+  }
 
   closeSnackbar = () => {
     if (this._isMounted) {
       this.setState({ isOpen: false, autoHideDuration: 5000 });
     }
-  };
+  }
 
   render() {
     const { action, autoHideDuration, isOpen, message, variant } = this.state;

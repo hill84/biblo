@@ -2,14 +2,23 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 // import { challengeRef, userChallengesRef } from '../../config/firebase';
 import { app } from '../../config/shared';
+import { userType } from '../../config/types';
 
 class Challenges extends React.Component {
   state = {
-    challenges: null,
+    /* challenges: null,
     desc: true,
     loading: false,
     activeUserChallenge: null,
-    userChallenges: null
+    userChallenges: null */
+  }
+
+  static propTypes = {
+    user: userType
+  }
+
+  static defaultProps = {
+    user: null
   }
 
   componentDidMount() {
@@ -17,14 +26,14 @@ class Challenges extends React.Component {
     this.fetch();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   componentDidUpdate(prevProps) {
     if (prevProps.user !== this.props.user) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetch = () => {

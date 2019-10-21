@@ -100,6 +100,10 @@ export const firestoreErrorMessages = {
   'auth/account-exists-with-different-credential': {
     en: "An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
     it: "L'email con cui hai provato ad accedere risulta già associata a un altro account. Fai login con un altro provider."
+  },
+  'auth/invalid-credential': {
+    en: "Error getting verification code",
+    it: "Errore nell'ottenimento del codice di verifica"
   }
 };
 
@@ -674,9 +678,9 @@ export const badWords = [
   'minchiate',
   'minchione', 
   'minchioni',
-  //'puttana', 
+  // 'puttana', 
   'puttanata',
-  //'puttane',
+  // 'puttane',
   'puttaniere', 
   'puttanieri',
   'rottinculo', 

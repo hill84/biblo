@@ -11,15 +11,15 @@ import React from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, /* userType */ } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 export default class UsersDash extends React.Component {
  	state = {
-    user: this.props.user,
+    // user: this.props.user,
     count: 0,
     desc: true,
     firstVisible: null,
@@ -49,17 +49,12 @@ export default class UsersDash extends React.Component {
 	static propTypes = {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
-    user: userType
+    // user: userType
   }
 
 	componentDidMount() { 
     this._isMounted = true;
     this.fetch();
-  }
-
-	componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubUsersFetch && this.unsubUsersFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -67,6 +62,11 @@ export default class UsersDash extends React.Component {
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubUsersFetch && this.unsubUsersFetch();
   }
     
   fetch = e => {
@@ -102,10 +102,8 @@ export default class UsersDash extends React.Component {
           if (this._isMounted) {
             this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ count: 0 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ count: 0 });
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
@@ -122,28 +120,28 @@ export default class UsersDash extends React.Component {
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
   onView = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
+    const { id } = e.currentTarget.parentNode.dataset;
     this.setState({ redirectTo: id });
   }
 
   onNote = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
+    const { id } = e.currentTarget.parentNode.dataset;
     this.props.onToggleDialog(id);
   }
 
   onSendReset = e => {
-    const email = e.currentTarget.parentNode.dataset.email;
+    const { email } = e.currentTarget.parentNode.dataset;
     auth.sendPasswordResetEmail(email).then(() => {
       this.props.openSnackbar(`Email inviata`, 'success');
     }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
   }
 
-  onSendVerification = e => {
+  onSendVerification = () => {
     // TODO
   }
 
   onLock = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
+    const { id } = e.currentTarget.parentNode.dataset;
     const state = e.currentTarget.parentNode.dataset.state === 'true';
     // console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
     userRef(id).update({ 'roles.editor': !state }).then(() => {
@@ -152,7 +150,7 @@ export default class UsersDash extends React.Component {
   }
 
   onDeleteRequest = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
+    const { id } = e.currentTarget.parentNode.dataset;
     const displayName = e.currentTarget.parentNode.dataset.name;
     if (this._isMounted) {
       this.setState({ isOpenDeleteDialog: true, selected: { displayName, id } });
@@ -166,15 +164,14 @@ export default class UsersDash extends React.Component {
     if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
     
     userRef(selected.id).delete().then(() => {
-      console.log(`✔ user db deleted`);
+      console.log(`%c✔ user db deleted`, 'color: green');
       openSnackbar('Elemento cancellato', 'success');
 
       userShelfRef(selected.id).delete().then(() => {
-        console.log(`✔ user reviews deleted`);
+        console.log(`%c✔ user reviews deleted`, 'color: green');
         openSnackbar('Recensioni cancellate', 'success');
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
 
     userNotificationsRef(selected.id).get().then(snap => {
       if (!snap.empty) {
@@ -186,12 +183,14 @@ export default class UsersDash extends React.Component {
               // console.log(notes);
               const deleteUserNotes = async () => {
                 await asyncForEach(snap, item => {
-                  noteRef(selected.id, item.id).delete().then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                  noteRef(selected.id, item.id).delete().then(() => {
+                    console.log(`• note ${item.id} deleted`);
+                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
                 });
-                console.log(`✔ ${snap.docs.length} notes deleted`);
+                console.log(`%c✔ ${snap.docs.length} notes deleted`, 'color: green');
                 openSnackbar(`${snap.docs.length} note cancellate`, 'success');
                 userNotificationsRef(selected.id).delete().then(() => {
-                  console.log(`✔ notifications collection deleted`);
+                  console.log(`%c✔ notifications collection deleted`, 'color: green');
                   // openSnackbar(`Collezione notifiche cancellata`, 'success');
                 }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
               }
@@ -208,8 +207,8 @@ export default class UsersDash extends React.Component {
   }
 
   onChangeRole = e => {
-    const id = e.currentTarget.parentNode.dataset.id;
-    const role = e.currentTarget.dataset.role;
+    const { id } = e.currentTarget.parentNode.dataset;
+    const { role } = e.currentTarget.dataset;
     const state = e.currentTarget.dataset.state === 'true';
     userRef(id).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
   }
@@ -249,10 +248,10 @@ export default class UsersDash extends React.Component {
               <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
             </div>
           </div>
-          <div className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
-            <div className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={this.onChangeRole} title="editor">E</div>
-            <div className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={this.onChangeRole} title="premium">P</div>
-            <div className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={this.onChangeRole} title="admin">A</div>
+          <div role="group" className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
+            <button type="button" className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={this.onChangeRole} title="editor">E</button>
+            <button type="button" className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={this.onChangeRole} title="premium">P</button>
+            <button type="button" className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={this.onChangeRole} title="admin">A</button>
           </div>
           <div className="col col-sm-2 col-lg text-right">
             <div className="timestamp">
@@ -295,7 +294,7 @@ export default class UsersDash extends React.Component {
 
 		return (
 			<div className="container" id="usersDashComponent">
-        <div className="card dark" style={{ minHeight: 200 }}>
+        <div className="card dark" style={{ minHeight: 200, }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
@@ -327,7 +326,7 @@ export default class UsersDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <React.Fragment>
+            <>
               <ul className="table dense nolist font-sm">
                 <li className="avatar-row labels">
                   <div className="row">
@@ -355,7 +354,7 @@ export default class UsersDash extends React.Component {
                 limit={limitBy[limitByIndex]}
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
 
@@ -366,10 +365,10 @@ export default class UsersDash extends React.Component {
             onClose={this.onCloseDeleteDialog}
             aria-labelledby="delete-dialog-title"
             aria-describedby="delete-dialog-description">
-            <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+            <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
             <DialogContent>
               <DialogContentText id="delete-dialog-description">
-                Cancellando l'utente <b>{selected.displayName}</b> <small className="monotype">({selected.id})</small> verranno rimosse anche la sua libreria e le sue notifiche.
+                Cancellando l&apos;utente <b>{selected.displayName}</b> <small className="monotype">({selected.id})</small> verranno rimosse anche la sua libreria e le sue notifiche.
               </DialogContentText>
             </DialogContent>
             <DialogActions className="dialog-footer flex no-gutter">

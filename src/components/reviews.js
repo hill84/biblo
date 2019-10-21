@@ -31,21 +31,19 @@ export default class Reviews extends React.Component {
   }
 
   static defaultProps = {
+    bid: null,
     container: true,
     limit: 5,
     pagination: true,
-    skeleton: false
+    skeleton: false,
+    uid: null,
+    user: null
   }
 
   componentDidMount() {
     this._isMounted = true;
     const { bid, uid } = this.props;
     this.fetch(bid, uid);
-  }
-  
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.reviewersFetch && this.reviewersFetch();
   }
 
   componentDidUpdate(prevProps) {
@@ -55,6 +53,11 @@ export default class Reviews extends React.Component {
       this.fetch(bid, uid);
       // console.log('Fetched updated reviews');
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.reviewersFetch && this.reviewersFetch();
   }
 
   fetch = (bid, uid) => { 
@@ -102,15 +105,13 @@ export default class Reviews extends React.Component {
             lastVisible: nextSnap.docs[nextSnap.docs.length-1] || prevState.lastVisible
           }));
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({ 
-            items: null,
-            loading: false,
-            page: null,
-            lastVisible: null
-          });
-        }
+      } else if (this._isMounted) {
+        this.setState({ 
+          items: null,
+          loading: false,
+          page: null,
+          lastVisible: null
+        });
       }
 		}).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
   }
@@ -131,16 +132,16 @@ export default class Reviews extends React.Component {
     );
 
 		return (
-      <React.Fragment>
+      <>
         <div className={`reviews ${container ? 'card dark' : ''}`}>
           {!loading && !items ? <EmptyState /> :
-            <React.Fragment>
+            <>
               <div className="head">
                 {!bid && <h2>Ultime recensioni<span className="counter">({items ? items.length : limit} di {count || limit})</span></h2>}
               </div>
-              {items && items.map((item, index) => (
+              {items && items.map(item => (
                 <Review 
-                  key={`${index}_${item.createdByUid}`} 
+                  key={`${item.bid || 'nobid'}_${item.createdByUid}`} 
                   bid={bid}
                   openSnackbar={openSnackbar}
                   uid={uid}
@@ -163,7 +164,7 @@ export default class Reviews extends React.Component {
                 />
               ))}
               {loading && skeleton && skeletons}
-            </React.Fragment>
+            </>
           }
         </div>
         {pagination && count > 0 && items && items.length < count &&
@@ -176,7 +177,7 @@ export default class Reviews extends React.Component {
             page={page}
           />
         }
-      </React.Fragment>
+      </>
 		);
 	}
 }

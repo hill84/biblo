@@ -1,0 +1,15 @@
+.component > [ class*='col-' ] { padding-left: 4px; padding-right: 4px; }
+.component > [ class*='col-' ]:first-child { padding-left: 7px; }
+.component > [ class*='col-' ]:last-child { padding-right: 7px; }
+.component button { 
+  float: left; 
+  width: 100%; 
+  margin: 3px 0; 
+  text-transform: initial; 
+  font-size: .85rem; 
+  letter-spacing: .03rem; 
+}
+.component button:disabled {
+  cursor: not-allowed;
+  opacity: .7;
+}

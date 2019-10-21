@@ -1,6 +1,6 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
-import { funcType, numberType, stringType, _oneOfType } from '../config/types';
+import { /* funcType, */ numberType, stringType, _oneOfType } from '../config/types';
 
 const copy = (text, props) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
@@ -12,7 +12,7 @@ const copy = (text, props) => typeof window !== "undefined" && navigator.clipboa
 
 const CopyToClipboard = React.forwardRef((props, ref) => (
   <Tooltip title="Copia">
-    <span className="copy" onClick={() => copy(props.text, props)} ref={ref}>
+    <span role="button" tabIndex={0} className="copy" onClick={() => copy(props.text, props)} onKeyDown={() => copy(props.text, props)} ref={ref}>
       {props.text}
     </span>
   </Tooltip>
@@ -20,7 +20,11 @@ const CopyToClipboard = React.forwardRef((props, ref) => (
 
 CopyToClipboard.propTypes = {
   text: _oneOfType([stringType, numberType]),
-  openSnackbar: funcType.isRequired
+  // openSnackbar: funcType.isRequired
+}
+
+CopyToClipboard.defaultProps = {
+  text: null
 }
 
 export default CopyToClipboard;

@@ -27,7 +27,7 @@ class GenresPage extends React.Component {
             <InView key={item.id} triggerOnce rootMargin={rootMargin}>
               {({ inView, ref }) => 
                 <div className="card dark card-fullwidth-sm" /* style={{'--cardBg': item.color}} */ ref={ref}>
-                  <BookCollection cid={denormURL(item.name)} openSnackbar={openSnackbar} desc={true} pagination={false} limit={7} inView={inView} scrollable />
+                  <BookCollection cid={denormURL(item.name)} openSnackbar={openSnackbar} desc pagination={false} limit={7} inView={inView} scrollable />
                 </div>
               }
             </InView>

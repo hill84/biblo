@@ -8,9 +8,9 @@ import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import { userRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { app, screenSize } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, historyType, userType, matchType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
 /* import CollectionForm from '../../forms/collectionForm'; */
 import NoteForm from '../../forms/noteForm';
@@ -43,8 +43,16 @@ export default class Admin extends React.Component {
 	}
 
 	static propTypes = {
+    history: historyType,
+    match: matchType,
     openSnackbar: funcType.isRequired,
     user: userType
+  }
+
+  static defaultProps = {
+    history: null,
+    match: null,
+    user: null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -68,16 +76,16 @@ export default class Admin extends React.Component {
     window.addEventListener('resize', this.updateScreenSize);
   }
 
-	componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubUserFetch && this.unsubUserFetch();
-    window.removeEventListener('resize', this.updateScreenSize);
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (this.state.aid !== prevState.aid) {
       this.fetchUser();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubUserFetch && this.unsubUserFetch();
+    window.removeEventListener('resize', this.updateScreenSize);
   }
   
   updateScreenSize = () => this.setState({ screenSize: screenSize() });
@@ -147,12 +155,12 @@ export default class Admin extends React.Component {
             onChange={this.onTabSelect}
             variant={screenSize === 'sm' ? 'scrollable' : 'fullWidth'}
             scrollButtons="auto">
-            <Tab label={<React.Fragment><span className="show-md">{icon.account()}</span><span className="hide-md">Utenti</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="show-md">{icon.book()}</span><span className="hide-md">Libri</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="show-md">{icon.accountEdit()}</span><span className="hide-md">Autori</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="show-md">{icon.viewCarousel()}</span><span className="hide-md">Collezioni</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="show-md">{icon.quote()}</span><span className="hide-md">Citazioni</span></React.Fragment>} />
-            <Tab label={<React.Fragment><span className="show-md">{icon.bell()}</span><span className="hide-md">Notifiche</span></React.Fragment>} />
+            <Tab label={<><span className="show-md">{icon.account()}</span><span className="hide-md">Utenti</span></>} />
+            <Tab label={<><span className="show-md">{icon.book()}</span><span className="hide-md">Libri</span></>} />
+            <Tab label={<><span className="show-md">{icon.accountEdit()}</span><span className="hide-md">Autori</span></>} />
+            <Tab label={<><span className="show-md">{icon.viewCarousel()}</span><span className="hide-md">Collezioni</span></>} />
+            <Tab label={<><span className="show-md">{icon.quote()}</span><span className="hide-md">Citazioni</span></>} />
+            <Tab label={<><span className="show-md">{icon.bell()}</span><span className="hide-md">Notifiche</span></>} />
           </Tabs>
         </AppBar>
         <BindKeyboardSwipeableViews
@@ -162,48 +170,48 @@ export default class Admin extends React.Component {
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
-          <React.Fragment>
+          <>
             {tabSelected === 0 && 
               <div className="tab" dir={tabDir}>
                 <UsersDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} />
               </div>
             }
-          </React.Fragment>
-          <React.Fragment>
+          </>
+          <>
             {tabSelected === 1 && 
               <div className="tab" dir={tabDir}>
                 <BooksDash user={user} openSnackbar={openSnackbar} />
               </div>
             }
-          </React.Fragment>
-          <React.Fragment>
+          </>
+          <>
             {tabSelected === 2 && 
               <div className="tab" dir={tabDir}>
                 <AuthorsDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleAuthorDialog} />
               </div>
             }
-          </React.Fragment>
-          <React.Fragment>
+          </>
+          <>
             {tabSelected === 3 && 
               <div className="tab" dir={tabDir}>
                 <CollectionsDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleCollectionDialog} />
               </div>
             }
-          </React.Fragment>
-          <React.Fragment>
+          </>
+          <>
             {tabSelected === 4 && 
               <div className="tab" dir={tabDir}>
                 <QuotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleQuoteDialog} />
               </div>
             }
-          </React.Fragment>
-          <React.Fragment>
+          </>
+          <>
             {tabSelected === 5 && 
               <div className="tab" dir={tabDir}>
                 <NotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} />
               </div>
             }
-          </React.Fragment>
+          </>
         </BindKeyboardSwipeableViews>
 
         {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} />}

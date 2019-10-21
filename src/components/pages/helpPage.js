@@ -4,7 +4,7 @@ import { app } from '../../config/shared';
 import booksRowImage from '../../images/books-row.png';
 import withScrollToTop from '../hocs/withScrollToTop';
 
-const HelpPage = props => (
+const HelpPage = () => (
   <div id="HelpPageComponent" className="reveal fadeIn slideUp">
     <Helmet>
       <title>{app.name} | Aiuto</title>
@@ -17,10 +17,10 @@ const HelpPage = props => (
         <p>Questa pagina &egrave; in preparazione...</p>
         
         <div className="pad-v hide-sm">
-          <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})` }} />
+          <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})`, }} />
         </div>
 
-        <p>Se hai bisogno di aiuto scrivici all'indirizzo <a href={`mailto:${app.email}?subject=Biblo: aiuto`}>{app.email}</a>.</p>
+        <p>Se hai bisogno di aiuto scrivici all&apos;indirizzo <a href={`mailto:${app.email}?subject=Biblo: aiuto`}>{app.email}</a>.</p>
       </div>
     </div>
   </div>

@@ -13,18 +13,25 @@ export default class RandomQuote extends React.Component {
     bookTitle: '',
     coverURL: '',
     quote: '',
-    limit: this.props.limit || 1,
+    limit: this.props.limit,
     loading: true,
-    auto: false,
+    // auto: false,
     skeleton: typeof this.props.skeleton === 'undefined' ? true : this.props.skeleton
   }
 
   static propTypes = {
     author: stringType,
-    auto: boolType,
+    // auto: boolType,
     className: stringType,
     limit: numberType,
     skeleton: boolType,
+  }
+
+  static defaultProps = {
+    author: null,
+    className: null,
+    limit: 1,
+    skeleton: null
   }
 
   componentDidMount() {
@@ -56,17 +63,15 @@ export default class RandomQuote extends React.Component {
             loading: false
           });
         }
-      } else {
-        if (this._isMounted) {
-          this.setState({
-            author: '',
-            bid: '',
-            bookTitle: '',
-            coverURL: '',
-            quote: '',
-            loading: false
-          });
-        }
+      } else if (this._isMounted) {
+        this.setState({
+          author: '',
+          bid: '',
+          bookTitle: '',
+          coverURL: '',
+          quote: '',
+          loading: false
+        });
       }
     }).catch(error => console.warn(error));
   }
@@ -84,7 +89,7 @@ export default class RandomQuote extends React.Component {
             <div className="col-auto">
               <Link to={`/book/${bid}/${normURL(bookTitle)}`} className="hoverable-items">
                 <div className="book">
-                  <div className="cover" style={{backgroundImage: `url(${coverURL})`}} title={bookTitle}>
+                  <div className="cover" style={{ backgroundImage: `url(${coverURL})`, }} title={bookTitle}>
                     <div className="overlay" />
                   </div>
                 </div>

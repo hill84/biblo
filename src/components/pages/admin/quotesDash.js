@@ -5,23 +5,23 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
+import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
-import { icon } from '../../../config/icons';
+import icon from '../../../config/icons';
 import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
-import { funcType, userType } from '../../../config/types';
+import { funcType, /* userType */ } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
-import ImageZoom from 'react-medium-image-zoom';
 
 export default class QuotesDash extends React.Component {
  	state = {
-    user: this.props.user,
+    // user: this.props.user,
     count: 0,
     desc: true,
     firstVisible: null,
     isOpenDeleteDialog: false,
-    isOpenFormDialog: false,
+    // isOpenFormDialog: false,
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
@@ -44,17 +44,12 @@ export default class QuotesDash extends React.Component {
 	static propTypes = {
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
-    user: userType
+    // user: userType
   }
 
 	componentDidMount() { 
     this._isMounted = true;
     this.fetch();
-  }
-
-	componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubQuotesFetch && this.unsubQuotesFetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -62,6 +57,11 @@ export default class QuotesDash extends React.Component {
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
       this.fetch();
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.unsubQuotesFetch && this.unsubQuotesFetch();
   }
     
   fetch = e => {
@@ -99,10 +99,8 @@ export default class QuotesDash extends React.Component {
           if (this._isMounted) {
             this.setState({ count: fullSnap.data().count }, () => fetcher());
           }
-        } else {
-          if (this._isMounted) {
-            this.setState({ count: 0 });
-          }
+        } else if (this._isMounted) {
+          this.setState({ count: 0 });
         }
       }).catch(err => this.props.openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
@@ -158,7 +156,7 @@ export default class QuotesDash extends React.Component {
         <li key={item.qid} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs overflow-hidden" style={{position: 'relative', backgroundImage: `url(${item.coverURL})`}}>
+              <div className="mock-cover xs overflow-hidden" style={{ position: 'relative', backgroundImage: `url(${item.coverURL})`, }}>
                 <ImageZoom
                   defaultStyles={imageZoomDefaultStyles}
                   image={{ src: item.coverURL, className: 'thumb hidden' }}
@@ -211,7 +209,7 @@ export default class QuotesDash extends React.Component {
 
 		return (
 			<div className="container" id="quotesDashComponent">
-        <div className="card dark" style={{ minHeight: 200 }}>
+        <div className="card dark" style={{ minHeight: 200, }}>
           <div className="head nav">
             <div className="row">
               <div className="col">
@@ -243,7 +241,7 @@ export default class QuotesDash extends React.Component {
           : !items ? 
             <div className="empty text-center">Nessun elemento</div>
           :
-            <React.Fragment>
+            <>
               <ul className="table dense nolist font-sm">
                 <li className="labels">
                   <div className="row">
@@ -264,7 +262,7 @@ export default class QuotesDash extends React.Component {
                 limit={limitBy[limitByIndex]}
                 page={page}
               />
-            </React.Fragment>
+            </>
           }
         </div>
 
@@ -274,7 +272,7 @@ export default class QuotesDash extends React.Component {
           onClose={this.onCloseDeleteDialog}
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l'eliminazione?</DialogTitle>
+          <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className="dialog-footer flex no-gutter">
             <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
             <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
