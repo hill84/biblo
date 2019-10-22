@@ -6,22 +6,23 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React from 'react';
-import { authorRef, authorsRef } from '../../config/firebase';
-import { handleFirestoreError, normalizeString } from '../../config/shared';
+import { collectionRef, collectionsRef } from '../../config/firebase';
+import { genres } from '../../config/lists';
+import { handleFirestoreError } from '../../config/shared';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
-export default class AuthorForm extends React.Component {
+export default class collectionForm extends React.Component {
 	state = {
     data: {
-      displayName: '',
-      source: '',
-      sex: '',
-      photoURL: '',
-      bio: ''
+      books_num: 0,
+      description: '',
+      edit: true,
+      genres: [],
+      title: ''
     },
-    bio_maxChars: 1000,
-    bio_minChars: 50,
+    desc_maxChars: 1000,
+    desc_minChars: 50,
     loading: false,
     changes: false,
     errors: {},
@@ -59,10 +60,9 @@ export default class AuthorForm extends React.Component {
 
   fetch = () => {
     if (typeof this.props.id === 'string') {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
-      authorRef(this.props.id).get().then(snap => {
+      if (this._isMounted) this.setState({ loading: true });
+
+      collectionRef(this.props.id).get().then(snap => {
         if (!snap.empty) {
           if (this._isMounted) {
             this.setState({ 
@@ -115,9 +115,9 @@ export default class AuthorForm extends React.Component {
     }
   };
 
-  checkDisplayName = async displayName => {
+  checkTitle = async title => {
     const { openSnackbar } = this.props;
-    const result = await authorsRef.where('displayName', '==', displayName).limit(1).get().then(snap => {
+    const result = await collectionsRef.where('title', '==', title).limit(1).get().then(snap => {
       if (!snap.empty) return true;
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -126,22 +126,22 @@ export default class AuthorForm extends React.Component {
 
 	validate = async data => {
     const errors = {};
-    const isDuplicate = await this.checkDisplayName(data.displayName);
+    const isDuplicate = typeof this.props.id === 'string' ? false : await this.checkTitle(data.title);
 
-    if (!data.displayName) { 
-      errors.displayName = "Inserisci il nominativo"; 
+    if (!data.title) { 
+      errors.title = "Inserisci il titolo"; 
     } else if (isDuplicate) {
-      errors.displayName = "Autore già presente";
+      errors.title = "Collezione già presente";
     }
-    if (!data.sex) {
-      errors.sex = "Sesso mancante";
+    if (!data.description) { 
+      errors.description = "Inserisci una descrizione"; 
+    } else if (data.description && data.description.length > this.state.desc_maxChars) {
+      errors.description = `Lunghezza massima ${this.state.desc_maxChars} caratteri`;
+    } else if (data.description && data.description.length < this.state.desc_minChars) {
+      errors.description = `Lunghezza minima ${this.state.desc_minChars} caratteri`;
     }
-    if (!data.bio) { 
-      errors.bio = "Inserisci una biografia"; 
-    } else if (data.bio && data.bio.length > this.state.bio_maxChars) {
-      errors.bio = `Lunghezza massima ${this.state.bio_maxChars} caratteri`;
-    } else if (data.bio && data.bio.length < this.state.bio_minChars) {
-      errors.bio = `Lunghezza minima ${this.state.bio_minChars} caratteri`;
+    if (data.genres && (data.genres.length > 3)) {
+      errors.genres = "Massimo 3 generi";
     }
 		return errors;
   };
@@ -159,68 +159,79 @@ export default class AuthorForm extends React.Component {
       
       if (Object.keys(errors).length === 0) {
         if (this._isMounted) this.setState({ loading: true });
-        const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
+        const ref = data.title ? collectionRef(data.title) : collectionsRef.doc();
         ref.set({
-          bio: data.bio || '',
-          displayName: data.displayName || '',
+          books_num: data.books_num || 0,
+          description: data.description || '',
+          title: data.title || '',
           edit: data.edit || true,
           // followers: data.followers || {},
+          genres: data.genres || [],
           lastEdit_num: Number((new Date()).getTime()),
           lastEditBy: user.displayName,
           lastEditByUid: user.uid,
-          photoURL: data.photoURL || '',
-          sex: data.sex || '',
-          source: data.source || ''
+          // photoURL: data.photoURL || '',
+          // source: data.source || ''
         }).then(() => {
           this.onToggle();
           if (this._isMounted) {
             this.setState({ loading: false });
           }
-          openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+          openSnackbar(data.title ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
         }).catch(err => console.warn(err));
       }
     } else this.onToggle();
-	};
+  };
 
 	render() {
-		const { authError, data, errors, loading, bio_leftChars, bio_maxChars } = this.state;
+    const { authError, data, errors, loading, desc_leftChars, desc_maxChars } = this.state;
+    
+    const menuItemsMap = (arr, values) => arr.map(item => 
+			<MenuItem 
+				value={item.name} 
+				key={item.id} 
+				// insetChildren={Boolean(values)} 
+				checked={values ? values.includes(item.name) : false}>
+				{item.name}
+      </MenuItem>
+    );
 
 		return (
 			<>
         <Overlay onClick={this.onToggle} />
-        <div role="dialog" aria-describedby="new author" className="dialog light">
+        <div role="dialog" aria-describedby="new collection" className="dialog light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="content">
             <div className="row">
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nominativo</InputLabel>
+                  <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo</InputLabel>
                   <Input
-                    id="displayName"
-                    name="displayName"
+                    id="title"
+                    name="title"
                     type="text"
                     autoFocus
-                    placeholder="Es: George Orwell"
-                    value={data.displayName}
+                    placeholder="Es: Cronache del ghiaccio e del fuoco"
+                    value={data.title}
                     onChange={this.onChange}
-                    error={Boolean(errors.displayName)}
+                    error={Boolean(errors.title)}
                   />
-                  {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+                  {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
                 </FormControl>
               </div>
               <div className="form-group col col-sm-3">
-                <FormControl className="select-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
-                  <Select
-                    id="sex"
-                    value={data.sex}
-                    onChange={this.onChangeSelect("sex")}
-                    error={Boolean(errors.sex)}>
-                    <MenuItem key="m" value="m">Uomo</MenuItem>
-                    <MenuItem key="f" value="f">Donna</MenuItem>
-                    <MenuItem key="x" value="x">Altro</MenuItem>
-                  </Select>
-                  {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.books_num)} htmlFor="books_num">Libri</InputLabel>
+                  <Input
+                    id="books_num"
+                    name="books_num"
+                    type="number"
+                    placeholder="Es: 5"
+                    value={data.books_num}
+                    onChange={this.onChange}
+                    error={Boolean(errors.books_num)}
+                  />
+                  {errors.books_num && <FormHelperText className="message error">{errors.books_num}</FormHelperText>}
                 </FormControl>
               </div>
             </div>
@@ -228,29 +239,46 @@ export default class AuthorForm extends React.Component {
             <div className="row">
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.bio)} htmlFor="bio">Biografia</InputLabel>
+                  <InputLabel error={Boolean(errors.description)} htmlFor="desccription">Descrizione</InputLabel>
                   <Input
-                    id="bio"
-                    name="bio"
+                    id="description"
+                    name="description"
                     type="text"
-                    placeholder={`Inserisci la biografia (max ${bio_maxChars} caratteri)...`}
-                    value={data.bio}
+                    placeholder={`Inserisci la descrizione (max ${desc_maxChars} caratteri)...`}
+                    value={data.description}
                     onChange={this.onChangeMaxChars}
                     rowsMax={20}
                     multiline
-                    error={Boolean(errors.bio)}
+                    error={Boolean(errors.description)}
                   />
-                  {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
-                  {(bio_leftChars !== undefined) && 
-                    <FormHelperText className={`message ${(bio_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                      Caratteri rimanenti: {bio_leftChars}
+                  {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
+                  {(desc_leftChars !== undefined) && 
+                    <FormHelperText className={`message ${(desc_leftChars < 0) ? 'alert' : 'neutral'}`}>
+                      Caratteri rimanenti: {desc_leftChars}
                     </FormHelperText>
                   }
                 </FormControl>
               </div>
             </div>
-            
+
             <div className="row">
+              <div className="form-group col">
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max 3)</InputLabel>
+                  <Select
+                    id="genres"
+                    value={data.genres}
+                    onChange={this.onChangeSelect("genres")}
+                    multiple
+                    error={Boolean(errors.genres)}>
+                    {menuItemsMap(genres, data.genres)}
+                  </Select>
+                  {errors.genres && <FormHelperText className="message error">{errors.genres}</FormHelperText>}
+                </FormControl>
+              </div>
+            </div>
+
+            {/* <div className="row">
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
                   <InputLabel error={Boolean(errors.source)} htmlFor="source">URL fonte</InputLabel>
@@ -258,7 +286,7 @@ export default class AuthorForm extends React.Component {
                     id="source"
                     name="source"
                     type="text"
-                    placeholder="Es: //it.wikipedia.org/wiki/George_Orwell"
+                    placeholder="Es: //it.wikipedia.org/wiki/Cronache_del_ghiaccio_e_del_fuoco"
                     value={data.source}
                     onChange={this.onChange}
                     error={Boolean(errors.source)}
@@ -267,7 +295,7 @@ export default class AuthorForm extends React.Component {
                 </FormControl>
               </div>
             </div>
-
+            
             <div className="row">
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
@@ -284,7 +312,7 @@ export default class AuthorForm extends React.Component {
                   {errors.photoURL && <FormHelperText className="message error">{errors.photoURL}</FormHelperText>}
                 </FormControl>
               </div>
-            </div>
+            </div> */}
 
 					  {authError && <div className="row"><div className="col message error">{authError}</div></div>}
           </div>

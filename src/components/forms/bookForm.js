@@ -127,7 +127,8 @@ export default class BookForm extends React.Component {
 
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [e.target.name]: e.target.value }, changes: true
+        book: { ...prevState.book, [e.target.name]: e.target.value }, 
+        changes: true
       }));
     }
   };
@@ -135,7 +136,8 @@ export default class BookForm extends React.Component {
   onChangeNumber = e => {
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [e.target.name]: parseInt(e.target.value, 10) }, changes: true
+        book: { ...prevState.book, [e.target.name]: parseInt(e.target.value, 10) }, 
+        changes: true
       }));
     }
   };
@@ -143,7 +145,8 @@ export default class BookForm extends React.Component {
   onChangeSelect = key => e => {
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: e.target.value }, changes: true
+        book: { ...prevState.book, [key]: e.target.value }, 
+        changes: true
       }));
     }
   };
@@ -151,7 +154,8 @@ export default class BookForm extends React.Component {
   onChangeDate = key => date => {
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: String(date) }, changes: true
+        book: { ...prevState.book, [key]: String(date) }, 
+        changes: true
       }));
     }
   };
@@ -159,7 +163,8 @@ export default class BookForm extends React.Component {
   onAddChip = (key, chip) => { 
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: [...prevState.book[key], chip] }, changes: true 
+        book: { ...prevState.book, [key]: [...prevState.book[key], chip] }, 
+        changes: true 
       })); 
     }
   }; 
@@ -168,7 +173,8 @@ export default class BookForm extends React.Component {
     if (this._isMounted) {
       this.setState(prevState => ({ 
         // chips: prevState.chips.filter((c) => c !== chip) 
-        book: { ...prevState.book, [key]: prevState.book[key].filter((c) => c !== chip) }, changes: true 
+        book: { ...prevState.book, [key]: prevState.book[key].filter((c) => c !== chip) }, 
+        changes: true 
       })); 
     }
   }; 
@@ -176,7 +182,8 @@ export default class BookForm extends React.Component {
   onAddChipToObj = (key, chip) => { 
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [key]: { ...prevState.book[key], [chip.split('.').join('')]: true }}, changes: true
+        book: { ...prevState.book, [key]: { ...prevState.book[key], [chip.split('.').join('')]: true }}, 
+        changes: true
       }));
     }
   };
@@ -188,7 +195,8 @@ export default class BookForm extends React.Component {
         book: { 
           ...prevState.book, 
           [key]: arrToObj(Object.keys(prevState.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
-        }, changes: true
+        }, 
+        changes: true
       }));
     }
   };
@@ -198,7 +206,9 @@ export default class BookForm extends React.Component {
     const maxChars = `${e.target.name}_maxChars`;
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [e.target.name]: e.target.value }, [leftChars]: prevState[maxChars] - e.target.value.length, changes: true
+        book: { ...prevState.book, [e.target.name]: e.target.value }, 
+        [leftChars]: prevState[maxChars] - e.target.value.length, 
+        changes: true
       }));
     }
   };
@@ -361,11 +371,10 @@ export default class BookForm extends React.Component {
     e.preventDefault();
     const { book, changes, imgPreview } = this.state;
     const { openSnackbar } = this.props;
+
     if (changes || !book.bid) {
       const errors = await this.validate(book);
-      if (this._isMounted) {
-        this.setState({ errors, loading: true });
-      }
+      if (this._isMounted) this.setState({ errors, loading: true });
       if (Object.keys(errors).length === 0) {
         let newBid = '';
         if (this.props.book.bid) {

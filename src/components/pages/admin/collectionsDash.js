@@ -36,6 +36,7 @@ export default class collectionsDash extends React.Component {
 	}
 
 	static propTypes = {
+    onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired,
     // user: userType
   } 
@@ -119,11 +120,8 @@ export default class collectionsDash extends React.Component {
   onCloseLimitMenu = () => this.setState({ limitMenuAnchorEl: null });
 
   onView = id => this.setState({ redirectTo: normURL(id) });
-  
-  onEdit = id => {
-    console.log(`Editing ${id}`);
-    // TODO
-  }
+
+  onEdit = id => this.props.onToggleDialog(id);
 
   onLock = (id, state) => {
     if (id) {
@@ -166,7 +164,7 @@ export default class collectionsDash extends React.Component {
             <div className="col-1 text-right">{item.books_num}</div>
             <div className="absolute-row right btns xs">
               <button type="button" className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" disabled onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
+              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
               <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
               <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close()}</button>
             </div>

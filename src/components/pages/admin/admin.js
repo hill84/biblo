@@ -12,7 +12,7 @@ import icon from '../../../config/icons';
 import { app, screenSize } from '../../../config/shared';
 import { funcType, historyType, userType, matchType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
-/* import CollectionForm from '../../forms/collectionForm'; */
+import CollectionForm from '../../forms/collectionForm';
 import NoteForm from '../../forms/noteForm';
 import QuoteForm from '../../forms/quoteForm';
 import AuthorsDash from './authorsDash';
@@ -121,7 +121,7 @@ export default class Admin extends React.Component {
   onToggleQuoteDialog = id => this.setState(prevState => ({ isOpenQuoteDialog: !prevState.isOpenQuoteDialog, selectedId: this.son(id) }));
 
 	render() {
-		const { isAdmin, isOpenAuthorDialog, /* isOpenCollectionDialog, */ isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, screenSize, selectedEl, selectedId, tabDir, tabSelected, user } = this.state;
+		const { isAdmin, isOpenAuthorDialog, isOpenCollectionDialog, isOpenNoteDialog, isOpenQuoteDialog, loadingUser, openSnackbar, screenSize, selectedEl, selectedId, tabDir, tabSelected, user } = this.state;
 
 		if (loadingUser) {
       return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -145,7 +145,7 @@ export default class Admin extends React.Component {
         <div className="actions btns text-center pad-v-sm">
           <button type="button" title="Crea libro" className="btn rounded primary"><Link to="/new-book">{icon.plus()} <span className="hide-sm">libro</span><span className="show-sm">{icon.book()}</span></Link></button>
           <button type="button" onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn rounded primary">{icon.plus()} <span className="hide-sm">autore</span><span className="show-sm">{icon.accountEdit()}</span></button>
-          {/* <button type="button" onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn rounded primary">{icon.plus()} <span className="hide-sm">collezione</span><span className="show-sm">{icon.viewCarousel()}</span></button> */}
+          <button type="button" onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn rounded primary">{icon.plus()} <span className="hide-sm">collezione</span><span className="show-sm">{icon.viewCarousel()}</span></button>
           <button type="button" onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn rounded primary">{icon.plus()} <span className="hide-sm">citazione</span><span className="show-sm">{icon.quote()}</span></button>
           {/* <button type="button" onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn rounded primary">{icon.plus()} <span className="hide-sm">notifica</span><span className="show-sm">{icon.bell()}</span></button> */}
         </div>
@@ -215,7 +215,7 @@ export default class Admin extends React.Component {
         </BindKeyboardSwipeableViews>
 
         {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} />}
-        {/* isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} /> */}
+        {isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={this.onToggleCollectionDialog} user={user} openSnackbar={openSnackbar} />}
         {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={this.onToggleNoteDialog} user={user} openSnackbar={openSnackbar} />}
         {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={this.onToggleQuoteDialog} user={user} openSnackbar={openSnackbar} />}
 			</div>
