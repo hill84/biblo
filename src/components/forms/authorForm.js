@@ -173,9 +173,7 @@ export default class AuthorForm extends React.Component {
           source: data.source || ''
         }).then(() => {
           this.onToggle();
-          if (this._isMounted) {
-            this.setState({ loading: false });
-          }
+          if (this._isMounted) this.setState({ loading: false });
           openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
         }).catch(err => console.warn(err));
       }

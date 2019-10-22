@@ -79,7 +79,9 @@ export default class QuoteForm extends React.Component {
     
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        data: { ...prevState.data, [e.target.name]: e.target.value }, errors: { ...prevState.errors, [e.target.name]: null }
+        data: { ...prevState.data, [e.target.name]: e.target.value }, 
+        errors: { ...prevState.errors, [e.target.name]: null },
+        changes: true
       }));
     }
   };
@@ -89,43 +91,46 @@ export default class QuoteForm extends React.Component {
     const maxChars = `${e.target.name}_maxChars`;
     if (this._isMounted) {
       this.setState(prevState => ({
-        data: { ...prevState.data, [e.target.name]: e.target.value }, [leftChars]: prevState[maxChars] - e.target.value.length, changes: true
+        data: { ...prevState.data, [e.target.name]: e.target.value }, 
+        [leftChars]: prevState[maxChars] - e.target.value.length, 
+        changes: true
       }));
     }
   };
 
 	onSubmit = e => {
     e.preventDefault();
-    const { data } = this.state;
+    const { changes, data } = this.state;
     const { openSnackbar, user } = this.props;
-		const errors = this.validate(this.state.data);
-		if (this._isMounted) {
-      this.setState({ authError: '', errors });
-    }
-		if (Object.keys(errors).length === 0) {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
-      const ref = data.qid ? quoteRef(data.qid) : quotesRef.doc();
-      ref.set({
-        author: data.author || '',
-        bid: data.bid || '',
-        bookTitle: data.bookTitle || '',
-        coverURL: data.coverURL || '',
-        lastEdit_num: Number((new Date()).getTime()),
-        lastEditBy: user.displayName,
-        lastEditByUid: user.uid,
-        edit: data.edit || true,
-        qid: data.qid || ref.id,
-        quote: data.quote || ''
-      }).then(() => {
-        this.onToggle();
+
+    if (changes) {
+      const errors = this.validate(data);
+      
+      if (this._isMounted) this.setState({ authError: '', errors });
+      
+      if (Object.keys(errors).length === 0) {
         if (this._isMounted) {
-          this.setState({ loading: false });
+          this.setState({ loading: true });
         }
-        openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-      }).catch(error => console.warn(error));
-		}
+        const ref = data.qid ? quoteRef(data.qid) : quotesRef.doc();
+        ref.set({
+          author: data.author || '',
+          bid: data.bid || '',
+          bookTitle: data.bookTitle || '',
+          coverURL: data.coverURL || '',
+          lastEdit_num: Number((new Date()).getTime()),
+          lastEditBy: user.displayName,
+          lastEditByUid: user.uid,
+          edit: data.edit || true,
+          qid: data.qid || ref.id,
+          quote: data.quote || ''
+        }).then(() => {
+          this.onToggle();
+          if (this._isMounted) this.setState({ loading: false });
+          openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+        }).catch(error => console.warn(error));
+      }
+    } else this.onToggle();
 	};
 
 	validate = data => {
