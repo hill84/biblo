@@ -143,11 +143,11 @@ export default class Admin extends React.Component {
           <meta name="robots" content="noindex, nofollow" />
         </Helmet>
         <div className="actions btns text-center pad-v-sm">
-          <button type="button" title="Crea libro" className="btn rounded primary"><Link to="/new-book">{icon.plus()} libro</Link></button>
-          <button type="button" onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn rounded primary">{icon.plus()} autore</button>
-          {/* <button type="button" onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn rounded primary">{icon.plus()} collezione</button> */}
-          <button type="button" onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn rounded primary">{icon.plus()} citazione</button>
-          {/* <button type="button" onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn rounded primary">{icon.plus()} Notifica</button> */}
+          <button type="button" title="Crea libro" className="btn rounded primary"><Link to="/new-book">{icon.plus()} <span className="hide-sm">libro</span><span className="show-sm">{icon.book()}</span></Link></button>
+          <button type="button" onClick={this.onToggleAuthorDialog} title="Crea autore" className="btn rounded primary">{icon.plus()} <span className="hide-sm">autore</span><span className="show-sm">{icon.accountEdit()}</span></button>
+          {/* <button type="button" onClick={this.onToggleCollectionDialog} title="Crea collezione" className="btn rounded primary">{icon.plus()} <span className="hide-sm">collezione</span><span className="show-sm">{icon.viewCarousel()}</span></button> */}
+          <button type="button" onClick={this.onToggleQuoteDialog} title="Crea citazione" className="btn rounded primary">{icon.plus()} <span className="hide-sm">citazione</span><span className="show-sm">{icon.quote()}</span></button>
+          {/* <button type="button" onClick={this.onToggleNoteDialog} title="Crea notifica" className="btn rounded primary">{icon.plus()} <span className="hide-sm">notifica</span><span className="show-sm">{icon.bell()}</span></button> */}
         </div>
         <AppBar position="static" className="appbar flat">
           <Tabs 
