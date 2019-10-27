@@ -89,8 +89,10 @@ export default class QuoteForm extends React.Component {
   };
   
   onChangeMaxChars = e => {
+    e.persist();
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
+    
     if (this._isMounted) {
       this.setState(prevState => ({
         data: { ...prevState.data, [e.target.name]: e.target.value }, 

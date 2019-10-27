@@ -110,7 +110,9 @@ export default class BookForm extends React.Component {
 
   
   onToggleDescription = e => {
+    e.persist();
     e.preventDefault();
+
     if (this._isMounted) {
       this.setState(prevState => ({
         isEditingDescription: !prevState.isEditingDescription
@@ -119,7 +121,9 @@ export default class BookForm extends React.Component {
   }
   
   onToggleIncipit = e => {
+    e.persist();
     e.preventDefault();
+    
     if (this._isMounted) {
       this.setState(prevState => ({
         isEditingIncipit: !prevState.isEditingIncipit
@@ -232,6 +236,7 @@ export default class BookForm extends React.Component {
   };
   
   onChangeMaxChars = e => {
+    e.persist();
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
     const key = e.target.name;
