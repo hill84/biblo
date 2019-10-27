@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "private": true,
   "devDependencies": {
     "eslint": "^6.5.1",
@@ -58,6 +58,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "https": "export HTTPS=true && npm start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
