@@ -7,16 +7,9 @@ import MinifiableText from './minifiableText';
 
 export default class RandomQuote extends React.Component {
   state = {
-    className: this.props.className || '',
-    author: this.props.author || '',
-    bid: '',
-    bookTitle: '',
-    coverURL: '',
-    quote: '',
-    limit: this.props.limit,
     loading: true,
     // auto: false,
-    skeleton: typeof this.props.skeleton === 'undefined' ? true : this.props.skeleton
+    skeleton: this.props.skeleton === null ? true : this.props.skeleton
   }
 
   static propTypes = {
@@ -30,7 +23,7 @@ export default class RandomQuote extends React.Component {
   static defaultProps = {
     author: null,
     className: null,
-    limit: 1,
+    limit: 20,
     skeleton: null
   }
 
@@ -44,32 +37,23 @@ export default class RandomQuote extends React.Component {
   }
   
   fetch = () => {
-    const { limit } = this.state;
-    const { author } = this.props;
-    const ref = author ? quotesRef.where('author', '==', author).limit(limit) : quotesRef.limit(this.props.limit || 20);
+    const { author, limit } = this.props;
+    const ref = author ? quotesRef.where('author', '==', author).limit(1) : quotesRef.limit(limit);
 
     ref.get().then(snap => {
       if (!snap.empty) {
         const count = snap.size;
         const randomIndex = Math.floor(Math.random() * count);
-        const quote = snap.docs[randomIndex].data();
+        const item = snap.docs[randomIndex].data();
         if (this._isMounted) {
           this.setState({
-            author: quote.author,
-            bid: quote.bid,
-            bookTitle: quote.bookTitle,
-            coverURL: quote.coverURL,
-            quote: quote.quote,
+            item,
             loading: false
           });
         }
       } else if (this._isMounted) {
         this.setState({
-          author: '',
-          bid: '',
-          bookTitle: '',
-          coverURL: '',
-          quote: '',
+          item: null,
           loading: false
         });
       }
@@ -77,19 +61,20 @@ export default class RandomQuote extends React.Component {
   }
 
   render() {
-    const { author, bid, bookTitle, className, coverURL, loading, quote, skeleton } = this.state;
+    const { item, loading, skeleton } = this.state;
+    const { author, className } = this.props;
 
     if (loading) return skeleton ? <div className="skltn quote" /> : null;
-    if (!quote) return null;
+    if (!item.quote) return null;
 
     return (
       <div className={`randomquote ${className}`}>
         <div className="row">
-          {coverURL &&
+          {item.coverURL &&
             <div className="col-auto">
-              <Link to={`/book/${bid}/${normURL(bookTitle)}`} className="hoverable-items">
+              <Link to={`/book/${item.bid}/${normURL(item.bookTitle)}`} className="hoverable-items">
                 <div className="book">
-                  <div className="cover" style={{ backgroundImage: `url(${coverURL})`, }} title={bookTitle}>
+                  <div className="cover" style={{ backgroundImage: `url(${item.coverURL})`, }} title={item.bookTitle}>
                     <div className="overlay" />
                   </div>
                 </div>
@@ -98,11 +83,12 @@ export default class RandomQuote extends React.Component {
           }
           <div className="col">
             <blockquote className="blockquote">
-              <div className="q"><MinifiableText text={quote} limit={500} /></div>
+              <div className="q"><MinifiableText text={item.quote} limit={500} /></div>
               <p>
-                {this.props.author ? '' : <span>– <Link to={`/author/${normURL(author)}`}>{author}</Link></span>}
-                {!this.props.author && bookTitle && ', '}
-                {bookTitle && <em>{bid ? <Link to={`/book/${bid}/${normURL(bookTitle)}`}>{bookTitle}</Link> : bookTitle}</em>}</p>
+                {author ? '' : <span>– <Link to={`/author/${normURL(item.author)}`}>{item.author}</Link></span>}
+                {!author && item.bookTitle && ', '}
+                {item.bookTitle && <em>{item.bid ? <Link to={`/book/${item.bid}/${normURL(item.bookTitle)}`}>{item.bookTitle}</Link> : item.bookTitle}</em>}
+              </p>
             </blockquote>
           </div>
         </div>

@@ -146,8 +146,18 @@ export default class QuoteForm extends React.Component {
     } else if (data.quote && data.quote.length < this.state.quote_minChars) {
       errors.quote = `Lunghezza minima ${this.state.quote_minChars} caratteri`;
     }
+    if (data.bid || data.coverURL) {
+      if (!data.bookTitle) {
+        errors.bookTitle = "Inserisci il titolo del libro";
+      }
+    }
+    if (data.coverURL || data.bookTitle) {
+      if (!data.bid) {
+        errors.bid = "Inserisci il bid del libro";
+      }
+    }
     if (!data.author) { 
-      errors.quote = "Inserisci l'autore"; 
+      errors.author = "Inserisci l'autore"; 
     }
 		return errors;
 	};

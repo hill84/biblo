@@ -2198,7 +2198,7 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
     repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
     linear-gradient(var(--skltnClr) 50%, transparent 50%);
   background-position: 0 0, 54px 0, 54px 110px;
-  background-size: 40px 138px, 100% 110px, calc(100% - 100px) 22px;
+  background-size: 40px 123px, 100% 110px, calc(100% - 150px) 22px;
 }
 
 .skltn.notification {
