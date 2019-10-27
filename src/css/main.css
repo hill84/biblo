@@ -271,6 +271,13 @@ ul.nolist li { display: block; }
   font-weight: 200;
 }
 
+.avatar.prepend-input {
+  --avatarSize: 46px;
+  margin-top: 16px;
+  width: var(--avatarSize);
+  height: var(--avatarSize);
+}
+
 .card .avatar { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.5); }
 
 .table li, .avatar-row { 
@@ -589,7 +596,7 @@ hr.line {
   transform-origin: top center;
   transform: translateY(-50%);
   animation: flipInX .4s ease-in-out;
-  z-index: 1201;
+  z-index: 1200;
 }
 
 .dialog .head.nav {
@@ -632,7 +639,7 @@ hr.line {
   will-change: opacity;
   transition: all .4s ease-in-out;
   animation: fadeIn .4s ease-in-out;
-  z-index: 1200;
+  z-index: 1199;
 }
 
 .react-cookie-banner {
@@ -1111,10 +1118,14 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   color: #fff;
   text-align: center;
   line-height: inherit;
-  will-change: opacity;
+  will-change: opacity, transform;
   opacity: 0;
   transition: all .2s ease-in-out;
   z-index: 2;
+}
+.upload-avatar .overlay span { 
+  will-change: opacity, transform; 
+  transition: all .2s ease-in-out;
 }
 .upload-avatar:hover .overlay { opacity: 1; transform: rotate(90deg); }
 .upload-avatar:active .overlay { color: rgba(0,0,0,.3); }
@@ -1123,12 +1134,12 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   background-color: rgba(244,67,54,.5);
   transform: rotate(45deg);
 }
-.upload-avatar.error .progress { 
-  background-color: rgba(244,67,54,.5);
-}
-.upload-avatar.success .progress {
+.upload-avatar.success .overlay { 
+  opacity: 1;
   background-color: rgba(67,160,71,.5);
 }
+.upload-avatar.success .overlay span { opacity: 0; transform: scale(0); }
+.upload-avatar.success:hover .overlay span { opacity: 1; transform: rotate(90deg); }
 .upload { 
   appearance: none;
   position: absolute;
@@ -1139,19 +1150,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   height: 100%;
   cursor: pointer;
 }
-.upload-avatar .progress { 
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  font-size: 1rem;
-  color: #fff;
-  font-weight: 600;
-  opacity: 0;
-  z-index: 1;
-}
-.upload-avatar.loading .progress, .upload-avatar.success .progress, .upload-avatar.error .progress { opacity: 1; }
+.upload-avatar .loader { padding: 0; }
 
 /* NOTIFICATIONS */
 .notes *::-webkit-scrollbar { display: none; }
@@ -1321,7 +1320,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 .randomquote {
   --bookWidth: 40px;
   --coverWidth: 40px;
-  --coverHeight: 64px;
+  --coverHeight: 62px;
 }
 .randomquote .cover { --pad: 7px; font-size: 7px; }
 
@@ -1683,6 +1682,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   border: 3px dashed rgba(0,0,0,.15);
 }
 .book.empty .cover .add { font-size: 4rem; }
+.cover .loader svg { margin: auto; }
 .edit-book-cover.error .cover { background-color: rgb(var(--errorClr)); }
 
 .cover .title, .cover .subtitle, .cover .author, .cover .publisher {
@@ -1928,7 +1928,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   --avatarSize: 32px; 
   --bookWidth: 40px;
   --coverWidth: 40px;
-  --coverHeight: 64px; 
+  --coverHeight: 62px; 
 }
 .review .cover { --pad: 7px; font-size: 7px; }
 .reviews .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
@@ -1983,7 +1983,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   transform-origin: top; 
   max-height: 500px; 
   animation: slideDown .4s ease-in-out; 
-  z-index: 1200; 
+  z-index: 1199; 
 }
 .review .foot .thumb { margin-left: calc(-1 * var(--btnPad)); }
 .review .foot .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
@@ -2232,6 +2232,7 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
 /* MOCKS */
 .mock-cover { background-color: var(--bookBg); background-size: cover; }
 .mock-cover.xs { width: 14px; height: 20px; border-radius: 1px; }
+.mock-cover.prepend-input { margin-top: 16px; width: 30px; height: 48px; border-radius: 2px; }
 .mock-cover .thumb { width: 100%; }
 
 /* GENRES */
@@ -2731,7 +2732,7 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
     --avatarSize: 24px;
     --bookWidth: 40px;
     --coverWidth: 40px;
-    --coverHeight: 64px; 
+    --coverHeight: 62px; 
   }
   .review .left { padding-left: 0; }
   .review .avatar { font-size: .5rem; }

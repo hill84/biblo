@@ -1,3 +1,4 @@
+import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -7,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React from 'react';
 import { authorRef, authorsRef } from '../../config/firebase';
-import { handleFirestoreError, normalizeString } from '../../config/shared';
+import { getInitials, handleFirestoreError, normalizeString } from '../../config/shared';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
@@ -267,6 +268,11 @@ export default class AuthorForm extends React.Component {
             </div>
 
             <div className="row">
+              <div className="col-auto">
+                <Avatar className="image avatar prepend-input" alt="Avatar">
+                  {data.photoURL ? <img src={data.photoURL} alt="" style={{ width: '100%', height: '100%', }} /> : getInitials(data.displayName)}
+                </Avatar>
+              </div>
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
                   <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>

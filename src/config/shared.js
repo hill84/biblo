@@ -82,19 +82,24 @@ export const asyncForEach = async (array, callback) => {
 }
 
 // VALIDATION
-export const validateImg = (file, maxSize) => {
-  const errors = {};
-  const maxBytes = maxSize * 1048576;
-  const fileExtension = file.name.split('.').pop();
-  const ext = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'];
-  if (ext.indexOf(fileExtension.toLowerCase()) === -1) {
-    // console.warn(`Image file extension not supperted: ${fileExtension}`);
-    errors.upload = `Tipo file non valido: ${fileExtension}`;
-  } else if (file.size > maxBytes) {
-    // console.warn('File size too big');
-    errors.upload = `File troppo pesante. Max ${maxSize}MB.`;
+export const validateImg = (file, maxMB = 1) => {
+  let error;
+
+  if (file) {
+    const maxBytes = maxMB * 1048576;
+    const fileExtension = file.name.split('.').pop();
+    const ext = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'];
+    if (ext.indexOf(fileExtension.toLowerCase()) === -1) {
+      // console.warn(`Image file extension not supperted: ${fileExtension}`);
+      error = `Tipo file non valido: ${fileExtension}`;
+    } else if (file.size > maxBytes) {
+      // console.warn('File size too big');
+      error = `File troppo pesante. Max ${maxMB}MB.`;
+    }
+  } else {
+    error = `File non trovato`;
   }
-  return errors;
+  return error;
 }
 
 export const checkBadWords = text => splitWords(text).some(word => badWords.some(badWord => word.toLowerCase() === badWord)); // BOOLEAN

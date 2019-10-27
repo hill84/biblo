@@ -20,7 +20,8 @@ import { funcType, userType } from '../../config/types';
 export default class Profile extends React.Component {
 	state = {
     user: this.props.user,
-    imgPreview: this.props.user.photoURL || '',
+    imgLoading: false,
+    imgPreview: this.props.user.photoURL,
     imgProgress: 0,
     loading: !this.props.user,
     changes: false,
@@ -79,6 +80,81 @@ export default class Profile extends React.Component {
     }
 	};
 
+
+	validate = user => {
+		const errors = {};
+    if (!user.displayName) errors.displayName = "Inserisci un nome utente";
+    if (Date(user.birth_date) > new Date()) { 
+      errors.birth_date = "Data di nascita non valida" 
+    } else if (calcAge(user.birth_date) < 13) { 
+      errors.birth_date = "Età minima 14 anni"; 
+    } else if (calcAge(user.birth_date) > 119) {
+      errors.birth_date = "E chi sei.. Matusalemme?"; 
+    }
+		if (user.city && user.city.length > 150) errors.city = "Lunghezza massima 150 caratteri";
+		return errors;
+	};
+
+	onImageChange = e => {
+    e.preventDefault();
+		const file = e.target.files[0];
+    
+    if (file) {
+      const { openSnackbar } = this.props;
+      const error = validateImg(file, 1);
+  
+      if (!error) {
+        if (this._isMounted) {
+          this.setState(prevState => ({ 
+            imgLoading: true, 
+            errors: { ...prevState.errors, upload: null } 
+          }));
+        }
+        const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
+        const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
+          if (this._isMounted) {
+            this.setState({ imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100 });
+          }
+        }, err => {
+          // console.warn(`Upload error: ${error.message}`);
+          if (this._isMounted) {
+            this.setState(prevState => ({ 
+              errors: { ...prevState.errors, upload: err.message },
+              imgLoading: false,
+              imgProgress: 0,
+            }), () => openSnackbar(err.message, 'error'));
+          }
+        }, () => {
+          // console.log('upload completed');
+          uploadTask.then(snap => {
+            snap.ref.getDownloadURL().then(url => {
+              if (this._isMounted) {
+                this.setState({
+                  imgLoading: false,
+                  imgPreview: url,
+                  changes: true,
+                  saved: false
+                }, () => openSnackbar('Immagine caricata', 'success'));
+              }
+            });
+          });
+          unsubUploadTask();
+        });
+      } else if (this._isMounted) {
+        this.setState(prevState => ({ 
+          errors: { ...prevState.errors, upload: error }
+        }), () => {
+          openSnackbar(error, 'error');
+          setTimeout(() => {
+            if (this._isMounted) this.setState(prevState => ({ 
+              errors: { ...prevState.errors, upload: null } 
+            }));
+          }, 2000);
+        });
+      }
+    }
+  };
+  
 	onSubmit = e => {
     e.preventDefault();
     const prevState = this.state;
@@ -116,71 +192,8 @@ export default class Profile extends React.Component {
 		} else this.props.openSnackbar('Ricontrolla i dati inseriti', 'error');
 	};
 
-	validate = user => {
-		const errors = {};
-    if (!user.displayName) errors.displayName = "Inserisci un nome utente";
-    if (Date(user.birth_date) > new Date()) { 
-      errors.birth_date = "Data di nascita non valida" 
-    } else if (calcAge(user.birth_date) < 13) { 
-      errors.birth_date = "Età minima 14 anni"; 
-    } else if (calcAge(user.birth_date) > 119) {
-      errors.birth_date = "E chi sei.. Matusalemme?"; 
-    }
-		if (user.city && user.city.length > 150) errors.city = "Lunghezza massima 150 caratteri";
-		return errors;
-	};
-
-	onImageChange = e => {
-    e.preventDefault();
-    const { openSnackbar } = this.props;
-		const file = e.target.files[0];
-    const errors = file && validateImg(file, 1);
-
-    if (this._isMounted) this.setState({ errors });
-
-		if (Object.keys(errors).length === 0) {
-      if (this._isMounted) this.setState({ loading: true });
-
-      const uploadTask = storageRef(`users/${authid}`, 'avatar').put(file);
-      // console.log(uploadTask);
-			uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
-        if (this._isMounted) {
-          this.setState({
-            imgProgress: (snap.bytesTransferred / snap.totalBytes) * 100
-          });
-        }
-			}, error => {
-        console.warn(`Upload error: ${error.message}`);
-        if (this._isMounted) {
-          this.setState({ 
-            loading: false,
-            errors: { ...errors, upload: error.message }
-          }, () => openSnackbar(error.message, 'error'));
-        }
-			}, () => {
-        // console.log('upload completed');
-        uploadTask.then(snap => {
-          snap.ref.getDownloadURL().then(url => {
-            if (this._isMounted) {
-              this.setState({
-                imgPreview: url,
-                loading: false,
-                changes: true,
-                saved: false
-              }, () => openSnackbar('Immagine caricata', 'success'));
-            }
-          });
-        });
-			});
-    } else if (this._isMounted) {
-      this.setState({
-        loading: false
-      }, () => openSnackbar(errors.upload, 'error'));
-    }
-	};
-
 	render() {
-		const { changes, errors, imgPreview, loading, imgProgress, saved, user } = this.state;
+		const { changes, errors, imgLoading, imgPreview, loading, imgProgress, saved, user } = this.state;
 		// const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
 		const menuItemsMap = (arr, values) => arr.map(item => 
 			<MenuItem 
@@ -200,13 +213,16 @@ export default class Profile extends React.Component {
           <div className="row basic-profile">
             
             <div className="col-auto">
-              <div className={`upload-avatar ${errors.upload ? 'error' : imgProgress === 100 ? 'success' : imgProgress > 0 ? 'loading' : ''}`}>
+              <div className={`upload-avatar ${errors.upload ? 'error' : imgProgress === 100 ? 'success' : ''}`}>
                 <Avatar className="avatar" src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
-                <div className="overlay">
-                  <span title="Carica un'immagine">+</span>
-                  <input type="file" accept="image/*" className="upload" onChange={this.onImageChange}/>
-                </div>
-                <div className="progress" />
+                {imgLoading ? 
+                  <div aria-hidden="true" className="loader"><CircularProgress /></div>
+                : 
+                  <div className="overlay">
+                    <span title="Carica un'immagine">+</span>
+                    <input type="file" accept="image/*" className="upload" onChange={this.onImageChange}/>
+                  </div>
+                }
               </div>
             </div>
             <div className="col">

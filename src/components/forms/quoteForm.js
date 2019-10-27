@@ -4,7 +4,9 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React from 'react';
+import ImageZoom from 'react-medium-image-zoom';
 import { quoteRef, quotesRef } from '../../config/firebase';
+import { imageZoomDefaultStyles } from '../../config/shared';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
@@ -232,6 +234,15 @@ export default class QuoteForm extends React.Component {
               </div>
             </div>
             <div className="row">
+              <div className="col-auto">
+                <div className="mock-cover xs overflow-hidden prepend-input" style={{ position: 'relative', backgroundImage: `url(${data.coverURL})`, }}>
+                  <ImageZoom
+                    defaultStyles={imageZoomDefaultStyles}
+                    image={{ src: data.coverURL, className: 'thumb hidden' }}
+                    zoomImage={{ className: 'magnified' }}
+                  />
+                </div>
+              </div>
               <div className="form-group col">
                 <FormControl className="input-field" margin="normal" fullWidth>
                   <InputLabel error={Boolean(errors.coverURL)} htmlFor="coverURL">URL Copertina</InputLabel>

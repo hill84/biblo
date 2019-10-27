@@ -1,5 +1,10 @@
 import MomentUtils from '@date-io/moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
@@ -58,17 +63,19 @@ export default class BookForm extends React.Component {
       title_sort: this.props.book.title_sort || '',
       trailerURL: this.props.book.trailerURL || ''
     },
+    imgLoading: false,
     imgPreview: null,
     imgProgress: 0,
     isEditingDescription: false,
     isEditingIncipit: false,
+    isOpenChangesDialog: false,
     description_maxChars: 2000,
     incipit_maxChars: 2500,
     URL_maxChars: 1000,
     loading: false,
     errors: {},
     changes: false,
-    prevProps: this.props,
+    prevBook: this.props.book,
     redirectToBook: null
   }
 
@@ -80,11 +87,8 @@ export default class BookForm extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (state.prevProps !== props) {
-      if ((props.book.bid !== state.book.bid) || (!state.book.bid && props.book !== state.prevProps.book)) { 
-        return { prevProps: props, book: props.book, errors: {} }
-      }
-      if (props.isEditing !== state.isEditing) { return { isEditing: props.isEditing } }
+    if ((props.book.bid !== state.book.bid) || (!state.book.bid && props.book !== state.prevBook)) { 
+      return { prevBook: props.book, book: props.book, errors: {} }
     }
     return null;
   }
@@ -104,6 +108,7 @@ export default class BookForm extends React.Component {
     this._isMounted = false;
   }
 
+  
   onToggleDescription = e => {
     e.preventDefault();
     if (this._isMounted) {
@@ -112,7 +117,7 @@ export default class BookForm extends React.Component {
       }));
     }
   }
-
+  
   onToggleIncipit = e => {
     e.preventDefault();
     if (this._isMounted) {
@@ -122,94 +127,122 @@ export default class BookForm extends React.Component {
     }
   }
   
+  isChanged = (key, newValue) => {
+    const prevValue = this.state.prevBook[key];
+
+    if (prevValue !== newValue) {
+      if (this._isMounted) {
+        this.setState({ changes: true });
+      }
+    }
+  }
+
   onChange = e => {
     e.persist();
+    const key = e.target.name;
+    const newValue = e.target.value;
 
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [e.target.name]: e.target.value }, 
-        changes: true
-      }));
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
+    
   };
 
   onChangeNumber = e => {
+    e.persist();
+
+    const key = e.target.name;
+    const newValue = parseInt(e.target.value, 10);
+   
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [e.target.name]: parseInt(e.target.value, 10) }, 
-        changes: true
-      }));
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
   };
 
   onChangeSelect = key => e => {
+    e.persist();
+
+    const newValue = e.target.value;
+
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: e.target.value }, 
-        changes: true
-      }));
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
   };
 
   onChangeDate = key => date => {
+    const newValue = String(date);
+
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: String(date) }, 
-        changes: true
-      }));
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
   };
 
-  onAddChip = (key, chip) => { 
+  onAddChip = (key, chip) => {
+    const prevState = this.state;
+    const newValue = [...prevState.book[key], chip];
+
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: [...prevState.book[key], chip] }, 
-        changes: true 
-      })); 
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue)); 
     }
   }; 
 
   onDeleteChip = (key, chip) => { 
+    const prevState = this.state;
+    const newValue = prevState.book[key].filter((c) => c !== chip);
+
     if (this._isMounted) {
       this.setState(prevState => ({ 
         // chips: prevState.chips.filter((c) => c !== chip) 
-        book: { ...prevState.book, [key]: prevState.book[key].filter((c) => c !== chip) }, 
-        changes: true 
-      })); 
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
   }; 
   
-  onAddChipToObj = (key, chip) => { 
+  onAddChipToObj = (key, chip) => {
+    const prevState = this.state;
+    const newValue = { ...prevState.book[key], [chip.split('.').join('')]: true };
+
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [key]: { ...prevState.book[key], [chip.split('.').join('')]: true }}, 
-        changes: true
-      }));
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
   };
 
-  onDeleteChipFromObj = (key, chip) => { 
+  onDeleteChipFromObj = (key, chip) => {
+    const prevState = this.state;
+    const newValue = arrToObj(Object.keys(prevState.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }));
+
     if (this._isMounted) {
       this.setState(prevState => ({
         // chips: prevState.chips.filter((c) => c !== chip)
-        book: { 
-          ...prevState.book, 
-          [key]: arrToObj(Object.keys(prevState.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }))
-        }, 
-        changes: true
-      }));
+        book: { ...prevState.book, [key]: newValue }
+      }), () => this.isChanged(key, newValue));
     }
   };
   
   onChangeMaxChars = e => {
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
+    const key = e.target.name;
+    const newValue = e.target.value;
+      
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [e.target.name]: e.target.value }, 
-        [leftChars]: prevState[maxChars] - e.target.value.length, 
+        book: { ...prevState.book, [key]: newValue }, 
+        [leftChars]: prevState[maxChars] - newValue.length, 
         changes: true
-      }));
+      }), () => this.isChanged(key, newValue));
     }
   };
 
@@ -252,7 +285,7 @@ export default class BookForm extends React.Component {
       errors.publisher = "Lunghezza massima 100 caratteri";
     }
     if (!book.pages_num) {
-      errors.pages_num = "Inserisci il numero di pagine";
+      errors.pages_num = "Inserisci le pagine";
     } else if (String(book.pages_num).length > 5) {
       errors.pages_num = "Lunghezza massima 5 cifre";
     } else if (book.pages_num < 20) {
@@ -330,41 +363,63 @@ export default class BookForm extends React.Component {
 
 	onImageChange = e => {
     e.preventDefault();
-    const { openSnackbar } = this.props;
 		const file = e.target.files[0];
-		// console.log(file);
-		const errors = validateImg(file, 1);
-		if (this._isMounted) { 
-      this.setState({ errors }) 
-    };
-		if (Object.keys(errors).length === 0) {
-			const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
-			const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
-				if (this._isMounted) { 
-          this.setState({ imgProgress: snap.bytesTransferred / snap.totalBytes * 100 });
+
+    if (file) {
+      const { openSnackbar } = this.props;
+      const error = validateImg(file, 1);
+      
+      if (!error) {
+        if (this._isMounted) {
+          this.setState(prevState => ({ 
+            imgLoading: true, 
+            errors: { ...prevState.errors, upload: null } 
+          }));
         }
-			}, error => {
-				// console.warn(`upload error: ${error.message}`);
-        if (this._isMounted) { 
-          this.setState({ errors: { ...errors, upload: error.message } }, () => openSnackbar(error.message, 'error'));
-        }
-			}, () => {
-        // console.log('upload completed');
-        uploadTask.then(snap => 
-          snap.ref.getDownloadURL().then(url => {
-            if (this._isMounted) {
-              this.setState(prevState => ({
-                imgPreview: url,
-                book: { ...prevState.book, covers: [url]},
-                changes: true,
-                success: false
-              }/* , () => console.log(url) && openSnackbar('Immagine caricata', 'success') */))
-            }
-          })
-        );
-        unsubUploadTask();
-			});
-		} else openSnackbar(errors.upload, 'error');
+        const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
+        const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
+          if (this._isMounted) { 
+            this.setState({ imgProgress: snap.bytesTransferred / snap.totalBytes * 100 });
+          }
+        }, err => {
+          // console.warn(`upload error: ${error.message}`);
+          if (this._isMounted) { 
+            this.setState(prevState => ({ 
+              errors: { ...prevState.errors, upload: err.message }, 
+              imgLoading: false,
+              imgProgress: 0
+            }), () => openSnackbar(err.message, 'error'));
+          }
+        }, () => {
+          // console.log('upload completed');
+          uploadTask.then(snap => 
+            snap.ref.getDownloadURL().then(url => {
+              const key = 'covers';
+              const newValue = [url];
+              
+              if (this._isMounted) {
+                this.setState(prevState => ({
+                  imgLoading: false,
+                  imgPreview: url,
+                  book: { ...prevState.book, covers: newValue }
+                }), () => {
+                  this.isChanged(key, newValue);
+                  openSnackbar('Immagine caricata', 'success');
+                  setTimeout(() => {
+                    if (this._isMounted) this.setState({ imgProgress: 0 });
+                  }, 2000);
+                })
+              }
+            })
+          );
+          unsubUploadTask();
+        });
+      } else if (this._isMounted) {
+        this.setState(prevState => ({ 
+          errors: { ...prevState.errors, upload: error } 
+        }), () => openSnackbar(error, 'error'));
+      }
+    }
   };
   
   onSubmit = async e => {
@@ -491,11 +546,19 @@ export default class BookForm extends React.Component {
     } else this.props.isEditing();
   }
 
-  onExitEditing = () => this.props.isEditing();
+  onExitEditing = () => {
+    if (this.state.changes) {
+      if (this._isMounted) {
+        this.setState({ isOpenChangesDialog: true });
+      }
+    } else this.props.isEditing();
+  }
+
+  onCloseChangesDialog = () => this.setState({ isOpenChangesDialog: false });
 	
 	render() {
-    const { book, description_leftChars, description_maxChars, errors, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, loading, redirectToBook } = this.state;
-    const { user } = this.props;
+    const { book, description_leftChars, description_maxChars, errors, imgLoading, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, isOpenChangesDialog, loading, redirectToBook } = this.state;
+    const { isEditing, user } = this.props;
     const isAdmin = hasRole(user, 'admin');
     const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
     
@@ -519,7 +582,7 @@ export default class BookForm extends React.Component {
             {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
             <div className="container md">
               <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
-                <Cover book={book} />
+                <Cover book={book} loading={imgLoading} />
                 {isAdmin && book.bid /* && !book.covers[0] */ && 
                   <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
                     <input type="file" accept="image/*" className="upload" onChange={this.onImageChange} />
@@ -831,6 +894,24 @@ export default class BookForm extends React.Component {
             </div>
           }
         </div>
+
+        <Dialog
+          open={isOpenChangesDialog}
+          keepMounted
+          onClose={this.onCloseChangesDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Ci sono delle modifiche non salvate</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Vuoi salvarle prima di uscire?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={isEditing}>Esci</button>
+            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva</button>
+          </DialogActions>
+        </Dialog>
       </>
 		);
 	}

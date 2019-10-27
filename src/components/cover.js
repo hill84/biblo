@@ -1,3 +1,4 @@
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
 import { InView } from 'react-intersection-observer';
@@ -19,6 +20,7 @@ export default class Cover extends React.Component {
     book: coverType,
     full: boolType,
     index: numberType,
+    loading: boolType,
     info: boolType,
     page: numberType,
     rating: boolType,
@@ -37,6 +39,7 @@ export default class Cover extends React.Component {
     full: null,
     index: 0,
     info: null,
+    loading: false,
     page: null,
     rating: null,
     showReaders: false
@@ -65,10 +68,8 @@ export default class Cover extends React.Component {
 
   render() {
     const { cover, book } = this.state;
-    const { animationDelay, bcid, full, index, info, page, rating, showReaders } = this.props;
+    const { animationDelay, bcid, full, index, info, loading, page, rating, showReaders } = this.props;
     const delay = page && page > 1 ? 0 : index / 20;
-
-    // if (!book) return null;
 
 		return (
       <div className="book"> 
@@ -79,10 +80,7 @@ export default class Cover extends React.Component {
               {book.readingState && book.readingState.state_num === 2 && <div className="bookmark" />}
               {book.review && book.review.text && <div className="cover-review">Recensione</div>}
               {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account()}</div> : ''}
-              <div className="overlay" />
-              {/* (book.covers && book.covers.length > 1) && 
-                <button type="button" className="btn sm neutral centered" onClick={this.changeCover}>Cambia copertina</button> 
-              */}
+              {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : <div className="overlay" />}
               {!cover &&
                 <>
                   <h2 className="title">{book.title}</h2>
