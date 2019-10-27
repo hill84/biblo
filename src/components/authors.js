@@ -15,19 +15,20 @@ export default class Authors extends React.Component {
     limit: this.props.limit,
     loading: true,
     page: 1,
-    pagination: false,
     scrollable: true
   }
 
   static propTypes = {
     inView: boolType,
     limit: numberType,
+    pagination: numberType,
     size: numberType
   }
 
   static defaultProps = {
     inView: true,
     limit: 10,
+    pagination: false,
     size: 80
   }
 
@@ -47,9 +48,12 @@ export default class Authors extends React.Component {
     this._isMounted = false;
   }
 
-  fetch = () => { 
+  fetch = (/* e */) => { 
     const { inView } = this.props;
     const { desc, limit } = this.state;
+    // const direction = e && e.currentTarget.dataset.direction;
+    // const prev = direction === 'prev';
+    // TODO: paginated fetch
 
     if (inView) {
       authorsRef.orderBy('lastEdit_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
@@ -82,8 +86,8 @@ export default class Authors extends React.Component {
   }
 	
 	render() {
-    const { size } = this.props;
-    const { count, desc, items, limit, loading, page, pagination, scrollable } = this.state;
+    const { pagination, size } = this.props;
+    const { count, desc, items, limit, loading, page, scrollable } = this.state;
 
     if (!loading && !items) {
       return <div className="info-row empty text-center">Non ci sono ancora autori.</div>;
@@ -112,14 +116,16 @@ export default class Authors extends React.Component {
                     type="button"
                     disabled={page < 2 && 'disabled'} 
                     className="btn sm clear prepend" 
-                    onClick={() => this.fetch('prev')} title="precedente">
+                    data-direction="prev"
+                    onClick={this.fetch} title="precedente">
                     {icon.chevronLeft()}
                   </button>
                   <button 
                     type="button"
                     disabled={page > (count / limit) && 'disabled'} 
                     className="btn sm clear append" 
-                    onClick={() => this.fetch('next')} title="successivo">
+                    data-direction="next"
+                    onClick={this.fetch} title="successivo">
                     {icon.chevronRight()}
                   </button>
                 </>
