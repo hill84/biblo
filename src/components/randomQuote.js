@@ -65,7 +65,7 @@ export default class RandomQuote extends React.Component {
     const { author, className } = this.props;
 
     if (loading) return skeleton ? <div className="skltn quote" /> : null;
-    if (!item.quote) return null;
+    if (!item) return null;
 
     return (
       <div className={`randomquote ${className}`}>

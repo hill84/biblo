@@ -21,7 +21,7 @@ export default class Authors extends React.Component {
   static propTypes = {
     inView: boolType,
     limit: numberType,
-    pagination: numberType,
+    pagination: boolType,
     size: numberType
   }
 
