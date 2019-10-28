@@ -51,19 +51,48 @@ export default class SearchBookForm extends React.Component {
     user: null
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.searchBy.key !== this.state.searchBy.key) {
+      this.setState({ value: '' });
+    }
+  }
+
   componentWillUnmount() {
+    this._isMounted = false;
     this.timer && clearTimeout(this.timer);
     this.unsubBooksFetch && this.unsubBooksFetch();
     this.unsubQuery && this.unsubQuery();
   }
 
-  onClickSearch = option => this.setState({ searchBy: option, /* searchAnchorEl: null */ });
-  // onCloseSearchMenu = () => this.setState({ searchAnchorEl: null });
-  // onOpenSearchMenu = e => this.setState({ searchAnchorEl: e.currentTarget });
+  /* onClickSearch = option => {
+    if (this._isMounted) this.setState({ searchBy: option });
+  }
+  onCloseSearchMenu = () => {
+    if (this._isMounted) this.setState({ searchAnchorEl: null });
+  }
+  onOpenSearchMenu = e => {
+    if (this._isMounted) this.setState({ searchAnchorEl: e.currentTarget });
+  } */
 
-  onClickSearchBy = option => this.setState(prevState => ({ searchBy: option, maxSearchResults: option.key === 'ISBN_13' ? 1 : prevState.maxSearchResults, searchByAnchorEl: null }));
-  onCloseSearchByMenu = () => this.setState({ searchByAnchorEl: null });
-  onOpenSearchByMenu = e => this.setState({ searchByAnchorEl: e.currentTarget });
+  onClickSearchBy = option => {
+    if (this._isMounted) {
+      this.setState(prevState => ({ 
+        searchBy: option, 
+        maxSearchResults: option.key === 'ISBN_13' ? 1 : prevState.maxSearchResults, 
+        searchByAnchorEl: null 
+      }));
+    }
+  }
+  onCloseSearchByMenu = () => {
+    if (this._isMounted) this.setState({ searchByAnchorEl: null });
+  }
+  onOpenSearchByMenu = e => {
+    if (this._isMounted) this.setState({ searchByAnchorEl: e.currentTarget });
+  }
 
   renderInput = inputProps => {
     const { ref, label, ...other } = inputProps;
@@ -81,9 +110,13 @@ export default class SearchBookForm extends React.Component {
     );
   }
 
-  onChange = (e, { newValue }) => this.setState({ value: String(newValue) });
-
-  shouldRenderSuggestions = value => value && this.state.searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
+  onChange = (e, { newValue }) => {
+    if (this._isMounted) this.setState({ value: String(newValue) });
+  }
+    
+  shouldRenderSuggestions = value => {
+    return value && this.state.searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
+  };
 
   onSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); // this.setState({ suggestions: this.getSuggestions(value) });
 
@@ -233,7 +266,9 @@ export default class SearchBookForm extends React.Component {
                 referrer = `/book/${doc.data().bid}/${normURL(doc.data().title)}`
               });
 
-              this.setState({ redirectToReferrer: referrer });
+              if (this._isMounted) {
+                this.setState({ redirectToReferrer: referrer });
+              }
             }
           });
         }
@@ -279,7 +314,9 @@ export default class SearchBookForm extends React.Component {
               })
             });
           } else options.push(emptyBook);
-          this.setState({ loading: false, suggestions: options });
+          if (this._isMounted) {
+            this.setState({ loading: false, suggestions: options });
+          }
         });
       } else {
         // console.log(searchBy.key);
@@ -310,7 +347,9 @@ export default class SearchBookForm extends React.Component {
               });
             });
           } else options.push(emptyBook);
-          this.setState({ loading: false, suggestions: options });
+          if (this._isMounted) {
+            this.setState({ loading: false, suggestions: options });
+          }
         });
       }
     }, searchBy.key === 'ISBN_13' ? 500 : 1000);
@@ -318,7 +357,7 @@ export default class SearchBookForm extends React.Component {
 
   onSuggestionSelected = (e, { suggestion, suggestionValue, suggestionIndex, /* sectionIndex, method */ }) => {
     if (suggestionIndex !== -1) {
-      this.setState({ loading: false });
+      if (this._isMounted) this.setState({ loading: false });
       clearTimeout(this.timer);
       this.props.onBookSelect(suggestion);
     } else console.warn('Suggestion not found');
@@ -365,8 +404,8 @@ export default class SearchBookForm extends React.Component {
               endAdornment: <button type="button" className="btn sm flat search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
             }}
           />
-          {/* searchBy.key === 'ISBN_13' && isNaN(value) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
-          {searchBy.key === 'ISBN_13' && !isNaN(value) &&
+          {/* searchBy.key === 'ISBN_13' && Number.isNaN(Number(value)) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
+          {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) &&
             <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
               {value.length} di 13 cifre
             </FormHelperText>

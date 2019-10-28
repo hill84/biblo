@@ -159,11 +159,12 @@ export default class BookForm extends React.Component {
 
     const key = e.target.name;
     const newValue = parseInt(e.target.value, 10);
-   
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
+    if (!Number.isNaN(newValue)) {
+      if (this._isMounted) {
+        this.setState(prevState => ({
+          book: { ...prevState.book, [key]: newValue }
+        }), () => this.isChanged(key, newValue));
+      }
     }
   };
 
@@ -653,7 +654,7 @@ export default class BookForm extends React.Component {
                         type="number"
                         placeholder="es: 9788854152601"
                         error={Boolean(errors.ISBN_13)}
-                        value={book.ISBN_13}
+                        value={Number(book.ISBN_13)}
                         onChange={this.onChangeNumber}
                       />
                       {errors.ISBN_13 && <FormHelperText className="message error">{errors.ISBN_13}</FormHelperText>}
@@ -700,7 +701,7 @@ export default class BookForm extends React.Component {
                         type="number"
                         placeholder="es: 128"
                         error={Boolean(errors.pages_num)}
-                        value={book.pages_num}
+                        value={Number(book.pages_num)}
                         onChange={this.onChangeNumber}
                       />
                       {errors.pages_num && <FormHelperText className="message error">{errors.pages_num}</FormHelperText>}
@@ -739,7 +740,7 @@ export default class BookForm extends React.Component {
                         type="number"
                         placeholder="es: 1"
                         error={Boolean(errors.edition_num)}
-                        value={book.edition_num}
+                        value={Number(book.edition_num)}
                         onChange={this.onChangeNumber}
                       />
                       {errors.edition_num && <FormHelperText className="message error">{errors.edition_num}</FormHelperText>}
