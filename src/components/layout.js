@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThemeProvider } from '@material-ui/styles';
-import React from 'react';
+import React, { Component } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
@@ -23,7 +23,7 @@ import { darkTheme } from '../config/themes';
 import { childrenType, funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
 
-export default class Layout extends React.Component {
+export default class Layout extends Component {
   state = {
     drawerIsOpen: false,
     moreAnchorEl: null,

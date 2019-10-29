@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
@@ -15,7 +15,7 @@ import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 import Bubbles from './bubbles';
 
-export default class Genre extends React.Component {
+export default class Genre extends Component {
   state = {
     count: 0,
     coverview: true,

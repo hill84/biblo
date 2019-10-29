@@ -2,7 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
@@ -11,7 +11,7 @@ import { app, getInitials, handleFirestoreError, normURL } from '../../config/sh
 import { funcType, numberType } from '../../config/types';
 import PaginationControls from '../paginationControls';
 
-export default class AuthorsPage extends React.Component {
+export default class AuthorsPage extends Component {
 	state = {
     items: null,
     count: 0,

@@ -16,7 +16,7 @@ import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
-import React from 'react';
+import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
@@ -27,7 +27,7 @@ import { arrToObj, checkBadWords, handleFirestoreError, hasRole, normalizeString
 import { bookType, funcType, userType } from '../../config/types';
 import Cover from '../cover';
 
-export default class BookForm extends React.Component {
+export default class BookForm extends Component {
 	state = {
     book: {
       ISBN_10: this.props.book.ISBN_10 || (this.props.book.ISBN_13 ? isbn.parse(this.props.book.ISBN_13) ? isbn.parse(this.props.book.ISBN_13).asIsbn10() : 0 : 0), 

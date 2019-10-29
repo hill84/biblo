@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -8,7 +8,7 @@ import { boolType, funcType, numberType, stringType } from '../config/types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
-export default class BookCollection extends React.Component {
+export default class BookCollection extends Component {
 	state = {
     cid: this.props.cid,
     bcid: this.props.bcid,

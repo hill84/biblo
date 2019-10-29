@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
-import React from 'react';
+import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
@@ -14,7 +14,7 @@ import { app, handleFirestoreError } from '../../config/shared';
 import { funcType, locationType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
-export default class LoginForm extends React.Component {
+export default class LoginForm extends Component {
 	state = {
     data: {
       email: '',

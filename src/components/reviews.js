@@ -1,5 +1,5 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { isAuthenticated, reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
@@ -7,7 +7,7 @@ import { boolType, funcType, numberType, stringType, userType } from '../config/
 import PaginationControls from './paginationControls';
 import Review from './review';
 
-export default class Reviews extends React.Component {
+export default class Reviews extends Component {
 	state = {
     items: null,
     count: 0,

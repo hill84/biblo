@@ -5,7 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
-import React from 'react';
+import React, { Component, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -16,9 +16,9 @@ import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
 import Rating from './rating';
 
-const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
+const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-export default class Review extends React.Component {
+export default class Review extends Component {
   state = {
     flagLoading: false,
     isOpenDeleteDialog: false,

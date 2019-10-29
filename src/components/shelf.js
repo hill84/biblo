@@ -2,7 +2,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -12,7 +12,7 @@ import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
-export default class Shelf extends React.Component {
+export default class Shelf extends Component {
   state = {
     luid: this.props.luid,
     uid: this.props.uid,

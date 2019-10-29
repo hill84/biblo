@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import icon from '../config/icons';
 import { funcType, numberType, stringType } from '../config/types';
 
-class Stepper extends React.Component {
+class Stepper extends Component {
   state = {
     activeStep: (this.props.percent && (this.props.steps || 4)/100 * (this.props.percent || 0)) || 0,
     percent: this.props.percent,

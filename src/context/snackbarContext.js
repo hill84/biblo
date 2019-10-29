@@ -1,10 +1,10 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { Component, createContext } from 'react';
 import SharedSnackbar from '../components/sharedSnackbar';
 
-const SharedSnackbarContext = React.createContext();
+const SharedSnackbarContext = createContext();
 
-export class SharedSnackbarProvider extends React.Component {
+export class SharedSnackbarProvider extends Component {
   state = {
     action: null,
     autoHideDuration: 5000,

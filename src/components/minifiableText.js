@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { boolType, numberType, stringType } from '../config/types';
 
-export default class MinifiableText extends React.Component {
+export default class MinifiableText extends Component {
 	state = {
     isTextMinified: this.props.textMinified === false ? this.props.textMinified : (this.props.text && this.props.text.length > (this.props.maxChars || 700)),
     maxChars: this.props.maxChars

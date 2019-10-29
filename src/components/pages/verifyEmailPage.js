@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { auth } from '../../config/firebase';
@@ -6,7 +6,7 @@ import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 
-export default class VerifyEmailPage extends React.Component {
+export default class VerifyEmailPage extends Component {
   state = {
     loading: false,
     emailSent: false

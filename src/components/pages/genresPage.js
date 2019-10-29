@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { InView } from 'react-intersection-observer';
 import { genres } from '../../config/lists';
@@ -6,7 +6,7 @@ import { app, denormURL } from '../../config/shared';
 import { funcType } from '../../config/types';
 import BookCollection from '../bookCollection';
 
-class GenresPage extends React.Component {
+class GenresPage extends Component {
   state = {}
 
   static propTypes = {

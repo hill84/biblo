@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import Book from '../book';
 
-const BookContainer = React.forwardRef((props, ref) => (
+const BookContainer = forwardRef((props, ref) => (
   <div id="BookContainerComponent" ref={ref}>
     <Book 
       bid={props.match.params.bid} 

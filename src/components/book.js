@@ -1,5 +1,5 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { lazy, Suspense } from 'react';
+import React, { Component, createRef, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
@@ -9,7 +9,7 @@ import NoMatch from './noMatch';
 const BookForm = lazy(() => import('./forms/bookForm'));
 const BookProfile = lazy(() => import('./pages/bookProfile'));
 
-export default class Book extends React.Component {
+export default class Book extends Component {
   state = {
     book: this.props.book,
     user: this.props.user,
@@ -39,8 +39,8 @@ export default class Book extends React.Component {
     isEditing: this.props.isEditing,
     loading: false
   }
-  addBookToShelfRef = React.createRef();
-  addBookToWishlistRef = React.createRef();
+  addBookToShelfRef = createRef();
+  addBookToWishlistRef = createRef();
 	
   static propTypes = {
     bid: stringType,

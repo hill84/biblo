@@ -2,7 +2,7 @@ import AppBar from '@material-ui/core/AppBar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
@@ -10,7 +10,7 @@ import { bindKeyboard } from 'react-swipeable-views-utils';
 import { userRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { app, screenSize } from '../../../config/shared';
-import { funcType, historyType, userType, matchType } from '../../../config/types';
+import { funcType, historyType, matchType, userType } from '../../../config/types';
 import AuthorForm from '../../forms/authorForm';
 import CollectionForm from '../../forms/collectionForm';
 import NoteForm from '../../forms/noteForm';
@@ -25,7 +25,7 @@ import UsersDash from './usersDash';
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
 
-export default class Admin extends React.Component {
+export default class Admin extends Component {
  	state = {
     isAdmin: false,
     aid: this.props.user && this.props.user.uid,

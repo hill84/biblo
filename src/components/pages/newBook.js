@@ -1,12 +1,12 @@
 import { ThemeProvider } from '@material-ui/styles';
-import React from 'react';
+import React, { Component } from 'react';
 import icon from '../../config/icons';
 import { darkTheme } from '../../config/themes';
 import { funcType, historyType, locationType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
-export default class NewBook extends React.Component {
+export default class NewBook extends Component {
 	state = {
 		book: null
 	}

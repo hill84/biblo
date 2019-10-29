@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { notesRef, notificationsRef } from '../../config/firebase';
@@ -10,7 +10,7 @@ import { app, getInitials, handleFirestoreError, timeSince } from '../../config/
 import { funcType, userType } from '../../config/types';
 import PaginationControls from '../paginationControls';
 
-export default class Notifications extends React.Component {
+export default class Notifications extends Component {
   state = {
     count: 0,
     desc: true,

@@ -1,13 +1,13 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
-import React from 'react';
+import React, { Component } from 'react';
 import { InView } from 'react-intersection-observer';
 import icon from '../config/icons';
 import { abbrNum, joinObj } from '../config/shared';
 import { boolType, coverType, numberType } from '../config/types';
 import Rating from './rating';
 
-export default class Cover extends React.Component {
+export default class Cover extends Component {
   state = {
     book: this.props.book,
     cover: (this.props.book && this.props.book.covers && this.props.book.covers[0]) || '',

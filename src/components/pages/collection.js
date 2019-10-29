@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
@@ -11,7 +11,7 @@ import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
 import Bubbles from './bubbles';
 
-export default class Collection extends React.Component {
+export default class Collection extends Component {
   state = {
     cid: this.props.match.params.cid,
     collection: null,

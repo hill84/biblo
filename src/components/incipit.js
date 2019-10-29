@@ -1,11 +1,11 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React from 'react';
+import React, { Component } from 'react';
 import { SayButton } from 'react-say';
 import icon from '../config/icons';
 import { funcType, stringType } from '../config/types';
 import Overlay from './overlay';
 
-export default class Incipit extends React.Component {
+export default class Incipit extends Component {
 	state = {
     isBig: false,
     isDark: false

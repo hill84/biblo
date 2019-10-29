@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { app } from '../config/shared';
 import DonationButtons from './donationButtons';
 
-export default class NewFeature extends React.Component {
+export default class NewFeature extends Component {
   state = {
     isOpenPayments: false
   }

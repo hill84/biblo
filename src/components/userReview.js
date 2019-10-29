@@ -9,17 +9,17 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import React from 'react';
+import React, { Component, forwardRef } from 'react';
 import { authid, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, timeSince } from '../config/shared';
 import { funcType, stringType, userBookType, userType } from '../config/types';
-import Rating from './rating';
 import Overlay from './overlay';
+import Rating from './rating';
 
-const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
+const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-export default class UserReview extends React.Component {
+export default class UserReview extends Component {
 	state = {
     bid: this.props.bid || '',
     user: this.props.user || {},

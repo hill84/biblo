@@ -5,14 +5,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
-import React from 'react';
+import React, { Component, forwardRef } from 'react';
 import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { bookRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
 import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
-import { boolType, bookType, funcType, locationType, objectType, refType, userBookType, userType } from '../../config/types';
+import { bookType, boolType, funcType, locationType, objectType, refType, userBookType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -24,9 +24,9 @@ import Reviews from '../reviews';
 import ShareButtons from '../share-buttons';
 import UserReview from '../userReview';
 
-const Transition = React.forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
+const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-export default class BookProfile extends React.Component {
+export default class BookProfile extends Component {
 	state = {
     book: {
       ...this.props.book,

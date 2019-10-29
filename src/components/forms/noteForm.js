@@ -3,12 +3,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import React from 'react';
+import React, { Component } from 'react';
 import { noteRef, notesRef } from '../../config/firebase';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
-export default class noteForm extends React.Component {
+export default class noteForm extends Component {
 	state = {
     data: {
       text: ''

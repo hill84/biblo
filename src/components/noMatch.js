@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../config/shared';
 import { funcType, locationType, shapeType, stringType } from '../config/types';
 import RandomQuote from './randomQuote';
 
-export default class NoMatch extends React.Component {
+export default class NoMatch extends Component {
   static propTypes = {
     history: shapeType({
       goBack: funcType.isRequired

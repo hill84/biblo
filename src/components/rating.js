@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Rater from 'react-rater';
 import { ratingLabels } from '../config/lists';
 import { abbrNum } from '../config/shared';
 import { boolType, ratingsType } from '../config/types';
 
-export default class Rating extends React.Component {
+export default class Rating extends Component {
   state = {
     ratings_num: this.props.ratings.ratings_num || 0,
     rating_num: this.props.ratings.rating_num || 0,

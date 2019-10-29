@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import icon from '../config/icons';
 
 const coinbaseURL = 'https://commerce.coinbase.com/checkout/d54258df-5760-4663-909f-324ddfacc5b6';
 const paypalURL = 'https://paypal.me/bibloapp';
 const buymeacoffeeURL = 'https://buymeacoffee.com/biblo';
 
-const DonationButtons = React.forwardRef((props, ref) => (
+const DonationButtons = forwardRef((props, ref) => (
   <div className="donation-btns" ref={ref}>
     <button type="button" className="btn primary rounded"><a target="_blank" rel="noopener noreferrer" href={buymeacoffeeURL}>{icon.coffee()} Buy me a coffee</a></button>
     <button type="button" className="btn primary rounded"><a target="_blank" rel="noopener noreferrer" href={coinbaseURL}>{icon.bitcoin()} Coinbase</a></button>

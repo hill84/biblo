@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
@@ -22,7 +22,7 @@ import Shelf from '../shelf';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
-export default class Dashboard extends React.Component {
+export default class Dashboard extends Component {
  	state = {
     isOwner: this.props.user ? this.props.user.uid === this.props.match.params.uid : false,
 		luid: this.props.user && this.props.user.uid,

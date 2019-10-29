@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 // import { challengeRef, userChallengesRef } from '../../config/firebase';
 import { app } from '../../config/shared';
 import { userType } from '../../config/types';
 
-class Challenges extends React.Component {
+class Challenges extends Component {
   state = {
     /* challenges: null,
     desc: true,

@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
 import PropTypes from 'prop-types';
-import React, { lazy, Suspense } from 'react';
+import React, { Component, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import ErrorBoundary from './components/errorBoundary';
@@ -41,7 +41,7 @@ const IconsPage = lazy(() => import('./components/pages/iconsPage'));
 const NewBook = lazy(() => import('./components/pages/newBook'));
 const Profile = lazy(() => import('./components/pages/profile'));
 
-export default class App extends React.Component {
+export default class App extends Component {
 	state = {
     error: null,
 		user: null

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import icon from '../config/icons';
 import { childrenType } from '../config/types';
 
-export default class ErrorBoundary extends React.Component {
+export default class ErrorBoundary extends Component {
   state = { 
     error: null, 
     errorInfo: null 

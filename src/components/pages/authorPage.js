@@ -1,6 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
@@ -13,7 +13,7 @@ import NoMatch from '../noMatch';
 import RandomQuote from '../randomQuote';
 import Bubbles from './bubbles';
 
-export default class AuthorPage extends React.Component {
+export default class AuthorPage extends Component {
   state = {
     author: {
       bio: '',

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
 import { normURL } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
 
-export default class RandomQuote extends React.Component {
+export default class RandomQuote extends Component {
   state = {
     loading: true,
     // auto: false,

@@ -3,11 +3,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
-import { ThemeProvider } from '@material-ui/styles';
 import TextField from '@material-ui/core/TextField';
+import { ThemeProvider } from '@material-ui/styles';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import React from 'react';
+import React, { Component } from 'react';
 // import { isAuthenticated } from '../../config/firebase';
 import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
@@ -17,7 +17,7 @@ import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, 
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 
-export default class SearchBookForm extends React.Component {
+export default class SearchBookForm extends Component {
   state = {
     // searchAnchorEl: null,
     searchByAnchorEl: null,

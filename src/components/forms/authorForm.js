@@ -6,13 +6,13 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React from 'react';
+import React, { Component } from 'react';
 import { authorRef, authorsRef } from '../../config/firebase';
 import { getInitials, handleFirestoreError, normalizeString } from '../../config/shared';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
-export default class AuthorForm extends React.Component {
+export default class AuthorForm extends Component {
 	state = {
     data: {
       displayName: '',
@@ -127,7 +127,7 @@ export default class AuthorForm extends React.Component {
 
 	validate = async data => {
     const errors = {};
-    const isDuplicate = await this.checkDisplayName(data.displayName);
+    const isDuplicate = this.props.id ? false : await this.checkDisplayName(data.displayName);
 
     if (!data.displayName) { 
       errors.displayName = "Inserisci il nominativo"; 

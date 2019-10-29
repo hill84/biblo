@@ -4,19 +4,18 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import React, { Component } from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
-import { bookRef, booksRef, countRef/* , reviewRef */ } from '../../../config/firebase';
+import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
-import { funcType, /* userType */ } from '../../../config/types';
+import { funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
-export default class BooksDash extends React.Component {
+export default class BooksDash extends Component {
  	state = {
-    // user: this.props.user,
     count: 0,
     desc: true,
     firstVisible: null,
@@ -41,8 +40,7 @@ export default class BooksDash extends React.Component {
 	}
 
 	static propTypes = {
-    openSnackbar: funcType.isRequired,
-    // user: userType
+    openSnackbar: funcType.isRequired
 	}
 
 	componentDidMount() { 

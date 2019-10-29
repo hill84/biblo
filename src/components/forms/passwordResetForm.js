@@ -3,13 +3,13 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import React from 'react';
+import React, { Component } from 'react';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import { handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 
-export default class PasswordResetForm extends React.Component {
+export default class PasswordResetForm extends Component {
   state = {
     email: '',
     loading: false,

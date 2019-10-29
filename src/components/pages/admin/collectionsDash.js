@@ -6,17 +6,16 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, normURL } from '../../../config/shared';
-import { funcType, /* userType */ } from '../../../config/types';
+import { funcType } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
-export default class collectionsDash extends React.Component {
+export default class collectionsDash extends Component {
  	state = {
-    // user: this.props.user,
     count: 0,
     desc: false,
     isOpenDeleteDialog: false,
@@ -37,8 +36,7 @@ export default class collectionsDash extends React.Component {
 
 	static propTypes = {
     onToggleDialog: funcType.isRequired,
-    openSnackbar: funcType.isRequired,
-    // user: userType
+    openSnackbar: funcType.isRequired
   } 
 
 	componentDidMount() { 

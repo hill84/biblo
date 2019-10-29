@@ -1,5 +1,5 @@
 import Avatar from '@material-ui/core/Avatar';
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../config/firebase';
 import { numberType, boolType } from '../config/types';
@@ -7,7 +7,7 @@ import { getInitials, normURL } from '../config/shared';
 import icon from '../config/icons';
 import { skltn_bubbleRow } from './skeletons';
 
-export default class Authors extends React.Component {
+export default class Authors extends Component {
 	state = {
     items: null,
     count: 0,

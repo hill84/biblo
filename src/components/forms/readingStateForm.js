@@ -7,7 +7,7 @@ import Select from '@material-ui/core/Select';
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
-import React from 'react';
+import React, { Component } from 'react';
 import { authid, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { handleFirestoreError } from '../../config/shared';
@@ -15,7 +15,7 @@ import { funcType, numberType, shapeType, stringType } from '../../config/types'
 import Overlay from '../overlay';
 import Stepper from '../stepper';
 
-export default class readingStateForm extends React.Component {
+export default class readingStateForm extends Component {
 	state = {
     state_num: this.props.readingState.state_num || 1,
     start_num: this.props.readingState.start_num || null,

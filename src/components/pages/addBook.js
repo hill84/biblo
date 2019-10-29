@@ -1,11 +1,11 @@
 import { ThemeProvider } from '@material-ui/styles';
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import icon from '../../config/icons';
 import { app } from '../../config/shared';
 import { primaryTheme } from '../../config/themes';
-import { locationType, historyType, funcType, userType } from '../../config/types';
+import { funcType, historyType, locationType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
@@ -14,7 +14,7 @@ const seo = {
   description: app.desc
 }
 
-export default class AddBook extends React.Component {
+export default class AddBook extends Component {
 	state = {
 		book: null
 	}

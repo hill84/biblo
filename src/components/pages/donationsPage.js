@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { app } from '../../config/shared';
 import DonationButtons from '../donationButtons';
 import withScrollToTop from '../hocs/withScrollToTop';
 
-const DonationsPage = React.forwardRef((props, ref) => (
+const DonationsPage = forwardRef((props, ref) => (
   <div id="DonationsPageComponent" className="reveal fadeIn slideUp" ref={ref}>
     <Helmet>
       <title>{app.name} | Donazioni</title>

@@ -5,14 +5,14 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React from 'react';
+import React, { Component } from 'react';
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
-export default class collectionForm extends React.Component {
+export default class collectionForm extends Component {
 	state = {
     data: {
       books_num: 0,

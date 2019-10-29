@@ -5,19 +5,18 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import React, { Component } from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { getInitials, handleFirestoreError, imageZoomDefaultStyles, normalizeString, normURL, timeSince } from '../../../config/shared';
-import { funcType, /* userType */ } from '../../../config/types';
+import { funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
-export default class AuthorsDash extends React.Component {
+export default class AuthorsDash extends Component {
  	state = {
-    // user: this.props.user,
     count: 0,
     desc: true,
     firstVisible: null,
@@ -43,12 +42,7 @@ export default class AuthorsDash extends React.Component {
 
 	static propTypes = {
     onToggleDialog: funcType.isRequired,
-    openSnackbar: funcType.isRequired,
-    // user: userType
-  }
-
-  static defaultProps = {
-    // user: null
+    openSnackbar: funcType.isRequired
   }
 
 	componentDidMount() { 

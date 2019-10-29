@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
@@ -7,7 +7,7 @@ import Cover from '../cover';
 import { skltn_shelfRow } from '../skeletons';
 import { userType } from '../../config/types';
 
-class Challenge extends React.Component {
+class Challenge extends Component {
   state = {
     booksPerRow: booksPerRow(),
     challenge: null,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { InView } from 'react-intersection-observer';
 import { Background, Parallax } from 'react-parallax';
@@ -20,7 +20,7 @@ const seo = {
   description: app.desc
 }
 
-class Home extends React.Component {
+class Home extends Component {
   state = {
     redirectTo: null,
     screenSize: screenSize()

@@ -1,12 +1,12 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React from 'react';
+import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { boolType, funcType } from '../config/types';
 import style from '../css/socialAuth.module.css';
 
-export default class SocialAuth extends React.Component {
+export default class SocialAuth extends Component {
 	state = {
     roles: {
       admin: false,

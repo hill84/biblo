@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import NoMatch from '../noMatch';
 import { historyType, locationType } from '../../config/types';
 
-const NoMatchPage = React.forwardRef((props, ref) => (
+const NoMatchPage = forwardRef((props, ref) => (
   <NoMatch history={props.history} location={props.location} ref={ref} />
 ));
 

@@ -10,14 +10,14 @@ import Select from '@material-ui/core/Select';
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
-import React from 'react';
+import React, { Component } from 'react';
 import firebase, { authid, storageRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { app, calcAge, getInitials, validateImg } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 
-export default class Profile extends React.Component {
+export default class Profile extends Component {
 	state = {
     user: this.props.user,
     imgLoading: false,
