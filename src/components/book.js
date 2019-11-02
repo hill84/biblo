@@ -101,31 +101,33 @@ export default class Book extends Component {
         // console.log(snap);
         if (snap.exists) {
           // console.log(snap.data());
-          this.setState(prevState => ({
-            book: {
-              ...prevState.book,
-              ...snap.data()
-            },
-            seo: {
-              author: Object.keys(snap.data().authors),
-              description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,
-              image: snap.data().covers.length && snap.data().covers[0],
-              isbn: snap.data().ISBN_13,
-              rating: { scale: '5', value: snap.data().rating_num },
-              release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
-              title: `${snap.data().title} di ${Object.keys(snap.data().authors)[0]} - ${snap.data().publisher} - ${app.name}`,
-              url: `${app.url}/book/${snap.data().bid}/${normURL(snap.data().title)}`,
-            },
-            userBook: {
-              ...prevState.userBook,
-              bid: snap.data().bid || '',
-              authors: snap.data().authors,
-              covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
-              publisher: snap.data().publisher,
-              title: snap.data().title,
-              subtitle: snap.data().subtitle
-            }
-          }));
+          if (this._isMounted) {
+            this.setState(prevState => ({
+              book: {
+                ...prevState.book,
+                ...snap.data()
+              },
+              seo: {
+                author: Object.keys(snap.data().authors),
+                description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,
+                image: snap.data().covers.length && snap.data().covers[0],
+                isbn: snap.data().ISBN_13,
+                rating: { scale: '5', value: snap.data().rating_num },
+                release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
+                title: `${snap.data().title} di ${Object.keys(snap.data().authors)[0]} - ${snap.data().publisher} - ${app.name}`,
+                url: `${app.url}/book/${snap.data().bid}/${normURL(snap.data().title)}`,
+              },
+              userBook: {
+                ...prevState.userBook,
+                bid: snap.data().bid || '',
+                authors: snap.data().authors,
+                covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
+                publisher: snap.data().publisher,
+                title: snap.data().title,
+                subtitle: snap.data().subtitle
+              }
+            }));
+          }
         } else console.warn(`No book with bid ${bid}`);
         this.setState({ loading: false }, () => this.fetchUserBook(bid || this.state.book.bid));
       });
@@ -139,31 +141,33 @@ export default class Book extends Component {
       this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
         if (snap.exists) {
           // console.log(snap.data());
-          this.setState({
-            book: {
-              ...prevState.book,
-              ...snap.data()
-            },
-            seo: {
-              author: Object.keys(prevState.book.authors),
-              description: `Scopri su ${app.name} la trama e le recensioni di ${prevState.book.title}, scritto da ${Object.keys(prevState.book.authors)[0]}, pubblicato da ${prevState.book.publisher}`,
-              image: prevState.book.covers.length && prevState.book.covers[0],
-              isbn: prevState.book.ISBN_13,
-              rating: { scale: '5', value: prevState.book.rating_num },
-              release_date: prevState.book.publication ? new Date(prevState.book.publication).toLocaleDateString() : '',
-              title: `${prevState.book.title} di ${Object.keys(prevState.book.authors)[0]} - ${prevState.book.publisher} - ${app.name}`,
-              url: `${app.url}/book/${prevState.book.bid}/${normURL(prevState.book.title)}`,
-            },
-            userBook: {
-              ...prevState.userBook,
-              bid: snap.data().bid || '',
-              authors: snap.data().authors || {},
-              covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
-              publisher: snap.data().publisher || '',
-              title: snap.data().title || '',
-              subtitle: snap.data().subtitle || ''
-            }
-          });
+          if (this._isMounted) {
+            this.setState({
+              book: {
+                ...prevState.book,
+                ...snap.data()
+              },
+              seo: {
+                author: Object.keys(prevState.book.authors),
+                description: `Scopri su ${app.name} la trama e le recensioni di ${prevState.book.title}, scritto da ${Object.keys(prevState.book.authors)[0]}, pubblicato da ${prevState.book.publisher}`,
+                image: prevState.book.covers.length && prevState.book.covers[0],
+                isbn: prevState.book.ISBN_13,
+                rating: { scale: '5', value: prevState.book.rating_num },
+                release_date: prevState.book.publication ? new Date(prevState.book.publication).toLocaleDateString() : '',
+                title: `${prevState.book.title} di ${Object.keys(prevState.book.authors)[0]} - ${prevState.book.publisher} - ${app.name}`,
+                url: `${app.url}/book/${prevState.book.bid}/${normURL(prevState.book.title)}`,
+              },
+              userBook: {
+                ...prevState.userBook,
+                bid: snap.data().bid || '',
+                authors: snap.data().authors || {},
+                covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
+                publisher: snap.data().publisher || '',
+                title: snap.data().title || '',
+                subtitle: snap.data().subtitle || ''
+              }
+            });
+          }
         } else console.warn(`No book with bid ${this.props.bid}`);
         this.setState({ loading: false }, () => {
           this.fetchUserBook(this.props.bid);
@@ -184,8 +188,10 @@ export default class Book extends Component {
     if (isAuthenticated() && bid) {
       this.unsubUserBookFetch = userBookRef(authid, bid).onSnapshot(snap => {
         if (snap.exists) {
-          this.setState({ userBook: snap.data() });
-        } else {
+          if (this._isMounted) {
+            this.setState({ userBook: snap.data() });
+          }
+        } else if (this._isMounted) {
           this.setState(prevState => ({
             userBook: { 
               ...prevState.userBook,
@@ -276,15 +282,17 @@ export default class Book extends Component {
         bookInShelf: false,
         bookInWishlist: true
       }).then(() => {
-        /* this.setState(prevState => ({ 
-          userBook: { 
-            ...prevState.userBook, 
-            rating_num: userBookRating_num,
-            review: userBookReview,
-            bookInShelf: false,
-            bookInWishlist: true 
-          }
-        })); */
+        /* if (this._isMounted) {
+          this.setState(prevState => ({ 
+            userBook: { 
+              ...prevState.userBook, 
+              rating_num: userBookRating_num,
+              review: userBookReview,
+              bookInShelf: false,
+              bookInWishlist: true 
+            }
+          })); 
+        } */
         // console.log('Book added to user wishlist');
         this.addBookToWishlistRef.current && this.addBookToWishlistRef.current.removeAttribute('disabled');
         openSnackbar('Libro aggiunto in lista desideri', 'success');
@@ -299,17 +307,19 @@ export default class Book extends Component {
             ratings_num: bookRatings_num,
             readers_num: bookReaders_num
           }).then(() => {
-            this.setState(prevState => ({ 
-              book: { 
-                ...prevState.book,
-                ratings_num: bookRatings_num,
-                readers_num: bookReaders_num
-              },
-              userBook: { 
-                ...prevState.userBook, 
-                rating_num: userBookRating_num 
-              }
-            }));
+            if (this._isMounted) {
+              this.setState(prevState => ({ 
+                book: { 
+                  ...prevState.book,
+                  ratings_num: bookRatings_num,
+                  readers_num: bookReaders_num
+                },
+                userBook: { 
+                  ...prevState.userBook, 
+                  rating_num: userBookRating_num 
+                }
+              }));
+            }
             //console.log('Rating and reader removed');
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -356,16 +366,18 @@ export default class Book extends Component {
       }
       
       userBookRef(authid, bid).delete().then(() => {
-        this.setState(prevState => ({ 
-          userBook: { 
-            ...prevState.userBook, 
-            bookInShelf: false, 
-            bookInWishlist: false,
-            rating_num: userBookRating_num,
-            readingState: { state_num: 1 },
-            review
-          }
-        }));
+        if (this._isMounted) {
+          this.setState(prevState => ({ 
+            userBook: { 
+              ...prevState.userBook, 
+              bookInShelf: false, 
+              bookInWishlist: false,
+              rating_num: userBookRating_num,
+              readingState: { state_num: 1 },
+              review
+            }
+          }));
+        }
         // console.log(`Book removed from user ${bookshelf}`);
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   
@@ -374,16 +386,18 @@ export default class Book extends Component {
         ratings_num: bookRatings_num,
         readers_num: bookReaders_num
       }).then(() => {
-        this.setState(prevState => ({ 
-          book: { 
-            ...prevState.book, 
-            rating_num: bookRating_num, 
-            ratings_num: bookRatings_num,
-            readers_num: bookReaders_num,
-            review,
-            reviews_num: bookReviews_num
-          }
-        }));
+        if (this._isMounted) {
+          this.setState(prevState => ({ 
+            book: { 
+              ...prevState.book, 
+              rating_num: bookRating_num, 
+              ratings_num: bookRatings_num,
+              readers_num: bookReaders_num,
+              review,
+              reviews_num: bookReviews_num
+            }
+          }));
+        }
         // console.log('Rating and reader removed');
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   
@@ -402,12 +416,14 @@ export default class Book extends Component {
 
         if (this.state.userBook.review.created_num) {
           reviewerRef(bid, authid).delete().then(() => {
-            this.setState(prevState => ({ 
-              userBook: { 
-                ...prevState.userBook, 
-                review
-              }
-            }));
+            if (this._isMounted) {
+              this.setState(prevState => ({ 
+                userBook: { 
+                  ...prevState.userBook, 
+                  review
+                }
+              }));
+            }
             // console.log(`Review removed from book`);
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }
@@ -466,13 +482,15 @@ export default class Book extends Component {
         rating_num: bookRating_num,
         ratings_num: bookRatings_num
       }).then(() => {
-        this.setState(prevState => ({ 
-          book: { 
-            ...prevState.book, 
-            rating_num: bookRating_num, 
-            ratings_num: bookRatings_num
-          }
-        }));
+        if (this._isMounted) {
+          this.setState(prevState => ({ 
+            book: { 
+              ...prevState.book, 
+              rating_num: bookRating_num, 
+              ratings_num: bookRatings_num
+            }
+          }));
+        }
         // console.log(`Book rated with ${rate} stars`);
 
         if (this.state.book.collections) {
@@ -490,12 +508,14 @@ export default class Book extends Component {
         userBookRef(authid, bid).update({
           rating_num: rate
         }).then(() => {
-          this.setState(prevState => ({ 
-            userBook: { 
-              ...prevState.userBook, 
-              rating_num: rate 
-            }
-          }));
+          if (this._isMounted) {
+            this.setState(prevState => ({ 
+              userBook: { 
+                ...prevState.userBook, 
+                rating_num: rate 
+              }
+            }));
+          }
           // console.log('User book rated with ' + rate + ' stars');
 
           userRef(authid).update({
@@ -510,20 +530,26 @@ export default class Book extends Component {
   }
   
   addReview = () => {
-    this.setState(prevState => ({
-      book: { ...prevState.book, reviews_num: prevState.book.reviews_num + 1 }
-    }));
+    if (this._isMounted) {
+      this.setState(prevState => ({
+        book: { ...prevState.book, reviews_num: prevState.book.reviews_num + 1 }
+      }));
+    }
   }
 
   removeReview = () => {
-    this.setState(prevState => ({
-      book: { ...prevState.book, reviews_num: prevState.book.reviews_num - 1 }
-    }));
+    if (this._isMounted) {
+      this.setState(prevState => ({
+        book: { ...prevState.book, reviews_num: prevState.book.reviews_num - 1 }
+      }));
+    }
   }
 
   isEditing = () => {
     if (this.state.book.EDIT.edit || this.state.user.roles.admin) {
-      this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+      if (this._isMounted) {
+        this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+      }
     } else console.warn('Cannot edit book. Book locked');
   }
 	

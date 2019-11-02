@@ -68,19 +68,25 @@ export default class Reviews extends Component {
     this.reviewersFetch = ref.onSnapshot(fullSnap => { // TODO: remove fullSnap
       // console.log(fullSnap);
       if (!fullSnap.empty) {
-        this.setState({ count: fullSnap.size });
+        if (this._isMounted) this.setState({ count: fullSnap.size });
         ref.orderBy('created_num', desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
           const items = [];
           if (!snap.empty) {
             snap.forEach(item => items.push(item.data()));
-            this.setState({
-              items, 
-              loading: false,
-              lastVisible: snap.docs[snap.docs.length-1]
-            });
+            if (this._isMounted) {
+              this.setState({
+                items, 
+                loading: false,
+                lastVisible: snap.docs[snap.docs.length-1]
+              });
+            }
           }
-        }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
-      } else {
+        }).catch(err => {
+          if (this._isMounted) {
+            this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+          }
+        });
+      } else if (this._isMounted) {
         this.setState({ loading: false });
       }
     });
@@ -91,9 +97,7 @@ export default class Reviews extends Component {
     const { bid, openSnackbar, uid } = this.props;
     const ref = bid ? reviewersRef(bid) : uid ? reviewersGroupRef.where('createdByUid', '==', uid) : reviewersGroupRef;
 
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    if (this._isMounted) this.setState({ loading: true });
 		ref.orderBy('created_num', desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(item => items.push(item.data()));
@@ -113,7 +117,9 @@ export default class Reviews extends Component {
           lastVisible: null
         });
       }
-		}).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
+		}).catch(err => {
+      if (this._isMounted) this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+    });
   }
 	
 	render() {

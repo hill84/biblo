@@ -1,6 +1,6 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { forwardRef } from 'react';
-import { /* funcType, */ numberType, stringType, _oneOfType } from '../config/types';
+import { numberType, stringType, _oneOfType } from '../config/types';
 
 const copy = (text, props) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
@@ -19,8 +19,7 @@ const CopyToClipboard = forwardRef((props, ref) => (
 ));
 
 CopyToClipboard.propTypes = {
-  text: _oneOfType([stringType, numberType]),
-  // openSnackbar: funcType.isRequired
+  text: _oneOfType([stringType, numberType])
 }
 
 CopyToClipboard.defaultProps = {

@@ -83,7 +83,7 @@ export default class Shelf extends Component {
     window.removeEventListener('resize', this.updateLimit);
   }
 
-  updateLimit = () => this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
+  updateLimit = () => this._isMounted && this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
 
   fetchUserBooks = e => {
     const { desc, filterByIndex, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
@@ -105,7 +105,7 @@ export default class Shelf extends Component {
   
       this.unsubUserBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
-          this.setState({ count: fullSnap.docs.length });
+          if (this._isMounted) this.setState({ count: fullSnap.docs.length });
           const fullBooks = [];
           fullSnap.forEach(fullUserBook => fullBooks.push({ 
             readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
@@ -114,72 +114,76 @@ export default class Shelf extends Component {
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
           this.unsubUserBooksFetch = ref.limit(limit).onSnapshot(snap => {
-            this.setState({ loading: true });
+            if (this._isMounted) this.setState({ loading: true });
             if (!snap.empty) {
               const items = [];
               snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
-              this.setState(prevState => ({ 
-                isOwner: luid === uid,
-                items,
-                loading: false,
-                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
-              }), () => {
-                // GET CHALLENGES
-                luid === uid && userRef(luid).collection('challenges').get().then(snap => {
-                  if (!snap.empty) {
-                    const challenges = [];
-                    snap.forEach(doc => challenges.push(doc.data()));
-                    // UPDATE READING STATE OF CHALLENGE BOOKS 
-                    const { cid } = challenges[0];
-                    const cBooks = { ...challenges[0].books };
-                    Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
-                      fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
-                        cBooks[item.bid] = true;
+              if (this._isMounted) {
+                this.setState(prevState => ({ 
+                  isOwner: luid === uid,
+                  items,
+                  loading: false,
+                  page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
+                }), () => {
+                  // GET CHALLENGES
+                  luid === uid && userRef(luid).collection('challenges').get().then(snap => {
+                    if (!snap.empty) {
+                      const challenges = [];
+                      snap.forEach(doc => challenges.push(doc.data()));
+                      // UPDATE READING STATE OF CHALLENGE BOOKS 
+                      const { cid } = challenges[0];
+                      const cBooks = { ...challenges[0].books };
+                      Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
+                        fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
+                          cBooks[item.bid] = true;
+                        });
                       });
-                    });
-                    Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
-                      fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
-                        cBooks[item.bid] = false;
+                      Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
+                        fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
+                          cBooks[item.bid] = false;
+                        });
                       });
-                    });
-                    if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
-                      console.warn(cBooks);
-                      userRef(luid).collection('challenges').doc(cid).update({ 
-                        books: cBooks, 
-                        completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Number((new Date()).getTime()) : 0
-                      }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-                    } // else console.log('No challenge books to update');
-                  }
-                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-              });
-            } else this.setState(empty);
+                      if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
+                        console.warn(cBooks);
+                        userRef(luid).collection('challenges').doc(cid).update({ 
+                          books: cBooks, 
+                          completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Number((new Date()).getTime()) : 0
+                        }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                      } // else console.log('No challenge books to update');
+                    }
+                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                });
+              }
+            } else if (this._isMounted) this.setState(empty);
           });
-        } else this.setState(empty);
+        } else if (this._isMounted) this.setState(empty);
       });
     } else console.warn(`No uid: ${uid}`);
   }
 
-  onChangeOrderBy = (e, i) => this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
+  onChangeOrderBy = (e, i) => this._isMounted && this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
 
-  onChangeFilterBy = (e, i) => this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
+  onChangeFilterBy = (e, i) => this._isMounted && this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
 
   onChangeSelect = key => e => {
-		this.setState(prevState => ({ 
-      // success: false, changes: true, 
-      user: { ...prevState.user, [key]: e.target.value },
-      errors: { ...prevState.errors, [key]: null } 
-    }));
+    if (this._isMounted) {
+      this.setState(prevState => ({ 
+        // success: false, changes: true, 
+        user: { ...prevState.user, [key]: e.target.value },
+        errors: { ...prevState.errors, [key]: null } 
+      }));
+    }
 	};
 
-  onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
+  onToggleDesc = () => this._isMounted && this.setState(prevState => ({ desc: !prevState.desc }));
 
-  onToggleView = () => this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
+  onToggleView = () => this._isMounted && this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
 
-  onOpenOrderMenu = e => this.setState({ orderMenuAnchorEl: e.currentTarget });
-  onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
+  onOpenOrderMenu = e => this._isMounted && this.setState({ orderMenuAnchorEl: e.currentTarget });
+  onCloseOrderMenu = () => this._isMounted && this.setState({ orderMenuAnchorEl: null });
 
-  onOpenFilterMenu = e => this.setState({ filterMenuAnchorEl: e.currentTarget });
-  onCloseFilterMenu = () => this.setState({ filterMenuAnchorEl: null });
+  onOpenFilterMenu = e => this._isMounted && this.setState({ filterMenuAnchorEl: e.currentTarget });
+  onCloseFilterMenu = () => this._isMounted && this.setState({ filterMenuAnchorEl: null });
 
   render() {
     const { coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;

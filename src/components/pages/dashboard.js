@@ -85,10 +85,10 @@ export default class Dashboard extends Component {
   }
 
 	componentDidMount() {
+    this._isMounted = true;
     const { history, openSnackbar, user } = this.props;
     const { isOwner, tabSelected, uid } = this.state;
-
-    this._isMounted = true;
+    
     window.addEventListener('resize', this.updateScreenSize);
     if (uid) {
       this.fetchUser();
@@ -238,6 +238,7 @@ export default class Dashboard extends Component {
 	onFollowUser = (e, fuid = this.state.user.uid, fuser = this.state.user) => {
     e.preventDefault();
     const { openSnackbar, user } = this.props;
+    
 		if (isAuthenticated()) {
 			const { followers, followings, lfollowers, lfollowings, luid, uid } = this.state;
 			let computedFollowers = luid !== fuid ? { ...followers } : { ...lfollowers };

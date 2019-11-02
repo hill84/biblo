@@ -27,9 +27,13 @@ auth.useDeviceLanguage();
 export const signOut = () => auth.signOut();
 
 export const storageKey_uid = 'uid';
-export const isAuthenticated = () => (!!auth.currentUser && !needsEmailVerification(auth.currentUser)) /* || !!localStorage.getItem(storageKey_uid) */;
-export let authid = (auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid));
-auth.onIdTokenChanged(user => user ? authid = ((auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid))) : null);
+export const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
+
+let cuid = (auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid));
+auth.onIdTokenChanged(user => {
+	cuid = user ? (user.uid || (isLocalStorage() && localStorage.getItem(storageKey_uid))) : null;
+});
+export const authid = cuid;
 // auth.onIdTokenChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */

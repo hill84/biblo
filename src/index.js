@@ -13,9 +13,11 @@ import * as serviceWorker from './serviceWorker';
 import BrowserNotSupported from './components/browser-not-supported';
 
 function getInternetExplorerVersion() {
+  /* eslint-disable no-var */
   var rv = -1;
   var ua;
   var re;
+  /* eslint-enable no-var */
   if (navigator.appName === 'Microsoft Internet Explorer') {
     ua = navigator.userAgent;
     re = new RegExp("MSIE ([0-9]{1,}[\\.0-9]{0,})");
@@ -30,7 +32,8 @@ function getInternetExplorerVersion() {
 
 if (process.env.NODE_ENV === 'production') {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
-    for (let [key, value] of Object.entries(window.__REACT_DEVTOOLS_GLOBAL_HOOK__)) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of Object.entries(window.__REACT_DEVTOOLS_GLOBAL_HOOK__)) {
       window.__REACT_DEVTOOLS_GLOBAL_HOOK__[key] = typeof value === 'function' ? () => {} : null;
     }
   }
@@ -39,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
 const history = createBrowserHistory();
 
 if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_GA_TRACKING_ID && readCookie('user-has-accepted-cookies') === 'true') {
-  ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, { debug: process.env.NODE_ENV === "production" ? false : true });
+  ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, { debug: process.env.NODE_ENV !== 'production' });
   ReactGA.pageview(window.location.pathname);
   history.listen(location => {
     ReactGA.set({ page: location.pathname });

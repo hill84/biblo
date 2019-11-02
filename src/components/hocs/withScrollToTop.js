@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-const withScrollToTop = Component => {
-  return class extends React.Component {
+const withScrollToTop = WrappedComponent => {
+  return class extends Component {
     componentDidMount() {
       window.scrollTo(0, 0);
     }
  
     render() {
-      return <Component {...this.props} />
+      return <WrappedComponent {...this.props} />
     }
   }
 }

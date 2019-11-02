@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
@@ -23,326 +23,325 @@ import { darkTheme } from '../config/themes';
 import { childrenType, funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
 
-export default class Layout extends Component {
-  state = {
+const Layout = props => {
+  const [state, setState] = useState({
     drawerIsOpen: false,
     moreAnchorEl: null,
     notes: null,
     notesAnchorEl: null
-  }
-
-  static propTypes = {
-    children: childrenType,
-    error: stringType,
-    openSnackbar: funcType.isRequired,
-    user: userType
-  }
-
-  static defaultProps = {
-    children: null,
-    error: null,
-    user: null
-  }
+  });
   
-  componentDidMount() {
-    this._isMounted = true;
-  }
+  const { children, error, openSnackbar, user } = props;
+  const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = state;
 
-  componentDidUpdate(prevProps) {
-    const { error, openSnackbar, user } = this.props;
-    if (this._isMounted) {
-      if (user !== prevProps.user){
-        this.timer = setTimeout(() => {
-          this.fetchNotes()
-        }, 1000);
-      }
-      if (error !== prevProps.error) {
-        openSnackbar(error, 'error', 9000);
-      }
+  useEffect(() => {
+    let unsubNotesFetch;
+
+    const fetchNotes = () => {
+      if (user) {
+        const notes = [];
+        roles.forEach(role => {
+          if (hasRole(user, role)) {
+            unsubNotesFetch = notesRef(`__${role}`).orderBy('created_num', 'desc').limit(5).onSnapshot(snap => {
+              if (!snap.empty) {
+                snap.forEach(note => {
+                  notes.push({ ...note.data(), role })
+                });
+              }
+            });
+          }
+        });
+        notesRef(user.uid).orderBy('created_num', 'desc').limit(10).get().then(snap => {
+          if (!snap.empty) {
+            snap.forEach(note => {
+              notes.push(note.data());
+            });
+            setState(prevState => ({ ...prevState, notes }));
+          }
+        }).catch(err => console.warn(err));
+      } else setState(prevState => ({ ...prevState, notes: null }));
     }
+
+    const unsubTimer = setTimeout(() => {
+      fetchNotes();
+    }, 1000);
+
+    return () => {
+      unsubNotesFetch && unsubNotesFetch();
+      unsubTimer && clearTimeout(unsubTimer);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (error) openSnackbar(error, 'error', 9000);
+  }, [error, openSnackbar]);
+
+  const onToggleDrawer = () => setState(prevState => ({ ...prevState, drawerIsOpen: !prevState.drawerIsOpen }));
+  const onCloseDrawer = () => setState(prevState => ({ ...prevState, drawerIsOpen: false }));
+
+  const onOpenMore = e => {
+    e.persist();
+    setState(prevState => ({ ...prevState, moreAnchorEl: e.currentTarget }));
   }
+  const onCloseMore = () => setState(prevState => ({ ...prevState, moreAnchorEl: null }));
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.timer && clearTimeout(this.timer);
-    this.unsubNotesFetch && this.unsubNotesFetch();
-  }
-
-  fetchNotes = () => {
-    const { user } = this.props;
-
-    if (user) {
-      const notes = [];
-      roles.forEach(role => {
-        if (hasRole(user, role)) {
-          this.unsubNotesFetch = notesRef(`__${role}`).orderBy('created_num', 'desc').limit(5).onSnapshot(snap => {
-            if (!snap.empty) {
-              snap.forEach(note => {
-                notes.push({ ...note.data(), role })
-              });
-            }
-          });
-        }
-      });
-      notesRef(user.uid).orderBy('created_num', 'desc').limit(10).get().then(snap => {
-        if (!snap.empty) {
-          snap.forEach(note => {
-            notes.push(note.data());
-          });
-          if (this._isMounted) this.setState({ notes });
-        }
-      }).catch(error => console.warn(error));
-    } else if (this._isMounted) this.setState({ notes: null });
-  }
-  
-  onToggleDrawer = () => this.setState(prevState => ({ drawerIsOpen: !prevState.drawerIsOpen }));
-  onCloseDrawer = () => this.setState({ drawerIsOpen: false });
-
-  onOpenMore = e => this.setState({ moreAnchorEl: e.currentTarget });
-  onCloseMore = () => this.setState({ moreAnchorEl: null });
-
-  onOpenNotes = e => {
-    const { notes } = this.state;
-    const { user } = this.props;
-
-    if (this._isMounted) this.setState({ notesAnchorEl: e.currentTarget });
+  const onOpenNotes = e => {
+    e.persist();
+    
+    setState(prevState => ({ ...prevState, notesAnchorEl: e.currentTarget }));
     notes && notes.filter(note => note.read !== true && !note.role).forEach(note => {
-      /* if (this._isMounted) {
-        this.setState({
-          notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
-        }); 
-      } */
-      noteRef(user.uid, note.nid).update({ read: true }).then().catch(error => console.warn(error));
+      /* setState(prevState => ({
+        ...prevState,
+        notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
+      })); */
+      noteRef(user.uid, note.nid).update({ read: true }).then().catch(err => console.warn(err));
     });
   }
-  onCloseNotes = () => this.setState({ notesAnchorEl: null });
+  const onCloseNotes = () => setState(prevState => ({ ...prevState, notesAnchorEl: null }));
 
-  // onOpenDialog = () => this.setState({ dialogIsOpen: true });
-  // onCloseDialog = () => this.setState({ dialogIsOpen: false });
-  
-  render() {
-    const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = this.state;
-    const { children, user } = this.props;
-    const toRead = notes => notes && notes.filter(note => !note.read || note.role);
+  // const onOpenDialog = () => setState(prevState => ({ ...prevState, dialogIsOpen: true }));
+  // const onCloseDialog = () => setState(prevState => ({ ...prevState, dialogIsOpen: false }));
 
-    return (
-      <div id="layoutComponent">
-        <AppBar id="appBarComponent" className="dark" position="static">
-          <Toolbar className="toolbar">
-            <Tooltip title="Menu" placement="bottom">
-              <IconButton className="drawer-btn" aria-label="Menu" onClick={this.onToggleDrawer}> 
-                {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
-              </IconButton>
-            </Tooltip>
-            <Typography className="title" variant="h6" color="inherit">
-              <Link to="/">{app.name}<sup>Beta</sup></Link>
-            </Typography>
-            {user ? 
-              <>
-                {user.roles.admin && 
-                  <Tooltip title="Aggiungi libro" placement="bottom">
-                    <IconButton
-                      className="search-btn popIn reveal hide-xs"
-                      component={Link} 
-                      to="/new-book"
-                      aria-label="New book">
-                      {icon.plus()}
-                    </IconButton>
-                  </Tooltip>
-                }
-                <Tooltip title="Cerca libro" placement="bottom">
+  const toRead = notes => notes && notes.filter(note => !note.read || note.role);
+
+  return (
+    <div id="layoutComponent">
+      <AppBar id="appBarComponent" className="dark" position="static">
+        <Toolbar className="toolbar">
+          <Tooltip title="Menu" placement="bottom">
+            <IconButton className="drawer-btn" aria-label="Menu" onClick={onToggleDrawer}> 
+              {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
+            </IconButton>
+          </Tooltip>
+          <Typography className="title" variant="h6" color="inherit">
+            <Link to="/">{app.name}<sup>Beta</sup></Link>
+          </Typography>
+          {user ? 
+            <>
+              {user.roles.admin && 
+                <Tooltip title="Aggiungi libro" placement="bottom">
                   <IconButton
-                    className="search-btn popIn reveal delay1"
+                    className="search-btn popIn reveal hide-xs"
                     component={Link} 
-                    to="/books/add"
-                    aria-label="Search">
-                    {icon.magnify()}
+                    to="/new-book"
+                    aria-label="New book">
+                    {icon.plus()}
                   </IconButton>
                 </Tooltip>
-                <Tooltip title={`${notes ? toRead(notes).length : 0} notifiche`} placement="bottom">
-                  <IconButton
-                    className="notes-btn popIn reveal delay2"
-                    aria-label="Notifications"
-                    aria-owns={notesAnchorEl ? 'notes-menu' : null}
-                    aria-haspopup="true"
-                    onClick={this.onOpenNotes}>
-                    {icon.bell()}
-                    {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  id="notes-menu"
-                  className="dropdown-menu notes"
-                  anchorEl={notesAnchorEl}
-                  onClick={this.onCloseNotes}
-                  open={Boolean(notesAnchorEl)}
-                  onClose={this.onCloseNotes}>
-                  {notes && toRead(notes).length ?
-                    toRead(notes).map((item, i) => (
-                      <MenuItem key={item.nid} style={{ animationDelay: `${(i + 1) / 10  }s`, }}> 
-                        <div className="row">
-                          <div className="col-auto">
-                            {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
-                              <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
-                                <Avatar className="image avatar" alt={item.createdBy}>
-                                  {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
-                                </Avatar>
-                              </Link>
-                              : <span className="icon">{icon.bell()}</span>
-                            }
-                          </div>
-                          <div className="col text">
-                            <div dangerouslySetInnerHTML={{__html: item.text}} />
-                          </div>
-                          <div className="col-auto date">{timeSince(item.created_num)}</div>
-                        </div>
-                      </MenuItem>
-                    ))
-                    : 
-                    <MenuItem>
+              }
+              <Tooltip title="Cerca libro" placement="bottom">
+                <IconButton
+                  className="search-btn popIn reveal delay1"
+                  component={Link} 
+                  to="/books/add"
+                  aria-label="Search">
+                  {icon.magnify()}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={`${notes ? toRead(notes).length : 0} notifiche`} placement="bottom">
+                <IconButton
+                  className="notes-btn popIn reveal delay2"
+                  aria-label="Notifications"
+                  aria-owns={notesAnchorEl ? 'notes-menu' : null}
+                  aria-haspopup="true"
+                  onClick={onOpenNotes}>
+                  {icon.bell()}
+                  {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="notes-menu"
+                className="dropdown-menu notes"
+                anchorEl={notesAnchorEl}
+                onClick={onCloseNotes}
+                open={Boolean(notesAnchorEl)}
+                onClose={onCloseNotes}>
+                {notes && toRead(notes).length ?
+                  toRead(notes).map((item, i) => (
+                    <MenuItem key={item.nid} style={{ animationDelay: `${(i + 1) / 10  }s`, }}> 
                       <div className="row">
                         <div className="col-auto">
-                          <span className="icon">{icon.bellOff()}</span>
+                          {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
+                            <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
+                              <Avatar className="image avatar" alt={item.createdBy}>
+                                {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
+                              </Avatar>
+                            </Link>
+                            : <span className="icon">{icon.bell()}</span>
+                          }
                         </div>
-                        <div className="col text">Non ci sono nuove notifiche</div>
+                        <div className="col text">
+                          <div dangerouslySetInnerHTML={{__html: item.text}} />
+                        </div>
+                        <div className="col-auto date">{timeSince(item.created_num)}</div>
                       </div>
                     </MenuItem>
-                  }
-                  <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
-                </Menu>
-
-                <Tooltip title={user.displayName} placement="bottom">
-                  <IconButton
-                    className="more-btn"
-                    aria-label="More"
-                    aria-owns={moreAnchorEl ? 'more-menu' : null}
-                    aria-haspopup="true"
-                    onClick={this.onOpenMore}>
-                    <Avatar className="avatar popIn reveal delay3" src={user.photoURL} alt={user.displayName}>
-                      {!user.photoURL && getInitials(user.displayName)}
-                    </Avatar>
-                    {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  id="more-menu"
-                  className="dropdown-menu"
-                  anchorEl={moreAnchorEl}
-                  onClick={this.onCloseMore}
-                  open={Boolean(moreAnchorEl)}
-                  onClose={this.onCloseMore}>
-                  <MenuItem component={Link} to="/profile">Profilo</MenuItem>
-                  <MenuItem component={Link} to={`/dashboard/${authid}`}>Dashboard</MenuItem>
-                  <MenuItem onClick={signOut}>Esci</MenuItem>
-                </Menu>
-              </>
-            : 
-              <>
-                <NavLink to="/login" className="btn flat hide-xs">Accedi</NavLink>
-                <NavLink to="/signup" className="btn primary">Registrati</NavLink>
-              </>
-            }
-          </Toolbar>
-        </AppBar>
-        
-        <ThemeProvider theme={darkTheme}>
-          <Drawer
-            className="drawer"
-            open={drawerIsOpen}
-            onClick={this.onCloseDrawer}>
-            <nav className="list">
-              {user && authid ? 
-                <>
-                  <NavLink to="/profile" className="auth-header">
-                    <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
-                    <div className="user">
-                      <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
-                      <div className="user-info">
-                        <div className="user-name">{user.displayName}</div>
-                        <div className="user-email">{user.email}</div>
+                  ))
+                  : 
+                  <MenuItem>
+                    <div className="row">
+                      <div className="col-auto">
+                        <span className="icon">{icon.bellOff()}</span>
                       </div>
+                      <div className="col text">Non ci sono nuove notifiche</div>
                     </div>
-                  </NavLink>
-                  {user.roles.admin && 
-                    <NavLink to="/admin">
-                      <MenuItem>
-                        <ListItemIcon>{icon.gauge()}</ListItemIcon>
-                        <Typography variant="inherit">Amministrazione</Typography>
-                      </MenuItem>
-                    </NavLink>
-                  }
-                  <NavLink to={`/dashboard/${authid}/shelf`}>
-                    <MenuItem>
-                      <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
-                      <Typography variant="inherit">La mia libreria</Typography>
-                    </MenuItem>
-                  </NavLink>
-                </>
-              :
-                <div className="auth-header-buttons">
-                  <NavLink to="/login">
-                    <MenuItem>
-                      <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
-                      <Typography variant="inherit">Accedi</Typography>
-                    </MenuItem>
-                  </NavLink>
-                  <NavLink to="/signup">
-                    <MenuItem>
-                      <ListItemIcon>{icon.accountPlus()}</ListItemIcon>
-                      <Typography variant="inherit">Registrati</Typography>
-                    </MenuItem>
-                  </NavLink>
-                </div>
-              }
-              <NavLink to="/" exact>
-                <MenuItem>
-                  <ListItemIcon>{icon.home()}</ListItemIcon>
-                  <Typography variant="inherit">Home</Typography>
-                </MenuItem>
-              </NavLink>
-              <NavLink to="/genres" exact>
-                <MenuItem>
-                  <ListItemIcon>{icon.libraryShelves()}</ListItemIcon>
-                  <Typography variant="inherit">Generi</Typography>
-                </MenuItem>
-              </NavLink>
-              <NavLink to="/authors" exact>
-                <MenuItem>
-                  <ListItemIcon>{icon.accountEdit()}</ListItemIcon>
-                  <Typography variant="inherit">Autori</Typography>
-                </MenuItem>
-              </NavLink>
-              <NavLink to="/donations" exact>
-                <MenuItem>
-                  <ListItemIcon>{icon.heart()}</ListItemIcon>
-                  <Typography variant="inherit">Donazioni</Typography>
-                </MenuItem>
-              </NavLink>
+                  </MenuItem>
+                }
+                <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
+              </Menu>
 
-              <MenuItem disableRipple className="bottom-item">
-                <div className="version">v {version}</div>
+              <Tooltip title={user.displayName} placement="bottom">
+                <IconButton
+                  className="more-btn"
+                  aria-label="More"
+                  aria-owns={moreAnchorEl ? 'more-menu' : null}
+                  aria-haspopup="true"
+                  onClick={onOpenMore}>
+                  <Avatar className="avatar popIn reveal delay3" src={user.photoURL} alt={user.displayName}>
+                    {!user.photoURL && getInitials(user.displayName)}
+                  </Avatar>
+                  {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="more-menu"
+                className="dropdown-menu"
+                anchorEl={moreAnchorEl}
+                onClick={onCloseMore}
+                open={Boolean(moreAnchorEl)}
+                onClose={onCloseMore}>
+                <MenuItem component={Link} to="/profile">Profilo</MenuItem>
+                <MenuItem component={Link} to={`/dashboard/${authid}`}>La mia libreria</MenuItem>
+                <MenuItem onClick={signOut}>Esci</MenuItem>
+              </Menu>
+            </>
+          : 
+            <>
+              <NavLink to="/login" className="btn flat hide-xs">Accedi</NavLink>
+              <NavLink to="/signup" className="btn primary">Registrati</NavLink>
+            </>
+          }
+        </Toolbar>
+      </AppBar>
+      
+      <ThemeProvider theme={darkTheme}>
+        <Drawer
+          className="drawer"
+          open={drawerIsOpen}
+          onClick={onCloseDrawer}>
+          <nav className="list">
+            {user && authid ? 
+              <>
+                <NavLink to="/profile" className="auth-header">
+                  <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
+                  <div className="user">
+                    <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+                    <div className="user-info">
+                      <div className="user-name">{user.displayName}</div>
+                      <div className="user-email">{user.email}</div>
+                    </div>
+                  </div>
+                </NavLink>
+                {user.roles.admin && 
+                  <NavLink to="/admin">
+                    <MenuItem>
+                      <ListItemIcon>{icon.gauge()}</ListItemIcon>
+                      <Typography variant="inherit">Amministrazione</Typography>
+                    </MenuItem>
+                  </NavLink>
+                }
+                <NavLink to={`/dashboard/${authid}/shelf`}>
+                  <MenuItem>
+                    <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
+                    <Typography variant="inherit">La mia libreria</Typography>
+                  </MenuItem>
+                </NavLink>
+              </>
+            :
+              <div className="auth-header-buttons">
+                <NavLink to="/login">
+                  <MenuItem>
+                    <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
+                    <Typography variant="inherit">Accedi</Typography>
+                  </MenuItem>
+                </NavLink>
+                <NavLink to="/signup">
+                  <MenuItem>
+                    <ListItemIcon>{icon.accountPlus()}</ListItemIcon>
+                    <Typography variant="inherit">Registrati</Typography>
+                  </MenuItem>
+                </NavLink>
+              </div>
+            }
+            <NavLink to="/" exact>
+              <MenuItem>
+                <ListItemIcon>{icon.home()}</ListItemIcon>
+                <Typography variant="inherit">Home</Typography>
               </MenuItem>
-              
-            </nav>
-          </Drawer>
-        </ThemeProvider>
-        
-        <main>
-          {children}
-        </main>
+            </NavLink>
+            <NavLink to="/genres" exact>
+              <MenuItem>
+                <ListItemIcon>{icon.libraryShelves()}</ListItemIcon>
+                <Typography variant="inherit">Generi</Typography>
+              </MenuItem>
+            </NavLink>
+            <NavLink to="/authors" exact>
+              <MenuItem>
+                <ListItemIcon>{icon.accountEdit()}</ListItemIcon>
+                <Typography variant="inherit">Autori</Typography>
+              </MenuItem>
+            </NavLink>
+            <NavLink to="/donations" exact>
+              <MenuItem>
+                <ListItemIcon>{icon.heart()}</ListItemIcon>
+                <Typography variant="inherit">Donazioni</Typography>
+              </MenuItem>
+            </NavLink>
 
-        <Footer />
+            <MenuItem disableRipple className="bottom-item">
+              <div className="version">v {version}</div>
+            </MenuItem>
+            
+          </nav>
+        </Drawer>
+      </ThemeProvider>
+      
+      <main>
+        {children}
+      </main>
 
-        <CookieBanner
-          disableStyle
-          message="Usiamo i cookie 🍪 Per saperne di più "
-          buttonMessage="Accetto"
-          link={<Link to="/cookie">clicca qui</Link>}
-          dismissOnScrollThreshold={100}
-          onAccept={() => {}}
-          cookie="user-has-accepted-cookies" 
-        />
-      </div> 
-    );
-  }
+      <Footer />
+
+      <CookieBanner
+        disableStyle
+        message="Usiamo i cookie 🍪 Per saperne di più "
+        buttonMessage="Accetto"
+        link={<Link to="/cookie">clicca qui</Link>}
+        dismissOnScrollThreshold={100}
+        onAccept={() => {}}
+        cookie="user-has-accepted-cookies" 
+      />
+    </div>
+  );
 }
+
+Layout.propTypes = {
+  children: childrenType,
+  error: stringType,
+  openSnackbar: funcType.isRequired,
+  user: userType
+}
+
+Layout.defaultProps = {
+  children: null,
+  error: null,
+  user: null
+}
+ 
+export default Layout;
+
+
+
+
+
+
