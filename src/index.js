@@ -10,7 +10,7 @@ import { readCookie } from './config/shared';
 import './css/grid.min.css';
 import './css/main.css';
 import * as serviceWorker from './serviceWorker';
-import BrowserNotSupported from './components/browser-not-supported';
+import BrowserNotSupported from './components/browserNotSupported';
 
 function getInternetExplorerVersion() {
   /* eslint-disable no-var */

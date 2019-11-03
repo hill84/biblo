@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
 import { normURL } from '../config/shared';
@@ -15,6 +15,8 @@ const RandomQuote = props => {
   const { author, className, limit } = props;
   const { item, loading, skeleton } = state;
 
+  const is = useRef(true);
+
   useEffect(() => {
     const ref = author ? quotesRef.where('author', '==', author).limit(1) : quotesRef.limit(limit);
 
@@ -23,12 +25,14 @@ const RandomQuote = props => {
         const count = snap.size;
         const randomIndex = Math.floor(Math.random() * count);
         const item = snap.docs[randomIndex].data();
-        setState(prevState => ({
-          ...prevState,
-          item,
-          loading: false
-        }));
-      } else {
+        if (is.current) {
+          setState(prevState => ({
+            ...prevState,
+            item,
+            loading: false
+          }));
+        }
+      } else if (is.current) {
         setState(prevState => ({
           ...prevState,
           item: null,
@@ -36,13 +40,17 @@ const RandomQuote = props => {
         }));
       }
     }).catch(err => console.warn(err));
+
+    return () => {
+      is.current = false;
+    }
   }, [author, limit]);
 
   if (loading) return skeleton ? <div className="skltn quote" /> : null;
   if (!item) return null;
 
   return (
-    <div className={`randomquote ${className}`}>
+    <div className={`randomquote ${className}`} ref={is}>
       <div className="row">
         {item.coverURL &&
           <div className="col-auto">

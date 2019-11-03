@@ -1,5 +1,5 @@
 import Avatar from '@material-ui/core/Avatar';
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../config/firebase';
 import { numberType, boolType } from '../config/types';
@@ -7,50 +7,25 @@ import { getInitials, normURL } from '../config/shared';
 import icon from '../config/icons';
 import { skltn_bubbleRow } from './skeletons';
 
-export default class Authors extends Component {
-	state = {
+const Authors = props => {
+  const [state, setState] = useState({
     items: null,
     count: 0,
     desc: true,
-    limit: this.props.limit,
+    limit: props.limit,
     loading: true,
     page: 1,
     scrollable: true
-  }
+  });
 
-  static propTypes = {
-    inView: boolType,
-    limit: numberType,
-    pagination: boolType,
-    size: numberType
-  }
+  const { inView, pagination, size } = props;
+  const { count, desc, items, limit, loading, page, scrollable } = state;
 
-  static defaultProps = {
-    inView: true,
-    limit: 10,
-    pagination: false,
-    size: 80
-  }
+  const is = useRef(true);
 
-  componentDidMount() {
-    this._isMounted = true;
-    this.fetch();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { limit, inView } = this.props;
-    if (inView !== prevProps.inView || limit !== prevState.limit) {
-      this.fetch();
-    } 
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  fetch = (/* e */) => { 
-    const { inView } = this.props;
-    const { desc, limit } = this.state;
+  const onToggleDesc = () => setState(prevState => ({ ...prevState, desc: !prevState.desc }));
+  
+  const fetch = useCallback((/* e */) => {
     // const direction = e && e.currentTarget.dataset.direction;
     // const prev = direction === 'prev';
     // TODO: paginated fetch
@@ -60,92 +35,121 @@ export default class Authors extends Component {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
-          if (this._isMounted) {
-            this.setState({ 
+          if (is.current) {
+            setState(prevState => ({ 
+              ...prevState, 
               // count: snap.docs.length,
               items,
               loading: false
-            });
+            }));
           }
           countRef('authors').get().then(fullSnap => {
             if (fullSnap.exists) { 
-              if (this._isMounted) {
-                this.setState({ count: fullSnap.data().count });
+              if (is.current) {
+                setState(prevState => ({ 
+                  ...prevState, 
+                  count: fullSnap.data().count 
+                }));
               }
             }
           }).catch(err => console.warn(err));
-        } else if (this._isMounted) {
-          this.setState({ 
+        } else if (is.current) {
+          setState(prevState => ({ 
+            ...prevState, 
             count: 0,
             items: null,
             loading: false
-          });
+          }));
         }
       }).catch(err => console.warn(err));
     }
-  }
-	
-	render() {
-    const { pagination, size } = this.props;
-    const { count, desc, items, limit, loading, page, scrollable } = this.state;
+  }, [desc, inView, limit]);
 
-    if (!loading && !items) {
-      return <div className="info-row empty text-center">Non ci sono ancora autori.</div>;
+  useEffect(() => {
+    fetch();
+
+    return () => {
+      useRef.current = false;
     }
+  }, [fetch]);
 
-		return (
-      <>
-        <div className="head nav" role="navigation">
-          <span className="counter last title primary-text">Autori</span> {items && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
-          {!loading && count > 0 &&
-            <div className="pull-right">
-              {(pagination && count > limit) || scrollable ?
-                <Link to="/authors" className="btn sm flat counter">Vedi tutti</Link>
-              :
+  return (
+    <>
+      <div className="head nav" role="navigation">
+        <span className="counter last title primary-text">Autori</span> {items && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
+        {!loading && count > 0 &&
+          <div className="pull-right">
+            {(pagination && count > limit) || scrollable ?
+              <Link to="/authors" className="btn sm flat counter">Vedi tutti</Link>
+            :
+              <button 
+                type="button"
+                className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
+                title={desc ? 'Ascendente' : 'Discendente'} 
+                onClick={onToggleDesc}>
+                {icon.arrowDown()}
+              </button>
+            }
+            {pagination && count > limit &&
+              <>
                 <button 
                   type="button"
-                  className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
-                  title={desc ? 'Ascendente' : 'Discendente'} 
-                  onClick={this.onToggleDesc}>
-                  {icon.arrowDown()}
+                  disabled={page < 2 && 'disabled'} 
+                  className="btn sm clear prepend" 
+                  data-direction="prev"
+                  onClick={fetch} title="precedente">
+                  {icon.chevronLeft()}
                 </button>
-              }
-              {pagination && count > limit &&
-                <>
-                  <button 
-                    type="button"
-                    disabled={page < 2 && 'disabled'} 
-                    className="btn sm clear prepend" 
-                    data-direction="prev"
-                    onClick={this.fetch} title="precedente">
-                    {icon.chevronLeft()}
-                  </button>
-                  <button 
-                    type="button"
-                    disabled={page > (count / limit) && 'disabled'} 
-                    className="btn sm clear append" 
-                    data-direction="next"
-                    onClick={this.fetch} title="successivo">
-                    {icon.chevronRight()}
-                  </button>
-                </>
-              }
-            </div>
-          }
-        </div>
-        <div className="bubbles row shelf scrollable">
-          {loading ? skltn_bubbleRow :
-            <div className="shelf-row hoverable-items avatars-row">
-              {items.map((item, index) => 
-                <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{ '--avatarSize': `${size}px`, animationDelay: `${index/10}s`, }} className="bubble col">
-                  <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>{!item.photoURL && getInitials(item.displayName)}</Avatar>
-                  <div className="title">{item.displayName}</div>
-                </Link>
-              )}
-            </div>
-          }
-        </div>
-      </>
-		);
-	}
+                <button 
+                  type="button"
+                  disabled={page > (count / limit) && 'disabled'} 
+                  className="btn sm clear append" 
+                  data-direction="next"
+                  onClick={fetch} title="successivo">
+                  {icon.chevronRight()}
+                </button>
+              </>
+            }
+          </div>
+        }
+      </div>
+      <div className="bubbles row shelf scrollable">
+        {loading ? skltn_bubbleRow :
+          <div className="shelf-row hoverable-items avatars-row">
+            {items.map((item, index) => 
+              <Link 
+                to={`/author/${normURL(item.displayName)}`} 
+                key={item.displayName} 
+                style={{ '--avatarSize': `${size}px`, animationDelay: `${index/10}s`, }} 
+                className="bubble col">
+                <Avatar 
+                  className="avatar centered" 
+                  src={item.photoURL} 
+                  alt={item.displayName}>
+                  {!item.photoURL && getInitials(item.displayName)}
+                </Avatar>
+                <div className="title">{item.displayName}</div>
+              </Link>
+            )}
+          </div>
+        }
+      </div>
+    </>
+  );
 }
+
+Authors.propTypes = {
+  inView: boolType,
+  limit: numberType,
+  pagination: boolType,
+  size: numberType
+}
+
+Authors.defaultProps = {
+  inView: true,
+  limit: 10,
+  pagination: false,
+  size: 80
+}
+
+export default Authors;

@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
@@ -33,6 +33,7 @@ const Layout = props => {
   
   const { children, error, openSnackbar, user } = props;
   const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = state;
+  const is = useRef(true);
 
   useEffect(() => {
     let unsubNotesFetch;
@@ -56,10 +57,10 @@ const Layout = props => {
             snap.forEach(note => {
               notes.push(note.data());
             });
-            setState(prevState => ({ ...prevState, notes }));
+            if (is.current) setState(prevState => ({ ...prevState, notes }));
           }
         }).catch(err => console.warn(err));
-      } else setState(prevState => ({ ...prevState, notes: null }));
+      } else if (is.current) setState(prevState => ({ ...prevState, notes: null }));
     }
 
     const unsubTimer = setTimeout(() => {
@@ -67,6 +68,7 @@ const Layout = props => {
     }, 1000);
 
     return () => {
+      is.current = false;
       unsubNotesFetch && unsubNotesFetch();
       unsubTimer && clearTimeout(unsubTimer);
     }
@@ -87,7 +89,6 @@ const Layout = props => {
 
   const onOpenNotes = e => {
     e.persist();
-    
     setState(prevState => ({ ...prevState, notesAnchorEl: e.currentTarget }));
     notes && notes.filter(note => note.read !== true && !note.role).forEach(note => {
       /* setState(prevState => ({
@@ -105,7 +106,7 @@ const Layout = props => {
   const toRead = notes => notes && notes.filter(note => !note.read || note.role);
 
   return (
-    <div id="layoutComponent">
+    <div id="layoutComponent" ref={is}>
       <AppBar id="appBarComponent" className="dark" position="static">
         <Toolbar className="toolbar">
           <Tooltip title="Menu" placement="bottom">

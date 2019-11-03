@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import icon from '../config/icons';
 import { childrenType } from '../config/types';
 
-export default class ErrorBoundary extends Component {
+export default class ErrorBoundary extends PureComponent {
   state = { 
     error: null, 
     errorInfo: null 

@@ -49,10 +49,7 @@ const App = () => {
 
   useEffect(() => {
     const clearUser = () => {
-      setState(prevState => ({ 
-        ...prevState, 
-        user: null 
-      }));
+      setState(prevState => ({ ...prevState, user: null }));
       isLocalStorage() && localStorage.removeItem(storageKey_uid)
     }
 
@@ -67,13 +64,10 @@ const App = () => {
             user: snap.data(), 
             error: null 
           }));
-          isLocalStorage() && localStorage.setItem(storageKey_uid, user.uid)
+          isLocalStorage() && localStorage.setItem(storageKey_uid, user.uid);
         } else console.warn(`User not found in database`);
       }, err => {
-        setState(prevState => ({ 
-          ...prevState, 
-          error: handleFirestoreError(err) 
-        }));
+        setState(prevState => ({ ...prevState, error: handleFirestoreError(err) }));
       });
     }
 
@@ -85,7 +79,9 @@ const App = () => {
       } else clearUser();
     });
 
-    return () => unsubUserFetch && unsubUserFetch();
+    return () => {
+      unsubUserFetch && unsubUserFetch();
+    }
   }, []);
 
   const { error, user } = state;
@@ -107,7 +103,7 @@ const App = () => {
               <ErrorBoundary>
                 <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
                   <Switch>
-                    <RouteWithProps path="/" exact component={Home} openSnackbar={openSnackbar} />
+                    <RouteWithProps path="/" exact component={Home} user={user} openSnackbar={openSnackbar} />
                     <Route path="/about" component={AboutPage} />
                     <Route path="/cookie" component={CookiePage} />
                     <Route path="/donations" component={DonationsPage} />
@@ -154,12 +150,12 @@ const App = () => {
  
 export default App;
 
-const PrivateRoute = ({component: Component, ...rest}) => (
+const PrivateRoute = ({ component: Component, ...rest }) => (
 	<Route {...rest} render={props => (
 		isAuthenticated() ?
 			<Component {...props} {...rest} />
 		:
-			<Redirect to={{ pathname: '/login', state: {from: props.location} }} />
+			<Redirect to={{ pathname: '/login', state: { from: props.location } }} />
 	)} />
 );
 
