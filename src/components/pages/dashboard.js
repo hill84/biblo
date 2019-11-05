@@ -292,7 +292,8 @@ export default class Dashboard extends Component {
             createdByUid: luid,
             photoURL: user.photoURL,
             tag: ['follow'],
-            read: false
+            read: false,
+            uid: fuid
           }).catch(err => console.warn(err));
         }
         // VISITOR

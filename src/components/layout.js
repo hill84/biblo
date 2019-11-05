@@ -68,11 +68,14 @@ const Layout = props => {
     }, 1000);
 
     return () => {
-      is.current = false;
       unsubNotesFetch && unsubNotesFetch();
       unsubTimer && clearTimeout(unsubTimer);
     }
   }, [user]);
+
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
   useEffect(() => {
     if (error) openSnackbar(error, 'error', 9000);

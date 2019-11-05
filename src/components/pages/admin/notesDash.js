@@ -6,7 +6,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { countRef, noteRef, notesRef, notificationsRef } from '../../../config/firebase';
+import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
 import { funcType } from '../../../config/types';
@@ -17,10 +17,11 @@ export default class NotesDash extends Component {
  	state = {
     count: 0,
     desc: true,
+    firstVisible: null,
     isOpenDeleteDialog: false,
     // isOpenFormDialog: false,
     items: null,
-    // lastVisible: null,
+    lastVisible: null,
     limitMenuAnchorEl: null,
     limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
@@ -38,6 +39,7 @@ export default class NotesDash extends Component {
 	componentDidMount() { 
     this._isMounted = true;
     this.fetch();
+    // this.getLastNotes(); // TODO: 
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -53,18 +55,15 @@ export default class NotesDash extends Component {
   }
     
   fetch = e => {
-    const { /* lastVisible,  */limitBy, limitByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, limitBy, limitByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
-    const lRef = notificationsRef.limit(limit);
-    const paginatedRef = prev ? lRef/* .endBefore(lastVisible) */ : lRef/* .startAfter(lastVisible) */;
-    const dRef = direction ? paginatedRef : lRef;
-    // console.log('fetching');
-    // console.log({ lastVisible: lastVisible && lastVisible.data().displayName, page, direction });
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    const ref = notificationsRef.orderBy('count', desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
+    const dRef = direction ? paginatedRef : ref;
+    
+    if (this._isMounted) this.setState({ loading: true });
 
     const fetcher = () => {
       this.unsubNotificationsFetch = dRef.onSnapshot(snap => {
@@ -72,10 +71,11 @@ export default class NotesDash extends Component {
           const items = [];
           snap.forEach(item => items.push({ id: item.id, count: item.data().count }));
           this.setState(prevState => ({
-            items,
-            // lastVisible: snap.docs[snap.size - 1],
+            firstVisible: snap.docs[prev ? snap.size -1 : 0],
+            items: prev ? items.reverse() : items,
+            lastVisible: snap.docs[prev ? 0 : snap.size -1],
             loading: false,
-            page: direction ? prev ? (prevState.page > 1) ? (prevState.page - 1) : 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : (prevState.page + 1) : 1
+            page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
           }));
         } else this.setState({ items: null, count: 0, loading: false });
       });
@@ -130,6 +130,18 @@ export default class NotesDash extends Component {
     });
   }
 
+  /* getLastNotes = (limit = 5) => {
+    const lRef = notesGroupRef.limit(limit);
+    lRef.get().then(snap => {
+      if (!snap.empty) {
+        // console.log(snap);
+        const items = [];
+        snap.forEach(item => items.push(item.data()));
+        console.log(items);
+      }
+    })
+  } */
+
 	render() {
     const { count, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
     const { openSnackbar } = this.props;
@@ -158,7 +170,7 @@ export default class NotesDash extends Component {
                     <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />
                   </div>
                   <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check() : icon.close()}</div>
-                  <div className="col col-sm-2 col-lg-1 text-right">
+                  <div className="col-auto col-sm-2 col-lg-1 text-right">
                     <div className="timestamp">{timeSince(note.created_num)}</div>
                   </div>
                   <div className="absolute-row right btns xs">

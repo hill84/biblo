@@ -231,7 +231,8 @@ export const noteType = shape({
   createdByUid: string.isRequired,
   photoURL: string,
   tag: arrayOf(_oneOf(['welcome', 'follow', 'like', 'test'])).isRequired,
-  read: bool.isRequired
+  read: bool.isRequired,
+  uid: string.isRequired
 });
 
 export const refType = PropTypes.oneOfType([PropTypes.func, PropTypes.object]);

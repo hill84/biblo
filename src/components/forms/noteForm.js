@@ -13,7 +13,7 @@ export default class noteForm extends Component {
     data: {
       text: ''
     },
-    text_maxChars: 100,
+    text_maxChars: 280,
     text_minChars: 10,
     loading: false,
     changes: false,
@@ -89,8 +89,10 @@ export default class noteForm extends Component {
   };
   
   onChangeMaxChars = e => {
+    e.persist();
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
+    
     if (this._isMounted) {
       this.setState(prevState => ({
         data: { ...prevState.data, [e.target.name]: e.target.value }, 
@@ -104,32 +106,28 @@ export default class noteForm extends Component {
     e.preventDefault();
     const { data } = this.state;
     const { nid, openSnackbar, uid, user } = this.props;
-		const errors = this.validate(data);
-		if (this._isMounted) {
-      this.setState({ authError: '', errors });
-    }
+    const errors = this.validate(data);
+    
+		if (this._isMounted) this.setState({ authError: '', errors });
+    
 		if (Object.keys(errors).length === 0) {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
+      if (this._isMounted) this.setState({ loading: true });
+      
       // console.log(`Sending notification to ${uid}`);
       const newNoteRef = notesRef(uid).doc();
       const ref = nid ? noteRef(uid, nid) : newNoteRef;
-      /* if (!nid) {
-        notesRef(uid).set({ count: 0 })
-      } */
+      // if (!nid) { notesRef(uid).set({ count: 0 }) }
       ref.set({
         nid: nid || newNoteRef.id,
         text: data.text,
         created_num: Number((new Date()).getTime()),
         createdBy: user.displayName,
         createdByUid: user.uid,
-        read: false
+        read: false,
+        uid
       }).then(() => {
         this.onToggle();
-        if (this._isMounted) {
-          this.setState({ loading: false, data: { text: '' } });
-        }
+        if (this._isMounted) this.setState({ loading: false, data: { text: '' } });
         openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
       }).catch(err => console.warn(err));
 		}
@@ -168,7 +166,7 @@ export default class noteForm extends Component {
                     placeholder={`Inserisci il testo (max ${text_maxChars} caratteri)...`}
                     value={data.text}
                     onChange={this.onChangeMaxChars}
-                    rowsMax={3}
+                    rowsMax={8}
                     multiline
                     error={Boolean(errors.text)}
                   />

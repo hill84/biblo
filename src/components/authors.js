@@ -67,11 +67,11 @@ const Authors = props => {
 
   useEffect(() => {
     fetch();
-
-    return () => {
-      useRef.current = false;
-    }
   }, [fetch]);
+
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
   return (
     <>

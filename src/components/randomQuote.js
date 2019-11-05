@@ -40,11 +40,11 @@ const RandomQuote = props => {
         }));
       }
     }).catch(err => console.warn(err));
-
-    return () => {
-      is.current = false;
-    }
   }, [author, limit]);
+
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
   if (loading) return skeleton ? <div className="skltn quote" /> : null;
   if (!item) return null;

@@ -77,6 +77,7 @@ export const notificationsRef = db.collection('notifications');
 export const userNotificationsRef = uid => notificationsRef.doc(uid);
 export const notesRef = uid => userNotificationsRef(uid).collection('notes');
 export const noteRef = (uid, nid) => notesRef(uid).doc(nid);
+export const notesGroupRef = db.collectionGroup('notes');
 
 export const challengesRef = db.collection('challenges');
 export const challengeRef = cid => challengesRef.doc(cid);

@@ -404,7 +404,7 @@ ul.nolist li { display: block; }
 .table li.read { color: var(--lighterTextClr); }
 
 .expandible-parent { cursor: pointer; }
-.expandible-parent .expandible { overflow: hidden; transition: max-height .9s ease-in-out; }
+.expandible-parent .expandible { overflow: hidden; transition: max-height .9s ease-in-out; padding-left: 20px; }
 .expandible-parent.compressed .expandible { height: 0; max-height: 0; }
 .expandible-parent.expanded .expandible { height: auto; max-height: 999px; }
 .expandible-parent .expandible-icon svg { will-change: transform; transition: all .2s ease-in-out; }
@@ -2210,7 +2210,7 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
     linear-gradient(var(--skltnClr) 50%, transparent 50%),
     linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
   background-position: 7px 12px, 45px 18px, 100% 18px, 0 47px;
-  background-size: 24px 24px, 240px 22px, 65px 22px, 100% 2px;
+  background-size: 24px 24px, 170px 22px, 45px 22px, 100% 2px;
 }
 
 /* MESSAGE */
