@@ -21,6 +21,8 @@ admin.initializeApp();
 // });
 
 // HELPERS
+const ff = functions.region('europe-west1').firestore;
+
 const count = (doc, change, collection, field, nestedField) => {
   let increment;
   if (change == 1 || change == -1) {
@@ -37,15 +39,15 @@ const count = (doc, change, collection, field, nestedField) => {
 }
 
 // REVIEWS
-exports.incrementReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onCreate(() => count('reviews', 1));
+exports.incrementReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate(() => count('reviews', 1));
 
-exports.decrementReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onDelete(() => count('reviews', -1));
+exports.decrementReviews = ff.document('reviews/{bid}/reviewers/{uid}').onDelete(() => count('reviews', -1));
 
-exports.countUserReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.uid, change, 'users', 'stats', 'reviews_num'));
+exports.countUserReviews = ff.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.uid, change, 'users', 'stats', 'reviews_num'));
 
-exports.countBookReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.bid, change, 'books', 'reviews_num'));
+exports.countBookReviews = ff.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count(context.params.bid, change, 'books', 'reviews_num'));
 
-/* exports.feedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
+/* exports.feedReviews = ff.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
   const { bid } = context.params;
   const feedRef = admin.firestore().collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
   const item = change.after.data();
@@ -55,7 +57,7 @@ exports.countBookReviews = functions.firestore.document('reviews/{bid}/reviewers
   return feedRef.update(item);
 });
 
-exports.truncateFeedReviews = functions.firestore.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => {
+exports.truncateFeedReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => {
   const latestReviewsRef = admin.firestore().collection('feeds').doc('latestReviews');
   const reviewsRef = latestReviewsRef.collection('reviews');
     
@@ -75,13 +77,17 @@ exports.truncateFeedReviews = functions.firestore.document('reviews/{bid}/review
 }); */
 
 // NOTIFICATIONS
-exports.incrementNotifications = functions.firestore.document('notifications/{nid}').onCreate(() => count('notifications', 1));
+exports.incrementNotifications = ff.document('notifications/{nid}').onCreate(() => count('notifications', 1));
 
-exports.decrementNotifications = functions.firestore.document('notifications/{nid}').onDelete(() => count('notifications', -1));
+exports.decrementNotifications = ff.document('notifications/{nid}').onDelete(() => count('notifications', -1));
 
-exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => count(context.params.uid, change, 'notifications'));
+/* exports.countNotes = ff.document('notifications/{uid}/notes/{nid}').onWrite((change, context) => count(context.params.uid, change, 'notifications')); */
 
-/* exports.clearSubNotes = functions.firestore.document('notifications/{uid}').onDelete((snap, context) => {
+exports.incrementNotes = ff.document('notifications/{uid}/notes/{nid}').onCreate((snap, context) => count(context.params.uid, 1, 'notifications'));
+
+exports.decrementNotes = ff.document('notifications/{uid}/notes/{nid}').onDelete((snap, context) => count(context.params.uid, -1, 'notifications'));
+
+/* exports.clearSubNotes = ff.document('notifications/{uid}').onDelete((snap, context) => {
   const { uid } = context.params;
   const collectionRef = admin.firestore().collection('notifications').doc(uid).collection('notes');
 
@@ -89,18 +95,18 @@ exports.countNotes = functions.firestore.document('notifications/{uid}/notes/{ni
 }); */
 
 // COLLECTIONS
-exports.incrementCollections = functions.firestore.document('collections/{cid}').onCreate(() => count('collections', 1));
+exports.incrementCollections = ff.document('collections/{cid}').onCreate(() => count('collections', 1));
 
-exports.decrementCollections = functions.firestore.document('collections/{cid}').onDelete(() => count('collections', -1));
+exports.decrementCollections = ff.document('collections/{cid}').onDelete(() => count('collections', -1));
 
-exports.countCollectionBooks = functions.firestore.document('collections/{cid}/books/{bid}').onWrite((change, context) => count(context.params.cid, change, 'collections', 'books_num'));
+exports.countCollectionBooks = ff.document('collections/{cid}/books/{bid}').onWrite((change, context) => count(context.params.cid, change, 'collections', 'books_num'));
 
 // BOOKS
-exports.incrementBooks = functions.firestore.document('books/{bid}').onCreate(() => count('books', 1));
+exports.incrementBooks = ff.document('books/{bid}').onCreate(() => count('books', 1));
 
-exports.decrementBooks = functions.firestore.document('books/{bid}').onDelete(() => count('books', -1));
+exports.decrementBooks = ff.document('books/{bid}').onDelete(() => count('books', -1));
 
-exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, context) => {
+exports.clearBook = ff.document('books/{bid}').onDelete((snap, context) => {
   const { bid } = context.params;
   const item = snap.data();
 
@@ -123,25 +129,25 @@ exports.clearBook = functions.firestore.document('books/{bid}').onDelete((snap, 
 });
 
 // USERS
-exports.incrementUsers = functions.firestore.document('users/{uid}').onCreate(() => count('users', 1));
+exports.incrementUsers = ff.document('users/{uid}').onCreate(() => count('users', 1));
 
-exports.decrementUsers = functions.firestore.document('users/{uid}').onDelete(() => count('users', -1));
+exports.decrementUsers = ff.document('users/{uid}').onDelete(() => count('users', -1));
 
-exports.clearUserAuth = functions.firestore.document('users/{uid}').onDelete((snap, context) => admin.auth().deleteUser(context.params.uid));
+exports.clearUserAuth = ff.document('users/{uid}').onDelete((snap, context) => admin.auth().deleteUser(context.params.uid));
 
-exports.clearUserFiles = functions.firestore.document('users/{uid}').onDelete((snap, context) => admin.storage().bucket().deleteFiles({ prefix: `users/${context.params.uid}` }));
+exports.clearUserFiles = ff.document('users/{uid}').onDelete((snap, context) => admin.storage().bucket().deleteFiles({ prefix: `users/${context.params.uid}` }));
 
 // AUTHORS
-exports.incrementAuthors = functions.firestore.document('authors/{aid}').onCreate(() => count('authors', 1));
+exports.incrementAuthors = ff.document('authors/{aid}').onCreate(() => count('authors', 1));
 
-exports.decrementAuthors = functions.firestore.document('authors/{aid}').onDelete(() => count('authors', -1));
+exports.decrementAuthors = ff.document('authors/{aid}').onDelete(() => count('authors', -1));
 
 // QUOTES
-exports.incrementQuotes = functions.firestore.document('quotes/{qid}').onCreate(() => count('quotes', 1));
+exports.incrementQuotes = ff.document('quotes/{qid}').onCreate(() => count('quotes', 1));
 
-exports.decrementQuotes = functions.firestore.document('quotes/{qid}').onDelete(() => count('quotes', -1));
+exports.decrementQuotes = ff.document('quotes/{qid}').onDelete(() => count('quotes', -1));
 
 // CHALLENGES
-exports.incrementChallenges = functions.firestore.document('challenges/{cid}').onCreate(() => count('challenges', 1));
+exports.incrementChallenges = ff.document('challenges/{cid}').onCreate(() => count('challenges', 1));
 
-exports.decrementChallenges = functions.firestore.document('challenges/{cid}').onDelete(() => count('challenges', -1));
+exports.decrementChallenges = ff.document('challenges/{cid}').onDelete(() => count('challenges', -1));
