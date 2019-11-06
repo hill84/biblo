@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { app } from '../../config/shared';
 import booksRowImage from '../../images/books-row.png';
 import withScrollToTop from '../hocs/withScrollToTop';

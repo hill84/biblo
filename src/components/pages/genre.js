@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';

@@ -5,7 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';

@@ -1,6 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { Component, createRef, lazy, Suspense } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
 import { boolType, bookType, funcType, objectType, stringType, /* userBookType, */ userType } from '../config/types';

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { InView } from 'react-intersection-observer';
 import { Background, Parallax } from 'react-parallax';
 import { Link, Redirect } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { app } from '../config/shared';
 import { funcType, locationType, shapeType, stringType } from '../config/types';
 import RandomQuote from './randomQuote';

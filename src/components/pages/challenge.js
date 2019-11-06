@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
 import { app, booksPerRow } from '../../config/shared';
