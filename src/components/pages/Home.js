@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { InView } from 'react-intersection-observer';
 import { Background, Parallax } from 'react-parallax';
@@ -22,6 +22,8 @@ const seo = {
 }
 
 const Home = props => {
+  const is = useRef(true);
+
   const [state, setState] = useState({
     redirectTo: null,
     screensize: screenSize()
@@ -31,18 +33,25 @@ const Home = props => {
   const { openSnackbar, user } = props;
 
   useEffect(() => {
-    const updateScreenSize = () => setState(prevState => ({ ...prevState, screensize: screenSize() }));
+    const updateScreenSize = () => {
+      if (is.current) {
+        setState(prevState => ({ ...prevState, screensize: screenSize() }));
+      }
+    }
 
     window.addEventListener('resize', updateScreenSize);
 
     auth.onIdTokenChanged(user => {
       if (needsEmailVerification(user)) {
-        setState(prevState => ({ ...prevState, redirectTo: '/verify-email' }));
+        if (is.current) {
+          setState(prevState => ({ ...prevState, redirectTo: '/verify-email' }));
+        }
       }
     });
 
     return () => {
       window.removeEventListener('resize', updateScreenSize);
+      is.current = false;
     };
   }, []);
   
@@ -52,7 +61,7 @@ const Home = props => {
   const rootMargin = '200px';
 
   return (
-    <div id="homeComponent">
+    <div id="homeComponent" ref={is}>
       <Helmet>
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
