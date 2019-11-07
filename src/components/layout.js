@@ -15,7 +15,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
-import { authid, noteRef, notesRef, signOut } from '../config/firebase';
+import { /* authid, */ noteRef, notesRef, signOut } from '../config/firebase';
 import icon from '../config/icons';
 import { roles } from '../config/lists';
 import { app, getInitials, hasRole, timeSince } from '../config/shared';
@@ -31,9 +31,9 @@ const Layout = props => {
     notesAnchorEl: null
   });
   
+  const is = useRef(true);
   const { children, error, openSnackbar, user } = props;
   const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = state;
-  const is = useRef(true);
 
   useEffect(() => {
     let unsubNotesFetch;
@@ -73,13 +73,13 @@ const Layout = props => {
     }
   }, [user]);
 
-  useEffect(() => () => {
-    is.current = false;
-  }, []);
-
   useEffect(() => {
     if (error) openSnackbar(error, 'error', 9000);
   }, [error, openSnackbar]);
+  
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
   const onToggleDrawer = () => setState(prevState => ({ ...prevState, drawerIsOpen: !prevState.drawerIsOpen }));
   const onCloseDrawer = () => setState(prevState => ({ ...prevState, drawerIsOpen: false }));
@@ -215,7 +215,7 @@ const Layout = props => {
                 open={Boolean(moreAnchorEl)}
                 onClose={onCloseMore}>
                 <MenuItem component={Link} to="/profile">Profilo</MenuItem>
-                <MenuItem component={Link} to={`/dashboard/${authid}`}>La mia libreria</MenuItem>
+                <MenuItem component={Link} to={`/dashboard/${user.uid}/shelf`}>La mia libreria</MenuItem>
                 <MenuItem onClick={signOut}>Esci</MenuItem>
               </Menu>
             </>
@@ -234,7 +234,7 @@ const Layout = props => {
           open={drawerIsOpen}
           onClick={onCloseDrawer}>
           <nav className="list">
-            {user && authid ? 
+            {user /* && authid */ ? 
               <>
                 <NavLink to="/profile" className="auth-header">
                   <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
@@ -254,7 +254,7 @@ const Layout = props => {
                     </MenuItem>
                   </NavLink>
                 }
-                <NavLink to={`/dashboard/${authid}/shelf`}>
+                <NavLink to={`/dashboard/${user.uid}/shelf`}>
                   <MenuItem>
                     <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
                     <Typography variant="inherit">La mia libreria</Typography>

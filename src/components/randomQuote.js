@@ -12,10 +12,9 @@ const RandomQuote = props => {
     skeleton: props.skeleton === null ? true : props.skeleton
   });
   
+  const is = useRef(true);
   const { author, className, limit } = props;
   const { item, loading, skeleton } = state;
-
-  const is = useRef(true);
 
   useEffect(() => {
     const ref = author ? quotesRef.where('author', '==', author).limit(1) : quotesRef.limit(limit);

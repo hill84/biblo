@@ -6,14 +6,16 @@ import { funcType, stringType } from '../config/types';
 import Overlay from './overlay';
 
 const Incipit = props => {
-  const [state, setState] = useState({ big: false, dark: false });
+  const [state, setState] = useState({ 
+    big: false, 
+    dark: false 
+  });
   
-  const onToggle = () => props.onToggle();
-  const onToggleDarkTheme = () => setState({ ...state, dark: !state.dark });
-  const onToggleSize = () => setState({ ...state, big: !state.big });
+  const onToggleDarkTheme = () => setState(prevState => ({ ...prevState, dark: !state.dark }));
+  const onToggleSize = () => setState(prevState => ({ ...prevState, big: !state.big }));
 
   const { big, dark } = state;
-  const { copyrightHolder, incipit, publication, title } = props;
+  const { copyrightHolder, incipit, onToggle, publication, title } = props;
 
   return (
     <>

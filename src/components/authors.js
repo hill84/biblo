@@ -18,10 +18,10 @@ const Authors = props => {
     scrollable: true
   });
 
+  const is = useRef(true);
+
   const { inView, pagination, size } = props;
   const { count, desc, items, limit, loading, page, scrollable } = state;
-
-  const is = useRef(true);
 
   const onToggleDesc = () => setState(prevState => ({ ...prevState, desc: !prevState.desc }));
   

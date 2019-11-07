@@ -8,82 +8,64 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { boolType, funcType, objectType, stringType } from '../config/types';
 
-export default class FlagDialog extends Component {
-  state = {
-    value: this.props.value
-  }
-
-  static propTypes = {
-    loading: PropTypes.bool,
-    onClose: funcType.isRequired,
-    onFlag: funcType.isRequired,
-    open: boolType.isRequired,
-    TransitionComponent: objectType,
-    value: stringType
-  }
-
-  static defaultProps = {
-    loading: false,
-    TransitionComponent: null,
-    value: ''
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  onClose = () => this.props.onClose();
+const FlagDialog = props => {
+  const [value, setValue] = useState(props.value);
   
-  onChange = e => {
-    if (this._isMounted) {
-      this.setState({ value: e.target.value });
-    }
-  }
-  
-  onFlag = () => this.props.onFlag(this.state.value);
+  const onChange = e => setValue(e.target.value);
+  const onFlag = () => props.onFlag(value);
 
-  render() { 
-    const { value } = this.state;
-    const { loading, open, TransitionComponent } = this.props;
+  const { loading, onClose, open, TransitionComponent } = props;
 
-    return (
-      <Dialog
-        open={open}
-        TransitionComponent={TransitionComponent}
-        keepMounted
-        onClose={this.onClose}
-        aria-labelledby="flag-dialog-title"
-        aria-describedby="flag-dialog-description">
-        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-        <DialogTitle id="flag-dialog-title">
-          Segnala commento
-        </DialogTitle>
-        <DialogContent>
-          <FormControl component="fieldset">
-            <RadioGroup
-              aria-label="flag"
-              name="flag"
-              value={value}
-              onChange={this.onChange}>
-              <FormControlLabel value="spam" control={<Radio />} label="Contenuti commerciali indesiderati o spam" />
-              <FormControlLabel value="porn" control={<Radio />} label="Pornografia o materiale sessualmente esplicito" />
-              <FormControlLabel value="hate" control={<Radio />} label="Incitamento all'odio o violenza esplicita" />
-              <FormControlLabel value="bully" control={<Radio />} label="Molestie o bullismo" />
-            </RadioGroup>
-          </FormControl>
-        </DialogContent>
-        <DialogActions className="dialog-footer flex no-gutter">
-          <button type="button" className="btn btn-footer flat" onClick={this.onClose}>Annulla</button>
-          {value && <button type="button" className="btn btn-footer primary" onClick={this.onFlag}>Segnala</button>}
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      open={open}
+      TransitionComponent={TransitionComponent}
+      keepMounted
+      onClose={onClose}
+      aria-labelledby="flag-dialog-title"
+      aria-describedby="flag-dialog-description">
+      {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+      <DialogTitle id="flag-dialog-title">
+        Segnala commento
+      </DialogTitle>
+      <DialogContent>
+        <FormControl component="fieldset">
+          <RadioGroup
+            aria-label="flag"
+            name="flag"
+            value={value}
+            onChange={onChange}>
+            <FormControlLabel value="spam" control={<Radio />} label="Contenuti commerciali indesiderati o spam" />
+            <FormControlLabel value="porn" control={<Radio />} label="Pornografia o materiale sessualmente esplicito" />
+            <FormControlLabel value="hate" control={<Radio />} label="Incitamento all'odio o violenza esplicita" />
+            <FormControlLabel value="bully" control={<Radio />} label="Molestie o bullismo" />
+          </RadioGroup>
+        </FormControl>
+      </DialogContent>
+      <DialogActions className="dialog-footer flex no-gutter">
+        <button type="button" className="btn btn-footer flat" onClick={onClose}>Annulla</button>
+        {value && <button type="button" className="btn btn-footer primary" onClick={onFlag}>Segnala</button>}
+      </DialogActions>
+    </Dialog>
+  );
 }
+
+FlagDialog.propTypes = {
+  loading: PropTypes.bool,
+  onClose: funcType.isRequired,
+  onFlag: funcType.isRequired,
+  open: boolType.isRequired,
+  TransitionComponent: objectType,
+  value: stringType
+}
+
+FlagDialog.defaultProps = {
+  loading: false,
+  TransitionComponent: null,
+  value: ''
+}
+
+export default FlagDialog;

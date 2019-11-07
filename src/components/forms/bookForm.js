@@ -107,7 +107,6 @@ export default class BookForm extends Component {
   componentWillUnmount() {
     this._isMounted = false;
   }
-
   
   onToggleDescription = e => {
     e.persist();
@@ -121,7 +120,7 @@ export default class BookForm extends Component {
   }
   
   onToggleIncipit = e => {
-    e.persist();
+    e.persist(); // TODO: check if needed
     e.preventDefault();
     
     if (this._isMounted) {

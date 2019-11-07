@@ -98,7 +98,6 @@ export default class Book extends Component {
       if (this._isMounted) this.setState({ loading: true });
       
       this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
-        // console.log(snap);
         if (snap.exists) {
           // console.log(snap.data());
           if (this._isMounted) {

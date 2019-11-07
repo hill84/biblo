@@ -30,7 +30,7 @@ import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebas
 import { app, handleFirestoreError, isLocalStorage, needsEmailVerification } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { locationType } from './config/types';
-import { SharedSnackbarConsumer, SharedSnackbarProvider } from './context/snackbarContext';
+import { SnackbarConsumer, SnackbarProvider } from './context/snackbarContext';
 
 const Admin = lazy(() => import('./components/pages/admin/admin'));
 const Challenge = lazy(() => import('./components/pages/challenge'));
@@ -97,8 +97,8 @@ const App = () => {
           <meta property="og:description" content={app.desc} />
           <meta name="description" content={app.desc} />
         </Helmet>
-        <SharedSnackbarProvider>
-          <SharedSnackbarConsumer>
+        <SnackbarProvider>
+          <SnackbarConsumer>
             {({ openSnackbar }) => (
               <Layout user={user} error={error} openSnackbar={openSnackbar}>
                 <ErrorBoundary>
@@ -143,8 +143,8 @@ const App = () => {
                 </ErrorBoundary>
               </Layout>
             )}
-          </SharedSnackbarConsumer>
-        </SharedSnackbarProvider>
+          </SnackbarConsumer>
+        </SnackbarProvider>
       </HelmetProvider>
     </ThemeProvider>
   );

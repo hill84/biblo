@@ -28,12 +28,12 @@ export const signOut = () => auth.signOut();
 
 export const storageKey_uid = 'uid';
 export const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
-
-let cuid = (auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid));
+const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid));
+// eslint-disable-next-line import/no-mutable-exports
+export let authid = currentUid();
 auth.onIdTokenChanged(user => {
-	cuid = user ? (user.uid || (isLocalStorage() && localStorage.getItem(storageKey_uid))) : null;
+	authid = user ? currentUid() : null
 });
-export const authid = cuid;
 // auth.onIdTokenChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */
