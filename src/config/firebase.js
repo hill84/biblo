@@ -3,7 +3,8 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
-import { isLocalStorage, needsEmailVerification } from './shared';
+import { needsEmailVerification } from './shared';
+import { ifLocalStorage, userKey } from './storage';
 
 const config = {
 	apiKey: "AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0",
@@ -25,10 +26,8 @@ export const TwitterAuthProvider = firebase.auth && new firebase.auth.TwitterAut
 export const auth = firebase.auth();
 auth.useDeviceLanguage();
 export const signOut = () => auth.signOut();
-
-export const storageKey_uid = 'uid';
 export const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
-const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid));
+const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(userKey)));
 // eslint-disable-next-line import/no-mutable-exports
 export let authid = currentUid();
 auth.onIdTokenChanged(user => {

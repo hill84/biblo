@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
@@ -14,8 +14,8 @@ import { app, handleFirestoreError } from '../../config/shared';
 import { funcType, locationType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
-export default class LoginForm extends Component {
-	state = {
+const LoginForm = props => {
+  const [state, setState] = useState({
     data: {
       email: '',
       password: ''
@@ -25,70 +25,39 @@ export default class LoginForm extends Component {
     authError: '',
     redirectToReferrer: false,
     showPassword: false
-  }
+  });
 
-  static propTypes = {
-    location: locationType,
-    openSnackbar: funcType.isRequired
-  }
+  const is = useRef(true);
+  const { location, openSnackbar } = props;
+  const { authError, data, loading, errors, redirectToReferrer, showPassword } = state;
 
-  static defaultProps = {
-    location: null
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-    const { location } = this.props;
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const email = params.get('email');
-    if (this._isMounted && email) {
-      this.setState(prevState => ({
+    
+    if (is.currenr && email) {
+      setState(prevState => ({
+        ...prevState,
         data: { ...prevState.data, email }
       }));
     }
-  }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+    return () => {
+      is.current = false;
+    }
+  }, [location.search]);
 
-	handleChange = e => {
+  const onChange = e => {
     e.persist();
 
-    this.setState(prevState => ({ 
+    setState(prevState => ({
+      ...prevState,
       data: { ...prevState.data, [e.target.name]: e.target.value }, 
       errors: { ...prevState.errors, [e.target.name]: null }
     }));
-	};
-
-	handleSubmit = e => {
-    e.preventDefault();
-    const { data } = this.state;
-    const errors = this.validate(data);
-    
-    if (this._isMounted) this.setState({ authError: '', errors });
-    
-		if (Object.keys(errors).length === 0) {
-      if (this._isMounted) this.setState({ loading: true });
-			auth.signInWithEmailAndPassword(data.email, data.password).then(() => {
-        if (this._isMounted) {
-          this.setState({
-            loading: false,
-            redirectToReferrer: true
-          });
-        }
-			}).catch(err => {
-        if (this._isMounted) {
-          this.setState({
-            authError: handleFirestoreError(err),
-            loading: false
-          });
-        }
-			});
-		}
-	};
-
-	validate = data => {
+  };
+  
+  const validate = data => {
 		const errors = {};
 		if (data.email) {
 			if (!isEmail(data.email)) errors.email = "Email non valida";
@@ -98,82 +67,117 @@ export default class LoginForm extends Component {
     } else errors.password = "Inserisci una password";
 		return errors;
   };
+
+	const onSubmit = e => {
+    e.preventDefault();
+    const errors = validate(data);
+    
+    if (is.current) setState(prevState => ({ ...prevState, authError: '', errors }));
+    
+		if (Object.keys(errors).length === 0) {
+      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+			auth.signInWithEmailAndPassword(data.email, data.password).then(() => {
+        if (is.current) {
+          setState(prevState => ({
+            ...prevState,
+            loading: false,
+            redirectToReferrer: true
+          }));
+        }
+			}).catch(err => {
+        if (is.current) {
+          setState(prevState => ({
+            ...prevState,
+            authError: handleFirestoreError(err),
+            loading: false
+          }));
+        }
+			});
+		}
+	};
   
-  handleClickShowPassword = () => {
-    if (this._isMounted) {
-      this.setState(prevState => ({ showPassword: !prevState.showPassword }));
+  const onClickShowPassword = () => {
+    if (is.current) {
+      setState(prevState => ({ ...prevState, showPassword: !prevState.showPassword }));
     }
   };
 
-  handleMouseDownPassword = e => e.preventDefault();
+  const onMouseDownPassword = e => e.preventDefault();
 
-	render() {
-    const { authError, data, errors, loading, redirectToReferrer, showPassword } = this.state;
-    const { openSnackbar } = this.props;
-    const { from } = { from: { pathname: '/' } };
+  const { from } = { from: { pathname: '/' } };
 
-		if (redirectToReferrer) return <Redirect to={from} />
+  if (redirectToReferrer) return <Redirect to={from} />
 
-		return (
-			<div id="loginFormComponent">
-        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-				<SocialAuth openSnackbar={openSnackbar} />
+  return (
+    <div id="loginFormComponent" ref={is}>
+      {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+      <SocialAuth openSnackbar={openSnackbar} />
 
-        <div className="light-text pad-v-xs">
-          <small>Effettuando il login confermi la presa visione della <Link to="/privacy">privacy</Link> di {app.name}</small>
+      <div className="light-text pad-v-xs">
+        <small>Effettuando il login confermi la presa visione della <Link to="/privacy">privacy</Link> di {app.name}</small>
+      </div>
+
+      <form onSubmit={onSubmit} noValidate>
+        <div className="form-group">
+          <FormControl className="input-field" margin="normal" fullWidth>
+            <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoFocus
+              placeholder="esempio@esempio.com"
+              value={data.email}
+              onChange={onChange}
+              error={Boolean(errors.email)}
+            />
+            {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
+          </FormControl>
         </div>
 
-				<form onSubmit={this.onSubmit} noValidate>
-					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth>
-              <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoFocus
-                placeholder="esempio@esempio.com"
-                value={data.email}
-                onChange={this.handleChange}
-                error={Boolean(errors.email)}
-              />
-              {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
-            </FormControl>
-					</div>
+        <div className="form-group">
+          <FormControl className="input-field" margin="normal" fullWidth>
+            <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Almeno 8 caratteri"
+              value={data.password}
+              onChange={onChange}
+              error={Boolean(errors.password)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={onClickShowPassword}
+                    onMouseDown={onMouseDownPassword}>
+                    {showPassword ? icon.eye() : icon.eyeOff()}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
+          </FormControl>
+        </div>
 
-					<div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth>
-              <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Almeno 8 caratteri"
-                value={data.password}
-                onChange={this.handleChange}
-                error={Boolean(errors.password)}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={this.handleClickShowPassword}
-                      onMouseDown={this.handleMouseDownPassword}>
-                      {showPassword ? icon.eye() : icon.eyeOff()}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-              {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
-            </FormControl>
-					</div>
+        {authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
-					{authError && <div className="row"><div className="col message error">{authError}</div></div>}
-
-					<div className="footer no-gutter">
-						<button type="button" className="btn btn-footer primary" onClick={this.handleSubmit}>Accedi</button>
-					</div>
-				</form>
-			</div>
-		);
-	}
+        <div className="footer no-gutter">
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Accedi</button>
+        </div>
+      </form>
+    </div>
+  );
 }
+
+LoginForm.propTypes = {
+  location: locationType,
+  openSnackbar: funcType.isRequired
+}
+
+LoginForm.defaultProps = {
+  location: null
+}
+ 
+export default LoginForm;

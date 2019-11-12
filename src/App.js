@@ -26,8 +26,9 @@ import PrivacyPage from './components/pages/privacyPage';
 import Signup from './components/pages/signup';
 import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
-import { auth, isAuthenticated, storageKey_uid, userRef } from './config/firebase';
-import { app, handleFirestoreError, isLocalStorage, needsEmailVerification } from './config/shared';
+import { auth, isAuthenticated, userRef } from './config/firebase';
+import { app, handleFirestoreError, needsEmailVerification } from './config/shared';
+import { userKey } from './config/storage';
 import { defaultTheme } from './config/themes';
 import { locationType } from './config/types';
 import { SnackbarConsumer, SnackbarProvider } from './context/snackbarContext';
@@ -42,49 +43,44 @@ const NewBook = lazy(() => import('./components/pages/newBook'));
 const Profile = lazy(() => import('./components/pages/profile'));
 
 const App = () => {
-  const [state, setState] = useState({
-    error: null,
-		user: null
-  });
+  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const clearUser = () => {
-      setState(prevState => ({ ...prevState, user: null }));
-      isLocalStorage() && localStorage.removeItem(storageKey_uid)
+      setUser(null);
     }
 
-    let unsubUserFetch;
-
-    const setUser = user => {
-      unsubUserFetch = userRef(user.uid).onSnapshot(snap => {
-        // console.log(snap);
-        if (snap.exists) {
-          setState(prevState => ({ 
-            ...prevState, 
-            user: snap.data(), 
-            error: null 
-          }));
-          isLocalStorage() && localStorage.setItem(storageKey_uid, user.uid);
-        } else console.warn(`User not found in database`);
-      }, err => {
-        setState(prevState => ({ ...prevState, error: handleFirestoreError(err) }));
-      });
-    }
+    const fetchUser = user => userRef(user.uid).onSnapshot(snap => {
+      // console.log(snap);
+      if (snap.exists) {
+        setUser(snap.data());
+        setError(null);
+      } else console.warn(`User not found in database`);
+    }, err => {
+      setError(handleFirestoreError(err));
+    });
 
     auth.onIdTokenChanged(user => {
-      if (user) {
-        // console.log(user);
-        if (needsEmailVerification(user)) clearUser();
-        else setUser(user);
-      } else clearUser();
+      if (user && !needsEmailVerification(user)) {
+        fetchUser(user);
+      } else {
+        clearUser();
+      }
     });
 
     return () => {
-      unsubUserFetch && unsubUserFetch();
+      fetchUser && fetchUser();
     }
   }, []);
 
-  const { error, user } = state;
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(userKey, user);
+    } catch(err) {
+      console.log(err);
+    }
+  }, [user]);
   
   return (
     <ThemeProvider theme={defaultTheme}>

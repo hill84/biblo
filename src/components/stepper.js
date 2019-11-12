@@ -1,88 +1,72 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import icon from '../config/icons';
 import { funcType, numberType, stringType } from '../config/types';
 
-class Stepper extends Component {
-  state = {
-    activeStep: (this.props.percent && (this.props.steps || 4)/100 * (this.props.percent || 0)) || 0,
-    percent: this.props.percent,
-    steps: this.props.steps
-  }
+const Stepper = props => {
+  const [state, setState] = useState({
+    activeStep: (props.percent && (props.steps || 4)/100 * (props.percent || 0)) || 0,
+    percent: props.percent,
+  });
 
-  static propTypes = {
-    className: stringType,
-    onNext: funcType,
-    onPrev: funcType,
-    percent: numberType,
-    steps: numberType
-  }
+  const is = useRef(true);
 
-  static defaultProps = {
-    className: null,
-    onNext: null,
-    onPrev: null,
-    percent: 0,
-    steps: 4
-  }
+  const { className, steps } = props;
+  const { activeStep, percent } = state;
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.percent !== state.percent) { 
-      return { activeStep: (props.percent && state.steps/100 * props.percent), percent: props.percent }; 
+  useEffect(() => {
+    if (is.current) {
+      setState(prevState => ({ ...prevState, percent: 100/steps * activeStep }));
     }
-    return null;
-  }
+  }, [activeStep, steps]);
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { activeStep, steps } = this.state;
+  const onNext = () => (props.onNext && props.onNext()) || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep + 1 })));
 
-    if (this._isMounted) {
-      if (activeStep !== prevState.activeStep) {
-        this.setState({ percent: 100/steps * activeStep });
-      }
-    }
-  }
+  const onPrev = () => (props.onPrev && props.onPrev()) || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  onNext = () => (this.props.onNext && this.props.onNext()) || this.setState(state => ({ activeStep: state.activeStep + 1 }));
-
-  onPrev = () => (this.props.onPrev && this.props.onPrev()) || this.setState(state => ({ activeStep: state.activeStep - 1 }));
-
-  render() { 
-    const { activeStep, percent, steps } = this.state;
-    const { className } = this.props;
-
-    return (
-      <div className={`stepper-container ${className}`}>
-        <div className="row">
-          <div className="col-auto">
-            <button type="button" className="btn flat rounded icon" onClick={this.onPrev} disabled={activeStep === 0}>
-            {icon.chevronLeft()}
-            </button>
-          </div>
-          <div className="col">
-            <div className="label">Progresso: <b>{Math.round(percent)}%</b></div>
-            <div className="stepper-wrapper">
-              <div className="stepper">
-                <div className={`bar ${activeStep === steps ? 'success' : activeStep === 0 ? 'pristine' : 'inprogress'}`} style={{ width: `${100/(steps/activeStep)}%`, }} />
-              </div>
+  return (
+    <div className={`stepper-container ${className}`} ref={is}>
+      <div className="row">
+        <div className="col-auto">
+          <button type="button" className="btn flat rounded icon" onClick={onPrev} disabled={activeStep === 0}>
+          {icon.chevronLeft()}
+          </button>
+        </div>
+        <div className="col">
+          <div className="label">Progresso: <b>{Math.round(percent)}%</b></div>
+          <div className="stepper-wrapper">
+            <div className="stepper">
+              <div className={`bar ${activeStep === steps ? 'success' : activeStep === 0 ? 'pristine' : 'inprogress'}`} style={{ width: `${100/(steps/activeStep)}%`, }} />
             </div>
           </div>
-          <div className="col-auto">
-            <button type="button" className="btn flat rounded icon" onClick={this.onNext} disabled={activeStep === steps}>
-              {icon.chevronRight()}
-            </button>
-          </div>
+        </div>
+        <div className="col-auto">
+          <button type="button" className="btn flat rounded icon" onClick={onNext} disabled={activeStep === steps}>
+            {icon.chevronRight()}
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
+Stepper.propTypes = {
+  className: stringType,
+  onNext: funcType,
+  onPrev: funcType,
+  percent: numberType,
+  steps: numberType
+}
+
+Stepper.defaultProps = {
+  className: null,
+  onNext: null,
+  onPrev: null,
+  percent: 0,
+  steps: 4
 }
  
 export default Stepper;

@@ -18,10 +18,11 @@ import { version } from '../../package.json';
 import { /* authid, */ noteRef, notesRef, signOut } from '../config/firebase';
 import icon from '../config/icons';
 import { roles } from '../config/lists';
-import { app, getInitials, hasRole, timeSince } from '../config/shared';
+import { app, getInitials, hasRole } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { childrenType, funcType, stringType, userType } from '../config/types';
 import Footer from './footer';
+import NoteMenuItem from './noteMenuItem';
 
 const Layout = props => {
   const [state, setState] = useState({
@@ -160,28 +161,9 @@ const Layout = props => {
                 onClick={onCloseNotes}
                 open={Boolean(notesAnchorEl)}
                 onClose={onCloseNotes}>
-                {notes && toRead(notes).length ?
-                  toRead(notes).map((item, i) => (
-                    <MenuItem key={item.nid} style={{ animationDelay: `${(i + 1) / 10  }s`, }}> 
-                      <div className="row">
-                        <div className="col-auto">
-                          {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
-                            <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
-                              <Avatar className="image avatar" alt={item.createdBy}>
-                                {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
-                              </Avatar>
-                            </Link>
-                            : <span className="icon">{icon.bell()}</span>
-                          }
-                        </div>
-                        <div className="col text">
-                          <div dangerouslySetInnerHTML={{__html: item.text}} />
-                        </div>
-                        <div className="col-auto date">{timeSince(item.created_num)}</div>
-                      </div>
-                    </MenuItem>
-                  ))
-                  : 
+                {notes && toRead(notes).length ? (
+                  toRead(notes).map((item, i) => <NoteMenuItem item={item} index={i} key={item.nid} animation />
+                )) : (
                   <MenuItem>
                     <div className="row">
                       <div className="col-auto">
@@ -190,7 +172,7 @@ const Layout = props => {
                       <div className="col text">Non ci sono nuove notifiche</div>
                     </div>
                   </MenuItem>
-                }
+                )}
                 <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
               </Menu>
 

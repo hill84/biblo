@@ -22,30 +22,22 @@ const seo = {
 }
 
 const Home = props => {
-  const is = useRef(true);
-
-  const [state, setState] = useState({
-    redirectTo: null,
-    screensize: screenSize()
-  });
+  const [redirectTo, setRedirectTo] = useState(null);
+  const [screensize, setScreensize] = useState(screenSize());
   
-  const { redirectTo, screensize } = state;
+  const is = useRef(true);
   const { openSnackbar, user } = props;
 
   useEffect(() => {
     const updateScreenSize = () => {
-      if (is.current) {
-        setState(prevState => ({ ...prevState, screensize: screenSize() }));
-      }
+      if (is.current) setScreensize(screenSize());
     }
 
     window.addEventListener('resize', updateScreenSize);
 
     auth.onIdTokenChanged(user => {
       if (needsEmailVerification(user)) {
-        if (is.current) {
-          setState(prevState => ({ ...prevState, redirectTo: '/verify-email' }));
-        }
+        if (is.current) setRedirectTo('/verify-email');
       }
     });
 

@@ -1,13 +1,12 @@
-import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
 import { notesRef, notificationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, getInitials, handleFirestoreError, timeSince } from '../../config/shared';
+import { app, handleFirestoreError } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
+import NoteMenuItem from '../noteMenuItem';
 import PaginationControls from '../paginationControls';
 
 export default class Notifications extends Component {
@@ -181,27 +180,7 @@ export default class Notifications extends Component {
               </div>
             </div>
             <div className="shelf notes">
-              {items && items.map(item => (
-                <MenuItem key={item.nid} style={{ animation: 'none', }}> 
-                  <div className="row">
-                    <div className="col-auto">
-                      {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
-                        <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
-                          <Avatar className="image avatar" alt={item.createdBy}>
-                            {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
-                          </Avatar>
-                        </Link>
-                      :
-                        <span className="icon">{icon.bell()}</span>
-                      }
-                    </div>
-                    <div className="col text">
-                      <div dangerouslySetInnerHTML={{ __html: item.text }} />
-                    </div>
-                    <div className="col-auto date">{timeSince(item.created_num)}</div>
-                  </div>
-                </MenuItem>
-              ))}
+              {items && items.map(item => <NoteMenuItem item={item} key={item.nid} animation={false} />)}
               {loading && skeletons}
             </div>
           </div>

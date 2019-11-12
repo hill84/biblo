@@ -6,14 +6,14 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { authorRef, authorsRef } from '../../config/firebase';
 import { getInitials, handleFirestoreError, normalizeString } from '../../config/shared';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
-export default class AuthorForm extends Component {
-	state = {
+const AuthorForm = props => {
+  const [state, setState] = useState({
     data: {
       displayName: '',
       source: '',
@@ -21,68 +21,53 @@ export default class AuthorForm extends Component {
       photoURL: '',
       bio: ''
     },
+    bio_leftChars: null,
     bio_maxChars: 1000,
     bio_minChars: 50,
     loading: false,
     changes: false,
     errors: {},
     authError: ''
-  }
+  });
 
-  static propTypes = {
-    onToggle: funcType.isRequired,
-    openSnackbar: funcType.isRequired,
-    id: stringType,
-    user: userType
-  }
+  const is = useRef(true);
+  const { id, openSnackbar, user } = props;
+  const { authError, bio_leftChars, bio_maxChars, bio_minChars, changes, data, errors, loading, selectedId } = state;
 
-  static defaultProps = {
-    id: null,
-    user: null
-  }
+  const fetch = useCallback(() => {
+    if (typeof id === 'string') {
+      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
 
-  componentDidMount() {
-    this.fetch();
-    this._isMounted = true;
-  }
-  
-  componentDidUpdate(prevProps, /* prevState */) {
-    if (this._isMounted) {
-      if (this.props.id !== prevProps.id) {
-        this.fetch();
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  fetch = () => {
-    if (typeof this.props.id === 'string') {
-      if (this._isMounted) {
-        this.setState({ loading: true });
-      }
-      authorRef(this.props.id).get().then(snap => {
+      authorRef(id).get().then(snap => {
         if (!snap.empty) {
-          if (this._isMounted) {
-            this.setState({ 
+          if (is.current) {
+            setState(prevState => ({
+              ...prevState,
               data: snap.data(),
               loading: false
-            });
+            }));
           }
         }
       }).catch(err => console.warn(err));
     }
-  }
+  }, [id]);
 
-  onToggle = () => this.props.onToggle(this.state.selectedId);
+  useEffect(() => {
+    fetch();
+  }, [fetch, id]);
 
-	onChange = e => {
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  const onToggle = () => props.onToggle(selectedId);
+
+  const onChange = e => {
     e.persist();
 
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
+    if (is.current) {
+      setState(prevState => ({
+        ...prevState,
         changes: true,
         data: { ...prevState.data, [e.target.name]: e.target.value }, 
         errors: { ...prevState.errors, [e.target.name]: null }
@@ -90,13 +75,14 @@ export default class AuthorForm extends Component {
     }
   };
   
-  onChangeMaxChars = e => {
+  const onChangeMaxChars = e => {
     e.persist();
     const leftChars = `${e.target.name}_leftChars`;
     const maxChars = `${e.target.name}_maxChars`;
 
-    if (this._isMounted) {
-      this.setState(prevState => ({
+    if (is.current) {
+      setState(prevState => ({
+        ...prevState,
         data: { ...prevState.data, [e.target.name]: e.target.value }, 
         [leftChars]: prevState[maxChars] - e.target.value.length, 
         changes: true
@@ -104,11 +90,12 @@ export default class AuthorForm extends Component {
     }
   };
 
-  onChangeSelect = key => e => {
+  const onChangeSelect = key => e => {
     e.persist();
 
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
+    if (is.current) {
+      setState(prevState => ({
+        ...prevState,
         changes: true,
         data: { ...prevState.data, [key]: e.target.value }, 
         errors: { ...prevState.errors, [key]: null } 
@@ -116,8 +103,7 @@ export default class AuthorForm extends Component {
     }
   };
 
-  checkDisplayName = async displayName => {
-    const { openSnackbar } = this.props;
+  const checkDisplayName = async displayName => {
     const result = await authorsRef.where('displayName', '==', displayName).limit(1).get().then(snap => {
       if (!snap.empty) return true;
       return false;
@@ -125,9 +111,9 @@ export default class AuthorForm extends Component {
     return result;
   }
 
-	validate = async data => {
+	const validate = async data => {
     const errors = {};
-    const isDuplicate = this.props.id ? false : await this.checkDisplayName(data.displayName);
+    const isDuplicate = id ? false : await checkDisplayName(data.displayName);
 
     if (!data.displayName) { 
       errors.displayName = "Inserisci il nominativo"; 
@@ -139,27 +125,25 @@ export default class AuthorForm extends Component {
     }
     if (!data.bio) { 
       errors.bio = "Inserisci una biografia"; 
-    } else if (data.bio && data.bio.length > this.state.bio_maxChars) {
-      errors.bio = `Lunghezza massima ${this.state.bio_maxChars} caratteri`;
-    } else if (data.bio && data.bio.length < this.state.bio_minChars) {
-      errors.bio = `Lunghezza minima ${this.state.bio_minChars} caratteri`;
+    } else if (data.bio && data.bio.length > bio_maxChars) {
+      errors.bio = `Lunghezza massima ${bio_maxChars} caratteri`;
+    } else if (data.bio && data.bio.length < bio_minChars) {
+      errors.bio = `Lunghezza minima ${bio_minChars} caratteri`;
     }
 		return errors;
   };
   
-	onSubmit = async e => {
+	const onSubmit = async e => {
     e.preventDefault();
-    const { changes, data } = this.state;
-    const { openSnackbar, user } = this.props;
-    const prevState = this.state;
+    const prevState = state;
 
     if (changes) {
-      const errors = await this.validate(prevState.data);
+      const errors = await validate(prevState.data);
       
-      if (this._isMounted) this.setState({ authError: '', errors });
+      if (is.current) setState(prevState => ({ ...prevState, authError: '', errors }));
       
       if (Object.keys(errors).length === 0) {
-        if (this._isMounted) this.setState({ loading: true });
+        if (is.current) setState(prevState => ({ ...prevState, loading: true }));
         const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
         ref.set({
           bio: data.bio || '',
@@ -173,130 +157,140 @@ export default class AuthorForm extends Component {
           sex: data.sex || '',
           source: data.source || ''
         }).then(() => {
-          this.onToggle();
-          if (this._isMounted) this.setState({ loading: false });
+          onToggle();
+          if (is.current) setState(prevState => ({ ...prevState, loading: false }));
           openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
         }).catch(err => console.warn(err));
       }
-    } else this.onToggle();
+    } else onToggle();
 	};
 
-	render() {
-		const { authError, data, errors, loading, bio_leftChars, bio_maxChars } = this.state;
-
-		return (
-			<>
-        <Overlay onClick={this.onToggle} />
-        <div role="dialog" aria-describedby="new author" className="dialog light">
-          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-          <div className="content">
-            <div className="row">
-              <div className="form-group col">
-                <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nominativo</InputLabel>
-                  <Input
-                    id="displayName"
-                    name="displayName"
-                    type="text"
-                    autoFocus
-                    placeholder="Es: George Orwell"
-                    value={data.displayName}
-                    onChange={this.onChange}
-                    error={Boolean(errors.displayName)}
-                  />
-                  {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
-                </FormControl>
-              </div>
-              <div className="form-group col col-sm-3">
-                <FormControl className="select-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
-                  <Select
-                    id="sex"
-                    value={data.sex}
-                    onChange={this.onChangeSelect("sex")}
-                    error={Boolean(errors.sex)}>
-                    <MenuItem key="m" value="m">Uomo</MenuItem>
-                    <MenuItem key="f" value="f">Donna</MenuItem>
-                    <MenuItem key="x" value="x">Altro</MenuItem>
-                  </Select>
-                  {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
-                </FormControl>
-              </div>
+  return (
+    <>
+      <Overlay onClick={onToggle} />
+      <div role="dialog" aria-describedby="new author" className="dialog light" ref={is}>
+        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+        <div className="content">
+          <div className="row">
+            <div className="form-group col">
+              <FormControl className="input-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nominativo</InputLabel>
+                <Input
+                  id="displayName"
+                  name="displayName"
+                  type="text"
+                  autoFocus
+                  placeholder="Es: George Orwell"
+                  value={data.displayName}
+                  onChange={onChange}
+                  error={Boolean(errors.displayName)}
+                />
+                {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+              </FormControl>
             </div>
-
-            <div className="row">
-              <div className="form-group col">
-                <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.bio)} htmlFor="bio">Biografia</InputLabel>
-                  <Input
-                    id="bio"
-                    name="bio"
-                    type="text"
-                    placeholder={`Inserisci la biografia (max ${bio_maxChars} caratteri)...`}
-                    value={data.bio}
-                    onChange={this.onChangeMaxChars}
-                    rowsMax={20}
-                    multiline
-                    error={Boolean(errors.bio)}
-                  />
-                  {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
-                  {(bio_leftChars !== undefined) && 
-                    <FormHelperText className={`message ${(bio_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                      Caratteri rimanenti: {bio_leftChars}
-                    </FormHelperText>
-                  }
-                </FormControl>
-              </div>
+            <div className="form-group col col-sm-3">
+              <FormControl className="select-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
+                <Select
+                  id="sex"
+                  value={data.sex}
+                  onChange={onChangeSelect("sex")}
+                  error={Boolean(errors.sex)}>
+                  <MenuItem key="m" value="m">Uomo</MenuItem>
+                  <MenuItem key="f" value="f">Donna</MenuItem>
+                  <MenuItem key="x" value="x">Altro</MenuItem>
+                </Select>
+                {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+              </FormControl>
             </div>
-            
-            <div className="row">
-              <div className="form-group col">
-                <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.source)} htmlFor="source">URL fonte</InputLabel>
-                  <Input
-                    id="source"
-                    name="source"
-                    type="text"
-                    placeholder="Es: //it.wikipedia.org/wiki/George_Orwell"
-                    value={data.source}
-                    onChange={this.onChange}
-                    error={Boolean(errors.source)}
-                  />
-                  {errors.source && <FormHelperText className="message error">{errors.source}</FormHelperText>}
-                </FormControl>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-auto">
-                <Avatar className="image avatar prepend-input" alt="Avatar">
-                  {data.photoURL ? <img src={data.photoURL} alt="" style={{ width: '100%', height: '100%', }} /> : getInitials(data.displayName)}
-                </Avatar>
-              </div>
-              <div className="form-group col">
-                <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>
-                  <Input
-                    id="photoURL"
-                    name="photoURL"
-                    type="text"
-                    placeholder="Es: //firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
-                    value={data.photoURL}
-                    onChange={this.onChange}
-                    error={Boolean(errors.photoURL)}
-                  />
-                  {errors.photoURL && <FormHelperText className="message error">{errors.photoURL}</FormHelperText>}
-                </FormControl>
-              </div>
-            </div>
-
-					  {authError && <div className="row"><div className="col message error">{authError}</div></div>}
           </div>
-          <div className="footer no-gutter">
-            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
+
+          <div className="row">
+            <div className="form-group col">
+              <FormControl className="input-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.bio)} htmlFor="bio">Biografia</InputLabel>
+                <Input
+                  id="bio"
+                  name="bio"
+                  type="text"
+                  placeholder={`Inserisci la biografia (max ${bio_maxChars} caratteri)...`}
+                  value={data.bio}
+                  onChange={onChangeMaxChars}
+                  rowsMax={20}
+                  multiline
+                  error={Boolean(errors.bio)}
+                />
+                {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
+                {(bio_leftChars !== null) && 
+                  <FormHelperText className={`message ${(bio_leftChars < 0) ? 'alert' : 'neutral'}`}>
+                    Caratteri rimanenti: {bio_leftChars}
+                  </FormHelperText>
+                }
+              </FormControl>
+            </div>
           </div>
+          
+          <div className="row">
+            <div className="form-group col">
+              <FormControl className="input-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.source)} htmlFor="source">URL fonte</InputLabel>
+                <Input
+                  id="source"
+                  name="source"
+                  type="text"
+                  placeholder="Es: //it.wikipedia.org/wiki/George_Orwell"
+                  value={data.source}
+                  onChange={onChange}
+                  error={Boolean(errors.source)}
+                />
+                {errors.source && <FormHelperText className="message error">{errors.source}</FormHelperText>}
+              </FormControl>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-auto">
+              <Avatar className="image avatar prepend-input" alt="Avatar">
+                {data.photoURL ? <img src={data.photoURL} alt="" style={{ width: '100%', height: '100%', }} /> : getInitials(data.displayName)}
+              </Avatar>
+            </div>
+            <div className="form-group col">
+              <FormControl className="input-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>
+                <Input
+                  id="photoURL"
+                  name="photoURL"
+                  type="text"
+                  placeholder="Es: //firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
+                  value={data.photoURL}
+                  onChange={onChange}
+                  error={Boolean(errors.photoURL)}
+                />
+                {errors.photoURL && <FormHelperText className="message error">{errors.photoURL}</FormHelperText>}
+              </FormControl>
+            </div>
+          </div>
+
+          {authError && <div className="row"><div className="col message error">{authError}</div></div>}
         </div>
-      </>
-		);
-	}
+        <div className="footer no-gutter">
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
+        </div>
+      </div>
+    </>
+  );
 }
+
+AuthorForm.propTypes = {
+  onToggle: funcType.isRequired,
+  openSnackbar: funcType.isRequired,
+  id: stringType,
+  user: userType
+}
+
+AuthorForm.defaultProps = {
+  id: null,
+  user: null
+}
+ 
+export default AuthorForm;

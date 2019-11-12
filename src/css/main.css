@@ -2202,14 +2202,14 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
 }
 
 .skltn.notification {
-  height: 48px;
+  height: 45px;
   margin-bottom: 0;
   background-image:
     radial-gradient(circle 12px, var(--skltnClr) 99%, transparent 0), 
     linear-gradient(var(--skltnClr) 50%, transparent 50%),
     linear-gradient(var(--skltnClr) 50%, transparent 50%),
     linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
-  background-position: 7px 12px, 45px 18px, 100% 18px, 0 47px;
+  background-position: 7px 10px, 45px 16px, 100% 16px, 0 44px;
   background-size: 24px 24px, 170px 22px, 45px 22px, 100% 2px;
 }
 

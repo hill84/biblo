@@ -1,76 +1,58 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { boolType, numberType, stringType } from '../config/types';
 
-export default class MinifiableText extends Component {
-	state = {
-    isTextMinified: this.props.textMinified === false ? this.props.textMinified : (this.props.text && this.props.text.length > (this.props.maxChars || 700)),
-    maxChars: this.props.maxChars
+const MinifiableText = props => {
+  const [minified, setMinified] = useState(props.defaultMinified === false ? props.defaultMinified : (props.text && props.text.length > (props.maxChars || 700)));
+
+  const is = useRef(true);
+  const { maxChars, source, text, defaultMinified } = props;
+
+  useEffect(() => {
+    if (is.current) setMinified(prevState => text.length > prevState.maxChars);
+  }, [text]);
+
+  useEffect(() => {
+    if (is.current) setMinified(defaultMinified === false ? defaultMinified : (text && text.length > (maxChars || 700)));
+  }, [maxChars, text, defaultMinified]);
+
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  const onMinify = () => {
+    if (is.current) setMinified(prevState => !prevState.minified); 
   }
 
-  static propTypes = {
-    textMinified: boolType,
-    maxChars: numberType,
-    text: stringType.isRequired,
-    source: stringType
-  }
+  if (!text) return null;
 
-  static defaultProps = {
-    textMinified: null,
-    maxChars: 700,
-    source: null
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentDidUpdate(prevProps, /* prevState */) {
-    if (this.props.text && this.props.text.length !== prevProps.text.length) {
-      if (this._isMounted) {
-        this.minifyText();
+  return (
+    <>
+      <span className={`minifiable ${minified ? 'minified' : 'expanded'}`} ref={is}>{text}</span>
+      {source && 
+        <span className="text-sm pull-right m-b-negative">
+          <a href="https://it.wikipedia.org/wiki/Licenze_Creative_Commons">
+            <span className="show-sm">&copy;</span>
+            <span className="hide-sm">CC BY-SA</span>
+          </a>&nbsp;
+          <a href={source} target="_blank" rel="noopener noreferrer">{source.indexOf('wikipedia') > -1 ? 'Wikipedia' : 'Fonte'}</a>
+        </span>
       }
-    }
-    if (this.props.textMinified !== prevProps.textMinified) {
-      if (this._isMounted) {
-        this.setState({
-          isTextMinified: this.props.textMinified === false ? this.props.textMinified : (this.props.text && this.props.text.length > (this.props.maxChars || 700))
-        });
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  minifyText = () => {
-    this.setState(prevState => ({ isTextMinified: this.props.text.length > prevState.maxChars }));
-  }
-
-  onMinify = () => {
-    this.setState(prevState => ({ isTextMinified: !prevState.isTextMinified })); 
-  }
-  
-	render() {
-    const { isTextMinified } = this.state;
-    const { text, source } = this.props;
-
-    if (!text) return null;
-
-		return (
-      <>
-        <span className={`minifiable ${isTextMinified ? 'minified' : 'expanded'}`}>{text}</span>
-        {source && 
-          <span className="text-sm pull-right m-b-negative">
-            <a href="https://it.wikipedia.org/wiki/Licenze_Creative_Commons">
-              <span className="show-sm">&copy;</span>
-              <span className="hide-sm">CC BY-SA</span>
-            </a>&nbsp;
-            <a href={source} target="_blank" rel="noopener noreferrer">{source.indexOf('wikipedia') > -1 ? 'Wikipedia' : 'Fonte'}</a>
-          </span>
-        }
-        {isTextMinified && <><br/><button type="button" className="link" onClick={this.onMinify}>Mostra tutto</button></>}
-      </>
-		);
-	}
+      {minified && <><br/><button type="button" className="link" onClick={onMinify}>Mostra tutto</button></>}
+    </>
+  );
 }
+
+MinifiableText.propTypes = {
+  defaultMinified: boolType,
+  maxChars: numberType,
+  text: stringType.isRequired,
+  source: stringType
+}
+
+MinifiableText.defaultProps = {
+  defaultMinified: null,
+  maxChars: 700,
+  source: null
+}
+ 
+export default MinifiableText;
