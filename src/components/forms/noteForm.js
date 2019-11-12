@@ -3,8 +3,11 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import React, { Component } from 'react';
 import { noteRef, notesRef } from '../../config/firebase';
+import { noteTypes } from '../../config/lists';
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
@@ -16,9 +19,7 @@ export default class noteForm extends Component {
     text_maxChars: 280,
     text_minChars: 10,
     loading: false,
-    changes: false,
-    errors: {},
-    authError: ''
+    errors: {}
   }
 
   static propTypes = {
@@ -80,24 +81,41 @@ export default class noteForm extends Component {
 
 	onChange = e => {
     e.persist();
+    const key = e.target.name;
+    const newValue = e.target.value;
     
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        data: { ...prevState.data, [e.target.name]: e.target.value }, errors: { ...prevState.errors, [e.target.name]: null }
+        data: { ...prevState.data, [key]: newValue }, 
+        errors: { ...prevState.errors, [key]: null }
+      }));
+    }
+  };
+
+  onChangeSelect = key => e => {
+    e.persist();
+    const newValue = e.target.value;
+
+    if (this._isMounted) {
+      this.setState(prevState => ({ 
+        data: { ...prevState.data, [key]: newValue }, 
+        errors: { ...prevState.errors, [key]: null }
       }));
     }
   };
   
   onChangeMaxChars = e => {
     e.persist();
-    const leftChars = `${e.target.name}_leftChars`;
-    const maxChars = `${e.target.name}_maxChars`;
+    const key = e.target.name;
+    const leftChars = `${key}_leftChars`;
+    const maxChars = `${key}_maxChars`;
+    const newValue = e.target.value;
     
     if (this._isMounted) {
       this.setState(prevState => ({
-        data: { ...prevState.data, [e.target.name]: e.target.value }, 
-        [leftChars]: prevState[maxChars] - e.target.value.length, 
-        changes: true
+        data: { ...prevState.data, [key]: newValue }, 
+        [leftChars]: prevState[maxChars] - newValue.length,
+        errors: { ...prevState.errors, [key]: null }
       }));
     }
   };
@@ -108,7 +126,7 @@ export default class noteForm extends Component {
     const { nid, openSnackbar, uid, user } = this.props;
     const errors = this.validate(data);
     
-		if (this._isMounted) this.setState({ authError: '', errors });
+		if (this._isMounted) this.setState({ errors });
     
 		if (Object.keys(errors).length === 0) {
       if (this._isMounted) this.setState({ loading: true });
@@ -123,6 +141,7 @@ export default class noteForm extends Component {
         created_num: Number((new Date()).getTime()),
         createdBy: user.displayName,
         createdByUid: user.uid,
+        tag: data.tag,
         read: false,
         uid
       }).then(() => {
@@ -146,7 +165,17 @@ export default class noteForm extends Component {
 	};
 
 	render() {
-    const { authError, data, errors, loading, text_leftChars, text_maxChars } = this.state;
+    const { data, errors, loading, text_leftChars, text_maxChars } = this.state;
+
+    const menuItemsMap = (arr, values) => arr.map(item => 
+			<MenuItem 
+				value={item} 
+				key={item} 
+				// insetChildren={Boolean(values)} 
+				checked={values ? values.includes(item) : false}>
+				{item}
+      </MenuItem>
+    );
 
 		return (
 			<>
@@ -179,7 +208,22 @@ export default class noteForm extends Component {
                 </FormControl>
               </div>
             </div>
-					  {authError && <div className="row"><div className="col message error">{authError}</div></div>}
+					  <div className="row">
+              <div className="form-group col">
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.tag)} htmlFor="tag">Tag</InputLabel>
+                  <Select
+                    id="tag"
+                    error={Boolean(errors.tag)}
+                    value={data.tag || []}
+                    onChange={this.onChangeSelect("tag")}
+                    multiple>
+                    {menuItemsMap(noteTypes, data.tag)}
+                  </Select>
+                  {errors.tag && <FormHelperText className="message error">{errors.tag}</FormHelperText>}
+                </FormControl>
+              </div>
+            </div>
           </div>
           <div className="footer no-gutter">
             <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
