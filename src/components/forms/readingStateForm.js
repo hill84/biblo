@@ -15,7 +15,7 @@ import { funcType, numberType, shapeType, stringType } from '../../config/types'
 import Overlay from '../overlay';
 import Stepper from '../stepper';
 
-export default class readingStateForm extends Component {
+export default class ReadingStateForm extends Component {
 	state = {
     state_num: this.props.readingState.state_num || 1,
     start_num: this.props.readingState.start_num || null,
@@ -86,19 +86,20 @@ export default class readingStateForm extends Component {
 
   onToggle = () => this.props.onToggle();
 
-  onChangeSelect = key => e => {
+  onChangeSelect = name => e => {
+    const { value } = e.target;
     if (this._isMounted) {
-      this.setState({ [key]: e.target.value, changes: true });
+      this.setState({ [name]: value, changes: true });
     }
 	};
 
-  onChangeDate = key => date => {
+  onChangeDate = name => date => {
     // console.log(date);
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        [key]: new Date(date).getTime(), 
+        [name]: new Date(date).getTime(), 
         changes: true,
-        errors: { ...prevState.errors, [key]: null }
+        errors: { ...prevState.errors, [name]: null }
       }));
     }
   };
@@ -116,6 +117,7 @@ export default class readingStateForm extends Component {
     e.preventDefault();
     const { changes, end_num, progress_num, start_num, state_num } = this.state;
     const { bid, onToggle, openSnackbar } = this.props;
+    
     if (changes) {
       const errors = this.validate(start_num, end_num);
       if (this._isMounted) {

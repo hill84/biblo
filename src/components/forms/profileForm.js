@@ -17,7 +17,7 @@ import { continents, europeanCountries, italianProvinces, languages, northAmeric
 import { app, calcAge, getInitials, validateImg } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 
-export default class Profile extends Component {
+export default class ProfileForm extends Component {
 	state = {
     user: this.props.user,
     imgLoading: false,
@@ -45,37 +45,39 @@ export default class Profile extends Component {
 
 	onChange = e => {
     e.persist();
+    const { name, value } = e.target;
 
     if (this._isMounted) {
       this.setState(prevState => ({ 
         saved: false, 
         changes: true, 
-        user: { ...prevState.user, [e.target.name]: e.target.value }, 
-        errors: { ...prevState.errors, [e.target.name]: null } 
+        user: { ...prevState.user, [name]: value }, 
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
 	};
 
-	onChangeDate = key => date => {
+	onChangeDate = name => date => {
     if (this._isMounted) {
       this.setState(prevState => ({ 
         saved: false, 
         changes: true, 
-        user: { ...prevState.user, [key]: String(date) }, 
-        errors: { ...prevState.errors, [key]: null } 
+        user: { ...prevState.user, [name]: String(date) }, 
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
   };
 
-	onChangeSelect = key => e => {
+	onChangeSelect = name => e => {
     e.persist();
+    const { value } = e.target;
     
     if (this._isMounted) {
       this.setState(prevState => ({ 
         saved: false, 
         changes: true, 
-        user: { ...prevState.user, [key]: e.target.value },
-        errors: { ...prevState.errors, [key]: null } 
+        user: { ...prevState.user, [name]: value },
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
 	};

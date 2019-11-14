@@ -278,7 +278,7 @@ ul.nolist li { display: block; }
   height: var(--avatarSize);
 }
 
-.card .avatar { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.5); }
+.card .avatar { background-color: rgba(0,0,0,.1); color: rgba(0,0,0,.3); }
 
 .table li, .avatar-row { 
   --pad: 7px;
@@ -361,7 +361,7 @@ ul.nolist li { display: block; }
 }
 .contacts-tab-col:after {
   top: calc(100% - var(--faderHeight));
-  bottom: 0;
+  bottom: -1px;
   background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardBg)) 90%);
   margin-top: calc(-1 * var(--faderHeight));
 }
@@ -2343,6 +2343,7 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
   width: var(--avatarSize); 
   height: var(--avatarSize); 
   overflow: visible;
+  font-size: 2rem;
 }
 .bubble .avatar img {
   border-radius: inherit;
@@ -2376,10 +2377,10 @@ progress[ value='100' ].stepper::-webkit-progress-bar {
   height: var(--avatarSize); 
   box-shadow: 0 0 0 3px rgb(var(--cardBg)); 
   color: #333;
-  font-size: 12px;
   animation-delay: .3s;
   z-index: 1;
 }
+.bubble-group .bubble .avatar { font-size: .8rem; }
 .bubble-group .bubble:nth-child(2) { animation-delay: .4s; }
 .bubble-group .bubble:nth-child(3) { animation-delay: .5s; }
 .bubble-group .bubble .avatar { background-color: rgb(var(--canvasLightestClr)); }

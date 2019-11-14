@@ -169,14 +169,16 @@ const Shelf = props => {
     }
   };
 
-  /* const onChangeSelect = key => e => {
+  /* const onChangeSelect = name => e => {
     e.persist();
+    const { value } = e.target;
+
     if (is.current) {
       setState(prevState => ({ 
         ...prevState,
         // success: false, changes: true, 
-        user: { ...prevState.user, [key]: e.target.value },
-        errors: { ...prevState.errors, [key]: null } 
+        user: { ...prevState.user, [name]: value },
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
 	}; */
@@ -497,12 +499,14 @@ export default Shelf;
 
   onChangeFilterBy = (e, i) => is.current && this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
 
-  onChangeSelect = key => e => {
+  onChangeSelect = name => e => {
+    const { value } = e.target;
+    
     if (is.current) {
       this.setState(prevState => ({ 
         // success: false, changes: true, 
-        user: { ...prevState.user, [key]: e.target.value },
-        errors: { ...prevState.errors, [key]: null } 
+        user: { ...prevState.user, [name]: value },
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
 	};

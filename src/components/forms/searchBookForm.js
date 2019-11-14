@@ -110,8 +110,8 @@ export default class SearchBookForm extends Component {
     );
   }
 
-  onChange = (e, { newValue }) => {
-    if (this._isMounted) this.setState({ value: String(newValue) });
+  onChange = (e, { value }) => {
+    if (this._isMounted) this.setState({ value: String(value) });
   }
     
   shouldRenderSuggestions = value => {

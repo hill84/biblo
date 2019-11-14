@@ -152,7 +152,7 @@ export default class Collection extends Component {
                 {loading ? <div className="skltn rows" /> : 
                   <>
                     <div className="info-row description">
-                      <MinifiableText text={collection.description} maxChars={700} defaultMinified={isTextMinified} />
+                      <MinifiableText text={collection.description} maxChars={500} defaultMinified={isTextMinified} />
                     </div>
                     <div className="info-row">
                       <button 

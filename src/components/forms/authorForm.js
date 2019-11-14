@@ -64,41 +64,44 @@ const AuthorForm = props => {
 
   const onChange = e => {
     e.persist();
+    const { name, value } = e.target;
 
     if (is.current) {
       setState(prevState => ({
         ...prevState,
         changes: true,
-        data: { ...prevState.data, [e.target.name]: e.target.value }, 
-        errors: { ...prevState.errors, [e.target.name]: null }
+        data: { ...prevState.data, [name]: value }, 
+        errors: { ...prevState.errors, [name]: null }
       }));
     }
   };
   
   const onChangeMaxChars = e => {
     e.persist();
-    const leftChars = `${e.target.name}_leftChars`;
-    const maxChars = `${e.target.name}_maxChars`;
+    const { name, value } = e.target;
+    const leftChars = `${name}_leftChars`;
+    const maxChars = `${name}_maxChars`;
 
     if (is.current) {
       setState(prevState => ({
         ...prevState,
-        data: { ...prevState.data, [e.target.name]: e.target.value }, 
-        [leftChars]: prevState[maxChars] - e.target.value.length, 
+        data: { ...prevState.data, [name]: value }, 
+        [leftChars]: prevState[maxChars] - value.length, 
         changes: true
       }));
     }
   };
 
-  const onChangeSelect = key => e => {
+  const onChangeSelect = name => e => {
     e.persist();
+    const { value } = e.target;
 
     if (is.current) {
       setState(prevState => ({
         ...prevState,
         changes: true,
-        data: { ...prevState.data, [key]: e.target.value }, 
-        errors: { ...prevState.errors, [key]: null } 
+        data: { ...prevState.data, [name]: value }, 
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
   };
