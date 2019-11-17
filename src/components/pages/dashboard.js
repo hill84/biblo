@@ -145,9 +145,7 @@ export default class Dashboard extends Component {
   }
   
   updateScreenSize = () => {
-    if (this._isMounted) {
-      this.setState({ screenSize: screenSize() });
-    };
+    if (this._isMounted) this.setState({ screenSize: screenSize() });
   }
     
   fetchUser = () => {

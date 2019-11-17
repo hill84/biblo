@@ -1,23 +1,30 @@
+import Tooltip from '@material-ui/core/Tooltip';
 import React, { useEffect, useRef, useState } from 'react';
 import icon from '../config/icons';
 import { funcType, numberType, stringType } from '../config/types';
 
 const Stepper = props => {
   const [state, setState] = useState({
-    activeStep: (props.percent && (props.steps || 4)/100 * (props.percent || 0)) || 0,
-    percent: props.percent,
+    activeStep: (props.value && props.steps / 100 * props.value) || 0,
+    value: props.value,
+    steps: props.steps
   });
 
   const is = useRef(true);
-
-  const { className, steps } = props;
-  const { activeStep, percent } = state;
+  const { className, max, value } = props;
+  const { activeStep, steps } = state;
 
   useEffect(() => {
-    if (is.current) {
-      setState(prevState => ({ ...prevState, percent: 100/steps * activeStep }));
+    if (is.current && steps) {
+      setState(prevState => ({ ...prevState, value: 100 / steps * activeStep }));
     }
   }, [activeStep, steps]);
+
+  useEffect(() => {
+    if (is.current && steps) {
+      setState(prevState => ({ ...prevState, activeStep: (value && steps / 100 * value), value }));
+    }
+  }, [steps, value]);
 
   useEffect(() => () => {
     is.current = false;
@@ -27,21 +34,21 @@ const Stepper = props => {
 
   const onPrev = () => (props.onPrev && props.onPrev()) || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
 
+  const percentage = Math.round(100 / (steps / activeStep));
+
   return (
     <div className={`stepper-container ${className}`} ref={is}>
       <div className="row">
         <div className="col-auto">
           <button type="button" className="btn flat rounded icon" onClick={onPrev} disabled={activeStep === 0}>
-          {icon.chevronLeft()}
+            {icon.chevronLeft()}
           </button>
         </div>
         <div className="col">
-          <div className="label">Progresso: <b>{Math.round(percent)}%</b></div>
-          <div className="stepper-wrapper">
-            <div className="stepper">
-              <div className={`bar ${activeStep === steps ? 'success' : activeStep === 0 ? 'pristine' : 'inprogress'}`} style={{ width: `${100/(steps/activeStep)}%`, }} />
-            </div>
-          </div>
+          <Tooltip title={max ? `(~${Math.round(max / 100 * value)} di ${max} pagine)` : `${percentage}%`}>
+            <label htmlFor="progress">Progresso <b>{percentage}%</b></label>
+          </Tooltip>
+          <progress id="progress" max={100} value={percentage} />
         </div>
         <div className="col-auto">
           <button type="button" className="btn flat rounded icon" onClick={onNext} disabled={activeStep === steps}>
@@ -57,16 +64,18 @@ Stepper.propTypes = {
   className: stringType,
   onNext: funcType,
   onPrev: funcType,
-  percent: numberType,
-  steps: numberType
+  value: numberType,
+  steps: numberType,
+  max: numberType
 }
 
 Stepper.defaultProps = {
   className: null,
   onNext: null,
   onPrev: null,
-  percent: 0,
-  steps: 4
+  value: 0,
+  steps: 4,
+  max: null
 }
  
 export default Stepper;

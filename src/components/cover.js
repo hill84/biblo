@@ -40,9 +40,7 @@ const Cover = props => {
           {full && book.publisher && <span className="publisher">{book.publisher}</span>}
           {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ?
             <Tooltip title={`${book.readingState.progress_num}%`} placement="top">
-              <div className="stepper">
-                <div className="bar" style={{ width: `${book.readingState.progress_num}%`, }} />
-              </div>
+              <progress max="100" value={book.readingState.progress_num} />
             </Tooltip>
           : book.rating_num > 0 && rating !== false && 
             <Rating ratings={{ rating_num: book.rating_num, ratings_num: book.ratings_num }} />

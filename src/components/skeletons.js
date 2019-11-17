@@ -1,8 +1,8 @@
 import React from 'react';
 
-const skltn = (n, className, stacked, style) => (
+const skltn = (limit, className, stacked, style) => (
   <div className={`skltn shelf-row ${stacked ? 'stacked' : ''}`} style={style}>
-    {[...Array(n)].map((e, i) => <div key={i} className={`skltn ${className}`} />)}
+    {[...Array(limit)].map((e, i) => <div key={i} className={`skltn ${className}`} />)}
   </div>
 );
 

@@ -23,7 +23,14 @@ import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
-const tabs = ['users', 'books', 'authors', 'collections', 'quotes', 'notifications'];
+const tabs = [
+  { name: 'users', label: 'Utenti', icon: icon.account() },
+  { name: 'books', label: 'Libri', icon: icon.book() },
+  { name: 'authors', label: 'Autori', icon: icon.accountEdit() },
+  { name: 'collections', label: 'Collezioni', icon: icon.viewCarousel() },
+  { name: 'quotes', label: 'Citazioni', icon: icon.quote() },
+  { name: 'notifications', label: 'Notifiche', icon: icon.bell() },
+];
 
 export default class Admin extends Component {
  	state = {
@@ -34,7 +41,7 @@ export default class Admin extends Component {
     loadingUser: true,
     selectedEl: null,
     selectedId: null,
-    tabSelected: this.props.match.params.tab ? tabs.indexOf(this.props.match.params.tab) !== -1 ? tabs.indexOf(this.props.match.params.tab) : 0 : 0,
+    tabSelected: this.props.match.params.tab ? (tabs.find(tab => tab.name === this.props.match.params.tab) || 0) : 0,
     isOpenAuthorDialog: false,
     isOpenCollectionDialog: false,
     isOpenNoteDialog: false,
@@ -56,10 +63,10 @@ export default class Admin extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (tabs.indexOf(props.match.params.tab) !== -1) {
-      if (tabs.indexOf(props.match.params.tab) !== state.tabSelected) {
-        return { tabSelected: tabs.indexOf(props.match.params.tab) };
-      }
+    const tabSelected = tabs.find(tab => tab.name === props.match.params.tab);
+    if (tabSelected && tabSelected !== state.tabSelected) {
+      const tabSelectedIndex = tabs.findIndex(tab => tab.name === props.match.params.tab);
+      return { tabSelected: tabSelectedIndex };
     }
     if (props.user) {
       if (props.user.uid !== state.aid) { 
@@ -72,7 +79,7 @@ export default class Admin extends Component {
 	componentDidMount() { 
     this._isMounted = true;
     if (this.state.aid) this.fetchUser();
-    if (this.state.tabSelected === 0) this.props.history.replace(`/admin/${tabs[0]}`, null);
+    if (this.state.tabSelected === 0) this.props.history.replace(`/admin/${tabs[0].name}`, null);
     window.addEventListener('resize', this.updateScreenSize);
   }
 
@@ -105,13 +112,33 @@ export default class Admin extends Component {
       }
     });
   }
-  
+
   onTabSelect = (e, value) => {
-    if (value !== -1) this.props.history.push(`/admin/${tabs[value]}`, null);
-    this.setState({ tabSelected: value });
+    if (value !== -1) {
+      if (this._isMounted) {
+        this.setState({ tabSelected: value }, () => {
+          this.historyPushTabIndex(value);
+        });
+      }
+    }
+  };
+
+  onTabSelectIndex = index => {
+    if (index !== -1) {
+      if (this._isMounted) {
+        this.setState({ tabSelected: index }, () => {
+          this.historyPushTabIndex(index);
+        });
+      }
+    }
   }
 
-  onTabSelectIndex = index => this.setState({ tabSelected: index });
+  historyPushTabIndex = index => {
+    const newPath = `/admin/${tabs[index].name}`;
+    if (this.props.history !== newPath) {
+      this.props.history.push(newPath, null);
+    }
+  }
 
   son = id => id ? typeof id === 'string' ? id : typeof id === 'number' ? String(id) : null : null;
 
@@ -165,12 +192,9 @@ export default class Admin extends Component {
             onChange={this.onTabSelect}
             variant={screenSize === 'sm' ? 'scrollable' : 'fullWidth'}
             scrollButtons="auto">
-            <Tab label={<><span className="show-md">{icon.account()}</span><span className="hide-md">Utenti</span></>} />
-            <Tab label={<><span className="show-md">{icon.book()}</span><span className="hide-md">Libri</span></>} />
-            <Tab label={<><span className="show-md">{icon.accountEdit()}</span><span className="hide-md">Autori</span></>} />
-            <Tab label={<><span className="show-md">{icon.viewCarousel()}</span><span className="hide-md">Collezioni</span></>} />
-            <Tab label={<><span className="show-md">{icon.quote()}</span><span className="hide-md">Citazioni</span></>} />
-            <Tab label={<><span className="show-md">{icon.bell()}</span><span className="hide-md">Notifiche</span></>} />
+            {tabs.map(tab => (
+              <Tab key={tab.name} label={<><span className="show-md">{tab.icon}</span><span className="hide-md">{tab.label}</span></>} />
+            ))}
           </Tabs>
         </AppBar>
         <BindKeyboardSwipeableViews
@@ -180,48 +204,24 @@ export default class Admin extends Component {
           axis="x"
           index={tabSelected}
           onChangeIndex={this.onTabSelectIndex}>
-          <>
-            {tabSelected === 0 && 
-              <div className="tab" dir={tabDir}>
-                <UsersDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} />
-              </div>
-            }
-          </>
-          <>
-            {tabSelected === 1 && 
-              <div className="tab" dir={tabDir}>
-                <BooksDash user={user} openSnackbar={openSnackbar} />
-              </div>
-            }
-          </>
-          <>
-            {tabSelected === 2 && 
-              <div className="tab" dir={tabDir}>
-                <AuthorsDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleAuthorDialog} />
-              </div>
-            }
-          </>
-          <>
-            {tabSelected === 3 && 
-              <div className="tab" dir={tabDir}>
-                <CollectionsDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleCollectionDialog} />
-              </div>
-            }
-          </>
-          <>
-            {tabSelected === 4 && 
-              <div className="tab" dir={tabDir}>
-                <QuotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleQuoteDialog} />
-              </div>
-            }
-          </>
-          <>
-            {tabSelected === 5 && 
-              <div className="tab" dir={tabDir}>
-                <NotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} />
-              </div>
-            }
-          </>
+          <div className="card dark" dir={tabDir}>
+            <UsersDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} inView={tabSelected === 0} />
+          </div>
+          <div className="card dark" dir={tabDir}>
+            <BooksDash user={user} openSnackbar={openSnackbar} inView={tabSelected === 1} />
+          </div>
+          <div className="card dark" dir={tabDir}>
+            <AuthorsDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleAuthorDialog} inView={tabSelected === 2} />
+          </div>
+          <div className="card dark" dir={tabDir}>
+            <CollectionsDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleCollectionDialog} inView={tabSelected === 3} />
+          </div>
+          <div className="card dark" dir={tabDir}>
+            <QuotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleQuoteDialog} inView={tabSelected === 4} />
+          </div>
+          <div className="card dark" dir={tabDir}>
+            <NotesDash user={user} openSnackbar={openSnackbar} onToggleDialog={this.onToggleNoteDialog} inView={tabSelected === 5} />
+          </div>
         </BindKeyboardSwipeableViews>
 
         {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={this.onToggleAuthorDialog} user={user} openSnackbar={openSnackbar} />}

@@ -236,4 +236,15 @@ export const noteType = shape({
   uid: string
 });
 
+export const collectionType = shape({
+  books_num: number.isRequired,
+  description: string.isRequired,
+  edit: bool.isRequired,
+  genres: arrayOf(string.isRequired).isRequired,
+  lastEdit_num: number,
+  lastEditBy: string,
+  lastEditByUid: string,
+  title: string.isRequired
+});
+
 export const refType = PropTypes.oneOfType([PropTypes.func, PropTypes.object]);

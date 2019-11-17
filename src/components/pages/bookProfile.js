@@ -210,7 +210,8 @@ export default class BookProfile extends Component {
               bid={book.bid} 
               readingState={userBook.readingState} 
               onToggle={this.onToggleReadingState} 
-              openSnackbar={openSnackbar} 
+              openSnackbar={openSnackbar}
+              pages={book.pages_num}
             />
           }
 

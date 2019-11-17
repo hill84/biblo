@@ -1,4 +1,3 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -9,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
-import { funcType } from '../../../config/types';
+import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -28,24 +27,28 @@ export default class NotesDash extends Component {
     page: 1,
     selectedEl: null,
     selectedId: null,
-    loading: true
+    loading: false
 	}
 
 	static propTypes = {
+    inView: boolType.isRequired,
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired
 	}
 
 	componentDidMount() { 
     this._isMounted = true;
-    this.fetch();
+    if (this.props.inView) this.fetch();
     // this.getLastNotes(); // TODO: 
   }
   
   componentDidUpdate(prevProps, prevState) {
-    const { limitByIndex } = this.state;
+    const { items, limitByIndex } = this.state;
     if (limitByIndex !== prevState.limitByIndex) {
-      this.fetch();
+      if (this.props.inView) this.fetch();
+    }
+    if (this.props.inView !== prevProps.inView && !items) {
+      if (this.props.inView) this.fetch();
     }
   }
 
@@ -145,45 +148,8 @@ export default class NotesDash extends Component {
 	render() {
     const { count, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
     const { openSnackbar } = this.props;
-    const itemsList = (items && items.length > 0 && items.map(item =>
-      <li 
-        key={item.id} 
-        role="treeitem"
-        className={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
-        onKeyDown={() => this.onToggleExpansion(item.id)}
-        onClick={() => this.onToggleExpansion(item.id)}>
-        <div className="row">
-          <div className="col-auto">{item.count || 0}</div>
-          <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
-          <div className="col-1 text-right expandible-icon">
-            {icon.chevronDown()}
-          </div>
-        </div>
-        {item.notes && item.notes.length > 0 && 
-          <ul className="expandible">
-            {item.notes.map((note, i) =>
-              <li key={note.nid} className={note.read ? 'read' : 'not-read'}>
-                <div className="row">
-                  <div className="col-auto">{i + 1}</div>
-                  <div className="col"><div dangerouslySetInnerHTML={{__html: note.text}} /></div>
-                  <div className="col-sm-3 col-lg-2 monotype hide-sm text-center">
-                    <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />
-                  </div>
-                  <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check() : icon.close()}</div>
-                  <div className="col-auto col-sm-2 col-lg-1 text-right">
-                    <div className="timestamp">{timeSince(note.created_num)}</div>
-                  </div>
-                  <div className="absolute-row right btns xs">
-                    <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil()}</button>
-                    <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close()}</button>
-                  </div>
-                </div>
-              </li>
-            )}
-          </ul>
-        }
-      </li>
-    ));
+
+    if (redirectTo) return <Redirect to={`/notifications/${redirectTo}`} />
 
     const limitByOptions = limitBy.map((option, index) => (
       <MenuItem
@@ -195,51 +161,86 @@ export default class NotesDash extends Component {
       </MenuItem>
     ));
 
-    if (redirectTo) return <Redirect to={`/notifications/${redirectTo}`} />
+    const limit = limitBy[limitByIndex];
+    const skeletons = [...Array(limit)].map((e, i) => <li key={i} className="avatar-row skltn dash" />);
 
-		return (
-			<div className="container" id="notesDashComponent">
-        <div className="card dark" style={{ minHeight: 200, }}>
-          <div className="head nav">
-            <div className="row">
-              <div className="col">
-                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
-                <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
-                <Menu 
-                  className="dropdown-menu"
-                  anchorEl={limitMenuAnchorEl} 
-                  open={Boolean(limitMenuAnchorEl)} 
-                  onClose={this.onCloseLimitMenu}>
-                  {limitByOptions}
-                </Menu>
-              </div>
+    const itemsList = loading ? skeletons : !items ? <li className="empty text-center">Nessun elemento</li> : (
+      items.map(item => (
+        <li 
+          key={item.id} 
+          role="treeitem"
+          className={`expandible-parent ${selectedId === item.id ? 'expanded' : 'compressed'}`} 
+          onKeyDown={() => this.onToggleExpansion(item.id)}
+          onClick={() => this.onToggleExpansion(item.id)}>
+          <div className="row">
+            <div className="col-auto">{item.count || 0}</div>
+            <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
+            <div className="col-1 text-right expandible-icon">
+              {icon.chevronDown()}
             </div>
           </div>
-          {loading ? 
-            <div aria-hidden="true" className="loader"><CircularProgress /></div> 
-          : !items ? 
-            <div className="empty text-center">Nessun elemento</div>
-          :
-            <>
-              <ul className="table dense nolist font-sm" role="tree">
-                <li className="labels">
+          {item.notes && item.notes.length > 0 && 
+            <ul className="expandible">
+              {item.notes.map((note, i) =>
+                <li key={note.nid} className={note.read ? 'read' : 'not-read'}>
                   <div className="row">
-                    <div className="col-auto">#</div>
-                    <div className="col">Uid</div>
-                    <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
+                    <div className="col-auto">{i + 1}</div>
+                    <div className="col"><div dangerouslySetInnerHTML={{__html: note.text}} /></div>
+                    <div className="col-sm-3 col-lg-2 monotype hide-sm text-center">
+                      <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />
+                    </div>
+                    <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check() : icon.close()}</div>
+                    <div className="col-auto col-sm-2 col-lg-1 text-right">
+                      <div className="timestamp">{timeSince(note.created_num)}</div>
+                    </div>
+                    <div className="absolute-row right btns xs">
+                      <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil()}</button>
+                      <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close()}</button>
+                    </div>
                   </div>
                 </li>
-                {itemsList}
-              </ul>
-              <PaginationControls 
-                count={count} 
-                fetch={this.fetch}
-                limit={limitBy[limitByIndex]}
-                page={page}
-              />
-            </>
+              )}
+            </ul>
           }
+        </li>
+      ))
+    );
+
+		return (
+      <>
+        <div className="head nav">
+          <div className="row">
+            <div className="col">
+              <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
+              <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limit} <span className="hide-xs">per pagina</span></button>
+              <Menu 
+                className="dropdown-menu"
+                anchorEl={limitMenuAnchorEl} 
+                open={Boolean(limitMenuAnchorEl)} 
+                onClose={this.onCloseLimitMenu}>
+                {limitByOptions}
+              </Menu>
+            </div>
+          </div>
         </div>
+        
+        <ul className="table dense nolist font-sm" role="tree">
+          <li className="labels">
+            <div className="row">
+              <div className="col-auto">#</div>
+              <div className="col">Uid</div>
+              <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
+            </div>
+          </li>
+          {itemsList}
+        </ul>
+        <PaginationControls 
+          count={count} 
+          fetch={this.fetch}
+          forceVisibility
+          limit={limit}
+          page={page}
+        />
 
         <Dialog
           open={isOpenDeleteDialog}
@@ -253,7 +254,7 @@ export default class NotesDash extends Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
-			</div>
+			</>
 		);
 	}
 }

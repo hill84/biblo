@@ -122,11 +122,7 @@ class Challenge extends Component {
                 <div className="col-4 col-sm-4 col-md-3 col-lg-2">
                   <div className="row">
                     <div className="col">
-                      <div className="stepper-wrapper" style={{ marginTop: 9, }}>
-                        <div className="stepper">
-                          <div className="bar inprogress" style={{ width: `${progress(userChallenge.books)}%`, }} />
-                        </div>
-                      </div>
+                      <progress className="inprogress" style={{ marginTop: 9, }} max={100} value={progress(userChallenge.books)} />
                     </div>
                     <div className="col-auto">
                       <div className="counter last">{progress(userChallenge.books)}%</div>

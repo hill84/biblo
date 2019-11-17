@@ -2,23 +2,24 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Component/* , useCallback, useEffect, useRef, useState */ } from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef,  userRef } from '../config/firebase';
 import icon from '../config/icons';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
+import { userBookTypes } from '../config/lists';
 import { funcType, /* numberType, */ stringType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
-const Shelf = props => {
+/* const Shelf = props => {
   const [state, setState] = useState({
     luid: props.luid,
     uid: props.uid,
     coverview: true,
     desc: true,
-    filterBy: [ 'Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consulatazione'],
+    filterBy: userBookTypes,
     filterByIndex: 0,
     filterMenuAnchorEl: null,
     isOwner: props.luid === props.uid,
@@ -52,7 +53,7 @@ const Shelf = props => {
 
   const fetchUserBooks = useCallback(e => {
     const direction = e && e.currentTarget.dataset.direction;
-
+    console.log('fetchUserBooks');
     if (uid) {
       const prev = direction === 'prev';
       const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
@@ -169,26 +170,12 @@ const Shelf = props => {
     }
   };
 
-  /* const onChangeSelect = name => e => {
-    e.persist();
-    const { value } = e.target;
-
-    if (is.current) {
-      setState(prevState => ({ 
-        ...prevState,
-        // success: false, changes: true, 
-        user: { ...prevState.user, [name]: value },
-        errors: { ...prevState.errors, [name]: null } 
-      }));
-    }
-	}; */
-
   const onToggleDesc = () => {
     if (is.current) setState(prevState => ({ ...prevState, desc: !prevState.desc }));
   }
 
   const onToggleView = () => {
-    if (is.current) setState(prevState => ({ ...prevState, coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
+    if (is.current) setState(prevState => ({ ...prevState, coverview: !prevState.coverview }));
   }
 
   const onOpenOrderMenu = e => {
@@ -344,15 +331,15 @@ Shelf.defaultProps = {
   luid: null
 }
  
-export default Shelf;
+export default Shelf; */
 
-/* export default class Shelf extends Component {
+export default class Shelf extends Component {
   state = {
     luid: this.props.luid,
     uid: this.props.uid,
     coverview: true,
     desc: true,
-    filterBy: [ 'Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consulatazione'],
+    filterBy: userBookTypes,
     filterByIndex: 0,
     filterMenuAnchorEl: null,
     isOwner: this.props.luid === this.props.uid,
@@ -394,7 +381,7 @@ export default Shelf;
   }
 
   componentDidMount() {
-    is.current = true;
+    this._isMounted = true;
     this.fetchUserBooks();
     window.addEventListener('resize', this.updateLimit);
   }
@@ -404,20 +391,20 @@ export default Shelf;
     if (desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
       this.fetchUserBooks();
     } else if (!luid && (luid !== prevState.luid)) {
-      if (is.current) {
+      if (this._isMounted) {
         this.setState({ isOwner: false });
       }
     }
   }
 
   componentWillUnmount() {
-    is.current = false;
+    this._isMounted = false;
     this.unsubUserBooksFullFetch && this.unsubUserBooksFullFetch();
     this.unsubUserBooksFetch && this.unsubUserBooksFetch();
     window.removeEventListener('resize', this.updateLimit);
   }
 
-  updateLimit = () => is.current && this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
+  updateLimit = () => this._isMounted && this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
 
   fetchUserBooks = e => {
     const { desc, filterByIndex, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
@@ -439,7 +426,7 @@ export default Shelf;
   
       this.unsubUserBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
-          if (is.current) this.setState({ count: fullSnap.docs.length });
+          if (this._isMounted) this.setState({ count: fullSnap.docs.length });
           const fullBooks = [];
           fullSnap.forEach(fullUserBook => fullBooks.push({ 
             readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
@@ -448,11 +435,11 @@ export default Shelf;
           const lastVisible = fullSnap.docs[startAt];
           const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
           this.unsubUserBooksFetch = ref.limit(limit).onSnapshot(snap => {
-            if (is.current) this.setState({ loading: true });
+            if (this._isMounted) this.setState({ loading: true });
             if (!snap.empty) {
               const items = [];
               snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
-              if (is.current) {
+              if (this._isMounted) {
                 this.setState(prevState => ({ 
                   isOwner: luid === uid,
                   items,
@@ -488,21 +475,21 @@ export default Shelf;
                   }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
                 });
               }
-            } else if (is.current) this.setState(empty);
+            } else if (this._isMounted) this.setState(empty);
           });
-        } else if (is.current) this.setState(empty);
+        } else if (this._isMounted) this.setState(empty);
       });
     } else console.warn(`No uid: ${uid}`);
   }
 
-  onChangeOrderBy = (e, i) => is.current && this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
+  onChangeOrderBy = (e, i) => this._isMounted && this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
 
-  onChangeFilterBy = (e, i) => is.current && this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
+  onChangeFilterBy = (e, i) => this._isMounted && this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
 
   onChangeSelect = name => e => {
     const { value } = e.target;
     
-    if (is.current) {
+    if (this._isMounted) {
       this.setState(prevState => ({ 
         // success: false, changes: true, 
         user: { ...prevState.user, [name]: value },
@@ -511,15 +498,15 @@ export default Shelf;
     }
 	};
 
-  onToggleDesc = () => is.current && this.setState(prevState => ({ desc: !prevState.desc }));
+  onToggleDesc = () => this._isMounted && this.setState(prevState => ({ desc: !prevState.desc }));
 
-  onToggleView = () => is.current && this.setState(prevState => ({ coverview: !prevState.coverview }));
+  onToggleView = () => this._isMounted && this.setState(prevState => ({ coverview: !prevState.coverview }));
 
-  onOpenOrderMenu = e => is.current && this.setState({ orderMenuAnchorEl: e.currentTarget });
-  onCloseOrderMenu = () => is.current && this.setState({ orderMenuAnchorEl: null });
+  onOpenOrderMenu = e => this._isMounted && this.setState({ orderMenuAnchorEl: e.currentTarget });
+  onCloseOrderMenu = () => this._isMounted && this.setState({ orderMenuAnchorEl: null });
 
-  onOpenFilterMenu = e => is.current && this.setState({ filterMenuAnchorEl: e.currentTarget });
-  onCloseFilterMenu = () => is.current && this.setState({ filterMenuAnchorEl: null });
+  onOpenFilterMenu = e => this._isMounted && this.setState({ filterMenuAnchorEl: e.currentTarget });
+  onCloseFilterMenu = () => this._isMounted && this.setState({ filterMenuAnchorEl: null });
 
   render() {
     const { coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
@@ -640,4 +627,4 @@ export default Shelf;
       </>
     );
   }
-} */
+}

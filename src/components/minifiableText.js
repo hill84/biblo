@@ -1,13 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { boolType, numberType, stringType } from '../config/types';
 
 const MinifiableText = props => {
   const is = useRef(true);
   const { maxChars, source, text, defaultMinified } = props;
-  const [minified, setMinified] = useState(defaultMinified === false ? defaultMinified : (text && text.length > maxChars));
+  const [minified, setMinified] = useState(defaultMinified === false ? defaultMinified : (text && text.length > (maxChars || 700)));
+
+  const minifyText = useCallback(() => {
+    if (is.current) setMinified(text.length > maxChars);
+  }, [maxChars, text]);
 
   useEffect(() => {
-    if (is.current) setMinified(defaultMinified === false ? defaultMinified : (text && text.length > maxChars));
+    minifyText();
+  }, [minifyText]);
+
+  useEffect(() => {
+    if (is.current) setMinified(defaultMinified === false ? defaultMinified : (text && text.length > (maxChars || 700)));
   }, [maxChars, text, defaultMinified]);
 
   useEffect(() => () => {
@@ -45,7 +53,7 @@ MinifiableText.propTypes = {
 }
 
 MinifiableText.defaultProps = {
-  defaultMinified: false,
+  defaultMinified: null,
   maxChars: 700,
   source: null
 }

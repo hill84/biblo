@@ -588,7 +588,7 @@ export default class BookForm extends Component {
                 {isAdmin && book.bid /* && !book.covers[0] */ && 
                   <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
                     <input type="file" accept="image/*" className="upload" onChange={this.onImageChange} />
-                    {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" className="stepper" /> */}
+                    {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" /> */}
                     <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
                   </button>
                 }
