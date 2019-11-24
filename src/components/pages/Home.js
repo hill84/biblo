@@ -52,7 +52,7 @@ const Home = props => {
   const rootMargin = '200px';
   const Hero = (
     <div className="container text-center">
-      <h1 className="title">Condividi la tua passione per i libri</h1>
+      <h1 className="title">Scopriamo nuovi libri, insieme</h1>
       <p className="subtitle">Crea la tua libreria, ascolta gli incipit, scopri cosa leggono i tuoi amici</p>
       <div className="btns">
         <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">{user ? 'La mia libreria' : 'Registrati'}</Link> 
