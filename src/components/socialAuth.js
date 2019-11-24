@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { boolType, funcType } from '../config/types';
-import style from '../css/socialAuth.module.css';
+import '../css/socialAuth.css';
 
 export default class SocialAuth extends Component {
 	state = {
@@ -83,7 +83,7 @@ export default class SocialAuth extends Component {
 		if (redirectToReferrer) return <Redirect to={from} />
 
 		return (
-			<div className={`${style.component} row`}>
+			<div className="social-auth row">
         <div className="col-4">
           <button type="button" disabled={disabled} className="col btn rounded google" onClick={this.googleAuth}>Google</button>
         </div>

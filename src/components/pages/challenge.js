@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
 import { app, booksPerRow } from '../../config/shared';
@@ -122,11 +122,7 @@ class Challenge extends Component {
                 <div className="col-4 col-sm-4 col-md-3 col-lg-2">
                   <div className="row">
                     <div className="col">
-                      <div className="stepper-wrapper" style={{ marginTop: 9, }}>
-                        <div className="stepper">
-                          <div className="bar inprogress" style={{ width: `${progress(userChallenge.books)}%`, }} />
-                        </div>
-                      </div>
+                      <progress className="inprogress" style={{ marginTop: 9, }} max={100} value={progress(userChallenge.books)} />
                     </div>
                     <div className="col-auto">
                       <div className="counter last">{progress(userChallenge.books)}%</div>

@@ -3,7 +3,8 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
-import { isLocalStorage, needsEmailVerification } from './shared';
+import { needsEmailVerification } from './shared';
+import { ifLocalStorage, userKey } from './storage';
 
 const config = {
 	apiKey: "AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0",
@@ -25,15 +26,13 @@ export const TwitterAuthProvider = firebase.auth && new firebase.auth.TwitterAut
 export const auth = firebase.auth();
 auth.useDeviceLanguage();
 export const signOut = () => auth.signOut();
-
-export const storageKey_uid = 'uid';
 export const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
-
-let cuid = (auth.currentUser && auth.currentUser.uid) || (isLocalStorage() && localStorage.getItem(storageKey_uid));
+const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(userKey)));
+// eslint-disable-next-line import/no-mutable-exports
+export let authid = currentUid();
 auth.onIdTokenChanged(user => {
-	cuid = user ? (user.uid || (isLocalStorage() && localStorage.getItem(storageKey_uid))) : null;
+	authid = user ? currentUid() : null
 });
-export const authid = cuid;
 // auth.onIdTokenChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */
@@ -77,6 +76,7 @@ export const notificationsRef = db.collection('notifications');
 export const userNotificationsRef = uid => notificationsRef.doc(uid);
 export const notesRef = uid => userNotificationsRef(uid).collection('notes');
 export const noteRef = (uid, nid) => notesRef(uid).doc(nid);
+export const notesGroupRef = db.collectionGroup('notes');
 
 export const challengesRef = db.collection('challenges');
 export const challengeRef = cid => challengesRef.doc(cid);

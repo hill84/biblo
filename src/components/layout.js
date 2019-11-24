@@ -1,4 +1,3 @@
-import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,28 +10,29 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
-import { authid, noteRef, notesRef, signOut } from '../config/firebase';
+import { /* authid, */ noteRef, notesRef, signOut } from '../config/firebase';
 import icon from '../config/icons';
 import { roles } from '../config/lists';
-import { app, getInitials, hasRole, timeSince } from '../config/shared';
+import { app, getInitials, hasRole } from '../config/shared';
 import { darkTheme } from '../config/themes';
 import { childrenType, funcType, stringType, userType } from '../config/types';
+import logo from '../images/logo.svg';
 import Footer from './footer';
+import NoteMenuItem from './noteMenuItem';
+import '../css/layout.css';
 
 const Layout = props => {
-  const [state, setState] = useState({
-    drawerIsOpen: false,
-    moreAnchorEl: null,
-    notes: null,
-    notesAnchorEl: null
-  });
+  const [notes, setNotes] = useState(null);
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const [moreAnchorEl, setMoreAnchorEl] = useState(null);
+  const [notesAnchorEl, setNotesAnchorEl] = useState(null);
   
+  const is = useRef(true);
   const { children, error, openSnackbar, user } = props;
-  const { drawerIsOpen, moreAnchorEl, notes, notesAnchorEl } = state;
 
   useEffect(() => {
     let unsubNotesFetch;
@@ -56,10 +56,10 @@ const Layout = props => {
             snap.forEach(note => {
               notes.push(note.data());
             });
-            setState(prevState => ({ ...prevState, notes }));
+            if (is.current) setNotes(notes);
           }
         }).catch(err => console.warn(err));
-      } else setState(prevState => ({ ...prevState, notes: null }));
+      } else if (is.current) setNotes(null);
     }
 
     const unsubTimer = setTimeout(() => {
@@ -75,46 +75,41 @@ const Layout = props => {
   useEffect(() => {
     if (error) openSnackbar(error, 'error', 9000);
   }, [error, openSnackbar]);
+  
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
-  const onToggleDrawer = () => setState(prevState => ({ ...prevState, drawerIsOpen: !prevState.drawerIsOpen }));
-  const onCloseDrawer = () => setState(prevState => ({ ...prevState, drawerIsOpen: false }));
+  const onToggleDrawer = () => setDrawerIsOpen(!drawerIsOpen);
+  const onCloseDrawer = () => setDrawerIsOpen(false);
 
   const onOpenMore = e => {
-    e.persist();
-    setState(prevState => ({ ...prevState, moreAnchorEl: e.currentTarget }));
+    setMoreAnchorEl(e.currentTarget);
   }
-  const onCloseMore = () => setState(prevState => ({ ...prevState, moreAnchorEl: null }));
+  const onCloseMore = () => setMoreAnchorEl(null);
 
   const onOpenNotes = e => {
-    e.persist();
-    
-    setState(prevState => ({ ...prevState, notesAnchorEl: e.currentTarget }));
+    setNotesAnchorEl(e.currentTarget);
     notes && notes.filter(note => note.read !== true && !note.role).forEach(note => {
-      /* setState(prevState => ({
-        ...prevState,
-        notes: { ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }
-      })); */
+      /* setNotes({ ...notes, [notes.find(obj => obj.nid === note.nid )]: { ...note, read: true } }); */
       noteRef(user.uid, note.nid).update({ read: true }).then().catch(err => console.warn(err));
     });
   }
-  const onCloseNotes = () => setState(prevState => ({ ...prevState, notesAnchorEl: null }));
-
-  // const onOpenDialog = () => setState(prevState => ({ ...prevState, dialogIsOpen: true }));
-  // const onCloseDialog = () => setState(prevState => ({ ...prevState, dialogIsOpen: false }));
+  const onCloseNotes = () => setNotesAnchorEl(null);
 
   const toRead = notes => notes && notes.filter(note => !note.read || note.role);
 
   return (
-    <div id="layoutComponent">
-      <AppBar id="appBarComponent" className="dark" position="static">
+    <div id="layoutComponent" ref={is}>
+      <div className="top-bar dark" position="static">
         <Toolbar className="toolbar">
           <Tooltip title="Menu" placement="bottom">
             <IconButton className="drawer-btn" aria-label="Menu" onClick={onToggleDrawer}> 
               {drawerIsOpen ? <NavigationClose /> : <MenuIcon />}
             </IconButton>
           </Tooltip>
-          <Typography className="title" variant="h6" color="inherit">
-            <Link to="/">{app.name}<sup>Beta</sup></Link>
+          <Typography className="title" variant="h1" color="inherit">
+            <Link to="/"><img src={logo} alt={app.name} /><sup>Beta</sup></Link>
           </Typography>
           {user ? 
             <>
@@ -156,28 +151,11 @@ const Layout = props => {
                 onClick={onCloseNotes}
                 open={Boolean(notesAnchorEl)}
                 onClose={onCloseNotes}>
-                {notes && toRead(notes).length ?
-                  toRead(notes).map((item, i) => (
-                    <MenuItem key={item.nid} style={{ animationDelay: `${(i + 1) / 10  }s`, }}> 
-                      <div className="row">
-                        <div className="col-auto">
-                          {(item.photoURL || item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1) ?
-                            <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
-                              <Avatar className="image avatar" alt={item.createdBy}>
-                                {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
-                              </Avatar>
-                            </Link>
-                            : <span className="icon">{icon.bell()}</span>
-                          }
-                        </div>
-                        <div className="col text">
-                          <div dangerouslySetInnerHTML={{__html: item.text}} />
-                        </div>
-                        <div className="col-auto date">{timeSince(item.created_num)}</div>
-                      </div>
-                    </MenuItem>
-                  ))
-                  : 
+                {notes && toRead(notes).length ? (
+                  toRead(notes).map((item, i) =>
+                    <NoteMenuItem item={item} index={i} key={item.nid} animation />
+                  )
+                ) : (
                   <MenuItem>
                     <div className="row">
                       <div className="col-auto">
@@ -186,7 +164,7 @@ const Layout = props => {
                       <div className="col text">Non ci sono nuove notifiche</div>
                     </div>
                   </MenuItem>
-                }
+                )}
                 <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
               </Menu>
 
@@ -211,7 +189,7 @@ const Layout = props => {
                 open={Boolean(moreAnchorEl)}
                 onClose={onCloseMore}>
                 <MenuItem component={Link} to="/profile">Profilo</MenuItem>
-                <MenuItem component={Link} to={`/dashboard/${authid}`}>La mia libreria</MenuItem>
+                <MenuItem component={Link} to={`/dashboard/${user.uid}/shelf`}>La mia libreria</MenuItem>
                 <MenuItem onClick={signOut}>Esci</MenuItem>
               </Menu>
             </>
@@ -222,7 +200,7 @@ const Layout = props => {
             </>
           }
         </Toolbar>
-      </AppBar>
+      </div>
       
       <ThemeProvider theme={darkTheme}>
         <Drawer
@@ -230,7 +208,7 @@ const Layout = props => {
           open={drawerIsOpen}
           onClick={onCloseDrawer}>
           <nav className="list">
-            {user && authid ? 
+            {user /* && authid */ ? 
               <>
                 <NavLink to="/profile" className="auth-header">
                   <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
@@ -250,7 +228,7 @@ const Layout = props => {
                     </MenuItem>
                   </NavLink>
                 }
-                <NavLink to={`/dashboard/${authid}/shelf`}>
+                <NavLink to={`/dashboard/${user.uid}/shelf`}>
                   <MenuItem>
                     <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
                     <Typography variant="inherit">La mia libreria</Typography>
@@ -314,9 +292,9 @@ const Layout = props => {
 
       <CookieBanner
         disableStyle
-        message="Usiamo i cookie 🍪 Per saperne di più "
+        message="🍪 Usiamo i cookie. "
         buttonMessage="Accetto"
-        link={<Link to="/cookie">clicca qui</Link>}
+        link={<Link to="/cookie">Approfondisci</Link>}
         dismissOnScrollThreshold={100}
         onAccept={() => {}}
         cookie="user-has-accepted-cookies" 

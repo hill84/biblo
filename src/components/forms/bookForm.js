@@ -107,7 +107,6 @@ export default class BookForm extends Component {
   componentWillUnmount() {
     this._isMounted = false;
   }
-
   
   onToggleDescription = e => {
     e.persist();
@@ -121,7 +120,7 @@ export default class BookForm extends Component {
   }
   
   onToggleIncipit = e => {
-    e.persist();
+    e.persist(); // TODO: check if needed
     e.preventDefault();
     
     if (this._isMounted) {
@@ -131,10 +130,10 @@ export default class BookForm extends Component {
     }
   }
   
-  isChanged = (key, newValue) => {
-    const prevValue = this.state.prevBook[key];
+  isChanged = (name, value) => {
+    const prevValue = this.state.prevBook[name];
 
-    if (prevValue !== newValue) {
+    if (prevValue !== value) {
       if (this._isMounted) {
         this.setState({ changes: true });
       }
@@ -143,112 +142,109 @@ export default class BookForm extends Component {
 
   onChange = e => {
     e.persist();
-    const key = e.target.name;
-    const newValue = e.target.value;
+    const { name, value } = e.target;
 
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value));
     }
     
   };
 
   onChangeNumber = e => {
     e.persist();
+    const { name } = e.target;
+    const value = parseInt(e.target.value, 10);
 
-    const key = e.target.name;
-    const newValue = parseInt(e.target.value, 10);
-    if (!Number.isNaN(newValue)) {
+    if (!Number.isNaN(value)) {
       if (this._isMounted) {
         this.setState(prevState => ({
-          book: { ...prevState.book, [key]: newValue }
-        }), () => this.isChanged(key, newValue));
+          book: { ...prevState.book, [name]: value }
+        }), () => this.isChanged(name, value));
       }
     }
   };
 
-  onChangeSelect = key => e => {
+  onChangeSelect = name => e => {
     e.persist();
-
-    const newValue = e.target.value;
-
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
-    }
-  };
-
-  onChangeDate = key => date => {
-    const newValue = String(date);
+    const { value } = e.target;
 
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value));
     }
   };
 
-  onAddChip = (key, chip) => {
+  onChangeDate = name => date => {
+    const value = String(date);
+
+    if (this._isMounted) {
+      this.setState(prevState => ({ 
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value));
+    }
+  };
+
+  onAddChip = (name, chip) => {
     const prevState = this.state;
-    const newValue = [...prevState.book[key], chip];
+    const value = [...prevState.book[name], chip];
 
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue)); 
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value)); 
     }
   }; 
 
-  onDeleteChip = (key, chip) => { 
+  onDeleteChip = (name, chip) => { 
     const prevState = this.state;
-    const newValue = prevState.book[key].filter((c) => c !== chip);
+    const value = prevState.book[name].filter((c) => c !== chip);
 
     if (this._isMounted) {
       this.setState(prevState => ({ 
         // chips: prevState.chips.filter((c) => c !== chip) 
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value));
     }
   }; 
   
-  onAddChipToObj = (key, chip) => {
+  onAddChipToObj = (name, chip) => {
     const prevState = this.state;
-    const newValue = { ...prevState.book[key], [chip.split('.').join('')]: true };
+    const value = { ...prevState.book[name], [chip.split('.').join('')]: true };
 
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value));
     }
   };
 
-  onDeleteChipFromObj = (key, chip) => {
+  onDeleteChipFromObj = (name, chip) => {
     const prevState = this.state;
-    const newValue = arrToObj(Object.keys(prevState.book[key]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ key: item, value: true }));
+    const value = arrToObj(Object.keys(prevState.book[name]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ name: item, value: true }));
 
     if (this._isMounted) {
       this.setState(prevState => ({
         // chips: prevState.chips.filter((c) => c !== chip)
-        book: { ...prevState.book, [key]: newValue }
-      }), () => this.isChanged(key, newValue));
+        book: { ...prevState.book, [name]: value }
+      }), () => this.isChanged(name, value));
     }
   };
   
   onChangeMaxChars = e => {
     e.persist();
-    const leftChars = `${e.target.name}_leftChars`;
-    const maxChars = `${e.target.name}_maxChars`;
-    const key = e.target.name;
-    const newValue = e.target.value;
+    const { name, value } = e.target;
+    const leftChars = `${name}_leftChars`;
+    const maxChars = `${name}_maxChars`;
       
     if (this._isMounted) {
       this.setState(prevState => ({
-        book: { ...prevState.book, [key]: newValue }, 
-        [leftChars]: prevState[maxChars] - newValue.length, 
+        book: { ...prevState.book, [name]: value }, 
+        [leftChars]: prevState[maxChars] - value.length, 
         changes: true
-      }), () => this.isChanged(key, newValue));
+      }), () => this.isChanged(name, value));
     }
   };
 
@@ -400,16 +396,16 @@ export default class BookForm extends Component {
           // console.log('upload completed');
           uploadTask.then(snap => 
             snap.ref.getDownloadURL().then(url => {
-              const key = 'covers';
-              const newValue = [url];
+              const name = 'covers';
+              const value = [url];
               
               if (this._isMounted) {
                 this.setState(prevState => ({
                   imgLoading: false,
                   imgPreview: url,
-                  book: { ...prevState.book, covers: newValue }
+                  book: { ...prevState.book, covers: value }
                 }), () => {
-                  this.isChanged(key, newValue);
+                  this.isChanged(name, value);
                   openSnackbar('Immagine caricata', 'success');
                   setTimeout(() => {
                     if (this._isMounted) this.setState({ imgProgress: 0 });
@@ -592,7 +588,7 @@ export default class BookForm extends Component {
                 {isAdmin && book.bid /* && !book.covers[0] */ && 
                   <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
                     <input type="file" accept="image/*" className="upload" onChange={this.onImageChange} />
-                    {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" className="stepper" /> */}
+                    {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" /> */}
                     <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
                   </button>
                 }

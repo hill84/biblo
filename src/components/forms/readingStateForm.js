@@ -1,109 +1,87 @@
 import MomentUtils from '@date-io/moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { authid, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { handleFirestoreError } from '../../config/shared';
+import { readingStates } from '../../config/lists';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
 
-export default class readingStateForm extends Component {
-	state = {
-    state_num: this.props.readingState.state_num || 1,
-    start_num: this.props.readingState.start_num || null,
-    end_num: this.props.readingState.end_num || null,
-    changes: false,
-    loading: false,
-    errors: {},
-    prevProps: this.props,
-    progress_num: this.props.readingState.progress_num || (this.props.readingState.state_num === 3 ? 100 : 0),
-    steps: 4
-  }
+const ReadingStateForm = props => {
+  const is = useRef(true);
+  const { bid, openSnackbar, pages, readingState } = props;
 
-  static propTypes = {
-    bid: stringType.isRequired,
-    onToggle: funcType.isRequired,
-    openSnackbar: funcType.isRequired,
-    readingState: shapeType({
-      state_num: numberType.isRequired,
-      start_num: numberType,
-      end_num: numberType,
-      progress_num: numberType
-    }).isRequired
-  }
+  const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
+  const [state_num, setState_num] = useState(readingState.state_num);
+  const [start_num, setStart_num] = useState(readingState.start_num || null);
+  const [end_num, setEnd_num] = useState(readingState.end_num || null);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [changes, setChanges] = useState(false);
+  const steps = 20;
 
-  static getDerivedStateFromProps(props, state) {
-    if (state.prevProps !== props) {
-      if (props.readingState.state_num !== state.state_num) { return { prevProps: props, state_num: props.readingState.state_num }}
-      if (props.readingState.start_num !== state.start_num) { return { prevProps: props, start_num: props.readingState.start_num }}
-      if (props.readingState.end_num !== state.end_num) { return { prevProps: props, end_num: props.readingState.end_num }}
-      if (props.readingState.progress_num !== state.progress_num) { return { prevProps: props, progress_num: props.readingState.progress_num }}
+  useEffect(() => {
+    if (is.current) {
+      if (progress_num === 0) setState_num(1);
+      if (progress_num === 100) setState_num(3);
+      setChanges(true);
     }
-    return null;
-  }
+  }, [progress_num]);
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { progress_num, state_num, steps } = this.state;
-    
-    if (state_num !== prevState.state_num) {
-      if (this._isMounted) {
-        switch (state_num) {
-          case 1: this.setState({ progress_num: 0 }); break;
-          case 2: this.setState({ progress_num: (100 / steps) }); break;
-          case 3: 
-          case 4: 
-          case 5: this.setState({ progress_num: 100 }); break;
-          default: break;
+  useEffect(() => {
+    if (is.current) {
+      if (state_num === 1) {
+        setProgress_num(0);
+        setStart_num(null);
+        setEnd_num(null);
+      }
+      if (state_num === 2) {
+        setEnd_num(null);
+        if (progress_num === 100 || progress_num === 0) {
+          setProgress_num(100 / steps);
         }
-        this.setState({ changes: true });
       }
+      if (state_num === 3) setProgress_num(100);
+      setChanges(true);
     }
-    if (progress_num !== prevState.progress_num) {
-      if (this._isMounted) {
-        if (progress_num === 0) this.setState({ state_num: 1 });
-        if (progress_num === (100 / steps)) this.setState({ state_num: 2 });
-        if (progress_num === 100) this.setState({ state_num: 3 });
-        this.setState({ changes: true });
-      }
-    }
-  }
+    // eslint-disable-next-line
+  }, [state_num]);
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
-  onToggle = () => this.props.onToggle();
+  const onToggle = () => props.onToggle();
 
-  onChangeSelect = key => e => {
-    if (this._isMounted) {
-      this.setState({ [key]: e.target.value, changes: true });
+  const onChangeSelect = name => e => {
+    const { value } = e.target;
+    if (is.current) {
+      if (name === 'state_num') setState_num(value);
+      setErrors({ ...errors, [name]: null });
+      setChanges(true);
     }
 	};
 
-  onChangeDate = key => date => {
-    // console.log(date);
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        [key]: new Date(date).getTime(), 
-        changes: true,
-        errors: { ...prevState.errors, [key]: null }
-      }));
+  const onChangeDate = name => date => {
+    if (is.current) {
+      if (name === 'start_num') setStart_num(new Date(date).getTime());
+      if (name === 'end_num') setEnd_num(new Date(date).getTime());
+      setErrors({ ...errors, [name]: null });
+      setChanges(true);
     }
   };
 
-  validate = (start, end) => {
+  const validate = (start, end) => {
     const errors = {};
     const today = new Date().getTime();
     if (start > today) { errors.start_num = "Data futura non valida"; }
@@ -112,137 +90,146 @@ export default class readingStateForm extends Component {
     return errors;
   }
 
-  onSubmit = e => {
+  const onSubmit = e => {
     e.preventDefault();
-    const { changes, end_num, progress_num, start_num, state_num } = this.state;
-    const { bid, onToggle, openSnackbar } = this.props;
     if (changes) {
-      const errors = this.validate(start_num, end_num);
-      if (this._isMounted) {
-        this.setState({ errors });
-      }
+      const errors = validate(start_num, end_num);
+      if (is.current) setErrors(errors);
       if (Object.keys(errors).length === 0) {
-        if (this._isMounted) {
-          this.setState({ loading: true }, () => {
-            userBookRef(authid, bid).update({
-              'readingState.state_num': state_num,
-              'readingState.start_num': start_num,
-              'readingState.end_num': end_num,
-              'readingState.progress_num': progress_num
-            }).then(() => {
-              // console.log(`UserBook readingState updated`);
-              if (this._isMounted) {
-                this.setState({ loading: false }, () => onToggle());
-              }
-            }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
-          });
-        }
+        if (is.current) setLoading(true);
+        userBookRef(authid, bid).update({
+          'readingState.state_num': state_num,
+          'readingState.start_num': start_num,
+          'readingState.end_num': end_num,
+          'readingState.progress_num': progress_num
+        }).then(() => {
+          // console.log(`UserBook readingState updated`);
+          if (is.current) setLoading(false);
+          props.onToggle();
+        }).catch(err => {
+          if (is.current) setLoading(false);
+          openSnackbar(handleFirestoreError(err), 'error');
+        });
       }
-    } else onToggle();
+    } else props.onToggle();
   }
 
-  onNext = () => this.setState(state => ({ progress_num: state.progress_num + (100/state.steps) }));
+  const onNext = () => setProgress_num(progress_num + (100/steps));
 
-  onPrev = () => this.setState(state => ({ progress_num: state.progress_num - (100/state.steps) }));
+  const onPrev = () => setProgress_num(progress_num - (100/steps));
 
-  render() {
-    const { end_num, loading, progress_num, start_num, state_num, steps } = this.state;
-
-		return (
-      <>
-        <Overlay onClick={this.onToggle} />
-        <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
-          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-          <div className="content">
-            <div className="row">
-              <div className="form-group col">
-                <FormControl className="select-field" margin="normal" fullWidth>
-                  <InputLabel htmlFor="state_num">Stato lettura</InputLabel>
-                  <Select
-                    id="state_num"
-                    value={state_num}
-                    onChange={this.onChangeSelect("state_num")}>
-                    <MenuItem key="rs1" value={1}>Non iniziato</MenuItem>
-                    <MenuItem key="rs2" value={2}>In lettura</MenuItem>
-                    <MenuItem key="rs3" value={3}>Finito</MenuItem>
-                    <MenuItem key="rs4" value={4}>Abbandonato</MenuItem>
-                    <MenuItem key="rs5" value={5}>Da consultazione</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
+  return (
+    <>
+      <Overlay onClick={onToggle} />
+      <div role="dialog" aria-describedby="reading state" className="dialog light reading-state" ref={is}>
+        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+        <div className="content">
+          <div className="row">
+            <div className="form-group col">
+              <FormControl className="select-field" margin="normal" fullWidth>
+                <InputLabel htmlFor="state_num">Stato lettura</InputLabel>
+                <Select
+                  id="state_num"
+                  value={state_num}
+                  onChange={onChangeSelect('state_num')}>
+                  {readingStates.map((item, i) => <MenuItem key={i + 1} value={i + 1}>{item}</MenuItem>)}
+                </Select>
+              </FormControl>
             </div>
-            {(state_num === 2 || state_num === 3) &&
-              <>
-                <div className="row">
-                  <div className={`form-group ${state_num === 3 ? `col-6` : `col-12`}`}>
+          </div>
+          {(state_num === 2 || state_num === 3) &&
+            <>
+              <div className="row">
+                <div className={`form-group ${state_num === 3 ? `col-6` : `col-12`}`}>
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                    <DatePicker 
+                      className="date-picker"
+                      name="start_num"
+                      cancelLabel="Annulla"
+                      leftArrowIcon={icon.chevronLeft()}
+                      rightArrowIcon={icon.chevronRight()}
+                      format="D MMMM YYYY"
+                      minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
+                      minDateMessage="Praticamente nel Jurassico.."
+                      maxDate={state_num === 3 ? end_num ? new Date(end_num) : new Date() : new Date()}
+                      maxDateMessage="Data non valida"
+                      label="Data di inizio"
+                      value={start_num ? new Date(start_num) : null}
+                      onChange={onChangeDate('start_num')}
+                      margin="normal"
+                      animateYearScrolling
+                      todayLabel="Oggi"
+                      showTodayButton
+                      fullWidth
+                    />
+                  </MuiPickersUtilsProvider>
+                  {errors.start_num && <FormHelperText className="message error">{errors.start_num}</FormHelperText>}
+                </div>
+                {state_num === 3 &&
+                  <div className="form-group col-6">
                     <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
                       <DatePicker 
                         className="date-picker"
-                        name="start_num"
+                        name="end_num"
                         cancelLabel="Annulla"
                         leftArrowIcon={icon.chevronLeft()}
                         rightArrowIcon={icon.chevronRight()}
                         format="D MMMM YYYY"
-                        minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
-                        minDateMessage="Praticamente nel Jurassico.."
-                        maxDate={state_num === 3 ? end_num ? new Date(end_num) : new Date() : new Date()}
-                        maxDateMessage="Data non valida"
-                        label="Data di inizio"
-                        value={start_num ? new Date(start_num) : null}
-                        onChange={this.onChangeDate("start_num")}
+                        minDate={new Date(start_num)}
+                        minDateMessage="Data non valida"
+                        maxDate={new Date()}
+                        maxDateMessage="Data futura non valida"
+                        label="Data di fine"
+                        value={end_num ? new Date(end_num) : null}
+                        onChange={onChangeDate('end_num')}
                         margin="normal"
                         animateYearScrolling
                         todayLabel="Oggi"
                         showTodayButton
                         fullWidth
+                        disabled={state_num !== 3}
                       />
                     </MuiPickersUtilsProvider>
+                    {errors.end_num && <FormHelperText className="message error">{errors.end_num}</FormHelperText>}
                   </div>
-                  {state_num === 3 &&
-                    <div className="form-group col-6">
-                      <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
-                        <DatePicker 
-                          className="date-picker"
-                          name="end_num"
-                          cancelLabel="Annulla"
-                          leftArrowIcon={icon.chevronLeft()}
-                          rightArrowIcon={icon.chevronRight()}
-                          format="D MMMM YYYY"
-                          minDate={new Date(start_num)}
-                          minDateMessage="Data non valida"
-                          maxDate={new Date()}
-                          maxDateMessage="Data futura non valida"
-                          label="Data di fine"
-                          value={end_num ? new Date(end_num) : null}
-                          onChange={this.onChangeDate("end_num")}
-                          margin="normal"
-                          animateYearScrolling
-                          todayLabel="Oggi"
-                          showTodayButton
-                          fullWidth
-                          disabled={state_num !== 3}
-                        />
-                      </MuiPickersUtilsProvider>
-                    </div>
-                  }
-                </div>
-                {state_num === 2 &&
-                  <Stepper 
-                    percent={progress_num} 
-                    onPrev={this.onPrev} 
-                    onNext={this.onNext} 
-                    steps={steps}
-                    className="form-control" 
-                  />
                 }
-              </>
-            }
-          </div>
-          <div className="footer no-gutter">
-            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva le modifiche</button>
-          </div>
+              </div>
+              {state_num === 2 &&
+                <Stepper
+                  value={progress_num} 
+                  onPrev={onPrev} 
+                  onNext={onNext}
+                  max={pages}
+                  steps={steps}
+                  className="form-control" 
+                />
+              }
+            </>
+          }
         </div>
-      </>
-		);
-	}
+        <div className="footer no-gutter">
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
+        </div>
+      </div>
+    </>
+  );
 }
+
+ReadingStateForm.propTypes = {
+  bid: stringType.isRequired,
+  onToggle: funcType.isRequired,
+  openSnackbar: funcType.isRequired,
+  pages: numberType,
+  readingState: shapeType({
+    state_num: numberType.isRequired,
+    start_num: numberType,
+    end_num: numberType,
+    progress_num: numberType
+  }).isRequired
+}
+
+ReadingStateForm.defaultProps = {
+  pages: null
+}
+ 
+export default ReadingStateForm;

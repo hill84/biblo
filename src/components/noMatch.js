@@ -1,13 +1,13 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { app } from '../config/shared';
-import { funcType, locationType, shapeType, stringType } from '../config/types';
+import { historyType, locationType, stringType } from '../config/types';
 import RandomQuote from './randomQuote';
 
 const NoMatch = props => {
-  const goBack = () => props.history.goBack();
+  const { history, imgUrl, location, title } = props;
 
-  const { imgUrl, location, title } = props;
+  const goBack = () => history.goBack();
 
   return (
     <div className="container empty" id="noMatchComponent">
@@ -32,9 +32,7 @@ const NoMatch = props => {
 }
 
 NoMatch.propTypes = {
-  history: shapeType({
-    goBack: funcType.isRequired
-  }).isRequired,
+  history: historyType.isRequired,
   imgUrl: stringType,
   location: locationType,
   title: stringType,

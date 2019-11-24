@@ -1,0 +1,21 @@
+#BookProfile { position: relative; z-index: 1; }
+#BookProfile .card .book { margin-bottom: 10px; }
+#BookProfile .own.review .row { opacity: .3; transition: all .4s ease-in-out; }
+#BookProfile .own.review:hover .row { opacity: 1; }
+#BookProfile .book-profile .rating { display: flex; align-items: center; }
+#BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; }
+
+@media ( max-width: 768px ) {
+  #BookProfile .book-profile .rating { display: block; }
+  /* #BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; } */
+}
+
+@media ( max-width: 420px ) {
+  #BookProfile .book-profile .user.rating .react-rater { font-size: 2.3rem; line-height: inherit; }
+  #BookProfile .book-profile .user.rating .label { display: none; }
+}
+
+@media ( pointer: coarse ) {
+  #BookProfile .book-profile .user.rating .react-rater { font-size: 2.3rem; }
+  #BookProfile .book-profile .user.rating .label { display: none; }
+}

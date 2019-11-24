@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';

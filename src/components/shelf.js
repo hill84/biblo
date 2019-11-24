@@ -1,3 +1,4 @@
+import { Tooltip } from '@material-ui/core';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -6,8 +7,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import icon from '../config/icons';
+import { userBookTypes } from '../config/lists';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
-import { funcType, /* numberType, */ stringType } from '../config/types';
+import { funcType, stringType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -18,7 +20,7 @@ export default class Shelf extends Component {
     uid: this.props.uid,
     coverview: true,
     desc: true,
-    filterBy: [ 'Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consulatazione'],
+    filterBy: userBookTypes,
     filterByIndex: 0,
     filterMenuAnchorEl: null,
     isOwner: this.props.luid === this.props.uid,
@@ -40,7 +42,6 @@ export default class Shelf extends Component {
   }
 
   static propTypes = {
-    // limit: numberType,
     openSnackbar: funcType.isRequired,
     shelf: stringType,
     luid: stringType,
@@ -48,7 +49,6 @@ export default class Shelf extends Component {
   }
 
   static defaultProps = {
-    // limit: null,
     shelf: null,
     luid: null
   }
@@ -66,8 +66,8 @@ export default class Shelf extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { /* coverview,  */desc, filterByIndex, limit, luid, orderByIndex, uid } = this.state;
-    if (/* coverview !== prevState.coverview ||  */desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
+    const { desc, filterByIndex, limit, luid, orderByIndex, uid } = this.state;
+    if (desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
       this.fetchUserBooks();
     } else if (!luid && (luid !== prevState.luid)) {
       if (this._isMounted) {
@@ -165,24 +165,29 @@ export default class Shelf extends Component {
 
   onChangeFilterBy = (e, i) => this._isMounted && this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
 
-  onChangeSelect = key => e => {
+  onChangeSelect = name => e => {
+    const { value } = e.target;
+    
     if (this._isMounted) {
       this.setState(prevState => ({ 
         // success: false, changes: true, 
-        user: { ...prevState.user, [key]: e.target.value },
-        errors: { ...prevState.errors, [key]: null } 
+        user: { ...prevState.user, [name]: value },
+        errors: { ...prevState.errors, [name]: null } 
       }));
     }
 	};
 
   onToggleDesc = () => this._isMounted && this.setState(prevState => ({ desc: !prevState.desc }));
 
-  onToggleView = () => this._isMounted && this.setState(prevState => ({ coverview: !prevState.coverview/* , limit: !prevState.coverview ? booksPerRow() * 2 - 1 : 10 */ }));
+  onToggleView = () => this._isMounted && this.setState(prevState => ({ coverview: !prevState.coverview }));
 
   onOpenOrderMenu = e => this._isMounted && this.setState({ orderMenuAnchorEl: e.currentTarget });
   onCloseOrderMenu = () => this._isMounted && this.setState({ orderMenuAnchorEl: null });
 
-  onOpenFilterMenu = e => this._isMounted && this.setState({ filterMenuAnchorEl: e.currentTarget });
+  onOpenFilterMenu = e => {
+    e.persist();
+    if (this._isMounted) this.setState({ filterMenuAnchorEl: e.currentTarget });
+  }
   onCloseFilterMenu = () => this._isMounted && this.setState({ filterMenuAnchorEl: null });
 
   render() {
@@ -267,14 +272,17 @@ export default class Shelf extends Component {
                     onClose={this.onCloseOrderMenu}>
                     {orderByOptions}
                   </Menu>
-                  <button 
-                    type="button"
-                    className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} 
-                    title={desc ? 'Ascendente' : 'Discendente'} 
-                    onClick={this.onToggleDesc} 
-                    disabled={count < 2}>
-                    {icon.arrowDown()}
-                  </button>
+                  <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                    <span>
+                      <button
+                        type="button"
+                        className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`}
+                        onClick={this.onToggleDesc}
+                        disabled={count < 2}>
+                        {icon.arrowDown()}
+                      </button>
+                    </span>
+                  </Tooltip>
                 </div>
               </div>
             </div>

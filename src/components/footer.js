@@ -1,13 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { app } from '../config/shared';
+import '../css/footer.css';
 
-const Footer = () => (
-  <footer>
-    <div className="footer dark" id="FooterComponent">
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="bottom-bar dark">
       <div className="container bottompend pad-v-xs">
         <div className="row">
-          <div className="col hide-md"><p>© {app.name} 2018</p></div>
+          <div className="col hide-md"><p>© {app.name} {currentYear}</p></div>
           <div className="col-md-auto col-12 text-center-md text-right">
             <ul className="nolist inline-items info-row">
               <li className="counter"><Link to="/about">Chi siamo</Link></li>
@@ -19,8 +22,8 @@ const Footer = () => (
           </div>
         </div>
       </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+}
 
 export default Footer;

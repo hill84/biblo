@@ -1,4 +1,3 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -10,7 +9,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
-import { funcType } from '../../../config/types';
+import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -37,23 +36,27 @@ export default class QuotesDash extends Component {
     orderByIndex: 0,
     page: 1,
     selectedId: null,
-    loading: true
+    loading: false
 	}
 
 	static propTypes = {
+    inView: boolType.isRequired,
     onToggleDialog: funcType.isRequired,
     openSnackbar: funcType.isRequired
   }
 
 	componentDidMount() { 
     this._isMounted = true;
-    this.fetch();
+    if (this.props.inView) this.fetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
-    const { desc, limitByIndex, orderByIndex } = this.state;
+    const { desc, items, limitByIndex, orderByIndex } = this.state;
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-      this.fetch();
+      if (this.props.inView) this.fetch();
+    }
+    if (this.props.inView !== prevProps.inView && !items) {
+      if (this.props.inView) this.fetch();
     }
   }
 
@@ -71,9 +74,7 @@ export default class QuotesDash extends Component {
     const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
     const dRef = direction ? paginatedRef : ref;
 
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    if (this._isMounted) this.setState({ loading: true });
 
     const fetcher = () => {
       this.unsubQuotesFetch = dRef.onSnapshot(snap => {
@@ -149,8 +150,33 @@ export default class QuotesDash extends Component {
     const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
 
-    const itemsList = (items && items.length &&
-      items.map(item => 
+    if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
+
+    const orderByOptions = orderBy.map((option, index) => (
+      <MenuItem
+        key={option.type}
+        disabled={index === -1}
+        selected={index === orderByIndex}
+        onClick={event => this.onChangeOrderBy(event, index)}>
+        {option.label}
+      </MenuItem>
+    ));
+
+    const limitByOptions = limitBy.map((option, index) => (
+      <MenuItem
+        key={option}
+        disabled={index === -1}
+        selected={index === limitByIndex}
+        onClick={event => this.onChangeLimitBy(event, index)}>
+        {option}
+      </MenuItem>
+    ));
+
+    const limit = limitBy[limitByIndex];
+    const skeletons = [...Array(limit)].map((e, i) => <li key={i} className="avatar-row skltn dash" />);
+
+    const itemsList = loading ? skeletons : !items ? <li className="empty text-center">Nessun elemento</li> : (
+      items.map(item => (
         <li key={item.qid} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
@@ -180,89 +206,60 @@ export default class QuotesDash extends Component {
             </div>
           </div>
         </li>
-      )
+      ))
     );
 
-    const orderByOptions = orderBy.map((option, index) => (
-      <MenuItem
-        key={option.type}
-        disabled={index === -1}
-        selected={index === orderByIndex}
-        onClick={event => this.onChangeOrderBy(event, index)}>
-        {option.label}
-      </MenuItem>
-    ));
-
-    const limitByOptions = limitBy.map((option, index) => (
-      <MenuItem
-        key={option}
-        disabled={index === -1}
-        selected={index === limitByIndex}
-        onClick={event => this.onChangeLimitBy(event, index)}>
-        {option}
-      </MenuItem>
-    ));
-
-    if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
-
 		return (
-			<div className="container" id="quotesDashComponent">
-        <div className="card dark" style={{ minHeight: 200, }}>
-          <div className="head nav">
-            <div className="row">
-              <div className="col">
-                <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
-                <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
-                <Menu 
-                  className="dropdown-menu"
-                  anchorEl={limitMenuAnchorEl} 
-                  open={Boolean(limitMenuAnchorEl)} 
-                  onClose={this.onCloseLimitMenu}>
-                  {limitByOptions}
-                </Menu>
-              </div>
-              <div className="col-auto">
-                <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                <button type="button" className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
-                <Menu 
-                  className="dropdown-menu"
-                  anchorEl={orderMenuAnchorEl} 
-                  open={Boolean(orderMenuAnchorEl)} 
-                  onClose={this.onCloseOrderMenu}>
-                  {orderByOptions}
-                </Menu>
-              </div>
+			<>
+        <div className="head nav">
+          <div className="row">
+            <div className="col">
+              <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
+              <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limit} <span className="hide-xs">per pagina</span></button>
+              <Menu 
+                className="dropdown-menu"
+                anchorEl={limitMenuAnchorEl} 
+                open={Boolean(limitMenuAnchorEl)} 
+                onClose={this.onCloseLimitMenu}>
+                {limitByOptions}
+              </Menu>
+            </div>
+            <div className="col-auto">
+              <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <Menu 
+                className="dropdown-menu"
+                anchorEl={orderMenuAnchorEl} 
+                open={Boolean(orderMenuAnchorEl)} 
+                onClose={this.onCloseOrderMenu}>
+                {orderByOptions}
+              </Menu>
             </div>
           </div>
-          {loading ? 
-            <div aria-hidden="true" className="loader"><CircularProgress /></div> 
-          : !items ? 
-            <div className="empty text-center">Nessun elemento</div>
-          :
-            <>
-              <ul className="table dense nolist font-sm">
-                <li className="labels">
-                  <div className="row">
-                    <div className="col-auto"><div className="mock-cover xs hidden" title="cover" /></div>
-                    <div className="col">Libro</div>
-                    <div className="col">Autore</div>
-                    <div className="col-5 hide-sm">Testo</div>
-                    <div className="col hide-sm">Qid</div>
-                    <div className="col hide-sm">Modificato da</div>
-                    <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
-                  </div>
-                </li>
-                {itemsList}
-              </ul>
-              <PaginationControls 
-                count={count} 
-                fetch={this.fetch}
-                limit={limitBy[limitByIndex]}
-                page={page}
-              />
-            </>
-          }
         </div>
+
+        <ul className="table dense nolist font-sm">
+          <li className="labels">
+            <div className="row">
+              <div className="col-auto"><div className="mock-cover xs hidden" title="cover" /></div>
+              <div className="col">Libro</div>
+              <div className="col">Autore</div>
+              <div className="col-5 hide-sm">Testo</div>
+              <div className="col hide-sm">Qid</div>
+              <div className="col hide-sm">Modificato da</div>
+              <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
+            </div>
+          </li>
+          {itemsList}
+        </ul>
+        
+        <PaginationControls 
+          count={count} 
+          fetch={this.fetch}
+          forceVisibility
+          limit={limit}
+          page={page}
+        />
 
         <Dialog
           open={isOpenDeleteDialog}
@@ -276,7 +273,7 @@ export default class QuotesDash extends Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
-			</div>
+			</>
 		);
 	}
 }

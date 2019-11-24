@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { noteTypes } from './lists'
 
 const { array, arrayOf, bool, func, shape, number, object, objectOf, oneOf, oneOfType, string } = PropTypes;
 
@@ -230,8 +231,20 @@ export const noteType = shape({
   createdBy: string.isRequired,
   createdByUid: string.isRequired,
   photoURL: string,
-  tag: arrayOf(_oneOf(['welcome', 'follow', 'like', 'test'])).isRequired,
-  read: bool.isRequired
+  tag: arrayOf(_oneOf(noteTypes)), // .isRequired,
+  read: bool.isRequired,
+  uid: string
+});
+
+export const collectionType = shape({
+  books_num: number.isRequired,
+  description: string.isRequired,
+  edit: bool.isRequired,
+  genres: arrayOf(string.isRequired).isRequired,
+  lastEdit_num: number,
+  lastEditBy: string,
+  lastEditByUid: string,
+  title: string.isRequired
 });
 
 export const refType = PropTypes.oneOfType([PropTypes.func, PropTypes.object]);

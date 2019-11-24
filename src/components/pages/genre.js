@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -258,7 +258,7 @@ export default class Genre extends Component {
           <Genres scrollable={isScrollable} />
           {genre && genre.description && 
             <div className="info-row text" style={{ marginTop: '.5rem', }}>
-              <MinifiableText text={genre.description} maxChars={isTextMinified ? 300 : 500} textMinified={isTextMinified} />
+              <MinifiableText text={genre.description} maxChars={isTextMinified ? 300 : 500} defaultMinified={isTextMinified} />
             </div>
           }
           {isAuthenticated() && 

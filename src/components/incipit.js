@@ -1,28 +1,38 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SayButton } from 'react-say';
 import icon from '../config/icons';
 import { funcType, stringType } from '../config/types';
 import Overlay from './overlay';
+import { incipitKey } from '../config/storage';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const Incipit = props => {
-  const [state, setState] = useState({ big: false, dark: false });
+  const [big, setBig] = useLocalStorage(incipitKey.fontBig, false);
+  const [dark, setDark] = useLocalStorage(incipitKey.themeDark, false);
   
-  const onToggle = () => props.onToggle();
-  const onToggleDarkTheme = () => setState({ ...state, dark: !state.dark });
-  const onToggleSize = () => setState({ ...state, big: !state.big });
+  const is = useRef(true);
+  const onToggleDarkTheme = () => {
+    if (is.current) setDark(!dark);
+  };
+  const onToggleSize = () => {
+    if (is.current) setBig(!big);
+  };
 
-  const { big, dark } = state;
-  const { copyrightHolder, incipit, publication, title } = props;
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  const { copyrightHolder, incipit, onToggle, publication, title } = props;
 
   return (
     <>
-      <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${dark ? 'dark' : 'light'}`}>
+      <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${dark ? 'dark' : 'light'}`} ref={is}>
         <div className="absolute-content">
           <div role="navigation" className="head nav row">
             <strong className="col title">{title}</strong>
             <div className="col-auto btn-row">
-              <SayButton speak={incipit}>
+              <SayButton text={incipit}>
                 <Tooltip title="Ascolta" placement="bottom">
                   <div className="btn rounded icon flat audio">
                     {icon.voice()}

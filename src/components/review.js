@@ -72,7 +72,7 @@ export default class Review extends Component {
         // console.log(`User likes increased to ${likes.length}`);
 
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-        const noteMsg = `<a href="/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 30)}</a>`;
+        const noteMsg = `<a href="/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 35)}</a>`;
         const newNoteRef = notesRef(review.createdByUid).doc();
         newNoteRef.set({
           nid: newNoteRef.id,
@@ -82,7 +82,8 @@ export default class Review extends Component {
           createdByUid: user.uid,
           photoURL: user.photoURL,
           tag: ['like'],
-          read: false
+          read: false,
+          uid: review.createdByUid
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }

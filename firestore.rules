@@ -29,11 +29,11 @@ service cloud.firestore {
     match /notifications/{uid} {
     	allow read;
       allow write: if isEditor();
-      
-      match /notes/{nid} {
-      	allow read;
-        allow write: if isEditor();
-      }
+    }
+
+    match /{path=**}/notes/{uid} {
+      allow read;
+      allow write: if isEditor();
     }
 
     match /followers/{uid} {
@@ -76,6 +76,7 @@ service cloud.firestore {
       allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
     }
 
+    // DEPRECATED
     match /feeds/latestReviews {
     	allow read;
       allow write: if isEditor();

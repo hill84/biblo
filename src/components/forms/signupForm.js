@@ -167,8 +167,7 @@ export default class SignupForm extends Component {
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         <FormControlLabel 
           className="text-left" 
-          style={{ marginRight: 0, }} 
-          error={Boolean(errors.checkedTerms)}
+          style={{ marginRight: 0, }}
           required
           label={
           <span style={{ fontSize: '.87rem', }}>Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}</span>
@@ -244,7 +243,6 @@ export default class SignupForm extends Component {
             <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Registrati</button>
           </div>
         </form>
-      
 			</>
 		);
 	}

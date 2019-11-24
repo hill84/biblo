@@ -1,9 +1,13 @@
 
+import { Tooltip } from '@material-ui/core';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
+import { genres } from '../../config/lists';
 import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
 import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import BookCollection from '../bookCollection';
@@ -16,6 +20,9 @@ export default class Collection extends Component {
     cid: this.props.match.params.cid,
     collection: null,
     collections: null,
+    desc: false,
+    filterByName: null,
+    filterMenuAnchorEl: null,
     followers: null,
     follow: false,
     loading: true,
@@ -52,8 +59,9 @@ export default class Collection extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { filterByName, cid, desc } = this.state;
     if (this._isMounted) {
-      if (this.state.cid !== prevState.cid || this.props.user !== prevProps.user) {
+      if (filterByName !== prevState.filterByName || cid !== prevState.cid || desc !== prevState.desc || this.props.user !== prevProps.user) {
         this.fetch();
       }
     }
@@ -68,7 +76,7 @@ export default class Collection extends Component {
   updateScreenSize = () => this.setState({ screenSize: screenSize() });
 
   fetch = () => {
-    const { cid } = this.state;
+    const { cid, desc, filterByName } = this.state;
     const { openSnackbar, user } = this.props;
 
     collectionRef(denormURL(cid)).get().then(snap => {
@@ -95,7 +103,10 @@ export default class Collection extends Component {
       }
     }).catch(err => this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error')));
 
-    collectionsRef.get().then(snap => {
+    const filter = filterByName && genres.filter(item => item.name === filterByName)[0].name;
+    const fRef = filterByName ? collectionsRef.where('genres', 'array-contains', filter) : collectionsRef;
+
+    fRef.orderBy('title', desc ? 'desc' : 'asc').get().then(snap => {
       if (!snap.empty) {
         const collections = [];
         snap.forEach(collection => collection.id !== (denormURL(cid)) && collections.push(collection.data()));
@@ -124,15 +135,42 @@ export default class Collection extends Component {
     }
   }
 
+  onToggleDesc = () => {
+    if (this._isMounted) this.setState(prevState => ({ desc: !prevState.desc  }));
+  }
+
+  onChangeFilterBy = (e, option) => {
+    if (this._isMounted) this.setState({ filterByName: option, filterMenuAnchorEl: null });
+  }
+  onOpenFilterMenu = e => {
+    e.persist();
+    if (this._isMounted) this.setState({ filterMenuAnchorEl: e.currentTarget });
+  }
+  onCloseFilterMenu = () => {
+    if (this._isMounted) this.setState({ filterMenuAnchorEl: null });
+  }
+  onResetFilters = () => {
+    if (this._isMounted) this.setState({ filterByName: null, filterMenuAnchorEl: null });
+  }
+
   render() {
-    const { cid, collection, collections, followers, follow, loading, loadingCollections, screenSize } = this.state;
+    const { cid, collection, collections, desc, filterByName, filterMenuAnchorEl, followers, follow, loading, loadingCollections, screenSize } = this.state;
     const { history, location, openSnackbar, user } = this.props;
 
     const isScrollable = isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
-    const isTextMinified = screenSize === 'xs' || screenSize === 'sm' || screenSize === 'md';
+    
     const isEditor = hasRole(user, 'editor');
 
-    if (!collection && !loading) {
+    const filterByOptions = genres.map(option => (
+      <MenuItem
+        key={option.id}
+        selected={option.name === filterByName}
+        onClick={e => this.onChangeFilterBy(e, option.name)}>
+        {option.name}
+      </MenuItem>
+    ));
+
+    if (!loading && !collection) {
       return <NoMatch title="Collezione non trovata" history={history} location={location} />
     }
 
@@ -145,14 +183,12 @@ export default class Collection extends Component {
         </Helmet>
         <div className="row">
           <div className="col">
-            <div className="sticky no-sticky-md">
-              
               <div className="card dark collection-profile">
                 <h2>{denormURL(cid)}</h2>
                 {loading ? <div className="skltn rows" /> : 
                   <>
                     <div className="info-row description">
-                      <MinifiableText text={collection.description} maxChars={700} textMinified={isTextMinified} />
+                      <MinifiableText text={collection.description} maxChars={500} />
                     </div>
                     <div className="info-row">
                       <button 
@@ -176,16 +212,56 @@ export default class Collection extends Component {
               </div>
               
               <div className="card dark text-left">
-                <h2>Altre collezioni</h2>
-                <div className={`badges ${isScrollable ? 'scrollable' : 'fullview'}`}>
+                <div className="head nav" role="navigation">
+                  <span className="counter last title">Altre collezioni</span>
+                  <div className="pull-right">
+                    {filterByName &&
+                    <Tooltip title="Resetta i filtri">
+                      <button
+                        type="button"
+                        className="btn icon sm flat rounded counter"
+                        onClick={this.onResetFilters}>
+                        {icon.close()}
+                      </button>
+                    </Tooltip>
+                    }
+                    <button 
+                      type="button"
+                      className="btn sm flat rounded counter"
+                      onClick={this.onOpenFilterMenu}>
+                      {filterByName || 'Filtra per genere'}
+                    </button>
+                    <Menu 
+                      className="dropdown-menu"
+                      anchorEl={filterMenuAnchorEl} 
+                      open={Boolean(filterMenuAnchorEl)} 
+                      onClose={this.onCloseFilterMenu}>
+                      {filterByOptions}
+                    </Menu>
+                    <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                      <button
+                        type="button"
+                        className={`btn sm icon flat rounded counter ${desc ? 'desc' : 'asc'}`}
+                        onClick={this.onToggleDesc}>
+                        {icon.arrowDown()}
+                      </button>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className={`badges table ${isScrollable ? 'scrollable' : 'fullview'} ${filterByName ? 'stacked' : ''}`}>
                   <div className="content">
-                    {loadingCollections ? <div className="skltn rows" /> : collections.map(collection => 
+                    {loadingCollections ? <div className="skltn rows" /> : collections ? collections.map(collection => 
                       <Link 
                         to={`/collection/${normURL(collection.title)}`} 
                         key={normalizeString(collection.title)} 
                         className="badge">
-                        {collection.title}
+                        {collection.title}{filterByName && <span className="pull-right">{collection.books_num} libri</span>}
                       </Link>
+                    ) : (
+                      <div className="empty text-center">
+                        <div className="counter last">Nessuna collezione</div>
+                        <button type="button" className="btn rounded flat" onClick={this.onResetFilters}>Resetta i filtri</button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -196,8 +272,6 @@ export default class Collection extends Component {
                 <li className="counter"><Link to="/genres">Generi</Link></li>
                 <li className="counter"><Link to="/authors">Autori</Link></li>
               </ul>
-              
-            </div>
           </div>
           <div className="col-md-6">
             <div className="card light">

@@ -1,9 +1,10 @@
+import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -139,7 +140,17 @@ export default class AuthorsPage extends Component {
                   </div>
                   <div className="col-auto">
                     <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                    <button type="button" className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                    <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                      <span>
+                        <button
+                          type="button"
+                          className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`}
+                          onClick={this.onToggleDesc}
+                          disabled={count < 2}>
+                          {icon.arrowDown()}
+                        </button>
+                      </span>
+                    </Tooltip>
                     <Menu 
                       className="dropdown-menu"
                       anchorEl={orderMenuAnchorEl} 

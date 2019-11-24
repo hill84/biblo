@@ -5,7 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
@@ -19,6 +19,7 @@ import NoMatch from '../noMatch';
 import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
+import '../../css/dashboard.css';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
@@ -145,9 +146,7 @@ export default class Dashboard extends Component {
   }
   
   updateScreenSize = () => {
-    if (this._isMounted) {
-      this.setState({ screenSize: screenSize() });
-    };
+    if (this._isMounted) this.setState({ screenSize: screenSize() });
   }
     
   fetchUser = () => {
@@ -292,7 +291,8 @@ export default class Dashboard extends Component {
             createdByUid: luid,
             photoURL: user.photoURL,
             tag: ['follow'],
-            read: false
+            read: false,
+            uid: fuid
           }).catch(err => console.warn(err));
         }
         // VISITOR

@@ -1,0 +1,15 @@
+.social-auth > [ class*='col-' ] { padding-left: 4px; padding-right: 4px; }
+.social-auth > [ class*='col-' ]:first-child { padding-left: 7px; }
+.social-auth > [ class*='col-' ]:last-child { padding-right: 7px; }
+.social-auth button { 
+  float: left; 
+  width: 100%; 
+  margin: 3px 0; 
+  text-transform: initial; 
+  font-size: .85rem; 
+  letter-spacing: .03rem; 
+}
+.social-auth button:disabled {
+  cursor: not-allowed;
+  opacity: .7;
+}

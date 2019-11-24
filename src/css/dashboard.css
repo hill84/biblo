@@ -1,0 +1,56 @@
+/* BASIC PROFILE */
+.basic-profile .avatar { 
+  margin-left: auto; 
+  margin-right: auto; 
+  margin-bottom: 10px;
+  width: var(--avatarSize);
+  height: var(--avatarSize);
+  transition: all .2s ease-in-out;
+}
+.basic-profile .avatar .thumb { 
+  width: 100%;
+  min-height: 100%;
+  border-radius: 99px; 
+}
+
+/* CONTACTS */
+.contacts-tab-col { overflow: auto; }
+.contacts-tab-col:before, .contacts-tab-col:after {
+  --faderHeight: 14px;
+  content: '';
+  display: block;
+  position: sticky;
+  left: 0;
+  width: 100%;
+  height: var(--faderHeight);
+  transition: all 4s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+.contacts-tab-col:after {
+  top: calc(100% - var(--faderHeight));
+  bottom: -1px;
+  background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardBg)) 90%);
+  margin-top: calc(-1 * var(--faderHeight));
+}
+.contacts-tab-col:before {
+  top: 0;
+  background: linear-gradient(to top, transparent 0%,rgb(var(--cardBg)) 90%);
+  margin-bottom: calc(-1 * var(--faderHeight));
+}
+.contacts-tab .avatar-row { 
+  margin-bottom: 0; 
+  padding-top: .4rem; 
+  padding-bottom: .4rem; 
+  border-bottom: 1px solid rgba(0, 0, 0, .1); 
+}
+.contacts-tab .avatar-row:last-child { border-bottom: 0; }
+.contacts-tab .avatar-row .avatar { float: left; margin-right: 14px; will-change: opacity; animation: fadeIn .3s ease-in-out; }
+.contacts-tab .avatar-row .btn { position: relative; margin-left: 2px; margin-right: 2px; }
+.contacts-tab .avatar-row .col-auto { min-width: 105px; text-align: right; }
+.contacts-tab .avatar-row .timestamp { 
+  position: absolute; 
+  right: 14px; 
+  color: var(--lightTextClr);
+  font-size: 85%;
+}

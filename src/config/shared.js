@@ -62,17 +62,6 @@ export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
 
 export const hasRole = (user, role) => user && user.roles && user.roles[role] === true;
 
-export const isLocalStorage = () => {
-  const test = 'test';
-  try {
-    localStorage.setItem(test, test);
-    localStorage.removeItem(test);
-    return true;
-  } catch(e) {
-    return false;
-  }
-}
-
 export const asyncForEach = async (array, callback) => {
   const results = [];
   for (let i = 0; i < array.length; i++) {

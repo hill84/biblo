@@ -1,3 +1,4 @@
+import './css/snackbar.css';
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -20,38 +21,17 @@ const isLocalhost = Boolean(
     )
 );
 
-export function register(config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-    // The URL constructor is available in all browsers that support SW.
-    const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
-    if (publicUrl.origin !== window.location.origin) {
-      // Our service worker won't work if PUBLIC_URL is on a different origin
-      // from what our page is served on. This might happen if a CDN is used to
-      // serve assets; see https://github.com/facebook/create-react-app/issues/2374
-      return;
-    }
-
-    window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
-
-      if (isLocalhost) {
-        // This is running on localhost. Let's check if a service worker still exists or not.
-        checkValidServiceWorker(swUrl, config);
-
-        // Add some additional logging to localhost, pointing developers to the
-        // service worker/PWA documentation.
-        navigator.serviceWorker.ready.then(() => {
-          console.log(
-            'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit http://bit.ly/CRA-PWA'
-          );
-        });
-      } else {
-        // Is not localhost. Just register service worker
-        registerValidSW(swUrl, config);
-      }
-    });
-  }
+function displayUpdateNotification() {
+  const link = document.createElement('a');
+  
+  link.classList.add('snackbar', 'update-notification');
+  link.setAttribute('href', '#');
+  link.innerHTML = '<span class="snackbar-message">🚀 Nuova versione disponibile</span><span class="snackbar-action"><button type="button" class="btn flat sm">Installa</button></span>';
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    window.location.reload();
+  });
+  document.querySelector('body').appendChild(link);
 }
 
 function registerValidSW(swUrl, config) {
@@ -127,23 +107,44 @@ function checkValidServiceWorker(swUrl, config) {
     });
 }
 
+export function register(config) {
+  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+    // The URL constructor is available in all browsers that support SW.
+    const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
+    if (publicUrl.origin !== window.location.origin) {
+      // Our service worker won't work if PUBLIC_URL is on a different origin
+      // from what our page is served on. This might happen if a CDN is used to
+      // serve assets; see https://github.com/facebook/create-react-app/issues/2374
+      return;
+    }
+
+    window.addEventListener('load', () => {
+      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+
+      if (isLocalhost) {
+        // This is running on localhost. Let's check if a service worker still exists or not.
+        checkValidServiceWorker(swUrl, config);
+
+        // Add some additional logging to localhost, pointing developers to the
+        // service worker/PWA documentation.
+        navigator.serviceWorker.ready.then(() => {
+          console.log(
+            'This web app is being served cache-first by a service ' +
+              'worker. To learn more, visit http://bit.ly/CRA-PWA'
+          );
+        });
+      } else {
+        // Is not localhost. Just register service worker
+        registerValidSW(swUrl, config);
+      }
+    });
+  }
+}
+
 export function unregister() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready.then(registration => {
       registration.unregister();
     });
   }
-}
-
-function displayUpdateNotification() {
-  const link = document.createElement('a');
-  
-  link.classList.add('snackbar', 'update-notification');
-  link.setAttribute('href', '#');
-  link.innerHTML = '<span class="snackbar-message">🚀 Nuova versione disponibile</span><span class="snackbar-action"><button type="button" class="btn flat sm">Installa</button></span>';
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    window.location.reload();
-  });
-  document.querySelector('body').appendChild(link);
 }

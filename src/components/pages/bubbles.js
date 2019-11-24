@@ -10,25 +10,22 @@ const Bubbles = props => {
   const text = count && <><b>{abbrNum(count)}</b> <span className="light-text">{props.label}</span></>;
 
   return (
-    <>
-      {/* items ? abbrNum(count) : 0} {props.isScrollable ? icon.account() : props.label */}
-      {props.items ? count > 2 && count < 100 ? 
-        <>
-          <div className="bubble-group inline">
-            {props.items.slice(0, props.limit).map(item => (
-              <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
-                <Tooltip title={item.displayName} placement="bottom">
-                  <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
-                    {!item.photoURL && getInitials(item.displayName)}
-                  </Avatar>
-                </Tooltip>
-              </Link>
-            ))}
-          </div>
-          {text}
-        </>
-      : text : ''}
-    </>
+    props.items ? count > 2 && count < 100 ? (
+      <>
+        <div className="bubble-group inline">
+          {props.items.slice(0, props.limit).map(item => (
+            <Link to={`/dashboard/${item.uid}`} key={item.displayName} className="bubble">
+              <Tooltip title={item.displayName} placement="bottom">
+                <Avatar className="avatar" src={item.photoURL} alt={item.displayName}>
+                  {!item.photoURL && getInitials(item.displayName)}
+                </Avatar>
+              </Tooltip>
+            </Link>
+          ))}
+        </div>
+        {text}
+      </>
+    ) : text : ''
   );
 }
 

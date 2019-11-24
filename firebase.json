@@ -10,34 +10,32 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "headers": [
-      {
-        "source": "**/*.@(eot|otf|ttf|ttc|woff|font.css)",
-        "headers": [ {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        } ]
-      },
-      { "source":"/service-worker.js", "headers": [{"key": "Cache-Control", "value": "no-cache"}] }
-    ],
-    "redirects": [
-      {
-        "source": "/sitemap",
-        "destination": "/sitemap.xml",
-        "type": 301
-      },
-      {
-        "source": "/sitemap/**",
-        "destination": "/sitemap.xml",
-        "type": 302
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    "headers": [{
+      "source": "**/*.@(eot|otf|ttf|ttc|woff|font.css)",
+      "headers": [{
+        "key": "Access-Control-Allow-Origin",
+        "value": "*"
+      }]
+    }, { 
+      "source": "/service-worker.js",
+      "headers": [{
+        "key": "Cache-Control",
+        "value": "max-age=0"
+      }]
+    }],
+    "redirects": [{
+      "source": "/sitemap",
+      "destination": "/sitemap.xml",
+      "type": 301
+    }, {
+      "source": "/sitemap/**",
+      "destination": "/sitemap.xml",
+      "type": 302
+    }],
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }]
   },
   "storage": {
     "rules": "storage.rules"

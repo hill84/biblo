@@ -21,8 +21,9 @@ import Incipit from '../incipit';
 import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
-import ShareButtons from '../share-buttons';
+import ShareButtons from '../shareButtons';
 import UserReview from '../userReview';
+import '../../css/bookProfile.css';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -200,7 +201,7 @@ export default class BookProfile extends Component {
           />
         }
       
-        <div id="BookProfileComponent">
+        <div id="BookProfile">
           <div className="content-background">
             <div className="bg" style={{ backgroundImage: `url(${book.covers[0]})`, }} />
           </div>
@@ -210,7 +211,8 @@ export default class BookProfile extends Component {
               bid={book.bid} 
               readingState={userBook.readingState} 
               onToggle={this.onToggleReadingState} 
-              openSnackbar={openSnackbar} 
+              openSnackbar={openSnackbar}
+              pages={book.pages_num}
             />
           }
 
@@ -233,9 +235,7 @@ export default class BookProfile extends Component {
                     className="btn-share-container"
                     hashtags={['biblo', 'libri', 'twittalibro']}
                     cover={book.covers && book.covers[0]}
-                    text={
-                      `${userBook.bookInShelf ? 'Ho aggiunto alla mia libreria 📚' : userBook.bookInWishlist ? 'Ho aggiunto alla mia lista dei desideri ♥️' : 'Consiglio'} il libro "${book.title}" di ${Object.keys(book.authors)[0]}. Leggi un estratto su ${app.name}.`
-                    }
+                    text={`${userBook.bookInShelf ? 'Ho aggiunto alla mia libreria' : userBook.bookInWishlist ? 'Ho aggiunto alla mia lista dei desideri' : 'Consiglio'} il libro "${book.title}" di ${Object.keys(book.authors)[0]}. Leggi un estratto su ${app.name}.`}
                     url={`${app.url}${location.pathname}`}
                     via="BibloSpace"
                   />
