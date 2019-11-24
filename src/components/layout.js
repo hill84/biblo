@@ -113,7 +113,7 @@ const Layout = props => {
           </Typography>
           {user ? 
             <>
-              {user.roles.admin && 
+              {user.roles.editor && 
                 <Tooltip title="Aggiungi libro" placement="bottom">
                   <IconButton
                     className="search-btn popIn reveal hide-xs"

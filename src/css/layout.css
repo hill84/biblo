@@ -34,7 +34,7 @@
   animation: popIn .8s ease-in-out .2s;
   animation-fill-mode: both;
 }
-.top-bar svg { --iconSize: 24px; }
+.top-bar svg.svg-icon { --iconSize: 24px; }
 .top-bar button { color: currentColor; }
 .top-bar .more-btn { margin-right: -12px; color: currentColor; padding: 7px; }
 .top-bar .drawer-btn { margin-left: -12px; color: currentColor; }
