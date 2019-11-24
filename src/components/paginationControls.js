@@ -1,6 +1,7 @@
 import React from 'react';
 import icon from '../config/icons';
 import { boolType, funcType, numberType } from '../config/types';
+import '../css/pagination.css';
 
 const PaginationControls = props => {
   const { count, fetch, forceVisibility, limit, loading, oneWay, page } = props;

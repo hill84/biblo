@@ -12,6 +12,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { authid, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { handleFirestoreError } from '../../config/shared';
+import { readingStates } from '../../config/lists';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
@@ -21,45 +22,40 @@ const ReadingStateForm = props => {
   const { bid, openSnackbar, pages, readingState } = props;
 
   const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
-  const [state_num, setState_num] = useState(readingState.state_num || 1);
+  const [state_num, setState_num] = useState(readingState.state_num);
   const [start_num, setStart_num] = useState(readingState.start_num || null);
   const [end_num, setEnd_num] = useState(readingState.end_num || null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [changes, setChanges] = useState(false);
-  const steps = 4;
+  const steps = 20;
 
   useEffect(() => {
     if (is.current) {
-      switch (state_num) {
-        case 1: setProgress_num(0); break;
-        case 2: setProgress_num(100 / steps); break;
-        case 3: 
-        case 4: 
-        case 5: setProgress_num(100); break;
-        default: break;
-      }
+      if (progress_num === 0) setState_num(1);
+      if (progress_num === 100) setState_num(3);
       setChanges(true);
     }
-  }, [state_num, steps]);
+  }, [progress_num]);
 
   useEffect(() => {
     if (is.current) {
-      if (progress_num === 0) {
-        setState_num(1);
+      if (state_num === 1) {
+        setProgress_num(0);
         setStart_num(null);
         setEnd_num(null);
       }
-      if (progress_num === (100 / steps)) {
-        setState_num(2);
+      if (state_num === 2) {
         setEnd_num(null);
+        if (progress_num === 100 || progress_num === 0) {
+          setProgress_num(100 / steps);
+        }
       }
-      if (progress_num === 100) {
-        setState_num(3);
-      }
+      if (state_num === 3) setProgress_num(100);
       setChanges(true);
     }
-  }, [progress_num, steps]);
+    // eslint-disable-next-line
+  }, [state_num]);
 
   useEffect(() => () => {
     is.current = false;
@@ -96,7 +92,6 @@ const ReadingStateForm = props => {
 
   const onSubmit = e => {
     e.preventDefault();
-    
     if (changes) {
       const errors = validate(start_num, end_num);
       if (is.current) setErrors(errors);
@@ -126,7 +121,7 @@ const ReadingStateForm = props => {
   return (
     <>
       <Overlay onClick={onToggle} />
-      <div role="dialog" aria-describedby="reading state" className="dialog light reading-state">
+      <div role="dialog" aria-describedby="reading state" className="dialog light reading-state" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         <div className="content">
           <div className="row">
@@ -137,11 +132,7 @@ const ReadingStateForm = props => {
                   id="state_num"
                   value={state_num}
                   onChange={onChangeSelect('state_num')}>
-                  <MenuItem key="rs1" value={1}>Non iniziato</MenuItem>
-                  <MenuItem key="rs2" value={2}>In lettura</MenuItem>
-                  <MenuItem key="rs3" value={3}>Finito</MenuItem>
-                  <MenuItem key="rs4" value={4}>Abbandonato</MenuItem>
-                  <MenuItem key="rs5" value={5}>Da consultazione</MenuItem>
+                  {readingStates.map((item, i) => <MenuItem key={i + 1} value={i + 1}>{item}</MenuItem>)}
                 </Select>
               </FormControl>
             </div>

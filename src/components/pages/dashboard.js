@@ -19,6 +19,7 @@ import NoMatch from '../noMatch';
 import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
+import '../../css/dashboard.css';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 

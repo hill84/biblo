@@ -266,7 +266,7 @@ export default class BooksDash extends Component {
                 onClose={this.onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
-              <button type="button" className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
             </div>
           </div>
         </div>

@@ -32,7 +32,7 @@ const Incipit = props => {
           <div role="navigation" className="head nav row">
             <strong className="col title">{title}</strong>
             <div className="col-auto btn-row">
-              <SayButton speak={incipit}>
+              <SayButton text={incipit}>
                 <Tooltip title="Ascolta" placement="bottom">
                   <div className="btn rounded icon flat audio">
                     {icon.voice()}

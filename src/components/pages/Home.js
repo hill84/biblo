@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { InView } from 'react-intersection-observer';
-import { Background, Parallax } from 'react-parallax';
 import { Link, Redirect } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
@@ -12,9 +11,9 @@ import BookCollection from '../bookCollection';
 import DonationButtons from '../donationButtons';
 import Genres from '../genres';
 import withScrollToTop from '../hocs/withScrollToTop';
-import Picture from '../picture';
 import RandomQuote from '../randomQuote';
 import Reviews from '../reviews';
+import '../../css/home.css';
 
 const seo = {
   title: `${app.name} | Home`,
@@ -51,6 +50,24 @@ const Home = props => {
 
   const isScrollable = isTouchDevice() || screensize === 'sm' || screensize === 'xs';
   const rootMargin = '200px';
+  const Hero = (
+    <div className="container text-center">
+      <h1 className="title">Condividi la tua passione per i libri</h1>
+      <p className="subtitle">Crea la tua libreria, ascolta gli incipit, scopri cosa leggono i tuoi amici</p>
+      <div className="btns">
+        <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">{user ? 'La mia libreria' : 'Registrati'}</Link> 
+        <div>
+          {user ?
+            <>
+              <Link className="counter" to="/about">Chi siamo</Link>
+              <Link className="counter" to="/help">Aiuto</Link>
+              <Link className="counter last" to="/donations">Donazioni</Link>
+            </>
+          : <p className="counter last">Sei già registrato? <Link to="/login">Accedi</Link></p>}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div id="homeComponent" ref={is}>
@@ -58,31 +75,11 @@ const Home = props => {
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
       </Helmet>
-      <Parallax
-        className="hero"
-        disabled={isScrollable}
-        strength={400}>
-        <div className="container text-center">
-          <h1 className="title reveal fadeIn slideUp">Scopriamo nuovi libri, insieme</h1>
-          <p className="subtitle reveal fadeIn slideUp hide-sm">Crea la tua libreria, scrivi una recensione, scopri cosa leggono i tuoi amici</p>
-          <div className="btns reveal fadeIn slideUp">
-            <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">{user ? 'La mia libreria' : 'Registrati'}</Link> 
-            <p className="font-sm">
-              {user ?
-                <>
-                  <Link className="counter" to="/about">Chi siamo</Link>
-                  <Link className="counter" to="/help">Aiuto</Link>
-                  <Link className="counter last" to="/donations">Donazioni</Link>
-                </>
-              : <small>Sei già registrato? <Link to="/login">Accedi</Link></small>}
-            </p>
-          </div>
-        </div>
-        <Background className="bg reveal fadeIn">
-          <div className="overlay" />
-          <Picture jpeg={bgHerojpeg} alt="Biblo, condividi la tua passione per i libri e per la lettura" />
-        </Background>
-      </Parallax>
+
+      <div className="hero" style={{ backgroundImage: `url(${bgHerojpeg})` }}>
+        <div className="overlay" />
+        {Hero}
+      </div>
   
       <div className="container" style={{ marginTop: -56, }}>
         <InView triggerOnce rootMargin={rootMargin}>

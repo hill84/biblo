@@ -11,7 +11,7 @@ const GenresPage = props => {
   const rootMargin = '300px';
 
   return (
-    <div id="GenresPageComponent">
+    <>
       <Helmet>
         <title>{app.name} | Generi</title>
       </Helmet>
@@ -26,7 +26,7 @@ const GenresPage = props => {
           </InView>
         )}
       </div>
-    </div>
+    </>
   );
 }
 

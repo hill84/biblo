@@ -23,6 +23,7 @@ import Rating from '../rating';
 import Reviews from '../reviews';
 import ShareButtons from '../shareButtons';
 import UserReview from '../userReview';
+import '../../css/bookProfile.css';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -200,7 +201,7 @@ export default class BookProfile extends Component {
           />
         }
       
-        <div id="BookProfileComponent">
+        <div id="BookProfile">
           <div className="content-background">
             <div className="bg" style={{ backgroundImage: `url(${book.covers[0]})`, }} />
           </div>

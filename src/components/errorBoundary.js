@@ -29,7 +29,7 @@ export default class ErrorBoundary extends PureComponent {
 
     if (errorInfo) {
       return (
-        <div className="container empty" id="errorBoundaryComponent">
+        <div className="container empty">
           <div className="card dark empty shake reveal">
             <div className="text-center">
               <div className="circle-icon popIn reveal">{icon.alert()}</div>

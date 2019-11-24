@@ -4,6 +4,7 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { Close } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import React, { createContext, useEffect, useRef, useState } from 'react';
+import '../css/snackbar.css';
 
 const SnackbarContext = createContext();
 

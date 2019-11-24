@@ -1,8 +1,9 @@
+import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { Component } from 'react';
+import React, { Component/* , useCallback, useEffect, useRef, useState */ } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
@@ -10,6 +11,180 @@ import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError, normURL } from '../../config/shared';
 import { funcType, numberType } from '../../config/types';
 import PaginationControls from '../paginationControls';
+
+/* const AuthorsPage = props => {
+  const [state, setState] = useState({
+    items: null,
+    count: 0,
+    desc: false,
+    lastVisible: null,
+    limit: props.limit,
+    loading: true,
+    orderBy: [ 
+      { type: 'photoURL', label: 'Foto' },
+      { type: 'displayName', label: 'Nominativo' }, 
+      { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
+      { type: 'sex', label: 'Sesso' }
+    ],
+    orderByIndex: 1,
+    page: 1
+  });
+
+  const is = useRef(true);
+  const { openSnackbar } = props;
+  const { count, desc, firstVisible, items, lastVisible, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page } = state;
+
+  const fetch = useCallback(e => {
+    const direction = e && e.currentTarget.dataset.direction;
+    const prev = direction === 'prev';
+    const ref = authorsRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
+    const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
+    const dRef = direction ? paginatedRef : ref;
+
+    const fetcher = () => {
+      console.log('fetching')
+      dRef.get().then(snap => {
+        if (!snap.empty) {
+          const items = [];
+          snap.forEach(item => items.push(item.data()));
+          if (is.current) {
+            setState(prevState => ({
+              ...prevState,
+              firstVisible: snap.docs[prev ? snap.size - 1 : 0],
+              items: prev ? items.reverse() : items,
+              lastVisible: snap.docs[prev ? 0 : snap.size - 1],
+              loading: false,
+              page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
+            }));
+          }
+        } else if (is.current) {
+          setState(prevState => ({
+            ...prevState,
+            firstVisible: null,
+            items: null,
+            lastVisible: null,
+            loading: false,
+            page: 1
+          }));
+        }
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    }
+
+    if (!direction) {
+      countRef('authors').get().then(fullSnap => {
+        if (fullSnap.exists) {
+          if (is.current) {
+            setState(prevState => ({ ...prevState, count: fullSnap.data().count }));
+            fetcher();
+          }
+        } else if (is.current) {
+          setState(prevState => ({ ...prevState, count: 0 }));
+        }
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    } else fetcher();
+    // eslint-disable-next-line
+  }, [desc, limit, orderBy, orderByIndex]);
+
+  useEffect(() => {
+    fetch();
+  }, [fetch, page]);
+
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  const onToggleDesc = () => setState(prevState => ({ ...prevState, desc: !prevState.desc }));
+
+  const onOpenOrderMenu = e => setState(prevState => ({ ...prevState, orderMenuAnchorEl: e.currentTarget }));
+  const onChangeOrderBy = (e, i) => setState(prevState => ({ ...prevState, orderByIndex: i, orderMenuAnchorEl: null, page: 1 }));
+  const onCloseOrderMenu = () => setState(prevState => ({ ...prevState, orderMenuAnchorEl: null }));
+
+  if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div> 
+    
+  const orderByOptions = orderBy.map((option, index) => (
+    <MenuItem
+      key={option.type}
+      disabled={index === -1}
+      selected={index === orderByIndex}
+      onClick={event => onChangeOrderBy(event, index)}>
+      {option.label}
+    </MenuItem>
+  ));
+
+  return (
+    <div className="container" id="authorsComponent" ref={is}>
+      <Helmet>
+        <title>{app.name} | Autori</title>
+        <meta name="description" content={app.desc} />
+      </Helmet>
+      <div className="card dark">
+        {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : !items ? <div className="empty text-center">Nessun elemento</div> :
+          <>
+            <div className="head nav" role="navigation">
+              <div className="row">
+                <div className="col">
+                  <span className="counter last title primary-text">Autori</span> {count !== 0 && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
+                </div>
+                <div className="col-auto">
+                  <button type="button" className="btn sm flat counter" onClick={onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+                  <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                    <span>
+                      <button
+                        type="button"
+                        className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`}
+                        onClick={onToggleDesc}
+                        disabled={count < 2}>
+                        {icon.arrowDown()}
+                      </button>
+                    </span>
+                  </Tooltip>
+                  <Menu 
+                    className="dropdown-menu"
+                    anchorEl={orderMenuAnchorEl} 
+                    open={Boolean(orderMenuAnchorEl)} 
+                    onClose={onCloseOrderMenu}>
+                    {orderByOptions}
+                  </Menu>
+                </div>
+              </div>
+            </div>
+
+            <div className={`bubbles boxed shelf-row avatars-row ${loading ? 'skltns-row' : 'hoverable-items'}`}>
+              {items.map((item, index) => 
+                <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{ animationDelay: `${index/20}s`, }} className="bubble">
+                  <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>
+                    {!item.photoURL && getInitials(item.displayName)}
+                  </Avatar>
+                  <div className="title">{item.displayName}</div>
+                </Link>
+              )}
+            </div>
+            
+            <PaginationControls 
+              count={count} 
+              fetch={fetch}
+              limit={limit}
+              loading={loading}
+              // oneWay
+              page={page}
+            />
+          </>
+        }
+      </div>
+    </div>
+  );
+}
+
+AuthorsPage.propTypes = {
+  limit: numberType,
+  openSnackbar: funcType.isRequired
+}
+
+AuthorsPage.defaultProps = {
+  limit: 27
+}
+ 
+export default AuthorsPage; */
 
 export default class AuthorsPage extends Component {
 	state = {
@@ -139,7 +314,17 @@ export default class AuthorsPage extends Component {
                   </div>
                   <div className="col-auto">
                     <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                    <button type="button" className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                    <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                      <span>
+                        <button
+                          type="button"
+                          className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`}
+                          onClick={this.onToggleDesc}
+                          disabled={count < 2}>
+                          {icon.arrowDown()}
+                        </button>
+                      </span>
+                    </Tooltip>
                     <Menu 
                       className="dropdown-menu"
                       anchorEl={orderMenuAnchorEl} 

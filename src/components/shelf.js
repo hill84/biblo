@@ -1,13 +1,14 @@
+import { Tooltip } from '@material-ui/core';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import React, { Component/* , useCallback, useEffect, useRef, useState */ } from 'react';
+import React, { Component, /* , useCallback, useEffect, useRef, useState */ } from 'react';
 import { Link } from 'react-router-dom';
-import { userBooksRef,  userRef } from '../config/firebase';
+import { userBooksRef, userRef } from '../config/firebase';
 import icon from '../config/icons';
-import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
 import { userBookTypes } from '../config/lists';
+import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
 import { funcType, /* numberType, */ stringType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
@@ -505,7 +506,10 @@ export default class Shelf extends Component {
   onOpenOrderMenu = e => this._isMounted && this.setState({ orderMenuAnchorEl: e.currentTarget });
   onCloseOrderMenu = () => this._isMounted && this.setState({ orderMenuAnchorEl: null });
 
-  onOpenFilterMenu = e => this._isMounted && this.setState({ filterMenuAnchorEl: e.currentTarget });
+  onOpenFilterMenu = e => {
+    e.persist();
+    if (this._isMounted) this.setState({ filterMenuAnchorEl: e.currentTarget });
+  }
   onCloseFilterMenu = () => this._isMounted && this.setState({ filterMenuAnchorEl: null });
 
   render() {
@@ -590,14 +594,17 @@ export default class Shelf extends Component {
                     onClose={this.onCloseOrderMenu}>
                     {orderByOptions}
                   </Menu>
-                  <button 
-                    type="button"
-                    className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} 
-                    title={desc ? 'Ascendente' : 'Discendente'} 
-                    onClick={this.onToggleDesc} 
-                    disabled={count < 2}>
-                    {icon.arrowDown()}
-                  </button>
+                  <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                    <span>
+                      <button
+                        type="button"
+                        className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`}
+                        onClick={this.onToggleDesc}
+                        disabled={count < 2}>
+                        {icon.arrowDown()}
+                      </button>
+                    </span>
+                  </Tooltip>
                 </div>
               </div>
             </div>

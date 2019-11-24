@@ -24,7 +24,7 @@ const MinifiableText = props => {
 
   const onMinify = () => {
     if (is.current) setMinified(!minified); 
-  }
+  };
 
   if (!text) return null;
 

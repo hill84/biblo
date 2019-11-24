@@ -1,10 +1,11 @@
+import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../config/firebase';
-import { numberType, boolType } from '../config/types';
-import { getInitials, normURL } from '../config/shared';
 import icon from '../config/icons';
+import { getInitials, normURL } from '../config/shared';
+import { boolType, numberType } from '../config/types';
 import { skltn_bubbleRow } from './skeletons';
 
 const Authors = props => {
@@ -75,20 +76,24 @@ const Authors = props => {
 
   return (
     <>
-      <div className="head nav" role="navigation">
+      <div className="head nav" role="navigation" ref={is}>
         <span className="counter last title primary-text">Autori</span> {items && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
         {!loading && count > 0 &&
           <div className="pull-right">
             {(pagination && count > limit) || scrollable ?
               <Link to="/authors" className="btn sm flat counter">Vedi tutti</Link>
             :
-              <button 
-                type="button"
-                className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`} 
-                title={desc ? 'Ascendente' : 'Discendente'} 
-                onClick={onToggleDesc}>
-                {icon.arrowDown()}
-              </button>
+              <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                <span>
+                  <button
+                    type="button"
+                    className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`}
+                    onClick={onToggleDesc}
+                    disabled={count < 2}>
+                    {icon.arrowDown()}
+                  </button>
+                </span>
+              </Tooltip>
             }
             {pagination && count > limit &&
               <>
@@ -114,7 +119,7 @@ const Authors = props => {
         }
       </div>
       <div className="bubbles row shelf scrollable">
-        {loading ? skltn_bubbleRow :
+        {loading ? skltn_bubbleRow : items ? (
           <div className="shelf-row hoverable-items avatars-row">
             {items.map((item, index) => 
               <Link 
@@ -132,7 +137,9 @@ const Authors = props => {
               </Link>
             )}
           </div>
-        }
+        ) : (
+          <div className="empty centered">Nessun autore</div>
+        )}
       </div>
     </>
   );
