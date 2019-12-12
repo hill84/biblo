@@ -1,14 +1,12 @@
-const isDefined = typeof localStorage !== 'undefined';
-
 export const ifLocalStorage = callback => {
-  if (isDefined) {
+  if (typeof localStorage !== 'undefined') {
     // console.log('localStorage is defined');
     if (callback && typeof callback === 'function') {
       // console.log('callback is a function')
       try {
         return callback();
-      } catch(e) {
-        // console.log('error', e);
+      } catch(err) {
+        // console.log('error', err);
         return null;
       }
     } else {

@@ -1,3 +1,4 @@
+import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -7,17 +8,30 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Grow from '@material-ui/core/Grow';
+import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import { Picker } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
 import React, { Component, forwardRef } from 'react';
 import { authid, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, timeSince } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../config/shared';
 import { funcType, stringType, userBookType, userType } from '../config/types';
+import '../css/emojiMart.css';
 import Overlay from './overlay';
 import Rating from './rating';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
+
+const EmojiPickerStyle = {
+  position: 'absolute',
+  top: '100%',
+  marginTop: 4,
+  right: 0,
+  zIndex: 1
+};
 
 export default class UserReview extends Component {
 	state = {
@@ -37,10 +51,13 @@ export default class UserReview extends Component {
       text: '',
       title: ''
     },
+    text__leftChars: null,
     text_minChars: 120,
     text_maxChars: 1500,
+    title_leftChars: null,
     title_maxChars: 255,
     isOpenDeleteDialog: false,
+    isOpenEmojiPicker: false,
     changes: false,
     loading: false,
     errors: {},
@@ -156,13 +173,25 @@ export default class UserReview extends Component {
           if (this._isMounted) {
             this.setState({ 
               changes: false,
-              isEditing: false, 
-              loading: false 
+              errors: {},
+              isEditing: false,
+              isOpenEmojiPicker: false,
+              loading: false,
+              text_leftChars: null,
+              title_leftChars: null
             });
           }
         } else console.warn(`No bid`);
       }
-    } else if (this._isMounted) this.setState({ isEditing: false });
+    } else if (this._isMounted) {
+      this.setState({
+        errors: {},
+        isEditing: false,
+        isOpenEmojiPicker: false,
+        text_leftChars: null,
+        title_leftChars: null
+      });
+    }
   }
 
   onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
@@ -192,7 +221,7 @@ export default class UserReview extends Component {
 
     if (this._isMounted) {
       if (!review.created_num) {
-        this.setState({ 
+        this.setState({
           review: {
             ...review,
             bid: '',
@@ -206,7 +235,13 @@ export default class UserReview extends Component {
           } 
         });
       }
-      this.setState({ isEditing: false });
+      this.setState({
+        errors: {},
+        isEditing: false,
+        isOpenEmojiPicker: false,
+        text_leftChars: null,
+        title_leftChars: null
+      });
     }
   }
 
@@ -219,7 +254,7 @@ export default class UserReview extends Component {
       this.setState(prevState => ({
         review: { ...prevState.review, [e.target.name]: e.target.value },
         errors: { ...prevState.errors, [e.target.name]: null } , 
-        [leftChars]: prevState[maxChars] - e.target.value.length, 
+        [leftChars]: prevState[maxChars] - e.target.value.length,
         changes: true
       }));
     } 
@@ -227,22 +262,43 @@ export default class UserReview extends Component {
 
   validate = review => {
     const { text_maxChars, text_minChars, title_maxChars } = this.state;
+    const { text, title } = review;
     const errors = {};
-    if (review.title && review.title.length > title_maxChars) {
-      errors.title = `Lunghezza massima ${title_maxChars} caratteri`;
-    }
-    if (!review.text) {
+    const urlMatches = text.match(urlRegex);
+
+    if (!text) {
       errors.text = "Aggiungi una recensione";
-    } else if (review.text.length > text_maxChars) {
+    } else if (text.length > text_maxChars) {
       errors.text = `Lunghezza massima ${text_maxChars} caratteri`;
-    } else if (review.text.length < text_minChars) {
+    } else if (text.length < text_minChars) {
       errors.text = `Lunghezza minima ${text_minChars} caratteri`;
+    } else if (urlMatches) {
+      errors.text = `Non inserire url o indirizzi email nel testo (${join(urlMatches)})`;
+    }
+    if (title && title.length > title_maxChars) {
+      errors.title = `Lunghezza massima ${title_maxChars} caratteri`;
     }
     return errors;
   }
+
+  toggleEmojiPicker = () => {
+    this.setState(prevState => ({
+      isOpenEmojiPicker: !prevState.isOpenEmojiPicker
+    }));
+  };
+
+  onMouseDown = e => e.preventDefault();
+
+  addEmoji = emoji => {
+    // console.log(emoji);
+    this.setState(prevState => ({
+      review: { ...prevState.review, text: `${prevState.review.text}${emoji.native}` },
+      changes: true
+    }));
+  };
   
   render() {
-    const { errors, isEditing, isOpenDeleteDialog, loading, review, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
+    const { changes, errors, isEditing, isOpenDeleteDialog, isOpenEmojiPicker, loading, review, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
 
     if (!user || !userBook) return null;
 
@@ -307,7 +363,27 @@ export default class UserReview extends Component {
                       onChange={this.onChangeMaxChars}
                       error={Boolean(errors.text)}
                       multiline
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <Tooltip title={isOpenEmojiPicker ? 'Chiudi' : 'Aggiungi emoji'} placement="top">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={this.toggleEmojiPicker}
+                              onMouseDown={this.onMouseDown}
+                            >
+                              {isOpenEmojiPicker ? icon.close() : icon.stickerEmoji()}
+                            </IconButton>
+                          </Tooltip>
+                        </InputAdornment>
+                      }
                     />
+                    {isOpenEmojiPicker && (
+                      <Picker
+                        color="rgb(var(--primaryClr))"
+                        style={EmojiPickerStyle}
+                        onSelect={this.addEmoji}
+                      />
+                    )}
                     {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
                     {text_leftChars && <FormHelperText className={`message ${(text_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {text_leftChars}</FormHelperText>}
                   </FormControl>
@@ -330,7 +406,7 @@ export default class UserReview extends Component {
                 </div>
 
                 <div className="footer no-gutter">
-                  <button type="button" className="btn btn-footer primary" onClick={this.onSubmit} disabled={!this.state.changes}>Pubblica</button>
+                  <button type="button" className="btn btn-footer primary" onClick={this.onSubmit} disabled={!changes}>Pubblica</button>
                 </div>
               </form>
             )

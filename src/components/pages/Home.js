@@ -5,7 +5,8 @@ import { Link, Redirect } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
-import bgHerojpeg from '../../images/covers-dark.jpg';
+import bgHero_jpeg from '../../images/covers-dark.jpg';
+import bgHero_webp from '../../images/covers-dark.webp';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
 import DonationButtons from '../donationButtons';
@@ -76,7 +77,7 @@ const Home = props => {
         <meta name="description" content={seo.description} />
       </Helmet>
 
-      <div className="hero" style={{ backgroundImage: `url(${bgHerojpeg})` }}>
+      <div className="hero" style={{ backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})` }}>
         <div className="overlay" />
         {Hero}
       </div>

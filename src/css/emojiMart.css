@@ -1,0 +1,14 @@
+.emoji-mart {
+  animation: fadeInSlideDown .6s cubic-bezier(.21, .61, .35, 1) both;
+  will-change: opacity, transform;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
+  opacity: .96;
+}
+
+.emoji-mart-search input {
+  border-radius: 99px;
+}
+
+.emoji-mart-anchor-bar {
+  background-color: rgb(var(--primaryClr));
+}

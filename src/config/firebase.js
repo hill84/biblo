@@ -7,12 +7,13 @@ import { needsEmailVerification } from './shared';
 import { ifLocalStorage, userKey } from './storage';
 
 const config = {
-	apiKey: "AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0",
-	authDomain: "biblo.space", // delibris-4fa3b.firebaseapp.com
-	databaseURL: "https://delibris-4fa3b.firebaseio.com",
-	projectId: "delibris-4fa3b",
-	storageBucket: "delibris-4fa3b.appspot.com",
-	messagingSenderId: "144759497905"
+	appId: '1:144759497905:web:e8d9fd244452fbbb',
+	apiKey: 'AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0',
+	authDomain: 'biblo.space', // delibris-4fa3b.firebaseapp.com
+	databaseURL: 'https://delibris-4fa3b.firebaseio.com',
+	projectId: 'delibris-4fa3b',
+	storageBucket: 'delibris-4fa3b.appspot.com',
+	messagingSenderId: '144759497905'
 };
 
 if (!firebase.apps.length) firebase.initializeApp(config);
