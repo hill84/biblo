@@ -21,6 +21,8 @@ const seo = {
   description: app.desc
 }
 
+const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})` };
+
 const Home = props => {
   const [redirectTo, setRedirectTo] = useState(null);
   const [screensize, setScreensize] = useState(screenSize());
@@ -77,21 +79,21 @@ const Home = props => {
         <meta name="description" content={seo.description} />
       </Helmet>
 
-      <div className="hero" style={{ backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})` }}>
+      <div className="hero" style={heroStyle}>
         <div className="overlay" />
         {Hero}
       </div>
   
-      <div className="container" style={{ marginTop: -56, }}>
+      <div className="container">
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) => 
-            <div className="card dark card-fullwidth-sm" ref={ref} style={{ marginBottom: 0, }}>
+            <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Best seller" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
             </div>
           }
         </InView>
 
-        <div className="row text-center" style={{ marginBottom: 14, }}>
+        <div className="row text-center value-props">
           <div className="col-md col-sm-6 pad">
             <h3>Crea la tua libreria</h3>
             <p>Riempi la tua dashboard con i libri che hai letto o che vorresti leggere</p>

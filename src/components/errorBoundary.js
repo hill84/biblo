@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import icon from '../config/icons';
 import { childrenType } from '../config/types';
 
+const detailsStyle = { whiteSpace: 'pre-wrap' };
+
 export default class ErrorBoundary extends PureComponent {
   state = { 
     error: null, 
@@ -35,7 +37,7 @@ export default class ErrorBoundary extends PureComponent {
               <div className="circle-icon popIn reveal">{icon.alert()}</div>
               <h1>Qualcosa &egrave; andato storto</h1>
               <p>Tranquillo, non &egrave; colpa tua... <a href="/">Torna alla home</a> per proseguire. Se hai bisogno di aiuto scrivi a <a href="mailto:info@biblo.space">info@biblo.space</a>.</p>
-              <details style={{ whiteSpace: 'pre-wrap', }}>
+              <details style={detailsStyle}>
                 <summary className="btn flat rounded">Dettagli per nerd</summary>
                 <h2>{error && error.toString()}</h2>
                 {errorInfo.componentStack}

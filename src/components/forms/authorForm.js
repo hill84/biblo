@@ -12,6 +12,8 @@ import { getInitials, handleFirestoreError, normalizeString } from '../../config
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
+const avatarImgStyle = { width: '100%', height: '100%' };
+
 const AuthorForm = props => {
   const [state, setState] = useState({
     data: {
@@ -254,7 +256,7 @@ const AuthorForm = props => {
           <div className="row">
             <div className="col-auto">
               <Avatar className="image avatar prepend-input" alt="Avatar">
-                {data.photoURL ? <img src={data.photoURL} alt="" style={{ width: '100%', height: '100%', }} /> : getInitials(data.displayName)}
+                {data.photoURL ? <img src={data.photoURL} alt="avatar" style={avatarImgStyle} /> : getInitials(data.displayName)}
               </Avatar>
             </div>
             <div className="form-group col">

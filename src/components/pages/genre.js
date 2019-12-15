@@ -257,7 +257,7 @@ export default class Genre extends Component {
           </div>
           <Genres scrollable={isScrollable} />
           {genre && genre.description && 
-            <div className="info-row text" style={{ marginTop: '.5rem', }}>
+            <div className="info-row text">
               <MinifiableText text={genre.description} maxChars={isTextMinified ? 300 : 500} defaultMinified={isTextMinified} />
             </div>
           }

@@ -16,6 +16,9 @@ import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
+const labelStyle = { marginRight: 0 };
+const formStyle = { marginTop: 20 };
+
 export default class SignupForm extends Component {
 	state = {
     checkedTerms: false, 
@@ -167,16 +170,16 @@ export default class SignupForm extends Component {
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         <FormControlLabel 
           className="text-left" 
-          style={{ marginRight: 0, }}
+          style={labelStyle}
           required
           label={
-          <span style={{ fontSize: '.87rem', }}>Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}</span>
+          <span className="text-sm">Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}</span>
         } control={
           <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
         } />
         {errors.checkedTerms && <FormHelperText className="message error">{errors.checkedTerms}</FormHelperText>}
         
-        <form onSubmit={this.onSubmit} noValidate style={{ marginTop: 20, }}>
+        <form onSubmit={this.onSubmit} noValidate style={formStyle}>
           <SocialAuth disabled={!checkedTerms} openSnackbar={openSnackbar} />
           <div className="form-group">
             <FormControl className="input-field" margin="normal" fullWidth>

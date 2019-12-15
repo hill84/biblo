@@ -1,0 +1,19 @@
+.card.author .avatar { 
+  width: var(--avatarSize); 
+  height: var(--avatarSize); 
+  line-height: var(--avatarSize); 
+  box-shadow: inset 1px 1px 1px rgba(0,0,0,.05);
+}
+.card.author .title { line-height: var(--avatarSize); }
+.card.author .info-row.bio { margin-bottom: 1em; }
+.card.author .loader, #authorComponent .coverview .book .info .author { display: none; }
+#authorComponent .randomquote { --pad: 10px; }
+#authorComponent .blockquote { 
+  /* margin-top: 10px; */
+  overflow: hidden; 
+  max-height: 0; 
+  animation-name: maxheightIn;
+  animation-duration: 1.2s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: both;
+}

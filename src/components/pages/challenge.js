@@ -121,8 +121,8 @@ class Challenge extends Component {
               {userChallenge &&
                 <div className="col-4 col-sm-4 col-md-3 col-lg-2">
                   <div className="row">
-                    <div className="col">
-                      <progress className="inprogress" style={{ marginTop: 9, }} max={100} value={progress(userChallenge.books)} />
+                    <div className="col flex">
+                      <progress className="inprogress" max={100} value={progress(userChallenge.books)} />
                     </div>
                     <div className="col-auto">
                       <div className="counter last">{progress(userChallenge.books)}%</div>

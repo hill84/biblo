@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
-import booksRowImage from '../../images/books-row.png';
+import BooksRowDivider from '../booksRowDivider';
 import withScrollToTop from '../hocs/withScrollToTop';
 
 const AboutPage = () => (
@@ -17,9 +17,7 @@ const AboutPage = () => (
         <p className="accent-text"><big>{app.name} &egrave; un social network dedicato a chi ama i libri e la lettura.</big></p>
         <p>La nostra missione &egrave; aiutare i lettori a trovare e condividere i libri che amano, diffondendo la passione per la lettura e la letteratura.</p>
         
-        <div className="pad-v hide-sm">
-          <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})`, }} />
-        </div>
+        <BooksRowDivider />
 
         <h2>Alcune cose che puoi fare su {app.name}</h2>
         <p>Iscrivendoti e consultando {app.name} potrai trovare informazioni utili e interessanti su tantissimi libri, scambiare opinioni con altri lettori e vedere cosa pensano gli utenti, leggendo le loro recensioni e i loro giudizi. Su {app.name} trovi le recensioni e i voti dati ai libri da altri utenti come te. Inoltre, se vuoi, puoi anche organizzare la tua libreria e tenere traccia delle tue letture, annotando lo stato di lettura e tante altre informazioni.</p>

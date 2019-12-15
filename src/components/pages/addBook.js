@@ -43,7 +43,7 @@ const AddBook = props => {
             <Link to="/collections" className="counter">Collezioni</Link>
             <Link to="/authors" className="counter">Autori</Link>
           </p>
-          <div className="text-center pad-v fadeIn reveal" style={{ animationDelay: '2s', }}>
+          <div className="text-center pad-v fadeIn reveal delay20">
             <p>Non hai trovato il libro che cercavi?</p>
             <p><Link to="/new-book" className="btn primary rounded">Crea la tua scheda libro</Link></p>
           </div>

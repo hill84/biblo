@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { app } from '../../config/shared';
-import booksRowImage from '../../images/books-row.png';
+import BooksRowDivider from '../booksRowDivider';
 import withScrollToTop from '../hocs/withScrollToTop';
 
 const CookiePage = () => (
@@ -15,9 +15,7 @@ const CookiePage = () => (
       <h1>Cookie policy</h1>
       <p className="lighter-text">Data di entrata in vigore: 10 Marzo 2019</p>
     
-      <div className="pad-v hide-sm">
-        <div className="container-divider" style={{ backgroundImage: `url(${booksRowImage})`, }} />
-      </div>
+      <BooksRowDivider />
 
       <div className="text-justify text-left-sm">
         <h2>Cosa sono i cookie?</h2>

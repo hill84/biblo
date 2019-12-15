@@ -7,6 +7,7 @@ import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../
 import icon from '../../config/icons';
 import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
 import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
+import '../../css/authorPage.css';
 import Cover from '../cover';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
@@ -162,7 +163,7 @@ export default class AuthorPage extends Component {
           <meta property="og:description" content={seo.description} />
           {seo.image && <meta property="og:image" content={seo.image} />}
         </Helmet>
-        <div className="card dark" id="authorCard">
+        <div className="card dark author">
           <div className="row text-center-md">
             <div className="col-md-auto col-sm-12">
               <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>

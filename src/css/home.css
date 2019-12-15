@@ -34,3 +34,15 @@
   animation: none;
   z-index: 1;
 }
+
+.hero + .container {
+  margin-top: -56px;
+}
+
+.value-props {
+  margin-bottom: 14px;
+}
+
+.value-props h3 {
+  margin-top: 0;
+}

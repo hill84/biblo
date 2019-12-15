@@ -52,7 +52,7 @@ const VerifyEmailPage = props => {
         <div className="bubble icon popIn" style={{ marginBottom: 15, }}>{icon.email()}</div>
         <p><big>Ti abbiamo inviato un&apos;email di conferma.</big> Per favore, clicca sul link di verifica e poi torna qui per effettuare il <Link to="/login">login</Link>.</p>
       </div>
-      <div className="fadeIn reveal" style={{ animationDelay: '2s', }}>
+      <div className="fadeIn reveal delay20">
         <p className="sub-footer">Non trovi l&apos;email? Controlla nella posta indesiderata.</p>
         <p>{emailSent ? 
           <span className="btn rounded success reveal fadeIn">Email inviata</span> : 

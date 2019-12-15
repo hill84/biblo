@@ -20,6 +20,7 @@ import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../config/shared';
 import { funcType, stringType, userBookType, userType } from '../config/types';
 import '../css/emojiMart.css';
+import emojiMartLocale from '../locales/emojiMart';
 import Overlay from './overlay';
 import Rating from './rating';
 
@@ -255,6 +256,7 @@ export default class UserReview extends Component {
         review: { ...prevState.review, [e.target.name]: e.target.value },
         errors: { ...prevState.errors, [e.target.name]: null } , 
         [leftChars]: prevState[maxChars] - e.target.value.length,
+        isOpenEmojiPicker: false,
         changes: true
       }));
     } 
@@ -382,6 +384,7 @@ export default class UserReview extends Component {
                         color="rgb(var(--primaryClr))"
                         style={EmojiPickerStyle}
                         onSelect={this.addEmoji}
+                        i18n={emojiMartLocale}
                       />
                     )}
                     {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}

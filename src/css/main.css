@@ -1077,26 +1077,6 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 #BookContainerComponent .container.top { margin-top: 60px; }
 #BookContainerComponent .container.top .book { margin-top: -60px; }
 
-/* author */
-#authorCard .avatar { 
-  width: var(--avatarSize); 
-  height: var(--avatarSize); 
-  line-height: var(--avatarSize); 
-  box-shadow: inset 1px 1px 1px rgba(0,0,0,.05);
-}
-#authorCard .title { line-height: var(--avatarSize); }
-#authorCard .loader, #authorComponent .coverview .book .info .author { display: none; }
-#authorComponent .randomquote { --pad: 10px; }
-#authorComponent .blockquote { 
-  /* margin-top: 10px; */
-  overflow: hidden; 
-  max-height: 0; 
-  animation-name: maxheightIn;
-  animation-duration: 1.2s;
-  animation-timing-function: ease-in;
-  animation-fill-mode: both;
-}
-
 /* randomquote */
 .randomquote {
   --bookWidth: 40px;
@@ -1997,6 +1977,7 @@ progress[ value='100' ]::-webkit-progress-bar {
 .mock-cover .thumb { width: 100%; }
 
 /* GENRES */
+.badges.genres { margin-bottom: 1em; }
 .badges.scrollable { position: relative; }
 .badges .content { 
   position: relative;
@@ -2215,6 +2196,7 @@ progress[ value='100' ]::-webkit-progress-bar {
   margin-bottom: 0;
 }
 .inline, ul.inline-items li { display: inline; }
+.inline-block { display: inline-block; }
 .rounded { --radius: 99px; }
 .pull-left { float: left; }
 .pull-right { float: right; }
@@ -2256,6 +2238,7 @@ progress[ value='100' ]::-webkit-progress-bar {
 .delay8 { animation-delay: .8s; }
 .delay9 { animation-delay: .9s; }
 .delay10 { animation-delay: 1s; }
+.delay20 { animation-delay: 2s; }
 
 @keyframes rotate { to { transform: rotate(360deg); } }
 @keyframes fadeInSlideUp { 
