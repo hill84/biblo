@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "private": true,
   "devDependencies": {
     "eslint": "^6.7.2",
