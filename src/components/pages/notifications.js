@@ -8,6 +8,7 @@ import { app, handleFirestoreError } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
 import NoteMenuItem from '../noteMenuItem';
 import PaginationControls from '../paginationControls';
+import { skltn_notification } from '../skeletons';
 
 export default class Notifications extends Component {
   state = {
@@ -131,7 +132,7 @@ export default class Notifications extends Component {
 
   render() {
     const { count, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page } = this.state;
-    const skeletons = [...Array(limit)].map((e, i) => <div key={i} className="skltn notification" />);
+    const skltn = skltn_notification(limit);
     const orderByOptions = orderBy.map((option, i) => (
       <MenuItem
         key={option.type}
@@ -181,7 +182,7 @@ export default class Notifications extends Component {
             </div>
             <div className="shelf notes">
               {items && items.map(item => <NoteMenuItem item={item} key={item.nid} animation={false} />)}
-              {loading && skeletons}
+              {loading && skltn}
             </div>
           </div>
         </div>

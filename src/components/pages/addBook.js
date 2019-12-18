@@ -8,6 +8,7 @@ import { primaryTheme } from '../../config/themes';
 import { funcType, historyType, locationType, userType } from '../../config/types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
+import '../../css/searchBook.css';
 
 const seo = {
   title: `${app.name} | Aggiungi libro`,

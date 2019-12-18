@@ -12,7 +12,7 @@ import { getInitials, handleFirestoreError, normalizeString } from '../../config
 import { funcType, stringType, userType } from '../../config/types';
 import Overlay from '../overlay';
 
-const avatarImgStyle = { width: '100%', height: '100%' };
+const avatarImgStyle = { width: '100%', height: '100%', };
 
 const AuthorForm = props => {
   const [state, setState] = useState({

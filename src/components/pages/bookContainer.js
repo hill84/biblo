@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import Book from '../book';
+import '../../css/bookContainer.css';
 
 const BookContainer = forwardRef((props, ref) => (
   <div id="BookContainerComponent" ref={ref}>

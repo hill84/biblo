@@ -14,6 +14,7 @@ import Genres from '../genres';
 import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 import Bubbles from './bubbles';
+import '../../css/genre.css';
 
 export default class Genre extends Component {
   state = {

@@ -1,0 +1,70 @@
+/* UPLOAD */
+.upload-avatar { 
+  --size: 64px;
+  position: relative; 
+  display: grid;
+  align-items: center;
+  border-radius: 99px;
+  width: var(--size);
+  height: var(--size);
+  line-height: var(--size);
+  font-size: 2rem;
+  text-align: center;
+  overflow: hidden;
+  background-color: rgba(0,0,0,.05);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+  transition: all .2s ease-in-out;
+}
+.basic-profile .upload-avatar .avatar {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  font-size: inherit;
+}
+.upload-avatar .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 99px;
+  overflow: hidden;
+  background-color: rgba(0,151,167,.5);
+  box-shadow: inset 1px 1px 0 rgba(0,0,0,.05);
+  font-size: 2.6rem;
+  color: #fff;
+  text-align: center;
+  line-height: inherit;
+  will-change: opacity, transform;
+  opacity: 0;
+  transition: all .2s ease-in-out;
+  z-index: 2;
+}
+.upload-avatar .overlay span { 
+  will-change: opacity, transform; 
+  transition: all .2s ease-in-out;
+}
+.upload-avatar:hover .overlay { opacity: 1; transform: rotate(90deg); }
+.upload-avatar:active .overlay { color: rgba(0,0,0,.3); }
+.upload-avatar.error .overlay { 
+  opacity: 1;
+  background-color: rgba(244,67,54,.5);
+  transform: rotate(45deg);
+}
+.upload-avatar.success .overlay { 
+  opacity: 1;
+  background-color: rgba(67,160,71,.5);
+}
+.upload-avatar.success .overlay span { opacity: 0; transform: scale(0); }
+.upload-avatar.success:hover .overlay span { opacity: 1; transform: rotate(90deg); }
+.upload { 
+  appearance: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.upload-avatar .loader { padding: 0; }

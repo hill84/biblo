@@ -4,7 +4,7 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
 import { needsEmailVerification } from './shared';
-import { ifLocalStorage, userKey } from './storage';
+import { ifLocalStorage, uidKey } from './storage';
 
 const config = {
 	appId: '1:144759497905:web:e8d9fd244452fbbb',
@@ -28,7 +28,7 @@ export const auth = firebase.auth();
 auth.useDeviceLanguage();
 export const signOut = () => auth.signOut();
 export const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
-const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(userKey)));
+const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(uidKey)));
 // eslint-disable-next-line import/no-mutable-exports
 export let authid = currentUid();
 auth.onIdTokenChanged(user => {

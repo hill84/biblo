@@ -28,7 +28,7 @@ import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { auth, isAuthenticated, userRef } from './config/firebase';
 import { app, handleFirestoreError, needsEmailVerification } from './config/shared';
-import { userKey } from './config/storage';
+import { uidKey } from './config/storage';
 import { defaultTheme } from './config/themes';
 import { locationType } from './config/types';
 import { SnackbarConsumer, SnackbarProvider } from './context/snackbarContext';
@@ -75,8 +75,9 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    const uid = user && user.uid;
     try {
-      window.localStorage.setItem(userKey, user);
+      window.localStorage.setItem(uidKey, uid);
     } catch(err) {
       console.log(err);
     }

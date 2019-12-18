@@ -6,7 +6,7 @@
 	"plugins": ["prettier"],
 	"parser": "babel-eslint",
 	"parserOptions": {
-		"ecmaVersion": 2017,
+		"ecmaVersion": 2020,
 		"sourceType": "module",
 		"ecmaFeatures": {
 			"jsx": true

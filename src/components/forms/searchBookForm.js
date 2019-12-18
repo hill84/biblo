@@ -16,6 +16,7 @@ import { booksRef } from '../../config/firebase';
 import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
+import '../../css/searchBook.css';
 
 export default class SearchBookForm extends Component {
   state = {

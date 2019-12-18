@@ -132,6 +132,8 @@ export const calcReadingTime = pages => calcMinutesToTime(pages * 1.25);
 
 export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
 
+export const timestamp = (new Date()).getTime();
+
 export const timeSince = date => {
   const seconds = Math.floor((new Date() - date) / 1000);
   let interval = Math.floor(seconds / 31536000);
@@ -160,7 +162,10 @@ export const msToTime = s => {
     return `${hours}${hours && minutes ? ' e ' : ''}${minutes}`;
   }
   return 'non disponibile';
-}
+};
+
+const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+export const diffDays = (secondDate, firstDate = timestamp) => Math.round(Math.abs((firstDate - secondDate) / oneDay));
 
 export const screenSize = () => {
   const w = window.innerWidth;

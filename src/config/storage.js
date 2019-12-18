@@ -24,6 +24,8 @@ export const incipitKey = {
   themeDark: 'incipit_themeDark'
 };
 
-export const userKey = 'uid';
+export const uidKey = 'uid';
 
 export const themeKey = 'theme'; // 'dark' | 'light' | 'mixed'
+
+export const recommendationQuoteKey = 'recommendation_quote';

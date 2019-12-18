@@ -5,6 +5,19 @@
 #BookProfile .book-profile .rating { display: flex; align-items: center; }
 #BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; }
 
+.select-isbn {
+  -webkit-appearance: none;
+  border-color: transparent;
+  border-radius: var(--radius);
+  background-color: transparent;
+  padding: 2px 5px;
+  margin-left: -6px;
+  cursor: pointer;
+}
+.select-isbn:hover {
+  border-color: rgba(0, 0, 0, .1);
+}
+
 @media ( max-width: 768px ) {
   #BookProfile .book-profile .rating { display: block; }
   /* #BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; } */

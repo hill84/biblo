@@ -21,7 +21,7 @@ const seo = {
   description: app.desc
 }
 
-const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})` };
+const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})`, };
 
 const Home = props => {
   const [redirectTo, setRedirectTo] = useState(null);
