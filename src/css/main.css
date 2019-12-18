@@ -757,7 +757,7 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
 
 /* FORM GROUP */
 .form-group label + div:before { border-color: rgba(0, 0, 0, .15); }
-.form-group .chip-input label + div:before { background-color: rgba(0, 0, 0, .15); }
+/* .form-group .chip-input label + div:before { background-color: rgba(0, 0, 0, .15); } */
 
 /* SELECT */
 .select-field svg { fill: rgba(0, 0, 0, .2); }
@@ -779,6 +779,18 @@ button:disabled .btn.audio { animation: audioPulse 1s infinite ease-in-out; }
   font-family: Roboto, sans-serif;
   transition: all .2s ease-in-out 0s;
   will-change: transform;
+  cursor: pointer;
+}
+
+/* UPLOAD */
+.upload { 
+  appearance: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
 }
 

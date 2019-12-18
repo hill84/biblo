@@ -52,7 +52,7 @@ if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_GA_TRACKING_I
 
 ReactDOM.render(
 	<Router history={history}>
-    {getInternetExplorerVersion() !== -1 ? <BrowserNotSupported /> : <App/>}
+    {getInternetExplorerVersion() === -1 ? <App/> : <BrowserNotSupported />}
 	</Router>,
 	document.getElementById('root')
 );

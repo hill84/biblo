@@ -292,9 +292,9 @@ const Layout = props => {
 
       <CookieBanner
         disableStyle
-        message="🍪 Usiamo i cookie. "
+        message="🍪 Usiamo i "
         buttonMessage="Accetto"
-        link={<Link to="/cookie">Approfondisci</Link>}
+        link={<Link to="/cookie">cookie</Link>}
         dismissOnScrollThreshold={100}
         onAccept={() => {}}
         cookie="user-has-accepted-cookies" 

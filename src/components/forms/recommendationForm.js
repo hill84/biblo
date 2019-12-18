@@ -87,7 +87,7 @@ const RecommendationForm = props => {
     }
   };
 
-  const recommended = uid => count && quote.recommends.find(recobj => recobj.uid === uid);
+  const recommended = uid => count && quote.recommends.find(recobj => recobj.uid === uid && recobj.bid === book.bid);
   
   const usersList = obj => (
     Object.keys(obj).map(f => (
@@ -128,8 +128,8 @@ const RecommendationForm = props => {
       <div role="dialog" aria-describedby="Recommend a book" className="dialog light book-recommendation" ref={is}>
         <div className="content">
           {quote.amount ? 
-            <p>Quota giornaliera: <strong>{quote.amount}</strong></p> : 
-            <p>Hai terminato la quota giornaliera</p>
+            <p className="light-text"><small>Quota giornaliera <strong>{quote.amount}</strong></small></p> : 
+            <p><small>Hai terminato la quota giornaliera</small></p>
           }
           <div className="contacts-tab">
             {loading ? skltn : hasFollowings 
