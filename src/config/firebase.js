@@ -7,13 +7,13 @@ import { needsEmailVerification } from './shared';
 import { ifLocalStorage, uidKey } from './storage';
 
 const config = {
-	appId: '1:144759497905:web:e8d9fd244452fbbb',
-	apiKey: 'AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0',
-	authDomain: 'biblo.space', // delibris-4fa3b.firebaseapp.com
-	databaseURL: 'https://delibris-4fa3b.firebaseio.com',
-	projectId: 'delibris-4fa3b',
-	storageBucket: 'delibris-4fa3b.appspot.com',
-	messagingSenderId: '144759497905'
+	appId: process.env.REACT_APP_FIREBASE_APP_ID,
+	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID
 };
 
 if (!firebase.apps.length) firebase.initializeApp(config);
