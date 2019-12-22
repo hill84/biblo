@@ -1,4 +1,7 @@
 {
+  "ignoreFiles": [
+    "src/css/*.min.css"
+  ],
   "rules": {
     "declaration-no-important": null,
     "color-no-invalid-hex": true,

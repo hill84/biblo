@@ -47,10 +47,14 @@
 .contacts-tab .avatar-row:last-child { border-bottom: 0; }
 .contacts-tab .avatar-row .avatar { float: left; margin-right: 14px; will-change: opacity; animation: fadeIn .3s ease-in-out; }
 .contacts-tab .avatar-row .btn { position: relative; margin-left: 2px; margin-right: 2px; }
-.contacts-tab .avatar-row .col-auto { min-width: 105px; text-align: right; }
 .contacts-tab .avatar-row .timestamp { 
   position: absolute; 
   right: 14px; 
   color: var(--lightTextClr);
   font-size: 85%;
+}
+
+@media ( min-width: 769px ) {
+  .contacts-tab-col:first-child { padding-right: var(--pad); }
+  .contacts-tab-col:last-child { padding-left: var(--pad); }
 }

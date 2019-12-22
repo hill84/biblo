@@ -22,6 +22,7 @@ import NotesDash from './notesDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
 
+const containerStyle = { maxWidth: 1280, };
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 const tabs = [
   { name: 'users', label: 'Utenti', icon: icon.account() },
@@ -154,7 +155,7 @@ export default class Admin extends Component {
       return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     } else if (!isAdmin) {
       return (
-        <div className="container empty" id="adminComponent">
+        <div className="container empty">
           <div className="card dark empty text-center">
             <p>{icon.cancel()}</p>
             <p>Area riservata agli amministratori</p>
@@ -164,7 +165,7 @@ export default class Admin extends Component {
     }
 
 		return (
-			<div className="container" id="adminComponent">
+			<div className="container" style={containerStyle}>
         <Helmet>
           <title>{app.name} | Amministrazione</title>
           <meta name="robots" content="noindex, nofollow" />

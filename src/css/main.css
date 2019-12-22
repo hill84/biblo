@@ -1,4 +1,5 @@
 :root {
+  /* Colors */
   /* http://www.material-ui.com/#/customization/colors */
   --primaryLighterClr: 0, 188, 212;       /* cyan500 */
   --primaryLightClr: 0, 172, 193;         /* cyan600 */
@@ -36,25 +37,6 @@
   --cardDarkerBg: rgba(0, 0, 0, .3);
   --cardDarkestBg: rgba(0, 0, 0, .4);
   --bookBg: rgb(var(--canvasLighterClr));
-  --radius: 3px;
-  --headerHeight: 60px;
-  --btnHeight: 36px;
-  --btnPad: .8rem;
-  --btnFontSize: .9rem;
-  --btnDisabledBg: rgba(0, 0, 0, .07);
-  --pad: 24px;
-  --avatarSize: 40px;
-  --booksPerRow-lg: 7;
-  --bubblesPerRow-lg: 9;
-  --shelf-rowHeight: 224px;
-  --bookWidth: 140px;
-  --coverWidth: 120px;
-  --coverHeight: 180px;
-  --skltnTitleY: 190px;
-  --skltnAuthorY: 209px;
-  --skltnStarsY: 228px;
-  --skltnCoverX: center;
-  --skltnTitleX: center;
   --skltn: 0, 10, 20;
   --skltnClr: rgba(var(--skltn), .15);
   --skltnLightClr: rgba(var(--skltn), .04);
@@ -67,6 +49,31 @@
   --linkClr: rgb(var(--primaryLightClr));
   --linkClrHover: rgb(var(--primaryLighterClr));
   --linkClrActive: rgb(var(--primaryClr));
+  --btnDisabledBg: rgba(0, 0, 0, .07);
+  
+  /* Measures */
+  --radius: 3px;
+  --headerHeight: 60px;
+  --btnHeight: 36px;
+  --btnPad: .8rem;
+  --btnFontSize: .9rem;
+  --pad: 24px;
+  --avatarSize: 40px;
+  --shelf-rowHeight: 224px;
+  --bookWidth: 140px;
+  --coverWidth: 120px;
+  --coverHeight: 180px;
+  --skltnTitleY: 190px;
+  --skltnAuthorY: 209px;
+  --skltnStarsY: 228px;
+
+  /* Values */
+  --booksPerRow-lg: 7;
+  --bubblesPerRow-lg: 9;
+
+  /* Alignments */
+  --skltnCoverX: center;
+  --skltnTitleX: center;
 }
 
 html {
@@ -1988,7 +1995,8 @@ progress[ value='100' ]::-webkit-progress-bar {
   .contacts-tab-col h4 {
     position: sticky;
     top: 0;
-    background-color: rgba(255,255,255,.94);
+    background-color: rgba(var(--cardBg), .94);
+    backdrop-filter: saturate(180%) blur(5px);
     margin: 0 -7px;
     padding: .5rem 7px;
     z-index: 1;
