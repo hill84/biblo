@@ -20,6 +20,7 @@
 	"rules": {
 		"camelcase": "off",
 		"declaration-block-trailing-semicolon": "off",
+		"import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
     "import/prefer-default-export" : "warn",
 		"jsx-a11y/anchor-is-valid": ["error", { "specialLink": ["to"] }],
 		"linebreak-style": ["off", "windows"],

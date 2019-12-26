@@ -1,164 +1,155 @@
 .skltns-row { display: block; }
-.skltn.shelf-row, .skltn.stacked {
-  position: relative;
-  height: var(--shelf-rowHeight);
-  overflow: hidden;
-}
-.skltn.shelf-row:before, .skltn.rows:before, .skltn.review:before, .skltn.quote:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: .6;
-  background: linear-gradient(90deg, transparent, rgb(var(--cardBg)), transparent) calc(-1 * var(--coverWidth)) 0;
-  background-size: 150px 100%;
-  background-repeat: no-repeat;
-  background-position: -150px 0;
-  animation: skltn_shelfRow 2.5s infinite linear;
-  z-index: 1;
-}
-.skltn.book {
-  min-width: var(--bookWidth);
-  margin: 0 auto;
-  width: 100%;
-  height: var(--shelf-rowHeight);
-  background:
-    linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnCoverX) top, 
-    linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnTitleY),
-    linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnAuthorY);
-  background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, calc(var(--coverWidth) * .8) 11px;
-  background-repeat: no-repeat;
-}
-.skltn.stacked {
-  --bookWidth: 100px;
-  --coverWidth: 80px;
-  --coverHeight: 120px;
-  --shelf-rowHeight: var(--coverHeight);
-  --skltnTitleY: 10px;
-  --skltnAuthorY: 30px;
-  --skltnCoverX: 0;
-  --skltnTitleX: 100px;
-  height: calc(3 * (var(--shelf-rowHeight) + 15px));
+.skltn {
+  &.shelf-row, &.stacked {
+    position: relative;
+    height: var(--shelf-rowHeight);
+    overflow: hidden;
+  }
+  &.shelf-row:before, &.rows:before, &.review:before, &.quote:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .6;
+    background: linear-gradient(90deg, transparent, rgb(var(--cardBg)), transparent) calc(-1 * var(--coverWidth)) 0;
+    background-size: 150px 100%;
+    background-repeat: no-repeat;
+    background-position: -150px 0;
+    animation: skltn_shelfRow 2.5s infinite linear;
+    z-index: 1;
+  }
+  &.book {
+    min-width: var(--bookWidth);
+    margin: 0 auto;
+    width: 100%;
+    height: var(--shelf-rowHeight);
+    background:
+      linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnCoverX) top, 
+      linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnTitleY),
+      linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnAuthorY);
+    background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, calc(var(--coverWidth) * .8) 11px;
+    background-repeat: no-repeat;
+  }
+  &.stacked {
+    --bookWidth: 100px;
+    --coverWidth: 80px;
+    --coverHeight: 120px;
+    --shelf-rowHeight: var(--coverHeight);
+    --skltnTitleY: 10px;
+    --skltnAuthorY: 30px;
+    --skltnCoverX: 0;
+    --skltnTitleX: 100px;
+    
+    height: calc(3 * (var(--shelf-rowHeight) + 15px));
+  }
+  &.bubble {
+    --skltnTitleY: calc(var(--avatarSize) + 12px);
+    --coverWidth: calc(var(--avatarSize) + 20px);
+
+    /* min-width: var(--bookWidth); */
+    margin: 0 auto;
+    width: 100%;
+    height: var(--shelf-rowHeight);
+    border-radius: 0;
+    background-image:
+      radial-gradient(circle var(--avatarSize), var(--skltnClr) 50%, transparent 0), 
+      linear-gradient(var(--skltnClr), var(--skltnClr));
+    background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
+    background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
+    background-repeat: no-repeat;
+  }
+  &.rows, &.review, &.quote { margin-bottom: 10px; }
+  &.rows, &.review, &.quote, &.notification, &.avatar-row, &.dash {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-height: 100%;
+    background-repeat: no-repeat;
+  }
+  &.rows {
+    height: 100px;
+    background-image:
+      repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+      linear-gradient(var(--skltnClr) 50%, transparent 50%);
+    background-position: 0 0, 0 88px;
+    background-size: 100% 88px,  calc(100% - 100px) 22px;
+  }
+  &.review {
+    height: 118px;
+    background-image:
+      radial-gradient(circle 16px, var(--skltnClr) 99%, transparent 0), 
+      linear-gradient(var(--skltnClr) 50%, transparent 50%),
+      repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+      linear-gradient(var(--skltnClr) 50%, transparent 50%);
+    background-position: 0 14px, 46px 22px, 46px 56px, 46px 100px;
+    background-size: 32px 32px, 200px 32px, 100% 44px, calc(100% - 100px) 22px;
+  }
+  &.quote {
+    height: 124px;
+    background-image:
+      linear-gradient(var(--skltnClr) 50%, transparent 50%),
+      repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+      linear-gradient(var(--skltnClr) 50%, transparent 50%);
+    background-position: 0 0, 54px 0, 54px 110px;
+    background-size: 40px 123px, 100% 110px, calc(100% - 150px) 22px;
+  }
+  &.notification {
+    --avatarSize: 24px;
+    --padH: 7px;
+    --padV: 10px;
+    --height: calc((var(--padV) * 2) + var(--avatarSize));
+    --rowH: calc(var(--height) + 1px);
+    --textH: 22px;
+    --padTextV: calc(((var(--height) - var(--textH)) / 2) + 4px);
+
+    height: var(--rowH);
+    background-image:
+      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
+      linear-gradient(var(--skltnClr) 50%, transparent 50%),
+      linear-gradient(var(--skltnClr) 50%, transparent 50%),
+      linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
+    background-position:
+      var(--padH) var(--padV), 
+      calc(var(--padH) + var(--avatarSize) + (var(--padH) * 2)) var(--padTextV), 
+      100% var(--padTextV),
+      0 var(--height);
+    background-size: var(--avatarSize) var(--avatarSize), 170px var(--textH), var(--rowH) var(--textH), 100% 1px;
+  }
+  &.avatar-row {
+    --avatarSize: 40px;
+    --padH: 7px;
+    --padV: calc(7px + .4rem);
+    --height: calc((var(--padV) * 2) + var(--avatarSize) + 1px);
+    --textH: 22px;
+    --padTextV: calc(((var(--height) - var(--textH)) / 2) + 4px);
+
+    height: var(--height);
+    background-image:
+      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
+      linear-gradient(var(--skltnClr) 50%, transparent 50%),
+      linear-gradient(var(--skltnClr) 50%, transparent 50%);
+    background-position:
+      0 var(--padV), 
+      calc(var(--avatarSize) + (var(--padH) * 2)) var(--padTextV), 
+      100% var(--padTextV);
+    background-size: var(--avatarSize) var(--avatarSize), 170px var(--textH), var(--height) var(--textH);
+  }
+  &.dash {
+    height: 35px;
+    background-image:
+      radial-gradient(circle 10px, var(--skltnClr) 99%, transparent 0), 
+      linear-gradient(var(--skltnClr) 50%, transparent 50%),
+      linear-gradient(var(--skltnClr) 50%, transparent 50%);
+    background-position: 0 7px, 34px 11px, 100% 11px;
+    background-size: 20px 20px, 100px 22px, 35px 22px;
+  }
 }
 /* .stacked .skltn.book { background-repeat: repeat-y; } */
 
 .bubbles .skltn.shelf-row {
   --shelf-rowHeight: 119px;
+
   grid-template-columns: repeat(var(--bubblesPerRow-lg), 1fr);
-}
-.skltn.bubble {
-  --skltnTitleY: calc(var(--avatarSize) + 12px);
-  --coverWidth: calc(var(--avatarSize) + 20px);
-  /* min-width: var(--bookWidth); */
-  margin: 0 auto;
-  width: 100%;
-  height: var(--shelf-rowHeight);
-  border-radius: 0;
-  background-image:
-    radial-gradient(circle var(--avatarSize), var(--skltnClr) 50%, transparent 0), 
-    linear-gradient(var(--skltnClr), var(--skltnClr));
-  background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
-  background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
-  background-repeat: no-repeat;
-}
-
-.skltn.rows, .skltn.review, .skltn.quote { margin-bottom: 10px; }
-
-.skltn.rows, .skltn.review, .skltn.quote, .skltn.notification, .skltn.avatar-row, .skltn.dash {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  max-height: 100%;
-  background-repeat: no-repeat;
-}
-
-.skltn.rows {
-  height: 100px;
-  background-image:
-    repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%);
-  background-position: 0 0, 0 88px;
-  background-size: 100% 88px,  calc(100% - 100px) 22px;
-}
-
-.skltn.review {
-  height: 118px;
-  background-image:
-    radial-gradient(circle 16px, var(--skltnClr) 99%, transparent 0), 
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%);
-  background-position: 0 14px, 46px 22px, 46px 56px, 46px 100px;
-  background-size: 32px 32px, 200px 32px, 100% 44px, calc(100% - 100px) 22px;
-}
-
-.skltn.quote {
-  height: 124px;
-  background-image:
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%);
-  background-position: 0 0, 54px 0, 54px 110px;
-  background-size: 40px 123px, 100% 110px, calc(100% - 150px) 22px;
-}
-
-.skltn.notification {
-  /* height: 45px;
-  background-image:
-    radial-gradient(circle 12px, var(--skltnClr) 99%, transparent 0), 
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
-  background-position: 7px 10px, 45px 16px, 100% 16px, 0 44px;
-  background-size: 24px 24px, 170px 22px, 45px 22px, 100% 2px; */
-  --avatarSize: 24px;
-  --padH: 7px;
-  --padV: 10px;
-  --height: calc((var(--padV) * 2) + var(--avatarSize));
-  --rowH: calc(var(--height) + 1px);
-  --textH: 22px;
-  --padTextV: calc(((var(--height) - var(--textH)) / 2) + 4px);
-  height: var(--rowH);
-  background-image:
-    radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
-  background-position:
-    var(--padH) var(--padV), 
-    calc(var(--padH) + var(--avatarSize) + (var(--padH) * 2)) var(--padTextV), 
-    100% var(--padTextV),
-    0 var(--height);
-  background-size: var(--avatarSize) var(--avatarSize), 170px var(--textH), var(--rowH) var(--textH), 100% 1px;
-}
-
-.skltn.avatar-row {
-  --avatarSize: 40px;
-  --padH: 7px;
-  --padV: calc(7px + .4rem);
-  --height: calc((var(--padV) * 2) + var(--avatarSize) + 1px);
-  --textH: 22px;
-  --padTextV: calc(((var(--height) - var(--textH)) / 2) + 4px);
-  height: var(--height);
-  background-image:
-    radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%);
-  background-position:
-    0 var(--padV), 
-    calc(var(--avatarSize) + (var(--padH) * 2)) var(--padTextV), 
-    100% var(--padTextV);
-  background-size: var(--avatarSize) var(--avatarSize), 170px var(--textH), var(--height) var(--textH);
-}
-
-.skltn.dash {
-  height: 35px;
-  background-image:
-    radial-gradient(circle 10px, var(--skltnClr) 99%, transparent 0), 
-    linear-gradient(var(--skltnClr) 50%, transparent 50%),
-    linear-gradient(var(--skltnClr) 50%, transparent 50%);
-  background-position: 0 7px, 34px 11px, 100% 11px;
-  background-size: 20px 20px, 100px 22px, 35px 22px;
 }

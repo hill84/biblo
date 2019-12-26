@@ -20,7 +20,7 @@ const Profile = props => {
         <ProfileForm openSnackbar={openSnackbar} user={user} />
       </div>
       <div className="text-center"> 
-        <Link to={`/dashboard/${user.uid}`} className="btn flat rounded">Vai alla dashboard</Link>
+        <Link to={`/dashboard/${user.uid}`} className="btn flat rounded">La mia libreria</Link>
       </div>
     </div>
   );

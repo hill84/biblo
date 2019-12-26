@@ -331,7 +331,7 @@ export default class BookProfile extends Component {
                           </button>
                         }
                         {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                          <button type="button" className="btn clear rounded" ref={addBookToWishlistRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
+                          <button type="button" className="btn flat rounded" ref={addBookToWishlistRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
                         }
                       </div>
                       {userBook.bookInShelf &&

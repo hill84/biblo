@@ -1,9 +1,19 @@
-#BookProfile { position: relative; z-index: 1; }
-#BookProfile .card .book { margin-bottom: 10px; }
-#BookProfile .own.review .row { opacity: .3; transition: all .4s ease-in-out; }
-#BookProfile .own.review:hover .row { opacity: 1; }
-#BookProfile .book-profile .rating { display: flex; align-items: center; }
-#BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; }
+@import 'media-queries.css';
+
+#BookProfile {
+  position: relative;
+  z-index: 1;
+  & .card .book { margin-bottom: 10px; }
+  & .own.review {
+    &:hover .row { opacity: 1; }
+    & .row { opacity: .3; transition: all .4s ease-in-out; }
+  }
+  & .book-profile .rating {
+    display: flex;
+    align-items: center;
+    & .react-rater { font-size: 1.4rem; }
+  }
+}
 
 .select-isbn {
   -webkit-appearance: none;
@@ -13,22 +23,24 @@
   padding: 2px 5px;
   margin-left: -6px;
   cursor: pointer;
-}
-.select-isbn:hover {
-  border-color: rgba(0, 0, 0, .1);
+  &:hover { border-color: rgba(var(--blackClr), .1); }
 }
 
-@media ( max-width: 768px ) {
+@media (--to-l) {
   #BookProfile .book-profile .rating { display: block; }
   /* #BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; } */
 }
 
-@media ( max-width: 420px ) {
-  #BookProfile .book-profile .user.rating .react-rater { font-size: 2.3rem; line-height: inherit; }
-  #BookProfile .book-profile .user.rating .label { display: none; }
+@media (--to-s) {
+  #BookProfile .book-profile .user.rating {
+    & .react-rater { font-size: 2.3rem; line-height: inherit; }
+    & .label { display: none; }
+  }
 }
 
-@media ( pointer: coarse ) {
-  #BookProfile .book-profile .user.rating .react-rater { font-size: 2.3rem; }
-  #BookProfile .book-profile .user.rating .label { display: none; }
+@media (pointer: coarse) {
+  #BookProfile .book-profile .user.rating {
+    & .react-rater { font-size: 2.3rem; }
+    & .label { display: none; }
+  }
 }

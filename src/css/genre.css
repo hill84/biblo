@@ -1,6 +1,14 @@
-#genreComponent .card { overflow: hidden; transition: background-color .4s ease-in-out; }
-#genreComponent .card h2 { color: var(--contrastedTextClr); }
-#genreComponent .badges:not(.scrollable) .badge { color: rgba(0, 0, 0, .5); font-weight: 600; }
-#genreComponent .badges:not(.scrollable) .badge:not(.active) { background-color: rgba(255, 255, 255, .2); }
-#genreComponent .badges:not(.scrollable) .badge:hover { background-color: rgba(255, 255, 255, .3); }
-#genreComponent .title .primary-text { color: rgba(0, 0, 0, .4); }
+#genreComponent {
+  & .card {
+    overflow: hidden;
+    transition: background-color .4s ease-in-out;
+    & h2 { color: var(--contrastedTextClr); }
+  }
+  & .badges:not(.scrollable) .badge {
+    color: rgba(var(--blackClr), .5);
+    font-weight: 600;
+    &:hover { background-color: rgba(var(--whiteClr), .3); }
+    &:not(.active) { background-color: rgba(var(--whiteClr), .2); }
+  }
+  & .title .primary-text { color: rgba(var(--blackClr), .4); }
+}

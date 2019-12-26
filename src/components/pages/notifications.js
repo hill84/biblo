@@ -168,8 +168,12 @@ export default class Notifications extends Component {
                   <span className="counter">{items ? items.length : 0} notific{items && items.length === 1 ? 'a' : 'he'} {items && count > items.length ? `di ${count}` : ''}</span>
                 </div>
                 <div className="col-auto">
-                  <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-                  <button type="button" className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+                  <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu} disabled={!items || items.length < 2}>
+                    <span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}
+                  </button>
+                  <button type="button" className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc} disabled={!items || items.length < 2}>
+                    {icon.arrowDown()}
+                  </button>
                   <Menu 
                     className="dropdown-menu"
                     anchorEl={orderMenuAnchorEl} 
@@ -181,8 +185,7 @@ export default class Notifications extends Component {
               </div>
             </div>
             <div className="shelf notes">
-              {items && items.map(item => <NoteMenuItem item={item} key={item.nid} animation={false} />)}
-              {loading && skltn}
+              {loading ? skltn : items.map(item => <NoteMenuItem item={item} key={item.nid} animation={false} />) }
             </div>
           </div>
         </div>

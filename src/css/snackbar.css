@@ -1,6 +1,6 @@
-/* SNACKBAR */
 .snackbar {
   --distance: 24px;
+  
   position: fixed;
   bottom: var(--distance);
   right: var(--distance);
@@ -19,25 +19,28 @@
   border-radius: 4px;
   background-color: rgb(var(--accentClr));
   text-decoration: none;
-  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+  box-shadow: 0 3px 5px -1px rgba(var(--blackClr), .2), 0 6px 10px 0 rgba(var(--blackClr), .14), 0 1px 18px 0 rgba(var(--blackClr), .12);
   animation: fadeInSlideUp .3s cubic-bezier(.21, .61, .35, 1) both .5s;
   z-index: 999;
+  &:hover { color: #222; }
+  & .snackbar-message { display: block; padding: 8px 0; }
+  & .snackbar-action { 
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: -8px;
+    padding-left: 16px;
+    & .btn.flat { color: inherit; font-weight: 600; }
+  }
 }
-.snackbar:hover { color: #222; }
-.snackbar .snackbar-message { display: block; padding: 8px 0; }
-.snackbar .snackbar-action { 
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  margin-right: -8px;
-  padding-left: 16px; 
-}
-.snackbar .snackbar-action .btn.flat { color: inherit; font-weight: 600; }
 
 /* SNACKBAR CONTENT */
-.snackbar-content { background-color: rgba(var(--cardBg), .9); backdrop-filter: saturate(180%) blur(10px); }
-.snackbar-content.error { background-color: rgba(var(--errorClr), .9); }
-.snackbar-content.info { background-color: rgba(var(--primaryClr), .9); }
-.snackbar-content.success { background-color: rgba(var(--successClr), .9); }
-.snackbar-content.warning { background-color: rgba(var(--accentClr), .9); }
-.snackbar-content .btn.flat { color: white; }
+.snackbar-content {
+  background-color: rgba(var(--cardBg), .9);
+  backdrop-filter: saturate(180%) blur(10px);
+  &.error { background-color: rgba(var(--errorClr), .9); }
+  &.info { background-color: rgba(var(--primaryClr), .9); }
+  &.success { background-color: rgba(var(--successClr), .9); }
+  &.warning { background-color: rgba(var(--accentClr), .9); }
+  & .btn.flat { color: white; }
+}

@@ -1,8 +1,8 @@
 .emoji-mart {
   animation: fadeInSlideDown .6s cubic-bezier(.21, .61, .35, 1) both;
   will-change: opacity, transform;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
-  border-color: rgba(0, 0, 0, .1);
+  box-shadow: 0 6px 12px rgba(var(--blackClr), .2);
+  border-color: rgba(var(--blackClr), .1);
   opacity: .96;
   max-width: 100%;
 }
@@ -17,15 +17,13 @@
 
 .dark.emoji-mart {
   background-color: rgb(var(--canvasLightClr));
-}
-
-.dark.emoji-mart .emoji-mart-category-label span {
-  background-color: rgb(var(--canvasLightClr));
-  color: #fff;
-}
-
-.dark.emoji-mart .emoji-mart-search input {
-  background-color: rgb(var(--canvasClr));
-  border-color: rgba(0, 0, 0, .1);
-  color: #fff;
+  & .emoji-mart-category-label span {
+    background-color: rgb(var(--canvasLightClr));
+    color: #fff;
+  }
+  & .emoji-mart-search input {
+    background-color: rgb(var(--canvasClr));
+    border-color: rgba(var(--blackClr), .1);
+    color: #fff;
+  }
 }
