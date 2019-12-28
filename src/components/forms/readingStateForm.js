@@ -17,10 +17,11 @@ import { funcType, numberType, shapeType, stringType } from '../../config/types'
 import Overlay from '../overlay';
 import Stepper from '../stepper';
 
+const steps = 20;
+
 const ReadingStateForm = props => {
   const is = useRef(true);
-  const { bid, openSnackbar, pages, readingState } = props;
-
+  const { bid, onToggle, openSnackbar, pages, readingState } = props;
   const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
   const [state_num, setState_num] = useState(readingState.state_num);
   const [start_num, setStart_num] = useState(readingState.start_num || null);
@@ -28,7 +29,6 @@ const ReadingStateForm = props => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [changes, setChanges] = useState(false);
-  const steps = 20;
 
   useEffect(() => {
     if (is.current) {
@@ -60,8 +60,6 @@ const ReadingStateForm = props => {
   useEffect(() => () => {
     is.current = false;
   }, []);
-
-  const onToggle = () => props.onToggle();
 
   const onChangeSelect = name => e => {
     const { value } = e.target;
@@ -105,13 +103,13 @@ const ReadingStateForm = props => {
         }).then(() => {
           // console.log(`UserBook readingState updated`);
           if (is.current) setLoading(false);
-          props.onToggle();
+          onToggle();
         }).catch(err => {
           if (is.current) setLoading(false);
           openSnackbar(handleFirestoreError(err), 'error');
         });
       }
-    } else props.onToggle();
+    } else onToggle();
   }
 
   const onNext = () => setProgress_num(progress_num + (100/steps));

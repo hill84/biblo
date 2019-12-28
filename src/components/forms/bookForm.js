@@ -16,283 +16,264 @@ import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { Component } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
 import firebase, { authid, bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, handleFirestoreError, hasRole, normalizeString, validateImg } from '../../config/shared';
-import { bookType, funcType, userType } from '../../config/types';
+import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, urlRegex, validateImg } from '../../config/shared';
+import { bookType, funcType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import Cover from '../cover';
 
-export default class BookForm extends Component {
-	state = {
-    book: {
-      ISBN_10: this.props.book.ISBN_10 || (this.props.book.ISBN_13 ? isbn.parse(this.props.book.ISBN_13) ? isbn.parse(this.props.book.ISBN_13).asIsbn10() : 0 : 0), 
-      ISBN_13: this.props.book.ISBN_13 || 0, 
-      EDIT: this.props.book.EDIT || {
-        createdBy: this.props.book.createdBy || '',
-        createdByUid: this.props.book.createdByUid || '',
-        created_num: this.props.book.created || 0,
-        edit: true,
-        lastEditBy: this.props.book.lastEditBy || '',
-        lastEditByUid: this.props.book.lastEditByUid || '',
-        lastEdit_num: this.props.book.lastEdit || 0
-      },
-      authors: this.props.book.authors || {}, 
-      bid: this.props.book.bid || '', 
-      collections: this.props.book.collections || [],
-      covers: this.props.book.covers || [], 
-      description: this.props.book.description || '', 
-      edition_num: this.props.book.edition_num || 0, 
-      format: this.props.book.format || '', 
-      genres: this.props.book.genres || [], 
-      incipit: this.props.book.incipit || '',
-      languages: this.props.book.languages || [], 
-      pages_num: this.props.book.pages_num || 0, 
-      publisher: this.props.book.publisher || '', 
-      publication: this.props.book.publication || '', 
-      readers_num: this.props.book.readers_num || 0,
-      rating_num: this.props.book.rating_num || 0,
-      ratings_num: this.props.book.ratings_num || 0,
-      reviews_num: this.props.book.reviews_num || 0,
-      subtitle: this.props.book.subtitle || '', 
-      title: this.props.book.title || '', 
-      title_sort: this.props.book.title_sort || '',
-      trailerURL: this.props.book.trailerURL || ''
+const max = {
+  chars: {
+    author: 50,
+    collection: 50,
+    description: 2000,
+    edition_num: 2,
+    incipit: 2500,
+    pages_num: 5,
+    publisher: 100,
+    subtitle: 255,
+    title: 255,
+    URL: 1000
+  },
+  items: {
+    authors: 5,
+    collections: 5,
+    genres: 3,
+    languages: 4
+  }
+};
+
+const min = {
+  chars: {
+    description: 100,
+    incipit: 255
+  },
+  items: {
+    pages_num: 20
+  }
+}
+
+const BookForm = props => {
+  const { user } = useContext(UserContext);
+  const { isEditing, openSnackbar } = props;
+  const [book, setBook] = useState({
+    ISBN_10: props.book.ISBN_10 || (props.book.ISBN_13 ? isbn.parse(props.book.ISBN_13) ? isbn.parse(props.book.ISBN_13).asIsbn10() : 0 : 0), 
+    ISBN_13: props.book.ISBN_13 || 0, 
+    EDIT: props.book.EDIT || {
+      createdBy: props.book.createdBy || '',
+      createdByUid: props.book.createdByUid || '',
+      created_num: props.book.created || 0,
+      edit: true,
+      lastEditBy: props.book.lastEditBy || '',
+      lastEditByUid: props.book.lastEditByUid || '',
+      lastEdit_num: props.book.lastEdit || 0
     },
-    imgLoading: false,
-    imgPreview: null,
-    imgProgress: 0,
-    isEditingDescription: false,
-    isEditingIncipit: false,
-    isOpenChangesDialog: false,
-    description_maxChars: 2000,
-    incipit_maxChars: 2500,
-    URL_maxChars: 1000,
-    loading: false,
-    errors: {},
-    changes: false,
-    prevBook: this.props.book,
-    redirectToBook: null
-  }
+    authors: props.book.authors || {}, 
+    bid: props.book.bid || '', 
+    collections: props.book.collections || [],
+    covers: props.book.covers || [], 
+    description: props.book.description || '', 
+    edition_num: props.book.edition_num || 0, 
+    format: props.book.format || '', 
+    genres: props.book.genres || [], 
+    incipit: props.book.incipit || '',
+    languages: props.book.languages || [], 
+    pages_num: props.book.pages_num || 0, 
+    publisher: props.book.publisher || '', 
+    publication: props.book.publication || '', 
+    readers_num: props.book.readers_num || 0,
+    rating_num: props.book.rating_num || 0,
+    ratings_num: props.book.ratings_num || 0,
+    reviews_num: props.book.reviews_num || 0,
+    subtitle: props.book.subtitle || '', 
+    title: props.book.title || '', 
+    title_sort: props.book.title_sort || '',
+    trailerURL: props.book.trailerURL || ''
+  });
+  const [changes, setChanges] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [imgLoading, setImgLoading] = useState(false);
+  const [imgPreview, setImgPreview] = useState(null);
+  const [imgProgress, setImgProgress] = useState(0);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [isEditingIncipit, setIsEditingIncipit] = useState(false);
+  const [isOpenChangesDialog, setIsOpenChangesDialog] = useState(false);
+  const [leftChars, setLeftChars] = useState({ description: null, incipit: null });
+  const [loading, setLoading] = useState(false);
+  const [prevBook, setPrevBook] = useState(props.book);
+  const [redirectToBook, setRedirectToBook] = useState(null);
+  const is = useRef(true);
 
-  static propTypes = {
-    book: bookType.isRequired,
-    isEditing: funcType.isRequired,
-    openSnackbar: funcType.isRequired,
-    user: userType.isRequired
-  }
+  useEffect(() => {
+    setPrevBook(book);
 
-  static getDerivedStateFromProps(props, state) {
-    if ((props.book.bid !== state.book.bid) || (!state.book.bid && props.book !== state.prevBook)) { 
-      return { prevBook: props.book, book: props.book, errors: {} }
+    return () => {
+      is.current = false;
     }
-    return null;
-  }
+    // eslint-disable-next-line
+  }, []);
 
-  componentDidMount(/* props */) {
-    this._isMounted = true;
-    /* if (this.props.book.bid) {
-      bookRef(this.props.book.bid).onSnapshot(snap => {
-        if (this._isMounted) {
-          this.setState({ book: snap.data() });
-        }
-      });
-    } */
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-  
-  onToggleDescription = e => {
+  const onToggleDescription = e => {
     e.persist();
     e.preventDefault();
 
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        isEditingDescription: !prevState.isEditingDescription
-      }));
+    if (is.current) {
+      setIsEditingDescription(!isEditingDescription);
     }
   }
   
-  onToggleIncipit = e => {
-    e.persist(); // TODO: check if needed
+  const onToggleIncipit = e => {
+    e.persist();
     e.preventDefault();
     
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        isEditingIncipit: !prevState.isEditingIncipit
-      }));
+    if (is.current) {
+      setIsEditingIncipit(!isEditingIncipit);
     }
   }
-  
-  isChanged = (name, value) => {
-    const prevValue = this.state.prevBook[name];
 
-    if (prevValue !== value) {
-      if (this._isMounted) {
-        this.setState({ changes: true });
+  const setChange = (name, value) => {
+    const index = changes.indexOf(name);
+    const isArray = Array.isArray(value);
+    const isObj = typeof value;
+    // console.log(prevBook[name], value);
+
+    if (prevBook[name] === value || ((isArray || isObj) &&  JSON.stringify(prevBook[name]) === JSON.stringify(value))) {
+      if (index !== -1) {
+        // console.log('remove item', name, index);
+        changes.splice(index, 1);
+        setChanges(changes);
       }
+    } else if (index === -1) {
+      setChanges([...changes, name]);
     }
   }
 
-  onChange = e => {
+  const setBookChange = (name, value) => {
+    if (is.current) {
+      setBook({ ...book, [name]: value });
+      setErrors({ ...errors, [name]: null });
+      setChange(name, value);
+    }
+  };
+
+  const onChange = e => {
     e.persist();
     const { name, value } = e.target;
-
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value));
-    }
-    
+    setBookChange(name, value);
   };
 
-  onChangeNumber = e => {
+  const onChangeNumber = e => {
     e.persist();
-    const { name } = e.target;
-    const value = parseInt(e.target.value, 10);
+    const { name, value } = e.target;
+    const value_num = parseInt(value, 10);
 
-    if (!Number.isNaN(value)) {
-      if (this._isMounted) {
-        this.setState(prevState => ({
-          book: { ...prevState.book, [name]: value }
-        }), () => this.isChanged(name, value));
-      }
+    const match = value.match(numRegex);
+
+    setBookChange(name, value_num);
+
+    if (match) {
+      setErrors({ ...errors, [name]: null });
+    } else {
+      setErrors({ ...errors, [name]: 'Numero non valido' });
     }
   };
 
-  onChangeSelect = name => e => {
+  const onChangeSelect = name => e => {
     e.persist();
     const { value } = e.target;
-
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value));
-    }
+    setBookChange(name, value);
   };
 
-  onChangeDate = name => date => {
+  const onChangeDate = name => date => {
     const value = String(date);
-
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value));
-    }
+    setBookChange(name, value);
   };
 
-  onAddChip = (name, chip) => {
-    const prevState = this.state;
-    const value = [...prevState.book[name], chip];
-
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value)); 
-    }
+  const onAddChip = (name, chip) => {
+    const value = [...book[name], chip];
+    setBookChange(name, value);
   }; 
 
-  onDeleteChip = (name, chip) => { 
-    const prevState = this.state;
-    const value = prevState.book[name].filter((c) => c !== chip);
-
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        // chips: prevState.chips.filter((c) => c !== chip) 
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value));
-    }
+  const onDeleteChip = (name, chip) => {
+    const value = book[name].filter(c => c !== chip);
+    setBookChange(name, value);
   }; 
   
-  onAddChipToObj = (name, chip) => {
-    const prevState = this.state;
-    const value = { ...prevState.book[name], [chip.split('.').join('')]: true };
-
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value));
-    }
+  const onAddChipToObj = (name, chip) => {
+    const value = { ...book[name], [chip.split('.').join('')]: true };
+    setBookChange(name, value)
   };
 
-  onDeleteChipFromObj = (name, chip) => {
-    const prevState = this.state;
-    const value = arrToObj(Object.keys(prevState.book[name]).map(arr => arr).filter((c) => c !== chip.split('.').join('')), item => ({ name: item, value: true }));
-
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        // chips: prevState.chips.filter((c) => c !== chip)
-        book: { ...prevState.book, [name]: value }
-      }), () => this.isChanged(name, value));
-    }
+  const onDeleteChipFromObj = (name, chip) => {
+    const value = arrToObj(Object.keys(book[name]).filter(c => c !== chip.split('.').join('')), item => ({ key: item, value: true }));
+    setBookChange(name, value);
   };
   
-  onChangeMaxChars = e => {
+  const onChangeMaxChars = e => {
     e.persist();
     const { name, value } = e.target;
-    const leftChars = `${name}_leftChars`;
-    const maxChars = `${name}_maxChars`;
-      
-    if (this._isMounted) {
-      this.setState(prevState => ({
-        book: { ...prevState.book, [name]: value }, 
-        [leftChars]: prevState[maxChars] - value.length, 
-        changes: true
-      }), () => this.isChanged(name, value));
+
+    if (is.current) {
+      setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
+      setBookChange(name, value);
     }
   };
 
-  onPreventDefault = e => { 
+  const onPreventDefault = e => { 
     if (e.key === 'Enter') e.preventDefault(); 
-  }
+  };
 
-  checkISBNnum = async num => {
-    const { openSnackbar } = this.props;
+  const checkISBNnum = async num => {
     const result = await booksRef.where('ISBN_13', '==', Number(num)).limit(1).get().then(snap => {
       if (!snap.empty) return true;
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     return result;
-  }
+  };
 
-  validate = async book => {
+  const validate = async book => {
     const errors = {};
-    const isDuplicate = await this.checkISBNnum(book.ISBN_13);
+    const isDuplicate = await checkISBNnum(book.ISBN_13);
     const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
     
     if (!book.title) {
       errors.title = "Inserisci il titolo";
-    } else if (book.title.length > 255) {
-      errors.title = "Lunghezza massima 255 caratteri";
+    } else if (book.title.length > max.chars.title) {
+      errors.title = `Lunghezza massima ${max.chars.title} caratteri`;
     }
-    if (book.subtitle && book.subtitle.length > 255) {
-      errors.subtitle = "Lunghezza massima 255 caratteri";
+
+    if (book.subtitle && book.subtitle.length > max.chars.subtitle) {
+      errors.subtitle = `Lunghezza massima ${max.chars.subtitle} caratteri`;
     }
+
     if (!Object.keys(book.authors).length) {
       errors.authors = "Inserisci l'autore";
-    } else if (Object.keys(book.authors).length > 5) {
-      errors.authors = "Massimo 5 autori";
-    } else if (Object.keys(book.authors).some(author => author.length > 50)) {
-      errors.authors = "Lunghezza massima 50 caratteri";
+    } else if (Object.keys(book.authors).length > max.items.authors) {
+      errors.authors = `Massimo ${max.items.authors} autori`;
+    } else if (Object.keys(book.authors).some(author => author.length > max.chars.author)) {
+      errors.authors = `Lunghezza massima ${max.chars.author} caratteri`;
     }
+
     if (!book.publisher) {
       errors.publisher = "Inserisci l'editore";
-    } else if (book.publisher.length > 100) {
-      errors.publisher = "Lunghezza massima 100 caratteri";
+    } else if (book.publisher.length > max.chars.publisher) {
+      errors.publisher = `Lunghezza massima ${max.chars.publisher} caratteri`;
     }
+
     if (!book.pages_num) {
       errors.pages_num = "Inserisci le pagine";
-    } else if (String(book.pages_num).length > 5) {
-      errors.pages_num = "Lunghezza massima 5 cifre";
-    } else if (book.pages_num < 20) {
-      errors.pages_num = "Minimo 20 pagine";
+    } else if (String(book.pages_num).length > max.chars.pages_num) {
+      errors.pages_num = `Lunghezza massima ${max.chars.pages_num} cifre`;
+    } else if (book.pages_num < min.items.pages_num) {
+      errors.pages_num = `Minimo ${min.items.pages_num} pagine`;
     }
+
     if (!book.ISBN_13) {
       errors.ISBN_13 = "Inserisci il codice ISBN";
     } else if (String(book.ISBN_13).length !== 13) {
@@ -303,94 +284,113 @@ export default class BookForm extends Component {
       }
     } else if (!isISBN(String(book.ISBN_13), 13)) {
       errors.ISBN_13 = "Codice non valido";
-    } else if (!this.props.book.bid && isDuplicate) {
+    } else if (!props.book.bid && isDuplicate) {
       errors.ISBN_13 = "Libro già presente";
     }
-    if (book.ISBN_10 && (String(book.ISBN_10).length !== 10)) {
-      errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
-    } else if (book.ISBN_10 && !isISBN(String(book.ISBN_10), 10)) {
-      errors.ISBN_10 = "Codice non valido";
-    }
+
+    if (book.ISBN_10) {
+      if (String(book.ISBN_10).length !== 10) {
+        errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
+      } else if (!isISBN(String(book.ISBN_10), 10)) {
+        errors.ISBN_10 = "Codice non valido";
+      }
+    } 
+
     if (new Date(book.publication).getTime() > maxPublication) {
       errors.publication = "Data di pubblicazione non valida";
     }
-    if (book.edition_num && book.edition_num < 1) {
-      errors.edition_num = "Numero non valido";
-    } else if (book.edition_num && book.edition_num.toString().length > 2) {
-      errors.edition_num = "Max 2 cifre";
+
+    if (book.edition_num) {
+      if (book.edition_num < 1) {
+        errors.edition_num = "Numero non valido";
+      } else if (String(book.edition_num).length > max.chars.edition_num) {
+        errors.edition_num = `Max ${max.chars.edition_num} cifre`;
+      }
     }
-    if (book.languages && (book.languages.length > 4)) {
-      errors.languages = "Massimo 4 lingue";
+
+    if (book.languages && (book.languages.length > max.items.languages)) {
+      errors.languages = `Massimo ${max.items.languages} lingue`;
     }
-    if (book.genres && (book.genres.length > 3)) {
-      errors.genres = "Massimo 3 generi";
+
+    if (book.genres && (book.genres.length > max.items.genres)) {
+      errors.genres = `Massimo ${max.items.genres} generi`;
     }
+
     if (book.collections) {
-      if (book.collections.length > 5) {
-        errors.collections = "Massimo 5 collezioni";
+      if (book.collections.length > max.items.collections) {
+        errors.collections = `Massimo ${max.items.collections} collezioni`;
       }
-      if (book.collections.some(collection => collection.length > 50)) {
-        errors.collections = "Lunghezza massima 50 caratteri";
+      if (book.collections.some(collection => collection.length > max.chars.collection)) {
+        errors.collections = `Lunghezza massima ${max.chars.collection} caratteri`;
       }
     }
-    if (book.description && book.description.length < 100) {
-      errors.description = `Lunghezza minima 100 caratteri`;
-      if (this._isMounted) { this.setState({ isEditingDescription: true }) }
+
+    if (book.description) {
+      if (book.description.length < min.chars.description) {
+        errors.description = `Lunghezza minima ${min.chars.description} caratteri`;
+        if (is.current) setIsEditingDescription(true);
+      } else if (book.description.length > max.chars.description) {
+        errors.description = `Lunghezza massima ${max.chars.description} caratteri`;
+        if (is.current) setIsEditingDescription(true);
+      }
     }
-    if (book.description && book.description.length > this.state.description_maxChars) {
-      errors.description = `Lunghezza massima ${this.state.description_maxChars} caratteri`;
-      if (this._isMounted) { this.setState({ isEditingDescription: true }) }
+
+    if (book.incipit) {
+      if (book.incipit.length < min.chars.incipit) {
+        errors.incipit = `Lunghezza minima ${min.chars.incipit} caratteri`;
+        if (is.current) setIsEditingIncipit(true);
+      } else if (book.incipit.length > max.chars.incipit) {
+        errors.incipit = `Lunghezza massima ${max.chars.incipit} caratteri`;
+        if (is.current) setIsEditingIncipit(true);
+      }
     }
-    if (book.incipit && book.incipit.length < 255) {
-      errors.incipit = `Lunghezza minima 255 caratteri`;
-      if (this._isMounted) { this.setState({ isEditingIncipit: true }) }
-    }
-    if (book.incipit && book.incipit.length > this.state.incipit_maxChars) {
-      errors.incipit = `Lunghezza massima ${this.state.incipit_maxChars} caratteri`;
-      if (this._isMounted) { this.setState({ isEditingIncipit: true }) }
-    }
+
     if (book.trailerURL) {
       if (!isURL(book.trailerURL)) {
         errors.trailerURL = `Formato URL non valido`;
       } 
-      if (book.trailerURL.length > this.state.URL_maxChars) {
-        errors.trailerURL = `Lunghezza massima ${this.state.URL_maxChars} caratteri`;
+      if (book.trailerURL.length > max.chars.URL) {
+        errors.trailerURL = `Lunghezza massima ${max.chars.URL} caratteri`;
       }
-    } 
-    ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
-      if (checkBadWords(book[text])) errors[text] = "Niente volgarità"
-    });
-    return errors;
-  }
+    }
 
-	onImageChange = e => {
+    ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
+      const urlMatches = book[text].match(urlRegex);
+      const badWords = checkBadWords(book[text]);
+      if (urlMatches) {
+        errors[text] = `Non inserire link (${join(urlMatches)})`;
+      } else if (badWords) {
+        errors[text] = "Niente volgarità";
+      }
+    });
+    
+    return errors;
+  };
+
+	const onImageChange = e => {
     e.preventDefault();
 		const file = e.target.files[0];
 
     if (file) {
-      const { openSnackbar } = this.props;
-      const error = validateImg(file, 1);
+      const uploadError = validateImg(file, 1);
       
-      if (!error) {
-        if (this._isMounted) {
-          this.setState(prevState => ({ 
-            imgLoading: true, 
-            errors: { ...prevState.errors, upload: null } 
-          }));
+      if (!uploadError) {
+        if (is.current) {
+          setImgLoading(true);
+          setErrors({ ...errors, upload: null });
         }
-        const uploadTask = storageRef(`books/${this.props.book.bid || this.state.book.bid}`, 'cover').put(file);
+        const uploadTask = storageRef(`books/${props.book.bid || book.bid}`, 'cover').put(file);
         const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
-          if (this._isMounted) { 
-            this.setState({ imgProgress: snap.bytesTransferred / snap.totalBytes * 100 });
+          if (is.current) { 
+            setImgProgress(snap.bytesTransferred / snap.totalBytes * 100);
           }
         }, err => {
           // console.warn(`upload error: ${error.message}`);
-          if (this._isMounted) { 
-            this.setState(prevState => ({ 
-              errors: { ...prevState.errors, upload: err.message }, 
-              imgLoading: false,
-              imgProgress: 0
-            }), () => openSnackbar(err.message, 'error'));
+          if (is.current) { 
+            setErrors({ ...errors, upload: err.message });
+            setImgLoading(false);
+            setImgProgress(0);
+            openSnackbar(err.message, 'error')
           }
         }, () => {
           // console.log('upload completed');
@@ -399,70 +399,68 @@ export default class BookForm extends Component {
               const name = 'covers';
               const value = [url];
               
-              if (this._isMounted) {
-                this.setState(prevState => ({
-                  imgLoading: false,
-                  imgPreview: url,
-                  book: { ...prevState.book, covers: value }
-                }), () => {
-                  this.isChanged(name, value);
-                  openSnackbar('Immagine caricata', 'success');
-                  setTimeout(() => {
-                    if (this._isMounted) this.setState({ imgProgress: 0 });
-                  }, 2000);
-                })
+              if (is.current) {
+                setImgLoading(false);
+                setImgPreview(url);
+                setBookChange(name, value);
+                openSnackbar('Immagine caricata', 'success');
+                setTimeout(() => {
+                  if (is.current) setImgProgress(0);
+                }, 2000);
               }
             })
           );
           unsubUploadTask();
         });
-      } else if (this._isMounted) {
-        this.setState(prevState => ({ 
-          errors: { ...prevState.errors, upload: error } 
-        }), () => openSnackbar(error, 'error'));
+      } else if (is.current) {
+        setErrors({ ...errors, upload: uploadError });
+        openSnackbar(uploadError, 'error');
       }
     }
   };
   
-  onSubmit = async e => {
+  const onSubmit = async e => {
     e.preventDefault();
-    const { book, changes, imgPreview } = this.state;
-    const { openSnackbar } = this.props;
 
-    if (changes || !book.bid) {
-      const errors = await this.validate(book);
-      if (this._isMounted) this.setState({ errors, loading: true });
+    if (changes.length || !book.bid) {
+      if (is.current) setLoading(true);
+
+      const errors = await validate(book);
+
+      if (is.current) setErrors(errors);
+
       if (Object.keys(errors).length === 0) {
         let newBid = '';
-        if (this.props.book.bid) {
+        if (props.book.bid) {
           const { covers, EDIT, title_sort, ...restBook } = book;
-          bookRef(this.props.book.bid).set({
+          bookRef(props.book.bid).set({
             ...restBook,
             covers: (imgPreview && Array(imgPreview)) || book.covers,
             title_sort: normalizeString(book.title) || book.title_sort,
             EDIT: {
               ...EDIT,
               lastEdit_num: Number((new Date()).getTime()),
-              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditBy: (user && user.displayName) || '',
               lastEditByUid: authid || ''
             }
           }).then(() => {
-            if (this._isMounted) {
-              this.setState({ loading: false, changes: false }, () => {
-                this.props.isEditing();
-                openSnackbar('Modifiche salvate', 'success');
-              });
+            if (is.current) {
+              setLoading(false);
+              setChanges([]);
+              isEditing();
+              openSnackbar('Modifiche salvate', 'success');
             }
           }).catch(err => {
-            if (this._isMounted) {
-              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+            if (is.current) {
+              setLoading(false);
+              openSnackbar(handleFirestoreError(err), 'error');
             }
           });
         } else {
           const newBookRef = booksRef.doc();
           newBid = newBookRef.id;
           newBookRef.set({
-            ISBN_10: book.ISBN_10,
+            ISBN_10: String(book.ISBN_10),
             ISBN_13: book.ISBN_13, 
             authors: book.authors, 
             bid: newBid,
@@ -471,11 +469,11 @@ export default class BookForm extends Component {
             description: book.description, 
             EDIT: {
               created_num: Number((new Date()).getTime()),
-              createdBy: (this.props.user && this.props.user.displayName) || '',
+              createdBy: (user && user.displayName) || '',
               createdByUid: authid || '',
               edit: true,
               lastEdit_num: Number((new Date()).getTime()),
-              lastEditBy: (this.props.user && this.props.user.displayName) || '',
+              lastEditBy: (user && user.displayName) || '',
               lastEditByUid: authid || ''
             },
             edition_num: book.edition_num, 
@@ -495,17 +493,18 @@ export default class BookForm extends Component {
             title_sort: book.title_sort,
             trailerURL: book.trailerURL
           }).then(() => {
-            if (this._isMounted) {
-              this.setState({ redirectToBook: `${newBid}/${book.title}` }, () => {
-                /* this.setState({ loading: false, changes: false });
-                this.props.isEditing(); */
-                openSnackbar('Nuovo libro creato', 'success');
-                // console.log(`New book created with bid ${newBid}`);
-              });
+            if (is.current) {
+              setRedirectToBook(`${newBid}/${book.title}`)
+              // setLoading(false);
+              // setChanges([]);
+              // isEditing();
+              openSnackbar('Nuovo libro creato', 'success');
+              // console.log(`New book created with bid ${newBid}`);
             }
           }).catch(err => {
-            if (this._isMounted) {
-              this.setState({ loading: false }, () => openSnackbar(handleFirestoreError(err), 'error'));
+            if (is.current) {
+              setLoading(false);
+              openSnackbar(handleFirestoreError(err), 'error');
             }
           });
         }
@@ -539,382 +538,393 @@ export default class BookForm extends Component {
             }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
           });
         }
-      } else if (this._isMounted) {
-        this.setState({ loading: false });
-        if (errors.description) { this.setState({ isEditingDescription: true })}
-        if (errors.incipit) { this.setState({ isEditingIncipit: true })}
+      } else if (is.current) {
+        setLoading(false);
+        if (errors.description) setIsEditingDescription(true)
+        if (errors.incipit) setIsEditingIncipit(true)
         openSnackbar('Ricontrolla i dati inseriti', 'error');
       }
-    } else this.props.isEditing();
-  }
+    } else isEditing();
+  };
 
-  onExitEditing = () => {
-    if (this.state.changes) {
-      if (this._isMounted) {
-        this.setState({ isOpenChangesDialog: true });
+  const onExitEditing = () => {
+    if (changes.length) {
+      if (is.current) {
+        setIsOpenChangesDialog(true);
       }
-    } else this.props.isEditing();
-  }
+    } else isEditing();
+  };
 
-  onCloseChangesDialog = () => this.setState({ isOpenChangesDialog: false });
-	
-	render() {
-    const { book, description_leftChars, description_maxChars, errors, imgLoading, imgProgress, incipit_leftChars, incipit_maxChars, isEditingDescription, isEditingIncipit, isOpenChangesDialog, loading, redirectToBook } = this.state;
-    const { isEditing, user } = this.props;
-    const isAdmin = hasRole(user, 'admin');
-    const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
-    
-    const menuItemsMap = (arr, values) => arr.map(item => 
-			<MenuItem 
-				value={item.name} 
-				key={item.id} 
-				// insetChildren={Boolean(values)} 
-				checked={values ? values.includes(item.name) : false}>
-				{item.name}
-      </MenuItem>
-    );
-    
-    if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
+  const onCloseChangesDialog = () => setIsOpenChangesDialog(false);
 
-		return (
-      <>
-        <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${book.covers[0]})`, }} /></div>
-        <div className="container top">
-          <form className="card light">
-            {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-            <div className="container md">
-              <div className={`edit-book-cover ${errors.upload ? 'error' : ''}`}>
-                <Cover book={book} loading={imgLoading} />
-                {isAdmin && book.bid /* && !book.covers[0] */ && 
-                  <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
-                    <input type="file" accept="image/*" className="upload" onChange={this.onImageChange} />
-                    {/* imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" /> */}
-                    <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
-                  </button>
-                }
+  const isAdmin = hasRole(user, 'admin');
+  const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
+  
+  const menuItemsMap = (arr, values) => arr.map(item => 
+    <MenuItem 
+      value={item.name} 
+      key={item.id} 
+      // insetChildren={Boolean(values)} 
+      checked={values ? values.includes(item.name) : false}>
+      {item.name}
+    </MenuItem>
+  );
+  
+  if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
+
+  return (
+    <>
+      <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${book.covers[0]})`, }} /></div>
+      <div className="container top" ref={is}>
+        <form className="card light">
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+          <div className="container md">
+            <div className={`edit-book-cover ${errors.upload ? 'error' : ''}  ${setFormatClass(book.format)}-format`}>
+              <Cover book={book} loading={imgLoading} />
+              {isAdmin && book.bid && // !book.covers[0] && 
+                <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
+                  <input type="file" accept="image/*" className="upload" onChange={onImageChange} />
+                  {
+                    // imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" />
+                  }
+                  <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
+                </button>
+              }
+            </div>
+            <div className="edit-book-info">
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo</InputLabel>
+                  <Input
+                    id="title"
+                    name="title"
+                    type="text"
+                    placeholder="es: Sherlock Holmes"
+                    error={Boolean(errors.title)}
+                    value={book.title || ''}
+                    onChange={onChange}
+                  />
+                  {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
+                </FormControl>
               </div>
-              <div className="edit-book-info">
-                <div className="form-group">
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.subtitle)} htmlFor="subtitle">Sottotitolo</InputLabel>
+                  <Input
+                    id="subtitle"
+                    name="subtitle"
+                    type="text"
+                    placeholder="es: Uno studio in rosso"
+                    error={Boolean(errors.subtitle)}
+                    value={book.subtitle || ''}
+                    onChange={onChange}
+                  />
+                  {errors.subtitle && <FormHelperText className="message error">{errors.subtitle}</FormHelperText>}
+                </FormControl>
+              </div>
+              <div className="form-group">
+                <FormControl className="chip-input" margin="normal" fullWidth>
+                  <ChipInput
+                    id="authors"
+                    name="authors"
+                    label="Autore"
+                    placeholder="es: Arthur Conan Doyle"
+                    blurBehavior="add"
+                    error={Boolean(errors.authors)}
+                    value={Object.keys(book.authors)}
+                    onAdd={chip => onAddChipToObj("authors", chip)}
+                    onDelete={chip => onDeleteChipFromObj("authors", chip)}
+                    onKeyPress={e => onPreventDefault(e)}
+                  />
+                  <FormHelperText className={`message ${errors.authors ? 'error' : ''}`}>
+                    {errors.authors || 'Premi invio per confermare'}
+                  </FormHelperText>
+                </FormControl>
+              </div>
+              <div className="row">
+                <div className="form-group col-sm-6">
                   <FormControl className="input-field" margin="normal" fullWidth>
-                    <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo</InputLabel>
+                    <InputLabel error={Boolean(errors.ISBN_13)} htmlFor="ISBN_13">ISBN-13</InputLabel>
                     <Input
-                      id="title"
-                      name="title"
-                      type="text"
-                      placeholder="es: Sherlock Holmes"
-                      error={Boolean(errors.title)}
-                      value={book.title || ''}
-                      onChange={this.onChange}
+                      id="ISBN_13"
+                      name="ISBN_13"
+                      type="number"
+                      placeholder="es: 9788854152601"
+                      error={Boolean(errors.ISBN_13)}
+                      value={Number(book.ISBN_13)}
+                      onChange={onChangeNumber}
                     />
-                    {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
+                    {errors.ISBN_13 && <FormHelperText className="message error">{errors.ISBN_13}</FormHelperText>}
                   </FormControl>
                 </div>
-                <div className="form-group">
+                <div className="form-group col-sm-6">
                   <FormControl className="input-field" margin="normal" fullWidth>
-                    <InputLabel error={Boolean(errors.subtitle)} htmlFor="subtitle">Sottotitolo</InputLabel>
+                    <InputLabel error={Boolean(errors.ISBN_10)} htmlFor="ISBN_10">ISBN-10</InputLabel>
                     <Input
-                      id="subtitle"
-                      name="subtitle"
+                      id="ISBN_10"
+                      name="ISBN_10"
                       type="text"
-                      placeholder="es: Uno studio in rosso"
-                      error={Boolean(errors.subtitle)}
-                      value={book.subtitle || ''}
-                      onChange={this.onChange}
+                      placeholder="es: 8854152609"
+                      error={Boolean(errors.ISBN_10)}
+                      value={book.ISBN_10}
+                      onChange={onChange}
                     />
-                    {errors.subtitle && <FormHelperText className="message error">{errors.subtitle}</FormHelperText>}
+                    {errors.ISBN_10 && <FormHelperText className="message error">{errors.ISBN_10}</FormHelperText>}
                   </FormControl>
                 </div>
-                <div className="form-group">
-                  <FormControl className="chip-input" margin="normal" fullWidth>
-                    <ChipInput
-                      id="authors"
-                      name="authors"
-                      label="Autore"
-                      placeholder="es: Arthur Conan Doyle"
-                      error={Boolean(errors.authors)}
-                      value={Object.keys(book.authors)}
-                      onAdd={chip => this.onAddChipToObj("authors", chip)}
-                      onDelete={chip => this.onDeleteChipFromObj("authors", chip)}
-                      onKeyPress={e => this.onPreventDefault(e)}
+              </div>
+              <div className="row">
+                <div className="form-group col-8">
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.publisher)} htmlFor="publisher">Editore</InputLabel>
+                    <Input
+                      id="publisher"
+                      name="publisher"
+                      type="text"
+                      placeholder="es: Newton Compton (Live)"
+                      error={Boolean(errors.publisher)}
+                      value={book.publisher}
+                      onChange={onChange}
                     />
-                    {errors.authors && <FormHelperText className="message error">{errors.authors}</FormHelperText>}
+                    {errors.publisher && <FormHelperText className="message error">{errors.publisher}</FormHelperText>}
                   </FormControl>
                 </div>
-                <div className="row">
-                  <div className="form-group col-sm-6">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.ISBN_13)} htmlFor="ISBN_13">ISBN-13</InputLabel>
-                      <Input
-                        id="ISBN_13"
-                        name="ISBN_13"
-                        type="number"
-                        placeholder="es: 9788854152601"
-                        error={Boolean(errors.ISBN_13)}
-                        value={Number(book.ISBN_13)}
-                        onChange={this.onChangeNumber}
-                      />
-                      {errors.ISBN_13 && <FormHelperText className="message error">{errors.ISBN_13}</FormHelperText>}
-                    </FormControl>
-                  </div>
-                  <div className="form-group col-sm-6">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.ISBN_10)} htmlFor="ISBN_10">ISBN-10</InputLabel>
-                      <Input
-                        id="ISBN_10"
-                        name="ISBN_10"
-                        type="text"
-                        placeholder="es: 8854152609"
-                        error={Boolean(errors.ISBN_10)}
-                        value={book.ISBN_10}
-                        onChange={this.onChange}
-                      />
-                      {errors.ISBN_10 && <FormHelperText className="message error">{errors.ISBN_10}</FormHelperText>}
-                    </FormControl>
-                  </div>
+                <div className="form-group col-4">
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.pages_num)} htmlFor="pages_num">Pagine</InputLabel>
+                    <Input
+                      id="pages_num"
+                      name="pages_num"
+                      type="number"
+                      placeholder="es: 128"
+                      error={Boolean(errors.pages_num)}
+                      value={Number(book.pages_num)}
+                      onChange={onChangeNumber}
+                    />
+                    {errors.pages_num && <FormHelperText className="message error">{errors.pages_num}</FormHelperText>}
+                  </FormControl>
                 </div>
-                <div className="row">
-                  <div className="form-group col-8">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.publisher)} htmlFor="publisher">Editore</InputLabel>
-                      <Input
-                        id="publisher"
-                        name="publisher"
-                        type="text"
-                        placeholder="es: Newton Compton (Live)"
-                        error={Boolean(errors.publisher)}
-                        value={book.publisher}
-                        onChange={this.onChange}
-                      />
-                      {errors.publisher && <FormHelperText className="message error">{errors.publisher}</FormHelperText>}
-                    </FormControl>
-                  </div>
-                  <div className="form-group col-4">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.pages_num)} htmlFor="pages_num">Pagine</InputLabel>
-                      <Input
-                        id="pages_num"
-                        name="pages_num"
-                        type="number"
-                        placeholder="es: 128"
-                        error={Boolean(errors.pages_num)}
-                        value={Number(book.pages_num)}
-                        onChange={this.onChangeNumber}
-                      />
-                      {errors.pages_num && <FormHelperText className="message error">{errors.pages_num}</FormHelperText>}
-                    </FormControl>
-                  </div>
+              </div>
+              <div className="row">
+                <div className="form-group col-8">
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                    <DatePicker
+                      className="date-picker"
+                      name="publication"
+                      cancelLabel="Annulla"
+                      leftArrowIcon={icon.chevronLeft()}
+                      rightArrowIcon={icon.chevronRight()}
+                      format="D MMMM YYYY"
+                      // disableFuture
+                      maxDate={maxPublication}
+                      maxDateMessage={<span>Data non valida</span>}
+                      error={Boolean(errors.publication)}
+                      label="Data di pubblicazione"
+                      value={book.publication ? new Date(book.publication) : null}
+                      onChange={onChangeDate("publication")}
+                      margin="normal"
+                      animateYearScrolling
+                      fullWidth
+                    />
+                  </MuiPickersUtilsProvider>
                 </div>
-                <div className="row">
-                  <div className="form-group col-8">
-                    <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
-                      <DatePicker
-                        className="date-picker"
-                        name="publication"
-                        cancelLabel="Annulla"
-                        leftArrowIcon={icon.chevronLeft()}
-                        rightArrowIcon={icon.chevronRight()}
-                        format="D MMMM YYYY"
-                        // disableFuture
-                        maxDate={maxPublication}
-                        maxDateMessage={<span>Data non valida</span>}
-                        error={Boolean(errors.publication)}
-                        label="Data di pubblicazione"
-                        value={book.publication ? new Date(book.publication) : null}
-                        onChange={this.onChangeDate("publication")}
-                        margin="normal"
-                        animateYearScrolling
-                        fullWidth
-                      />
-                    </MuiPickersUtilsProvider>
-                  </div>
-                  <div className="form-group col-4">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.edition_num)} htmlFor="edition_num">Edizione</InputLabel>
-                      <Input
-                        id="edition_num"
-                        name="edition_num"
-                        type="number"
-                        placeholder="es: 1"
-                        error={Boolean(errors.edition_num)}
-                        value={Number(book.edition_num)}
-                        onChange={this.onChangeNumber}
-                      />
-                      {errors.edition_num && <FormHelperText className="message error">{errors.edition_num}</FormHelperText>}
-                    </FormControl>
-                  </div>
+                <div className="form-group col-4">
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.edition_num)} htmlFor="edition_num">Edizione</InputLabel>
+                    <Input
+                      id="edition_num"
+                      className="spin-buttons"
+                      name="edition_num"
+                      type="number"
+                      placeholder="es: 1"
+                      error={Boolean(errors.edition_num)}
+                      value={Number(book.edition_num)}
+                      onChange={onChangeNumber}
+                    />
+                    {errors.edition_num && <FormHelperText className="message error">{errors.edition_num}</FormHelperText>}
+                  </FormControl>
                 </div>
-                <div className="row">
-                  <div className="form-group col-sm-6">
-                    <FormControl className="select-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.languages)} htmlFor="languages">Lingua</InputLabel>
-                      <Select
-                        id="languages"
-                        error={Boolean(errors.languages)}
-                        value={book.languages}
-                        onChange={this.onChangeSelect("languages")}
-                        multiple>
-                        {menuItemsMap(languages, book.languages)}
-                      </Select>
-                      {errors.languages && <FormHelperText className="message error">{errors.languages}</FormHelperText>}
-                    </FormControl>
-                  </div>
-                  <div className="form-group col-sm-6">
-                    <FormControl className="select-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.format)} htmlFor="format">Formato</InputLabel>
-                      <Select
-                        id="format"
-                        error={Boolean(errors.format)}
-                        value={book.format}
-                        onChange={this.onChangeSelect("format")}>
-                        {menuItemsMap(formats, book.format)}
-                      </Select>
-                      {errors.format && <FormHelperText className="message error">{errors.format}</FormHelperText>}
-                    </FormControl>
-                  </div>
-                </div>
-                <div className="form-group">
+              </div>
+              <div className="row">
+                <div className="form-group col-sm-6">
                   <FormControl className="select-field" margin="normal" fullWidth>
-                    <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max 3)</InputLabel>
+                    <InputLabel error={Boolean(errors.languages)} htmlFor="languages">Lingua</InputLabel>
                     <Select
-                      id="genres"
-                      placeholder="es: Giallo, Thriller"
-                      error={Boolean(errors.genres)}
-                      value={book.genres}
-                      onChange={this.onChangeSelect("genres")}
+                      id="languages"
+                      error={Boolean(errors.languages)}
+                      value={book.languages}
+                      onChange={onChangeSelect("languages")}
                       multiple>
-                      {menuItemsMap(genres, book.genres)}
+                      {menuItemsMap(languages, book.languages)}
                     </Select>
-                    {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+                    {errors.languages && <FormHelperText className="message error">{errors.languages}</FormHelperText>}
                   </FormControl>
                 </div>
-                {isAdmin &&
-                  <>
-                    <div className="form-group">
-                      <FormControl className="chip-input" margin="normal" fullWidth>
-                        <ChipInput
-                          name="collections"
-                          label="Collezione (max 5)"
-                          placeholder="es: Sherlock Holmes"
-                          error={Boolean(errors.collections)}
-                          value={book.collections}
-                          onAdd={chip => this.onAddChip("collections", chip)}
-                          onDelete={chip => this.onDeleteChip("collections", chip)}
-                          disabled={!isAdmin}
-                          onKeyPress={e => this.onPreventDefault(e)}
-                        />
-                        {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}
-                      </FormControl>
-                    </div>
-                    <div className="form-group">
-                      <FormControl className="input-field" margin="normal" fullWidth>
-                        <InputLabel error={Boolean(errors.trailerURL)} htmlFor="trailerURL">Video trailer</InputLabel>
-                        <Input
-                          id="trailerURL"
-                          name="trailerURL"
-                          type="url"
-                          placeholder="es: https://www.youtube.com/..."
-                          error={Boolean(errors.trailerURL)}
-                          value={book.trailerURL}
-                          disabled={!isAdmin}
-                          onChange={this.onChange}
-                        />
-                        {errors.trailerURL && <FormHelperText className="message error">{errors.trailerURL}</FormHelperText>}
-                      </FormControl>
-                    </div>
-                  </>
-                }
-                {isEditingDescription /* || book.description */ ?
-                  <div className="form-group">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.description)} htmlFor="description">Descrizione</InputLabel>
-                      <Input
-                        id="description"
-                        name="description"
-                        type="text"
-                        placeholder={`Inserisci una descrizione (max ${description_maxChars} caratteri)...`}
-                        error={Boolean(errors.description)}
-                        value={book.description}
-                        onChange={this.onChangeMaxChars}
-                        rowsMax={30}
-                        multiline
-                      />
-                      {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
-                      {(description_leftChars !== undefined) && 
-                        <FormHelperText className={`message ${(description_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                          Caratteri rimanenti: {description_leftChars}
-                        </FormHelperText>
-                      }
-                    </FormControl>
-                  </div>
-                :
-                  <div className="info-row">
-                    <button type="button" className="btn flat rounded centered" onClick={this.onToggleDescription}>
-                      {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
-                    </button>
-                  </div>
-                }
-                {isEditingIncipit /* || book.incipit */ ? 
-                  <div className="form-group">
-                    <FormControl className="input-field" margin="normal" fullWidth>
-                      <InputLabel error={Boolean(errors.incipit)} htmlFor="incipit">Incipit</InputLabel>
-                      <Input
-                        id="incipit"
-                        name="incipit"
-                        type="text"
-                        placeholder={`Inserisci i primi paragrafi (max ${incipit_maxChars} caratteri)...`}
-                        error={Boolean(errors.incipit)}
-                        value={book.incipit || ''}
-                        onChange={this.onChangeMaxChars}
-                        rowsMax={30}
-                        multiline
-                      />
-                      {errors.incipit && <FormHelperText className="message error">{errors.incipit}</FormHelperText>}
-                      {(incipit_leftChars !== undefined) && 
-                        <FormHelperText className={`message ${(incipit_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                          Caratteri rimanenti: {incipit_leftChars}
-                        </FormHelperText>
-                      }
-                    </FormControl>
-                  </div>
-                :
-                  <div className="info-row">
-                    <button type="button" className="btn flat rounded centered" onClick={this.onToggleIncipit}>
-                      {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
-                    </button>
-                  </div>
-                }
-
+                <div className="form-group col-sm-6">
+                  <FormControl className="select-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.format)} htmlFor="format">Formato</InputLabel>
+                    <Select
+                      id="format"
+                      error={Boolean(errors.format)}
+                      value={book.format}
+                      onChange={onChangeSelect("format")}>
+                      {menuItemsMap(formats, book.format)}
+                    </Select>
+                    {errors.format && <FormHelperText className="message error">{errors.format}</FormHelperText>}
+                  </FormControl>
+                </div>
               </div>
-            </div>
-            <div className="footer no-gutter">
-              <button type="button" onClick={this.onSubmit} className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
-            </div>
-          </form>
-          {book.bid && 
-            <div className="form-group">
-              <button type="button" onClick={this.onExitEditing} className="btn flat rounded centered">Annulla</button>
-            </div>
-          }
-        </div>
+              <div className="form-group">
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max 3)</InputLabel>
+                  <Select
+                    id="genres"
+                    placeholder="es: Giallo, Thriller"
+                    error={Boolean(errors.genres)}
+                    value={book.genres}
+                    onChange={onChangeSelect("genres")}
+                    multiple>
+                    {menuItemsMap(genres, book.genres)}
+                  </Select>
+                  {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+                </FormControl>
+              </div>
+              {isAdmin &&
+                <>
+                  <div className="form-group">
+                    <FormControl className="chip-input" margin="normal" fullWidth>
+                      <ChipInput
+                        name="collections"
+                        label="Collezione (max 5)"
+                        placeholder="es: Sherlock Holmes"
+                        blurBehavior="add"
+                        error={Boolean(errors.collections)}
+                        value={book.collections}
+                        onAdd={chip => onAddChip("collections", chip)}
+                        onDelete={chip => onDeleteChip("collections", chip)}
+                        disabled={!isAdmin}
+                        onKeyPress={e => onPreventDefault(e)}
+                      />
+                      {errors.collections && <FormHelperText className="message error">{errors.collections}</FormHelperText>}
+                    </FormControl>
+                  </div>
+                  <div className="form-group">
+                    <FormControl className="input-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.trailerURL)} htmlFor="trailerURL">Video trailer</InputLabel>
+                      <Input
+                        id="trailerURL"
+                        name="trailerURL"
+                        type="url"
+                        placeholder="es: https://www.youtube.com/..."
+                        error={Boolean(errors.trailerURL)}
+                        value={book.trailerURL}
+                        disabled={!isAdmin}
+                        onChange={onChange}
+                      />
+                      {errors.trailerURL && <FormHelperText className="message error">{errors.trailerURL}</FormHelperText>}
+                    </FormControl>
+                  </div>
+                </>
+              }
+              {isEditingDescription ?
+                <div className="form-group">
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.description)} htmlFor="description">Descrizione</InputLabel>
+                    <Input
+                      id="description"
+                      name="description"
+                      type="text"
+                      placeholder={`Inserisci una descrizione (max ${max.chars.description} caratteri)...`}
+                      error={Boolean(errors.description)}
+                      value={book.description}
+                      onChange={onChangeMaxChars}
+                      rowsMax={30}
+                      multiline
+                    />
+                    {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
+                    {leftChars.description !== null && 
+                      <FormHelperText className={`message ${(leftChars.description < 0) ? 'alert' : 'neutral'}`}>
+                        Caratteri rimanenti: {leftChars.description}
+                      </FormHelperText>
+                    }
+                  </FormControl>
+                </div>
+              :
+                <div className="info-row">
+                  <button type="button" className="btn flat rounded centered" onClick={onToggleDescription}>
+                    {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
+                  </button>
+                </div>
+              }
+              {isEditingIncipit ? 
+                <div className="form-group">
+                  <FormControl className="input-field" margin="normal" fullWidth>
+                    <InputLabel error={Boolean(errors.incipit)} htmlFor="incipit">Incipit</InputLabel>
+                    <Input
+                      id="incipit"
+                      name="incipit"
+                      type="text"
+                      placeholder={`Inserisci i primi paragrafi (max ${max.chars.incipit} caratteri)...`}
+                      error={Boolean(errors.incipit)}
+                      value={book.incipit || ''}
+                      onChange={onChangeMaxChars}
+                      rowsMax={30}
+                      multiline
+                    />
+                    {errors.incipit && <FormHelperText className="message error">{errors.incipit}</FormHelperText>}
+                    {leftChars.incipit !== null && 
+                      <FormHelperText className={`message ${(leftChars.incipit < 0) ? 'alert' : 'neutral'}`}>
+                        Caratteri rimanenti: {leftChars.incipit}
+                      </FormHelperText>
+                    }
+                  </FormControl>
+                </div>
+              :
+                <div className="info-row">
+                  <button type="button" className="btn flat rounded centered" onClick={onToggleIncipit}>
+                    {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
+                  </button>
+                </div>
+              }
 
-        <Dialog
-          open={isOpenChangesDialog}
-          keepMounted
-          onClose={this.onCloseChangesDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Ci sono delle modifiche non salvate</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="delete-dialog-description">
-              Vuoi salvarle prima di uscire?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={isEditing}>Esci</button>
-            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Salva</button>
-          </DialogActions>
-        </Dialog>
-      </>
-		);
-	}
+            </div>
+          </div>
+          <div className="footer no-gutter">
+            <button type="button" onClick={onSubmit} className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
+          </div>
+        </form>
+        {book.bid && 
+          <div className="form-group">
+            <button type="button" onClick={onExitEditing} className="btn flat rounded centered">Annulla</button>
+          </div>
+        }
+      </div>
+
+      <Dialog
+        open={isOpenChangesDialog}
+        keepMounted
+        onClose={onCloseChangesDialog}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description">
+        <DialogTitle id="delete-dialog-title">Ci sono modifiche non salvate</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Vuoi salvarle prima di uscire?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions className="dialog-footer flex no-gutter">
+          <button type="button" className="btn btn-footer flat" onClick={isEditing}>Esci</button>
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva</button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 }
+
+BookForm.propTypes = {
+  book: bookType.isRequired,
+  isEditing: funcType.isRequired,
+  openSnackbar: funcType.isRequired
+}
+ 
+export default BookForm;

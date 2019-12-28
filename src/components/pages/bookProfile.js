@@ -12,7 +12,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { bookRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
+import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, setFormatClass, timeSince } from '../../config/shared';
 import { bookType, boolType, funcType, locationType, objectType, refType, userBookType, userType } from '../../config/types';
 import '../../css/bookProfile.css';
 import BookCollection from '../bookCollection';
@@ -159,15 +159,6 @@ export default class BookProfile extends Component {
     }
   }
 
-  setFormatClass = format => {
-    switch (format) {
-      case 'Audiolibro': return 'audio';
-      case 'Rivista': return 'magazine';
-      case 'Ebook': return 'ebook';
-      default: return 'book';
-    }
-  }
-
   onLock = () => {
     const { openSnackbar } = this.props;
     const { book } = this.state;
@@ -242,7 +233,7 @@ export default class BookProfile extends Component {
               <div className="row">
                 <div className="col-md-auto col-sm-12" style={{ marginBottom: 15, }}>
                   {book.incipit ? 
-                    <div tabIndex={0} role="button" className={`hoverable-items text-center ${this.setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit} onKeyDown={this.onToggleIncipit}>
+                    <div tabIndex={0} role="button" className={`hoverable-items text-center ${setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit} onKeyDown={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
                       <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>
                     </div>

@@ -72,42 +72,46 @@ export const firestoreErrorMessages = {
     it: "Errore sconosciuto." 
   },
   // AUTH
+  'auth/account-exists-with-different-credential': {
+    en: "An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
+    it: "L'email con cui hai provato ad accedere risulta già associata a un altro account. Fai login con un altro provider."
+  },
   'auth/email-already-in-use': {
     en: "The email address is already in use by another account.",
     it: "Indirizzo email già usato da un altro account."
   },
-  'auth/user-not-found': {
-    en: "There is no user record corresponding to this identifier. The user may have been deleted.",
-    it: "Utente non trovato. Potrebbe essere stato cancellato."
+  'auth/internal-error': {
+    en: "Internal error.",
+    it: "Errore interno."
   },
-  'auth/too-many-requests': {
-    en: "We have blocked all requests from this device due to unusual activity. Try again later.",
-    it: "Abbiamo rilevato attività sospette provenienti da questo dispositivo. Riprova più tardi."
+  'auth/invalid-credential': {
+    en: "Error getting verification code",
+    it: "Errore nell'ottenimento del codice di verifica"
+  },
+  'auth/network-request-failed': {
+    en: "Network error.",
+    it: "Nessuna connessione internet."
   },
   'auth/popup-closed-by-user': {
     en: "The popup has been closed by the user before finalizing the operation.",
     it: "Il popup è stato chiuso dall'utente prima di finalizzare l'operazione."
   },
-  'auth/wrong-password': {
-    en: "The password is invalid or the user does not have a password.",
-    it: "La password è sbagliata o l'utente non ha una password. Forse ti sei registrato con un social?"
+  'auth/too-many-requests': {
+    en: "We have blocked all requests from this device due to unusual activity. Try again later.",
+    it: "Abbiamo rilevato attività sospette provenienti da questo dispositivo. Riprova più tardi."
   },
   'auth/user-disabled': {
     en: "The user account has been disabled by an administrator.",
     it: "L'account utente è stato disabilitato da un amministratore."
-  }, 
-  'auth/internal-error': {
-    en: "Internal error.",
-    it: "Errore interno."
   },
-  'auth/account-exists-with-different-credential': {
-    en: "An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
-    it: "L'email con cui hai provato ad accedere risulta già associata a un altro account. Fai login con un altro provider."
+  'auth/user-not-found': {
+    en: "There is no user record corresponding to this identifier. The user may have been deleted.",
+    it: "Utente non trovato. Potrebbe essere stato cancellato."
   },
-  'auth/invalid-credential': {
-    en: "Error getting verification code",
-    it: "Errore nell'ottenimento del codice di verifica"
-  }
+  'auth/wrong-password': {
+    en: "The password is invalid or the user does not have a password.",
+    it: "La password è sbagliata o l'utente non ha una password. Forse ti sei registrato con un social?"
+  },
 };
 
 export const ratingLabels = { 

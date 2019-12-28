@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import icon from '../config/icons';
 import { childrenType } from '../config/types';
 
-const detailsStyle = { whiteSpace: 'pre-wrap' };
+const detailsStyle = { whiteSpace: 'pre-wrap', };
 
 export default class ErrorBoundary extends PureComponent {
   state = { 

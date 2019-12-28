@@ -183,7 +183,7 @@ export default class SearchBookForm extends Component {
           <span className="title">Libro non trovato...</span>
         </div>
         <div className="secondaryText">
-          <button type="button" className="btn primary">Crea nuovo</button>
+          <button type="button" className="btn sm flat rounded">Crea nuovo</button>
         </div>
       </MenuItem>
     );
@@ -274,7 +274,10 @@ export default class SearchBookForm extends Component {
           });
         }
 
-        fetch(new Request(booksAPIRef(searchParams), { method: 'GET' })).then(res => res.json()).then(json => {
+        fetch(booksAPIRef(searchParams), {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        }).then(res => res.json()).then(json => {
           const options = [];
           if (json.items && json.items.length > 0) {
             // console.log(json.items);

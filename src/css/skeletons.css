@@ -69,12 +69,18 @@
     background-repeat: no-repeat;
   }
   &.rows {
-    height: 100px;
+    --height: 99px;
+    --rowH: 22px;
+
+    height: var(--height);
     background-image:
-      repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
+      repeating-linear-gradient(var(--skltnClr), var(--skltnClr) calc(var(--rowH) / 2), transparent calc(var(--rowH) / 2), transparent var(--rowH)),
       linear-gradient(var(--skltnClr) 50%, transparent 50%);
-    background-position: 0 0, 0 88px;
-    background-size: 100% 88px,  calc(100% - 100px) 22px;
+    background-position: 0 0, 0 calc(var(--height) - (var(--rowH) / 2));
+    background-size: 100% calc(var(--height) - var(--rowH)), calc(100% - var(--height)) var(--rowH);
+    &.two { --height: 33px; }
+    &.three { --height: 55px; }
+    &.four { --height: 77px; }
   }
   &.review {
     height: 118px;

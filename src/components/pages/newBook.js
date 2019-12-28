@@ -1,17 +1,20 @@
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import icon from '../../config/icons';
 import { darkTheme } from '../../config/themes';
-import { funcType, historyType, locationType, userType } from '../../config/types';
+import { funcType, historyType, locationType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
 const NewBook = props => {
   const [book, setBook] = useState(null);
 
+  const { user } = useContext(UserContext);
+
   const onBookSelect = book => setBook(book);
 
-	const { history, location, openSnackbar, user } = props;
+	const { history, location, openSnackbar } = props;
 
   return (
     <div className="container" id="newBookComponent">
@@ -30,15 +33,13 @@ const NewBook = props => {
 NewBook.propTypes = {
   history: historyType,
   location: locationType,
-  openSnackbar: funcType,
-  user: userType
+  openSnackbar: funcType
 }
 
 NewBook.defaultProps = {
   history: null,
   location: null,
-  openSnackbar: null,
-  user: null
+  openSnackbar: null
 }
 
 export default NewBook;

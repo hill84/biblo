@@ -11,17 +11,17 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 import icon from '../../config/icons';
 import '../../css/recommendationForm.css';
 
+const skltnLimit = 3;
+const quoteLimit = 5;
+
 const RecommendationForm = props => {
-  const { book, openSnackbar, uid } = props;
+  const { book, onToggle, openSnackbar, uid } = props;
   const [quote, setQuote] = useLocalStorage(recommendationQuoteKey, false);
-  
   const [loading, setLoading] = useState(false);
   const [followings, setFollowings] = useState(null);
-  
   const is = useRef(true);
+  
   const count = quote && quote.recommends ? quote.recommends.length : 0;
-  const skltnLimit = 3;
-  const quoteLimit = 5;
 
   const initQuote = useCallback(() => setQuote({ amount: 5, timestamp, recommends: [] }), [setQuote]);
   const cleanQuote = useCallback(() => setQuote({ ...quote, amount: 0, timestamp }), [quote, setQuote]);
@@ -60,8 +60,6 @@ const RecommendationForm = props => {
   useEffect(() => () => {
     is.current = false;
   }, []);
-
-  const onToggle = () => props.onToggle();
 
   const onRecommendBook = e => {
     e.preventDefault();

@@ -3,40 +3,42 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { Close } from '@material-ui/icons';
 import PropTypes from 'prop-types';
-import React, { createContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import '../css/snackbar.css';
 
 const SnackbarContext = createContext();
 
-export const SnackbarProvider = props => {
-  const is = useRef(true);
+const initialAutoHideDuration = 5000;
 
+export const SnackbarProvider = props => {
+  const { children } = props;
+  const [action, setAction] = useState(null);
+  const [autoHideDuration, setAutoHideDuration] = useState(initialAutoHideDuration);
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [variant, setVariant] = useState(null);
+  const is = useRef(true);
+  
   useEffect(() => () => {
     is.current = false;
   }, []);
 
-  const [state, setState] = useState({
-    action: null,
-    autoHideDuration: 5000,
-    isOpen: false,
-    message: '',
-    variant: null
-  });
-
-  const openSnackbar = (message, variant, autoHideDuration, action) => {
+  const openSnackbar = useCallback((message, variant, autoHideDuration, action) => {
     if (is.current) {
-      setState(prevState => ({ ...prevState, action, message, isOpen: true, variant, autoHideDuration }));
+      setAction(action);
+      setMessage(message);
+      setIsOpen(true);
+      setVariant(variant);
+      setAutoHideDuration(autoHideDuration);
     }
-  }
+  }, []);
 
-  const closeSnackbar = () => {
+  const closeSnackbar = useCallback(() => {
     if (is.current) {
-      setState(prevState => ({ ...prevState, isOpen: false, autoHideDuration: 5000 }));
+      setIsOpen(false);
+      setAutoHideDuration(initialAutoHideDuration);
     }
-  }
-
-  const { action, autoHideDuration, isOpen, message, variant } = state;
-  const { children } = props;
+  }, []);
 
   return (
     <SnackbarContext.Provider
@@ -70,7 +72,7 @@ const SharedSnackbar = () => (
           horizontal: 'left',
         }}
         open={snackbarIsOpen}
-        autoHideDuration={autoHideDuration || 5000}
+        autoHideDuration={autoHideDuration || initialAutoHideDuration}
         onClose={closeSnackbar}>
         <SnackbarContent
           message={message}

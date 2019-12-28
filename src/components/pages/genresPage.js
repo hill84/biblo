@@ -6,9 +6,10 @@ import { app, denormURL } from '../../config/shared';
 import { funcType } from '../../config/types';
 import BookCollection from '../bookCollection';
 
+const rootMargin = '300px';
+
 const GenresPage = props => {
   const { openSnackbar } = props;
-  const rootMargin = '300px';
 
   return (
     <>

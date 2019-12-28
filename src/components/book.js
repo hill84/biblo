@@ -12,7 +12,6 @@ const BookProfile = lazy(() => import('./pages/bookProfile'));
 export default class Book extends Component {
   state = {
     book: this.props.book,
-    user: this.props.user,
     userBook: {
       bid: '',
       authors: [],
@@ -62,7 +61,6 @@ export default class Book extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.user !== state.user) { return { user: props.user }; }
     if (props.book && (props.book !== state.book)) { 
       return { 
         /* book: props.book,
@@ -545,7 +543,7 @@ export default class Book extends Component {
   }
 
   isEditing = () => {
-    if (this.state.book.EDIT.edit || this.state.user.roles.admin) {
+    if (this.state.book.EDIT.edit || this.props.user.roles.admin) {
       if (this._isMounted) {
         this.setState(prevState => ({ isEditing: !prevState.isEditing }));
       }
@@ -553,8 +551,8 @@ export default class Book extends Component {
   }
 	
 	render() {
-    const { book, isEditing, loading, seo, user, userBook } = this.state;
-    const { history, location, openSnackbar } = this.props;
+    const { book, isEditing, loading, seo, userBook } = this.state;
+    const { history, location, openSnackbar, user } = this.props;
 
     if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
@@ -579,11 +577,10 @@ export default class Book extends Component {
         }
         <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
         {isEditing && isAuthenticated() ?
-          <BookForm 
+          <BookForm
             openSnackbar={openSnackbar}
-            isEditing={this.isEditing} 
-            book={book} 
-            user={user}
+            isEditing={this.isEditing}
+            book={book}
           />
         :
           <BookProfile 

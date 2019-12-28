@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
@@ -19,20 +19,21 @@ import icon from '../config/icons';
 import { roles } from '../config/lists';
 import { app, getInitials, hasRole } from '../config/shared';
 import { darkTheme } from '../config/themes';
-import { childrenType, funcType, stringType, userType } from '../config/types';
+import { childrenType, funcType, stringType } from '../config/types';
+import UserContext from '../context/userContext';
+import '../css/layout.css';
 import logo from '../images/logo.svg';
 import Footer from './footer';
 import NoteMenuItem from './noteMenuItem';
-import '../css/layout.css';
 
 const Layout = props => {
+  const { user } = useContext(UserContext);
+  const { children, error, openSnackbar } = props;
   const [notes, setNotes] = useState(null);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [moreAnchorEl, setMoreAnchorEl] = useState(null);
   const [notesAnchorEl, setNotesAnchorEl] = useState(null);
-  
   const is = useRef(true);
-  const { children, error, openSnackbar, user } = props;
 
   useEffect(() => {
     let unsubNotesFetch;
@@ -306,14 +307,12 @@ const Layout = props => {
 Layout.propTypes = {
   children: childrenType,
   error: stringType,
-  openSnackbar: funcType.isRequired,
-  user: userType
+  openSnackbar: funcType.isRequired
 }
 
 Layout.defaultProps = {
   children: null,
-  error: null,
-  user: null
+  error: null
 }
  
 export default Layout;

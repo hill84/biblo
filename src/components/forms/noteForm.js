@@ -5,83 +5,83 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { noteRef, notesRef } from '../../config/firebase';
 import { noteTypes } from '../../config/lists';
-import { funcType, stringType, userType } from '../../config/types';
+import { funcType, stringType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 
-const NoteForm = props => {
-  const [state, setState] = useState({
-    data: {
-      text: ''
-    },
-    text_leftChars: null,
-    text_maxChars: 280,
-    text_minChars: 10,
-    loading: false,
-    errors: {}
-  });
+const max = {
+  chars: {
+    text: 280,
+    password: 50
+  }
+};
 
+const min = {
+  chars: { text: 10 }
+};
+
+const NoteForm = props => {
+  const { user } = useContext(UserContext);
+  const { nid, onToggle, openSnackbar, uid } = props;
+  const [data, setData] = useState({
+    text: ''
+  });
+  const [changes, setChanges] = useState(false);
+  const [leftChars, setLeftChars] = useState({ text: null });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const is = useRef(true);
-  const { nid, onToggle, openSnackbar, uid, user } = props;
-  const { data, text_leftChars, text_maxChars, text_minChars, loading, errors } = state;
 
   const fetch = useCallback(() => {
     if (nid && uid) {
-      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+      if (is.current) setLoading(true);
       
       noteRef(uid, nid).get().then(snap => {
         if (!snap.empty) {
           if (is.current) {
-            setState(prevState => ({ 
-              ...prevState,
-              data: snap.data(),
-              loading: false
-            }));
+            setData(snap.data());
+            setLoading(false);
           }
         }
-      }).catch(error => console.warn(error));
+      }).catch(err => console.warn(err));
     }
   }, [nid, uid]);
+
+  const onChangeMaxChars = e => {
+    e.persist();
+    const { name, value } = e.target;
+
+    if (is.current) {
+      setChanges(true);
+      setData({ ...data, [name]: value });
+      setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
+      setErrors({ ...errors, [name]: null });
+    }
+  };
 
   const onChangeSelect = name => e => {
     e.persist();
     const { value } = e.target;
 
     if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        data: { ...prevState.data, [name]: value }, 
-        errors: { ...prevState.errors, [name]: null }
-      }));
-    }
-  };
-  
-  const onChangeMaxChars = e => {
-    e.persist();
-    const { name, value } = e.target;
-    const leftChars = `${name}_leftChars`;
-    const maxChars = `${name}_maxChars`;
-    
-    if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        data: { ...prevState.data, [name]: value }, 
-        [leftChars]: prevState[maxChars] - value.length,
-        errors: { ...prevState.errors, [name]: null }
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value });
+      setErrors({ ...errors, [name]: null });
     }
   };
 
   const validate = data => {
-		const errors = {};
+    const errors = {};
+    
     if (!data.text) { 
       errors.text = "Inserisci il testo"; 
-    } else if (data.text && data.text.length > text_maxChars) {
-      errors.text = `Lunghezza massima ${text_maxChars} caratteri`;
-    } else if (data.text && data.text.length < text_minChars) {
-      errors.text = `Lunghezza minima ${text_minChars} caratteri`;
+    } else if (data.text && data.text.length > max.chars.text) {
+      errors.text = `Lunghezza massima ${max.chars.text} caratteri`;
+    } else if (data.text && data.text.length < min.chars.text) {
+      errors.text = `Lunghezza minima ${min.chars.text} caratteri`;
     }
     if (!data.tag) { 
       errors.tag = "Scegli un tag"; 
@@ -91,37 +91,44 @@ const NoteForm = props => {
 
 	const onSubmit = e => {
     e.preventDefault();
-    const errors = validate(data);
-    
-		if (is.current) setState(prevState => ({ ...prevState, errors }));
-    
-		if (Object.keys(errors).length === 0) {
-      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+
+    if (changes) {
+      if (is.current) setLoading(true);
+      const errors = validate(data);
       
-      // console.log(`Sending notification to ${uid}`);
-      const newNoteRef = notesRef(uid).doc();
-      const ref = nid ? noteRef(uid, nid) : newNoteRef;
-      // if (!nid) { notesRef(uid).set({ count: 0 }) }
-      ref.set({
-        nid: nid || newNoteRef.id,
-        text: data.text,
-        created_num: Number((new Date()).getTime()),
-        createdBy: user.displayName,
-        createdByUid: user.uid,
-        tag: data.tag,
-        read: false,
-        uid
-      }).then(() => {
-        onToggle();
-        if (is.current) setState(prevState => ({ ...prevState, loading: false, data: { text: '' } }));
-        openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-      }).catch(err => console.warn(err));
-		}
+      if (is.current) setErrors(errors);
+      
+      if (Object.keys(errors).length === 0) {
+        if (is.current) setLoading(true);
+        
+        // console.log(`Sending notification to ${uid}`);
+        const newNoteRef = notesRef(uid).doc();
+        const ref = nid ? noteRef(uid, nid) : newNoteRef;
+        // if (!nid) { notesRef(uid).set({ count: 0 }) }
+        ref.set({
+          nid: nid || newNoteRef.id,
+          text: data.text,
+          created_num: Number((new Date()).getTime()),
+          createdBy: user.displayName,
+          createdByUid: user.uid,
+          tag: data.tag,
+          read: false,
+          uid
+        }).then(() => {
+          onToggle();
+          if (is.current) {
+            setLoading(false);
+            setData({ ...data, text: '' });
+          }
+          openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+        }).catch(err => console.warn(err));
+      } else if (is.current) setLoading(false);
+    } else onToggle();
 	};
 
   useEffect(() => {
     fetch();
-  }, [fetch, nid])
+  }, [fetch]);
 
   useEffect(() => () => {
     is.current = false;
@@ -152,7 +159,7 @@ const NoteForm = props => {
                   name="text"
                   type="text"
                   autoFocus
-                  placeholder={`Inserisci il testo (max ${text_maxChars} caratteri)...`}
+                  placeholder={`Inserisci il testo (max ${max.chars.text} caratteri)...`}
                   value={data.text}
                   onChange={onChangeMaxChars}
                   rowsMax={8}
@@ -160,9 +167,9 @@ const NoteForm = props => {
                   error={Boolean(errors.text)}
                 />
                 {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
-                {(text_leftChars !== null) && 
-                  <FormHelperText className={`message ${(text_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                    Caratteri rimanenti: {text_leftChars}
+                {(leftChars.text !== null) && 
+                  <FormHelperText className={`message ${(leftChars.text < 0) ? 'alert' : 'neutral'}`}>
+                    Caratteri rimanenti: {leftChars.text}
                   </FormHelperText>
                 }
               </FormControl>
@@ -197,13 +204,11 @@ NoteForm.propTypes = {
   onToggle: funcType.isRequired,
   openSnackbar: funcType.isRequired,
   nid: stringType,
-  uid: stringType.isRequired,
-  user: userType
+  uid: stringType.isRequired
 }
 
 NoteForm.defaultProps = {
-  nid: null,
-  user: null
+  nid: null
 }
  
 export default NoteForm;

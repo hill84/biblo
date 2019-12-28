@@ -4,11 +4,4 @@
     transition: background-color .4s ease-in-out;
     & h2 { color: var(--contrastedTextClr); }
   }
-  & .badges:not(.scrollable) .badge {
-    color: rgba(var(--blackClr), .5);
-    font-weight: 600;
-    &:hover { background-color: rgba(var(--whiteClr), .3); }
-    &:not(.active) { background-color: rgba(var(--whiteClr), .2); }
-  }
-  & .title .primary-text { color: rgba(var(--blackClr), .4); }
 }

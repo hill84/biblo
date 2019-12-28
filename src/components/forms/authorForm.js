@@ -6,48 +6,46 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { authorRef, authorsRef } from '../../config/firebase';
 import { getInitials, handleFirestoreError, normalizeString } from '../../config/shared';
-import { funcType, stringType, userType } from '../../config/types';
+import { funcType, stringType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 
 const avatarImgStyle = { width: '100%', height: '100%', };
+const max = { chars: {
+  bio: 1000,
+  displayName: 50
+}};
+const min = { chars: { bio: 50 }};
 
 const AuthorForm = props => {
-  const [state, setState] = useState({
-    data: {
-      displayName: '',
-      source: '',
-      sex: '',
-      photoURL: '',
-      bio: ''
-    },
-    bio_leftChars: null,
-    bio_maxChars: 1000,
-    bio_minChars: 50,
-    loading: false,
-    changes: false,
-    errors: {},
-    authError: ''
+  const { user } = useContext(UserContext);
+  const { id, onToggle, openSnackbar } = props;
+  const [data, setData] = useState({
+    displayName: '',
+    source: '',
+    sex: '',
+    photoURL: '',
+    bio: ''
   });
-
+  const [leftChars, setLeftChars] = useState({ bio: null });
+  const [loading, setLoading] = useState(false);
+  const [changes, setChanges] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [authError, setAuthError] = useState('');
   const is = useRef(true);
-  const { id, openSnackbar, user } = props;
-  const { authError, bio_leftChars, bio_maxChars, bio_minChars, changes, data, errors, loading, selectedId } = state;
 
   const fetch = useCallback(() => {
     if (typeof id === 'string') {
-      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+      if (is.current) setLoading(true);
 
       authorRef(id).get().then(snap => {
         if (!snap.empty) {
           if (is.current) {
-            setState(prevState => ({
-              ...prevState,
-              data: snap.data(),
-              loading: false
-            }));
+            setData(snap.data());
+            setLoading(false);
           }
         }
       }).catch(err => console.warn(err));
@@ -62,35 +60,26 @@ const AuthorForm = props => {
     is.current = false;
   }, []);
 
-  const onToggle = () => props.onToggle(selectedId);
-
   const onChange = e => {
     e.persist();
     const { name, value } = e.target;
 
     if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        changes: true,
-        data: { ...prevState.data, [name]: value }, 
-        errors: { ...prevState.errors, [name]: null }
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value }); 
+      setErrors({ ...errors, [name]: null });
     }
   };
   
   const onChangeMaxChars = e => {
     e.persist();
     const { name, value } = e.target;
-    const leftChars = `${name}_leftChars`;
-    const maxChars = `${name}_maxChars`;
 
     if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        data: { ...prevState.data, [name]: value }, 
-        [leftChars]: prevState[maxChars] - value.length, 
-        changes: true
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value });
+      setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
+      setErrors({ ...errors, [name]: null });
     }
   };
 
@@ -99,12 +88,9 @@ const AuthorForm = props => {
     const { value } = e.target;
 
     if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        changes: true,
-        data: { ...prevState.data, [name]: value }, 
-        errors: { ...prevState.errors, [name]: null } 
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value });
+      setErrors({ ...errors, [name]: null });
     }
   };
 
@@ -124,31 +110,36 @@ const AuthorForm = props => {
       errors.displayName = "Inserisci il nominativo"; 
     } else if (isDuplicate) {
       errors.displayName = "Autore già presente";
+    } else if (data.displayName && data.displayName.length > max.chars.displayName) {
+      errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
     }
     if (!data.sex) {
       errors.sex = "Sesso mancante";
     }
     if (!data.bio) { 
       errors.bio = "Inserisci una biografia"; 
-    } else if (data.bio && data.bio.length > bio_maxChars) {
-      errors.bio = `Lunghezza massima ${bio_maxChars} caratteri`;
-    } else if (data.bio && data.bio.length < bio_minChars) {
-      errors.bio = `Lunghezza minima ${bio_minChars} caratteri`;
+    } else if (data.bio && data.bio.length > max.chars.bio) {
+      errors.bio = `Massimo ${max.chars.bio} caratteri`;
+    } else if (data.bio && data.bio.length < min.chars.bio) {
+      errors.bio = `Minimo ${min.chars.bio} caratteri`;
     }
 		return errors;
   };
   
 	const onSubmit = async e => {
     e.preventDefault();
-    const prevState = state;
 
     if (changes) {
-      const errors = await validate(prevState.data);
+      if (is.current) setLoading(true);
+      const errors = await validate(data);
       
-      if (is.current) setState(prevState => ({ ...prevState, authError: '', errors }));
+      if (is.current) {
+        setAuthError('');
+        setErrors(errors);
+      }
       
       if (Object.keys(errors).length === 0) {
-        if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+        if (is.current) setLoading(true);
         const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
         ref.set({
           bio: data.bio || '',
@@ -163,10 +154,10 @@ const AuthorForm = props => {
           source: data.source || ''
         }).then(() => {
           onToggle();
-          if (is.current) setState(prevState => ({ ...prevState, loading: false }));
+          if (is.current) setLoading(false);
           openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
         }).catch(err => console.warn(err));
-      }
+      } else if (is.current) setLoading(false);
     } else onToggle();
 	};
 
@@ -218,7 +209,7 @@ const AuthorForm = props => {
                   id="bio"
                   name="bio"
                   type="text"
-                  placeholder={`Inserisci la biografia (max ${bio_maxChars} caratteri)...`}
+                  placeholder={`Inserisci la biografia (max ${max.chars.bio} caratteri)...`}
                   value={data.bio}
                   onChange={onChangeMaxChars}
                   rowsMax={20}
@@ -226,9 +217,9 @@ const AuthorForm = props => {
                   error={Boolean(errors.bio)}
                 />
                 {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
-                {(bio_leftChars !== null) && 
-                  <FormHelperText className={`message ${(bio_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                    Caratteri rimanenti: {bio_leftChars}
+                {(leftChars.bio !== null) && 
+                  <FormHelperText className={`message ${(leftChars.bio < 0) ? 'alert' : 'neutral'}`}>
+                    Caratteri rimanenti: {leftChars.bio}
                   </FormHelperText>
                 }
               </FormControl>
@@ -289,13 +280,11 @@ const AuthorForm = props => {
 AuthorForm.propTypes = {
   onToggle: funcType.isRequired,
   openSnackbar: funcType.isRequired,
-  id: stringType,
-  user: userType
+  id: stringType
 }
 
 AuthorForm.defaultProps = {
-  id: null,
-  user: null
+  id: null
 }
  
 export default AuthorForm;
