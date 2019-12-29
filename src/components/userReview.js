@@ -17,7 +17,7 @@ import 'emoji-mart/css/emoji-mart.css';
 import React, { Component, forwardRef } from 'react';
 import { authid, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../config/shared';
 import { funcType, stringType, userBookType, userType } from '../config/types';
 import '../css/emojiMart.css';
 import emojiMartLocale from '../locales/emojiMart';
@@ -117,13 +117,11 @@ export default class UserReview extends Component {
   fetchUserReview = () => {
     const { bid, review} = this.state;
 
-    // console.log('Fetching user review');
     this.unsubReviewerFetch = reviewerRef(bid, authid).onSnapshot(snap => {
       if (this._isMounted) {
         this.setState({ loading: true });
       }
       if (snap.exists) {
-        // console.log(snap.data());
         if (this._isMounted) {
           this.setState({ review: snap.data() });
         }
@@ -163,7 +161,7 @@ export default class UserReview extends Component {
             bookTitle: userBook.title,
             covers: userBook.covers,
             createdByUid: user.uid,
-            created_num: Number((new Date()).getTime()),
+            created_num: timestamp,
             displayName: user.displayName,
             photoURL: user.photoURL,
             rating_num: userBook.rating_num

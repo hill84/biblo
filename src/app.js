@@ -53,7 +53,6 @@ const App = () => {
     const clearUser = () => setUser(null);
 
     const fetchUser = user => userRef(user.uid).onSnapshot(snap => {
-      // console.log(snap);
       if (snap.exists) {
         setUser(snap.data());
         setError(null);
@@ -117,7 +116,7 @@ const App = () => {
                         <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
                         <RouteWithProps path="/collection/:cid" component={Collection} openSnackbar={openSnackbar} />
                         <RouteWithProps path="/collections" component={NewFeature} openSnackbar={openSnackbar} />
-                        <RouteWithProps path="/genre/:gid" component={Genre} user={user} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/genre/:gid" component={Genre}openSnackbar={openSnackbar} />
                         <RouteWithProps path="/book/:bid" component={BookContainer} openSnackbar={openSnackbar} />
                         <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
                         <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
@@ -128,8 +127,8 @@ const App = () => {
                         <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
                         <PrivateRoute path="/admin" exact component={Admin} openSnackbar={openSnackbar} />
                         <PrivateRoute path="/admin/:tab" component={Admin} openSnackbar={openSnackbar} />
-                        <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
-                        <PrivateRoute path="/challenges" component={NewFeature} user={user} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/challenge" component={Challenge} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/challenges" component={NewFeature} openSnackbar={openSnackbar} />
                         <Redirect from="/home" to="/" />
                         <Redirect from="/webmaster/*" to="/" />
                         <Redirect from="/chi-siamo" to="/about" />

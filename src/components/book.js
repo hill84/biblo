@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { Component, createRef, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
-import { app, handleFirestoreError, normURL } from '../config/shared';
+import { app, handleFirestoreError, normURL, timestamp } from '../config/shared';
 import { boolType, bookType, funcType, objectType, stringType, /* userBookType, */ userType } from '../config/types';
 import NoMatch from './noMatch';
 
@@ -97,7 +97,6 @@ export default class Book extends Component {
       
       this.unsubBookFetch = bookRef(bid).onSnapshot(snap => {
         if (snap.exists) {
-          // console.log(snap.data());
           if (this._isMounted) {
             this.setState(prevState => ({
               book: {
@@ -137,7 +136,6 @@ export default class Book extends Component {
       
       this.unsubBookUpdate = bookRef(this.props.bid).onSnapshot(snap => {
         if (snap.exists) {
-          // console.log(snap.data());
           if (this._isMounted) {
             this.setState({
               book: {
@@ -218,7 +216,7 @@ export default class Book extends Component {
       
       userBookRef(authid, bid).set({
         ...this.state.userBook,
-        added_num: Number(new Date().getTime()),
+        added_num: timestamp,
         bookInShelf: true,
         bookInWishlist: false
       }).then(() => {
@@ -275,7 +273,7 @@ export default class Book extends Component {
         ...this.state.userBook,
         /* rating_num: userBookRating_num,
         review: userBookReview, */
-        added_num: Number(new Date().getTime()),
+        added_num: timestamp,
         bookInShelf: false,
         bookInWishlist: true
       }).then(() => {

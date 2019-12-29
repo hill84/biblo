@@ -1,25 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // import { challengeRef, userChallengesRef } from '../../config/firebase';
+import UserContext from '../../context/userContext';
 import { app } from '../../config/shared';
-import { userType } from '../../config/types';
 
-const Challenges = props => {
+const Challenges = () => {
+  const { user } = useContext(UserContext);
   const [state, setState] = useState({
     challenges: null,
     loading: true,
-    userChallenges: null
-    /* desc: true,
-    activeUserChallenge: null */
+    /* userChallenges: null */
   });
-  
   const is = useRef(true);
-  const { user } = props;
   const { challenges, loading/* , userChallenges */ } = state;
 
   useEffect(() => {
     const fetch = () => {
-      console.log('fetch');
+      // console.log('fetch');
       if (is.current) {
         setState(prevState => ({ 
           ...prevState,
@@ -28,11 +25,11 @@ const Challenges = props => {
             { books: {}, cid: 'challenge_2', description: '', title: 'challenge_2' },
             { books: {}, cid: 'challenge_3', description: '', title: 'challenge_3' }
           ],
-          userChallenges: [
+          /* userChallenges: [
             { books: {}, cid: 'user_challenge_1', completed_num: 0, created_num: 0, description: '', title: 'user_challenge_1' }, 
             { books: {}, cid: 'user_challenge_2', completed_num: 0, created_num: 0, description: '', title: 'user_challenge_2' },
             { books: {}, cid: 'user_challenge_3', completed_num: 0, created_num: 0, description: '', title: 'user_challenge_3' }
-          ],
+          ], */
           loading: false
         }));
       }
@@ -42,7 +39,7 @@ const Challenges = props => {
 
     return () => {
       is.current = false;
-      fetch && fetch();
+      fetch();
     };
   }, []);
 
@@ -73,14 +70,6 @@ const Challenges = props => {
       )}
     </div>
   );
-}
-
-Challenges.propTypes = {
-  user: userType
-}
-
-Challenges.defaultProps = {
-  user: null
 }
 
 export default Challenges;

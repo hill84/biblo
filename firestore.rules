@@ -12,17 +12,17 @@ service cloud.firestore {
 
       match /challenges/{cid} {
         allow read;
-        allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+        allow write: if isEditor();
       }
 
-      match /collectiones/{cid} {
+      match /collections/{cid} {
         allow read;
-        allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+        allow write: if isEditor();
       }
 
       match /authors/{aid} {
         allow read;
-        allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+        allow write: if isEditor();
       }
     }
 
@@ -50,12 +50,12 @@ service cloud.firestore {
     	allow read;
       allow create: if isEditor() && isValidBook();
       allow update: if isEditor() && isValidBook() && (incomingData().bid == existingData().bid);
-      allow delete: if (isEditor() && isAdmin());
+      allow delete: if isEditor() && isAdmin();
     }
     
     match /shelves/{uid} {
       allow read;
-      allow write: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
+      allow write: if isEditor() && (isAdmin() || isOwner(uid));
 
     	match /books/{bid} {
         allow read;
@@ -73,19 +73,7 @@ service cloud.firestore {
     match /{path=**}/reviewers/{uid} {
       allow read;
       allow create, update: if isEditor();
-      allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
-    }
-
-    // DEPRECATED
-    match /feeds/latestReviews {
-    	allow read;
-      allow write: if isEditor();
-      
-      match /reviews/{bid} {
-      	allow read;
-        allow create, update: if isEditor();
-        allow delete: if (isEditor() && isAdmin()) || (isEditor() && isOwner(uid));
-      }
+      allow delete: if isEditor() && (isAdmin() || isOwner(uid));
     }
     
     match /authors/{aid} {
@@ -145,6 +133,11 @@ service cloud.firestore {
     match /admin/{document=**} {
     	allow read: if isAdmin();
       allow write: if isEditor() && isAdmin();
+    }
+
+    match /recommendations/{uid} {
+    	allow read;
+      allow write: if isEditor() && (isAdmin() || isOwner(uid));
     }
 
     /// FUNCTIONS ///

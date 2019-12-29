@@ -40,53 +40,71 @@ auth.onIdTokenChanged(user => {
 const db = firebase.firestore();
 db.settings({/* my settings... */});
 const { FieldValue } = firebase.firestore;
-const timestamp = FieldValue.serverTimestamp();
-// const timestamp = firebase.ServerValue;
+const timestamp = FieldValue.serverTimestamp(); // const timestamp = firebase.ServerValue;
 
+// Users
 const usersRef = db.collection('users');
 const userRef = uid => usersRef.doc(uid);
+
+// Shelves
 const userShelfRef = uid => db.collection('shelves').doc(uid);
 const userBooksRef = uid => userShelfRef(uid).collection('books');
 const userBookRef = (uid, bid) => userBooksRef(uid).doc(bid);
 
+// Followers
 const followersRef = uid => db.collection('followers').doc(uid);
+
+// Followings
 const followingsRef = uid => db.collection('followings').doc(uid);
 
+// Books
 const booksRef = db.collection('books');
 const bookRef = bid => booksRef.doc(bid);
 
+// Collections
 const collectionsRef = db.collection('collections');
 const collectionRef = cid => collectionsRef.doc(cid);
 const collectionBooksRef = cid => collectionRef(cid).collection('books');
 const collectionFollowersRef = cid => collectionRef(cid).collection('followers');
 const collectionBookRef = (cid, bid) => collectionBooksRef(cid).doc(bid);
 
+// Reviews
 const reviewsRef = db.collection('reviews');
 const reviewRef = bid => reviewsRef.doc(bid);
 const reviewersRef = bid => reviewRef(bid).collection('reviewers');
 const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
 const reviewersGroupRef = db.collectionGroup('reviewers');
 
+// Authors
 const authorsRef = db.collection('authors');
 const authorRef = aid => authorsRef.doc(aid);
 const authorFollowersRef = aid => authorRef(aid).collection('followers');
+
+// Quotes
 const quotesRef = db.collection('quotes');
 const quoteRef = qid => quotesRef.doc(qid);
 
+// Notifications
 const notificationsRef = db.collection('notifications');
 const userNotificationsRef = uid => notificationsRef.doc(uid);
 const notesRef = uid => userNotificationsRef(uid).collection('notes');
 const noteRef = (uid, nid) => notesRef(uid).doc(nid);
 const notesGroupRef = db.collectionGroup('notes');
 
+// Challenges
 const challengesRef = db.collection('challenges');
 const challengeRef = cid => challengesRef.doc(cid);
 const userChallengesRef = uid => db.collection('users').doc(uid).collection('challenges');
 const userChallengeRef = (uid, cid) => userChallengesRef(uid).doc(cid);
 
+// Genres
 const genreRef = gid => db.collection('genres').doc(gid);
 const genreFollowersRef = gid => genreRef(gid).collection('followers');
 
+// Recommendations
+const userRecommendationsRef = uid => db.collection('recommendations').doc(uid);
+
+// Counters
 const countRef = cid => db.collection('counters').doc(cid);
 
 /* STORAGE */
@@ -139,7 +157,8 @@ export {
 	userChallengeRef,
 	genreRef,
 	genreFollowersRef,
+	userRecommendationsRef,
 	countRef,
-	storageRef
+	storageRef,
 };
 export default firebase;

@@ -9,7 +9,7 @@ import React, { Component, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, timestamp, truncateString } from '../config/shared';
 import { funcType, reviewType, stringType, userType } from '../config/types';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
@@ -77,7 +77,7 @@ export default class Review extends Component {
         newNoteRef.set({
           nid: newNoteRef.id,
           text: noteMsg,
-          created_num: Number((new Date()).getTime()),
+          created_num: timestamp,
           createdBy: user.displayName,
           createdByUid: user.uid,
           photoURL: user.photoURL,
@@ -115,7 +115,7 @@ export default class Review extends Component {
     const flag = {
       value,
       flaggedByUid: user.uid,
-      flagged_num: Number((new Date()).getTime())
+      flagged_num: timestamp
     };
 
     if (bid && review && user) {

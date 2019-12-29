@@ -342,9 +342,7 @@ export default class SearchBookForm extends Component {
         this.unsubQuery = query.limit(maxSearchResults).onSnapshot(snap => {
           const options = [];
           if (!snap.empty) {
-            // console.log(snap);
             snap.forEach(doc => {
-              // console.log(doc.data());
               options.push({
                 ...doc.data(),
                 label: typeof doc.data()[optionLabel] === 'object' ? String(Object.keys(doc.data()[optionLabel])[0]) : doc.data()[optionLabel] // Autosuggest OPTION LABEL

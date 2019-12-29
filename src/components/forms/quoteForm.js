@@ -6,7 +6,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { quoteRef, quotesRef } from '../../config/firebase';
-import { imageZoomDefaultStyles } from '../../config/shared';
+import { imageZoomDefaultStyles, timestamp } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
@@ -138,7 +138,7 @@ const QuoteForm = props => {
           bid: data.bid || '',
           bookTitle: data.bookTitle || '',
           coverURL: data.coverURL || '',
-          lastEdit_num: Number((new Date()).getTime()),
+          lastEdit_num: timestamp,
           lastEditBy: user.displayName,
           lastEditByUid: user.uid,
           edit: data.edit || true,

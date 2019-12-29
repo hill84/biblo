@@ -138,7 +138,6 @@ export default class NotesDash extends Component {
     const lRef = notesGroupRef.limit(limit);
     lRef.get().then(snap => {
       if (!snap.empty) {
-        // console.log(snap);
         const items = [];
         snap.forEach(item => items.push(item.data()));
         console.log(items);

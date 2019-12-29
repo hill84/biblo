@@ -141,9 +141,9 @@ const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.flo
 
 export const calcReadingTime = pages => calcMinutesToTime(pages * 1.25);
 
-export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
+export const timestamp = Date.now();
 
-export const timestamp = (new Date()).getTime();
+export const calcAge = birthDate => Math.abs(new Date(timestamp - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
 
 export const timeSince = date => {
   const seconds = Math.floor((new Date() - date) / 1000);

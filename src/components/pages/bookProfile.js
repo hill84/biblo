@@ -224,7 +224,6 @@ export default class BookProfile extends Component {
               book={book}
               onToggle={this.onToggleSuggest} 
               openSnackbar={openSnackbar}
-              uid={user.uid}
             />
           }
 

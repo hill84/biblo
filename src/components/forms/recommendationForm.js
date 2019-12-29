@@ -1,22 +1,31 @@
 import Avatar from '@material-ui/core/Avatar';
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { followingsRef } from '../../config/firebase';
-import { diffDays, getInitials, timestamp } from '../../config/shared';
-import { bookType, funcType, stringType } from '../../config/types';
+import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
+import icon from '../../config/icons';
+import { app, diffDays, getInitials, handleFirestoreError, normURL, timestamp, truncateString } from '../../config/shared';
+import { bookType, funcType } from '../../config/types';
+import UserContext from '../../context/userContext';
+import '../../css/recommendationForm.css';
 import Overlay from '../overlay';
 import { skltn_avatarRow } from '../skeletons';
-import { recommendationQuoteKey } from '../../config/storage';
-import useLocalStorage from '../../hooks/useLocalStorage';
-import icon from '../../config/icons';
-import '../../css/recommendationForm.css';
 
 const skltnLimit = 3;
 const quoteLimit = 5;
 
 const RecommendationForm = props => {
-  const { book, onToggle, openSnackbar, uid } = props;
-  const [quote, setQuote] = useLocalStorage(recommendationQuoteKey, false);
+  const { user } = useContext(UserContext);
+  const { uid, displayName, photoURL } = user;
+  const quoteInitialState = {
+    uid,
+    displayName,
+    photoURL,
+    amount: 5,
+    timestamp,
+    recommends: []
+  };
+  const { book, onToggle, openSnackbar } = props;
+  const [quote, setQuote] = useState(quoteInitialState);
   const [loading, setLoading] = useState(false);
   const [followings, setFollowings] = useState(null);
   const is = useRef(true);
@@ -24,24 +33,53 @@ const RecommendationForm = props => {
   const count = quote && quote.recommends ? quote.recommends.length : 0;
 
   const initQuote = useCallback(() => setQuote({ amount: 5, timestamp, recommends: [] }), [setQuote]);
-  const cleanQuote = useCallback(() => setQuote({ ...quote, amount: 0, timestamp }), [quote, setQuote]);
-  const isNewDay = useMemo(() => diffDays(new Date(quote.timestamp)) > 0, [quote.timestamp]); 
-
+  
+  const fetch = useCallback(() => {
+    setLoading(true);
+    
+    const unsubFetch = userRecommendationsRef(uid).onSnapshot(snap => {
+      if (snap.exists) {
+        setQuote(snap.data());
+        setLoading(false);
+      }
+    });
+    
+    return () => {
+      unsubFetch && unsubFetch();
+    }
+	}, [uid]);
+  
   useEffect(() => {
-    if (!quote || isNewDay) {
+    fetch();
+  }, [fetch]);
+  
+  const isNewDay = useMemo(() => diffDays(new Date(quote.timestamp)) > 0, [quote.timestamp]);
+  
+  useEffect(() => {
+    if (!quote.timestamp || isNewDay) {
       initQuote();
     } else if (quote.amount > quoteLimit || count >= quoteLimit) {
-      cleanQuote();
+      // Shallow fix frauds
+      userRecommendationsRef(uid).set({
+        ...quote,
+        uid,
+        displayName,
+        photoURL,
+        amount: 0,
+        timestamp
+      }).catch(err => {
+        openSnackbar(handleFirestoreError(err), 'error');
+      });
     }
-  }, [count, initQuote, isNewDay, quote, cleanQuote]);
+  }, [count, isNewDay, openSnackbar, quote, uid]);
 
   const fetchFollowings = useCallback(() => {
     setLoading(true);
+
     const unsubFetchFollowings = followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         setFollowings(snap.data());
         setLoading(false);
-        // console.log({ uid, followings: snap.data() });
       } else {
         setFollowings(null);
         setLoading(false);
@@ -64,24 +102,51 @@ const RecommendationForm = props => {
   const onRecommendBook = e => {
     e.preventDefault();
     const { fuid } = e.currentTarget.dataset;
+    const { bid, covers, title } = book;
+
     const recommendation = {
       uid: fuid,
-      bid: book.bid,
-      title: book.title,
-      cover: book.covers[0]
+      bid,
+      title,
+      cover: covers[0]
     };
 
+    const newNoteRef = notesRef(fuid).doc();
+    const userName = displayName.split(' ')[0];
+    const userDisplayName = truncateString(userName, 12);
+    const noteMsg = `<a href="${app.url}/dashboard/${uid}">${userDisplayName}</a> ti consiglia il libro <a href="${app.url}/book/${bid}/${normURL(title)}">${title}</a>`;
+
     if (is.current) {
-      // DO SOMETHING
-      setQuote({
+      userRecommendationsRef(uid).set({
         ...quote,
+        uid,
+        displayName,
+        photoURL,
         amount: quote.amount - 1,
         recommends: count ? [
           ...quote.recommends, 
           recommendation
         ] : [recommendation]
+      }).then(() => {
+        newNoteRef.set({
+          nid: newNoteRef.id,
+          text: noteMsg,
+          created_num: timestamp,
+          createdBy: user.displayName,
+          createdByUid: uid,
+          photoURL: user.photoURL,
+          cover: book.covers[0],
+          tag: ['recommendation'],
+          read: false,
+          uid: fuid
+        }).then(() => {
+          openSnackbar('Libro consigliato', 'success');
+        }).catch(err => {
+          openSnackbar(handleFirestoreError(err), 'error');
+        });
+      }).catch(err => {
+        openSnackbar(handleFirestoreError(err), 'error');
       });
-      openSnackbar('Libro consigliato', 'success');
     }
   };
 
@@ -93,7 +158,9 @@ const RecommendationForm = props => {
         <div className="row">
           <div className="col-auto">
             <Link to={`/dashboard/${f}`}>
-              <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>
+              <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>
+                {!obj[f].photoURL && getInitials(obj[f].displayName)}
+              </Avatar>
             </Link>
           </div>
           <div className="col">
@@ -144,8 +211,7 @@ const RecommendationForm = props => {
 RecommendationForm.propTypes = {
   book: bookType.isRequired,
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
-  uid: stringType.isRequired,
+  openSnackbar: funcType.isRequired
 }
  
 export default RecommendationForm;
