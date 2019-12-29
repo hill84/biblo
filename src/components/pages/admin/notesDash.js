@@ -12,6 +12,8 @@ import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
+const limitBy = [ 15, 25, 50, 100, 250, 500];
+
 export default class NotesDash extends Component {
  	state = {
     count: 0,
@@ -22,7 +24,6 @@ export default class NotesDash extends Component {
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     page: 1,
     selectedEl: null,
@@ -58,7 +59,7 @@ export default class NotesDash extends Component {
   }
     
   fetch = e => {
-    const { desc, firstVisible, lastVisible, limitBy, limitByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, limitByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
@@ -137,7 +138,6 @@ export default class NotesDash extends Component {
     const lRef = notesGroupRef.limit(limit);
     lRef.get().then(snap => {
       if (!snap.empty) {
-        // console.log(snap);
         const items = [];
         snap.forEach(item => items.push(item.data()));
         console.log(items);
@@ -146,7 +146,7 @@ export default class NotesDash extends Component {
   } */
 
 	render() {
-    const { count, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
+    const { count, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
     const { openSnackbar } = this.props;
 
     if (redirectTo) return <Redirect to={`/notifications/${redirectTo}`} />

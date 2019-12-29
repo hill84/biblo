@@ -1,3 +1,4 @@
+import { Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,19 +12,20 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { bookRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, timeSince } from '../../config/shared';
+import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, setFormatClass, timeSince } from '../../config/shared';
 import { bookType, boolType, funcType, locationType, objectType, refType, userBookType, userType } from '../../config/types';
+import '../../css/bookProfile.css';
 import BookCollection from '../bookCollection';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
 import ReadingStateForm from '../forms/readingStateForm';
+import RecommendationForm from '../forms/recommendationForm';
 import Incipit from '../incipit';
 import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
 import ShareButtons from '../shareButtons';
 import UserReview from '../userReview';
-import '../../css/bookProfile.css';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -34,8 +36,10 @@ export default class BookProfile extends Component {
       bid: (this.props.book && this.props.book.bid) || ''
     },
     // errors: {},
+    ISBN: 'ISBN_13',
     isOpenRemoveDialog: false,
     isOpenReadingState: false,
+    isOpenRecommendation: false,
     isOpenIncipit: this.props.location ? this.props.location.pathname.indexOf('/incipit') !== -1 : false,
     prevProps: this.props,
     user: this.props.user || {},
@@ -149,12 +153,9 @@ export default class BookProfile extends Component {
     }
   }
 
-  setFormatClass = format => {
-    switch (format) {
-      case 'Audiolibro': return 'audio';
-      case 'Rivista': return 'magazine';
-      case 'Ebook': return 'ebook';
-      default: return 'book';
+  onToggleSuggest = () => {
+    if (this._isMounted) {
+      this.setState(prevState => ({ isOpenRecommendation: !prevState.isOpenRecommendation })); 
     }
   }
 
@@ -176,9 +177,11 @@ export default class BookProfile extends Component {
       }).catch(error => console.warn(error));
     }
   }
+
+  onChangeISBN = e => this.setState({ ISBN: e.target.value });
   
 	render() {
-    const { book, isOpenIncipit, isOpenReadingState, user, userBook } = this.state;
+    const { book, ISBN, isOpenIncipit, isOpenReadingState, isOpenRecommendation, user, userBook } = this.state;
     const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, location, openSnackbar, removeReview } = this.props;
     
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -207,12 +210,20 @@ export default class BookProfile extends Component {
           </div>
 
           {isOpenReadingState && 
-            <ReadingStateForm 
-              bid={book.bid} 
-              readingState={userBook.readingState} 
-              onToggle={this.onToggleReadingState} 
+            <ReadingStateForm
+              bid={book.bid}
+              readingState={userBook.readingState}
+              onToggle={this.onToggleReadingState}
               openSnackbar={openSnackbar}
               pages={book.pages_num}
+            />
+          }
+
+          {isOpenRecommendation && user &&
+            <RecommendationForm
+              book={book}
+              onToggle={this.onToggleSuggest} 
+              openSnackbar={openSnackbar}
             />
           }
 
@@ -221,7 +232,7 @@ export default class BookProfile extends Component {
               <div className="row">
                 <div className="col-md-auto col-sm-12" style={{ marginBottom: 15, }}>
                   {book.incipit ? 
-                    <div tabIndex={0} role="button" className={`hoverable-items text-center ${this.setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit} onKeyDown={this.onToggleIncipit}>
+                    <div tabIndex={0} role="button" className={`hoverable-items text-center ${setFormatClass(book.format)}-format`} onClick={this.onToggleIncipit} onKeyDown={this.onToggleIncipit}>
                       <Cover book={book} rating={false} info={false} />
                       <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>
                     </div>
@@ -252,25 +263,35 @@ export default class BookProfile extends Component {
                       <>
                         {isAdmin && 
                           <button type="button" onClick={this.onLock} className={`btn sm icon-sm rounded counter ${book.EDIT.edit ? 'flat' : 'primary'}`}>
-                            {book.EDIT.edit ? icon.lock() : icon.lockOpen()} <span className="hide-sm">{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</span>
+                            <span className="hide-sm">{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</span>
                           </button>
                         }
                         <button type="button" onClick={this.onEditing} className="btn sm icon-sm rounded flat counter" disabled={isLocked} title="Modifica disabilitata">
                           {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} <span className="hide-sm">Modifica</span>
                         </button>
+                        <button type="button" className="btn sm icon-sm rounded flat counter" onClick={this.onToggleSuggest}>
+                          {icon.accountHeart()} <span className="hide-sm">Consiglia</span>
+                        </button>
                       </>
                     }
                   </div>
                   <div className="info-row hide-sm">
-                    <span className="counter">ISBN-13: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_13}/></span>
-                    {book.ISBN_10 !== 0 && <span className="counter">ISBN-10: <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></span>}
-                    {book.publication && <span className="counter">Pubblicazione: {new Date(book.publication).toLocaleDateString()}</span>}
-                    {/* book.edition_num !== 0 && <span className="counter">Edizione: {book.edition_num}</span> */}
-                    {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className="counter">Pagine: {book.pages_num}</span>}
-                    {book.format === 'Audiolibro' && book.duration && <span className="counter">Durata: {msToTime(book.duration)}</span>}
-                    {book.format !== 'Libro' && <span className="counter">Formato: {book.format}</span>}
-                    {book.genres && book.genres[0] && <span className="counter comma">Gener{book.genres[1] ? 'i' : 'e'}: {book.genres.map(genre => <Link to={`/genre/${normURL(genre)}`} className="counter" key={genre}>{genre}</Link> )}</span>}
-                    {book.collections && book.collections[0] && <span className="counter comma">Collezion{book.collections[1] ? 'i' : 'e'}: {book.collections.map(collection => <Link to={`/collection/${normURL(collection)}`} className="counter" key={collection}>{collection}</Link> )}</span>}
+                    <span className="counter">
+                      <Tooltip title="Cambia tipo ISBN">
+                        <select className="select-isbn" onChange={this.onChangeISBN} defaultValue={ISBN} disabled={book.ISBN_10 === 0}>
+                          <option value="ISBN_13">ISBN-13</option>
+                          <option value="ISBN_10">ISBN-10</option>
+                        </select>
+                      </Tooltip> <CopyToClipboard openSnackbar={openSnackbar} text={book[ISBN]}/>
+                    </span>
+                    {/* book.ISBN_10 !== 0 && <span className="counter">ISBN-10 <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></span> */}
+                    {book.publication && <span className="counter">Pubblicazione {new Date(book.publication).toLocaleDateString()}</span>}
+                    {/* book.edition_num !== 0 && <span className="counter">Edizione {book.edition_num}</span> */}
+                    {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className="counter">Pagine {book.pages_num}</span>}
+                    {book.format === 'Audiolibro' && book.duration && <span className="counter">Durata {msToTime(book.duration)}</span>}
+                    {book.format !== 'Libro' && <span className="counter">Formato {book.format}</span>}
+                    {book.genres && book.genres[0] && <span className="counter comma">Gener{book.genres[1] ? 'i' : 'e'} {book.genres.map(genre => <Link to={`/genre/${normURL(genre)}`} className="counter" key={genre}>{genre}</Link> )}</span>}
+                    {book.collections && book.collections[0] && <span className="counter comma">Collezion{book.collections[1] ? 'i' : 'e'} {book.collections.map(collection => <Link to={`/collection/${normURL(collection)}`} className="counter" key={collection}>{collection}</Link> )}</span>}
                   </div>
 
                   <div className="info-row">

@@ -10,17 +10,13 @@ import { handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 
 const PasswordResetForm = props => {
-  const [state, setState] = useState({
-    email: '',
-    emailSent: false,
-    loading: false,
-    authError: null,
-    errors: {}
-  });
-
-  const is = useRef(true);
   const { openSnackbar } = props;
-  const { email, emailSent, loading, authError, errors } = state;
+  const [email, setEmail] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState(null);
+  const [errors, setErrors] = useState({});
+  const is = useRef(true);
 
   useEffect(() => () => {
     is.current = false;
@@ -28,13 +24,11 @@ const PasswordResetForm = props => {
 
   const onChange = e => {
     e.persist();
+    const { name, value } = e.target;
 
     if (is.current) {
-      setState(prevState => ({ 
-        ...prevState,
-        email: e.target.value, 
-        errors: { ...prevState.errors, [e.target.name]: null } 
-      }));
+      setEmail(value); 
+      setErrors({ ...errors, [name]: null });
     }
   };
   
@@ -53,25 +47,21 @@ const PasswordResetForm = props => {
     e.preventDefault();
     const errors = validate(email);
 
-    if (is.current) setState(prevState => ({ ...prevState, errors }));
+    if (is.current) setErrors(errors);
+
     if (Object.keys(errors).length === 0) {
-      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+      if (is.current) setLoading(true);
+      
       auth.sendPasswordResetEmail(email).then(() => {
         if (is.current) {
-          setState(prevState => ({ 
-            ...prevState, 
-            emailSent: true, 
-            loading: false 
-          }));
+          setEmailSent(true);
+          setLoading(false);
         }
         openSnackbar(`Ti abbiamo inviato un'email per reimpostare la password.`, 'success');
       }).catch(err => {
         if (is.current) {
-          setState(prevState => ({ 
-            ...prevState, 
-            authError: handleFirestoreError(err),
-            loading: false
-          }));
+          setAuthError(handleFirestoreError(err));
+          setLoading(false);
         }
       });
     }

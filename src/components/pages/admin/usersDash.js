@@ -12,27 +12,29 @@ import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
-import { boolType, funcType } from '../../../config/types';
+import { funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
+const limitBy = [ 15, 25, 50, 100, 250, 500 ];
+const orderBy = [ 
+  { type: 'creationTime', label: 'Data'}, 
+  { type: 'displayName', label: 'Nome'}, 
+  { type: 'uid', label: 'uid'}, 
+  { type: 'email', label: 'Email'},
+  { type: 'stats.shelf_num', label: 'Libri'},
+  { type: 'stats.wishlist_num', label: 'Desideri'},
+  { type: 'stats.reviews_num', label: 'Recensioni'},
+  { type: 'stats.ratings_num', label: 'Voti'}
+];
+
 const UsersDash = props => {
+  const { onToggleDialog, openSnackbar } = props;
   const [state, setState] = useState({
     firstVisible: null,
     items: null,
     lastVisible: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500 ],
     limitByIndex: 0,
-    orderBy: [ 
-      { type: 'creationTime', label: 'Data'}, 
-      { type: 'displayName', label: 'Nome'}, 
-      { type: 'uid', label: 'uid'}, 
-      { type: 'email', label: 'Email'},
-      { type: 'stats.shelf_num', label: 'Libri'},
-      { type: 'stats.wishlist_num', label: 'Desideri'},
-      { type: 'stats.reviews_num', label: 'Recensioni'},
-      { type: 'stats.ratings_num', label: 'Voti'}
-    ],
     orderByIndex: 0,
     page: 1
   });
@@ -44,11 +46,9 @@ const UsersDash = props => {
   const [loading, setLoading] = useState(false);
   const [redirectTo, setRedirectTo] = useState(null);
   const [selected, setSelected] = useState(null);
-  
+  const { firstVisible, items, lastVisible, limitByIndex, orderByIndex, page } = state;
   const is = useRef(true);
   const sub = useRef();
-  const { inView, onToggleDialog, openSnackbar } = props;
-  const { firstVisible, items, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex, page } = state;
   const limit = limitBy[limitByIndex];
 
   const fetch = useCallback(e => {
@@ -65,20 +65,22 @@ const UsersDash = props => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
-          setState(prevState => ({
-            ...prevState,
+          setState({
+            ...state,
             firstVisible: snap.docs[prev ? snap.size - 1 : 0],
             items: prev ? items.reverse() : items,
             lastVisible: snap.docs[prev ? 0 : snap.size - 1],
-            page: direction ? prev ? prevState.page - 1 : ((prevState.page * limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1
-          }));
+            page: direction ? prev ? state.page - 1 : ((state.page * limit) > state.count) ? state.page : state.page + 1 : 1
+          });
           setLoading(false);
-        } else setState(prevState => ({ 
-          ...prevState, 
-          firstVisible: null, 
-          items: null, 
-          lastVisible: null
-        }));
+        } else {
+          setState({ 
+            ...state, 
+            firstVisible: null, 
+            items: null, 
+            lastVisible: null
+          });
+        }
         setLoading(false);
       });
     }
@@ -95,7 +97,7 @@ const UsersDash = props => {
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
-  }, [desc, firstVisible, lastVisible, limit, openSnackbar, orderBy, orderByIndex]);
+  }, [desc, firstVisible, lastVisible, limit, openSnackbar, orderByIndex, state]);
 
   const onToggleDesc = () => setDesc(!desc);
   
@@ -103,14 +105,14 @@ const UsersDash = props => {
   const onCloseOrderMenu = () => setOrderMenuAnchorEl(null);
   const onChangeOrderBy = (e, i) => {
     setOrderMenuAnchorEl(null);
-    setState(prevState => ({ ...prevState, orderByIndex: i, page: 1 }));
+    setState({ ...state, orderByIndex: i, page: 1 });
   }
 
   const onOpenLimitMenu = e => setLimitMenuAnchorEl(e.currentTarget);
   const onCloseLimitMenu = () => setLimitMenuAnchorEl(null);
   const onChangeLimitBy = (e, i) => {
     setLimitMenuAnchorEl(null);
-    setState(prevState => ({ ...prevState, limitByIndex: i, page: 1 }));
+    setState({ ...state, limitByIndex: i, page: 1 });
   }
 
   const onView = e => {
@@ -212,9 +214,9 @@ const UsersDash = props => {
   }
 
   useEffect(() => {
-    if (inView) fetch();
+    fetch();
     // eslint-disable-next-line
-  }, [desc, inView, limitByIndex, orderByIndex]);
+  }, [desc, limitByIndex, orderByIndex]);
 
   useEffect(() => {
     const unsub = sub.current;
@@ -387,7 +389,6 @@ const UsersDash = props => {
 }
 
 UsersDash.propTypes = {
-  inView: boolType.isRequired,
   onToggleDialog: funcType.isRequired,
   openSnackbar: funcType.isRequired
 }

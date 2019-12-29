@@ -8,19 +8,21 @@ import Select from '@material-ui/core/Select';
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useEffect, useRef, useState } from 'react';
-import { authid, userBookRef } from '../../config/firebase';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { handleFirestoreError } from '../../config/shared';
 import { readingStates } from '../../config/lists';
+import { handleFirestoreError } from '../../config/shared';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
 
-const ReadingStateForm = props => {
-  const is = useRef(true);
-  const { bid, openSnackbar, pages, readingState } = props;
+const steps = 20;
 
+const ReadingStateForm = props => {
+  const { user } = useContext(UserContext);
+  const { bid, onToggle, openSnackbar, pages, readingState } = props;
   const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
   const [state_num, setState_num] = useState(readingState.state_num);
   const [start_num, setStart_num] = useState(readingState.start_num || null);
@@ -28,7 +30,7 @@ const ReadingStateForm = props => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [changes, setChanges] = useState(false);
-  const steps = 20;
+  const is = useRef(true);
 
   useEffect(() => {
     if (is.current) {
@@ -60,8 +62,6 @@ const ReadingStateForm = props => {
   useEffect(() => () => {
     is.current = false;
   }, []);
-
-  const onToggle = () => props.onToggle();
 
   const onChangeSelect = name => e => {
     const { value } = e.target;
@@ -97,7 +97,7 @@ const ReadingStateForm = props => {
       if (is.current) setErrors(errors);
       if (Object.keys(errors).length === 0) {
         if (is.current) setLoading(true);
-        userBookRef(authid, bid).update({
+        userBookRef(user.uid, bid).update({
           'readingState.state_num': state_num,
           'readingState.start_num': start_num,
           'readingState.end_num': end_num,
@@ -105,13 +105,13 @@ const ReadingStateForm = props => {
         }).then(() => {
           // console.log(`UserBook readingState updated`);
           if (is.current) setLoading(false);
-          props.onToggle();
+          onToggle();
         }).catch(err => {
           if (is.current) setLoading(false);
           openSnackbar(handleFirestoreError(err), 'error');
         });
       }
-    } else props.onToggle();
+    } else onToggle();
   }
 
   const onNext = () => setProgress_num(progress_num + (100/steps));

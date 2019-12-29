@@ -5,82 +5,77 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
-import { handleFirestoreError } from '../../config/shared';
-import { funcType, stringType, userType } from '../../config/types';
+import { handleFirestoreError, timestamp } from '../../config/shared';
+import { funcType, stringType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 
-const CollectionForm = props => {
-  const [state, setState] = useState({
-    data: {
-      books_num: 0,
-      description: '',
-      edit: true,
-      genres: [],
-      title: ''
-    },
-    desc_leftChars: null,
-    desc_maxChars: 1000,
-    desc_minChars: 50,
-    loading: false,
-    changes: false,
-    errors: {},
-    selectedId: null
-  });
+const max = {
+  chars: {
+    desc: 1000,
+    title: 100
+  },
+  items: { genres: 3 }
+};
+const min = {
+  chars: { desc: 50 },
+  items: { books_num: 4 }
+};
 
+const CollectionForm = props => {
+  const { user } = useContext(UserContext);
+  const { id, onToggle, openSnackbar } = props;
+  const [data, setData] = useState({
+    books_num: 0,
+    description: '',
+    edit: true,
+    genres: [],
+    title: ''
+  });
+  const [leftChars, setLeftChars] = useState({ desc: null });
+  const [loading, setLoading] = useState(false);
+  const [changes, setChanges] = useState(false);
+  const [errors, setErrors] = useState({});
   const is = useRef(true);
-  const { id, openSnackbar, user } = props;
-  const { changes, desc_leftChars, desc_maxChars, desc_minChars, data, errors, loading, selectedId } = state;
 
   const fetch = useCallback(() => {
     if (typeof id === 'string') {
-      if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+      if (is.current) setLoading(true);
 
       collectionRef(id).get().then(snap => {
         if (!snap.empty) {
           if (is.current) {
-            setState(prevState => ({
-              ...prevState,
-              data: snap.data(),
-              loading: false
-            }));
+            setData(snap.data());
+            setLoading(false);
           }
         }
       }).catch(err => console.warn(err));
     }
   }, [id]);
 
-  const onToggle = () => props.onToggle(selectedId);
-
 	const onChange = e => {
     e.persist();
     const { name, value } = e.target;
 
     if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        changes: true,
-        data: { ...prevState.data, [name]: value }, 
-        errors: { ...prevState.errors, [name]: null }
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value }); 
+      setErrors({ ...errors, [name]: null });
     }
   };
 
   const onChangeMaxChars = e => {
     e.persist();
     const { name, value } = e.target;
-    const leftChars = `${name}_leftChars`;
-    const maxChars = `${name}_maxChars`;
 
     if (is.current) {
-      setState(prevState => ({
-        ...prevState,
-        data: { ...prevState.data, [name]: value }, 
-        [leftChars]: prevState[maxChars] - value.length, 
-        changes: true
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value });
+      setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
+      setErrors({ ...errors, [name]: null });
     }
   };
 
@@ -89,12 +84,9 @@ const CollectionForm = props => {
     const { value } = e.target;
 
     if (is.current) {
-      setState(prevState => ({ 
-        ...prevState,
-        changes: true,
-        data: { ...prevState.data, [name]: value }, 
-        errors: { ...prevState.errors, [name]: null } 
-      }));
+      setChanges(true);
+      setData({ ...data, [name]: value });
+      setErrors({ ...errors, [name]: null });
     }
   };
 
@@ -114,33 +106,40 @@ const CollectionForm = props => {
       errors.title = "Inserisci il titolo"; 
     } else if (isDuplicate) {
       errors.title = "Collezione già presente";
+    } else if (data.title && data.title.length > max.chars.title) {
+      errors.title = `Massimo ${max.chars.title} caratteri`;
     }
     if (!data.description) { 
       errors.description = "Inserisci una descrizione"; 
-    } else if (data.description && data.description.length > desc_maxChars) {
-      errors.description = `Lunghezza massima ${desc_maxChars} caratteri`;
-    } else if (data.description && data.description.length < desc_minChars) {
-      errors.description = `Lunghezza minima ${desc_minChars} caratteri`;
+    } else if (data.description && data.description.length > max.chars.desc) {
+      errors.description = `Massimo ${max.chars.desc} caratteri`;
+    } else if (data.description && data.description.length < min.chars.desc) {
+      errors.description = `Minimo ${min.chars.desc} caratteri`;
     }
     if (!data.genres) {
       errors.genres = "Scegli almeno un genere";
-    } else if (data.genres.length > 3) {
-      errors.genres = "Massimo 3 generi";
+    } else if (data.genres.length > max.items.genres) {
+      errors.genres = `Massimo ${max.items.genres} generi`;
+    }
+    if (!data.books_num) {
+      errors.books_num = "Inserisci libri";
+    } else if (data.books_num < min.items.books_num) {
+      errors.books_num = `Minimo ${min.items.books_num} libri`;
     }
 		return errors;
   };
   
 	const onSubmit = async e => {
     e.preventDefault();
-    const prevState = state;
 
     if (changes) {
-      const errors = await validate(prevState.data);
+      if (is.current) setLoading(true);
+      const errors = await validate(data);
       
-      if (is.current) setState(prevState => ({ ...prevState, errors }));
+      if (is.current) setErrors(errors);
       
       if (Object.keys(errors).length === 0) {
-        if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+        if (is.current) setLoading(true );
         const ref = data.title ? collectionRef(data.title) : collectionsRef.doc();
         ref.set({
           books_num: data.books_num || 0,
@@ -149,17 +148,17 @@ const CollectionForm = props => {
           edit: data.edit || true,
           // followers: data.followers || {},
           genres: data.genres || [],
-          lastEdit_num: Number((new Date()).getTime()),
+          lastEdit_num: timestamp,
           lastEditBy: user.displayName,
           lastEditByUid: user.uid,
           // photoURL: data.photoURL || '',
           // source: data.source || ''
         }).then(() => {
           onToggle();
-          if (is.current) setState(prevState => ({ ...prevState, loading: false }));
+          if (is.current) setLoading(false);
           openSnackbar(data.title ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
         }).catch(err => console.warn(err));
-      }
+      } else if (is.current) setLoading(false);
     } else onToggle();
   };
 
@@ -229,7 +228,7 @@ const CollectionForm = props => {
                   id="description"
                   name="description"
                   type="text"
-                  placeholder={`Inserisci la descrizione (max ${desc_maxChars} caratteri)...`}
+                  placeholder={`Inserisci la descrizione (max ${max.chars.desc} caratteri)...`}
                   value={data.description}
                   onChange={onChangeMaxChars}
                   rowsMax={20}
@@ -237,9 +236,9 @@ const CollectionForm = props => {
                   error={Boolean(errors.description)}
                 />
                 {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
-                {(desc_leftChars !== null) && 
-                  <FormHelperText className={`message ${(desc_leftChars < 0) ? 'alert' : 'neutral'}`}>
-                    Caratteri rimanenti: {desc_leftChars}
+                {(leftChars.desc !== null) && 
+                  <FormHelperText className={`message ${(leftChars.desc < 0) ? 'alert' : 'neutral'}`}>
+                    Caratteri rimanenti: {leftChars.desc}
                   </FormHelperText>
                 }
               </FormControl>
@@ -249,7 +248,7 @@ const CollectionForm = props => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="select-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max 3)</InputLabel>
+                <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max {max.items.genres})</InputLabel>
                 <Select
                   id="genres"
                   value={data.genres}
@@ -310,13 +309,11 @@ const CollectionForm = props => {
 CollectionForm.propTypes = {
   onToggle: funcType.isRequired,
   openSnackbar: funcType.isRequired,
-  id: stringType,
-  user: userType
+  id: stringType
 }
 
 CollectionForm.defaultProps = {
-  id: null,
-  user: null
+  id: null
 }
 
 export default CollectionForm;

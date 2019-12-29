@@ -16,6 +16,7 @@ import { booksRef } from '../../config/firebase';
 import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
+import '../../css/searchBook.css';
 
 export default class SearchBookForm extends Component {
   state = {
@@ -182,7 +183,7 @@ export default class SearchBookForm extends Component {
           <span className="title">Libro non trovato...</span>
         </div>
         <div className="secondaryText">
-          <button type="button" className="btn primary">Crea nuovo</button>
+          <button type="button" className="btn sm flat rounded">Crea nuovo</button>
         </div>
       </MenuItem>
     );
@@ -273,7 +274,10 @@ export default class SearchBookForm extends Component {
           });
         }
 
-        fetch(new Request(booksAPIRef(searchParams), { method: 'GET' })).then(res => res.json()).then(json => {
+        fetch(booksAPIRef(searchParams), {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        }).then(res => res.json()).then(json => {
           const options = [];
           if (json.items && json.items.length > 0) {
             // console.log(json.items);
@@ -338,9 +342,7 @@ export default class SearchBookForm extends Component {
         this.unsubQuery = query.limit(maxSearchResults).onSnapshot(snap => {
           const options = [];
           if (!snap.empty) {
-            // console.log(snap);
             snap.forEach(doc => {
-              // console.log(doc.data());
               options.push({
                 ...doc.data(),
                 label: typeof doc.data()[optionLabel] === 'object' ? String(Object.keys(doc.data()[optionLabel])[0]) : doc.data()[optionLabel] // Autosuggest OPTION LABEL

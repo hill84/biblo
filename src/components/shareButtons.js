@@ -4,7 +4,7 @@ import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } fr
 import { arrayType, stringType } from '../config/types';
 
 const ShareButtons = props => {
-  const IconProps = { size: 24, round: true };
+  const IconProps = { size: 32, round: true };
   const { className, cover, hashtags, text, url, via, ...attrs } = props;
   const fbProps = { className, quote: text, url, ...attrs };
   const twProps = { className, title: text, url, via, ...attrs };

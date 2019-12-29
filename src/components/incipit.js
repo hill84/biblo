@@ -1,42 +1,31 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { SayButton } from 'react-say';
 import icon from '../config/icons';
-import { funcType, stringType } from '../config/types';
-import Overlay from './overlay';
 import { incipitKey } from '../config/storage';
+import { funcType, stringType } from '../config/types';
 import useLocalStorage from '../hooks/useLocalStorage';
+import Overlay from './overlay';
 
 const Incipit = props => {
   const [big, setBig] = useLocalStorage(incipitKey.fontBig, false);
   const [dark, setDark] = useLocalStorage(incipitKey.themeDark, false);
-  
-  const is = useRef(true);
-  const onToggleDarkTheme = () => {
-    if (is.current) setDark(!dark);
-  };
-  const onToggleSize = () => {
-    if (is.current) setBig(!big);
-  };
 
-  useEffect(() => () => {
-    is.current = false;
-  }, []);
+  const onToggleDarkTheme = () => setDark(!dark);
+  const onToggleSize = () => setBig(!big);
 
   const { copyrightHolder, incipit, onToggle, publication, title } = props;
 
   return (
     <>
-      <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${dark ? 'dark' : 'light'}`} ref={is}>
+      <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${dark ? 'dark' : 'light'}`}>
         <div className="absolute-content">
           <div role="navigation" className="head nav row">
             <strong className="col title">{title}</strong>
             <div className="col-auto btn-row">
               <SayButton text={incipit}>
                 <Tooltip title="Ascolta" placement="bottom">
-                  <div className="btn rounded icon flat audio">
-                    {icon.voice()}
-                  </div>
+                  <div className="btn rounded icon flat audio">{icon.voice()}</div>
                 </Tooltip>
               </SayButton>
               <Tooltip title="Formato" placement="bottom">

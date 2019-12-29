@@ -6,6 +6,7 @@ import icon from '../config/icons';
 import { abbrNum, joinObj } from '../config/shared';
 import { boolType, coverType, numberType } from '../config/types';
 import Rating from './rating';
+import '../css/cover.css';
 
 const Cover = props => {
   const { animationDelay, bcid, book, full, index, info, loading, page, rating, showReaders } = props;

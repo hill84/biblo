@@ -1,4 +1,7 @@
 {
+  "ignoreFiles": [
+    "src/css/*.min.css"
+  ],
   "rules": {
     "declaration-no-important": null,
     "color-no-invalid-hex": true,
@@ -50,7 +53,7 @@
     "declaration-block-semicolon-newline-after": null,
     "declaration-block-trailing-semicolon": "always",
     "block-closing-brace-newline-after": "always",
-    "selector-attribute-brackets-space-inside": "always",
+    "selector-attribute-brackets-space-inside": "never",
     "selector-attribute-quotes": "always",
     "selector-combinator-space-before": "always",
     "selector-combinator-space-after": "always",
@@ -60,7 +63,7 @@
     "rule-empty-line-before": null,
     "media-feature-colon-space-after": "always",
     "media-feature-name-case": "lower",
-    "media-feature-parentheses-space-inside": "always",
+    "media-feature-parentheses-space-inside": "never",
     "media-feature-range-operator-space-after": "always",
     "media-feature-range-operator-space-before": "never",
     "media-query-list-comma-space-after": "always",

@@ -16,6 +16,7 @@ import icon from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { app, calcAge, getInitials, validateImg } from '../../config/shared';
 import { funcType, userType } from '../../config/types';
+import '../../css/profileForm.css';
 
 export default class ProfileForm extends Component {
 	state = {

@@ -13,13 +13,13 @@ import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, truncateString } from '../../config/shared';
+import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, timestamp, truncateString } from '../../config/shared';
 import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
+import '../../css/dashboard.css';
 import NoMatch from '../noMatch';
 import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
-import '../../css/dashboard.css';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
@@ -185,7 +185,6 @@ export default class Dashboard extends Component {
     this.unsubUidFollowersFetch && this.unsubUidFollowersFetch();
     this.unsubUidFollowersFetch = followersRef(uid).onSnapshot(snap => {
       if (snap.exists) {
-        // console.log(snap.data());
         this.setState({
           followers: snap.data(),
           // followersCount: 10, // TODO
@@ -199,7 +198,6 @@ export default class Dashboard extends Component {
         this.unsubLuidFollowersFetch && this.unsubLuidFollowersFetch();
         this.unsubLuidFollowersFetch = followersRef(luid).onSnapshot(snap => {
           if (snap.exists) {
-            // console.log({ lfollowers: snap.data() });
             this.setState({ lfollowers: snap.data() });
           } else this.setState({ lfollowers: {} });
         });
@@ -260,7 +258,7 @@ export default class Dashboard extends Component {
           [luid]: {
             displayName: user.displayName,
             photoURL: user.photoURL,
-            timestamp: (new Date()).getTime()
+            timestamp
           }
         };
 				computedFollowings = {
@@ -268,7 +266,7 @@ export default class Dashboard extends Component {
           [fuid]: {
             displayName: fuser.displayName,
             photoURL: fuser.photoURL,
-            timestamp: (new Date()).getTime()
+            timestamp
           }
         };
         snackbarMsg = `Segui ${fuser.displayName}`;
@@ -286,7 +284,7 @@ export default class Dashboard extends Component {
           newNoteRef.set({
             nid: newNoteRef.id,
             text: noteMsg,
-            created_num: Number((new Date()).getTime()),
+            created_num: timestamp,
             createdBy: user.displayName,
             createdByUid: luid,
             photoURL: user.photoURL,

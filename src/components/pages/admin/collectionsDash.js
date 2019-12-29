@@ -13,6 +13,11 @@ import { handleFirestoreError, normURL } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
+const limitBy = [ 15, 25, 50, 100, 250, 500];
+const orderBy = [ 
+  { type: 'title', label: 'Titolo'}
+];
+
 export default class collectionsDash extends Component {
  	state = {
     count: 0,
@@ -21,12 +26,8 @@ export default class collectionsDash extends Component {
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
-    orderBy: [ 
-      { type: 'title', label: 'Titolo'}
-    ],
     orderByIndex: 0,
     page: 1,
     selectedId: null,
@@ -61,7 +62,7 @@ export default class collectionsDash extends Component {
   }
     
   fetch = e => {
-    const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, limitByIndex, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
@@ -150,7 +151,7 @@ export default class collectionsDash extends Component {
   }
 
 	render() {
-    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
 
     if (redirectTo) return <Redirect to={`/collection/${redirectTo}`} />
 

@@ -1,7 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
 import PropTypes from 'prop-types';
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import ErrorBoundary from './components/errorBoundary';
@@ -28,10 +28,11 @@ import TermsPage from './components/pages/termsPage';
 import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { auth, isAuthenticated, userRef } from './config/firebase';
 import { app, handleFirestoreError, needsEmailVerification } from './config/shared';
-import { userKey } from './config/storage';
+import { uidKey } from './config/storage';
 import { defaultTheme } from './config/themes';
 import { locationType } from './config/types';
 import { SnackbarConsumer, SnackbarProvider } from './context/snackbarContext';
+import UserContext from './context/userContext';
 
 const Admin = lazy(() => import('./components/pages/admin/admin'));
 const Challenge = lazy(() => import('./components/pages/challenge'));
@@ -46,13 +47,12 @@ const App = () => {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
 
+  const userProvided = useMemo(() => ({ user, setUser }), [user, setUser]);
+
   useEffect(() => {
-    const clearUser = () => {
-      setUser(null);
-    }
+    const clearUser = () => setUser(null);
 
     const fetchUser = user => userRef(user.uid).onSnapshot(snap => {
-      // console.log(snap);
       if (snap.exists) {
         setUser(snap.data());
         setError(null);
@@ -69,16 +69,15 @@ const App = () => {
       }
     });
 
-    return () => {
-      fetchUser && fetchUser();
-    }
+    return () => fetchUser();
   }, []);
 
   useEffect(() => {
+    const uid = user && user.uid;
     try {
-      window.localStorage.setItem(userKey, user);
+      window.localStorage.setItem(uidKey, uid);
     } catch(err) {
-      console.log(err);
+      console.warn(err);
     }
   }, [user]);
   
@@ -96,48 +95,50 @@ const App = () => {
         <SnackbarProvider>
           <SnackbarConsumer>
             {({ openSnackbar }) => (
-              <Layout user={user} error={error} openSnackbar={openSnackbar}>
-                <ErrorBoundary>
-                  <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
-                    <Switch>
-                      <RouteWithProps path="/" exact component={Home} user={user} openSnackbar={openSnackbar} />
-                      <Route path="/about" component={AboutPage} />
-                      <Route path="/cookie" component={CookiePage} />
-                      <Route path="/donations" component={DonationsPage} />
-                      <Route path="/help" component={HelpPage} />
-                      <Route path="/privacy" component={PrivacyPage} />
-                      <Route path="/terms" component={TermsPage} />
-                      <RouteWithProps path="/verify-email" component={VerifyEmailPage} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/password-reset" component={PasswordResetForm} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/login" component={Login} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/signup" component={Signup} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/collection/:cid" component={Collection} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/collections" component={NewFeature} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/genre/:gid" component={Genre} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/book/:bid" component={BookContainer} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
-                      <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/books/add" component={AddBook} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/new-book" component={NewBook} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/notifications" component={Notifications} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/profile" exact component={Profile} user={user} openSnackbar={openSnackbar}/>
-                      <PrivateRoute path="/admin" exact component={Admin} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/admin/:tab" component={Admin} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/challenge" component={Challenge} user={user} openSnackbar={openSnackbar} />
-                      <PrivateRoute path="/challenges" component={NewFeature} user={user} openSnackbar={openSnackbar} />
-                      <Redirect from="/home" to="/" />
-                      <Redirect from="/webmaster/*" to="/" />
-                      <Redirect from="/chi-siamo" to="/about" />
-                      <Redirect from="/aiuto" to="/help" />
-                      <Route component={NoMatchPage} status={404} />
-                    </Switch>
-                  </Suspense>
-                </ErrorBoundary>
-              </Layout>
+              <UserContext.Provider value={userProvided}>
+                <Layout error={error} openSnackbar={openSnackbar}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
+                      <Switch>
+                        <RouteWithProps path="/" exact component={Home} openSnackbar={openSnackbar} />
+                        <Route path="/about" component={AboutPage} />
+                        <Route path="/cookie" component={CookiePage} />
+                        <Route path="/donations" component={DonationsPage} />
+                        <Route path="/help" component={HelpPage} />
+                        <Route path="/privacy" component={PrivacyPage} />
+                        <Route path="/terms" component={TermsPage} />
+                        <RouteWithProps path="/verify-email" component={VerifyEmailPage} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/password-reset" component={PasswordResetForm} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/login" component={Login} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/signup" component={Signup} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/author/:aid" component={AuthorPage} user={user} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/genres" component={genresPage} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/authors" component={AuthorsPage} user={user} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/collection/:cid" component={Collection} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/collections" component={NewFeature} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/genre/:gid" component={Genre}openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/book/:bid" component={BookContainer} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/books/add" component={AddBook} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/new-book" component={NewBook} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/notifications" component={Notifications} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/profile" exact component={Profile} openSnackbar={openSnackbar}/>
+                        <PrivateRoute path="/admin" exact component={Admin} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/admin/:tab" component={Admin} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/challenge" component={Challenge} openSnackbar={openSnackbar} />
+                        <PrivateRoute path="/challenges" component={NewFeature} openSnackbar={openSnackbar} />
+                        <Redirect from="/home" to="/" />
+                        <Redirect from="/webmaster/*" to="/" />
+                        <Redirect from="/chi-siamo" to="/about" />
+                        <Redirect from="/aiuto" to="/help" />
+                        <Route component={NoMatchPage} status={404} />
+                      </Switch>
+                    </Suspense>
+                  </ErrorBoundary>
+                </Layout>
+              </UserContext.Provider>
             )}
           </SnackbarConsumer>
         </SnackbarProvider>

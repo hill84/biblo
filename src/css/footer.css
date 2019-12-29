@@ -1,4 +1,3 @@
-/* FOOTER */
 .bottom-bar { 
   position: absolute;
   right: 0;
@@ -11,6 +10,6 @@
   margin-top: 48px; 
   line-height: 200%;
   font-size: .82rem;
+  & .container { margin-top: 0; }
+  & .divider { margin: 0 auto; }
 }
-.bottom-bar .container { margin-top: 0; }
-.bottom-bar .divider { margin: 0 auto; }

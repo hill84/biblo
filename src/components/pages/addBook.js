@@ -1,25 +1,27 @@
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import icon from '../../config/icons';
 import { app } from '../../config/shared';
 import { primaryTheme } from '../../config/themes';
-import { funcType, historyType, locationType, userType } from '../../config/types';
+import { funcType, historyType, locationType } from '../../config/types';
+import UserContext from '../../context/userContext';
+import '../../css/searchBook.css';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
 const seo = {
   title: `${app.name} | Aggiungi libro`,
   description: app.desc
-}
+};
 
 const AddBook = props => {
+  const { user } = useContext(UserContext);
+  const { history, location, openSnackbar } = props;
   const [book, setBook] = useState(null);
 
   const onBookSelect = book => setBook(book);
-
-  const { history, location, openSnackbar, user } = props;
 
   return (
     <div className="container" id="addBookComponent">
@@ -56,15 +58,13 @@ const AddBook = props => {
 AddBook.propTypes = {
   history: historyType,
   location: locationType,
-  openSnackbar: funcType,
-  user: userType
+  openSnackbar: funcType
 }
 
 AddBook.defaultProps = {
   history: null,
   location: null,
-  openSnackbar: null,
-  user: null
+  openSnackbar: null
 }
  
 export default AddBook;

@@ -17,7 +17,7 @@ import 'emoji-mart/css/emoji-mart.css';
 import React, { Component, forwardRef } from 'react';
 import { authid, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../config/shared';
 import { funcType, stringType, userBookType, userType } from '../config/types';
 import '../css/emojiMart.css';
 import emojiMartLocale from '../locales/emojiMart';
@@ -31,8 +31,21 @@ const EmojiPickerStyle = {
   top: '100%',
   marginTop: 4,
   right: 0,
-  zIndex: 1
+  zIndex: 1,
 };
+
+const max = {
+  chars: {
+    text: 1500,
+    title: 255
+  }
+};
+
+const min = {
+  chars: {
+    text: 120
+  }
+}
 
 export default class UserReview extends Component {
 	state = {
@@ -52,11 +65,7 @@ export default class UserReview extends Component {
       text: '',
       title: ''
     },
-    text__leftChars: null,
-    text_minChars: 120,
-    text_maxChars: 1500,
-    title_leftChars: null,
-    title_maxChars: 255,
+    leftChars: { text: null, title: null },
     isOpenDeleteDialog: false,
     isOpenEmojiPicker: false,
     changes: false,
@@ -108,13 +117,11 @@ export default class UserReview extends Component {
   fetchUserReview = () => {
     const { bid, review} = this.state;
 
-    // console.log('Fetching user review');
     this.unsubReviewerFetch = reviewerRef(bid, authid).onSnapshot(snap => {
       if (this._isMounted) {
         this.setState({ loading: true });
       }
       if (snap.exists) {
-        // console.log(snap.data());
         if (this._isMounted) {
           this.setState({ review: snap.data() });
         }
@@ -154,7 +161,7 @@ export default class UserReview extends Component {
             bookTitle: userBook.title,
             covers: userBook.covers,
             createdByUid: user.uid,
-            created_num: Number((new Date()).getTime()),
+            created_num: timestamp,
             displayName: user.displayName,
             photoURL: user.photoURL,
             rating_num: userBook.rating_num
@@ -178,8 +185,7 @@ export default class UserReview extends Component {
               isEditing: false,
               isOpenEmojiPicker: false,
               loading: false,
-              text_leftChars: null,
-              title_leftChars: null
+              leftChars: { text: null, title: null },
             });
           }
         } else console.warn(`No bid`);
@@ -189,8 +195,7 @@ export default class UserReview extends Component {
         errors: {},
         isEditing: false,
         isOpenEmojiPicker: false,
-        text_leftChars: null,
-        title_leftChars: null
+        leftChars: { text: null, title: null },
       });
     }
   }
@@ -240,22 +245,20 @@ export default class UserReview extends Component {
         errors: {},
         isEditing: false,
         isOpenEmojiPicker: false,
-        text_leftChars: null,
-        title_leftChars: null
+        leftChars: { text: null, title: null },
       });
     }
   }
 
   onChangeMaxChars = e => {
     e.persist();
-    const leftChars = `${e.target.name}_leftChars`;
-    const maxChars = `${e.target.name}_maxChars`;
+    const { name, value } = e.target;
     
     if (this._isMounted) {
       this.setState(prevState => ({
-        review: { ...prevState.review, [e.target.name]: e.target.value },
-        errors: { ...prevState.errors, [e.target.name]: null } , 
-        [leftChars]: prevState[maxChars] - e.target.value.length,
+        review: { ...prevState.review, [name]: value },
+        errors: { ...prevState.errors, [name]: null } , 
+        leftChars: { ...prevState.leftChars, [name]: max.chars[name] - value.length },
         isOpenEmojiPicker: false,
         changes: true
       }));
@@ -263,22 +266,21 @@ export default class UserReview extends Component {
   };
 
   validate = review => {
-    const { text_maxChars, text_minChars, title_maxChars } = this.state;
     const { text, title } = review;
     const errors = {};
     const urlMatches = text.match(urlRegex);
 
     if (!text) {
       errors.text = "Aggiungi una recensione";
-    } else if (text.length > text_maxChars) {
-      errors.text = `Lunghezza massima ${text_maxChars} caratteri`;
-    } else if (text.length < text_minChars) {
-      errors.text = `Lunghezza minima ${text_minChars} caratteri`;
+    } else if (text.length > max.chars.text) {
+      errors.text = `Lunghezza massima ${max.chars.text} caratteri`;
+    } else if (text.length < min.chars.text) {
+      errors.text = `Lunghezza minima ${min.chars.text} caratteri`;
     } else if (urlMatches) {
-      errors.text = `Non inserire url o indirizzi email nel testo (${join(urlMatches)})`;
+      errors.text = `Non inserire link (${join(urlMatches)})`;
     }
-    if (title && title.length > title_maxChars) {
-      errors.title = `Lunghezza massima ${title_maxChars} caratteri`;
+    if (title && title.length > max.chars.title) {
+      errors.title = `Lunghezza massima ${max.chars.title} caratteri`;
     }
     return errors;
   }
@@ -288,6 +290,12 @@ export default class UserReview extends Component {
       isOpenEmojiPicker: !prevState.isOpenEmojiPicker
     }));
   };
+
+  onClick = () => {
+    if (this.state.isOpenEmojiPicker) {
+      this.setState({ isOpenEmojiPicker: false });
+    }
+  }
 
   onMouseDown = e => e.preventDefault();
 
@@ -300,7 +308,7 @@ export default class UserReview extends Component {
   };
   
   render() {
-    const { changes, errors, isEditing, isOpenDeleteDialog, isOpenEmojiPicker, loading, review, text_leftChars, text_maxChars, title_leftChars, title_maxChars, user, userBook } = this.state;
+    const { changes, errors, isEditing, isOpenDeleteDialog, isOpenEmojiPicker, loading, review, leftChars, user, userBook } = this.state;
 
     if (!user || !userBook) return null;
 
@@ -360,9 +368,10 @@ export default class UserReview extends Component {
                       name="text"
                       type="text"
                       autoFocus={isEditing}
-                      placeholder={`Scrivi una recensione (max ${text_maxChars} caratteri)...`}
+                      placeholder={`Scrivi una recensione (max ${max.chars.text} caratteri)...`}
                       value={review.text || ''}
                       onChange={this.onChangeMaxChars}
+                      onClick={this.onClick}
                       error={Boolean(errors.text)}
                       multiline
                       endAdornment={
@@ -388,7 +397,7 @@ export default class UserReview extends Component {
                       />
                     )}
                     {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
-                    {text_leftChars && <FormHelperText className={`message ${(text_leftChars < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {text_leftChars}</FormHelperText>}
+                    {leftChars.text && <FormHelperText className={`message ${(leftChars.text < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {leftChars.text}</FormHelperText>}
                   </FormControl>
                 </div>
                 <div className="form-group">
@@ -398,13 +407,14 @@ export default class UserReview extends Component {
                       id="title"
                       name="title"
                       type="text"
-                      placeholder={`Aggiungi un titolo (max ${title_maxChars} caratteri)...`}
+                      placeholder={`Aggiungi un titolo (max ${max.chars.title} caratteri)...`}
                       value={review.title || ''}
                       onChange={this.onChangeMaxChars}
+                      onClick={this.onClick}
                       error={Boolean(errors.title)}
                     />
                     {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
-                    {title_leftChars && <FormHelperText className={`message ${(title_leftChars) < 0 ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {title_leftChars}</FormHelperText>}
+                    {leftChars.title && <FormHelperText className={`message ${(leftChars.title) < 0 ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {leftChars.title}</FormHelperText>}
                   </FormControl>
                 </div>
 

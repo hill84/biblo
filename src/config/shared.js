@@ -49,7 +49,7 @@ export const arrToObj = (arr, fn) => {
   }
   return obj;
 };
-// example: const obj = arrToObj(arr, function(item) { return { key: item, value: 'author' }});
+// example: const obj = arrToObj(arr, item => { key: item, value: 'author' });
 export const truncateString = (str, limit) => str && str.length > limit ? `${str.substr(0, limit)}…` : str;
 export const normURL = str => str && encodeURI(str.replace(/ /g, '_'));
 export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
@@ -68,9 +68,20 @@ export const asyncForEach = async (array, callback) => {
     results.push(callback(array[i], i, array));
   }
   await Promise.all(results);
-}
+};
+
+export const setFormatClass = format => {
+  switch (format) {
+    case 'Audiolibro': return 'audio';
+    case 'Rivista': return 'magazine';
+    case 'Ebook': return 'ebook';
+    default: return 'book';
+  }
+};
 
 // REGEX
+export const numRegex = /-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?/;
+
 export const urlRegex = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9$\-_.+!*'(),;?&=]|(?:%[a-fA-F0-9]{2})){1,64}(?::(?:[a-zA-Z0-9$\-_.+!*'(),;?&=]|(?:%[a-fA-F0-9]{2})){1,25})?@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?::\d{1,5})?)(\/(?:(?:[a-zA-Z0-9;/?:@&=#~\-.+!*'(),_])|(?:%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
 
 export const emailRegex = /[a-zA-Z0-9\\+\\.\\_\\%\\-]{1,256}\\@[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}(\\.[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25})+/gi;
@@ -94,7 +105,7 @@ export const validateImg = (file, maxMB = 1) => {
     error = `File non trovato`;
   }
   return error;
-}
+};
 
 export const checkBadWords = text => splitWords(text).some(word => badWords.some(badWord => word.toLowerCase() === badWord)); // BOOLEAN
 export const calcVulgarity = text => splitWords(text).filter(word => badWords.some(badWord => word.toLowerCase() === badWord)).length; // NUMBER
@@ -123,14 +134,16 @@ export const capitalizeInitials = str => {
     str[i] = str[i][0].toUpperCase() + str[i].substr(1);
   }
   return str.join(' ');
-}
+};
 
 // CALCULATION
 const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) ? `${Math.floor(minutes%60)} minuti` : ''}`;
 
 export const calcReadingTime = pages => calcMinutesToTime(pages * 1.25);
 
-export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
+export const timestamp = Date.now();
+
+export const calcAge = birthDate => Math.abs(new Date(timestamp - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
 
 export const timeSince = date => {
   const seconds = Math.floor((new Date() - date) / 1000);
@@ -160,17 +173,20 @@ export const msToTime = s => {
     return `${hours}${hours && minutes ? ' e ' : ''}${minutes}`;
   }
   return 'non disponibile';
-}
+};
+
+const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+export const diffDays = (secondDate, firstDate = timestamp) => Math.round(Math.abs((firstDate - secondDate) / oneDay));
 
 export const screenSize = () => {
   const w = window.innerWidth;
   return w <= 359 ? 'xs' : w <= 768 ? 'sm' : w <= 992 ? 'md' : w <= 1200 ? 'lg' : 'xl';
-}
+};
 
 export const booksPerRow = () => {
   const w = window.innerWidth;
   return w <= 359 ? 2 : w <= 768 ? 3 : w <= 992 ? 4 : w <= 1200 ? 6 : 7;
-}
+};
 
 export const abbrNum = (num, decPlaces = 0) => {
   decPlaces = 10 ** decPlaces;
@@ -187,7 +203,7 @@ export const abbrNum = (num, decPlaces = 0) => {
     }
   }
   return num;
-}
+};
 
 // MAP
 export const switchGenres = array => array.map(str => {
@@ -247,19 +263,19 @@ export const switchLanguages = str => {
 export const handleFirestoreError = err => {
   if (process.env.NODE_ENV !== 'production') console.warn(err);
   return firestoreErrorMessages[err.code] && (lang === 'it' || lang === 'en') ? firestoreErrorMessages[err.code][lang] : err.message;
-}
+};
 
 export const slowImport = (value, ms = 1000) => {
   return new Promise(resolve => {
     setTimeout(() => resolve(value), ms);
   });
-}
+};
 
 export const fakeImportComponent = (value, ms = 1000, bool) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => bool ? resolve({ default: value }) : reject(Error), ms);
   });
-}
+};
 
 export const createCookie = (name, value, days) => {
   let expires = '';
@@ -269,7 +285,7 @@ export const createCookie = (name, value, days) => {
 		expires = `; expires=${date.toGMTString()}`;
 	}
 	document.cookie = `${name}=${value}${expires}; path=/`;
-}
+};
 
 export const readCookie = name => {
 	const nameEQ = `${name}=`;
@@ -280,6 +296,6 @@ export const readCookie = name => {
 		if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
 	}
 	return null;
-}
+};
 
 export const eraseCookie = name => createCookie(name, "", -1);

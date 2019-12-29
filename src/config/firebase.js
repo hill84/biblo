@@ -4,16 +4,16 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
 import { needsEmailVerification } from './shared';
-import { ifLocalStorage, userKey } from './storage';
+import { ifLocalStorage, uidKey } from './storage';
 
 const config = {
-	appId: '1:144759497905:web:e8d9fd244452fbbb',
-	apiKey: 'AIzaSyDmzwyXa4bBotGhyXN3r5ZAchDmua8a5i0',
-	authDomain: 'biblo.space', // delibris-4fa3b.firebaseapp.com
-	databaseURL: 'https://delibris-4fa3b.firebaseio.com',
-	projectId: 'delibris-4fa3b',
-	storageBucket: 'delibris-4fa3b.appspot.com',
-	messagingSenderId: '144759497905'
+	appId: process.env.REACT_APP_FIREBASE_APP_ID,
+	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID
 };
 
 if (!firebase.apps.length) firebase.initializeApp(config);
@@ -21,16 +21,16 @@ if (!firebase.apps.length) firebase.initializeApp(config);
 firebase.performance();
 
 /* AUTH */
-export const GoogleAuthProvider = firebase.auth && new firebase.auth.GoogleAuthProvider();
-export const FacebookAuthProvider = firebase.auth && new firebase.auth.FacebookAuthProvider();
-export const TwitterAuthProvider = firebase.auth && new firebase.auth.TwitterAuthProvider();
-export const auth = firebase.auth();
+const GoogleAuthProvider = firebase.auth && new firebase.auth.GoogleAuthProvider();
+const FacebookAuthProvider = firebase.auth && new firebase.auth.FacebookAuthProvider();
+const TwitterAuthProvider = firebase.auth && new firebase.auth.TwitterAuthProvider();
+const auth = firebase.auth();
 auth.useDeviceLanguage();
-export const signOut = () => auth.signOut();
-export const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
-const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(userKey)));
+const signOut = () => auth.signOut();
+const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
+const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(uidKey)));
 // eslint-disable-next-line import/no-mutable-exports
-export let authid = currentUid();
+let authid = currentUid();
 auth.onIdTokenChanged(user => {
 	authid = user ? currentUid() : null
 });
@@ -39,59 +39,126 @@ auth.onIdTokenChanged(user => {
 /* FIRESTORE */
 const db = firebase.firestore();
 db.settings({/* my settings... */});
-export const { FieldValue } = firebase.firestore;
-export const timestamp = FieldValue.serverTimestamp();
-// export const timestamp = firebase.ServerValue;
+const { FieldValue } = firebase.firestore;
+const timestamp = FieldValue.serverTimestamp(); // const timestamp = firebase.ServerValue;
 
-export const usersRef = db.collection('users');
-export const userRef = uid => usersRef.doc(uid);
-export const userShelfRef = uid => db.collection('shelves').doc(uid);
-export const userBooksRef = uid => userShelfRef(uid).collection('books');
-export const userBookRef = (uid, bid) => userBooksRef(uid).doc(bid);
-export const followersRef = uid => db.collection('followers').doc(uid);
-export const followingsRef = uid => db.collection('followings').doc(uid);
+// Users
+const usersRef = db.collection('users');
+const userRef = uid => usersRef.doc(uid);
 
-export const booksRef = db.collection('books');
-export const bookRef = bid => booksRef.doc(bid);
+// Shelves
+const userShelfRef = uid => db.collection('shelves').doc(uid);
+const userBooksRef = uid => userShelfRef(uid).collection('books');
+const userBookRef = (uid, bid) => userBooksRef(uid).doc(bid);
 
-export const collectionsRef = db.collection('collections');
-export const collectionRef = cid => collectionsRef.doc(cid);
-export const collectionBooksRef = cid => collectionRef(cid).collection('books');
-export const collectionFollowersRef = cid => collectionRef(cid).collection('followers');
-export const collectionBookRef = (cid, bid) => collectionBooksRef(cid).doc(bid);
+// Followers
+const followersRef = uid => db.collection('followers').doc(uid);
 
-export const reviewsRef = db.collection('reviews');
-export const reviewRef = bid => reviewsRef.doc(bid);
-export const reviewersRef = bid => reviewRef(bid).collection('reviewers');
-export const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
-export const reviewersGroupRef = db.collectionGroup('reviewers');
+// Followings
+const followingsRef = uid => db.collection('followings').doc(uid);
 
-export const authorsRef = db.collection('authors');
-export const authorRef = aid => authorsRef.doc(aid);
-export const authorFollowersRef = aid => authorRef(aid).collection('followers');
+// Books
+const booksRef = db.collection('books');
+const bookRef = bid => booksRef.doc(bid);
 
-export const quotesRef = db.collection('quotes');
-export const quoteRef = qid => quotesRef.doc(qid);
+// Collections
+const collectionsRef = db.collection('collections');
+const collectionRef = cid => collectionsRef.doc(cid);
+const collectionBooksRef = cid => collectionRef(cid).collection('books');
+const collectionFollowersRef = cid => collectionRef(cid).collection('followers');
+const collectionBookRef = (cid, bid) => collectionBooksRef(cid).doc(bid);
 
-export const notificationsRef = db.collection('notifications');
-export const userNotificationsRef = uid => notificationsRef.doc(uid);
-export const notesRef = uid => userNotificationsRef(uid).collection('notes');
-export const noteRef = (uid, nid) => notesRef(uid).doc(nid);
-export const notesGroupRef = db.collectionGroup('notes');
+// Reviews
+const reviewsRef = db.collection('reviews');
+const reviewRef = bid => reviewsRef.doc(bid);
+const reviewersRef = bid => reviewRef(bid).collection('reviewers');
+const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
+const reviewersGroupRef = db.collectionGroup('reviewers');
 
-export const challengesRef = db.collection('challenges');
-export const challengeRef = cid => challengesRef.doc(cid);
-export const userChallengesRef = uid => db.collection('users').doc(uid).collection('challenges');
-export const userChallengeRef = (uid, cid) => userChallengesRef(uid).doc(cid);
+// Authors
+const authorsRef = db.collection('authors');
+const authorRef = aid => authorsRef.doc(aid);
+const authorFollowersRef = aid => authorRef(aid).collection('followers');
 
-export const genreRef = gid => db.collection('genres').doc(gid);
-export const genreFollowersRef = gid => genreRef(gid).collection('followers');
+// Quotes
+const quotesRef = db.collection('quotes');
+const quoteRef = qid => quotesRef.doc(qid);
 
-export const countRef = cid => db.collection('counters').doc(cid);
+// Notifications
+const notificationsRef = db.collection('notifications');
+const userNotificationsRef = uid => notificationsRef.doc(uid);
+const notesRef = uid => userNotificationsRef(uid).collection('notes');
+const noteRef = (uid, nid) => notesRef(uid).doc(nid);
+const notesGroupRef = db.collectionGroup('notes');
+
+// Challenges
+const challengesRef = db.collection('challenges');
+const challengeRef = cid => challengesRef.doc(cid);
+const userChallengesRef = uid => db.collection('users').doc(uid).collection('challenges');
+const userChallengeRef = (uid, cid) => userChallengesRef(uid).doc(cid);
+
+// Genres
+const genreRef = gid => db.collection('genres').doc(gid);
+const genreFollowersRef = gid => genreRef(gid).collection('followers');
+
+// Recommendations
+const userRecommendationsRef = uid => db.collection('recommendations').doc(uid);
+
+// Counters
+const countRef = cid => db.collection('counters').doc(cid);
 
 /* STORAGE */
 const storage = firebase.storage();
-export const storageRef = (folder, file) => storage.ref(`${folder}/${file}`);
+const storageRef = (folder, file) => storage.ref(`${folder}/${file}`);
 
 /* EXPORT */
+export {
+	GoogleAuthProvider,
+	FacebookAuthProvider,
+	TwitterAuthProvider,
+	auth,
+	signOut,
+	isAuthenticated,
+	authid,
+	FieldValue,
+	timestamp,
+	usersRef,
+	userRef,
+	userShelfRef,
+	userBooksRef,
+	userBookRef,
+	followersRef,
+	followingsRef,
+	booksRef,
+	bookRef,
+	collectionsRef,
+	collectionRef,
+	collectionBooksRef,
+	collectionFollowersRef,
+	collectionBookRef,
+	reviewsRef,
+	reviewRef,
+	reviewersRef,
+	reviewerRef,
+	reviewersGroupRef,
+	authorsRef,
+	authorRef,
+	authorFollowersRef,
+	quotesRef,
+	quoteRef,
+	notificationsRef,
+	userNotificationsRef,
+	notesRef,
+	noteRef,
+	notesGroupRef,
+	challengesRef,
+	challengeRef,
+	userChallengesRef,
+	userChallengeRef,
+	genreRef,
+	genreFollowersRef,
+	userRecommendationsRef,
+	countRef,
+	storageRef,
+};
 export default firebase;

@@ -16,8 +16,20 @@ import { app, handleFirestoreError } from '../../config/shared';
 import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
-const labelStyle = { marginRight: 0 };
-const formStyle = { marginTop: 20 };
+const labelStyle = { marginRight: 0, };
+const formStyle = { marginTop: 20, };
+
+const max = {
+  chars: {
+    displayName: 50,
+    email: 254,
+    password: 50
+  }
+};
+
+const min = {
+  chars: { password: 8 }
+};
 
 export default class SignupForm extends Component {
 	state = {
@@ -58,35 +70,61 @@ export default class SignupForm extends Component {
     this._isMounted = false;
   }
 
-  toggleCheckbox = name => event => this.setState({ [name]: event.target.checked });
+  toggleCheckbox = e => {
+    e.persist();
+    const { name, checked } = e.target;
+
+    this.setState(prevState => ({ 
+      [name]: checked,
+      errors: { ...prevState.errors, [name]: null }
+    }));
+  }
 
 	onChange = e => {
     e.persist();
+    const { name, value } = e.target;
 
     if (this._isMounted) {
       this.setState(prevState => ({ 
-        data: { ...prevState.data, [e.target.name]: e.target.value }, 
-        errors: { ...prevState.errors, [e.target.name]: null }
+        data: { ...prevState.data, [name]: value }, 
+        errors: { ...prevState.errors, [name]: null }
       }));
     }
   };
   
 	validate = data => {
     const errors = {};
+
     if (!this.state.checkedTerms) {
       errors.checkedTerms = "Spunta la casella obbligatoria"; 
     }
+
+    const name = data.displayName.toLowerCase();
+
 		if (!data.displayName) { 
       errors.displayName = "Inserisci un nome utente"; 
-    } else if (data.displayName.toLowerCase() === 'admin' || data.displayName.toLowerCase() === 'amministratore' || data.displayName.toLowerCase() === 'biblo.space') {
+    } else if (name === 'admin' || name === 'amministratore' || name.startsWith('biblo')) {
       errors.displayName = "Nome utente non permesso"; 
       // TODO: check further forbidden names
+    } else if (data.displayName.length > max.chars.displayName) {
+      errors.displayName = `Massimo ${max.chars.displayName} caratteri`
     }
-		if (data.email) { 
-			if (!isEmail(data.email)) errors.email = "Email non valida";
-		} else { errors.email = "Inserisci un indirizzo email"; }
-		if (!data.password) { errors.password = "Inserisci una password"; 
-    } else if (data.password.length < 8) { errors.password = "Password troppo corta"; }
+
+		if (!data.email) {
+      errors.email = "Inserisci un indirizzo email";
+    } else if (!isEmail(data.email)) {
+      errors.email = "Email non valida";
+		} else if (data.email.length > max.chars.email) {
+      errors.password = `Massimo ${max.chars.email} caratteri`;
+    }
+
+		if (!data.password) {
+      errors.password = "Inserisci una password"; 
+    } else if (data.password.length < min.chars.password) {
+      errors.password = `Minimo ${min.chars.password} caratteri`;
+    } else if (data.password.length > max.chars.password) {
+      errors.password = `Massimo ${max.chars.password} caratteri`;
+    }
     // TODO: check password strength
 		return errors;
   };
@@ -172,11 +210,19 @@ export default class SignupForm extends Component {
           className="text-left" 
           style={labelStyle}
           required
-          label={
-          <span className="text-sm">Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}</span>
-        } control={
-          <Checkbox checked={checkedTerms} onChange={this.toggleCheckbox('checkedTerms')} value="checkedTerms" />
-        } />
+          label={(
+            <span className="text-sm">
+              Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}
+            </span>
+          )}
+          control={(
+            <Checkbox
+              checked={checkedTerms}
+              onChange={this.toggleCheckbox}
+              name="checkedTerms"
+            />
+          )}
+        />
         {errors.checkedTerms && <FormHelperText className="message error">{errors.checkedTerms}</FormHelperText>}
         
         <form onSubmit={this.onSubmit} noValidate style={formStyle}>

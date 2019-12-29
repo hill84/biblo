@@ -14,6 +14,15 @@ import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
+const limitBy = [ 15, 25, 50, 100, 250, 500];
+const orderBy = [ 
+  { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
+  { type: 'lastEditByUid', label: 'Modificato da' },
+  { type: 'displayName', label: 'Nominativo' }, 
+  { type: 'sex', label: 'Sesso' },
+  { type: 'photoURL', label: 'Foto' }
+];
+
 export default class AuthorsDash extends Component {
  	state = {
     count: 0,
@@ -23,16 +32,8 @@ export default class AuthorsDash extends Component {
     items: null,
     lastVisible: null,
     limitMenuAnchorEl: null,
-    limitBy: [ 15, 25, 50, 100, 250, 500],
     limitByIndex: 0,
     orderMenuAnchorEl: null,
-    orderBy: [ 
-      { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
-      { type: 'lastEditByUid', label: 'Modificato da' },
-      { type: 'displayName', label: 'Nominativo' }, 
-      { type: 'sex', label: 'Sesso' },
-      { type: 'photoURL', label: 'Foto' }
-    ],
     orderByIndex: 0,
     page: 1,
     selectedId: null,
@@ -66,7 +67,7 @@ export default class AuthorsDash extends Component {
   }
     
   fetch = e => {
-    const { desc, firstVisible, lastVisible, limitBy, limitByIndex, orderBy, orderByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, limitByIndex, orderByIndex } = this.state;
     const { openSnackbar } = this.props;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
@@ -148,7 +149,7 @@ export default class AuthorsDash extends Component {
   }
 
 	render() {
-    const { count, desc, isOpenDeleteDialog, items, limitBy, limitByIndex, limitMenuAnchorEl, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
+    const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
     const { openSnackbar } = this.props;
     
     if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />

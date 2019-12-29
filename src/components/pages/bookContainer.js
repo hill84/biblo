@@ -1,33 +1,38 @@
-import React, { forwardRef } from 'react';
-import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
+import React, { forwardRef, useContext } from 'react';
+import { funcType, historyType, locationType, matchType } from '../../config/types';
+import UserContext from '../../context/userContext';
+import '../../css/bookContainer.css';
 import Book from '../book';
 
-const BookContainer = forwardRef((props, ref) => (
-  <div id="BookContainerComponent" ref={ref}>
-    <Book 
-      bid={props.match.params.bid} 
-      user={props.user} 
-      openSnackbar={props.openSnackbar} 
-      history={props.history} 
-      location={props.location} 
-    />
-  </div>
-));
+const BookContainer = forwardRef((props, ref) => {
+  const { user } = useContext(UserContext);
+  const { history, location, match, openSnackbar } = props;
+
+  return (
+    <div id="BookContainerComponent" ref={ref}>
+      <Book 
+        bid={match.params.bid}
+        user={user}
+        openSnackbar={openSnackbar}
+        history={history}
+        location={location}
+      />
+    </div>
+  );
+});
 
 BookContainer.propTypes = {
   history: historyType,
   location: locationType,
   match: matchType,
-  openSnackbar: funcType,
-  user: userType
+  openSnackbar: funcType
 }
 
 BookContainer.defaultProps = {
   history: null,
   location: null,
   match: null,
-  openSnackbar: null,
-  user: null
+  openSnackbar: null
 }
 
 export default BookContainer;

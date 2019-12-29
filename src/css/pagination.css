@@ -1,5 +1,18 @@
-.pagination { --size: 20px; padding-bottom: 14px; }
-.pagination .page { padding: 0 10px; font-weight: 200; }
-.pagination .btn { vertical-align: middle; margin-top: 0; margin-bottom: 0; line-height: var(--size); }
-.pagination .btn svg { --iconSize: var(--size); }
-.pagination.loading .btn svg { color: rgb(var(--primaryClr)); will-change: transform; animation: rotate .3s infinite; }
+.pagination {
+  --size: 20px;
+  
+  padding-bottom: 14px;
+  & .page { padding: 0 10px; font-weight: 200; }
+  & .btn {
+    vertical-align: middle;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: var(--size);
+    & svg { --iconSize: var(--size); }
+  }
+  &.loading .btn svg {
+    color: rgb(var(--primaryClr));
+    will-change: transform;
+    animation: rotate .3s infinite;
+  }
+}

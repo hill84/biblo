@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { InView } from 'react-intersection-observer';
 import { Link, Redirect } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
-import { funcType, userType } from '../../config/types';
+import { funcType } from '../../config/types';
+import UserContext from '../../context/userContext';
+import '../../css/home.css';
 import bgHero_jpeg from '../../images/covers-dark.jpg';
 import bgHero_webp from '../../images/covers-dark.webp';
 import Authors from '../authors';
@@ -14,26 +16,25 @@ import Genres from '../genres';
 import withScrollToTop from '../hocs/withScrollToTop';
 import RandomQuote from '../randomQuote';
 import Reviews from '../reviews';
-import '../../css/home.css';
 
 const seo = {
   title: `${app.name} | Home`,
   description: app.desc
-}
-
-const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})` };
+};
+const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})`, };
+const rootMargin = '200px';
 
 const Home = props => {
+  const { user } = useContext(UserContext);
+  const { openSnackbar } = props;
   const [redirectTo, setRedirectTo] = useState(null);
-  const [screensize, setScreensize] = useState(screenSize());
-  
+  const [_screenSize, setScreenSize] = useState(screenSize());
   const is = useRef(true);
-  const { openSnackbar, user } = props;
 
   useEffect(() => {
     const updateScreenSize = () => {
-      if (is.current) setScreensize(screenSize());
-    }
+      if (is.current) setScreenSize(screenSize());
+    };
 
     window.addEventListener('resize', updateScreenSize);
 
@@ -48,17 +49,14 @@ const Home = props => {
       is.current = false;
     };
   }, []);
-  
-  if (redirectTo) return <Redirect to={redirectTo} />
 
-  const isScrollable = isTouchDevice() || screensize === 'sm' || screensize === 'xs';
-  const rootMargin = '200px';
-  const Hero = (
+  const isScrollable = useMemo(() => isTouchDevice() || _screenSize === 'sm' || _screenSize === 'xs', [_screenSize]);
+  const Hero = useMemo(() => (
     <div className="container text-center">
       <h1 className="title">Scopriamo nuovi libri, insieme</h1>
       <p className="subtitle">Crea la tua libreria, ascolta gli incipit, scopri cosa leggono i tuoi amici</p>
       <div className="btns">
-        <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">{user ? 'La mia libreria' : 'Registrati'}</Link> 
+        <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">{user ? 'La mia libreria' : 'Registrati'}</Link>
         <div>
           {user ?
             <>
@@ -66,11 +64,13 @@ const Home = props => {
               <Link className="counter" to="/help">Aiuto</Link>
               <Link className="counter last" to="/donations">Donazioni</Link>
             </>
-          : <p className="counter last">Sei già registrato? <Link to="/login">Accedi</Link></p>}
+            : <p className="counter last">Sei già registrato? <Link to="/login">Accedi</Link></p>}
         </div>
       </div>
     </div>
-  );
+  ), [user]);
+
+  if (redirectTo) return <Redirect to={redirectTo} />
 
   return (
     <div id="homeComponent" ref={is}>
@@ -83,10 +83,10 @@ const Home = props => {
         <div className="overlay" />
         {Hero}
       </div>
-  
+
       <div className="container">
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Best seller" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
             </div>
@@ -111,7 +111,7 @@ const Home = props => {
             <p>Sfoglia il catalogo per scoprire il tuo prossimo libro preferito</p>
           </div>
         </div>
-  
+
         <div className="row flex">
           <div className="col-12 col-lg-5 flex">
             <div className="card dark card-fullwidth-sm">
@@ -129,14 +129,14 @@ const Home = props => {
                   </button>
                 </div>
               </div>
-              
+
               <Genres className="table" scrollable={isScrollable} />
             </div>
           </div>
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <Authors pagination={false} limit={9} inView={inView} scrollable />
             </div>
@@ -144,7 +144,7 @@ const Home = props => {
         </InView>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) =>
             <div ref={ref}>
               {inView && <Reviews limit={5} openSnackbar={openSnackbar} pagination skeleton />}
             </div>
@@ -152,7 +152,7 @@ const Home = props => {
         </InView>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Libri proibiti" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
             </div>
@@ -165,7 +165,7 @@ const Home = props => {
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Premio Strega" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} desc scrollable />
             </div>
@@ -189,7 +189,7 @@ const Home = props => {
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Top" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
             </div>
@@ -203,11 +203,6 @@ const Home = props => {
 
 Home.propTypes = {
   openSnackbar: funcType.isRequired,
-  user: userType,
 }
 
-Home.defaultProps = {
-  user: null
-}
- 
 export default withScrollToTop(Home);
