@@ -32,7 +32,7 @@ const Incipit = props => {
                 <button type="button" className="btn rounded icon flat" onClick={onToggleSize}>{icon.formatSize()}</button> 
               </Tooltip>
               <Tooltip title="Tema" placement="bottom">
-                <button type="button" className="btn rounded icon flat" onClick={onToggleDarkTheme}>{icon.lamp()}</button> 
+                <button type="button" className="btn rounded icon flat" onClick={onToggleDarkTheme}>{icon.brightness_6()}</button> 
               </Tooltip>
               <Tooltip title="Chiudi" placement="bottom">
                 <button type="button" className="btn rounded icon flat" onClick={onToggle}>{icon.close()}</button>
