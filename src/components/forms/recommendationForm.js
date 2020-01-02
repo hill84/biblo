@@ -71,7 +71,7 @@ const RecommendationForm = props => {
         openSnackbar(handleFirestoreError(err), 'error');
       });
     }
-  }, [count, isNewDay, openSnackbar, quote, uid]);
+  }, [count, displayName, initQuote, isNewDay, openSnackbar, photoURL, quote, uid]);
 
   const fetchFollowings = useCallback(() => {
     setLoading(true);
