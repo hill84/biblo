@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
+import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL, timestamp } from '../../config/shared';
 import { funcType, historyType, locationType, matchType, userType } from '../../config/types';
 import '../../css/authorPage.css';
 import Cover from '../cover';
@@ -125,7 +125,7 @@ export default class AuthorPage extends Component {
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
-        timestamp: (new Date()).getTime()
+        timestamp
       }).then(() => this.setState({ follow: true })).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   }

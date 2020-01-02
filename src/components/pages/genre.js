@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize, timestamp } from '../../config/shared';
 import { funcType, matchType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
@@ -208,7 +208,7 @@ const Genre = props => {
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
-        timestamp: (new Date()).getTime()
+        timestamp
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };

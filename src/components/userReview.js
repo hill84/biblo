@@ -172,7 +172,7 @@ export default class UserReview extends Component {
           userBookRef(authid, bid).update({
             review: {
               ...review,
-              created_num: (new Date()).getTime()
+              created_num: timestamp
             }
           }).then(() => {
             // console.log(`User review posted`);

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, timestamp, truncateString } from '../../config/shared';
 import { funcType, historyType, locationType, matchType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import BookCollection from '../bookCollection';
@@ -114,7 +114,7 @@ const Collection = props => {
           uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
-          timestamp: (new Date()).getTime()
+          timestamp
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }

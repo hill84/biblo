@@ -14,7 +14,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
-import { /* authid, */ noteRef, notesRef, signOut } from '../config/firebase';
+import { noteRef, notesRef, signOut } from '../config/firebase';
 import icon from '../config/icons';
 import { roles } from '../config/lists';
 import { app, getInitials, hasRole } from '../config/shared';
@@ -209,7 +209,7 @@ const Layout = props => {
           open={drawerIsOpen}
           onClick={onCloseDrawer}>
           <nav className="list">
-            {user /* && authid */ ? 
+            {user ? 
               <>
                 <NavLink to="/profile" className="auth-header">
                   <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
