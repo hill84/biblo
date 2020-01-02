@@ -42,7 +42,6 @@ export default class BookProfile extends Component {
     isOpenRecommendation: false,
     isOpenIncipit: this.props.location ? this.props.location.pathname.indexOf('/incipit') !== -1 : false,
     prevProps: this.props,
-    user: this.props.user || {},
     userBook: this.props.userBook
   }
 
@@ -181,8 +180,8 @@ export default class BookProfile extends Component {
   onChangeISBN = e => this.setState({ ISBN: e.target.value });
   
 	render() {
-    const { book, ISBN, isOpenIncipit, isOpenReadingState, isOpenRecommendation, user, userBook } = this.state;
-    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, location, openSnackbar, removeReview } = this.props;
+    const { book, ISBN, isOpenIncipit, isOpenReadingState, isOpenRecommendation, userBook } = this.state;
+    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, location, openSnackbar, removeReview, user } = this.props;
     
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     
@@ -389,7 +388,6 @@ export default class BookProfile extends Component {
                 }
               </>
             }
-
           </div>
         </div>
 
