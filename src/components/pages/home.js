@@ -7,7 +7,7 @@ import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../co
 import { funcType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/home.css';
-import bgHero_jpeg from '../../images/covers-dark.jpg';
+import bgHero_jpg from '../../images/covers-dark.jpg';
 import bgHero_webp from '../../images/covers-dark.webp';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
@@ -21,7 +21,7 @@ const seo = {
   title: `${app.name} | Home`,
   description: app.desc
 };
-const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpeg})`, };
+const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpg})`, };
 const rootMargin = '200px';
 
 const Home = props => {
