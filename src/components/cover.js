@@ -21,7 +21,7 @@ const Cover = props => {
             {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
             {book.readingState && book.readingState.state_num === 2 && <div className="bookmark" />}
             {book.review && book.review.text && <div className="cover-review">Recensione</div>}
-            {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account()}</div> : ''}
+            {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account}</div> : ''}
             {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : <div className="overlay" />}
             {!cover &&
               <>

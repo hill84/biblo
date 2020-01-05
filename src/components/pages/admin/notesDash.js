@@ -176,7 +176,7 @@ export default class NotesDash extends Component {
             <div className="col-auto">{item.count || 0}</div>
             <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
             <div className="col-1 text-right expandible-icon">
-              {icon.chevronDown()}
+              {icon.chevronDown}
             </div>
           </div>
           {item.notes && item.notes.length > 0 && 
@@ -189,13 +189,13 @@ export default class NotesDash extends Component {
                     <div className="col-sm-3 col-lg-2 monotype hide-sm text-center">
                       <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />
                     </div>
-                    <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check() : icon.close()}</div>
+                    <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check : icon.close}</div>
                     <div className="col-auto col-sm-2 col-lg-1 text-right">
                       <div className="timestamp">{timeSince(note.created_num)}</div>
                     </div>
                     <div className="absolute-row right btns xs">
-                      <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil()}</button>
-                      <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close()}</button>
+                      <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.id, note.nid)}>{icon.pencil}</button>
+                      <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.id, note.nid)}>{icon.close}</button>
                     </div>
                   </div>
                 </li>

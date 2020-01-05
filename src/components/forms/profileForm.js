@@ -279,8 +279,8 @@ export default class ProfileForm extends Component {
                     className="date-picker"
                     name="birth_date"
                     cancelLabel="Annulla"
-                    leftArrowIcon={icon.chevronLeft()}
-                    rightArrowIcon={icon.chevronRight()}
+                    leftArrowIcon={icon.chevronLeft}
+                    rightArrowIcon={icon.chevronRight}
                     format="D MMMM YYYY"
                     minDate={new Date().setFullYear(new Date().getFullYear() - 120)}
                     minDateMessage="E chi sei.. Matusalemme?"

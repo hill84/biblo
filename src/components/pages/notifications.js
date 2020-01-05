@@ -161,7 +161,7 @@ const Notifications = props => {
                   <span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}
                 </button>
                 <button type="button" className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc} disabled={!items || items.length < 2}>
-                  {icon.arrowDown()}
+                  {icon.arrowDown}
                 </button>
                 <Menu 
                   className="dropdown-menu"

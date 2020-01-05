@@ -211,7 +211,7 @@ export default class Review extends Component {
                         disabled={!isAuthenticated() || !isEditor || isOwner} 
                         onClick={this.onThumbChange}
                         title={like ? 'Annulla mi piace' : 'Mi piace'}>
-                        {icon.thumbUp()} {abbrNum(likes_num)}
+                        {icon.thumbUp} {abbrNum(likes_num)}
                       </button>
                     </div>
                     {/* <div className="counter">
@@ -221,19 +221,19 @@ export default class Review extends Component {
                         disabled={!isAuthenticated() || !isEditor || isOwner} 
                         onClick={this.onThumbChange}
                         title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
-                        {icon.thumbDown()} {abbrNum(dislikes_num)}
+                        {icon.thumbDown} {abbrNum(dislikes_num)}
                       </button>
                     </div> */}
                     {isAuthenticated() && isEditor && !isOwner && 
                       <>
                         <div className="counter">
                           <button type="button" className="btn sm flat" disabled onClick={this.onAddResponse}>
-                            <span className="show-sm">{icon.pencil()}</span> <span className="hide-sm">Rispondi</span>
+                            <span className="show-sm">{icon.pencil}</span> <span className="hide-sm">Rispondi</span>
                           </button>
                         </div>
                         <div className="counter show-on-hover">
                           <button type="button" className="btn sm flat" onClick={this.onFlagRequest} disabled={flaggedByUser}>
-                            <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
+                            <span className="show-sm">{icon.flag}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
                           </button>
                         </div>
                       </>
@@ -241,7 +241,7 @@ export default class Review extends Component {
                     {isAuthenticated() && isEditor && (isOwner || isAdmin) && 
                       <div className="counter show-on-hover">
                         <button type="button" className="btn sm flat" onClick={this.onDeleteRequest}>
-                          <span className="show-sm">{icon.delete()}</span> <span className="hide-sm">Elimina</span>
+                          <span className="show-sm">{icon.delete}</span> <span className="hide-sm">Elimina</span>
                         </button>
                       </div>
                     }

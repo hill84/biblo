@@ -294,12 +294,12 @@ const UsersDash = props => {
             </div>
           </div>
           <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
-            <button type="button" className="btn icon green" onClick={onView} title="anteprima">{icon.eye()}</button>
-            <button type="button" className="btn icon primary" onClick={onNote} title="Invia notifica">{icon.bell()}</button>
-            {/* <button type="button" className="btn icon primary" onClick={onSendVerification} title="Invia email di verifica">{icon.email()}</button> */}
-            <button type="button" className="btn icon primary" onClick={onSendReset} title="Invia email di reset password">{icon.textboxPassword()}</button>
-            <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-            <button type="button" className="btn icon red" onClick={onDeleteRequest} title="elimina">{icon.close()}</button>
+            <button type="button" className="btn icon green" onClick={onView} title="anteprima">{icon.eye}</button>
+            <button type="button" className="btn icon primary" onClick={onNote} title="Invia notifica">{icon.bell}</button>
+            {/* <button type="button" className="btn icon primary" onClick={onSendVerification} title="Invia email di verifica">{icon.email}</button> */}
+            <button type="button" className="btn icon primary" onClick={onSendReset} title="Invia email di reset password">{icon.textboxPassword}</button>
+            <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+            <button type="button" className="btn icon red" onClick={onDeleteRequest} title="elimina">{icon.close}</button>
           </div>
         </div>
       </li>
@@ -323,7 +323,7 @@ const UsersDash = props => {
           </div>
           <div className="col-auto">
             <button type="button" className="btn sm flat counter" onClick={onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-            <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc}>{icon.arrowDown()}</button>
+            <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc}>{icon.arrowDown}</button>
             <Menu 
               className="dropdown-menu"
               anchorEl={orderMenuAnchorEl} 
@@ -344,10 +344,10 @@ const UsersDash = props => {
             <div className="col hide-sm">Email</div>
             <div className="col col-sm-3 col-lg-2 hide-xs">
               <div className="row text-center">
-                <div className="col" title="Libri">{icon.book()}</div>
-                <div className="col" title="Desideri">{icon.heart()}</div>
-                <div className="col" title="Recensioni">{icon.review()}</div>
-                <div className="col hide-md" title="Voti">{icon.star()}</div>
+                <div className="col" title="Libri">{icon.book}</div>
+                <div className="col" title="Desideri">{icon.heart}</div>
+                <div className="col" title="Recensioni">{icon.review}</div>
+                <div className="col hide-md" title="Voti">{icon.star}</div>
               </div>
             </div>
             <div className="col col-md-2 col-lg-1 text-center">Ruoli</div>

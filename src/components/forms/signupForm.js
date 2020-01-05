@@ -277,7 +277,7 @@ export default class SignupForm extends Component {
                       aria-label="toggle password visibility"
                       onClick={this.handleClickShowPassword}
                       onMouseDown={this.handleMouseDownPassword}>
-                      {showPassword ? icon.eye() : icon.eyeOff()}
+                      {showPassword ? icon.eye : icon.eyeOff}
                     </IconButton>
                   </InputAdornment>
                 }

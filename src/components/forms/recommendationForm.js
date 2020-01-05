@@ -173,7 +173,7 @@ const RecommendationForm = props => {
                   data-fuid={f}
                   onClick={onRecommendBook}
                   disabled={quote.amount < 1 || recommended(f)}>
-                  {recommended(f) ? <span>{icon.check()} Consigliato</span> : 'Consiglia'}
+                  {recommended(f) ? <span>{icon.check} Consigliato</span> : 'Consiglia'}
                 </button>
               </div>
             </div>

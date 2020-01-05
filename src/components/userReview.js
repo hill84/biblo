@@ -340,16 +340,16 @@ export default class UserReview extends Component {
                       <div className="foot row">
                         <div className="col-auto likes">
                           <div className="counter">
-                            <button type="button" className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp()} {abbrNum(review.likes.length)}</button>
+                            <button type="button" className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp} {abbrNum(review.likes.length)}</button>
                           </div>
                           <div className="counter">
-                            <button type="button" className="btn sm flat" disabled>{icon.comment()} 0</button>
+                            <button type="button" className="btn sm flat" disabled>{icon.comment} 0</button>
                           </div>
                           <div className="counter">
-                            <button type="button" className="btn sm flat" onClick={this.onEditing}>{icon.pencil()} <span className="hide-sm">Modifica</span></button>
+                            <button type="button" className="btn sm flat" onClick={this.onEditing}>{icon.pencil} <span className="hide-sm">Modifica</span></button>
                           </div>
                           <div className="counter">
-                            <button type="button" className="btn sm flat" onClick={this.onDeleteRequest}>{icon.delete()} <span className="hide-sm">Elimina</span></button>
+                            <button type="button" className="btn sm flat" onClick={this.onDeleteRequest}>{icon.delete} <span className="hide-sm">Elimina</span></button>
                           </div>
                         </div>
                         <div className="col text-right date">{timeSince(review.created_num)}</div>
@@ -382,7 +382,7 @@ export default class UserReview extends Component {
                               onClick={this.toggleEmojiPicker}
                               onMouseDown={this.onMouseDown}
                             >
-                              {isOpenEmojiPicker ? icon.close() : icon.stickerEmoji()}
+                              {isOpenEmojiPicker ? icon.close : icon.stickerEmoji}
                             </IconButton>
                           </Tooltip>
                         </InputAdornment>

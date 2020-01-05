@@ -121,7 +121,7 @@ const Layout = props => {
                     component={Link} 
                     to="/new-book"
                     aria-label="New book">
-                    {icon.plus()}
+                    {icon.plus}
                   </IconButton>
                 </Tooltip>
               }
@@ -131,7 +131,7 @@ const Layout = props => {
                   component={Link} 
                   to="/books/add"
                   aria-label="Search">
-                  {icon.magnify()}
+                  {icon.magnify}
                 </IconButton>
               </Tooltip>
               <Tooltip title={`${notes ? toRead(notes).length : 0} notifiche`} placement="bottom">
@@ -141,7 +141,7 @@ const Layout = props => {
                   aria-owns={notesAnchorEl ? 'notes-menu' : null}
                   aria-haspopup="true"
                   onClick={onOpenNotes}>
-                  {icon.bell()}
+                  {icon.bell}
                   {notes && toRead(notes).length ? <div className="badge dot">{toRead(notes).length}</div> : null}
                 </IconButton>
               </Tooltip>
@@ -160,7 +160,7 @@ const Layout = props => {
                   <MenuItem>
                     <div className="row">
                       <div className="col-auto">
-                        <span className="icon">{icon.bellOff()}</span>
+                        <span className="icon">{icon.bellOff}</span>
                       </div>
                       <div className="col text">Non ci sono nuove notifiche</div>
                     </div>
@@ -179,7 +179,7 @@ const Layout = props => {
                   <Avatar className="avatar popIn reveal delay3" src={user.photoURL} alt={user.displayName}>
                     {!user.photoURL && getInitials(user.displayName)}
                   </Avatar>
-                  {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock()}</div>}
+                  {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock}</div>}
                 </IconButton>
               </Tooltip>
               <Menu
@@ -224,14 +224,14 @@ const Layout = props => {
                 {user.roles.admin && 
                   <NavLink to="/admin">
                     <MenuItem>
-                      <ListItemIcon>{icon.gauge()}</ListItemIcon>
+                      <ListItemIcon>{icon.gauge}</ListItemIcon>
                       <Typography variant="inherit">Amministrazione</Typography>
                     </MenuItem>
                   </NavLink>
                 }
                 <NavLink to={`/dashboard/${user.uid}/shelf`}>
                   <MenuItem>
-                    <ListItemIcon>{icon.homeAccount()}</ListItemIcon>
+                    <ListItemIcon>{icon.homeAccount}</ListItemIcon>
                     <Typography variant="inherit">La mia libreria</Typography>
                   </MenuItem>
                 </NavLink>
@@ -240,13 +240,13 @@ const Layout = props => {
               <div className="auth-header-buttons">
                 <NavLink to="/login">
                   <MenuItem>
-                    <ListItemIcon>{icon.loginVariant()}</ListItemIcon>
+                    <ListItemIcon>{icon.loginVariant}</ListItemIcon>
                     <Typography variant="inherit">Accedi</Typography>
                   </MenuItem>
                 </NavLink>
                 <NavLink to="/signup">
                   <MenuItem>
-                    <ListItemIcon>{icon.accountPlus()}</ListItemIcon>
+                    <ListItemIcon>{icon.accountPlus}</ListItemIcon>
                     <Typography variant="inherit">Registrati</Typography>
                   </MenuItem>
                 </NavLink>
@@ -254,25 +254,25 @@ const Layout = props => {
             }
             <NavLink to="/" exact>
               <MenuItem>
-                <ListItemIcon>{icon.home()}</ListItemIcon>
+                <ListItemIcon>{icon.home}</ListItemIcon>
                 <Typography variant="inherit">Home</Typography>
               </MenuItem>
             </NavLink>
             <NavLink to="/genres" exact>
               <MenuItem>
-                <ListItemIcon>{icon.libraryShelves()}</ListItemIcon>
+                <ListItemIcon>{icon.libraryShelves}</ListItemIcon>
                 <Typography variant="inherit">Generi</Typography>
               </MenuItem>
             </NavLink>
             <NavLink to="/authors" exact>
               <MenuItem>
-                <ListItemIcon>{icon.accountEdit()}</ListItemIcon>
+                <ListItemIcon>{icon.accountEdit}</ListItemIcon>
                 <Typography variant="inherit">Autori</Typography>
               </MenuItem>
             </NavLink>
             <NavLink to="/donations" exact>
               <MenuItem>
-                <ListItemIcon>{icon.heart()}</ListItemIcon>
+                <ListItemIcon>{icon.heart}</ListItemIcon>
                 <Typography variant="inherit">Donazioni</Typography>
               </MenuItem>
             </NavLink>

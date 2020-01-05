@@ -296,10 +296,10 @@ const Genre = props => {
               onClick={onFollow}>
               {follow ? (
                 <>
-                  <span className="hide-on-hover">{icon.check()} Segui</span>
+                  <span className="hide-on-hover">{icon.check} Segui</span>
                   <span className="show-on-hover">Smetti</span>
                 </> 
-              ) : <span>{icon.plus()} Segui</span> }
+              ) : <span>{icon.plus} Segui</span> }
             </button>
             <div className="counter last inline">
               <Bubbles limit={3} items={followers} />
@@ -321,7 +321,7 @@ const Genre = props => {
                       disabled={!items}
                       title={coverview ? 'Stack view' : 'Cover view'}
                       onClick={onToggleView}>
-                      {coverview ? icon.viewSequential() : icon.viewGrid()}
+                      {coverview ? icon.viewSequential : icon.viewGrid}
                     </button>
                     <span className="counter">
                       {items ? items.length : 0} libr{items && items.length === 1 ? 'o' : 'i'} {items && count > items.length ? `di ${count}` : ''}
@@ -341,7 +341,7 @@ const Genre = props => {
                       disabled={!items}
                       title={desc ? 'Ascendente' : 'Discendente'}
                       onClick={onToggleDesc}>
-                      {icon.arrowDown()}
+                      {icon.arrowDown}
                     </button>
                     <Menu 
                       className="dropdown-menu"

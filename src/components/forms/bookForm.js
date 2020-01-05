@@ -712,8 +712,8 @@ const BookForm = props => {
                       className="date-picker"
                       name="publication"
                       cancelLabel="Annulla"
-                      leftArrowIcon={icon.chevronLeft()}
-                      rightArrowIcon={icon.chevronRight()}
+                      leftArrowIcon={icon.chevronLeft}
+                      rightArrowIcon={icon.chevronRight}
                       format="D MMMM YYYY"
                       // disableFuture
                       maxDate={maxPublication}

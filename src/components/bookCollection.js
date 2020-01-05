@@ -129,7 +129,7 @@ const BookCollection = props => {
                     className={`btn sm icon flat counter ${desc ? 'desc' : 'asc'}`}
                     onClick={onToggleDesc}
                     disabled={count < 2}>
-                    {icon.arrowDown()}
+                    {icon.arrowDown}
                   </button>
                 </span>
               </Tooltip>
@@ -142,7 +142,7 @@ const BookCollection = props => {
                   className="btn sm flat icon rounded" 
                   data-direction="prev"
                   onClick={fetch} title="precedente">
-                  {icon.chevronLeft()}
+                  {icon.chevronLeft}
                 </button>
                 <button 
                   type="button"
@@ -150,7 +150,7 @@ const BookCollection = props => {
                   className="btn sm flat icon rounded" 
                   data-direction="next"
                   onClick={fetch} title="successivo">
-                  {icon.chevronRight()}
+                  {icon.chevronRight}
                 </button>
               </>
             }

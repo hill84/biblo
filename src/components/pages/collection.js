@@ -189,10 +189,10 @@ const Collection = props => {
                         disabled={!user || !isEditor}>
                         {follow ? 
                           <>
-                            <span className="hide-on-hover">{icon.check()} Segui</span>
+                            <span className="hide-on-hover">{icon.check} Segui</span>
                             <span className="show-on-hover">Smetti</span>
                           </> 
-                        : <span>{icon.plus()} Segui</span> }
+                        : <span>{icon.plus} Segui</span> }
                       </button>
                       <div className="counter last inline">
                         <Bubbles limit={3} items={followers} />
@@ -213,7 +213,7 @@ const Collection = props => {
                       type="button"
                       className="btn icon sm flat rounded counter"
                       onClick={onResetFilters}>
-                      {icon.close()}
+                      {icon.close}
                     </button>
                   </Tooltip>
                   }
@@ -235,7 +235,7 @@ const Collection = props => {
                       type="button"
                       className={`btn sm icon flat rounded counter ${desc ? 'desc' : 'asc'}`}
                       onClick={onToggleDesc}>
-                      {icon.arrowDown()}
+                      {icon.arrowDown}
                     </button>
                   </Tooltip>
                 </div>

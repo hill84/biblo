@@ -261,15 +261,18 @@ export default class BookProfile extends Component {
                     {isAuthenticated() && hasBid && isEditor && 
                       <>
                         {isAdmin && 
-                          <button type="button" onClick={this.onLock} className={`btn sm icon-sm rounded counter ${book.EDIT.edit ? 'flat' : 'primary'}`}>
+                          <button type="button" onClick={this.onLock} className={`link counter ${book.EDIT.edit ? 'flat' : 'primary'}`}>
+                            <span className="show-sm">{book.EDIT.edit ? icon.lock : icon.lockOpen}</span>
                             <span className="hide-sm">{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</span>
                           </button>
                         }
-                        <button type="button" onClick={this.onEditing} className="btn sm icon-sm rounded flat counter" disabled={isLocked} title="Modifica disabilitata">
-                          {book.EDIT.edit ? icon.pencil() : icon.pencilOff()} <span className="hide-sm">Modifica</span>
+                        <button type="button" onClick={this.onEditing} className="link counter" disabled={isLocked} title="Modifica disabilitata">
+                          <span className="show-sm">{book.EDIT.edit ? icon.pencil : icon.pencilOff}</span>
+                          <span className="hide-sm">Modifica</span>
                         </button>
-                        <button type="button" className="btn sm icon-sm rounded flat counter" onClick={this.onToggleSuggest}>
-                          {icon.accountHeart()} <span className="hide-sm">Consiglia</span>
+                        <button type="button" className="link counter" onClick={this.onToggleSuggest}>
+                          <span className="show-sm">{icon.accountHeart}</span>
+                          <span className="hide-sm">Consiglia</span>
                         </button>
                       </>
                     }
@@ -303,24 +306,24 @@ export default class BookProfile extends Component {
                         {userBook.bookInShelf ? 
                           <>
                             <button type="button" className="btn success rounded error-on-hover" onClick={this.onRemoveBookFromShelfRequest}>
-                              <span className="hide-on-hover">{icon.check()} libreria</span>
-                              <span className="show-on-hover">{icon.close()} libreria</span>
+                              <span className="hide-on-hover">{icon.check} libreria</span>
+                              <span className="show-on-hover">{icon.close} libreria</span>
                             </button>
                             <button type="button" className="btn rounded" onClick={this.onToggleReadingState}>
                               <span className="hide-xs">Stato</span> lettura
                             </button>
                           </>
                         :
-                          <button type="button" className="btn primary rounded" ref={addBookToShelfRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToShelf}>{icon.plus()} libreria</button>
+                          <button type="button" className="btn primary rounded" ref={addBookToShelfRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToShelf}>{icon.plus} libreria</button>
                         }
                         {userBook.bookInWishlist && 
                           <button type="button" className="btn success rounded error-on-hover" onClick={this.onRemoveBookFromWishlist}>
-                            <span className="hide-on-hover">{icon.check()} desideri</span>
-                            <span className="show-on-hover">{icon.close()} desideri</span>
+                            <span className="hide-on-hover">{icon.check} desideri</span>
+                            <span className="show-on-hover">{icon.close} desideri</span>
                           </button>
                         }
                         {(!userBook.bookInWishlist && !userBook.bookInShelf) &&
-                          <button type="button" className="btn flat rounded" ref={addBookToWishlistRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus()} desideri</button>
+                          <button type="button" className="btn flat rounded" ref={addBookToWishlistRef} disabled={!hasBid || !isEditor} onClick={this.onAddBookToWishlist}>{icon.plus} desideri</button>
                         }
                       </div>
                       {userBook.bookInShelf &&
@@ -342,14 +345,14 @@ export default class BookProfile extends Component {
                   }
 
                   <div className="info-row bookdetails">
-                    <span className="counter">{icon.reader()} <b>{abbrNum(book.readers_num)}</b> <span className="hide-sm">Lettori</span></span>
-                    <span className="counter">{icon.messageTextOutline()} <b>{abbrNum(book.reviews_num)}</b> <span className="hide-sm">Recensioni</span></span>
-                    {book.pages_num && <span className="counter">{icon.timer()} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
+                    <span className="counter">{icon.reader} <b>{abbrNum(book.readers_num)}</b> <span className="hide-sm">Lettori</span></span>
+                    <span className="counter">{icon.messageTextOutline} <b>{abbrNum(book.reviews_num)}</b> <span className="hide-sm">Recensioni</span></span>
+                    {book.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                   </div>
                 </div>
                 {book.EDIT &&
                   <div className="edit-info">
-                    {icon.informationOutline()}
+                    {icon.informationOutline}
                     <div className="show-on-hover">
                       {book.EDIT.lastEdit_num ? 
                         <span>Modificato da <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{book.EDIT.lastEditBy}</Link> {timeSince(new Date(book.EDIT.lastEdit_num))}</span> 

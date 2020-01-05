@@ -18,7 +18,7 @@ const NewBook = props => {
 
   return (
     <div className="container" id="newBookComponent">
-      {!book && <h2 className="text-center">{icon.plus()} Crea la tua scheda libro</h2>}
+      {!book && <h2 className="text-center">{icon.plus} Crea la tua scheda libro</h2>}
       <ThemeProvider theme={darkTheme}>
         <div className="card sm dark search-book">
           <SearchBookForm onBookSelect={onBookSelect} user={user} newBook />

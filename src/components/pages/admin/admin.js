@@ -24,12 +24,12 @@ import UsersDash from './usersDash';
 const containerStyle = { maxWidth: 1280, };
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 const tabs = [
-  { name: 'users', label: 'Utenti', icon: icon.account() },
-  { name: 'books', label: 'Libri', icon: icon.book() },
-  { name: 'authors', label: 'Autori', icon: icon.accountEdit() },
-  { name: 'collections', label: 'Collezioni', icon: icon.viewCarousel() },
-  { name: 'quotes', label: 'Citazioni', icon: icon.quote() },
-  { name: 'notifications', label: 'Notifiche', icon: icon.bell() },
+  { name: 'users', label: 'Utenti', icon: icon.account },
+  { name: 'books', label: 'Libri', icon: icon.book },
+  { name: 'authors', label: 'Autori', icon: icon.accountEdit },
+  { name: 'collections', label: 'Collezioni', icon: icon.viewCarousel },
+  { name: 'quotes', label: 'Citazioni', icon: icon.quote },
+  { name: 'notifications', label: 'Notifiche', icon: icon.bell },
 ];
 
 const Admin = props => {
@@ -121,7 +121,7 @@ const Admin = props => {
     return (
       <div className="container empty">
         <div className="card dark empty text-center">
-          <p>{icon.cancel()}</p>
+          <p>{icon.cancel}</p>
           <p>Area riservata agli amministratori</p>
         </div>
       </div>
@@ -136,19 +136,19 @@ const Admin = props => {
       </Helmet>
       <div className="actions btns text-center pad-v-sm" ref={is}>
         <button type="button" title="Crea libro" className="btn rounded primary">
-          <Link to="/new-book"><span className="hide-sm">{icon.plus()} libro</span><span className="show-sm">{icon.book()}</span></Link>
+          <Link to="/new-book"><span className="hide-sm">{icon.plus} libro</span><span className="show-sm">{icon.book}</span></Link>
         </button>
         <button type="button" onClick={onToggleAuthorDialog} title="Crea autore" className={`btn rounded ${isOpenAuthorDialog ? 'secondary' : 'primary'}`}>
-          <span className="hide-sm">{icon.plus()} autore</span><span className="show-sm">{icon.accountEdit()}</span>
+          <span className="hide-sm">{icon.plus} autore</span><span className="show-sm">{icon.accountEdit}</span>
         </button>
         <button type="button" onClick={onToggleCollectionDialog} title="Crea collezione" className={`btn rounded ${isOpenCollectionDialog ? 'secondary' : 'primary'}`}>
-          <span className="hide-sm">{icon.plus()} collezione</span><span className="show-sm">{icon.viewCarousel()}</span>
+          <span className="hide-sm">{icon.plus} collezione</span><span className="show-sm">{icon.viewCarousel}</span>
         </button>
         <button type="button" onClick={onToggleQuoteDialog} title="Crea citazione" className={`btn rounded ${isOpenQuoteDialog ? 'secondary' : 'primary'}`}>
-          <span className="hide-sm">{icon.plus()} citazione</span><span className="show-sm">{icon.quote()}</span>
+          <span className="hide-sm">{icon.plus} citazione</span><span className="show-sm">{icon.quote}</span>
         </button>
         {
-          // <button type="button" onClick={onToggleNoteDialog} title="Crea notifica" className="btn rounded primary"><span className="hide-sm">{icon.plus()} notifica</span><span className="show-sm">{icon.bell()}</span></button>
+          // <button type="button" onClick={onToggleNoteDialog} title="Crea notifica" className="btn rounded primary"><span className="hide-sm">{icon.plus} notifica</span><span className="show-sm">{icon.bell}</span></button>
         }
       </div>
       <AppBar position="static" className="appbar flat">

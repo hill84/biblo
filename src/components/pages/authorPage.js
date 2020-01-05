@@ -190,10 +190,10 @@ export default class AuthorPage extends Component {
                     disabled={!user || !isEditor}>
                     {follow ? 
                       <>
-                        <span className="hide-on-hover">{icon.check()} Segui</span>
+                        <span className="hide-on-hover">{icon.check} Segui</span>
                         <span className="show-on-hover">Smetti</span>
                       </> 
-                    : <span>{icon.plus()} Segui</span> }
+                    : <span>{icon.plus} Segui</span> }
                   </button>
                   <div className="counter last inline">
                     <Bubbles limit={3} items={followers} />
@@ -220,7 +220,7 @@ export default class AuthorPage extends Component {
                             className="btn sm flat counter"
                             title={coverview ? 'Stack view' : 'Cover view'} 
                             onClick={this.onToggleView}>
-                            {coverview ? icon.viewSequential() : icon.viewGrid()}
+                            {coverview ? icon.viewSequential : icon.viewGrid}
                           </button>
                           <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
                         </div>

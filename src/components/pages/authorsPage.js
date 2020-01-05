@@ -147,7 +147,7 @@ export default class AuthorsPage extends Component {
                           className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`}
                           onClick={this.onToggleDesc}
                           disabled={count < 2}>
-                          {icon.arrowDown()}
+                          {icon.arrowDown}
                         </button>
                       </span>
                     </Tooltip>

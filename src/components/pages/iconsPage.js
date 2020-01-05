@@ -15,14 +15,14 @@ const IconsPage = props => (
     <Helmet>
       <title>{app.name} | Icone</title>
     </Helmet>
+    <h2>Icone di sistema</h2>
     <div className="card dark">
-      <h2>Icone di sistema</h2>
       <div className="row">
         {Object.keys(icon).map((item, i) => 
           <div role="button" tabIndex={0} className="col tt" onClick={() => copy(item, props)} onKeyDown={() => copy(item, props)} key={i}>
             <span className="tip">{item}</span>
             <button type="button" className="btn lg centered icon flat">
-              {icon[item]()}
+              {icon[item]}
             </button>
           </div>
         )}

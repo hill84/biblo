@@ -27,10 +27,10 @@ export default class Shelf extends Component {
     limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0),
     loading: true,
     orderBy: [ 
-      { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar() }, 
-      { type: 'title', label: 'Titolo', icon: icon.formatTitle() }, 
-      { type: 'rating_num', label: 'Valutazione', icon: icon.star() }, 
-      { type: 'authors', label: 'Autore', icon: icon.accountEdit() }
+      { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar }, 
+      { type: 'title', label: 'Titolo', icon: icon.formatTitle }, 
+      { type: 'rating_num', label: 'Valutazione', icon: icon.star }, 
+      { type: 'authors', label: 'Autore', icon: icon.accountEdit }
     ],
     orderByIndex: 0,
     orderMenuAnchorEl: null,
@@ -234,7 +234,7 @@ export default class Shelf extends Component {
                     disabled={!count}
                     title={coverview ? 'Stack view' : 'Cover view'} 
                     onClick={this.onToggleView}>
-                    {coverview ? icon.viewSequential() : icon.viewGrid()}
+                    {coverview ? icon.viewSequential : icon.viewGrid}
                   </button>
                   {shelf === 'bookInShelf' && count > 0 && 
                     <>
@@ -279,7 +279,7 @@ export default class Shelf extends Component {
                         className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`}
                         onClick={this.onToggleDesc}
                         disabled={count < 2}>
-                        {icon.arrowDown()}
+                        {icon.arrowDown}
                       </button>
                     </span>
                   </Tooltip>

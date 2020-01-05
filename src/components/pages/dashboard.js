@@ -391,16 +391,16 @@ export default class Dashboard extends Component {
     const creationYear = user && String(new Date(user.creationTime).getFullYear());
 		const ShelfDetails = () => (
       <div className="info-row footer centered shelfdetails">
-        <span className="counter">{icon.book()} <b>{user.stats.shelf_num}</b> <span className="hide-sm">Libri</span></span>
-        <span className="counter">{icon.heart()} <b>{user.stats.wishlist_num}</b> <span className="hide-sm">Desideri</span></span>
-        <span className="counter">{icon.star()} <b>{user.stats.ratings_num}</b> <span className="hide-sm">Valutazioni</span></span>
-        <span className="counter">{icon.messageText()} <b>{user.stats.reviews_num}</b> <span className="hide-sm">Recensioni</span></span>
+        <span className="counter">{icon.book} <b>{user.stats.shelf_num}</b> <span className="hide-sm">Libri</span></span>
+        <span className="counter">{icon.heart} <b>{user.stats.wishlist_num}</b> <span className="hide-sm">Desideri</span></span>
+        <span className="counter">{icon.star} <b>{user.stats.ratings_num}</b> <span className="hide-sm">Valutazioni</span></span>
+        <span className="counter">{icon.messageText} <b>{user.stats.reviews_num}</b> <span className="hide-sm">Recensioni</span></span>
       </div>
     );
 		const EmptyRow = () => (
       <div className="avatar-row empty">
         <div className="row">
-          <div className="col"><Avatar className="avatar">{icon.accountOff()}</Avatar> Nessuno</div>
+          <div className="col"><Avatar className="avatar">{icon.accountOff}</Avatar> Nessuno</div>
         </div>
       </div>
     );
@@ -460,7 +460,7 @@ export default class Dashboard extends Component {
 											</span>
 											{user.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(user.languages)}</span>}
 											{creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
-											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil()} Modifica</button></Link>}
+											{isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
 										</div>
 										<div className="info-row">
 											{!isOwner && isAuthenticated() &&
@@ -471,10 +471,10 @@ export default class Dashboard extends Component {
 													onClick={this.onFollowUser}>
 													{follow ? 
 														<>
-															<span className="hide-on-hover">{icon.check()} Segui</span>
+															<span className="hide-on-hover">{icon.check} Segui</span>
 															<span className="show-on-hover">Smetti</span>
 														</> 
-													: <span>{icon.plus()} Segui</span> }
+													: <span>{icon.plus} Segui</span> }
 												</button>
 											}
 											<span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
@@ -492,7 +492,7 @@ export default class Dashboard extends Component {
                   <div className="progress-container">
                     <div className="progress-base" />
                     <CircularProgress variant="static" value={progress < 100 ? progress : !challengeCompleted ? challengeProgress : 0} size={60} max={100} thickness={3} />
-                    <div className="progress-value">{progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader()}</div>
+                    <div className="progress-value">{progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader}</div>
                   </div>
                   <div className="info-row">
                     <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Nessuna sfida'}</div>
@@ -512,10 +512,10 @@ export default class Dashboard extends Component {
             variant="fullWidth"
             // variant="scrollable"
             scrollButtons="auto">
-            <Tab label={TabLabel(icon.book(), 'Libreria')} />
-            <Tab label={TabLabel(icon.heart(), 'Desideri')} />
-            <Tab label={TabLabel(icon.poll(), 'Attività')} />
-            <Tab label={TabLabel(icon.account(), 'Contatti')} />
+            <Tab label={TabLabel(icon.book, 'Libreria')} />
+            <Tab label={TabLabel(icon.heart, 'Desideri')} />
+            <Tab label={TabLabel(icon.poll, 'Attività')} />
+            <Tab label={TabLabel(icon.account, 'Contatti')} />
           </Tabs>
         </AppBar>
         <BindKeyboardSwipeableViews 

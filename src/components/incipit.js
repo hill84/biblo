@@ -25,17 +25,17 @@ const Incipit = props => {
             <div className="col-auto btn-row">
               <SayButton text={incipit}>
                 <Tooltip title="Ascolta" placement="bottom">
-                  <div className="btn rounded icon flat audio">{icon.voice()}</div>
+                  <div className="btn rounded icon flat audio">{icon.voice}</div>
                 </Tooltip>
               </SayButton>
               <Tooltip title="Formato" placement="bottom">
-                <button type="button" className="btn rounded icon flat" onClick={onToggleSize}>{icon.formatSize()}</button> 
+                <button type="button" className="btn rounded icon flat" onClick={onToggleSize}>{icon.formatSize}</button> 
               </Tooltip>
               <Tooltip title="Tema" placement="bottom">
-                <button type="button" className="btn rounded icon flat" onClick={onToggleDarkTheme}>{icon.brightness_6()}</button> 
+                <button type="button" className="btn rounded icon flat" onClick={onToggleDarkTheme}>{icon.brightness_6}</button> 
               </Tooltip>
               <Tooltip title="Chiudi" placement="bottom">
-                <button type="button" className="btn rounded icon flat" onClick={onToggle}>{icon.close()}</button>
+                <button type="button" className="btn rounded icon flat" onClick={onToggle}>{icon.close}</button>
               </Tooltip>
             </div>
           </div>

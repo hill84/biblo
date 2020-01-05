@@ -146,8 +146,8 @@ const ReadingStateForm = props => {
                       className="date-picker"
                       name="start_num"
                       cancelLabel="Annulla"
-                      leftArrowIcon={icon.chevronLeft()}
-                      rightArrowIcon={icon.chevronRight()}
+                      leftArrowIcon={icon.chevronLeft}
+                      rightArrowIcon={icon.chevronRight}
                       format="D MMMM YYYY"
                       minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
                       minDateMessage="Praticamente nel Jurassico.."
@@ -172,8 +172,8 @@ const ReadingStateForm = props => {
                         className="date-picker"
                         name="end_num"
                         cancelLabel="Annulla"
-                        leftArrowIcon={icon.chevronLeft()}
-                        rightArrowIcon={icon.chevronRight()}
+                        leftArrowIcon={icon.chevronLeft}
+                        rightArrowIcon={icon.chevronRight}
                         format="D MMMM YYYY"
                         minDate={new Date(start_num)}
                         minDateMessage="Data non valida"

@@ -233,10 +233,10 @@ export default class BooksDash extends Component {
               <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit} data-title={item.title}>
-              <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={this.onEdit} title="Modifica">{icon.pencil()}</button>
-              <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={this.onDeleteRequest}>{icon.close()}</button>
+              <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye}</button>
+              <button type="button" className="btn icon primary" onClick={this.onEdit} title="Modifica">{icon.pencil}</button>
+              <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+              <button type="button" className="btn icon red" onClick={this.onDeleteRequest}>{icon.close}</button>
             </div>
           </div>
         </li>
@@ -267,7 +267,7 @@ export default class BooksDash extends Component {
                 onClose={this.onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
             </div>
           </div>
         </div>

@@ -158,7 +158,7 @@ const LoginForm = props => {
                     aria-label="toggle password visibility"
                     onClick={onTogglePassword}
                     onMouseDown={onMouseDownPassword}>
-                    {showPassword ? icon.eye() : icon.eyeOff()}
+                    {showPassword ? icon.eye : icon.eyeOff}
                   </IconButton>
                 </InputAdornment>
               }
