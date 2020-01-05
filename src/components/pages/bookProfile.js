@@ -379,7 +379,7 @@ export default class BookProfile extends Component {
                     userBook={userBook} 
                   /> 
                 }
-                <Reviews bid={book.bid} openSnackbar={openSnackbar} user={user} />
+                <Reviews bid={book.bid} openSnackbar={openSnackbar} />
                 {book.collections[0] && 
                   <InView triggerOnce rootMargin="200px">
                     {({ inView, ref }) => 
