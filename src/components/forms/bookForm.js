@@ -20,7 +20,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
-import firebase, { authid, bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
+import firebase, { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, timestamp, urlRegex, validateImg } from '../../config/shared';
@@ -431,6 +431,10 @@ const BookForm = props => {
 
       if (Object.keys(errors).length === 0) {
         let newBid = '';
+        const bookCover = book.covers[0];
+        const userUid = (user && user.uid) || '';
+        const userDisplayName = (user && user.displayName) || '';
+
         if (props.book.bid) {
           const { covers, EDIT, title_sort, ...restBook } = book;
           bookRef(props.book.bid).set({
@@ -440,8 +444,8 @@ const BookForm = props => {
             EDIT: {
               ...EDIT,
               lastEdit_num: timestamp,
-              lastEditBy: (user && user.displayName) || '',
-              lastEditByUid: authid || ''
+              lastEditBy: userDisplayName,
+              lastEditByUid: userUid
             }
           }).then(() => {
             if (is.current) {
@@ -469,12 +473,12 @@ const BookForm = props => {
             description: book.description, 
             EDIT: {
               created_num: timestamp,
-              createdBy: (user && user.displayName) || '',
-              createdByUid: authid || '',
+              createdBy: userDisplayName,
+              createdByUid: userUid,
               edit: true,
               lastEdit_num: timestamp,
-              lastEditBy: (user && user.displayName) || '',
-              lastEditByUid: authid || ''
+              lastEditBy: userDisplayName,
+              lastEditByUid: userUid
             },
             edition_num: book.edition_num, 
             format: book.format, 
@@ -516,7 +520,7 @@ const BookForm = props => {
                   collectionBookRef(cid, book.bid || newBid).set({
                     bid: book.bid || newBid, 
                     bcid: collectionBook.exists ? collectionBook.data().bcid : (collection.data().books_num || 0) + 1,
-                    covers: (imgPreview && Array(imgPreview)) || (!!book.covers[0] && Array(book.covers[0])) || [],
+                    covers: (imgPreview && Array(imgPreview)) || (!!bookCover && Array(bookCover)) || [],
                     title: book.title,  
                     subtitle: book.subtitle, 
                     authors: book.authors, 
@@ -572,16 +576,18 @@ const BookForm = props => {
   
   if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
 
+  const bookCover = book.covers[0];
+
   return (
     <>
-      <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${book.covers[0]})`, }} /></div>
+      <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${bookCover})`, }} /></div>
       <div className="container top" ref={is}>
         <form className="card light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
           <div className="container md">
-            <div className={`edit-book-cover ${errors.upload ? 'error' : ''}  ${setFormatClass(book.format)}-format`}>
+            <div className={`edit-book-cover ${errors.upload ? 'error' : ''} ${setFormatClass(book.format)}-format`}>
               <Cover book={book} loading={imgLoading} />
-              {isAdmin && book.bid && // !book.covers[0] && 
+              {isAdmin && book.bid &&
                 <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
                   <input type="file" accept="image/*" className="upload" onChange={onImageChange} />
                   {
