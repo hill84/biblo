@@ -156,6 +156,8 @@ const Admin = props => {
           value={tabSelected}
           onChange={onTabSelect}
           variant={_screenSize === 'sm' ? 'scrollable' : 'fullWidth'}
+          indicatorColor="primary"
+          // textColor="primary"
           scrollButtons="auto">
           {tabs.map(tab => (
             <Tab key={tab.name} label={<><span className="show-md">{tab.icon}</span><span className="hide-md">{tab.label}</span></>} />

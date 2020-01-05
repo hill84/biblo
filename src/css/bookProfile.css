@@ -23,6 +23,7 @@
   padding: 2px 5px;
   margin-left: -6px;
   cursor: pointer;
+  color: var(--mainTextClr);
   &:hover { border-color: rgba(var(--blackClr), .1); }
 }
 

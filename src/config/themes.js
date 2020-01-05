@@ -59,7 +59,7 @@ export const darkTheme = createMuiTheme({
       contrastText: '#FFF',
     },
     background: {
-      paper: '#32434E',
+      paper: blueGrey[900],
       default: blueGrey[900]
     },
     typography: {
@@ -85,7 +85,7 @@ export const primaryTheme = createMuiTheme({
       contrastText: '#FFF',
     },
     background: {
-      paper: '#32434E',
+      paper: blueGrey[900],
       default: blueGrey[900]
     },
     typography: {

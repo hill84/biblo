@@ -18,7 +18,7 @@ const Incipit = props => {
 
   return (
     <>
-      <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit ${dark ? 'dark' : 'light'}`}>
+      <div role="dialog" aria-describedby="incipit" className={`dialog book-incipit force-theme ${dark ? 'dark' : 'light'}`}>
         <div className="absolute-content">
           <div role="navigation" className="head nav row">
             <strong className="col title">{title}</strong>

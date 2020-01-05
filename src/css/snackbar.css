@@ -36,7 +36,7 @@
 
 /* SNACKBAR CONTENT */
 .snackbar-content {
-  background-color: rgba(var(--cardBg), .9);
+  background-color: rgba(var(--cardClr), .9);
   backdrop-filter: saturate(180%) blur(10px);
   &.error { background-color: rgba(var(--errorClr), .9); }
   &.info { background-color: rgba(var(--primaryClr), .9); }

@@ -32,13 +32,13 @@
   }
   &::before {
     top: 0;
-    background: linear-gradient(to top, transparent 0%,rgb(var(--cardBg)) 90%);
+    background: linear-gradient(to top, transparent 0%,rgb(var(--cardClr)) 90%);
     margin-bottom: calc(-1 * var(--faderHeight));
   }
   &::after {
     top: calc(100% - var(--faderHeight));
     bottom: -1px;
-    background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardBg)) 90%);
+    background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardClr)) 90%);
     margin-top: calc(-1 * var(--faderHeight));
   }
 }
