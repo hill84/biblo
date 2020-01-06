@@ -23,6 +23,7 @@ import Reviews from '../reviews';
 import Shelf from '../shelf';
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
+
 const tabDir = null;
 
 const unsub = {
@@ -33,6 +34,8 @@ const unsub = {
   uidFollowersFetch: null,
   uidFollowingsFetch: null
 };
+
+const skltnStyle = { margin: '.4em 0', };
 
 const Dashboard = props => {
   const { user } = useContext(UserContext);
@@ -348,8 +351,8 @@ const Dashboard = props => {
   const challengeCompleted = useMemo(() => challengeProgress === 100, [challengeProgress]);
   const isMini = useMemo(() => isTouchDevice() || _screenSize === 'sm' || _screenSize === 'xs', [_screenSize]);
 
-  if (!duser && loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
-  if (!duser) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
+  // if (!duser && loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
+  if (!duser && !loading) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
   
   const usersList = obj => (
     <>
@@ -383,7 +386,7 @@ const Dashboard = props => {
     </>
   );
 
-  const Roles = Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
+  const Roles = duser && Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
     <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>
   ));
 
@@ -391,10 +394,10 @@ const Dashboard = props => {
 
   const ShelfDetails = () => (
     <div className="info-row footer centered shelfdetails">
-      <span className="counter">{icon.book} <b>{duser.stats.shelf_num}</b> <span className="hide-sm">Libri</span></span>
-      <span className="counter">{icon.heart} <b>{duser.stats.wishlist_num}</b> <span className="hide-sm">Desideri</span></span>
-      <span className="counter">{icon.star} <b>{duser.stats.ratings_num}</b> <span className="hide-sm">Valutazioni</span></span>
-      <span className="counter">{icon.messageText} <b>{duser.stats.reviews_num}</b> <span className="hide-sm">Recensioni</span></span>
+      <span className="counter">{icon.book} <b>{duser ? duser.stats.shelf_num : 0}</b> <span className="hide-sm">Libri</span></span>
+      <span className="counter">{icon.heart} <b>{duser ? duser.stats.wishlist_num : 0}</b> <span className="hide-sm">Desideri</span></span>
+      <span className="counter">{icon.star} <b>{duser ? duser.stats.ratings_num : 0}</b> <span className="hide-sm">Valutazioni</span></span>
+      <span className="counter">{icon.messageText} <b>{duser ? duser.stats.reviews_num : 0}</b> <span className="hide-sm">Recensioni</span></span>
     </div>
   );
 
@@ -423,67 +426,78 @@ const Dashboard = props => {
     }
   };
 
+  const contactsSkeleton = [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />);
+
   return (
-    <div className="container" id="dashboardComponent">
+    <div className="container" id="dashboardComponent" ref={is}>
       <Helmet>
         <title>{app.name} | {duser ? `${tabSeoTitle()} di ${duser.displayName}` : 'Dashboard utente'}</title>
         <link rel="canonical" href={app.url} />
         <meta name="description" content={app.desc} />
-        {tabSelected && <link rel="canonical" href={`${app.url}/dashboard/${duser.uid}/shelf`} />}
+        {tabSelected && duser && <link rel="canonical" href={`${app.url}/dashboard/${duser.uid}/shelf`} />}
       </Helmet>
       <div className="row">
         <div className="col-md col-12">
           <div className="card dark basic-profile-card">
             <div className="basic-profile">
-              <Tooltip title="Ruolo utente" placement="left">
-                <div className="role-badges">{Roles} {!duser.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
-              </Tooltip>
-              <div className="row">
-                <div className="col-auto">
-                  <Avatar className="avatar" /* src={duser.photoURL} */ alt={duser.displayName}>
-                    {duser.photoURL ? 
-                      <ImageZoom
-                        defaultStyles={imageZoomDefaultStyles}
-                        image={{ src: duser.photoURL, className: 'thumb' }}
-                        zoomImage={{ className: 'magnified avatar' }}
-                      />
-                    : getInitials(duser.displayName)}
-                  </Avatar>
-                </div>
-                <div className="col">
-                  <h2 className="username">{duser.displayName}</h2>
-                  <div className="info-row hide-xs">
-                    {duser.sex && duser.sex !== 'x' && <span className="counter">{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
-                    {duser.birth_date && <span className="counter">{calcAge(duser.birth_date)} anni</span>}
-                    <span className="counter comma strict">
-                      {duser.city && <span className="counter">{duser.city}</span>}
-                      {duser.country && <span className="counter">{duser.country}</span>}
-                      {duser.continent && <span className="counter">{duser.continent}</span>}
-                    </span>
-                    {duser.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(duser.languages)}</span>}
-                    {creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
-                    {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
+                {duser &&
+                  <Tooltip title="Ruolo utente" placement="left">
+                    <div className="role-badges">{Roles} {!duser.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
+                  </Tooltip>
+                }
+                <div className="row">
+                  <div className="col-auto">
+                    <Avatar className="avatar" /* src={duser.photoURL} */ alt={duser ? duser.displayName : 'Avatar'}>
+                      {duser && !loading ? duser.photoURL ? 
+                        <ImageZoom
+                          defaultStyles={imageZoomDefaultStyles}
+                          image={{ src: duser.photoURL, className: 'thumb' }}
+                          zoomImage={{ className: 'magnified avatar' }}
+                        />
+                      : getInitials(duser.displayName) : ''}
+                    </Avatar>
                   </div>
-                  <div className="info-row">
-                    {!isOwner && isAuthenticated() &&
-                      <button 
-                        type="button"
-                        className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
-                        // disabled={!isAuthenticated()}
-                        onClick={onFollowUser}>
-                        {follow ? 
-                          <>
-                            <span className="hide-on-hover">{icon.check} Segui</span>
-                            <span className="show-on-hover">Smetti</span>
-                          </> 
-                        : <span>{icon.plus} Segui</span> }
-                      </button>
-                    }
-                    <span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
-                    {screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
+                  <div className="col">
+                    <h2 className="username">{duser && !loading ? duser.displayName : <span className="skltn area" />}</h2>
+                    {duser && !loading ? (
+                      <>
+                        <div className="info-row hide-xs">
+                          {duser.sex && duser.sex !== 'x' && <span className="counter">{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
+                          {duser.birth_date && <span className="counter">{calcAge(duser.birth_date)} anni</span>}
+                          <span className="counter comma strict">
+                            {duser.city && <span className="counter">{duser.city}</span>}
+                            {duser.country && <span className="counter">{duser.country}</span>}
+                            {duser.continent && <span className="counter">{duser.continent}</span>}
+                          </span>
+                          {duser.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(duser.languages)}</span>}
+                          {creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
+                          {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
+                        </div>
+                        <div className="info-row">
+                          {!isOwner && isAuthenticated() &&
+                            <button 
+                              type="button"
+                              className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
+                              // disabled={!isAuthenticated()}
+                              onClick={onFollowUser}>
+                              {follow ? 
+                                <>
+                                  <span className="hide-on-hover">{icon.check} Segui</span>
+                                  <span className="show-on-hover">Smetti</span>
+                                </> 
+                              : <span>{icon.plus} Segui</span> }
+                            </button>
+                          }
+                          <span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
+                          {screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="skltn three rows" style={skltnStyle} />
+                    )}
                   </div>
                 </div>
-              </div>
+
             </div>
           </div>
         </div>
@@ -541,11 +555,11 @@ const Dashboard = props => {
             <div className="row">
               <div className="col-md-6 cols-12 contacts-tab-col">
                 <h4>Seguito da:</h4>
-                {Object.keys(followers).length ? usersList(followers) : <EmptyRow />}
+                {loading ? contactsSkeleton : Object.keys(followers).length ? usersList(followers) : <EmptyRow />}
               </div>
               <div className="col-md-6 col-12 contacts-tab-col">
                 <h4>Segue:</h4>
-                {Object.keys(followings).length ? usersList(followings) : <EmptyRow />}
+                {loading ? contactsSkeleton : Object.keys(followings).length ? usersList(followings) : <EmptyRow />}
               </div>
             </div>
           }

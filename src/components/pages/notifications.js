@@ -31,16 +31,15 @@ const Notifications = props => {
   const [page, setPage] = useState(1);
   const is = useRef(true);
 
-  const setEmptyState = useCallback(() => {
-    setCount(0);
-    setItems(null);
-    setLoading(false);
-    setPage(1);
-  }, []);
-
   const fetch = useCallback(() => {
     const items = [];
     const ref = notesRef(user.uid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    const setEmptyState = () => {
+      setCount(0);
+      setItems(null);
+      setLoading(false);
+      setPage(1);
+    };
 
     if (is.current) setLoading(true);
 
@@ -74,7 +73,7 @@ const Notifications = props => {
         openSnackbar(handleFirestoreError(err), 'error');
       }
     });
-  }, [desc, openSnackbar, orderByIndex, setEmptyState, user.uid]);
+  }, [desc, openSnackbar, orderByIndex, user.uid]);
 
   useEffect(() => {
     fetch();
