@@ -370,14 +370,13 @@ export default class BookProfile extends Component {
             {book.bid &&
               <>
                 {isAuthenticated() && isEditor && userBook.bookInShelf &&
-                  <UserReview 
-                    addReview={addReview} 
+                  <UserReview
+                    addReview={addReview}
                     bid={book.bid}
                     openSnackbar={openSnackbar}
-                    removeReview={removeReview} 
-                    user={user} 
-                    userBook={userBook} 
-                  /> 
+                    removeReview={removeReview}
+                    userBook={userBook}
+                  />
                 }
                 <Reviews bid={book.bid} openSnackbar={openSnackbar} />
                 {book.collections[0] && 

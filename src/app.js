@@ -118,8 +118,8 @@ const App = () => {
                         <RouteWithProps path="/collections" component={NewFeature} openSnackbar={openSnackbar} />
                         <RouteWithProps path="/genre/:gid" component={Genre}openSnackbar={openSnackbar} />
                         <RouteWithProps path="/book/:bid" component={BookContainer} openSnackbar={openSnackbar} />
-                        <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} user={user} openSnackbar={openSnackbar} />
-                        <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} user={user} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/dashboard/:uid" exact component={Dashboard} openSnackbar={openSnackbar} />
+                        <RouteWithProps path="/dashboard/:uid/:tab" component={Dashboard} openSnackbar={openSnackbar} />
                         <RouteWithProps path="/icons" component={IconsPage} openSnackbar={openSnackbar} />
                         <PrivateRoute path="/books/add" component={AddBook} openSnackbar={openSnackbar} />
                         <PrivateRoute path="/new-book" component={NewBook} openSnackbar={openSnackbar} />

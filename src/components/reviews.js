@@ -1,7 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserContext from '../context/userContext';
 import { isAuthenticated, reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { boolType, funcType, numberType, stringType } from '../config/types';
@@ -11,7 +10,6 @@ import Review from './review';
 const desc = true;
 
 const Reviews = props => {
-  const { user } = useContext(UserContext);
   const { bid, container, limit, openSnackbar, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
   const [count, setCount] = useState(0);
@@ -54,6 +52,7 @@ const Reviews = props => {
     const ref = bid ? reviewersRef(bid) : uid ? reviewersGroupRef.where('createdByUid', '==', uid) : reviewersGroupRef;
 
     if (is.current) setLoading(true);
+    
 		ref.orderBy('created_num', desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
       if (!nextSnap.empty) {
         nextSnap.forEach(item => items.push(item.data()));
@@ -76,8 +75,8 @@ const Reviews = props => {
   }, [bid, count, items, lastVisible, limit, openSnackbar, page, uid]);
 
   useEffect(() => {
-    fetch(bid, uid);
-  }, [bid, fetch, uid]);
+    fetch();
+  }, [fetch]);
 
   useEffect(() => () => {
     is.current = false;
@@ -109,7 +108,6 @@ const Reviews = props => {
                 bid={bid}
                 openSnackbar={openSnackbar}
                 uid={uid}
-                user={user}
                 review={{
                   bid: item.bid || '',
                   photoURL: item.photoURL || '',

@@ -16,7 +16,7 @@ import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
@@ -119,25 +119,23 @@ const BookForm = props => {
     // eslint-disable-next-line
   }, []);
 
-  const onToggleDescription = e => {
+  const onToggleDescription = useCallback(e => {
     e.persist();
     e.preventDefault();
 
     if (is.current) {
-      setIsEditingDescription(!isEditingDescription);
+      setIsEditingDescription(isEditingDescription => (!isEditingDescription));
     }
-  }
+  }, []);
   
-  const onToggleIncipit = e => {
+  const onToggleIncipit = useCallback(e => {
     e.persist();
     e.preventDefault();
     
-    if (is.current) {
-      setIsEditingIncipit(!isEditingIncipit);
-    }
-  }
+    if (is.current) setIsEditingIncipit(isEditingIncipit => (!isEditingIncipit));
+  }, []);
 
-  const setChange = (name, value) => {
+  const setChange = useCallback((name, value) => {
     const index = changes.indexOf(name);
     const isArray = Array.isArray(value);
     const isObj = typeof value;
@@ -150,25 +148,25 @@ const BookForm = props => {
         setChanges(changes);
       }
     } else if (index === -1) {
-      setChanges([...changes, name]);
+      setChanges(changes => ([...changes, name]));
     }
-  }
+  }, [changes, prevBook, setChanges]); // changes
 
-  const setBookChange = (name, value) => {
+  const setBookChange = useCallback((name, value) => {
     if (is.current) {
-      setBook({ ...book, [name]: value });
-      setErrors({ ...errors, [name]: null });
+      setBook(book => ({ ...book, [name]: value }));
+      setErrors(errors => ({ ...errors, [name]: null }));
       setChange(name, value);
     }
-  };
+  }, [setChange]);
 
-  const onChange = e => {
+  const onChange = useCallback(e => {
     e.persist();
     const { name, value } = e.target;
     setBookChange(name, value);
-  };
+  }, [setBookChange]);
 
-  const onChangeNumber = e => {
+  const onChangeNumber = useCallback(e => {
     e.persist();
     const { name, value } = e.target;
     const value_num = parseInt(value, 10);
@@ -178,66 +176,66 @@ const BookForm = props => {
     setBookChange(name, value_num);
 
     if (match) {
-      setErrors({ ...errors, [name]: null });
+      setErrors(errors => ({ ...errors, [name]: null }));
     } else {
-      setErrors({ ...errors, [name]: 'Numero non valido' });
+      setErrors(errors => ({ ...errors, [name]: 'Numero non valido' }));
     }
-  };
+  }, [setBookChange]);
 
-  const onChangeSelect = name => e => {
+  const onChangeSelect = useCallback(name => e => {
     e.persist();
     const { value } = e.target;
     setBookChange(name, value);
-  };
+  }, [setBookChange]);
 
-  const onChangeDate = name => date => {
+  const onChangeDate = useCallback(name => date => {
     const value = String(date);
     setBookChange(name, value);
-  };
+  }, [setBookChange]);
 
-  const onAddChip = (name, chip) => {
+  const onAddChip = useCallback((name, chip) => {
     const value = [...book[name], chip];
     setBookChange(name, value);
-  }; 
+  }, [book, setBookChange]);
 
-  const onDeleteChip = (name, chip) => {
+  const onDeleteChip = useCallback((name, chip) => {
     const value = book[name].filter(c => c !== chip);
     setBookChange(name, value);
-  }; 
+  }, [book, setBookChange]);
   
-  const onAddChipToObj = (name, chip) => {
+  const onAddChipToObj = useCallback((name, chip) => {
     const value = { ...book[name], [chip.split('.').join('')]: true };
     setBookChange(name, value)
-  };
+  }, [book, setBookChange]);
 
-  const onDeleteChipFromObj = (name, chip) => {
+  const onDeleteChipFromObj = useCallback((name, chip) => {
     const value = arrToObj(Object.keys(book[name]).filter(c => c !== chip.split('.').join('')), item => ({ key: item, value: true }));
     setBookChange(name, value);
-  };
+  }, [book, setBookChange]);
   
-  const onChangeMaxChars = e => {
+  const onChangeMaxChars = useCallback(e => {
     e.persist();
     const { name, value } = e.target;
 
     if (is.current) {
-      setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
+      setLeftChars(leftChars => ({ ...leftChars, [name]: max.chars[name] - value.length }));
       setBookChange(name, value);
     }
-  };
+  }, [setBookChange]);
 
-  const onPreventDefault = e => { 
+  const onPreventDefault = useCallback(e => { 
     if (e.key === 'Enter') e.preventDefault(); 
-  };
+  }, []);
 
-  const checkISBNnum = async num => {
+  const checkISBNnum = useCallback(async num => {
     const result = await booksRef.where('ISBN_13', '==', Number(num)).limit(1).get().then(snap => {
       if (!snap.empty) return true;
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     return result;
-  };
+  }, [openSnackbar]);
 
-  const validate = async book => {
+  const validate = useCallback(async book => {
     const errors = {};
     const isDuplicate = await checkISBNnum(book.ISBN_13);
     const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
@@ -365,9 +363,9 @@ const BookForm = props => {
     });
     
     return errors;
-  };
+  }, [checkISBNnum, props.book]);
 
-	const onImageChange = e => {
+	const onImageChange = useCallback(e => {
     e.preventDefault();
 		const file = e.target.files[0];
 
@@ -377,7 +375,7 @@ const BookForm = props => {
       if (!uploadError) {
         if (is.current) {
           setImgLoading(true);
-          setErrors({ ...errors, upload: null });
+          setErrors(errors => ({ ...errors, upload: null }));
         }
         const uploadTask = storageRef(`books/${props.book.bid || book.bid}`, 'cover').put(file);
         const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
@@ -387,7 +385,7 @@ const BookForm = props => {
         }, err => {
           // console.warn(`upload error: ${error.message}`);
           if (is.current) { 
-            setErrors({ ...errors, upload: err.message });
+            setErrors(errors => ({ ...errors, upload: err.message }));
             setImgLoading(false);
             setImgProgress(0);
             openSnackbar(err.message, 'error')
@@ -413,13 +411,13 @@ const BookForm = props => {
           unsubUploadTask();
         });
       } else if (is.current) {
-        setErrors({ ...errors, upload: uploadError });
+        setErrors(errors => ({ ...errors, upload: uploadError }));
         openSnackbar(uploadError, 'error');
       }
     }
-  };
+  }, [book, openSnackbar, props.book, setBookChange]);
   
-  const onSubmit = async e => {
+  const onSubmit = useCallback(async e => {
     e.preventDefault();
 
     if (changes.length || !book.bid) {
@@ -549,22 +547,20 @@ const BookForm = props => {
         openSnackbar('Ricontrolla i dati inseriti', 'error');
       }
     } else isEditing();
-  };
+  }, [book, changes, imgPreview, isEditing, openSnackbar, props.book, user, validate]);
 
-  const onExitEditing = () => {
+  const onExitEditing = useCallback(() => {
     if (changes.length) {
-      if (is.current) {
-        setIsOpenChangesDialog(true);
-      }
+      if (is.current) setIsOpenChangesDialog(true);
     } else isEditing();
-  };
+  }, [changes, isEditing]);
 
   const onCloseChangesDialog = () => setIsOpenChangesDialog(false);
 
   const isAdmin = hasRole(user, 'admin');
   const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
   
-  const menuItemsMap = (arr, values) => arr.map(item => 
+  const menuItemsMap = useCallback((arr, values) => arr.map(item => 
     <MenuItem 
       value={item.name} 
       key={item.id} 
@@ -572,7 +568,7 @@ const BookForm = props => {
       checked={values ? values.includes(item.name) : false}>
       {item.name}
     </MenuItem>
-  );
+  ), []);
   
   if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
 

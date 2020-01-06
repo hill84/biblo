@@ -1,5 +1,5 @@
 import Avatar from '@material-ui/core/Avatar';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -53,7 +53,7 @@ const RecommendationForm = props => {
     fetch();
   }, [fetch]);
   
-  const isNewDay = useMemo(() => diffDays(new Date(quote.timestamp)) > 0, [quote.timestamp]);
+  const isNewDay = diffDays(new Date(quote.timestamp)) > 0;
   
   useEffect(() => {
     if (!quote.timestamp || isNewDay) {

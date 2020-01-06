@@ -83,7 +83,7 @@ const UsersDash = props => {
         }
         setLoading(false);
       });
-    }
+    };
     
     if (!direction) {
       countRef('users').get().then(fullSnap => {
@@ -105,36 +105,34 @@ const UsersDash = props => {
   const onCloseOrderMenu = () => setOrderMenuAnchorEl(null);
   const onChangeOrderBy = (e, i) => {
     setOrderMenuAnchorEl(null);
-    setState({ ...state, orderByIndex: i, page: 1 });
-  }
+    setState(state => ({ ...state, orderByIndex: i, page: 1 }));
+  };
 
   const onOpenLimitMenu = e => setLimitMenuAnchorEl(e.currentTarget);
   const onCloseLimitMenu = () => setLimitMenuAnchorEl(null);
   const onChangeLimitBy = (e, i) => {
     setLimitMenuAnchorEl(null);
-    setState({ ...state, limitByIndex: i, page: 1 });
-  }
+    setState(state => ({ ...state, limitByIndex: i, page: 1 }));
+  };
 
   const onView = e => {
     const { id } = e.currentTarget.parentNode.dataset;
     setRedirectTo(id);
-  }
+  };
 
   const onNote = e => {
     const { id } = e.currentTarget.parentNode.dataset;
     onToggleDialog(id);
-  }
+  };
 
   const onSendReset = e => {
     const { email } = e.currentTarget.parentNode.dataset;
     auth.sendPasswordResetEmail(email).then(() => {
       openSnackbar(`Email inviata`, 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-  }
+  };
 
-  /* const onSendVerification = () => {
-    // TODO
-  } */
+  // const onSendVerification = () => {}; // TODO
 
   const onLock = e => {
     const { id } = e.currentTarget.parentNode.dataset;
@@ -143,7 +141,7 @@ const UsersDash = props => {
     userRef(id).update({ 'roles.editor': !state }).then(() => {
       openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-  }
+  };
 
   const onDeleteRequest = e => {
     const { id } = e.currentTarget.parentNode.dataset;
@@ -152,15 +150,12 @@ const UsersDash = props => {
       setIsOpenDeleteDialog(true);
       setSelected({ displayName, id });
     }
-  }
+  };
   const onCloseDeleteDialog = () => {
     setIsOpenDeleteDialog(false);
     setSelected(null)
-  }
-  const onDelete = () => {
-    const { selected } = state;
-    const { openSnackbar } = props;
-    
+  };
+  const onDelete = useCallback(() => {
     if (is.current) setIsOpenDeleteDialog(false);
     
     userRef(selected.id).delete().then(() => {
@@ -204,14 +199,14 @@ const UsersDash = props => {
     // TODO: delete all users, genres, authors and collections followed.
     
     onCloseDeleteDialog();
-  }
+  }, [openSnackbar, selected]);
 
   const onChangeRole = e => {
     const { id } = e.currentTarget.parentNode.dataset;
     const { role } = e.currentTarget.dataset;
     const state = e.currentTarget.dataset.state === 'true';
     userRef(id).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
-  }
+  };
 
   useEffect(() => {
     fetch();

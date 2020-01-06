@@ -28,7 +28,6 @@ const min = {
 const LoginForm = props => {
   const { location, openSnackbar } = props;
   const [email, setEmail] = useState('');
-  // eslint-disable-next-line no-unused-vars
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});

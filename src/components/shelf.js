@@ -14,24 +14,23 @@ import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
+const filterBy = userBookTypes;
+const orderBy = [ 
+  { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar }, 
+  { type: 'title', label: 'Titolo', icon: icon.formatTitle }, 
+  { type: 'rating_num', label: 'Valutazione', icon: icon.star }, 
+  { type: 'authors', label: 'Autore', icon: icon.accountEdit }
+];
+
 export default class Shelf extends Component {
   state = {
-    luid: this.props.luid,
-    uid: this.props.uid,
     coverview: true,
     desc: true,
-    filterBy: userBookTypes,
     filterByIndex: 0,
     filterMenuAnchorEl: null,
     isOwner: this.props.luid === this.props.uid,
     limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0),
     loading: true,
-    orderBy: [ 
-      { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar }, 
-      { type: 'title', label: 'Titolo', icon: icon.formatTitle }, 
-      { type: 'rating_num', label: 'Valutazione', icon: icon.star }, 
-      { type: 'authors', label: 'Autore', icon: icon.accountEdit }
-    ],
     orderByIndex: 0,
     orderMenuAnchorEl: null,
     shelf: this.props.shelf || 'bookInShelf',
@@ -53,12 +52,6 @@ export default class Shelf extends Component {
     luid: null
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.uid !== state.uid) { return { uid: props.uid }; }
-    if (props.luid !== state.luid) { return { luid: props.luid }; }
-    return null;
-  }
-
   componentDidMount() {
     this._isMounted = true;
     this.fetchUserBooks();
@@ -66,10 +59,11 @@ export default class Shelf extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { desc, filterByIndex, limit, luid, orderByIndex, uid } = this.state;
-    if (desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevState.luid)) || uid !== prevState.uid) {
+    const { desc, filterByIndex, limit, orderByIndex } = this.state;
+    const { luid, uid } = this.props;
+    if (desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit ||  orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevProps.luid)) || uid !== prevProps.uid) {
       this.fetchUserBooks();
-    } else if (!luid && (luid !== prevState.luid)) {
+    } else if (!luid && (luid !== prevProps.luid)) {
       if (this._isMounted) {
         this.setState({ isOwner: false });
       }
@@ -83,11 +77,14 @@ export default class Shelf extends Component {
     window.removeEventListener('resize', this.updateLimit);
   }
 
-  updateLimit = () => this._isMounted && this.setState({ limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0) });
+  updateLimit = () => {
+    const { luid, uid } = this.props;
+    this._isMounted && this.setState({ limit: booksPerRow() * 2 - (luid === uid ? 1 : 0) });
+  }
 
   fetchUserBooks = e => {
-    const { desc, filterByIndex, limit, luid, orderBy, orderByIndex, page, shelf, uid } = this.state;
-    const { openSnackbar } = this.props;
+    const { desc, filterByIndex, limit, orderByIndex, page, shelf } = this.state;
+    const { luid, openSnackbar, uid } = this.props;
     const direction = e && e.currentTarget.dataset.direction;
 
     if (uid) {
@@ -191,7 +188,8 @@ export default class Shelf extends Component {
   onCloseFilterMenu = () => this._isMounted && this.setState({ filterMenuAnchorEl: null });
 
   render() {
-    const { coverview, desc, filterBy, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
+    const { coverview, desc, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
+
     const covers = items && items.length > 0 && items.map((book, i) => (
       <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
     ));
@@ -236,12 +234,12 @@ export default class Shelf extends Component {
                     onClick={this.onToggleView}>
                     {coverview ? icon.viewSequential : icon.viewGrid}
                   </button>
-                  {shelf === 'bookInShelf' && count > 0 && 
+                  {shelf === 'bookInShelf' && 
                     <>
                       <button 
                         type="button"
                         className="btn sm flat counter" 
-                        disabled={!count}
+                        // disabled={!count}
                         onClick={this.onOpenFilterMenu}>
                         {filterBy[filterByIndex]}
                       </button>

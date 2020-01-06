@@ -105,7 +105,7 @@ const Admin = props => {
   };
 
   const onToggleNoteDialog = (id, el) => {
-    setIsOpenNoteDialog(!isOpenNoteDialog)
+    setIsOpenNoteDialog(!isOpenNoteDialog);
     setSelectedId(son(id));
     setSelectedEl(son(el));
   };
