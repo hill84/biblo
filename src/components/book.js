@@ -576,7 +576,6 @@ export default class Book extends Component {
         <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
         {isEditing && isAuthenticated() ?
           <BookForm
-            openSnackbar={openSnackbar}
             isEditing={this.isEditing}
             book={book}
           />

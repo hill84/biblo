@@ -7,7 +7,7 @@ import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../co
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize, timestamp } from '../../config/shared';
-import { funcType, matchType } from '../../config/types';
+import { matchType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
 import Cover from '../cover';
@@ -16,6 +16,7 @@ import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from '../skeletons';
 import Bubbles from './bubbles';
+import SnackbarContext from '../../context/snackbarContext';
 
 const limit = 28;
 const orderBy = [ 
@@ -26,7 +27,8 @@ const skltnStyle = { display: 'inline-block', marginTop: '1.1em', };
 
 const Genre = props => {
   const { user } = useContext(UserContext);
-  const { match, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { match } = props;
   const [count, setCount] = useState(0);
   const [coverview, setCoverview] = useState(true);
   const [desc, setDesc] = useState(true);
@@ -383,8 +385,7 @@ const Genre = props => {
 }
 
 Genre.propTypes = {
-  match: matchType,
-  openSnackbar: funcType.isRequired
+  match: matchType
 }
 
 Genre.defaultProps = {

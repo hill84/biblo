@@ -4,7 +4,6 @@ import { InView } from 'react-intersection-observer';
 import { Link, Redirect } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
-import { funcType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/home.css';
 import bgHero_jpg from '../../images/covers-dark.jpg';
@@ -24,9 +23,8 @@ const seo = {
 const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpg})`, };
 const rootMargin = '200px';
 
-const Home = props => {
+const Home = () => {
   const { user } = useContext(UserContext);
-  const { openSnackbar } = props;
   const [redirectTo, setRedirectTo] = useState(null);
   const [_screenSize, setScreenSize] = useState(screenSize());
   const is = useRef(true);
@@ -88,7 +86,7 @@ const Home = props => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="Best seller" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid="Best seller" pagination={false} limit={7} inView={inView} scrollable />
             </div>
           }
         </InView>
@@ -146,7 +144,7 @@ const Home = props => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div ref={ref}>
-              {inView && <Reviews limit={5} openSnackbar={openSnackbar} pagination skeleton />}
+              {inView && <Reviews limit={5} pagination skeleton />}
             </div>
           }
         </InView>
@@ -154,7 +152,7 @@ const Home = props => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="Libri proibiti" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid="Libri proibiti" pagination={false} limit={7} inView={inView} scrollable />
             </div>
           }
         </InView>
@@ -167,7 +165,7 @@ const Home = props => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="Premio Strega" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} desc scrollable />
+              <BookCollection cid="Premio Strega" pagination={false} limit={7} inView={inView} desc scrollable />
             </div>
           }
         </InView>
@@ -175,7 +173,7 @@ const Home = props => {
         {/* <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) => 
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="Harry Potter" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid="Harry Potter" pagination={false} limit={7} inView={inView} scrollable />
             </div>
           }
         </InView> */}
@@ -191,7 +189,7 @@ const Home = props => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="Top" openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid="Top" pagination={false} limit={7} inView={inView} scrollable />
             </div>
           }
         </InView>
@@ -199,10 +197,6 @@ const Home = props => {
       </div>
     </div>
   );
-}
-
-Home.propTypes = {
-  openSnackbar: funcType.isRequired,
 }
 
 export default withScrollToTop(Home);

@@ -14,6 +14,7 @@ import icon from '../../config/icons';
 import { readingStates } from '../../config/lists';
 import { handleFirestoreError, timestamp } from '../../config/shared';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
@@ -22,7 +23,8 @@ const steps = 20;
 
 const ReadingStateForm = props => {
   const { user } = useContext(UserContext);
-  const { bid, onToggle, openSnackbar, pages, readingState } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { bid, onToggle, pages, readingState } = props;
   const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
   const [state_num, setState_num] = useState(readingState.state_num);
   const [start_num, setStart_num] = useState(readingState.start_num || null);
@@ -218,7 +220,6 @@ const ReadingStateForm = props => {
 ReadingStateForm.propTypes = {
   bid: stringType.isRequired,
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
   pages: numberType,
   readingState: shapeType({
     state_num: numberType.isRequired,

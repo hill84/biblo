@@ -8,7 +8,8 @@ import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import icon from '../../../config/icons';
 import { app, screenSize } from '../../../config/shared';
-import { funcType, historyType, matchType } from '../../../config/types';
+import { historyType, matchType } from '../../../config/types';
+import SnackbarContext from '../../../context/snackbarContext';
 import UserContext from '../../../context/userContext';
 import AuthorForm from '../../forms/authorForm';
 import CollectionForm from '../../forms/collectionForm';
@@ -34,7 +35,8 @@ const tabs = [
 
 const Admin = props => {
   const { user } = useContext(UserContext);
-  const { history, match, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { history, match } = props;
   const [selectedEl, setSelectedEl] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [tabSelected, setTabSelected] = useState(0);
@@ -138,13 +140,13 @@ const Admin = props => {
         <button type="button" title="Crea libro" className="btn rounded primary">
           <Link to="/new-book"><span className="hide-sm">{icon.plus} libro</span><span className="show-sm">{icon.book}</span></Link>
         </button>
-        <button type="button" onClick={onToggleAuthorDialog} title="Crea autore" className={`btn rounded ${isOpenAuthorDialog ? 'secondary' : 'primary'}`}>
+        <button type="button" onClick={onToggleAuthorDialog} title="Crea autore" className={`btn rounded ${isOpenAuthorDialog ? 'flat' : 'primary'}`}>
           <span className="hide-sm">{icon.plus} autore</span><span className="show-sm">{icon.accountEdit}</span>
         </button>
-        <button type="button" onClick={onToggleCollectionDialog} title="Crea collezione" className={`btn rounded ${isOpenCollectionDialog ? 'secondary' : 'primary'}`}>
+        <button type="button" onClick={onToggleCollectionDialog} title="Crea collezione" className={`btn rounded ${isOpenCollectionDialog ? 'flat' : 'primary'}`}>
           <span className="hide-sm">{icon.plus} collezione</span><span className="show-sm">{icon.viewCarousel}</span>
         </button>
-        <button type="button" onClick={onToggleQuoteDialog} title="Crea citazione" className={`btn rounded ${isOpenQuoteDialog ? 'secondary' : 'primary'}`}>
+        <button type="button" onClick={onToggleQuoteDialog} title="Crea citazione" className={`btn rounded ${isOpenQuoteDialog ? 'flat' : 'primary'}`}>
           <span className="hide-sm">{icon.plus} citazione</span><span className="show-sm">{icon.quote}</span>
         </button>
         {
@@ -172,7 +174,7 @@ const Admin = props => {
         index={tabSelected}
         onChangeIndex={onTabSelectIndex}>
         <div className="card dark">
-          <UsersDash openSnackbar={openSnackbar} onToggleDialog={onToggleNoteDialog} inView={tabSelected === 0} />
+          <UsersDash onToggleDialog={onToggleNoteDialog} inView={tabSelected === 0} />
         </div>
         <div className="card dark">
           <BooksDash user={user} openSnackbar={openSnackbar} inView={tabSelected === 1} />
@@ -191,18 +193,17 @@ const Admin = props => {
         </div>
       </BindKeyboardSwipeableViews>
 
-      {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={onToggleAuthorDialog} openSnackbar={openSnackbar} />}
-      {isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={onToggleCollectionDialog} openSnackbar={openSnackbar} />}
-      {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={onToggleNoteDialog} openSnackbar={openSnackbar} />}
-      {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={onToggleQuoteDialog} openSnackbar={openSnackbar} />}
+      {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={onToggleAuthorDialog} />}
+      {isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={onToggleCollectionDialog} />}
+      {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={onToggleNoteDialog} />}
+      {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={onToggleQuoteDialog} />}
     </div>
   );
 };
 
 Admin.propTypes = {
   history: historyType,
-  match: matchType,
-  openSnackbar: funcType.isRequired
+  match: matchType
 }
 
 Admin.defaultProps = {

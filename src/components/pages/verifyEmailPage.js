@@ -1,27 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 
-const VerifyEmailPage = props => {
-  const [state, setState] = useState({
-    emailSent: false,
-    loading: false
-  });
-
+const VerifyEmailPage = () => {
+  const { openSnackbar } = useContext(SnackbarContext);
+  const [emailSent, setEmailSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const is = useRef(true);
-  const { openSnackbar } = props;
-  const { emailSent, loading } = state;
 
   useEffect(() => () => {
     is.current = false;
   }, []);
 
   const sendEmailVerification = () => {
-    if (is.current) setState(prevState => ({ ...prevState, loading: true}));
+    if (is.current) setLoading(true);
 
     const actionCodeSettings = {
       url: `${app.url}/login/?email=${auth.currentUser.email}`
@@ -29,13 +25,16 @@ const VerifyEmailPage = props => {
 
     auth.onIdTokenChanged(user => {
       user.sendEmailVerification(actionCodeSettings).then(() => {
-        if (is.current) setState({ emailSent: true, loading: false });
+        if (is.current) {
+          setEmailSent(true);
+          setLoading(false);
+        }
         // FORCE USER RELOAD
         auth.currentUser.reload().then(() => {
           auth.currentUser.getToken(true);
         }).catch(err => console.warn(err));
       }).catch(err => {
-        if (is.current) setState(prevState => ({ ...prevState, loading: false }));
+        if (is.current) setLoading(false);
         openSnackbar(handleFirestoreError(err), 'error');
       });
     });
@@ -61,10 +60,6 @@ const VerifyEmailPage = props => {
       </div>
     </div>
   );
-}
-
-VerifyEmailPage.propTypes = {
-  openSnackbar: funcType.isRequired
 }
  
 export default VerifyEmailPage;

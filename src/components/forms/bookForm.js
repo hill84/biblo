@@ -16,7 +16,7 @@ import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
@@ -25,6 +25,7 @@ import icon from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, timestamp, urlRegex, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Cover from '../cover';
 
@@ -61,7 +62,8 @@ const min = {
 
 const BookForm = props => {
   const { user } = useContext(UserContext);
-  const { isEditing, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { isEditing } = props;
   const [book, setBook] = useState({
     ISBN_10: props.book.ISBN_10 || (props.book.ISBN_13 ? isbn.parse(props.book.ISBN_13) ? isbn.parse(props.book.ISBN_13).asIsbn10() : 0 : 0), 
     ISBN_13: props.book.ISBN_13 || 0, 
@@ -925,8 +927,7 @@ const BookForm = props => {
 
 BookForm.propTypes = {
   book: bookType.isRequired,
-  isEditing: funcType.isRequired,
-  openSnackbar: funcType.isRequired
+  isEditing: funcType.isRequired
 }
  
 export default BookForm;

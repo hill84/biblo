@@ -147,7 +147,6 @@ export default class NotesDash extends Component {
 
 	render() {
     const { count, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, page, redirectTo, selectedId } = this.state;
-    const { openSnackbar } = this.props;
 
     if (redirectTo) return <Redirect to={`/notifications/${redirectTo}`} />
 
@@ -174,7 +173,7 @@ export default class NotesDash extends Component {
           onClick={() => this.onToggleExpansion(item.id)}>
           <div className="row">
             <div className="col-auto">{item.count || 0}</div>
-            <div className="col monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.id}/></div>
+            <div className="col monotype"><CopyToClipboard text={item.id}/></div>
             <div className="col-1 text-right expandible-icon">
               {icon.chevronDown}
             </div>
@@ -187,7 +186,7 @@ export default class NotesDash extends Component {
                     <div className="col-auto">{i + 1}</div>
                     <div className="col"><div dangerouslySetInnerHTML={{__html: note.text}} /></div>
                     <div className="col-sm-3 col-lg-2 monotype hide-sm text-center">
-                      <CopyToClipboard openSnackbar={openSnackbar} text={note.nid} />
+                      <CopyToClipboard text={note.nid} />
                     </div>
                     <div className="col-auto" title={note.read ? 'Letta' : 'Non letta'}>{note.read ? icon.check : icon.close}</div>
                     <div className="col-auto col-sm-2 col-lg-1 text-right">

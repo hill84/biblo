@@ -165,7 +165,6 @@ export default class BooksDash extends Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    const { openSnackbar } = this.props;
     
     if (redirectTo) return <Redirect to={`/book/${redirectTo}`} />
 
@@ -212,13 +211,13 @@ export default class BooksDash extends Component {
               {Object.keys(item.authors)[0]}
             </Link>
             <div className="col hide-md monotype" title={item.bid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.bid}/>
+              <CopyToClipboard text={item.bid}/>
             </div>
             <div className="col hide-md monotype" title={item.ISBN_13}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_13}/>
+              <CopyToClipboard text={item.ISBN_13}/>
             </div>
             <div className="col hide-md monotype" title={item.ISBN_10}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_10} />
+              <CopyToClipboard text={item.ISBN_10} />
             </div>
             <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm">
               {item.EDIT.createdBy}

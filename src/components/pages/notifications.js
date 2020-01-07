@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { notesRef, notificationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import NoteMenuItem from '../noteMenuItem';
 import PaginationControls from '../paginationControls';
@@ -18,9 +18,9 @@ const orderBy = [
   { type: 'createdByUid', label: 'Mittente'}
 ];
 
-const Notifications = props => {
+const Notifications = () => {
   const { user } = useContext(UserContext);
-  const { openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
   const [count, setCount] = useState(0);
   const [desc, setDesc] = useState(true);
   const [items, setItems] = useState(null);
@@ -190,10 +190,6 @@ const Notifications = props => {
       }
     </div>
   );
-}
-
-Notifications.propTypes = {
-  openSnackbar: funcType.isRequired
 }
  
 export default Notifications;

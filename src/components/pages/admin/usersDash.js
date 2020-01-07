@@ -6,13 +6,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
 import { funcType } from '../../../config/types';
+import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -29,7 +30,8 @@ const orderBy = [
 ];
 
 const UsersDash = props => {
-  const { onToggleDialog, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { onToggleDialog } = props;
   const [state, setState] = useState({
     firstVisible: null,
     items: null,
@@ -265,10 +267,10 @@ const UsersDash = props => {
             {item.displayName}
           </Link>
           <div className="col monotype hide-sm" title={item.uid}>
-            <CopyToClipboard openSnackbar={openSnackbar} text={item.uid} />
+            <CopyToClipboard text={item.uid} />
           </div>
           <div className="col monotype hide-sm" title={item.email}>
-            <CopyToClipboard openSnackbar={openSnackbar} text={item.email} />
+            <CopyToClipboard text={item.email} />
           </div>
           <div className="col col-sm-3 col-lg-2 hide-xs">
             <div className="row text-center">
@@ -384,8 +386,7 @@ const UsersDash = props => {
 }
 
 UsersDash.propTypes = {
-  onToggleDialog: funcType.isRequired,
-  openSnackbar: funcType.isRequired
+  onToggleDialog: funcType.isRequired
 }
  
 export default UsersDash;

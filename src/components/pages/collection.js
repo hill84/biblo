@@ -9,7 +9,8 @@ import { collectionFollowersRef, collectionRef, collectionsRef } from '../../con
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, timestamp, truncateString } from '../../config/shared';
-import { funcType, historyType, locationType, matchType } from '../../config/types';
+import { historyType, locationType, matchType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
@@ -18,7 +19,8 @@ import Bubbles from './bubbles';
 
 const Collection = props => {
   const { user } = useContext(UserContext);
-  const { history, location, match, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { history, location, match } = props;
   const [collection, setCollection] = useState(null);
   const [collections, setCollections] = useState(null);
   const [desc, setDesc] = useState(false);
@@ -267,7 +269,7 @@ const Collection = props => {
         </div>
         <div className="col-md-6">
           <div className="card light">
-            <BookCollection cid={denormURL(cid)} openSnackbar={openSnackbar} pagination={false} booksPerRow={1} stacked />
+            <BookCollection cid={denormURL(cid)} pagination={false} booksPerRow={1} stacked />
           </div>
         </div>
       </div>
@@ -278,8 +280,7 @@ const Collection = props => {
 Collection.propTypes = {
   history: historyType,
   location: locationType,
-  match: matchType,
-  openSnackbar: funcType.isRequired
+  match: matchType
 }
 
 Collection.defaultProps = {

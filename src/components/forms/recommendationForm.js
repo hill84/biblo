@@ -5,6 +5,7 @@ import { followingsRef, notesRef, userRecommendationsRef } from '../../config/fi
 import icon from '../../config/icons';
 import { app, diffDays, getInitials, handleFirestoreError, normURL, timestamp, truncateString } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/recommendationForm.css';
 import Overlay from '../overlay';
@@ -15,6 +16,7 @@ const quoteLimit = 5;
 
 const RecommendationForm = props => {
   const { user } = useContext(UserContext);
+  const { openSnackbar } = useContext(SnackbarContext);
   const { uid, displayName, photoURL } = user;
   const quoteInitialState = {
     uid,
@@ -24,7 +26,7 @@ const RecommendationForm = props => {
     timestamp,
     recommends: []
   };
-  const { book, onToggle, openSnackbar } = props;
+  const { book, onToggle } = props;
   const [quote, setQuote] = useState(quoteInitialState);
   const [loading, setLoading] = useState(false);
   const [followings, setFollowings] = useState(null);
@@ -210,8 +212,7 @@ const RecommendationForm = props => {
 
 RecommendationForm.propTypes = {
   book: bookType.isRequired,
-  onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired
+  onToggle: funcType.isRequired
 }
  
 export default RecommendationForm;

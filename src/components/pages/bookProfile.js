@@ -181,7 +181,7 @@ export default class BookProfile extends Component {
   
 	render() {
     const { book, ISBN, isOpenIncipit, isOpenReadingState, isOpenRecommendation, userBook } = this.state;
-    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, location, openSnackbar, removeReview, user } = this.props;
+    const { addBookToShelfRef, addBookToWishlistRef, addReview, loading, location, removeReview, user } = this.props;
     
     if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
     
@@ -213,7 +213,6 @@ export default class BookProfile extends Component {
               bid={book.bid}
               readingState={userBook.readingState}
               onToggle={this.onToggleReadingState}
-              openSnackbar={openSnackbar}
               pages={book.pages_num}
             />
           }
@@ -221,8 +220,7 @@ export default class BookProfile extends Component {
           {isOpenRecommendation && user &&
             <RecommendationForm
               book={book}
-              onToggle={this.onToggleSuggest} 
-              openSnackbar={openSnackbar}
+              onToggle={this.onToggleSuggest}
             />
           }
 
@@ -284,9 +282,9 @@ export default class BookProfile extends Component {
                           <option value="ISBN_13">ISBN-13</option>
                           <option value="ISBN_10">ISBN-10</option>
                         </select>
-                      </Tooltip> <CopyToClipboard openSnackbar={openSnackbar} text={book[ISBN]}/>
+                      </Tooltip> <CopyToClipboard text={book[ISBN]}/>
                     </span>
-                    {/* book.ISBN_10 !== 0 && <span className="counter">ISBN-10 <CopyToClipboard openSnackbar={openSnackbar} text={book.ISBN_10}/></span> */}
+                    {/* book.ISBN_10 !== 0 && <span className="counter">ISBN-10 <CopyToClipboard text={book.ISBN_10}/></span> */}
                     {book.publication && <span className="counter">Pubblicazione {new Date(book.publication).toLocaleDateString()}</span>}
                     {/* book.edition_num !== 0 && <span className="counter">Edizione {book.edition_num}</span> */}
                     {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className="counter">Pagine {book.pages_num}</span>}
@@ -373,17 +371,16 @@ export default class BookProfile extends Component {
                   <UserReview
                     addReview={addReview}
                     bid={book.bid}
-                    openSnackbar={openSnackbar}
                     removeReview={removeReview}
                     userBook={userBook}
                   />
                 }
-                <Reviews bid={book.bid} openSnackbar={openSnackbar} />
+                <Reviews bid={book.bid} />
                 {book.collections[0] && 
                   <InView triggerOnce rootMargin="200px">
                     {({ inView, ref }) => 
                       <div className="card dark card-fullwidth-sm" ref={ref} style={{ marginBottom: 0, }}>
-                        <BookCollection cid={book.collections[0]} openSnackbar={openSnackbar} pagination={false} limit={7} inView={inView} scrollable />
+                        <BookCollection cid={book.collections[0]} pagination={false} limit={7} inView={inView} scrollable />
                       </div>
                     }
                   </InView>

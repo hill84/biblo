@@ -19,7 +19,8 @@ import icon from '../config/icons';
 import { roles } from '../config/lists';
 import { app, getInitials, hasRole } from '../config/shared';
 import { darkTheme } from '../config/themes';
-import { childrenType, funcType, stringType } from '../config/types';
+import { childrenType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/layout.css';
 import logo from '../images/logo.svg';
@@ -27,8 +28,9 @@ import Footer from './footer';
 import NoteMenuItem from './noteMenuItem';
 
 const Layout = props => {
-  const { user } = useContext(UserContext);
-  const { children, error, openSnackbar } = props;
+  const { error, user } = useContext(UserContext);
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { children } = props;
   const [notes, setNotes] = useState(null);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [moreAnchorEl, setMoreAnchorEl] = useState(null);
@@ -305,14 +307,11 @@ const Layout = props => {
 }
 
 Layout.propTypes = {
-  children: childrenType,
-  error: stringType,
-  openSnackbar: funcType.isRequired
+  children: childrenType
 }
 
 Layout.defaultProps = {
-  children: null,
-  error: null
+  children: null
 }
  
 export default Layout;

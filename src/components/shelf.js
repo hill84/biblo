@@ -3,13 +3,15 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import icon from '../config/icons';
 import { userBookTypes } from '../config/lists';
 import { booksPerRow, handleFirestoreError, normURL, timestamp } from '../config/shared';
-import { funcType, stringType } from '../config/types';
+import { stringType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
+import UserContext from '../context/userContext';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -31,7 +33,10 @@ const unsub = {
 const pagination = true;
 
 const Shelf = props => {
-  const { luid, openSnackbar, uid } = props;
+  const { user } = useContext(UserContext);
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { uid } = props;
+  const luid = user && user.uid;
   const [coverview, setCoverview] = useState(true);
   const [desc, setDesc] = useState(true);
   const [filterByIndex, setFilterByIndex] = useState(0);
@@ -68,80 +73,78 @@ const Shelf = props => {
   const fetchUserBooks = useCallback(e => {
     const direction = e && e.currentTarget.dataset.direction;
 
-    if (uid) {
-      const prev = direction === 'prev';
-      const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
-      const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
-      const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
-      const setEmptyState = () => {
-        setIsOwner(luid === uid);
-        setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
-        setCount(0);
-        setItems([]);
-        setLoading(false);
-        setPage(1);
-      };
-  
-      unsub.userBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
-        if (!fullSnap.empty) {
-          if (is.current) setCount(fullSnap.docs.length);
+    const prev = direction === 'prev';
+    const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
+    const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
+    const setEmptyState = () => {
+      setIsOwner(luid === uid);
+      setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
+      setCount(0);
+      setItems([]);
+      setLoading(false);
+      setPage(1);
+    };
 
-          const fullBooks = [];
+    unsub.userBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
+      if (!fullSnap.empty) {
+        if (is.current) setCount(fullSnap.docs.length);
 
-          fullSnap.forEach(fullUserBook => fullBooks.push({ 
-            readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
-          }));
-          
-          const lastVisible = fullSnap.docs[startAt];
-          const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
+        const fullBooks = [];
 
-          unsub.userBooksFetch = ref.limit(limit).onSnapshot(snap => {
-            if (is.current) setLoading(true);
+        fullSnap.forEach(fullUserBook => fullBooks.push({ 
+          readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
+        }));
+        
+        const lastVisible = fullSnap.docs[startAt];
+        const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
 
-            if (!snap.empty) {
-              const items = [];
-              snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
+        unsub.userBooksFetch = ref.limit(limit).onSnapshot(snap => {
+          if (is.current) setLoading(true);
 
-              if (is.current) {
-                setIsOwner(luid === uid);
-                setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
-                setItems(items);
-                setLoading(false);
-                setPage(page => (direction ? prev ? page > 1 ? page - 1 : 1 : (page * limit) > count ? page : page + 1 : 1));
-                
-                // GET CHALLENGES
-                luid === uid && userRef(luid).collection('challenges').get().then(snap => {
-                  if (!snap.empty) {
-                    const challenges = [];
-                    snap.forEach(doc => challenges.push(doc.data()));
-                    // UPDATE READING STATE OF CHALLENGE BOOKS 
-                    const { cid } = challenges[0];
-                    const cBooks = { ...challenges[0].books };
-                    Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
-                      fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
-                        cBooks[item.bid] = true;
-                      });
+          if (!snap.empty) {
+            const items = [];
+            snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
+
+            if (is.current) {
+              setIsOwner(luid === uid);
+              setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
+              setItems(items);
+              setLoading(false);
+              setPage(page => (direction ? prev ? page > 1 ? page - 1 : 1 : (page * limit) > count ? page : page + 1 : 1));
+              
+              // GET CHALLENGES
+              luid === uid && userRef(luid).collection('challenges').get().then(snap => {
+                if (!snap.empty) {
+                  const challenges = [];
+                  snap.forEach(doc => challenges.push(doc.data()));
+                  // UPDATE READING STATE OF CHALLENGE BOOKS 
+                  const { cid } = challenges[0];
+                  const cBooks = { ...challenges[0].books };
+                  Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
+                    fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
+                      cBooks[item.bid] = true;
                     });
-                    Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
-                      fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
-                        cBooks[item.bid] = false;
-                      });
+                  });
+                  Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
+                    fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
+                      cBooks[item.bid] = false;
                     });
-                    if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
-                      console.warn(cBooks);
-                      userRef(luid).collection('challenges').doc(cid).update({ 
-                        books: cBooks, 
-                        completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? timestamp : 0
-                      }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-                    } // else console.log('No challenge books to update');
-                  }
-                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-              }
-            } else if (is.current) setEmptyState();
-          });
-        } else if (is.current) setEmptyState();
-      });
-    } else console.warn(`No uid: ${uid}`);
+                  });
+                  if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
+                    console.warn(cBooks);
+                    userRef(luid).collection('challenges').doc(cid).update({ 
+                      books: cBooks, 
+                      completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? timestamp : 0
+                    }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+                  } // else console.log('No challenge books to update');
+                }
+              }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+            }
+          } else if (is.current) setEmptyState();
+        });
+      } else if (is.current) setEmptyState();
+    });
     // eslint-disable-next-line
   }, [count, desc, filterByIndex, limit, luid, openSnackbar, orderByIndex, shelf, uid]);
 
@@ -306,15 +309,12 @@ const Shelf = props => {
 }
 
 Shelf.propTypes = {
-  openSnackbar: funcType.isRequired,
   shelf: stringType,
-  luid: stringType,
   uid: stringType.isRequired
 }
 
 Shelf.defaultProps = {
-  shelf: null,
-  luid: null
+  shelf: null
 }
  
 export default Shelf;

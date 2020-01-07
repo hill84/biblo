@@ -1,17 +1,19 @@
 import { Tooltip } from '@material-ui/core';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
 import { genres } from '../config/lists';
 import { app, booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
-import { boolType, funcType, numberType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 const _booksPerRow = booksPerRow;
 
 const BookCollection = props => {
+  const { openSnackbar } = useContext(SnackbarContext);
   const [state, setState] = useState({
     booksPerRow: props.booksPerRow,
     limit:  props.limit || (props.pagination ? _booksPerRow() : 98),
@@ -23,7 +25,7 @@ const BookCollection = props => {
     // lastVisible: null
   });
 
-  const { bcid, cid, inView, openSnackbar, pagination, scrollable, stacked } = props;
+  const { bcid, cid, inView, pagination, scrollable, stacked } = props;
   const { booksPerRow, collection, count, desc, limit, loading, page } = state;
 
   const is = useRef(true);
@@ -172,7 +174,6 @@ BookCollection.propTypes = {
   desc: boolType,
   inView: boolType,
   limit: numberType,
-  openSnackbar: funcType.isRequired,
   pagination: boolType,
   scrollable: boolType,
   stacked: boolType

@@ -1,16 +1,18 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { isAuthenticated, reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { boolType, funcType, numberType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
 import PaginationControls from './paginationControls';
 import Review from './review';
 
 const desc = true;
 
 const Reviews = props => {
-  const { bid, container, limit, openSnackbar, pagination, skeleton, uid } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { bid, container, limit, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,6 @@ const Reviews = props => {
               <Review 
                 key={`${item.bid || 'nobid'}_${item.createdByUid}`}
                 bid={bid}
-                openSnackbar={openSnackbar}
                 uid={uid}
                 review={{
                   bid: item.bid || '',
@@ -147,7 +148,6 @@ Reviews.propTypes = {
   bid: stringType,
   container: boolType,
   limit: numberType,
-  openSnackbar: funcType.isRequired,
   pagination: boolType,
   skeleton: boolType,
   uid: stringType

@@ -14,7 +14,8 @@ import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from 
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, timestamp, truncateString } from '../../config/shared';
-import { funcType, historyType, locationType, matchType } from '../../config/types';
+import { historyType, locationType, matchType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
 import NoMatch from '../noMatch';
@@ -39,7 +40,8 @@ const skltnStyle = { margin: '.4em 0', };
 
 const Dashboard = props => {
   const { user } = useContext(UserContext);
-  const { history, location, match, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { history, location, match } = props;
   const tab = match.params && match.params.tab;
   const [uid, setUid] = useState(null);
   const [luid, setLuid] = useState(null);
@@ -542,13 +544,13 @@ const Dashboard = props => {
         index={tabSelected}
         onChangeIndex={onTabSelectIndex}>
         <div className="card tab" dir={tabDir}>
-          {tabSelected === 0 && <Shelf luid={luid} uid={uid} openSnackbar={openSnackbar} shelf="bookInShelf" />}
+          {tabSelected === 0 && uid && <Shelf uid={uid} shelf="bookInShelf" />}
         </div>
         <div className="card tab" dir={tabDir}>
-          {tabSelected === 1 && <Shelf luid={luid} uid={uid} openSnackbar={openSnackbar} shelf="bookInWishlist" />}
+          {tabSelected === 1 && uid && <Shelf uid={uid} shelf="bookInWishlist" />}
         </div>
         <div className="card tab" dir={tabDir}>
-          {tabSelected === 2 && <Reviews uid={uid} limit={3} container={false} openSnackbar={openSnackbar} pagination skeleton />}
+          {tabSelected === 2 && uid && <Reviews uid={uid} limit={3} container={false} pagination skeleton />}
         </div>
         <div className="card tab contacts-tab" dir={tabDir}>
           {tabSelected === 3 && 
@@ -573,8 +575,7 @@ const Dashboard = props => {
 Dashboard.propTypes = {
   history: historyType,
   location: locationType,
-  match: matchType,
-  openSnackbar: funcType.isRequired
+  match: matchType
 }
 
 Dashboard.defaultProps = {

@@ -149,7 +149,6 @@ export default class QuotesDash extends Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    const { openSnackbar } = this.props;
 
     if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
 
@@ -192,7 +191,7 @@ export default class QuotesDash extends Component {
             {item.bid ? <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
             <Link to={`/author/${normURL(item.author)}`} className="col">{item.author}</Link>
             <div className="col-5 hide-sm" title={item.quote}>{item.quote}</div>
-            <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.qid}/></div>
+            <div className="col hide-sm monotype"><CopyToClipboard text={item.qid}/></div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col hide-sm">
               {item.lastEditBy}
             </Link>

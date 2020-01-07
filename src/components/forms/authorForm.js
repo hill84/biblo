@@ -11,6 +11,7 @@ import { authorRef, authorsRef } from '../../config/firebase';
 import { getInitials, handleFirestoreError, normalizeString, timestamp } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import UserContext from '../../context/userContext';
+import SnackbarContext from '../../context/snackbarContext';
 import Overlay from '../overlay';
 
 const avatarImgStyle = { width: '100%', height: '100%', };
@@ -22,7 +23,8 @@ const min = { chars: { bio: 50 }};
 
 const AuthorForm = props => {
   const { user } = useContext(UserContext);
-  const { id, onToggle, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { id, onToggle } = props;
   const [data, setData] = useState({
     displayName: '',
     source: '',
@@ -279,7 +281,6 @@ const AuthorForm = props => {
 
 AuthorForm.propTypes = {
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
   id: stringType
 }
 

@@ -18,12 +18,13 @@ import React, { forwardRef, useCallback, useContext, useEffect, useRef, useState
 import { authid, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../config/shared';
-import { funcType, stringType, userBookType } from '../config/types';
+import { stringType, userBookType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
+import UserContext from '../context/userContext';
 import '../css/emojiMart.css';
 import emojiMartLocale from '../locales/emojiMart';
 import Overlay from './overlay';
 import Rating from './rating';
-import UserContext from '../context/userContext';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -50,7 +51,8 @@ const min = {
 
 const UserReview = props => {
   const { user } = useContext(UserContext);
-  const { bid, openSnackbar, userBook } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { bid, userBook } = props;
   const [review, setReview] = useState({
     bid: '',
     bookTitle: '',
@@ -392,7 +394,6 @@ const UserReview = props => {
 UserReview.propTypes = {
   // addReview: funcType.isRequired,
   bid: stringType.isRequired,
-  openSnackbar: funcType.isRequired,
   // removeReview: funcType.isRequired,
   userBook: userBookType
 }

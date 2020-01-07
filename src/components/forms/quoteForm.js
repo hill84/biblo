@@ -8,6 +8,7 @@ import ImageZoom from 'react-medium-image-zoom';
 import { quoteRef, quotesRef } from '../../config/firebase';
 import { imageZoomDefaultStyles, timestamp } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 
@@ -21,7 +22,8 @@ const min = { chars: { quote: 50 }};
 
 const QuoteForm = props => {
   const { user } = useContext(UserContext);
-  const { id, onToggle, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { id, onToggle } = props;
   const [data, setData] = useState({
     author: '',
     bid: '',
@@ -271,7 +273,6 @@ const QuoteForm = props => {
 
 QuoteForm.propTypes = {
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
   id: stringType
 }
 

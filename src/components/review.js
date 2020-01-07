@@ -5,12 +5,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
-import React, { forwardRef, useCallback, useContext, useMemo, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, timestamp, truncateString } from '../config/shared';
-import { funcType, reviewType, stringType } from '../config/types';
+import { reviewType, stringType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
@@ -21,7 +22,8 @@ const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const Review = props => {
   const { user } = useContext(UserContext);
-  const { bid, openSnackbar, review, uid } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { bid, review, uid } = props;
   const [flagLoading, setFlagLoading] = useState(false);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
@@ -262,7 +264,6 @@ const Review = props => {
 
 Review.propTypes = {
   bid: stringType,
-  openSnackbar: funcType.isRequired,
   review: reviewType.isRequired,
   uid: stringType
 }
