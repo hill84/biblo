@@ -214,7 +214,7 @@ const BookProfile = props => {
                 <h2 className="title flex">{loading ? <span className="skltn area" /> : book.title}</h2>
                 {book && book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                 {loading ? (
-                  <div className="skltn rows" />
+                  <div className="skltn rows" style={{ marginTop: '2em', }} />
                 ) : book && (
                   <>
                     <div className="info-row">
@@ -225,7 +225,7 @@ const BookProfile = props => {
                       {isAuthenticated() && hasBid && isEditor && (
                         <>
                           {isAdmin && 
-                            <button type="button" onClick={onLock} className={`link counter ${book.EDIT.edit ? 'flat' : 'primary'}`}>
+                            <button type="button" onClick={onLock} className={`link counter ${book.EDIT.edit ? 'flat' : 'active'}`}>
                               <span className="show-sm">{book.EDIT.edit ? icon.lock : icon.lockOpen}</span>
                               <span className="hide-sm">{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</span>
                             </button>
