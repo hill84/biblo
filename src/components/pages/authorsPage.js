@@ -9,8 +9,17 @@ import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError, normURL } from '../../config/shared';
-import { funcType, numberType } from '../../config/types';
+import { funcType } from '../../config/types';
 import PaginationControls from '../paginationControls';
+
+const orderBy = [ 
+  { type: 'photoURL', label: 'Foto' },
+  { type: 'displayName', label: 'Nominativo' }, 
+  { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
+  { type: 'sex', label: 'Sesso' }
+];
+
+const limit = 27;
 
 export default class AuthorsPage extends Component {
 	state = {
@@ -18,25 +27,13 @@ export default class AuthorsPage extends Component {
     count: 0,
     desc: false,
     lastVisible: null,
-    limit: this.props.limit,
     loading: true,
-    orderBy: [ 
-      { type: 'photoURL', label: 'Foto' },
-      { type: 'displayName', label: 'Nominativo' }, 
-      { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
-      { type: 'sex', label: 'Sesso' }
-    ],
     orderByIndex: 1,
     page: 1
   }
 
   static propTypes = {
-    limit: numberType,
     openSnackbar: funcType.isRequired
-  }
-
-  static defaultProps = {
-    limit: 27
   }
 
   componentDidMount() {
@@ -45,9 +42,9 @@ export default class AuthorsPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { desc, limit, orderByIndex } = this.state;
+    const { desc, orderByIndex } = this.state;
     if (this._isMounted) {
-      if (desc !== prevState.desc || limit !== prevState.limit || orderByIndex !== prevState.orderByIndex) {
+      if (desc !== prevState.desc || orderByIndex !== prevState.orderByIndex) {
         this.fetch();
       }
     }
@@ -59,16 +56,14 @@ export default class AuthorsPage extends Component {
 
   fetch = e => { 
     const { openSnackbar } = this.props;
-    const { desc, firstVisible, lastVisible, limit, orderBy, orderByIndex } = this.state;
+    const { desc, firstVisible, lastVisible, orderByIndex } = this.state;
     const direction = e && e.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const ref = authorsRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
     const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
     const dRef = direction ? paginatedRef : ref;
 
-    if (this._isMounted) {
-      this.setState({ loading: true });
-    }
+    if (this._isMounted) this.setState({ loading: true });
 
     const fetcher = () => {
       dRef.get().then(snap => {
@@ -110,9 +105,9 @@ export default class AuthorsPage extends Component {
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 	
 	render() {
-    const { count, desc, items, limit, loading, orderBy, orderByIndex, orderMenuAnchorEl, page } = this.state;
+    const { count, desc, items, loading, orderByIndex, orderMenuAnchorEl, page } = this.state;
 
-    if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div> 
+    // if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div> 
     
     const orderByOptions = orderBy.map((option, index) => (
       <MenuItem
@@ -131,8 +126,14 @@ export default class AuthorsPage extends Component {
           <meta name="description" content={app.desc} />
         </Helmet>
         <div className="card dark">
-          {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : !items ? <div className="empty text-center">Nessun elemento</div> :
+          {!loading && !items ? (
+            <div className="empty text-center">Nessun elemento</div>
+          ) : (
             <>
+              {loading && (
+                <div aria-hidden="true" className="loader"><CircularProgress /></div>
+              )}
+              
               <div className="head nav" role="navigation">
                 <div className="row">
                   <div className="col">
@@ -162,27 +163,26 @@ export default class AuthorsPage extends Component {
                 </div>
               </div>
 
-              <div className={`bubbles boxed shelf-row avatars-row ${loading ? 'skltns-row' : 'hoverable-items'}`}>
-                {items.map((item, index) => 
-                  <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} style={{ animationDelay: `${index/20}s`, }} className="bubble">
+              <div className="bubbles boxed shelf-row avatars-row hoverable-items">
+                {items && items.map((item, index) => (
+                  <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} data-index={index} className="bubble">
                     <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>
                       {!item.photoURL && getInitials(item.displayName)}
                     </Avatar>
                     <div className="title">{item.displayName}</div>
                   </Link>
-                )}
+                ))}
               </div>
               
               <PaginationControls 
                 count={count} 
                 fetch={this.fetch}
                 limit={limit}
-                loading={loading}
-                // oneWay
                 page={page}
               />
+              
             </>
-          }
+          )}
         </div>
       </div>
 		);

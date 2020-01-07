@@ -11,13 +11,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    & .skltn {
-      margin-left: 0;
-      height: calc(var(--avatarSize) * .5);
-      width: 40%;
-      min-width: 50px;
-      max-width: 250px;
-    }
   }
   & .email { color: var(--lightTextClr); }
   & .role-badges { position: absolute; top: 10px; right: 10px; z-index: 1; }

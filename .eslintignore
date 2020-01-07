@@ -1,0 +1,5 @@
+node_modules/*
+build/*
+
+functions/node_modules/*
+functions/lib/*

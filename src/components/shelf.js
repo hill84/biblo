@@ -77,13 +77,14 @@ const Shelf = props => {
     const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
     const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
     const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
-    const setEmptyState = () => {
+    const setEmptyState = err => {
       setIsOwner(luid === uid);
       setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
       setCount(0);
       setItems([]);
       setLoading(false);
       setPage(1);
+      if (err) openSnackbar(handleFirestoreError(err), 'error');
     };
 
     unsub.userBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
@@ -139,7 +140,7 @@ const Shelf = props => {
                     }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
                   } // else console.log('No challenge books to update');
                 }
-              }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+              }).catch(err => setEmptyState(err));
             }
           } else if (is.current) setEmptyState();
         });

@@ -16,7 +16,7 @@ import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
@@ -63,40 +63,40 @@ const min = {
 const BookForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { isEditing } = props;
+  const { book: _book, isEditing } = props;
   const [book, setBook] = useState({
-    ISBN_10: props.book.ISBN_10 || (props.book.ISBN_13 ? isbn.parse(props.book.ISBN_13) ? isbn.parse(props.book.ISBN_13).asIsbn10() : 0 : 0), 
-    ISBN_13: props.book.ISBN_13 || 0, 
-    EDIT: props.book.EDIT || {
-      createdBy: props.book.createdBy || '',
-      createdByUid: props.book.createdByUid || '',
-      created_num: props.book.created || 0,
+    ISBN_10: _book.ISBN_10 || (_book.ISBN_13 ? isbn.parse(_book.ISBN_13) ? isbn.parse(_book.ISBN_13).asIsbn10() : 0 : 0), 
+    ISBN_13: _book.ISBN_13 || 0, 
+    EDIT: _book.EDIT || {
+      createdBy: _book.createdBy || '',
+      createdByUid: _book.createdByUid || '',
+      created_num: _book.created || 0,
       edit: true,
-      lastEditBy: props.book.lastEditBy || '',
-      lastEditByUid: props.book.lastEditByUid || '',
-      lastEdit_num: props.book.lastEdit || 0
+      lastEditBy: _book.lastEditBy || '',
+      lastEditByUid: _book.lastEditByUid || '',
+      lastEdit_num: _book.lastEdit || 0
     },
-    authors: props.book.authors || {}, 
-    bid: props.book.bid || '', 
-    collections: props.book.collections || [],
-    covers: props.book.covers || [], 
-    description: props.book.description || '', 
-    edition_num: props.book.edition_num || 0, 
-    format: props.book.format || '', 
-    genres: props.book.genres || [], 
-    incipit: props.book.incipit || '',
-    languages: props.book.languages || [], 
-    pages_num: props.book.pages_num || 0, 
-    publisher: props.book.publisher || '', 
-    publication: props.book.publication || '', 
-    readers_num: props.book.readers_num || 0,
-    rating_num: props.book.rating_num || 0,
-    ratings_num: props.book.ratings_num || 0,
-    reviews_num: props.book.reviews_num || 0,
-    subtitle: props.book.subtitle || '', 
-    title: props.book.title || '', 
-    title_sort: props.book.title_sort || '',
-    trailerURL: props.book.trailerURL || ''
+    authors: _book.authors || {}, 
+    bid: _book.bid || '', 
+    collections: _book.collections || [],
+    covers: _book.covers || [], 
+    description: _book.description || '', 
+    edition_num: _book.edition_num || 0, 
+    format: _book.format || '', 
+    genres: _book.genres || [], 
+    incipit: _book.incipit || '',
+    languages: _book.languages || [], 
+    pages_num: _book.pages_num || 0, 
+    publisher: _book.publisher || '', 
+    publication: _book.publication || '', 
+    readers_num: _book.readers_num || 0,
+    rating_num: _book.rating_num || 0,
+    ratings_num: _book.ratings_num || 0,
+    reviews_num: _book.reviews_num || 0,
+    subtitle: _book.subtitle || '', 
+    title: _book.title || '', 
+    title_sort: _book.title_sort || '',
+    trailerURL: _book.trailerURL || ''
   });
   const [changes, setChanges] = useState([]);
   const [errors, setErrors] = useState({});
@@ -108,7 +108,7 @@ const BookForm = props => {
   const [isOpenChangesDialog, setIsOpenChangesDialog] = useState(false);
   const [leftChars, setLeftChars] = useState({ description: null, incipit: null });
   const [loading, setLoading] = useState(false);
-  const [prevBook, setPrevBook] = useState(props.book);
+  const [prevBook, setPrevBook] = useState(_book);
   const [redirectToBook, setRedirectToBook] = useState(null);
   const is = useRef(true);
 
@@ -121,21 +121,21 @@ const BookForm = props => {
     // eslint-disable-next-line
   }, []);
 
-  const onToggleDescription = useCallback(e => {
+  const onToggleDescription = e => {
     e.persist();
     e.preventDefault();
 
     if (is.current) {
       setIsEditingDescription(isEditingDescription => (!isEditingDescription));
     }
-  }, []);
+  };
   
-  const onToggleIncipit = useCallback(e => {
+  const onToggleIncipit = e => {
     e.persist();
     e.preventDefault();
     
     if (is.current) setIsEditingIncipit(isEditingIncipit => (!isEditingIncipit));
-  }, []);
+  };
 
   const setChange = useCallback((name, value) => {
     const index = changes.indexOf(name);
@@ -152,15 +152,15 @@ const BookForm = props => {
     } else if (index === -1) {
       setChanges(changes => ([...changes, name]));
     }
-  }, [changes, prevBook, setChanges]); // changes
+  }, [changes, prevBook, setChanges]);
 
   const setBookChange = useCallback((name, value) => {
     if (is.current) {
       setBook(book => ({ ...book, [name]: value }));
-      setErrors(errors => ({ ...errors, [name]: null }));
       setChange(name, value);
+      if (errors[name]) setErrors(errors => ({ ...errors, [name]: null }));
     }
-  }, [setChange]);
+  }, [errors, setChange]);
 
   const onChange = useCallback(e => {
     e.persist();
@@ -220,14 +220,14 @@ const BookForm = props => {
     const { name, value } = e.target;
 
     if (is.current) {
-      setLeftChars(leftChars => ({ ...leftChars, [name]: max.chars[name] - value.length }));
       setBookChange(name, value);
+      setLeftChars(leftChars => ({ ...leftChars, [name]: max.chars[name] - value.length }));
     }
   }, [setBookChange]);
 
-  const onPreventDefault = useCallback(e => { 
+  const onPreventDefault = e => { 
     if (e.key === 'Enter') e.preventDefault(); 
-  }, []);
+  };
 
   const checkISBNnum = useCallback(async num => {
     const result = await booksRef.where('ISBN_13', '==', Number(num)).limit(1).get().then(snap => {
@@ -284,7 +284,7 @@ const BookForm = props => {
       }
     } else if (!isISBN(String(book.ISBN_13), 13)) {
       errors.ISBN_13 = "Codice non valido";
-    } else if (!props.book.bid && isDuplicate) {
+    } else if (!_book.bid && isDuplicate) {
       errors.ISBN_13 = "Libro già presente";
     }
 
@@ -365,7 +365,7 @@ const BookForm = props => {
     });
     
     return errors;
-  }, [checkISBNnum, props.book]);
+  }, [checkISBNnum, _book]);
 
 	const onImageChange = useCallback(e => {
     e.preventDefault();
@@ -379,7 +379,7 @@ const BookForm = props => {
           setImgLoading(true);
           setErrors(errors => ({ ...errors, upload: null }));
         }
-        const uploadTask = storageRef(`books/${props.book.bid || book.bid}`, 'cover').put(file);
+        const uploadTask = storageRef(`books/${_book.bid || book.bid}`, 'cover').put(file);
         const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
           if (is.current) { 
             setImgProgress(snap.bytesTransferred / snap.totalBytes * 100);
@@ -417,7 +417,7 @@ const BookForm = props => {
         openSnackbar(uploadError, 'error');
       }
     }
-  }, [book, openSnackbar, props.book, setBookChange]);
+  }, [book, openSnackbar, _book, setBookChange]);
   
   const onSubmit = useCallback(async e => {
     e.preventDefault();
@@ -435,9 +435,9 @@ const BookForm = props => {
         const userUid = (user && user.uid) || '';
         const userDisplayName = (user && user.displayName) || '';
 
-        if (props.book.bid) {
+        if (_book.bid) {
           const { covers, EDIT, title_sort, ...restBook } = book;
-          bookRef(props.book.bid).set({
+          bookRef(_book.bid).set({
             ...restBook,
             covers: (imgPreview && Array(imgPreview)) || book.covers,
             title_sort: normalizeString(book.title) || book.title_sort,
@@ -549,7 +549,7 @@ const BookForm = props => {
         openSnackbar('Ricontrolla i dati inseriti', 'error');
       }
     } else isEditing();
-  }, [book, changes, imgPreview, isEditing, openSnackbar, props.book, user, validate]);
+  }, [book, changes, imgPreview, isEditing, openSnackbar, _book, user, validate]);
 
   const onExitEditing = useCallback(() => {
     if (changes.length) {
@@ -559,10 +559,10 @@ const BookForm = props => {
 
   const onCloseChangesDialog = () => setIsOpenChangesDialog(false);
 
-  const isAdmin = hasRole(user, 'admin');
-  const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
+  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
+  const maxPublication = useMemo(() => new Date(new Date().setMonth(new Date().getMonth() + 1)), []);
   
-  const menuItemsMap = useCallback((arr, values) => arr.map(item => 
+  const menuItemsMap = (arr, values) => arr.map(item => 
     <MenuItem 
       value={item.name} 
       key={item.id} 
@@ -570,15 +570,12 @@ const BookForm = props => {
       checked={values ? values.includes(item.name) : false}>
       {item.name}
     </MenuItem>
-  ), []);
+  );
   
   if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
 
-  const bookCover = book.covers[0];
-
   return (
     <>
-      <div className="content-background"><div className="bg" style={{ backgroundImage: `url(${bookCover})`, }} /></div>
       <div className="container top" ref={is}>
         <form className="card light">
           {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}

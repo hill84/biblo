@@ -352,8 +352,7 @@ const Dashboard = props => {
   const challengeProgress = useMemo(() => challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0, [challengeBooks_num, challengeReadBooks_num]);
   const challengeCompleted = useMemo(() => challengeProgress === 100, [challengeProgress]);
   const isMini = useMemo(() => isTouchDevice() || _screenSize === 'sm' || _screenSize === 'xs', [_screenSize]);
-
-  // if (!duser && loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
+  
   if (!duser && !loading) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
   
   const usersList = obj => (
@@ -442,15 +441,15 @@ const Dashboard = props => {
         <div className="col-md col-12">
           <div className="card dark basic-profile-card">
             <div className="basic-profile">
-                {duser &&
+                {duser && (
                   <Tooltip title="Ruolo utente" placement="left">
                     <div className="role-badges">{Roles} {!duser.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
                   </Tooltip>
-                }
+                )}
                 <div className="row">
                   <div className="col-auto">
                     <Avatar className="avatar" /* src={duser.photoURL} */ alt={duser ? duser.displayName : 'Avatar'}>
-                      {duser && !loading ? duser.photoURL ? 
+                      {!loading ? duser.photoURL ? 
                         <ImageZoom
                           defaultStyles={imageZoomDefaultStyles}
                           image={{ src: duser.photoURL, className: 'thumb' }}
@@ -460,8 +459,8 @@ const Dashboard = props => {
                     </Avatar>
                   </div>
                   <div className="col">
-                    <h2 className="username">{duser && !loading ? duser.displayName : <span className="skltn area" />}</h2>
-                    {duser && !loading ? (
+                    <h2 className="username">{loading ? <span className="skltn area" /> : duser.displayName}</h2>
+                    {!loading ? (
                       <>
                         <div className="info-row hide-xs">
                           {duser.sex && duser.sex !== 'x' && <span className="counter">{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
@@ -476,20 +475,22 @@ const Dashboard = props => {
                           {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
                         </div>
                         <div className="info-row">
-                          {!isOwner && isAuthenticated() &&
+                          {!isOwner && isAuthenticated() && (
                             <button 
                               type="button"
                               className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
                               // disabled={!isAuthenticated()}
                               onClick={onFollowUser}>
-                              {follow ? 
+                              {follow ? (
                                 <>
                                   <span className="hide-on-hover">{icon.check} Segui</span>
                                   <span className="show-on-hover">Smetti</span>
                                 </> 
-                              : <span>{icon.plus} Segui</span> }
+                              ) : ( 
+                                <span>{icon.plus} Segui</span>
+                              )}
                             </button>
-                          }
+                          )}
                           <span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
                           {screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
                         </div>
@@ -503,7 +504,7 @@ const Dashboard = props => {
             </div>
           </div>
         </div>
-        {isOwner && 
+        {isOwner && (
           <div className="col-lg-2 col-md-3 col-12 hide-md flex">
             <div className="card dark pad-v-sm text-center flex align-items-center">
               <div className="container">
@@ -519,7 +520,7 @@ const Dashboard = props => {
               </div>
             </div>
           </div>
-        }
+        )}
       </div>
 
       <AppBar position="static" className="appbar toppend mobile">
@@ -553,7 +554,7 @@ const Dashboard = props => {
           {tabSelected === 2 && uid && <Reviews uid={uid} limit={3} container={false} pagination skeleton />}
         </div>
         <div className="card tab contacts-tab" dir={tabDir}>
-          {tabSelected === 3 && 
+          {tabSelected === 3 && (
             <div className="row">
               <div className="col-md-6 cols-12 contacts-tab-col">
                 <h4>Seguito da:</h4>
@@ -564,7 +565,7 @@ const Dashboard = props => {
                 {loading ? contactsSkeleton : Object.keys(followings).length ? usersList(followings) : <EmptyRow />}
               </div>
             </div>
-          }
+          )}
         </div>
       </BindKeyboardSwipeableViews>
       <ShelfDetails />

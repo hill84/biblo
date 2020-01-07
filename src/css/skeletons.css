@@ -89,6 +89,7 @@
       linear-gradient(var(--skltnClr) 50%, transparent 50%);
     background-position: 0 0, 0 calc(var(--height) - (var(--rowH) / 2));
     background-size: 100% calc(var(--height) - var(--rowH)), calc(100% - var(--height)) var(--rowH);
+    &.one { --height: var(--rowH); }
     &.two { --height: 33px; }
     &.three { --height: 55px; }
     &.four { --height: 77px; }
@@ -164,6 +165,18 @@
   }
 }
 /* .stacked .skltn.book { background-repeat: repeat-y; } */
+h2, h3, h4 {
+  & .skltn.area {
+    margin-left: 0;
+    width: 40%;
+    min-width: 50px;
+    max-width: 250px;
+  }
+}
+h1 .skltn.area { height: 38px; }
+h2 .skltn.area { height: 28px; }
+h3 .skltn.area { height: 16px; }
+h4 .skltn.area { height: 14px; }
 
 .bubbles .skltn.shelf-row {
   --shelf-rowHeight: 119px;

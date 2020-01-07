@@ -1,5 +1,4 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { Component, createRef, lazy, Suspense } from 'react';
+import React, { Component, createRef, lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL, timestamp } from '../config/shared';
@@ -550,9 +549,11 @@ export default class Book extends Component {
 	
 	render() {
     const { book, isEditing, loading, seo, userBook } = this.state;
-    const { history, location, openSnackbar, user } = this.props;
+    const { history, location } = this.props;
 
     if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
+
+    const bgStyle = book ? { backgroundImage: `url(${book.covers[0]})`, } : {};
 
 		return (
       <>
@@ -573,7 +574,10 @@ export default class Book extends Component {
             <meta property="books:rating:scale" content={seo.rating.scale} />
           </Helmet>
         }
-        <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
+        
+        <div className="content-background">
+          <div className="bg" style={bgStyle} />
+        </div>
         {isEditing && isAuthenticated() ?
           <BookForm
             isEditing={this.isEditing}
@@ -581,7 +585,6 @@ export default class Book extends Component {
           />
         :
           <BookProfile 
-            openSnackbar={openSnackbar}
             addBookToShelf={this.addBookToShelf} 
             addBookToShelfRef={this.addBookToShelfRef} 
             addBookToWishlist={this.addBookToWishlist} 
@@ -597,10 +600,8 @@ export default class Book extends Component {
             loading={loading}
             book={book}
             userBook={userBook}
-            user={user}
           />
         }
-        </Suspense>
       </>
 		);
 	}

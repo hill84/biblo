@@ -3,7 +3,10 @@
 #BookProfile {
   position: relative;
   z-index: 1;
-  & .card .book { margin-bottom: 10px; }
+  & .card {
+    &.main { min-height: 256px; }
+    & .book { margin-bottom: 10px; }
+  }
   & .own.review {
     &:hover .row { opacity: 1; }
     & .row { opacity: .3; transition: all .4s ease-in-out; }
@@ -28,8 +31,16 @@
 }
 
 @media (--to-l) {
-  #BookProfile .book-profile .rating { display: block; }
-  /* #BookProfile .book-profile .rating .react-rater { font-size: 1.4rem; } */
+  #BookProfile {
+    & .share-buttons {
+      position: absolute; top: 0; left: 0;
+      & .btn-share-container { display: block; margin: 0 .4em .4em; }
+    }
+    & .book-profile .rating {
+      display: block;
+      /* & .react-rater { font-size: 1.4rem; } */
+    }
+  }
 }
 
 @media (--to-s) {

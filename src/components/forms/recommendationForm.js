@@ -193,11 +193,15 @@ const RecommendationForm = props => {
     <>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="Recommend a book" className="dialog light book-recommendation" ref={is}>
+        <div className="sticky-content">
+          <div role="navigation" className="head nav">
+            <div className="row">
+              <div className="col"><strong>Consiglia <span className="hide-xs">a un amico</span></strong></div>
+              <div className="col-auto"><span className="light-text">Quota giornaliera {quote.amount ? quote.amount : 'terminata'}</span></div>
+            </div>
+          </div>
+        </div>
         <div className="content">
-          {quote.amount ? 
-            <p className="light-text"><small>Quota giornaliera <strong>{quote.amount}</strong></small></p> : 
-            <p><small>Hai terminato la quota giornaliera</small></p>
-          }
           <div className="contacts-tab">
             {loading ? skltn : hasFollowings 
               ? usersList(followings) 

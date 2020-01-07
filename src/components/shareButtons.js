@@ -12,7 +12,7 @@ const ShareButtons = props => {
 
   return (
     <Tooltip title="Condividi" placement="bottom">
-      <div className="text-center">
+      <div className="share-buttons text-center">
         <FacebookShareButton {...fbProps}>
           <FacebookIcon {...IconProps} />
         </FacebookShareButton>

@@ -22,6 +22,12 @@ const Reviews = props => {
 
   const fetch = useCallback(() => {
     const ref = bid ? reviewersRef(bid) : uid ? reviewersGroupRef.where('createdByUid', '==', uid) : reviewersGroupRef;
+    const setEmptyState = err => {
+      setItems(null);
+      setLoading(false);
+      setLastVisible(null);
+      if (err) openSnackbar(handleFirestoreError(err), 'error');
+    };
   
     ref.onSnapshot(fullSnap => { // TODO: remove fullSnap
       // console.log(fullSnap);
@@ -39,14 +45,9 @@ const Reviews = props => {
             }
           }
         }).catch(err => {
-          if (is.current) {
-            setLoading(false);
-            openSnackbar(handleFirestoreError(err), 'error');
-          }
+          if (is.current) setEmptyState(err);
         });
-      } else if (is.current) {
-        setLoading(false);
-      }
+      } else if (is.current) setEmptyState();
     });
   }, [bid, limit, openSnackbar, uid]);
 
