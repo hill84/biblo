@@ -11,7 +11,7 @@ import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { funcType, locationType } from '../../config/types';
+import { locationType } from '../../config/types';
 import SocialAuth from '../socialAuth';
 
 const max = {
@@ -26,9 +26,8 @@ const min = {
 };
 
 const LoginForm = props => {
-  const { location, openSnackbar } = props;
+  const { location } = props;
   const [email, setEmail] = useState('');
-  // eslint-disable-next-line no-unused-vars
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -117,7 +116,7 @@ const LoginForm = props => {
   return (
     <div id="loginFormComponent" ref={is}>
       {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-      <SocialAuth openSnackbar={openSnackbar} />
+      <SocialAuth />
 
       <div className="light-text pad-v-xs">
         <small>Effettuando il login confermi la presa visione della <Link to="/privacy">privacy</Link> di {app.name}</small>
@@ -158,7 +157,7 @@ const LoginForm = props => {
                     aria-label="toggle password visibility"
                     onClick={onTogglePassword}
                     onMouseDown={onMouseDownPassword}>
-                    {showPassword ? icon.eye() : icon.eyeOff()}
+                    {showPassword ? icon.eye : icon.eyeOff}
                   </IconButton>
                 </InputAdornment>
               }
@@ -178,8 +177,7 @@ const LoginForm = props => {
 }
 
 LoginForm.propTypes = {
-  location: locationType,
-  openSnackbar: funcType.isRequired
+  location: locationType
 }
 
 LoginForm.defaultProps = {

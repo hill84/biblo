@@ -3,15 +3,16 @@ import React from 'react';
 import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } from 'react-share';
 import { arrayType, stringType } from '../config/types';
 
+const IconProps = { size: 32, round: true };
+
 const ShareButtons = props => {
-  const IconProps = { size: 32, round: true };
   const { className, cover, hashtags, text, url, via, ...attrs } = props;
   const fbProps = { className, quote: text, url, ...attrs };
   const twProps = { className, title: text, url, via, ...attrs };
 
   return (
     <Tooltip title="Condividi" placement="bottom">
-      <div className="text-center">
+      <div className="share-buttons text-center">
         <FacebookShareButton {...fbProps}>
           <FacebookIcon {...IconProps} />
         </FacebookShareButton>

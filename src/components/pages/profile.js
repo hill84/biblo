@@ -2,14 +2,13 @@ import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
-import { funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import ProfileForm from '../forms/profileForm';
 
-const Profile = props => {
+const Profile = () => {
   const { user } = useContext(UserContext);
-
-  const { openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
 
   if (!user) return null;
 
@@ -27,10 +26,6 @@ const Profile = props => {
       </div>
     </div>
   );
-}
-
-Profile.propTypes = {
-  openSnackbar: funcType.isRequired
 }
  
 export default Profile;

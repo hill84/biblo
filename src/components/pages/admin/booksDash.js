@@ -165,7 +165,6 @@ export default class BooksDash extends Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    const { openSnackbar } = this.props;
     
     if (redirectTo) return <Redirect to={`/book/${redirectTo}`} />
 
@@ -212,13 +211,13 @@ export default class BooksDash extends Component {
               {Object.keys(item.authors)[0]}
             </Link>
             <div className="col hide-md monotype" title={item.bid}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.bid}/>
+              <CopyToClipboard text={item.bid}/>
             </div>
             <div className="col hide-md monotype" title={item.ISBN_13}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_13}/>
+              <CopyToClipboard text={item.ISBN_13}/>
             </div>
             <div className="col hide-md monotype" title={item.ISBN_10}>
-              <CopyToClipboard openSnackbar={openSnackbar} text={item.ISBN_10} />
+              <CopyToClipboard text={item.ISBN_10} />
             </div>
             <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm">
               {item.EDIT.createdBy}
@@ -233,10 +232,10 @@ export default class BooksDash extends Component {
               <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit} data-title={item.title}>
-              <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={this.onEdit} title="Modifica">{icon.pencil()}</button>
-              <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={this.onDeleteRequest}>{icon.close()}</button>
+              <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye}</button>
+              <button type="button" className="btn icon primary" onClick={this.onEdit} title="Modifica">{icon.pencil}</button>
+              <button type="button" className={`btn icon ${item.EDIT.edit ? 'secondary' : 'flat' }`} onClick={this.onLock} title={item.EDIT.edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+              <button type="button" className="btn icon red" onClick={this.onDeleteRequest}>{icon.close}</button>
             </div>
           </div>
         </li>
@@ -267,7 +266,7 @@ export default class BooksDash extends Component {
                 onClose={this.onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
             </div>
           </div>
         </div>

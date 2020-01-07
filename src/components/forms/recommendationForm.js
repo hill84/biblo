@@ -1,10 +1,11 @@
 import Avatar from '@material-ui/core/Avatar';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, diffDays, getInitials, handleFirestoreError, normURL, timestamp, truncateString } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/recommendationForm.css';
 import Overlay from '../overlay';
@@ -15,6 +16,7 @@ const quoteLimit = 5;
 
 const RecommendationForm = props => {
   const { user } = useContext(UserContext);
+  const { openSnackbar } = useContext(SnackbarContext);
   const { uid, displayName, photoURL } = user;
   const quoteInitialState = {
     uid,
@@ -24,7 +26,7 @@ const RecommendationForm = props => {
     timestamp,
     recommends: []
   };
-  const { book, onToggle, openSnackbar } = props;
+  const { book, onToggle } = props;
   const [quote, setQuote] = useState(quoteInitialState);
   const [loading, setLoading] = useState(false);
   const [followings, setFollowings] = useState(null);
@@ -53,7 +55,7 @@ const RecommendationForm = props => {
     fetch();
   }, [fetch]);
   
-  const isNewDay = useMemo(() => diffDays(new Date(quote.timestamp)) > 0, [quote.timestamp]);
+  const isNewDay = diffDays(new Date(quote.timestamp)) > 0;
   
   useEffect(() => {
     if (!quote.timestamp || isNewDay) {
@@ -71,7 +73,7 @@ const RecommendationForm = props => {
         openSnackbar(handleFirestoreError(err), 'error');
       });
     }
-  }, [count, isNewDay, openSnackbar, quote, uid]);
+  }, [count, displayName, initQuote, isNewDay, openSnackbar, photoURL, quote, uid]);
 
   const fetchFollowings = useCallback(() => {
     setLoading(true);
@@ -173,7 +175,7 @@ const RecommendationForm = props => {
                   data-fuid={f}
                   onClick={onRecommendBook}
                   disabled={quote.amount < 1 || recommended(f)}>
-                  {recommended(f) ? <span>{icon.check()} Consigliato</span> : 'Consiglia'}
+                  {recommended(f) ? <span>{icon.check} Consigliato</span> : 'Consiglia'}
                 </button>
               </div>
             </div>
@@ -191,11 +193,15 @@ const RecommendationForm = props => {
     <>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="Recommend a book" className="dialog light book-recommendation" ref={is}>
+        <div className="sticky-content">
+          <div role="navigation" className="head nav">
+            <div className="row">
+              <div className="col"><strong>Consiglia <span className="hide-xs">a un amico</span></strong></div>
+              <div className="col-auto"><span className="light-text">Quota giornaliera {quote.amount ? quote.amount : 'terminata'}</span></div>
+            </div>
+          </div>
+        </div>
         <div className="content">
-          {quote.amount ? 
-            <p className="light-text"><small>Quota giornaliera <strong>{quote.amount}</strong></small></p> : 
-            <p><small>Hai terminato la quota giornaliera</small></p>
-          }
           <div className="contacts-tab">
             {loading ? skltn : hasFollowings 
               ? usersList(followings) 
@@ -210,8 +216,7 @@ const RecommendationForm = props => {
 
 RecommendationForm.propTypes = {
   book: bookType.isRequired,
-  onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired
+  onToggle: funcType.isRequired
 }
  
 export default RecommendationForm;

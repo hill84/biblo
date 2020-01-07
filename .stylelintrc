@@ -38,7 +38,7 @@
     "selector-max-empty-lines": 0,
     "media-feature-name-no-vendor-prefix": true,
     "at-rule-no-vendor-prefix": true,
-    "max-nesting-depth": 2,
+    "max-nesting-depth": 3,
     "font-weight-notation": "numeric",
     "font-family-name-quotes": "always-where-recommended",
     "number-leading-zero": "never",

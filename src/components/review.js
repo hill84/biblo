@@ -5,12 +5,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
-import React, { Component, forwardRef } from 'react';
+import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { authid, isAuthenticated, notesRef, reviewerRef, userBookRef } from '../config/firebase';
+import { notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, timestamp, truncateString } from '../config/shared';
-import { funcType, reviewType, stringType, userType } from '../config/types';
+import { reviewType, stringType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
+import UserContext from '../context/userContext';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
@@ -18,57 +20,40 @@ import Rating from './rating';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-export default class Review extends Component {
-  state = {
-    flagLoading: false,
-    isOpenDeleteDialog: false,
-    isOpenFlagDialog: false,
-    like: this.props.review.likes.length && this.props.review.likes.indexOf(authid) > -1 ? true : false || false,
-    likes_num: this.props.review.likes.length || 0
-  }
+const Review = props => {
+  const { user } = useContext(UserContext);
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { bid, review, uid } = props;
+  const [flagLoading, setFlagLoading] = useState(false);
+  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+  const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
+  const [like, setLike] = useState(review.likes.length && review.likes.indexOf(user && user.uid) > -1 ? true : false || false);
+  const [likes_num, setLikes_num] = useState(review.likes.length || 0);
+  const is = useRef(true);
 
-  static propTypes = {
-    bid: stringType,
-    openSnackbar: funcType.isRequired,
-    review: reviewType.isRequired,
-    user: userType,
-    uid: stringType
-  }
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
-  static defaultProps = {
-    bid: null,
-    user: null,
-    uid: null
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.review.likes.length !== state.likes_num) { return { likes_num: props.review.likes.length }}
-    return null;
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  onThumbChange = () => {
-    const { like } = this.state;
-    const { bid, openSnackbar, review, user } = this.props;
+  const onThumbChange = useCallback(() => {
     let { likes } = review;
     
-    if (this._isMounted) {
+    if (user) {
       if (like) {
-        likes = likes.filter(e => e !== authid);
-        this.setState({ like: false, likes_num: likes.length });
-        // console.log(`User ${authid} remove like on review ${bid}/${review.createdByUid}`);
+        likes = likes.filter(e => e !== user.uid);
+        if (is.current) {
+          setLike(false);
+          setLikes_num(likes.length);
+        }
+        // console.log(`User ${user.uid} remove like on review ${bid}/${review.createdByUid}`);
         // console.log(`User likes decreased to ${likes.length}`);
       } else {
-        likes = [...likes, authid];
-        this.setState({ like: true, likes_num: likes.length });
-        // console.log(`User ${authid} add like on review ${bid}/${review.createdByUid}`);
+        likes = [...likes, user.uid];
+        if (is.current) {
+          setLike(true);
+          setLikes_num(likes.length);
+        }
+        // console.log(`User ${user.uid} add like on review ${bid}/${review.createdByUid}`);
         // console.log(`User likes increased to ${likes.length}`);
 
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
@@ -96,48 +81,43 @@ export default class Review extends Component {
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid or ruid');
-  }
+  }, [bid, like, openSnackbar, review, user]);
 
-  onAddResponse = () => {
-    // TODO
-  }
+  // const onAddResponse = () => {} // TODO
 
-  onSubmitResponse = () => {
-    // TODO
-  }
+  // const onSubmitResponse = () => {} // TODO
 
-  onFlagRequest = () => this._isMounted && this.setState({ isOpenFlagDialog: true });
+  const onFlagRequest = () => setIsOpenFlagDialog(true);
 
-  onCloseFlagDialog = () => this._isMounted && this.setState({ isOpenFlagDialog: false });
+  const onCloseFlagDialog = () => setIsOpenFlagDialog(false);
 
-  onFlag = value => {
-    const { bid, openSnackbar, review, user} = this.props;
-    const flag = {
-      value,
-      flaggedByUid: user.uid,
-      flagged_num: timestamp
-    };
-
-    if (bid && review && user) {
-      if (this._isMounted) this.setState({ flagLoading: true });
-      reviewerRef(bid, review.createdByUid).update({ flag }).then(() => {
-        if (this._isMounted) {
-          this.setState({ flagLoading: false, isOpenFlagDialog: false }, () => {
+  const onFlag = useCallback(value => {
+    if (user) {
+      const flag = {
+        value,
+        flaggedByUid: user.uid,
+        flagged_num: timestamp
+      };
+  
+      if (bid && review && user) {
+        if (is.current) setFlagLoading(true);
+        reviewerRef(bid, review.createdByUid).update({ flag }).then(() => {
+          if (is.current) {
+            setFlagLoading(false);
+            setIsOpenFlagDialog(false);
             openSnackbar('Recensione segnalata agli amministratori', 'success');
-          });
-        }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    } else console.warn('Cannot flag');
-  }
+          }
+        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      } else console.warn('Cannot flag');
+    }
+  }, [bid, openSnackbar, review, user]);
 
-  onDeleteRequest = () => this.setState({ isOpenDeleteDialog: true });
+  const onDeleteRequest = () => setIsOpenDeleteDialog(true);
 
-  onCloseDeleteDialog = () => this.setState({ isOpenDeleteDialog: false });
+  const onCloseDeleteDialog = () => setIsOpenDeleteDialog(false);
 
-  onDelete = () => {
-    const { bid, openSnackbar, review} = this.props;
-
-    if (this._isMounted) this.setState({ isOpenDeleteDialog: false });
+  const onDelete = () => {
+    if (is.current) setIsOpenDeleteDialog(false);
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {
       reviewerRef(bid, review.createdByUid).delete().then(() => {
@@ -148,141 +128,149 @@ export default class Review extends Component {
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`No bid`);
-  }
+  };
 
-  render() {
-    const { flagLoading, isOpenDeleteDialog, isOpenFlagDialog, like, likes_num } = this.state;
-    const { bid, review, uid, user } = this.props;
+  const isOwner = useMemo(() => review.createdByUid === (user && user.uid), [review, user]);
+  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
+  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
+  const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === (user && user.uid), [review, user]);
 
-    const isOwner = review.createdByUid === authid;
-    const isAdmin = hasRole(user, 'admin');
-    const isEditor = hasRole(user, 'editor');
-    const flaggedByUser = (review.flag && review.flag.flaggedByUid) === (user && user.uid);
-
-    return (
-      <>
-        <div className={`${isAuthenticated() && isOwner ? 'own review' : 'review'} ${(isAdmin || flaggedByUser) && review.flag ? `flagged ${review.flag.value}` : ''}`}>
-          <div className="row">
-            <div className="col-auto left">
-              {!bid ?
-                <Link to={`/book/${review.bid}/${normURL(review.bookTitle)}`} className="hoverable-items">
-                  <Cover info={false} book={{
-                    bid: review.bid,
-                    title: review.bookTitle,
-                    authors: { 'author': true },
-                    covers: review.covers,
-                    publisher: 'publisher'
-                  }} />
-                  {!uid && <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>}
-                </Link>
-              :
-                <Link to={`/dashboard/${review.createdByUid}`}>
-                  <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
-                </Link>
-              }
-            </div>
-            <div className="col right">
-              <div className="head row">
-                <Link to={uid ? `/book/${review.bid}/${normURL(review.bookTitle)}` : `/dashboard/${review.createdByUid}`} className="col-auto author">
-                  <h3>
-                    {uid ? review.bookTitle : review.displayName}
-                    {/* isAuthenticated() && isOwner && <span className="badge">TU</span> */}
-                    {!bid && <span className="date">{timeSince(review.created_num)}</span>}
-                  </h3>
-                </Link>
-                
-                {review.rating_num > 0 && 
-                  <div className="col text-right">
-                    <Rating ratings={{rating_num: review.rating_num}} labels />
-                  </div>
-                }
-              </div>
-              {review.title && <h4 className="title">{review.title}</h4>}
-              <div className="info-row text">
-                <MinifiableText text={review.text} maxChars={500} />
-              </div>
-              {bid && 
-                <div className="foot row">
-                  <div className="col-auto likes">
-                    <div className="counter">
-                      <button 
-                        type="button"
-                        className={`btn flat thumb up ${like}`} 
-                        disabled={!isAuthenticated() || !isEditor || isOwner} 
-                        onClick={this.onThumbChange}
-                        title={like ? 'Annulla mi piace' : 'Mi piace'}>
-                        {icon.thumbUp()} {abbrNum(likes_num)}
-                      </button>
-                    </div>
-                    {/* <div className="counter">
-                      <button 
-                        type="button"
-                        className={`btn flat thumb down ${dislike}`} 
-                        disabled={!isAuthenticated() || !isEditor || isOwner} 
-                        onClick={this.onThumbChange}
-                        title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
-                        {icon.thumbDown()} {abbrNum(dislikes_num)}
-                      </button>
-                    </div> */}
-                    {isAuthenticated() && isEditor && !isOwner && 
-                      <>
-                        <div className="counter">
-                          <button type="button" className="btn sm flat" disabled onClick={this.onAddResponse}>
-                            <span className="show-sm">{icon.pencil()}</span> <span className="hide-sm">Rispondi</span>
-                          </button>
-                        </div>
-                        <div className="counter show-on-hover">
-                          <button type="button" className="btn sm flat" onClick={this.onFlagRequest} disabled={flaggedByUser}>
-                            <span className="show-sm">{icon.flag()}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
-                          </button>
-                        </div>
-                      </>
-                    }
-                    {isAuthenticated() && isEditor && (isOwner || isAdmin) && 
-                      <div className="counter show-on-hover">
-                        <button type="button" className="btn sm flat" onClick={this.onDeleteRequest}>
-                          <span className="show-sm">{icon.delete()}</span> <span className="hide-sm">Elimina</span>
-                        </button>
-                      </div>
-                    }
-                  </div>
-                  <div className="col counter text-right date">{timeSince(review.created_num)}</div>
+  return (
+    <>
+      <div className={`${isOwner ? 'own review' : 'review'} ${(isAdmin || flaggedByUser) && review.flag ? `flagged ${review.flag.value}` : ''}`} ref={is}>
+        <div className="row">
+          <div className="col-auto left">
+            {!bid ?
+              <Link to={`/book/${review.bid}/${normURL(review.bookTitle)}`} className="hoverable-items">
+                <Cover info={false} book={{
+                  bid: review.bid,
+                  title: review.bookTitle,
+                  authors: { 'author': true },
+                  covers: review.covers,
+                  publisher: 'publisher'
+                }} />
+                {!uid && <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>}
+              </Link>
+            :
+              <Link to={`/dashboard/${review.createdByUid}`}>
+                <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
+              </Link>
+            }
+          </div>
+          <div className="col right">
+            <div className="head row">
+              <Link to={uid ? `/book/${review.bid}/${normURL(review.bookTitle)}` : `/dashboard/${review.createdByUid}`} className="col-auto author">
+                <h3>
+                  {uid ? review.bookTitle : review.displayName}
+                  {/* isOwner && <span className="badge">TU</span> */}
+                  {!bid && <span className="date">{timeSince(review.created_num)}</span>}
+                </h3>
+              </Link>
+              
+              {review.rating_num > 0 && 
+                <div className="col text-right">
+                  <Rating ratings={{rating_num: review.rating_num}} labels />
                 </div>
               }
             </div>
+            {review.title && <h4 className="title">{review.title}</h4>}
+            <div className="info-row text">
+              <MinifiableText text={review.text} maxChars={500} />
+            </div>
+            {bid && 
+              <div className="foot row">
+                <div className="col-auto likes">
+                  <div className="counter">
+                    <button 
+                      type="button"
+                      className={`btn flat thumb up ${like}`} 
+                      disabled={!isEditor || isOwner} 
+                      onClick={onThumbChange}
+                      title={like ? 'Annulla mi piace' : 'Mi piace'}>
+                      {icon.thumbUp} {abbrNum(likes_num)}
+                    </button>
+                  </div>
+                  {/* <div className="counter">
+                    <button 
+                      type="button"
+                      className={`btn flat thumb down ${dislike}`} 
+                      disabled={!isEditor || isOwner} 
+                      onClick={onThumbChange}
+                      title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
+                      {icon.thumbDown} {abbrNum(dislikes_num)}
+                    </button>
+                  </div> */}
+                  {isEditor && !isOwner && 
+                    <>
+                      {/* <div className="counter">
+                        <button type="button" className="btn sm flat" disabled onClick={onAddResponse}>
+                          <span className="show-sm">{icon.pencil}</span> <span className="hide-sm">Rispondi</span>
+                        </button>
+                      </div> */}
+                      <div className="counter show-on-hover">
+                        <button type="button" className="btn sm flat" onClick={onFlagRequest} disabled={flaggedByUser}>
+                          <span className="show-sm">{icon.flag}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
+                        </button>
+                      </div>
+                    </>
+                  }
+                  {isEditor && (isOwner || isAdmin) && 
+                    <div className="counter show-on-hover">
+                      <button type="button" className="btn sm flat" onClick={onDeleteRequest}>
+                        <span className="show-sm">{icon.delete}</span> <span className="hide-sm">Elimina</span>
+                      </button>
+                    </div>
+                  }
+                </div>
+                <div className="col counter text-right date">{timeSince(review.created_num)}</div>
+              </div>
+            }
           </div>
         </div>
+      </div>
 
-        <Dialog
-          open={isOpenDeleteDialog}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={this.onCloseDeleteDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">
-            Procedere con l&apos;eliminazione?
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="delete-dialog-description">
-              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Elimina</button>
-          </DialogActions>
-        </Dialog>
+      <Dialog
+        open={isOpenDeleteDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={onCloseDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description">
+        <DialogTitle id="delete-dialog-title">
+          Procedere con l&apos;eliminazione?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions className="dialog-footer flex no-gutter">
+          <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
+          <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
+        </DialogActions>
+      </Dialog>
 
-        <FlagDialog 
-          loading={flagLoading}
-          open={isOpenFlagDialog} 
-          onClose={this.onCloseFlagDialog} 
-          onFlag={this.onFlag} 
-          TransitionComponent={Transition} 
-          value={flaggedByUser ? review.flag && review.flag.value : ''}
-        />
-      </>
-    );
-  }
+      <FlagDialog 
+        loading={flagLoading}
+        open={isOpenFlagDialog} 
+        onClose={onCloseFlagDialog} 
+        onFlag={onFlag} 
+        TransitionComponent={Transition} 
+        value={flaggedByUser ? review.flag && review.flag.value : ''}
+      />
+    </>
+  );
 }
+
+Review.propTypes = {
+  bid: stringType,
+  review: reviewType.isRequired,
+  uid: stringType
+}
+
+Review.defaultProps = {
+  bid: null,
+  uid: null
+}
+ 
+export default Review;

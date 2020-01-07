@@ -2,23 +2,23 @@ import { ThemeProvider } from '@material-ui/styles';
 import React, { useContext, useState } from 'react';
 import icon from '../../config/icons';
 import { darkTheme } from '../../config/themes';
-import { funcType, historyType, locationType } from '../../config/types';
+import { historyType, locationType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
 const NewBook = props => {
-  const [book, setBook] = useState(null);
-
   const { user } = useContext(UserContext);
-
+  const { openSnackbar } = useContext(SnackbarContext);
+	const { history, location } = props;
+  const [book, setBook] = useState(null);
+  
   const onBookSelect = book => setBook(book);
-
-	const { history, location, openSnackbar } = props;
 
   return (
     <div className="container" id="newBookComponent">
-      {!book && <h2 className="text-center">{icon.plus()} Crea la tua scheda libro</h2>}
+      {!book && <h2 className="text-center">{icon.plus} Crea la tua scheda libro</h2>}
       <ThemeProvider theme={darkTheme}>
         <div className="card sm dark search-book">
           <SearchBookForm onBookSelect={onBookSelect} user={user} newBook />
@@ -32,14 +32,12 @@ const NewBook = props => {
 
 NewBook.propTypes = {
   history: historyType,
-  location: locationType,
-  openSnackbar: funcType
+  location: locationType
 }
 
 NewBook.defaultProps = {
   history: null,
-  location: null,
-  openSnackbar: null
+  location: null
 }
 
 export default NewBook;

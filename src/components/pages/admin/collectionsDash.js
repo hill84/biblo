@@ -188,10 +188,10 @@ export default class collectionsDash extends Component {
             <div className="col-5 col-lg-8" title={item.description}>{item.description}</div>
             <div className="col-1 text-right">{item.books_num}</div>
             <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil()}</button>
-              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close()}</button>
+              <button type="button" className="btn icon green" onClick={() => this.onView(item.title)} title="Anteprima">{icon.eye}</button>
+              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.title)} title="Modifica">{icon.pencil}</button>
+              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.title, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.title)}>{icon.close}</button>
             </div>
           </div>
         </li>
@@ -222,7 +222,7 @@ export default class collectionsDash extends Component {
                 onClose={this.onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
             </div>
           </div>
         </div>

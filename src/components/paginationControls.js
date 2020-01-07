@@ -18,7 +18,7 @@ const PaginationControls = props => {
               data-direction="prev"
               onClick={fetch} 
               title="precedente">
-              {icon.chevronLeft()}
+              {icon.chevronLeft}
             </button>
             <span className="page">{page} di {(count % limit > 0 ? 1 : 0) + ((count - count % limit) / limit)}</span>
           </>
@@ -30,7 +30,7 @@ const PaginationControls = props => {
           data-direction="next"
           onClick={fetch} 
           title="successivo">
-          {oneWay ? loading ? icon.loading() : 'Mostra altro' : icon.chevronRight()}
+          {oneWay ? loading ? icon.loading : 'Mostra altro' : icon.chevronRight}
         </button>
       </div>
     )

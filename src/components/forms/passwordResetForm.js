@@ -3,14 +3,14 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import { handleFirestoreError } from '../../config/shared';
-import { funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 
-const PasswordResetForm = props => {
-  const { openSnackbar } = props;
+const PasswordResetForm = () => {
+  const { openSnackbar } = useContext(SnackbarContext);
   const [email, setEmail] = useState('');
   const [emailSent, setEmailSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -103,10 +103,6 @@ const PasswordResetForm = props => {
       </div>
     </div>
   );
-}
-
-PasswordResetForm.propTypes = {
-  openSnackbar: funcType.isRequired
 }
  
 export default PasswordResetForm;

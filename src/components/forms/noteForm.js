@@ -11,6 +11,7 @@ import { noteTypes } from '../../config/lists';
 import { timestamp } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import UserContext from '../../context/userContext';
+import SnackbarContext from '../../context/snackbarContext';
 import Overlay from '../overlay';
 
 const max = {
@@ -26,7 +27,8 @@ const min = {
 
 const NoteForm = props => {
   const { user } = useContext(UserContext);
-  const { nid, onToggle, openSnackbar, uid } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { nid, onToggle, uid } = props;
   const [data, setData] = useState({
     text: ''
   });
@@ -203,7 +205,6 @@ const NoteForm = props => {
 
 NoteForm.propTypes = {
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
   nid: stringType,
   uid: stringType.isRequired
 }

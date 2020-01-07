@@ -19,7 +19,7 @@ const NoteMenuItem = forwardRef((props, ref) => {
                 {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
               </Avatar>
             </Link>
-            : <span className="icon">{icon.bell()}</span>
+            : <span className="icon">{icon.bell}</span>
           }
         </div>
         <div className="col text">

@@ -150,7 +150,6 @@ export default class AuthorsDash extends Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    const { openSnackbar } = this.props;
     
     if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
     
@@ -192,7 +191,7 @@ export default class AuthorsDash extends Component {
                 : getInitials(item.displayName)}
               </Avatar>
             </div>
-            <div className="col-6 col-sm-4 col-lg-2" title={item.displayName}><CopyToClipboard openSnackbar={openSnackbar} text={item.displayName}/></div>
+            <div className="col-6 col-sm-4 col-lg-2" title={item.displayName}><CopyToClipboard text={item.displayName}/></div>
             <div className="col-1"><button type="button" className="btn xs flat" title={item.sex === 'm' ? 'uomo' : 'donna'}>{item.sex}</button></div>
             <div className="col hide-lg" title={item.bio}>{item.bio}</div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col col-sm-2 col-lg-1">{item.lastEditBy}</Link>
@@ -200,10 +199,10 @@ export default class AuthorsDash extends Component {
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(normURL(item.displayName))}>{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={() => this.onEdit(normalizeString(item.displayName))}>{icon.pencil()}</button>
-              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(normalizeString(item.displayName), item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(normalizeString(item.displayName))}>{icon.close()}</button>
+              <button type="button" className="btn icon green" onClick={() => this.onView(normURL(item.displayName))}>{icon.eye}</button>
+              <button type="button" className="btn icon primary" onClick={() => this.onEdit(normalizeString(item.displayName))}>{icon.pencil}</button>
+              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(normalizeString(item.displayName), item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(normalizeString(item.displayName))}>{icon.close}</button>
             </div>
           </div>
         </li>
@@ -227,7 +226,7 @@ export default class AuthorsDash extends Component {
             </div>
             <div className="col-auto">
               <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
               <Menu 
                 className="dropdown-menu"
                 anchorEl={orderMenuAnchorEl} 

@@ -10,6 +10,7 @@ import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
 import { handleFirestoreError, timestamp } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 
@@ -27,7 +28,8 @@ const min = {
 
 const CollectionForm = props => {
   const { user } = useContext(UserContext);
-  const { id, onToggle, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { id, onToggle } = props;
   const [data, setData] = useState({
     books_num: 0,
     description: '',
@@ -308,7 +310,6 @@ const CollectionForm = props => {
 
 CollectionForm.propTypes = {
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
   id: stringType
 }
 

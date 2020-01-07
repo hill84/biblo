@@ -12,8 +12,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { readingStates } from '../../config/lists';
-import { handleFirestoreError } from '../../config/shared';
+import { handleFirestoreError, timestamp } from '../../config/shared';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
@@ -22,7 +23,8 @@ const steps = 20;
 
 const ReadingStateForm = props => {
   const { user } = useContext(UserContext);
-  const { bid, onToggle, openSnackbar, pages, readingState } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { bid, onToggle, pages, readingState } = props;
   const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
   const [state_num, setState_num] = useState(readingState.state_num);
   const [start_num, setStart_num] = useState(readingState.start_num || null);
@@ -83,7 +85,7 @@ const ReadingStateForm = props => {
 
   const validate = (start, end) => {
     const errors = {};
-    const today = new Date().getTime();
+    const today = timestamp;
     if (start > today) { errors.start_num = "Data futura non valida"; }
     if (end > today) { errors.end_num = "Data futura non valida"; }
     if (end && start > end) { errors.end_num = "Data non valida"; }
@@ -146,8 +148,8 @@ const ReadingStateForm = props => {
                       className="date-picker"
                       name="start_num"
                       cancelLabel="Annulla"
-                      leftArrowIcon={icon.chevronLeft()}
-                      rightArrowIcon={icon.chevronRight()}
+                      leftArrowIcon={icon.chevronLeft}
+                      rightArrowIcon={icon.chevronRight}
                       format="D MMMM YYYY"
                       minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
                       minDateMessage="Praticamente nel Jurassico.."
@@ -172,8 +174,8 @@ const ReadingStateForm = props => {
                         className="date-picker"
                         name="end_num"
                         cancelLabel="Annulla"
-                        leftArrowIcon={icon.chevronLeft()}
-                        rightArrowIcon={icon.chevronRight()}
+                        leftArrowIcon={icon.chevronLeft}
+                        rightArrowIcon={icon.chevronRight}
                         format="D MMMM YYYY"
                         minDate={new Date(start_num)}
                         minDateMessage="Data non valida"
@@ -218,7 +220,6 @@ const ReadingStateForm = props => {
 ReadingStateForm.propTypes = {
   bid: stringType.isRequired,
   onToggle: funcType.isRequired,
-  openSnackbar: funcType.isRequired,
   pages: numberType,
   readingState: shapeType({
     state_num: numberType.isRequired,

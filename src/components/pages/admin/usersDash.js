@@ -6,13 +6,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
 import { funcType } from '../../../config/types';
+import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -29,7 +30,8 @@ const orderBy = [
 ];
 
 const UsersDash = props => {
-  const { onToggleDialog, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { onToggleDialog } = props;
   const [state, setState] = useState({
     firstVisible: null,
     items: null,
@@ -83,7 +85,7 @@ const UsersDash = props => {
         }
         setLoading(false);
       });
-    }
+    };
     
     if (!direction) {
       countRef('users').get().then(fullSnap => {
@@ -105,36 +107,34 @@ const UsersDash = props => {
   const onCloseOrderMenu = () => setOrderMenuAnchorEl(null);
   const onChangeOrderBy = (e, i) => {
     setOrderMenuAnchorEl(null);
-    setState({ ...state, orderByIndex: i, page: 1 });
-  }
+    setState(state => ({ ...state, orderByIndex: i, page: 1 }));
+  };
 
   const onOpenLimitMenu = e => setLimitMenuAnchorEl(e.currentTarget);
   const onCloseLimitMenu = () => setLimitMenuAnchorEl(null);
   const onChangeLimitBy = (e, i) => {
     setLimitMenuAnchorEl(null);
-    setState({ ...state, limitByIndex: i, page: 1 });
-  }
+    setState(state => ({ ...state, limitByIndex: i, page: 1 }));
+  };
 
   const onView = e => {
     const { id } = e.currentTarget.parentNode.dataset;
     setRedirectTo(id);
-  }
+  };
 
   const onNote = e => {
     const { id } = e.currentTarget.parentNode.dataset;
     onToggleDialog(id);
-  }
+  };
 
   const onSendReset = e => {
     const { email } = e.currentTarget.parentNode.dataset;
     auth.sendPasswordResetEmail(email).then(() => {
       openSnackbar(`Email inviata`, 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-  }
+  };
 
-  /* const onSendVerification = () => {
-    // TODO
-  } */
+  // const onSendVerification = () => {}; // TODO
 
   const onLock = e => {
     const { id } = e.currentTarget.parentNode.dataset;
@@ -143,7 +143,7 @@ const UsersDash = props => {
     userRef(id).update({ 'roles.editor': !state }).then(() => {
       openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-  }
+  };
 
   const onDeleteRequest = e => {
     const { id } = e.currentTarget.parentNode.dataset;
@@ -152,15 +152,12 @@ const UsersDash = props => {
       setIsOpenDeleteDialog(true);
       setSelected({ displayName, id });
     }
-  }
+  };
   const onCloseDeleteDialog = () => {
     setIsOpenDeleteDialog(false);
     setSelected(null)
-  }
-  const onDelete = () => {
-    const { selected } = state;
-    const { openSnackbar } = props;
-    
+  };
+  const onDelete = useCallback(() => {
     if (is.current) setIsOpenDeleteDialog(false);
     
     userRef(selected.id).delete().then(() => {
@@ -204,14 +201,14 @@ const UsersDash = props => {
     // TODO: delete all users, genres, authors and collections followed.
     
     onCloseDeleteDialog();
-  }
+  }, [openSnackbar, selected]);
 
   const onChangeRole = e => {
     const { id } = e.currentTarget.parentNode.dataset;
     const { role } = e.currentTarget.dataset;
     const state = e.currentTarget.dataset.state === 'true';
     userRef(id).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
-  }
+  };
 
   useEffect(() => {
     fetch();
@@ -270,10 +267,10 @@ const UsersDash = props => {
             {item.displayName}
           </Link>
           <div className="col monotype hide-sm" title={item.uid}>
-            <CopyToClipboard openSnackbar={openSnackbar} text={item.uid} />
+            <CopyToClipboard text={item.uid} />
           </div>
           <div className="col monotype hide-sm" title={item.email}>
-            <CopyToClipboard openSnackbar={openSnackbar} text={item.email} />
+            <CopyToClipboard text={item.email} />
           </div>
           <div className="col col-sm-3 col-lg-2 hide-xs">
             <div className="row text-center">
@@ -294,12 +291,12 @@ const UsersDash = props => {
             </div>
           </div>
           <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
-            <button type="button" className="btn icon green" onClick={onView} title="anteprima">{icon.eye()}</button>
-            <button type="button" className="btn icon primary" onClick={onNote} title="Invia notifica">{icon.bell()}</button>
-            {/* <button type="button" className="btn icon primary" onClick={onSendVerification} title="Invia email di verifica">{icon.email()}</button> */}
-            <button type="button" className="btn icon primary" onClick={onSendReset} title="Invia email di reset password">{icon.textboxPassword()}</button>
-            <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-            <button type="button" className="btn icon red" onClick={onDeleteRequest} title="elimina">{icon.close()}</button>
+            <button type="button" className="btn icon green" onClick={onView} title="anteprima">{icon.eye}</button>
+            <button type="button" className="btn icon primary" onClick={onNote} title="Invia notifica">{icon.bell}</button>
+            {/* <button type="button" className="btn icon primary" onClick={onSendVerification} title="Invia email di verifica">{icon.email}</button> */}
+            <button type="button" className="btn icon primary" onClick={onSendReset} title="Invia email di reset password">{icon.textboxPassword}</button>
+            <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+            <button type="button" className="btn icon red" onClick={onDeleteRequest} title="elimina">{icon.close}</button>
           </div>
         </div>
       </li>
@@ -323,7 +320,7 @@ const UsersDash = props => {
           </div>
           <div className="col-auto">
             <button type="button" className="btn sm flat counter" onClick={onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-            <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc}>{icon.arrowDown()}</button>
+            <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc}>{icon.arrowDown}</button>
             <Menu 
               className="dropdown-menu"
               anchorEl={orderMenuAnchorEl} 
@@ -344,10 +341,10 @@ const UsersDash = props => {
             <div className="col hide-sm">Email</div>
             <div className="col col-sm-3 col-lg-2 hide-xs">
               <div className="row text-center">
-                <div className="col" title="Libri">{icon.book()}</div>
-                <div className="col" title="Desideri">{icon.heart()}</div>
-                <div className="col" title="Recensioni">{icon.review()}</div>
-                <div className="col hide-md" title="Voti">{icon.star()}</div>
+                <div className="col" title="Libri">{icon.book}</div>
+                <div className="col" title="Desideri">{icon.heart}</div>
+                <div className="col" title="Recensioni">{icon.review}</div>
+                <div className="col hide-md" title="Voti">{icon.star}</div>
               </div>
             </div>
             <div className="col col-md-2 col-lg-1 text-center">Ruoli</div>
@@ -389,8 +386,7 @@ const UsersDash = props => {
 }
 
 UsersDash.propTypes = {
-  onToggleDialog: funcType.isRequired,
-  openSnackbar: funcType.isRequired
+  onToggleDialog: funcType.isRequired
 }
  
 export default UsersDash;

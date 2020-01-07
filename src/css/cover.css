@@ -11,8 +11,8 @@
     text-align: center;
     display: grid;
     align-items: center;
-    color: rgba(0,0,0,.15);
-    border: 3px dashed rgba(0,0,0,.15);
+    color: rgba(var(--blackClr), .15);
+    border: 3px dashed rgba(var(--blackClr), .15);
     & .add { font-size: 4rem; }
   }
   & .info {
@@ -31,17 +31,18 @@
 
 .cover {
   --pad: 14px;
+  --radius: 2px;
 
   position: relative;
   width: var(--coverWidth);
   height: var(--coverHeight);
-  background-color: var(--bookBg);
+  background-color: rgb(var(--bookClr));
   background-size: cover;
   background-position: top center;
-  box-shadow: 0 2px 3px rgba(0,0,0,.12);
+  box-shadow: 0 2px 3px rgba(var(--blackClr), .12);
   /* overflow: hidden; */
-  border-radius: 2px;
-  color: rgba(0,0,0,.6);
+  border-radius: var(--radius);
+  color: rgba(var(--blackClr), .6);
   font-size: 9px;
   text-align: left;
   line-height: 1.35;
@@ -75,11 +76,12 @@
   & .title, & .subtitle {
     white-space: normal;
     max-height: 65px;
-    margin: 0 0 2px 0;
+    margin: 0;
+    margin-bottom: .1rem;
     font-weight: 500;
     font-size: 120%;
   }
-  & .title { color: #fff; font-size: 142%; font-weight: 400; }
+  & .title { font-size: 142%; font-weight: 400; margin-bottom: .4rem; }
   & .author { font-size: 110%; font-weight: 500; }
   & .publisher { position: absolute; width: auto; left: var(--pad); right: var(--pad); bottom: var(--pad); }
   & .svg-icon { --iconSize: 10px; margin-left: 3px; }

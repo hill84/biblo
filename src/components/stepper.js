@@ -41,7 +41,7 @@ const Stepper = props => {
       <div className="row">
         <div className="col-auto">
           <button type="button" className="btn flat rounded icon" onClick={onPrev} disabled={activeStep === 0}>
-            {icon.chevronLeft()}
+            {icon.chevronLeft}
           </button>
         </div>
         <div className="col">
@@ -52,7 +52,7 @@ const Stepper = props => {
         </div>
         <div className="col-auto">
           <button type="button" className="btn flat rounded icon" onClick={onNext} disabled={activeStep === steps}>
-            {icon.chevronRight()}
+            {icon.chevronRight}
           </button>
         </div>
       </div>

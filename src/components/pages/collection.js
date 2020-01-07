@@ -2,23 +2,26 @@
 import { Tooltip } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { lazy, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
-import { funcType, historyType, locationType, matchType } from '../../config/types';
+import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, timestamp, truncateString } from '../../config/shared';
+import { historyType, locationType, matchType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
-import NoMatch from '../noMatch';
 import Bubbles from './bubbles';
+
+const NoMatch = lazy(() => import('../noMatch'));
 
 const Collection = props => {
   const { user } = useContext(UserContext);
-  const { history, location, match, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { history, location, match } = props;
   const [collection, setCollection] = useState(null);
   const [collections, setCollections] = useState(null);
   const [desc, setDesc] = useState(false);
@@ -114,7 +117,7 @@ const Collection = props => {
           uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
-          timestamp: (new Date()).getTime()
+          timestamp
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }
@@ -189,10 +192,10 @@ const Collection = props => {
                         disabled={!user || !isEditor}>
                         {follow ? 
                           <>
-                            <span className="hide-on-hover">{icon.check()} Segui</span>
+                            <span className="hide-on-hover">{icon.check} Segui</span>
                             <span className="show-on-hover">Smetti</span>
                           </> 
-                        : <span>{icon.plus()} Segui</span> }
+                        : <span>{icon.plus} Segui</span> }
                       </button>
                       <div className="counter last inline">
                         <Bubbles limit={3} items={followers} />
@@ -213,7 +216,7 @@ const Collection = props => {
                       type="button"
                       className="btn icon sm flat rounded counter"
                       onClick={onResetFilters}>
-                      {icon.close()}
+                      {icon.close}
                     </button>
                   </Tooltip>
                   }
@@ -235,7 +238,7 @@ const Collection = props => {
                       type="button"
                       className={`btn sm icon flat rounded counter ${desc ? 'desc' : 'asc'}`}
                       onClick={onToggleDesc}>
-                      {icon.arrowDown()}
+                      {icon.arrowDown}
                     </button>
                   </Tooltip>
                 </div>
@@ -267,7 +270,7 @@ const Collection = props => {
         </div>
         <div className="col-md-6">
           <div className="card light">
-            <BookCollection cid={denormURL(cid)} openSnackbar={openSnackbar} pagination={false} booksPerRow={1} stacked />
+            <BookCollection cid={denormURL(cid)} pagination={false} booksPerRow={1} stacked />
           </div>
         </div>
       </div>
@@ -278,8 +281,7 @@ const Collection = props => {
 Collection.propTypes = {
   history: historyType,
   location: locationType,
-  match: matchType,
-  openSnackbar: funcType.isRequired
+  match: matchType
 }
 
 Collection.defaultProps = {

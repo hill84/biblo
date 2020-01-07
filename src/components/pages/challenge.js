@@ -7,10 +7,11 @@ import Cover from '../cover';
 import { skltn_shelfRow } from '../skeletons';
 import UserContext from '../../context/userContext';
 
+const desc = true;
+
 const Challenge = () => {
   const { user } = useContext(UserContext);
   const [challenge, setChallenge] = useState(null);
-  const [desc] = useState(true);
   const [loading, setLoading] = useState(false);
   const [userChallenge, setUserChallenge] = useState(null);
   const [userChallenges, setUserChallenges] = useState(null);
@@ -68,7 +69,7 @@ const Challenge = () => {
         }
       });
     }
-  }, [desc, user]);
+  }, [user]);
 
   useEffect(() => {
     fetch();

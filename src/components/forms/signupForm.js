@@ -199,7 +199,6 @@ export default class SignupForm extends Component {
 
 	render() {
     const { authError, checkedTerms, data, errors, loading, redirectTo, showPassword } = this.state;
-    const { openSnackbar } = this.props;
 
 		if (redirectTo) return <Redirect to={redirectTo} />
 
@@ -226,7 +225,7 @@ export default class SignupForm extends Component {
         {errors.checkedTerms && <FormHelperText className="message error">{errors.checkedTerms}</FormHelperText>}
         
         <form onSubmit={this.onSubmit} noValidate style={formStyle}>
-          <SocialAuth disabled={!checkedTerms} openSnackbar={openSnackbar} />
+          <SocialAuth disabled={!checkedTerms} />
           <div className="form-group">
             <FormControl className="input-field" margin="normal" fullWidth>
               <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome e cognome</InputLabel>
@@ -277,7 +276,7 @@ export default class SignupForm extends Component {
                       aria-label="toggle password visibility"
                       onClick={this.handleClickShowPassword}
                       onMouseDown={this.handleMouseDownPassword}>
-                      {showPassword ? icon.eye() : icon.eyeOff()}
+                      {showPassword ? icon.eye : icon.eyeOff}
                     </IconButton>
                   </InputAdornment>
                 }

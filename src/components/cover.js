@@ -17,20 +17,27 @@ const Cover = props => {
     <div className="book"> 
       <InView triggerOnce rootMargin="130px">
         {({ inView, ref }) =>
-          <div ref={ref} className="cover" title={book.title} style={{ animationDelay: (animationDelay !== false) ? `${delay}s` : '', backgroundImage: inView ? cover ? `url(${cover})` : null : null, }}>
+          <div
+            ref={ref}
+            className="cover"
+            title={book ? book.title : null}
+            style={{
+              animationDelay: (animationDelay !== false) ? `${delay}s` : '',
+              backgroundImage: inView ? cover ? `url(${cover})` : null : null, 
+            }}>
             {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
-            {book.readingState && book.readingState.state_num === 2 && <div className="bookmark" />}
-            {book.review && book.review.text && <div className="cover-review">Recensione</div>}
-            {showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account()}</div> : ''}
+            {book && book.readingState && book.readingState.state_num === 2 && <div className="bookmark" />}
+            {book && book.review && book.review.text && <div className="cover-review">Recensione</div>}
+            {book && showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account}</div> : ''}
             {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : <div className="overlay" />}
-            {!cover &&
+            {!cover && book && (
               <>
                 <h2 className="title">{book.title}</h2>
                 {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                 <span className="author">{joinObj(book.authors)}</span>
                 {book.publisher && <span className="publisher">{book.publisher}</span>}
               </>
-            }
+            )}
           </div>
         }
       </InView>

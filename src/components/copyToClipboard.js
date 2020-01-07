@@ -1,22 +1,27 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { forwardRef } from 'react';
+import React, { useContext } from 'react';
 import { numberType, stringType, _oneOfType } from '../config/types';
+import SnackbarContext from '../context/snackbarContext';
 
-const copy = (text, props) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
+const copy = (text, openSnackbar) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
-  props.openSnackbar('Copiato negli appunti', 'success');
+  openSnackbar('Copiato negli appunti', 'success');
 }, error => {
-  props.openSnackbar('Errore interno', 'error');
+  openSnackbar('Errore interno', 'error');
   console.warn('Async: Could not copy text: ', error);
 });
 
-const CopyToClipboard = forwardRef((props, ref) => (
-  <Tooltip title="Copia">
-    <span role="button" tabIndex={0} className="copy" onClick={() => copy(props.text, props)} onKeyDown={() => copy(props.text, props)} ref={ref}>
-      {props.text}
-    </span>
-  </Tooltip>
-));
+const CopyToClipboard = props => {
+  const { openSnackbar } = useContext(SnackbarContext);
+
+  return (
+    <Tooltip title="Copia">
+      <span role="button" tabIndex={0} className="copy" onClick={() => copy(props.text, openSnackbar)} onKeyDown={() => copy(props.text, openSnackbar)}>
+        {props.text}
+      </span>
+    </Tooltip>
+  );
+};
 
 CopyToClipboard.propTypes = {
   text: _oneOfType([stringType, numberType])

@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import icon from '../../config/icons';
 import { app } from '../../config/shared';
 import { primaryTheme } from '../../config/themes';
-import { funcType, historyType, locationType } from '../../config/types';
+import { historyType, locationType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/searchBook.css';
 import Book from '../book';
@@ -18,7 +19,8 @@ const seo = {
 
 const AddBook = props => {
   const { user } = useContext(UserContext);
-  const { history, location, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { history, location } = props;
   const [book, setBook] = useState(null);
 
   const onBookSelect = book => setBook(book);
@@ -30,7 +32,7 @@ const AddBook = props => {
         <meta name="description" content={seo.description} />
         <link rel="canonical" href={app.url} />
       </Helmet>
-      {!book && <h2 className="text-center">{icon.magnify()} Cerca un libro</h2>}
+      {!book && <h2 className="text-center">{icon.magnify} Cerca un libro</h2>}
       <ThemeProvider theme={primaryTheme}>
         <div className="card sm primary search-book">
           <SearchBookForm onBookSelect={onBookSelect} user={user} />
@@ -57,14 +59,12 @@ const AddBook = props => {
 
 AddBook.propTypes = {
   history: historyType,
-  location: locationType,
-  openSnackbar: funcType
+  location: locationType
 }
 
 AddBook.defaultProps = {
   history: null,
-  location: null,
-  openSnackbar: null
+  location: null
 }
  
 export default AddBook;

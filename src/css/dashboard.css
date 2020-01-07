@@ -1,17 +1,31 @@
 @import 'media-queries.css';
 
 /* BASIC PROFILE */
-.basic-profile .avatar { 
-  margin-left: auto; 
-  margin-right: auto; 
-  margin-bottom: 10px;
-  width: var(--avatarSize);
-  height: var(--avatarSize);
-  transition: all .2s ease-in-out;
-  & .thumb { 
-    width: 100%;
-    min-height: 100%;
-    border-radius: 99px; 
+.basic-profile {
+  & .username {
+    display: flex;
+    font-size: 1.8rem;
+    line-height: var(--avatarSize);
+    min-height: var(--avatarSize);
+    margin-top: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  & .email { color: var(--lightTextClr); }
+  & .role-badges { position: absolute; top: 10px; right: 10px; z-index: 1; }
+  & .avatar { 
+    margin-left: auto; 
+    margin-right: auto; 
+    margin-bottom: 10px;
+    width: var(--avatarSize);
+    height: var(--avatarSize);
+    transition: all .2s ease-in-out;
+    & .thumb { 
+      width: 100%;
+      min-height: 100%;
+      border-radius: 99px; 
+    }
   }
 }
 
@@ -32,13 +46,13 @@
   }
   &::before {
     top: 0;
-    background: linear-gradient(to top, transparent 0%,rgb(var(--cardBg)) 90%);
+    background: linear-gradient(to top, transparent 0%,rgb(var(--cardClr)) 90%);
     margin-bottom: calc(-1 * var(--faderHeight));
   }
   &::after {
     top: calc(100% - var(--faderHeight));
     bottom: -1px;
-    background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardBg)) 90%);
+    background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardClr)) 90%);
     margin-top: calc(-1 * var(--faderHeight));
   }
 }
@@ -46,7 +60,7 @@
   margin-bottom: 0; 
   padding-top: .4rem; 
   padding-bottom: .4rem; 
-  border-bottom: 1px solid rgba(var(--blackClr), .1); 
+  border-bottom-width: 1px;
   &:last-child { border-bottom: 0; }
   & .avatar { float: left; will-change: opacity; animation: fadeIn .3s ease-in-out; }
   & .btn { position: relative; margin-left: 2px; margin-right: 2px; }

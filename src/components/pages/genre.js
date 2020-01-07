@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
-import { funcType, matchType } from '../../config/types';
+import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize, timestamp } from '../../config/shared';
+import { matchType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
 import Cover from '../cover';
@@ -16,6 +16,7 @@ import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from '../skeletons';
 import Bubbles from './bubbles';
+import SnackbarContext from '../../context/snackbarContext';
 
 const limit = 28;
 const orderBy = [ 
@@ -26,7 +27,8 @@ const skltnStyle = { display: 'inline-block', marginTop: '1.1em', };
 
 const Genre = props => {
   const { user } = useContext(UserContext);
-  const { match, openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
+  const { match } = props;
   const [count, setCount] = useState(0);
   const [coverview, setCoverview] = useState(true);
   const [desc, setDesc] = useState(true);
@@ -208,7 +210,7 @@ const Genre = props => {
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
-        timestamp: (new Date()).getTime()
+        timestamp
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
@@ -296,10 +298,10 @@ const Genre = props => {
               onClick={onFollow}>
               {follow ? (
                 <>
-                  <span className="hide-on-hover">{icon.check()} Segui</span>
+                  <span className="hide-on-hover">{icon.check} Segui</span>
                   <span className="show-on-hover">Smetti</span>
                 </> 
-              ) : <span>{icon.plus()} Segui</span> }
+              ) : <span>{icon.plus} Segui</span> }
             </button>
             <div className="counter last inline">
               <Bubbles limit={3} items={followers} />
@@ -321,7 +323,7 @@ const Genre = props => {
                       disabled={!items}
                       title={coverview ? 'Stack view' : 'Cover view'}
                       onClick={onToggleView}>
-                      {coverview ? icon.viewSequential() : icon.viewGrid()}
+                      {coverview ? icon.viewSequential : icon.viewGrid}
                     </button>
                     <span className="counter">
                       {items ? items.length : 0} libr{items && items.length === 1 ? 'o' : 'i'} {items && count > items.length ? `di ${count}` : ''}
@@ -341,7 +343,7 @@ const Genre = props => {
                       disabled={!items}
                       title={desc ? 'Ascendente' : 'Discendente'}
                       onClick={onToggleDesc}>
-                      {icon.arrowDown()}
+                      {icon.arrowDown}
                     </button>
                     <Menu 
                       className="dropdown-menu"
@@ -383,8 +385,7 @@ const Genre = props => {
 }
 
 Genre.propTypes = {
-  match: matchType,
-  openSnackbar: funcType.isRequired
+  match: matchType
 }
 
 Genre.defaultProps = {

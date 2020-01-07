@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { notesRef, notificationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { funcType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import NoteMenuItem from '../noteMenuItem';
 import PaginationControls from '../paginationControls';
@@ -18,9 +18,9 @@ const orderBy = [
   { type: 'createdByUid', label: 'Mittente'}
 ];
 
-const Notifications = props => {
+const Notifications = () => {
   const { user } = useContext(UserContext);
-  const { openSnackbar } = props;
+  const { openSnackbar } = useContext(SnackbarContext);
   const [count, setCount] = useState(0);
   const [desc, setDesc] = useState(true);
   const [items, setItems] = useState(null);
@@ -31,16 +31,15 @@ const Notifications = props => {
   const [page, setPage] = useState(1);
   const is = useRef(true);
 
-  const setEmptyState = useCallback(() => {
-    setCount(0);
-    setItems(null);
-    setLoading(false);
-    setPage(1);
-  }, []);
-
   const fetch = useCallback(() => {
     const items = [];
     const ref = notesRef(user.uid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    const setEmptyState = () => {
+      setCount(0);
+      setItems(null);
+      setLoading(false);
+      setPage(1);
+    };
 
     if (is.current) setLoading(true);
 
@@ -74,7 +73,7 @@ const Notifications = props => {
         openSnackbar(handleFirestoreError(err), 'error');
       }
     });
-  }, [desc, openSnackbar, orderByIndex, setEmptyState, user.uid]);
+  }, [desc, openSnackbar, orderByIndex, user.uid]);
 
   useEffect(() => {
     fetch();
@@ -161,7 +160,7 @@ const Notifications = props => {
                   <span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}
                 </button>
                 <button type="button" className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc} disabled={!items || items.length < 2}>
-                  {icon.arrowDown()}
+                  {icon.arrowDown}
                 </button>
                 <Menu 
                   className="dropdown-menu"
@@ -191,10 +190,6 @@ const Notifications = props => {
       }
     </div>
   );
-}
-
-Notifications.propTypes = {
-  openSnackbar: funcType.isRequired
 }
  
 export default Notifications;

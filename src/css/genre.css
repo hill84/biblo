@@ -2,6 +2,6 @@
   & .card {
     overflow: hidden;
     transition: background-color .4s ease-in-out;
-    & h2 { color: var(--contrastedTextClr); }
+    & h2 { color: rgb(var(--contrastedTextClr)); }
   }
 }

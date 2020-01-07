@@ -149,7 +149,6 @@ export default class QuotesDash extends Component {
 
 	render() {
     const { count, desc, isOpenDeleteDialog, items, limitByIndex, limitMenuAnchorEl, loading, orderByIndex, orderMenuAnchorEl, page, redirectTo } = this.state;
-    const { openSnackbar } = this.props;
 
     if (redirectTo) return <Redirect to={`/author/${redirectTo}`} />
 
@@ -192,7 +191,7 @@ export default class QuotesDash extends Component {
             {item.bid ? <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
             <Link to={`/author/${normURL(item.author)}`} className="col">{item.author}</Link>
             <div className="col-5 hide-sm" title={item.quote}>{item.quote}</div>
-            <div className="col hide-sm monotype"><CopyToClipboard openSnackbar={openSnackbar} text={item.qid}/></div>
+            <div className="col hide-sm monotype"><CopyToClipboard text={item.qid}/></div>
             <Link to={`/dashboard/${item.lastEditByUid}`} title={item.lastEditByUid} className="col hide-sm">
               {item.lastEditBy}
             </Link>
@@ -200,10 +199,10 @@ export default class QuotesDash extends Component {
               <div className="timestamp">{timeSince(item.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs">
-              <button type="button" className="btn icon green" onClick={() => this.onView(normURL(item.author))}>{icon.eye()}</button>
-              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.qid)}>{icon.pencil()}</button>
-              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.qid, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock()}</button>
-              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.qid)}>{icon.close()}</button>
+              <button type="button" className="btn icon green" onClick={() => this.onView(normURL(item.author))}>{icon.eye}</button>
+              <button type="button" className="btn icon primary" onClick={() => this.onEdit(item.qid)}>{icon.pencil}</button>
+              <button type="button" className={`btn icon ${item.edit ? 'secondary' : 'flat' }`} onClick={() => this.onLock(item.qid, item.edit)} title={item.edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+              <button type="button" className="btn icon red" onClick={() => this.onDeleteRequest(item.qid)}>{icon.close}</button>
             </div>
           </div>
         </li>
@@ -227,7 +226,7 @@ export default class QuotesDash extends Component {
             </div>
             <div className="col-auto">
               <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown()}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
               <Menu 
                 className="dropdown-menu"
                 anchorEl={orderMenuAnchorEl} 

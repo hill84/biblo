@@ -8,28 +8,27 @@ import { ThemeProvider } from '@material-ui/styles';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import React, { Component } from 'react';
-// import { isAuthenticated } from '../../config/firebase';
 import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
+import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages, timestamp } from '../../config/shared';
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 import '../../css/searchBook.css';
+
+const searchByOptions = [
+  { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
+  { key: 'ISBN_13', type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13' },
+  { key: 'author', type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors' },
+  { key: 'publisher', type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher' }
+];
 
 export default class SearchBookForm extends Component {
   state = {
     // searchAnchorEl: null,
     searchByAnchorEl: null,
-    searchBy: 
-      { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
-    searchByOptions: [
-      { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
-      { key: 'ISBN_13', type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13' },
-      { key: 'author', type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors' },
-      { key: 'publisher', type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher' }
-    ],
+    searchBy: { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
     // searchText: '',
     value: '',
     loading: false,
@@ -88,12 +87,8 @@ export default class SearchBookForm extends Component {
       }));
     }
   }
-  onCloseSearchByMenu = () => {
-    if (this._isMounted) this.setState({ searchByAnchorEl: null });
-  }
-  onOpenSearchByMenu = e => {
-    if (this._isMounted) this.setState({ searchByAnchorEl: e.currentTarget });
-  }
+  onCloseSearchByMenu = () => this.setState({ searchByAnchorEl: null });
+  onOpenSearchByMenu = e => this.setState({ searchByAnchorEl: e.currentTarget });
 
   renderInput = inputProps => {
     const { ref, label, ...other } = inputProps;
@@ -193,7 +188,7 @@ export default class SearchBookForm extends Component {
       EDIT: {
         createdBy: (user && user.displayName) || '',
         createdByUid: (user && user.uid) || '',
-        created_num: (new Date()).getTime() || 0
+        created_num: timestamp || 0
       },
       authors: searchBy.key === 'author' ? { searchTextType: true } : {},
       bid: '',
@@ -292,7 +287,7 @@ export default class SearchBookForm extends Component {
                 EDIT: {
                   createdBy: user.displayName || '',
                   createdByUid: user.uid || '',
-                  created_num: (new Date()).getTime() || 0
+                  created_num: timestamp || 0
                 },
                 authors: (b.authors && arrToObj(b.authors.map(author => author.split('.').join('')), item => ({ key: item, value: true }))) || {},
                 bid: '',
@@ -366,7 +361,7 @@ export default class SearchBookForm extends Component {
   }
 
   render() {
-    const { loading, redirectToReferrer, searchBy, searchByAnchorEl, searchByOptions, suggestions, value } = this.state;
+    const { loading, redirectToReferrer, searchBy, searchByAnchorEl, suggestions, value } = this.state;
     const { newBook } = this.props;
     const options = searchByOptions.map(option => (
       <MenuItem 
