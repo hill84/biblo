@@ -44,9 +44,19 @@
 }
 
 @media (--to-s) {
-  #BookProfile .book-profile .user.rating {
-    & .react-rater { font-size: 2.3rem; line-height: inherit; }
-    & .label { display: none; }
+  #BookProfile .book-profile {
+    & .author {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 105px);
+      display: inline-block;
+      vertical-align: middle;
+    }
+    & .user.rating {
+      & .react-rater { font-size: 2.3rem; line-height: inherit; }
+      & .label { display: none; }
+    }
   }
 }
 

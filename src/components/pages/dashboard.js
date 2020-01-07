@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
@@ -18,10 +18,11 @@ import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
-import NoMatch from '../noMatch';
 import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
+
+const NoMatch = lazy(() => import('../noMatch'));
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
@@ -352,7 +353,12 @@ const Dashboard = props => {
   const challengeProgress = useMemo(() => challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0, [challengeBooks_num, challengeReadBooks_num]);
   const challengeCompleted = useMemo(() => challengeProgress === 100, [challengeProgress]);
   const isMini = useMemo(() => isTouchDevice() || _screenSize === 'sm' || _screenSize === 'xs', [_screenSize]);
-  
+  const contactsSkeleton = useMemo(() => [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />), []);
+  const creationYear = useMemo(() => duser && String(new Date(duser.creationTime).getFullYear()), [duser]);
+  const Roles = useMemo(() => duser && Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
+    <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>
+  )), [duser]);
+
   if (!duser && !loading) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
   
   const usersList = obj => (
@@ -387,12 +393,6 @@ const Dashboard = props => {
     </>
   );
 
-  const Roles = duser && Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
-    <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>
-  ));
-
-  const creationYear = duser && String(new Date(duser.creationTime).getFullYear());
-
   const ShelfDetails = () => (
     <div className="info-row footer centered shelfdetails">
       <span className="counter">{icon.book} <b>{duser ? duser.stats.shelf_num : 0}</b> <span className="hide-sm">Libri</span></span>
@@ -426,8 +426,6 @@ const Dashboard = props => {
       default: return 'La dashboard';
     }
   };
-
-  const contactsSkeleton = [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />);
 
   return (
     <div className="container" id="dashboardComponent" ref={is}>

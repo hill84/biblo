@@ -2,7 +2,7 @@
 import { Tooltip } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { lazy, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
@@ -14,8 +14,9 @@ import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import BookCollection from '../bookCollection';
 import MinifiableText from '../minifiableText';
-import NoMatch from '../noMatch';
 import Bubbles from './bubbles';
+
+const NoMatch = lazy(() => import('../noMatch'));
 
 const Collection = props => {
   const { user } = useContext(UserContext);

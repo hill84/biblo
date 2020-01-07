@@ -5,27 +5,19 @@ import React, { lazy, Suspense, useContext } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import ErrorBoundary from './components/errorBoundary';
-import PasswordResetForm from './components/forms/passwordResetForm';
 import Layout from './components/layout';
-import NewFeature from './components/newFeature';
-import AboutPage from './components/pages/aboutPage';
 import AddBook from './components/pages/addBook';
 import AuthorPage from './components/pages/authorPage';
 import AuthorsPage from './components/pages/authorsPage';
 import BookContainer from './components/pages/bookContainer';
-import CookiePage from './components/pages/cookiePage';
-import DonationsPage from './components/pages/donationsPage';
+import Collection from './components/pages/collection';
+import Dashboard from './components/pages/dashboard';
 import Genre from './components/pages/genre';
-import genresPage from './components/pages/genresPage';
-import HelpPage from './components/pages/helpPage';
+import GenresPage from './components/pages/genresPage';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
-import NoMatchPage from './components/pages/noMatchPage';
-import Notifications from './components/pages/notifications';
-import PrivacyPage from './components/pages/privacyPage';
+import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
-import TermsPage from './components/pages/termsPage';
-import VerifyEmailPage from './components/pages/verifyEmailPage';
 import { isAuthenticated } from './config/firebase';
 import { app } from './config/shared';
 import { defaultTheme } from './config/themes';
@@ -34,13 +26,21 @@ import SnackbarContext, { SnackbarProvider } from './context/snackbarContext';
 import { UserProvider } from './context/userContext';
 
 const Admin = lazy(() => import('./components/pages/admin/admin'));
+const AboutPage = lazy(() => import('./components/pages/aboutPage'));
 const Challenge = lazy(() => import('./components/pages/challenge'));
 // const Challenges = lazy(() => import('./components/pages/challenges'));
-const Collection = lazy(() => import('./components/pages/collection'));
-const Dashboard = lazy(() => import('./components/pages/dashboard'));
+const CookiePage = lazy(() => import('./components/pages/cookiePage'));
+const DonationsPage = lazy(() => import('./components/pages/donationsPage'));
+const HelpPage = lazy(() => import('./components/pages/helpPage'));
 const IconsPage = lazy(() => import('./components/pages/iconsPage'));
 const NewBook = lazy(() => import('./components/pages/newBook'));
-const Profile = lazy(() => import('./components/pages/profile'));
+const NewFeature = lazy(() => import('./components/newFeature'));
+const NoMatchPage = lazy(() => import('./components/pages/noMatchPage'));
+const Notifications = lazy(() => import('./components/pages/notifications'));
+const PasswordResetForm = lazy(() => import('./components/forms/passwordResetForm'));
+const PrivacyPage = lazy(() => import('./components/pages/privacyPage'));
+const TermsPage = lazy(() => import('./components/pages/termsPage'));
+const VerifyEmailPage = lazy(() => import('./components/pages/verifyEmailPage'));
 
 const App = () => (
   <ThemeProvider theme={defaultTheme}>
@@ -61,37 +61,37 @@ const App = () => (
                 <Switch>
                   <Route path="/" exact component={Home} />
                   <Route path="/about" component={AboutPage} />
-                  <Route path="/cookie" component={CookiePage} />
-                  <Route path="/donations" component={DonationsPage} />
-                  <Route path="/help" component={HelpPage} />
-                  <Route path="/privacy" component={PrivacyPage} />
-                  <Route path="/terms" component={TermsPage} />
-                  <Route path="/verify-email" component={VerifyEmailPage} />
-                  <Route path="/password-reset" component={PasswordResetForm} />
-                  <Route path="/login" component={Login} />
-                  <Route path="/signup" component={Signup} />
                   <Route path="/author/:aid" component={AuthorPage} />
-                  <Route path="/genres" component={genresPage} />
-                  <RouteWithProps path="/authors" component={AuthorsPage} /> {/* CLASS */}
+                  <Route path="/book/:bid" component={BookContainer} />
+                  <Route path="/challenges" component={NewFeature} />          
                   <Route path="/collection/:cid" component={Collection} />
                   <Route path="/collections" component={NewFeature} />
-                  <Route path="/genre/:gid" component={Genre} />
-                  <Route path="/book/:bid" component={BookContainer} />
+                  <Route path="/cookie" component={CookiePage} />
                   <Route path="/dashboard/:uid" exact component={Dashboard} />
                   <Route path="/dashboard/:uid/:tab" component={Dashboard} />
+                  <Route path="/donations" component={DonationsPage} />
+                  <Route path="/genre/:gid" component={Genre} />
+                  <Route path="/genres" component={GenresPage} />
+                  <Route path="/help" component={HelpPage} />
                   <Route path="/icons" component={IconsPage} />
+                  <Route path="/login" component={Login} />
+                  <Route path="/password-reset" component={PasswordResetForm} />
+                  <Route path="/privacy" component={PrivacyPage} />
+                  <Route path="/signup" component={Signup} />
+                  <Route path="/terms" component={TermsPage} />
+                  <Route path="/verify-email" component={VerifyEmailPage} />
+                  <RouteWithProps path="/authors" component={AuthorsPage} /> {/* CLASS */}
+                  <PrivateRoute path="/admin" exact component={Admin} />
+                  <PrivateRoute path="/admin/:tab" component={Admin} />
                   <PrivateRoute path="/books/add" component={AddBook} />
+                  <PrivateRoute path="/challenge" component={Challenge} />
                   <PrivateRoute path="/new-book" component={NewBook} />
                   <PrivateRoute path="/notifications" component={Notifications} />
                   <PrivateRoute path="/profile" exact component={Profile}/>
-                  <PrivateRoute path="/admin" exact component={Admin} />
-                  <PrivateRoute path="/admin/:tab" component={Admin} />
-                  <PrivateRoute path="/challenge" component={Challenge} />
-                  <Route path="/challenges" component={NewFeature} />          
+                  <Redirect from="/aiuto" to="/help" />
+                  <Redirect from="/chi-siamo" to="/about" />
                   <Redirect from="/home" to="/" />
                   <Redirect from="/webmaster/*" to="/" />
-                  <Redirect from="/chi-siamo" to="/about" />
-                  <Redirect from="/aiuto" to="/help" />
                   <Route component={NoMatchPage} status={404} />
                 </Switch>
               </Suspense>

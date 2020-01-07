@@ -3,7 +3,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -42,7 +42,7 @@ const Shelf = props => {
   const [filterByIndex, setFilterByIndex] = useState(0);
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState(null);
   const [isOwner, setIsOwner] = useState(luid === uid);
-  const [limit, setLimit] = useState(booksPerRow() * 2 - (luid === uid ? 1 : 0));
+  const [limit, setLimit] = useState(0);
   const [loading, setLoading] = useState(true);
   const [orderByIndex, setOrderByIndex] = useState(0);
   const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState(null);
@@ -53,7 +53,7 @@ const Shelf = props => {
   const is = useRef(true);
 
   const updateLimit = useCallback(() => {
-    if (is.current) {
+    if (is.current && uid) {
       setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
     }
   }, [luid, uid]);
@@ -66,20 +66,23 @@ const Shelf = props => {
     }
   }, [updateLimit]);
 
+  useEffect(() => {
+    updateLimit();
+  }, [updateLimit]);
+
   useEffect(() => () => {
     is.current = false;
   }, []);
 
   const fetchUserBooks = useCallback(e => {
     const direction = e && e.currentTarget.dataset.direction;
-
     const prev = direction === 'prev';
     const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
     const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
     const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
     const setEmptyState = err => {
       setIsOwner(luid === uid);
-      setLimit(booksPerRow() * 2 - (luid === uid ? 1 : 0));
+      updateLimit();
       setCount(0);
       setItems([]);
       setLoading(false);
@@ -94,7 +97,8 @@ const Shelf = props => {
         const fullBooks = [];
 
         fullSnap.forEach(fullUserBook => fullBooks.push({ 
-          readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
+          readingState: { state_num: fullUserBook.data().readingState.state_num }, 
+          bid: fullUserBook.id 
         }));
         
         const lastVisible = fullSnap.docs[startAt];
@@ -147,11 +151,11 @@ const Shelf = props => {
       } else if (is.current) setEmptyState();
     });
     // eslint-disable-next-line
-  }, [count, desc, filterByIndex, limit, luid, openSnackbar, orderByIndex, shelf, uid]);
+  }, [desc, filterByIndex, limit, luid, openSnackbar, orderByIndex, shelf, uid]);
 
   useEffect(() => {
-    fetchUserBooks();
-  }, [fetchUserBooks]);
+    if (uid && limit) fetchUserBooks();
+  }, [fetchUserBooks, limit, luid, uid]);
 
   useEffect(() => () => {
     is.current = false;
@@ -167,31 +171,32 @@ const Shelf = props => {
     }
   };
 
-  const onChangeFilterBy = (e, i) => {
+  const onChangeFilterBy = useCallback((e, i) => {
     if (is.current) {
       setFilterByIndex(i);
       setFilterMenuAnchorEl(null);
       setPage(1);
     }
-  };
+  }, []);
 
   const onToggleDesc = () => is.current && setDesc(!desc);
 
   const onToggleView = () => is.current && setCoverview(!coverview);
 
-  const onOpenOrderMenu = e => is.current && setOrderMenuAnchorEl(e.currentTarget);
-  const onCloseOrderMenu = () => is.current && setOrderMenuAnchorEl(null);
+  const onOpenOrderMenu = e => setOrderMenuAnchorEl(e.currentTarget);
+  const onCloseOrderMenu = () => setOrderMenuAnchorEl(null);
 
   const onOpenFilterMenu = e => {
     e.persist();
     if (is.current) setFilterMenuAnchorEl(e.currentTarget);
   }
-  const onCloseFilterMenu = () => is.current && setFilterMenuAnchorEl(null);
+  const onCloseFilterMenu = () => setFilterMenuAnchorEl(null);
 
-  const covers = items && items.length > 0 && items.map((book, i) => (
+  const covers = useMemo(() => items && items.length > 0 && items.map((book, i) => (
     <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
-  ));
-  const filterByOptions = filterBy.map((option, i) => (
+  )), [items, shelf]);
+
+  const filterByOptions = useMemo(() => filterBy.map((option, i) => (
     <MenuItem
       key={i}
       disabled={i === -1}
@@ -199,8 +204,9 @@ const Shelf = props => {
       onClick={e => onChangeFilterBy(e, i)}>
       {option}
     </MenuItem>
-  ));
-  const orderByOptions = orderBy.map((option, i) => (
+  )), [filterByIndex, onChangeFilterBy]);
+
+  const orderByOptions = useMemo(() => orderBy.map((option, i) => (
     <MenuItem
       key={option.type}
       className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : ''}
@@ -210,7 +216,8 @@ const Shelf = props => {
       <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
       <Typography variant="inherit">{orderBy[i].label}</Typography>
     </MenuItem>
-  ));
+  )), [orderByIndex, shelf]);
+
   const EmptyState = () => (
     <div className="info-row empty text-center">
       Nessuna libro <span className="hide-xs">trovato</span>
