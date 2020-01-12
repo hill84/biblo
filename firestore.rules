@@ -7,33 +7,38 @@ service cloud.firestore {
     match /users/{uid} {
     	allow read;
       allow create: if isValidUser();
-      allow update: if (isEditor() && isAdmin()) || (isValidUser() && isOwner(uid));
+      allow update: if isValidUser() && ((isEditor() && isAdmin()) || isOwner(uid));
     	allow delete: if (isEditor() && isAdmin()) || isOwner(uid);
 
       match /challenges/{cid} {
         allow read;
-        allow write: if isEditor();
+        allow update: if isEditor();
+        allow create, delete: if isEditor() && isAdmin();
       }
 
       match /collections/{cid} {
         allow read;
-        allow write: if isEditor();
+        allow update: if isEditor();
+        allow create, delete: if isEditor() && isAdmin();
       }
 
       match /authors/{aid} {
         allow read;
-        allow write: if isEditor();
+        allow update: if isEditor();
+        allow create, delete: if isEditor() && isAdmin();
       }
     }
 
     match /notifications/{uid} {
     	allow read;
-      allow write: if isEditor();
+      allow create, update: if isEditor();
+      allow delete: if isEditor() && (isAdmin() || isOwner(uid));
     }
 
     match /{path=**}/notes/{uid} {
       allow read;
-      allow write: if isEditor();
+      allow create, update: if isEditor();
+      allow delete: if isEditor() && (isAdmin() || isOwner(uid));
     }
 
     match /followers/{uid} {
@@ -72,8 +77,7 @@ service cloud.firestore {
 
     match /{path=**}/reviewers/{uid} {
       allow read;
-      allow create, update: if isEditor();
-      allow delete: if isEditor() && (isAdmin() || isOwner(uid));
+      allow write: if isEditor();
     }
     
     match /authors/{aid} {
@@ -83,7 +87,7 @@ service cloud.firestore {
 
       match /followers/{uid} {
         allow read;
-        allow write: if isEditor();
+        allow write: if isEditor() && (isAdmin() || isOwner(uid));
       }
     }
     
@@ -100,7 +104,7 @@ service cloud.firestore {
 
       match /followers/{uid} {
         allow read;
-        allow write: if isEditor();
+        allow write: if isEditor() && (isAdmin() || isOwner(uid));
       }
     }
 
@@ -111,7 +115,7 @@ service cloud.firestore {
 
       match /followers/{uid} {
         allow read;
-        allow write: if isEditor();
+        allow write: if isEditor() && (isAdmin() || isOwner(uid));
       }
     }
 
