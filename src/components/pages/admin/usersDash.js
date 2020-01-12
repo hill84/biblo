@@ -6,7 +6,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
@@ -18,6 +18,7 @@ import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 const limitBy = [ 15, 25, 50, 100, 250, 500 ];
+
 const orderBy = [ 
   { type: 'creationTime', label: 'Data'}, 
   { type: 'displayName', label: 'Nome'}, 
@@ -29,17 +30,23 @@ const orderBy = [
   { type: 'stats.ratings_num', label: 'Voti'}
 ];
 
+const unsub = {
+  usersFetch: null
+};
+
+const initialState = {
+  firstVisible: null,
+  items: null,
+  lastVisible: null,
+  limitByIndex: 0,
+  orderByIndex: 0,
+  page: 1
+};
+
 const UsersDash = props => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { onToggleDialog } = props;
-  const [state, setState] = useState({
-    firstVisible: null,
-    items: null,
-    lastVisible: null,
-    limitByIndex: 0,
-    orderByIndex: 0,
-    page: 1
-  });
+  const { onToggleDialog, onToggleNoteDialog } = props;
+  const [state, setState] = useState(initialState);
   const [count, setCount] = useState(0);
   const [desc, setDesc] = useState(true);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
@@ -50,8 +57,8 @@ const UsersDash = props => {
   const [selected, setSelected] = useState(null);
   const { firstVisible, items, lastVisible, limitByIndex, orderByIndex, page } = state;
   const is = useRef(true);
-  const sub = useRef();
-  const limit = limitBy[limitByIndex];
+
+  const limit = useMemo(() => limitBy[limitByIndex], [limitByIndex]);
 
   const fetch = useCallback(e => {
     const direction = e && e.currentTarget.dataset.direction;
@@ -63,27 +70,24 @@ const UsersDash = props => {
     if (is.current) setLoading(true);
 
     const fetcher = () => {
-      sub.current.usersFetch = dRef.onSnapshot(snap => {
+      unsub.usersFetch = dRef.onSnapshot(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
-          setState({
-            ...state,
-            firstVisible: snap.docs[prev ? snap.size - 1 : 0],
-            items: prev ? items.reverse() : items,
-            lastVisible: snap.docs[prev ? 0 : snap.size - 1],
-            page: direction ? prev ? state.page - 1 : ((state.page * limit) > state.count) ? state.page : state.page + 1 : 1
-          });
+          if (is.current) {
+            setState({
+              ...state,
+              firstVisible: snap.docs[prev ? snap.size - 1 : 0],
+              items: prev ? items.reverse() : items,
+              lastVisible: snap.docs[prev ? 0 : snap.size - 1],
+              page: direction ? prev ? state.page - 1 : ((state.page * limit) > state.count) ? state.page : state.page + 1 : 1
+            });
+            setLoading(false);
+          }
+        } else if (is.current) {
+          setState(initialState);
           setLoading(false);
-        } else {
-          setState({ 
-            ...state, 
-            firstVisible: null, 
-            items: null, 
-            lastVisible: null
-          });
         }
-        setLoading(false);
       });
     };
     
@@ -96,10 +100,22 @@ const UsersDash = props => {
           }
         } else if (is.current) {
           setCount(0);
+          setState(initialState);
+          setLoading(false);
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
   }, [desc, firstVisible, lastVisible, limit, openSnackbar, orderByIndex, state]);
+  
+  useEffect(() => {
+    fetch();
+    // eslint-disable-next-line
+  }, [desc, limitByIndex, orderByIndex]);
+
+  useEffect(() => () => {
+    is.current = false;
+    unsub.usersFetch && unsub.usersFetch();
+  }, []);
 
   const onToggleDesc = () => setDesc(!desc);
   
@@ -107,14 +123,14 @@ const UsersDash = props => {
   const onCloseOrderMenu = () => setOrderMenuAnchorEl(null);
   const onChangeOrderBy = (e, i) => {
     setOrderMenuAnchorEl(null);
-    setState(state => ({ ...state, orderByIndex: i, page: 1 }));
+    setState({ ...state, orderByIndex: i, page: 1 });
   };
 
   const onOpenLimitMenu = e => setLimitMenuAnchorEl(e.currentTarget);
   const onCloseLimitMenu = () => setLimitMenuAnchorEl(null);
   const onChangeLimitBy = (e, i) => {
     setLimitMenuAnchorEl(null);
-    setState(state => ({ ...state, limitByIndex: i, page: 1 }));
+    setState({ ...state, limitByIndex: i, page: 1 });
   };
 
   const onView = e => {
@@ -124,7 +140,7 @@ const UsersDash = props => {
 
   const onNote = e => {
     const { id } = e.currentTarget.parentNode.dataset;
-    onToggleDialog(id);
+    onToggleNoteDialog(id);
   };
 
   const onSendReset = e => {
@@ -135,6 +151,8 @@ const UsersDash = props => {
   };
 
   // const onSendVerification = () => {}; // TODO
+
+  const onEdit = item => onToggleDialog(item);
 
   const onLock = e => {
     const { id } = e.currentTarget.parentNode.dataset;
@@ -210,20 +228,6 @@ const UsersDash = props => {
     userRef(id).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
   };
 
-  useEffect(() => {
-    fetch();
-    // eslint-disable-next-line
-  }, [desc, limitByIndex, orderByIndex]);
-
-  useEffect(() => {
-    const unsub = sub.current;
-
-    return () => {
-      is.current = false;
-      unsub.userFetch && unsub.usersFetch();
-    }
-  }, []);
-
   if (redirectTo) return <Redirect to={`/dashboard/${redirectTo}`} />
   
   const orderByOptions = orderBy.map((option, index) => (
@@ -266,11 +270,16 @@ const UsersDash = props => {
           <Link to={`/dashboard/${item.uid}`} className="col" title={item.displayName}>
             {item.displayName}
           </Link>
-          <div className="col monotype hide-sm" title={item.uid}>
+          <div className="col monotype hide-sm">
             <CopyToClipboard text={item.uid} />
           </div>
-          <div className="col monotype hide-sm" title={item.email}>
+          <div className="col monotype hide-sm">
             <CopyToClipboard text={item.email} />
+          </div>
+          <div role="group" className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
+            <button type="button" className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={onChangeRole} title="editor">E</button>
+            <button type="button" className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={onChangeRole} title="premium">P</button>
+            <button type="button" className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={onChangeRole} title="admin">A</button>
           </div>
           <div className="col col-sm-3 col-lg-2 hide-xs">
             <div className="row text-center">
@@ -280,22 +289,56 @@ const UsersDash = props => {
               <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
             </div>
           </div>
-          <div role="group" className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
-            <button type="button" className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={onChangeRole} title="editor">E</button>
-            <button type="button" className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={onChangeRole} title="premium">P</button>
-            <button type="button" className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={onChangeRole} title="admin">A</button>
-          </div>
-          <div className="col col-sm-2 col-lg text-right">
+          <div className="col col-sm-2 text-right">
             <div className="timestamp">
-              <span className="date">{new Date(item.creationTime).toLocaleDateString('it-IT', dateOptions)}</span><span className="time hide-lg"> - {new Date(item.creationTime).toLocaleTimeString('it-IT', timeOptions)}</span>
+              <span className="date">{new Date(item.creationTime).toLocaleDateString('it-IT', dateOptions)}</span><span className="time hide-lg"> &middot; {new Date(item.creationTime).toLocaleTimeString('it-IT', timeOptions)}</span>
             </div>
           </div>
           <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
-            <button type="button" className="btn icon green" onClick={onView} title="anteprima">{icon.eye}</button>
-            <button type="button" className="btn icon primary" onClick={onNote} title="Invia notifica">{icon.bell}</button>
-            {/* <button type="button" className="btn icon primary" onClick={onSendVerification} title="Invia email di verifica">{icon.email}</button> */}
-            <button type="button" className="btn icon primary" onClick={onSendReset} title="Invia email di reset password">{icon.textboxPassword}</button>
-            <button type="button" className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`} onClick={onLock} title={item.roles.editor ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
+            <button
+              type="button"
+              className="btn icon green"
+              title="anteprima"
+              onClick={onView}>
+              {icon.eye}
+            </button>
+            <button
+              type="button"
+              className="btn icon primary"
+              title="modifica"
+              onClick={() => onEdit(item)}>
+              {icon.pencil}
+            </button>
+            <button
+              type="button"
+              className="btn icon primary"
+              title="Invia notifica"
+              onClick={onNote}>
+              {icon.bell}
+            </button>
+            {/* 
+              <button
+                type="button"
+                className="btn icon primary"
+                title="Invia email di verifica"
+                onClick={onSendVerification}>
+                {icon.email}
+              </button>
+            */}
+            <button
+              type="button"
+              className="btn icon primary"
+              title="Invia email di reset password"
+              onClick={onSendReset}>
+              {icon.textboxPassword}
+            </button>
+            <button
+              type="button"
+              className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`}
+              title={item.roles.editor ? 'Blocca' : 'Sblocca'}
+              onClick={onLock}>
+              {icon.lock}
+            </button>
             <button type="button" className="btn icon red" onClick={onDeleteRequest} title="elimina">{icon.close}</button>
           </div>
         </div>
@@ -306,7 +349,7 @@ const UsersDash = props => {
   return (
     <>
       <div className="head nav" ref={is}>
-        <div className="row" ref={sub}>
+        <div className="row">
           <div className="col">
             <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
             <button type="button" className="btn sm flat counter last" onClick={onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
@@ -339,6 +382,7 @@ const UsersDash = props => {
             <div className="col">Nominativo</div>
             <div className="col hide-sm">Uid</div>
             <div className="col hide-sm">Email</div>
+            <div className="col col-md-2 col-lg-1 text-center">Ruoli</div>
             <div className="col col-sm-3 col-lg-2 hide-xs">
               <div className="row text-center">
                 <div className="col" title="Libri">{icon.book}</div>
@@ -347,8 +391,7 @@ const UsersDash = props => {
                 <div className="col hide-md" title="Voti">{icon.star}</div>
               </div>
             </div>
-            <div className="col col-md-2 col-lg-1 text-center">Ruoli</div>
-            <div className="col col-sm-2 col-lg text-right">Creato</div>
+            <div className="col col-sm-2 text-right">Creato</div>
           </div>
         </li>
         {itemsList}
@@ -362,7 +405,7 @@ const UsersDash = props => {
         page={page}
       />
 
-      {selected && 
+      {selected && (
         <Dialog
           open={isOpenDeleteDialog}
           keepMounted
@@ -380,13 +423,14 @@ const UsersDash = props => {
             <button type="button" className="btn btn-footer primary" onClick={onDelete}>Procedi</button>
           </DialogActions>
         </Dialog>
-      }
+      )}
     </>
   );
 }
 
 UsersDash.propTypes = {
-  onToggleDialog: funcType.isRequired
+  onToggleDialog: funcType.isRequired,
+  onToggleNoteDialog: funcType.isRequired
 }
  
 export default UsersDash;

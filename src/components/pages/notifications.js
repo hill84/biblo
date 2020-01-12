@@ -1,6 +1,6 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { notesRef, notificationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -31,49 +31,53 @@ const Notifications = () => {
   const [page, setPage] = useState(1);
   const is = useRef(true);
 
+  const authid = useMemo(() => user && user.uid, [user]);
+
   const fetch = useCallback(() => {
-    const items = [];
-    const ref = notesRef(user.uid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
-    const setEmptyState = () => {
-      setCount(0);
-      setItems(null);
-      setLoading(false);
-      setPage(1);
-    };
-
-    if (is.current) setLoading(true);
-
-    ref.limit(limit).get().then(snap => {
-      if (!snap.empty) {
-        snap.forEach(item => items.push(item.data()));
-        if (is.current) {
-          setItems(items);
-          setLastVisible(snap.docs[snap.docs.length-1]);
-          setLoading(false);
-          setPage(1);
-        }
-        notificationsRef.doc(user.uid).get().then(snap => {
-          if (snap.exists) {
-            if (is.current) {
-              setCount(snap.data().count);
-            }
-          }
-        }).catch(err => {
+    if (authid) {
+      const items = [];
+      const ref = notesRef(authid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+      const setEmptyState = () => {
+        setCount(0);
+        setItems(null);
+        setLoading(false);
+        setPage(1);
+      };
+  
+      if (is.current) setLoading(true);
+  
+      ref.limit(limit).get().then(snap => {
+        if (!snap.empty) {
+          snap.forEach(item => items.push(item.data()));
           if (is.current) {
-            setEmptyState();
-            openSnackbar(handleFirestoreError(err), 'error');
+            setItems(items);
+            setLastVisible(snap.docs[snap.docs.length-1]);
+            setLoading(false);
+            setPage(1);
           }
-        });
-      } else if (is.current) {
-        setEmptyState();
-      }
-    }).catch(err => {
-      if (is.current) {
-        setEmptyState();
-        openSnackbar(handleFirestoreError(err), 'error');
-      }
-    });
-  }, [desc, openSnackbar, orderByIndex, user.uid]);
+          notificationsRef.doc(authid).get().then(snap => {
+            if (snap.exists) {
+              if (is.current) {
+                setCount(snap.data().count);
+              }
+            }
+          }).catch(err => {
+            if (is.current) {
+              setEmptyState();
+              openSnackbar(handleFirestoreError(err), 'error');
+            }
+          });
+        } else if (is.current) {
+          setEmptyState();
+        }
+      }).catch(err => {
+        if (is.current) {
+          setEmptyState();
+          openSnackbar(handleFirestoreError(err), 'error');
+        }
+      });
+    }
+  }, [desc, openSnackbar, orderByIndex, authid]);
 
   useEffect(() => {
     fetch();
@@ -84,7 +88,7 @@ const Notifications = () => {
   }, []);
 
   const fetchNext = () => {
-    const ref = notesRef(user.uid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    const ref = notesRef(authid).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
 
     if (is.current) setLoading(true);
 

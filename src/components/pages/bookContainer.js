@@ -6,7 +6,7 @@ import '../../css/bookContainer.css';
 import Book from '../book';
 
 const BookContainer = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
 
@@ -17,6 +17,7 @@ const BookContainer = props => {
         user={user}
         openSnackbar={openSnackbar}
         history={history}
+        isAuth={isAuth}
         location={location}
       />
     </div>

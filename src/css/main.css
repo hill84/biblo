@@ -471,8 +471,7 @@ hr.line {
 }
 
 .MuiTooltip-popper .MuiTooltip-tooltip {
-  background-color: rgba(var(--canvasLightClr), .9);
-  box-shadow: 0 1px 2px rgba(var(--blackClr), .1);
+  background-color: rgba(var(--canvasClr), .95);
 }
 
 /* CARDS */
@@ -2172,8 +2171,8 @@ progress {
   .thumb {
     &.false, &.true:hover { color: var(--lightTextClr); }
     &.down.true, &.down.false:hover { color: rgb(var(--errorClr)); }
-    &.true:hover:not(:disabled) svg { transform: rotateX(180deg); }
     /*
+    &.true:hover:not(:disabled) svg { transform: rotateX(180deg); }
     &.false:not(:hover):not(:active), &.true:hover { color: var(--lightTextClr); }
     &.up.true:not(:hover), &.up.false:hover { color: rgb(var(--linkClr)); }
     &.down.true:not(:hover), &.down.false:hover { color: rgb(var(--errorClr)); }

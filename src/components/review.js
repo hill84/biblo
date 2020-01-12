@@ -1,3 +1,4 @@
+import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -181,25 +182,33 @@ const Review = props => {
               <div className="foot row">
                 <div className="col-auto likes">
                   <div className="counter">
-                    <button 
-                      type="button"
-                      className={`btn flat thumb up ${like}`} 
-                      disabled={!isEditor || isOwner} 
-                      onClick={onThumbChange}
-                      title={like ? 'Annulla mi piace' : 'Mi piace'}>
-                      {icon.thumbUp} {abbrNum(likes_num)}
-                    </button>
+                    <Tooltip title={like ? 'Annulla mi piace' : 'Mi piace'}>
+                      <span>
+                        <button 
+                          type="button"
+                          className={`btn flat thumb up ${like}`} 
+                          disabled={!isEditor || isOwner} 
+                          onClick={onThumbChange}>
+                          {icon.thumbUp} {abbrNum(likes_num)}
+                        </button>
+                      </span>
+                    </Tooltip>
                   </div>
-                  {/* <div className="counter">
-                    <button 
-                      type="button"
-                      className={`btn flat thumb down ${dislike}`} 
-                      disabled={!isEditor || isOwner} 
-                      onClick={onThumbChange}
-                      title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
-                      {icon.thumbDown} {abbrNum(dislikes_num)}
-                    </button>
-                  </div> */}
+                  {/* 
+                    <div className="counter">
+                      <Tooltip title={dislike ? 'Annulla mi piace' : 'Mi piace'}>
+                        <span>
+                          <button 
+                            type="button"
+                            className={`btn flat thumb down ${dislike}`} 
+                            disabled={!isEditor || isOwner} 
+                            onClick={onThumbChange}>
+                            {icon.thumbDown} {abbrNum(dislikes_num)}
+                          </button>
+                        </span>
+                      </Tooltip>
+                    </div> 
+                  */}
                   {isEditor && !isOwner && 
                     <>
                       {/* <div className="counter">
@@ -229,35 +238,39 @@ const Review = props => {
         </div>
       </div>
 
-      <Dialog
-        open={isOpenDeleteDialog}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={onCloseDeleteDialog}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description">
-        <DialogTitle id="delete-dialog-title">
-          Procedere con l&apos;eliminazione?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Cancellando la recensione perderai tutti i like e i commenti ricevuti.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className="dialog-footer flex no-gutter">
-          <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
-          <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
-        </DialogActions>
-      </Dialog>
+      {isOpenDeleteDialog && (
+        <Dialog
+          open={isOpenDeleteDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">
+            Procedere con l&apos;eliminazione?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
+          </DialogActions>
+        </Dialog>
+      )}
 
-      <FlagDialog 
-        loading={flagLoading}
-        open={isOpenFlagDialog} 
-        onClose={onCloseFlagDialog} 
-        onFlag={onFlag} 
-        TransitionComponent={Transition} 
-        value={flaggedByUser ? review.flag && review.flag.value : ''}
-      />
+      {isOpenFlagDialog && (
+        <FlagDialog 
+          loading={flagLoading}
+          open={isOpenFlagDialog} 
+          onClose={onCloseFlagDialog} 
+          onFlag={onFlag} 
+          TransitionComponent={Transition} 
+          value={flaggedByUser ? review.flag && review.flag.value : ''}
+        />
+      )}
     </>
   );
 }

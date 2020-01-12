@@ -901,23 +901,25 @@ const BookForm = props => {
         }
       </div>
 
-      <Dialog
-        open={isOpenChangesDialog}
-        keepMounted
-        onClose={onCloseChangesDialog}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description">
-        <DialogTitle id="delete-dialog-title">Ci sono modifiche non salvate</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Vuoi salvarle prima di uscire?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className="dialog-footer flex no-gutter">
-          <button type="button" className="btn btn-footer flat" onClick={isEditing}>Esci</button>
-          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva</button>
-        </DialogActions>
-      </Dialog>
+      {isOpenChangesDialog && (
+        <Dialog
+          open={isOpenChangesDialog}
+          keepMounted
+          onClose={onCloseChangesDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">Ci sono modifiche non salvate</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Vuoi salvarle prima di uscire?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={isEditing}>Esci</button>
+            <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva</button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 }

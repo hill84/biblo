@@ -3,12 +3,10 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
-import { needsEmailVerification } from './shared';
-import { ifLocalStorage, uidKey } from './storage';
 
 const config = {
-	appId: process.env.REACT_APP_FIREBASE_APP_ID,
-	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
@@ -27,14 +25,6 @@ const TwitterAuthProvider = firebase.auth && new firebase.auth.TwitterAuthProvid
 const auth = firebase.auth();
 auth.useDeviceLanguage();
 const signOut = () => auth.signOut();
-const isAuthenticated = () => Boolean(auth.currentUser) && !needsEmailVerification(auth.currentUser);
-const currentUid = () => (auth.currentUser && auth.currentUser.uid) || (ifLocalStorage(localStorage.getItem(uidKey)));
-// eslint-disable-next-line import/no-mutable-exports
-let authid = currentUid();
-auth.onIdTokenChanged(user => {
-	authid = user ? currentUid() : null
-});
-// auth.onIdTokenChanged(user => user ? isAuthenticated() ? console.log(`${user.uid} authenticated`) : console.log(`Not authenticated`) : console.log(`No user`));
 
 /* FIRESTORE */
 const db = firebase.firestore();
@@ -118,8 +108,6 @@ export {
 	TwitterAuthProvider,
 	auth,
 	signOut,
-	isAuthenticated,
-	authid,
 	FieldValue,
 	timestamp,
 	usersRef,

@@ -18,12 +18,11 @@ import Home from './components/pages/home';
 import Login from './components/pages/login';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
-import { isAuthenticated } from './config/firebase';
 import { app } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { locationType } from './config/types';
 import SnackbarContext, { SnackbarProvider } from './context/snackbarContext';
-import { UserProvider } from './context/userContext';
+import UserContext, { UserProvider } from './context/userContext';
 
 const Admin = lazy(() => import('./components/pages/admin/admin'));
 const AboutPage = lazy(() => import('./components/pages/aboutPage'));
@@ -87,7 +86,7 @@ const App = () => (
                   <PrivateRoute path="/challenge" component={Challenge} />
                   <PrivateRoute path="/new-book" component={NewBook} />
                   <PrivateRoute path="/notifications" component={Notifications} />
-                  <PrivateRoute path="/profile" exact component={Profile}/>
+                  <PrivateRoute path="/profile" component={Profile}/>
                   <Redirect from="/aiuto" to="/help" />
                   <Redirect from="/chi-siamo" to="/about" />
                   <Redirect from="/home" to="/" />
@@ -105,14 +104,19 @@ const App = () => (
  
 export default App;
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={props => (
-    isAuthenticated() ?
-      <Component {...props} {...rest} />
-    :
-      <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
-  )} />
-);
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const { isAuth } = useContext(UserContext);
+
+  return (
+    <Route {...rest} render={props => (
+      isAuth ? (
+        <Component {...props} {...rest} />
+      ) : (
+        <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+      )
+    )} />
+  );
+};
 
 PrivateRoute.propTypes = {
   component: PropTypes.oneOfType([
@@ -120,7 +124,7 @@ PrivateRoute.propTypes = {
     PropTypes.object
   ]).isRequired,
   location: locationType
-}
+};
 
 PrivateRoute.defaultProps = {
   location: { pathname: '' },

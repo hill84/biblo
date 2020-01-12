@@ -2,8 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { InView } from 'react-intersection-observer';
 import { Link, Redirect } from 'react-router-dom';
-import { auth } from '../../config/firebase';
-import { app, isTouchDevice, needsEmailVerification, screenSize } from '../../config/shared';
+import { app, isTouchDevice, screenSize as _screenSize } from '../../config/shared';
 import UserContext from '../../context/userContext';
 import '../../css/home.css';
 import bgHero_jpg from '../../images/covers-dark.jpg';
@@ -24,23 +23,17 @@ const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpg})`, 
 const rootMargin = '200px';
 
 const Home = () => {
-  const { user } = useContext(UserContext);
+  const { emailVerified, user } = useContext(UserContext);
   const [redirectTo, setRedirectTo] = useState(null);
-  const [_screenSize, setScreenSize] = useState(screenSize());
+  const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
 
   useEffect(() => {
     const updateScreenSize = () => {
-      if (is.current) setScreenSize(screenSize());
+      if (is.current) setScreenSize(_screenSize());
     };
 
     window.addEventListener('resize', updateScreenSize);
-
-    auth.onIdTokenChanged(user => {
-      if (needsEmailVerification(user)) {
-        if (is.current) setRedirectTo('/verify-email');
-      }
-    });
 
     return () => {
       window.removeEventListener('resize', updateScreenSize);
@@ -48,7 +41,14 @@ const Home = () => {
     };
   }, []);
 
-  const isScrollable = useMemo(() => isTouchDevice() || _screenSize === 'sm' || _screenSize === 'xs', [_screenSize]);
+  useEffect(() => {
+    if (user && !emailVerified && is.current) {
+      setRedirectTo('/verify-email');
+    }
+  }, [emailVerified, user]);
+
+  const isScrollable = useMemo(() => isTouchDevice() || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
+
   const Hero = useMemo(() => (
     <div className="container text-center">
       <h1 className="title">Scopriamo nuovi libri, insieme</h1>

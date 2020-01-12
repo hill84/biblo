@@ -9,7 +9,7 @@ import React, { forwardRef, lazy, useContext, useEffect, useMemo, useRef, useSta
 import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
-import { bookRef, isAuthenticated } from '../../config/firebase';
+import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
 import { bookType, boolType, funcType, locationType, objectType, refType, userBookType } from '../../config/types';
@@ -33,7 +33,7 @@ const NoMatch = lazy(() => import('../noMatch'));
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const BookProfile = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const {
     addBookToShelf,
@@ -222,7 +222,7 @@ const BookProfile = props => {
                         <Link to={`/author/${normURL(author)}`} className="counter" key={author}>{author}</Link> 
                       )}</span>}
                       {book.publisher && <span className="counter hide-sm">editore: {book.publisher}</span>}
-                      {isAuthenticated() && hasBid && isEditor && (
+                      {isAuth && hasBid && isEditor && (
                         <>
                           {isAdmin && 
                             <button type="button" onClick={onLock} className={`link counter ${book.EDIT.edit ? 'flat' : 'active'}`}>
@@ -265,7 +265,7 @@ const BookProfile = props => {
                       <Rating labels ratings={{ ratings_num: book ? book.ratings_num : 0, rating_num: book ? book.rating_num : 0 }}/>
                     </div>
 
-                    {isAuthenticated() && (
+                    {isAuth && (
                       <>
                         <div className="info-row">
                           {userBook.bookInShelf ? (
@@ -338,7 +338,7 @@ const BookProfile = props => {
           <div className="container">
             {book.bid && (
               <>
-                {isAuthenticated() && isEditor && userBook.bookInShelf && (
+                {isAuth && isEditor && userBook.bookInShelf && (
                   <UserReview
                     addReview={addReview}
                     bid={book.bid}
@@ -362,26 +362,28 @@ const BookProfile = props => {
         )}
       </div>
 
-      <Dialog
-        open={isOpenRemoveDialog}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={onCloseRemoveDialog}
-        aria-labelledby="remove-dialog-title"
-        aria-describedby="remove-dialog-description">
-        <DialogTitle id="remove-dialog-title">
-          Procedere con la rimozione?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="remove-dialog-description">
-            Rimuovendo il libro perderai il voto, la recensione e lo stato di lettura.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className="dialog-footer no-gutter">
-          <button type="button" className="btn btn-footer flat" onClick={onCloseRemoveDialog}>Annulla</button>
-          <button type="button" className="btn btn-footer primary" onClick={onRemoveBookFromShelf}>Procedi</button>
-        </DialogActions>
-      </Dialog>
+      {isOpenRemoveDialog && (
+        <Dialog
+          open={isOpenRemoveDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={onCloseRemoveDialog}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description">
+          <DialogTitle id="remove-dialog-title">
+            Procedere con la rimozione?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Rimuovendo il libro perderai il voto, la recensione e lo stato di lettura.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions className="dialog-footer no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={onCloseRemoveDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={onRemoveBookFromShelf}>Procedi</button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 }

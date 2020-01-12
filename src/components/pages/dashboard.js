@@ -10,10 +10,10 @@ import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
-import { followersRef, followingsRef, isAuthenticated, notesRef, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, notesRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize, timeSince, timestamp, truncateString } from '../../config/shared';
+import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, timestamp, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -40,7 +40,7 @@ const unsub = {
 const skltnStyle = { margin: '.4em 0', };
 
 const Dashboard = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const tab = match.params && match.params.tab;
@@ -61,12 +61,12 @@ const Dashboard = props => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [tabSelected, setTabSelected] = useState(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
-  const [_screenSize, setScreenSize] = useState(screenSize());
+  const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
 
   useEffect(() => {
     const updateScreenSize = () => {
-      if (is.current) setScreenSize(screenSize());
+      if (is.current) setScreenSize(_screenSize());
     };
     
     window.addEventListener('resize', updateScreenSize);
@@ -125,7 +125,7 @@ const Dashboard = props => {
           setFollow(false);
         }
       });
-      if (isAuthenticated()) {
+      if (isAuth) {
         if (luid && luid !== uid) {
           // console.log('fetching lfollowers');
           unsub.luidFollowersFetch && unsub.luidFollowersFetch();
@@ -139,7 +139,7 @@ const Dashboard = props => {
         }
       }
     }
-	}, [luid, uid]);
+	}, [isAuth, luid, uid]);
 
 	const fetchFollowings = useCallback(() => {
     if (uid) {
@@ -256,7 +256,7 @@ const Dashboard = props => {
   const onFollowUser = useCallback((e, fuid = duser.uid, fuser = duser) => {
     e.preventDefault();
     
-		if (isAuthenticated()) {
+		if (isAuth) {
 			let computedFollowers = luid !== fuid ? { ...followers } : { ...lfollowers };
 			let computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
 			// console.log({ luid, fuid, computedFollowers, computedFollowings, followers, followings, lfollowers, lfollowings });
@@ -320,7 +320,7 @@ const Dashboard = props => {
     } else {
       openSnackbar('Utente non autenticato', 'error');
     }
-  }, [duser, followers, followings, lfollowers, lfollowings, luid, openSnackbar, uid, user]);
+  }, [duser, followers, followings, isAuth, lfollowers, lfollowings, luid, openSnackbar, uid, user]);
 
   const historyPushTabIndex = useCallback(index => {
     const newPath = `/dashboard/${uid}/${tabs[index]}`;
@@ -352,7 +352,7 @@ const Dashboard = props => {
   const challengeReadBooks_num = useMemo(() => challengeBooks && Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length, [challengeBooks]);
   const challengeProgress = useMemo(() => challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0, [challengeBooks_num, challengeReadBooks_num]);
   const challengeCompleted = useMemo(() => challengeProgress === 100, [challengeProgress]);
-  const isMini = useMemo(() => isTouchDevice() || _screenSize === 'sm' || _screenSize === 'xs', [_screenSize]);
+  const isMini = useMemo(() => isTouchDevice() || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
   const contactsSkeleton = useMemo(() => [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />), []);
   const creationYear = useMemo(() => duser && String(new Date(duser.creationTime).getFullYear()), [duser]);
   const Roles = useMemo(() => duser && Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
@@ -473,11 +473,11 @@ const Dashboard = props => {
                           {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
                         </div>
                         <div className="info-row">
-                          {!isOwner && isAuthenticated() && (
+                          {!isOwner && isAuth && (
                             <button 
                               type="button"
                               className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
-                              // disabled={!isAuthenticated()}
+                              // disabled={!isAuth}
                               onClick={onFollowUser}>
                               {follow ? (
                                 <>

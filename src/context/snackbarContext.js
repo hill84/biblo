@@ -61,7 +61,7 @@ export const SnackbarProvider = props => {
   ]);
 
   return (
-    <SnackbarContext.Provider
+    <SnackbarContext.Provider ref={is}
       value={snackbarProvided}>
       <SharedSnackbar />
       {children}
