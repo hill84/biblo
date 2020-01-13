@@ -2326,7 +2326,15 @@ progress {
     background: linear-gradient(to bottom, rgba(var(--bgClr), var(--bgOpacity)) 0%, rgba(var(--bgClr), 1) 100%);
     box-shadow: 0 -1px 10px -2px rgba(var(--blackClr), .2);
     animation: fadeInSlideUp .4s cubic-bezier(.21, .61, .35, 1) .4s both;
-    & .label { display: block; height: 0; line-height: 16px; font-size: .5rem; font-weight: 200; opacity: 0; transition: all .2s ease-in-out; }
+    & .label {
+      display: block;
+      height: 0;
+      line-height: 16px;
+      font-size: .5rem;
+      font-weight: 200;
+      opacity: 0;
+      transition: all .2s ease-in-out;
+    }
     & button {
       height: 52px;
       margin-bottom: env(safe-area-inset-bottom);
