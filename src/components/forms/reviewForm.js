@@ -15,16 +15,16 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { reviewerRef, userBookRef } from '../config/firebase';
-import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../config/shared';
-import { stringType, userBookType } from '../config/types';
-import SnackbarContext from '../context/snackbarContext';
-import UserContext from '../context/userContext';
-import '../css/emojiMart.css';
-import emojiMartLocale from '../locales/emojiMart';
-import Overlay from './overlay';
-import Rating from './rating';
+import { reviewerRef, userBookRef } from '../../config/firebase';
+import icon from '../../config/icons';
+import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../../config/shared';
+import { stringType, userBookType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
+import UserContext from '../../context/userContext';
+import '../../css/emojiMart.css';
+import emojiMartLocale from '../../locales/emojiMart';
+import Overlay from '../overlay';
+import Rating from '../rating';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -49,23 +49,28 @@ const min = {
   }
 };
 
-const UserReview = props => {
+const ReviewForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, userBook } = props;
-  const [review, setReview] = useState({
+  const authid = useMemo(() => user && user.uid, [user]);
+  const initialReviewState = useMemo(() => ({
     bid: '',
     bookTitle: '',
+    comments_num: 0,
     covers: [],
-    createdByUid: '',
-    created_num: 0,
+    createdByUid: authid,
+    created_num: timestamp,
+    lastEditByUid: authid,
+    lastEdit_num: timestamp,
     displayName: '',
     likes: [],
     photoURL: '',
     rating_num: 0,
     text: '',
     title: ''
-  });
+  }), [authid]);
+  const [review, setReview] = useState(initialReviewState);
   const [leftChars, setLeftChars] = useState({ text: null, title: null });
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState(false);
@@ -75,34 +80,25 @@ const UserReview = props => {
   const [isEditing, setIsEditing] = useState(false);
   const is = useRef(true);
 
-  const authid = useMemo(() => user && user.uid, [user]);
-
-  const fetchUserReview = useCallback(() => {
+  const fetchReviewForm = useCallback(() => {
     reviewerRef(bid, authid).onSnapshot(snap => {
       if (is.current) setLoading(true);
 
       if (snap.exists) {
         if (is.current) setReview(snap.data());
       } else if (is.current) {
-        setReview(review => ({
-          ...review,
-          created_num: 0,
-          likes: [],
-          rating_num: 0,
-          text: '',
-          title: ''
-        }));
+        setReview(initialReviewState);
       }
       if (is.current) {
         setLoading(false);
         setChanges(false);
       }
     });
-  }, [authid, bid]);
+  }, [authid, bid, initialReviewState]);
 
   useEffect(() => {
-    fetchUserReview();
-  }, [fetchUserReview]);
+    fetchReviewForm();
+  }, [fetchReviewForm]);
 
   const onEditing = () => {
     if (is.current) setIsEditing(true);
@@ -139,24 +135,30 @@ const UserReview = props => {
         if (is.current) setLoading(true);
 
         if (bid) {
-          reviewerRef(bid, authid).set({
-            ...review,
+          const { comments_num, flag, likes, ...userBookReview } = review;
+          const updatedReview = {
             bid: userBook.bid,
             bookTitle: userBook.title,
             covers: userBook.covers,
-            createdByUid: authid,
-            created_num: timestamp,
             displayName: user.displayName,
+            lastEditByUid: authid,
+            lastEdit_num: timestamp,
             photoURL: user.photoURL,
             rating_num: userBook.rating_num
+          };
+
+          reviewerRef(bid, authid).set({
+            ...review,
+            ...updatedReview
           }).then(() => {
             // console.log(`Book review created`);
+            openSnackbar('Recensione salvata', 'success')
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-          userBookRef(authid, bid).update({
+          userBookRef(authid, bid).update({ 
             review: {
-              ...review,
-              created_num: timestamp
+              ...userBookReview,
+              ...updatedReview
             }
           }).then(() => {
             // console.log(`User review posted`);
@@ -202,24 +204,14 @@ const UserReview = props => {
   const onExitEditing = useCallback(() => {
     if (is.current) {
       if (!review.created_num) {
-        setReview(review => ({
-          ...review,
-          bid: '',
-          bookTitle: '',
-          covers: [],
-          created_num: 0,
-          likes: [],
-          rating_num: 0,
-          text: '',
-          title: ''
-        }));
+        setReview(initialReviewState);
       }
       setErrors({});
       setIsEditing(false);
       setIsOpenEmojiPicker(false);
       setLeftChars({ text: null, title: null });
     }
-  }, [review.created_num]);
+  }, [initialReviewState, review.created_num]);
 
   const onChangeMaxChars = e => {
     e.persist();
@@ -335,7 +327,7 @@ const UserReview = props => {
                         <h3>{user.displayName}</h3>
                       </div>
                       <div className="col text-right rating">
-                        <Rating ratings={{rating_num: userBook.rating_num}} labels />
+                        <Rating ratings={{ rating_num: userBook.rating_num }} labels />
                       </div>
                     </div>
                     <h4 className="title">{review.title}</h4>
@@ -395,15 +387,15 @@ const UserReview = props => {
   );
 }
 
-UserReview.propTypes = {
+ReviewForm.propTypes = {
   // addReview: funcType.isRequired,
   bid: stringType.isRequired,
   // removeReview: funcType.isRequired,
   userBook: userBookType
 }
 
-UserReview.defaultProps = {
+ReviewForm.defaultProps = {
   userBook: null
 }
  
-export default UserReview;
+export default ReviewForm;

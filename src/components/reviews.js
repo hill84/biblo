@@ -112,21 +112,7 @@ const Reviews = props => {
                 key={`${item.bid || 'nobid'}_${item.createdByUid}`}
                 bid={bid}
                 uid={uid}
-                review={{
-                  bid: item.bid || '',
-                  photoURL: item.photoURL || '',
-                  displayName: item.displayName || '',
-                  bookTitle: item.bookTitle,
-                  covers: item.covers || [],
-                  createdByUid: item.createdByUid || '',
-                  created_num: item.created_num || 0,
-                  flag: item.flag,
-                  dislikes: item.dislikes || {},
-                  likes: item.likes || {},
-                  rating_num: item.rating_num || 0,
-                  text: item.text || '',
-                  title: item.title || '',
-                }} 
+                review={item} 
               />
             ))}
             {loading && skeleton && skeletons}

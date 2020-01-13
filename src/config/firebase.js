@@ -63,6 +63,8 @@ const reviewsRef = db.collection('reviews');
 const reviewRef = bid => reviewsRef.doc(bid);
 const reviewersRef = bid => reviewRef(bid).collection('reviewers');
 const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
+const reviewerCommentersRef = (bid, uid) => reviewerRef(bid, uid).collection('commenters');
+const reviewerCommenterRef = (bid, uid, cid) => reviewerRef(bid, uid).collection('commenters').doc(cid);
 const reviewersGroupRef = db.collectionGroup('reviewers');
 
 // Authors
@@ -128,6 +130,8 @@ export {
 	reviewRef,
 	reviewersRef,
 	reviewerRef,
+	reviewerCommentersRef,
+	reviewerCommenterRef,
 	reviewersGroupRef,
 	authorsRef,
 	authorRef,

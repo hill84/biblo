@@ -26,7 +26,7 @@ import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
 import ShareButtons from '../shareButtons';
-import UserReview from '../userReview';
+import ReviewForm from '../forms/reviewForm';
 
 const NoMatch = lazy(() => import('../noMatch'));
 
@@ -339,7 +339,7 @@ const BookProfile = props => {
             {book.bid && (
               <>
                 {isAuth && isEditor && userBook.bookInShelf && (
-                  <UserReview
+                  <ReviewForm
                     addReview={addReview}
                     bid={book.bid}
                     removeReview={removeReview}

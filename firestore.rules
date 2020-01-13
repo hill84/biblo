@@ -73,6 +73,12 @@ service cloud.firestore {
     match /reviews/{bid} {
     	allow read;
       allow write: if isEditor();
+
+      match /reviewers/{uid}/commenters/{cid} {
+        allow read;
+        allow update: if isEditor();
+        allow create, delete: if isEditor() && (isAdmin() || isOwner(cid));
+      }
     }
 
     match /{path=**}/reviewers/{uid} {
