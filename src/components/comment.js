@@ -8,52 +8,34 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { notesRef, reviewerCommentersRef, reviewerRef, userBookRef } from '../config/firebase';
+import { notesRef, reviewerCommenterRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
-import { reviewType, stringType } from '../config/types';
+import { commentType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
-import Comment from './comment';
-import Cover from './cover';
 import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
-import Rating from './rating';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-const Review = props => {
+const Comment = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, review, uid } = props;
+  const { bid, comment, rid } = props;
   const [flagLoading, setFlagLoading] = useState(false);
-  const [comments, setComments] = useState(null);
-  const [selectedRid, setSelectedRid] = useState(null);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
-  const [like, setLike] = useState(review.likes.length && review.likes.indexOf(user && user.uid) > -1 ? true : false || false);
-  const [likes_num, setLikes_num] = useState(review.likes.length || 0);
+  const [like, setLike] = useState(comment.likes.length && comment.likes.indexOf(user && user.uid) > -1 ? true : false || false);
+  const [likes_num, setLikes_num] = useState(comment.likes.length || 0);
   const is = useRef(true);
-
-  useEffect(() => {
-    if (bid && selectedRid) {
-      console.log(bid, selectedRid);
-      reviewerCommentersRef(bid, selectedRid).limit(20).get().then(snap => {
-        if (!snap.empty) {
-          const items = [];
-          snap.forEach(item => items.push(item.data()));
-          setComments(items);
-        }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    }
-  }, [bid, selectedRid, openSnackbar]);
 
   useEffect(() => () => {
     is.current = false;
   }, []);
 
   const onThumbChange = useCallback(() => {
-    let { likes } = review;
+    let { likes } = comment;
     
     if (user) {
       if (like) {
@@ -62,7 +44,7 @@ const Review = props => {
           setLike(false);
           setLikes_num(likes.length);
         }
-        // console.log(`User ${user.uid} remove like on review ${bid}/${review.createdByUid}`);
+        // console.log(`User ${user.uid} remove like on comment ${bid}/${comment.createdByUid}`);
         // console.log(`User likes decreased to ${likes.length}`);
       } else {
         likes = [...likes, user.uid];
@@ -70,12 +52,18 @@ const Review = props => {
           setLike(true);
           setLikes_num(likes.length);
         }
-        // console.log(`User ${user.uid} add like on review ${bid}/${review.createdByUid}`);
+        // console.log(`User ${user.uid} add like on comment ${bid}/${comment.createdByUid}`);
         // console.log(`User likes increased to ${likes.length}`);
 
+        const likerURL = `/dashboard/${user.uid}`;
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-        const noteMsg = `<a href="/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 35)}</a>`;
-        const newNoteRef = notesRef(review.createdByUid).doc();
+        const reviewerURL = `/dashboard/${comment.reviewerUid}`;
+        const reviewerDisplayName = truncateString(comment.reviewerDisplayName.split(' ')[0], 12);
+        const bookTitle = truncateString(comment.bookTitle, 35);
+        const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
+        const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace al tuo commento alla recensione di <a href="${reviewerURL}">${reviewerDisplayName}</a> del libro <a href="${bookURL}">${bookTitle}</a>`;
+        const newNoteRef = notesRef(comment.createdByUid).doc();
+        
         newNoteRef.set({
           nid: newNoteRef.id,
           text: noteMsg,
@@ -85,24 +73,17 @@ const Review = props => {
           photoURL: user.photoURL,
           tag: ['like'],
           read: false,
-          uid: review.createdByUid
+          uid: comment.createdByUid
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }
     // console.log({likes, 'likes_num': likes.length});
-    if (bid && review.createdByUid) {
-      reviewerRef(bid, review.createdByUid).update({ likes }).then(() => {
-        // console.log(`Book review likes updated`);
-        userBookRef(review.createdByUid, bid).update({ likes }).then(() => {
-          // console.log(`User book review likes updated`);
-        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    if (bid && comment.createdByUid && rid) {
+      reviewerCommenterRef(bid, rid, comment.createdByUid).update({ likes }).then(() => {
+        // console.log(`Review comment likes updated`);
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    } else console.warn('No bid or ruid');
-  }, [bid, like, openSnackbar, review, user]);
-
-  const onAddResponse = () => {} // TODO
-
-  // const onSubmitResponse = () => {} // TODO
+    } else console.warn('No bid or cid');
+  }, [bid, comment, like, openSnackbar, rid, user]);
 
   const onFlagRequest = () => setIsOpenFlagDialog(true);
 
@@ -116,18 +97,18 @@ const Review = props => {
         flagged_num: Date.now()
       };
   
-      if (bid && review && user) {
+      if (bid && comment && rid) {
         if (is.current) setFlagLoading(true);
-        reviewerRef(bid, review.createdByUid).update({ flag }).then(() => {
+        reviewerCommenterRef(bid, rid, comment.createdByUid).update({ flag }).then(() => {
           if (is.current) {
             setFlagLoading(false);
             setIsOpenFlagDialog(false);
-            openSnackbar('Recensione segnalata agli amministratori', 'success');
+            openSnackbar('Commento segnalato agli amministratori', 'success');
           }
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       } else console.warn('Cannot flag');
     }
-  }, [bid, openSnackbar, review, user]);
+  }, [bid, comment, openSnackbar, rid, user]);
 
   const onDeleteRequest = () => setIsOpenDeleteDialog(true);
 
@@ -137,66 +118,38 @@ const Review = props => {
     if (is.current) setIsOpenDeleteDialog(false);
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {
-      reviewerRef(bid, review.createdByUid).delete().then(() => {
+      reviewerCommenterRef(bid, rid, comment.createdByUid).delete().then(() => {
         // console.log(`Book review deleted`);
-        userBookRef(review.createdByUid, bid).update({ review: {} }).then(() => {
-          // console.log(`User review deleted`);
-          openSnackbar('Recensione cancellata', 'success');
-        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`No bid`);
   };
 
-  const onToggleCommentsPanel = () => setSelectedRid(s => s === review.createdByUid ? null : review.createdByUid);
-
-  // const onCloseCommentsPanel = () => setSelectedRid(null);
-
-  const isOwner = useMemo(() => review.createdByUid === (user && user.uid), [review, user]);
+  const isOwner = useMemo(() => comment.createdByUid === (user && user.uid), [comment, user]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
-  const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === (user && user.uid), [review, user]);
+  const flaggedByUser = useMemo(() => (comment.flag && comment.flag.flaggedByUid) === (user && user.uid), [comment, user]);
 
   return (
     <>
-      <div className={`${isOwner ? 'own review' : 'review'} ${review.flag ? `flagged ${review.flag.value}` : ''}`} ref={is}>
+      <div className={`${isOwner ? 'own comment' : 'comment'} ${comment.flag ? `flagged ${comment.flag.value}` : ''}`} ref={is}>
         <div className="row">
           <div className="col-auto left">
-            {!bid ?
-              <Link to={`/book/${review.bid}/${normURL(review.bookTitle)}`} className="hoverable-items">
-                <Cover info={false} book={{
-                  bid: review.bid,
-                  title: review.bookTitle,
-                  authors: { 'author': true },
-                  covers: review.covers,
-                  publisher: 'publisher'
-                }} />
-                {!uid && <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>}
-              </Link>
-            :
-              <Link to={`/dashboard/${review.createdByUid}`}>
-                <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
-              </Link>
-            }
+            <Link to={`/dashboard/${comment.createdByUid}`}>
+              <Avatar className="avatar" src={comment.photoURL} alt={comment.displayName}>{!comment.photoURL && getInitials(comment.displayName)}</Avatar>
+            </Link>
           </div>
           <div className="col right">
             <div className="head row">
-              <Link to={uid ? `/book/${review.bid}/${normURL(review.bookTitle)}` : `/dashboard/${review.createdByUid}`} className="col-auto author">
+              <Link to={rid ? `/book/${comment.bid}/${normURL(comment.bookTitle)}` : `/dashboard/${comment.createdByUid}`} className="col-auto author">
                 <h3>
-                  {uid ? review.bookTitle : review.displayName}
+                  {rid ? comment.bookTitle : comment.displayName}
                   {/* isOwner && <span className="badge">TU</span> */}
-                  {!bid && <span className="date">{timeSince(review.created_num)}</span>}
+                  {!bid && <span className="date">{timeSince(comment.created_num)}</span>}
                 </h3>
               </Link>
-              
-              {review.rating_num > 0 && 
-                <div className="col text-right">
-                  <Rating ratings={{rating_num: review.rating_num}} labels />
-                </div>
-              }
             </div>
-            {review.title && <h4 className="title">{review.title}</h4>}
             <div className="info-row text">
-              <MinifiableText text={review.text} maxChars={500} />
+              <MinifiableText text={comment.text} maxChars={500} />
             </div>
             {bid && 
               <div className="foot row">
@@ -216,7 +169,7 @@ const Review = props => {
                   </div>
                   {/* 
                     <div className="counter">
-                      <Tooltip title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
+                      <Tooltip title={dislike ? 'Annulla mi piace' : 'Mi piace'}>
                         <span>
                           <button 
                             type="button"
@@ -229,30 +182,6 @@ const Review = props => {
                       </Tooltip>
                     </div> 
                   */}
-                  {isEditor && !isOwner && (
-                    <div className="counter">
-                      <button type="button" className="btn sm flat" onClick={onAddResponse}>
-                        <span className="show-sm">{icon.pencil}</span> <span className="hide-sm">Rispondi</span>
-                      </button>
-                    </div>
-                  )}
-                  {review.comments_num && (
-                    <div className="counter">
-                      <button type="button" className="btn sm flat" onClick={onToggleCommentsPanel}>
-                        {selectedRid && selectedRid === review.createdByUid ? (
-                          <>
-                            <span className="hide-sm">Nascondi</span>
-                            <span className="show-sm">{icon.menuUp}</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="hide-sm">Visualizza</span>
-                            <span className="show-sm">{icon.menuDown}</span>
-                          </>
-                        )} {`${review.comments_num} rispost${review.comments_num > 1 ? 'e' : 'a'}`}
-                      </button>
-                    </div>
-                  )}
                   {isEditor && !isOwner && (
                     <>
                       <div className="counter show-on-hover">
@@ -270,16 +199,9 @@ const Review = props => {
                     </div>
                   )}
                 </div>
-                <div className="col counter text-right date">{timeSince(review.created_num)}</div>
+                <div className="col counter text-right date">{timeSince(comment.created_num)}</div>
               </div>
             }
-            {selectedRid && selectedRid === review.createdByUid && comments && (
-              <div className="comments">
-                {comments.map(item => (
-                  <Comment key={item.created_num} bid={bid} rid={review.createdByUid} comment={item} />
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -297,7 +219,7 @@ const Review = props => {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
-              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+              Cancellando il commento perderai tutti i like ricevuti.
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">
@@ -314,22 +236,17 @@ const Review = props => {
           onClose={onCloseFlagDialog} 
           onFlag={onFlag} 
           TransitionComponent={Transition} 
-          value={flaggedByUser ? review.flag && review.flag.value : ''}
+          value={flaggedByUser ? comment.flag && comment.flag.value : ''}
         />
       )}
     </>
   );
 }
 
-Review.propTypes = {
-  bid: stringType,
-  review: reviewType.isRequired,
-  uid: stringType
+Comment.propTypes = {
+  bid: stringType.isRequired,
+  comment: commentType.isRequired,
+  rid: stringType.isRequired
 }
 
-Review.defaultProps = {
-  bid: null,
-  uid: null
-}
-
-export default Review;
+export default Comment;

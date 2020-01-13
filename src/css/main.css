@@ -1628,7 +1628,7 @@ input[type='number'] {
   }
 }
 .card.user-review .footer { margin-bottom: -14px; }
-.review { 
+.review, .comment { 
   --avatarSize: 32px; 
   --bookWidth: 40px;
   --coverWidth: 40px;
@@ -1645,7 +1645,7 @@ input[type='number'] {
     padding-bottom: 14px;
   }
   & .cover { --pad: 7px; font-size: 7px; }
-  & + .review { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(var(--blackClr), .05); }
+  & + .review, & .comment { margin-top: 14px; padding-top: 14px; border-top: 2px solid rgba(var(--blackClr), .05); }
   & .left { position: relative; padding-right: 0; }
   & .left .avatar.absolute {
     --avatarSize: 28px; 

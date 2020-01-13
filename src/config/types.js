@@ -131,12 +131,49 @@ export const coverType = shape({
   incipit: string
 });
 
+export const flagType = shape({
+  value: stringType.isRequired,
+  flaggedByUid: stringType.isRequired,
+  flagged_num: numberType.isRequired
+});
+
+export const reviewType = shape({
+  bid: string.isRequired,
+  covers: arrayOf(string).isRequired,
+  bookTitle: string.isRequired,
+  comments_num: number,
+  coverURL: arrayOf(string),
+  createdByUid: string.isRequired,
+  created_num: number.isRequired,
+  displayName: string.isRequired,
+  lastEdit_num: number,
+  lastEditByUid: string,
+  flag: flagType,
+  likes: arrayOf(string).isRequired,
+  photoURL: string,
+  rating_num: number.isRequired,
+  text: string.isRequired,
+  title: string
+});
+
+const userBookReviewType = shape({
+  bid: string,
+  covers: arrayOf(string),
+  bookTitle: string,
+  coverURL: arrayOf(string),
+  createdByUid: string,
+  created_num: number,
+  displayName: string,
+  lastEdit_num: number,
+  lastEditByUid: string,
+  photoURL: string,
+  rating_num: number,
+  text: string,
+  title: string
+});
+
 export const userBookType = shape({
-  review: shape({
-    created_num: number,
-    text: string,
-    title: string
-  }).isRequired,
+  review: userBookReviewType.isRequired,
   readingState: shape({
     state_num: number.isRequired,
     start_num: number,
@@ -152,29 +189,23 @@ export const ratingsType = shape({
   ratings_num: number
 });
 
-export const reviewType = shape({
+export const commentType = shape({
   bookTitle: string,
-  coverURL: arrayOf(string),
   createdByUid: string.isRequired,
   created_num: number.isRequired,
   displayName: string.isRequired,
-  flag: shape({
-    value: stringType.isRequired,
-    flaggedByUid: stringType.isRequired,
-    flagged_num: numberType.isRequired
-  }),
+  flag: flagType,
   likes: arrayOf(string).isRequired,
   photoURL: string,
-  rating_num: number.isRequired,
-  text: string.isRequired,
-  title: string
+  text: string.isRequired
 });
 
 export const userReviewType = shape({
   bookTitle: string,
   coverURL: arrayOf(string),
   created_num: number.isRequired,
-  likes_num: number.isRequired,
+  reviewerDisplayName: string.isRequired,
+  reviewerUid: string.isRequired,
   text: string.isRequired,
   title: string
 });
