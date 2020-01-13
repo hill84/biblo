@@ -14,8 +14,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
-import React, { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { authid, reviewerRef, userBookRef } from '../config/firebase';
+import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
@@ -75,6 +75,8 @@ const UserReview = props => {
   const [isEditing, setIsEditing] = useState(false);
   const is = useRef(true);
 
+  const authid = useMemo(() => user && user.uid, [user]);
+
   const fetchUserReview = useCallback(() => {
     reviewerRef(bid, authid).onSnapshot(snap => {
       if (is.current) setLoading(true);
@@ -96,7 +98,7 @@ const UserReview = props => {
         setChanges(false);
       }
     });
-  }, [bid]);
+  }, [authid, bid]);
 
   useEffect(() => {
     fetchUserReview();
@@ -142,7 +144,7 @@ const UserReview = props => {
             bid: userBook.bid,
             bookTitle: userBook.title,
             covers: userBook.covers,
-            createdByUid: user.uid,
+            createdByUid: authid,
             created_num: timestamp,
             displayName: user.displayName,
             photoURL: user.photoURL,
@@ -176,7 +178,7 @@ const UserReview = props => {
       setIsOpenEmojiPicker(false);
       setLeftChars({ text: null, title: null });
     }
-  }, [bid, changes, openSnackbar, review, user, userBook, validate]);
+  }, [authid, bid, changes, openSnackbar, review, user, userBook, validate]);
 
   const onDeleteRequest = () => setIsOpenDeleteDialog(true);
 
@@ -195,7 +197,7 @@ const UserReview = props => {
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
     } else console.warn(`No bid`);
-  }, [bid, openSnackbar]);
+  }, [authid, bid, openSnackbar]);
 
   const onExitEditing = useCallback(() => {
     if (is.current) {
@@ -367,26 +369,28 @@ const UserReview = props => {
         // isEditing && <div className="form-group"><button onClick={onExitEditing} className="btn flat centered">Annulla</button></div>
       }
 
-      <Dialog
-        open={isOpenDeleteDialog}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={onCloseDeleteDialog}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description">
-        <DialogTitle id="delete-dialog-title">
-          Procedere con l&apos;eliminazione?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Cancellando la recensione perderai tutti i like e i commenti ricevuti.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className="dialog-footer flex no-gutter">
-          <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
-          <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
-        </DialogActions>
-      </Dialog>
+      {isOpenDeleteDialog && (
+        <Dialog
+          open={isOpenDeleteDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={onCloseDeleteDialog}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description">
+          <DialogTitle id="delete-dialog-title">
+            Procedere con l&apos;eliminazione?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions className="dialog-footer flex no-gutter">
+            <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
+            <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 }

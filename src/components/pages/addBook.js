@@ -18,7 +18,7 @@ const seo = {
 };
 
 const AddBook = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location } = props;
   const [book, setBook] = useState(null);
@@ -38,9 +38,17 @@ const AddBook = props => {
           <SearchBookForm onBookSelect={onBookSelect} user={user} />
         </div>
       </ThemeProvider>
-      {book ?
-        <Book bid={book.bid} book={book} history={history} location={location} user={user} openSnackbar={openSnackbar} />
-      :
+      {book ? (
+        <Book
+          bid={book.bid}
+          book={book}
+          history={history}
+          location={location}
+          isAuth={isAuth}
+          user={user}
+          openSnackbar={openSnackbar}
+        />
+      ) : (
         <>
           <p className="text-center">
             <Link to="/genres" className="counter">Generi</Link>
@@ -52,7 +60,7 @@ const AddBook = props => {
             <p><Link to="/new-book" className="btn primary rounded">Crea la tua scheda libro</Link></p>
           </div>
         </>
-      }
+      )}
     </div>
   );
 }

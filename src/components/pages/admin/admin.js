@@ -21,6 +21,8 @@ import CollectionsDash from './collectionsDash';
 import NotesDash from './notesDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
+import UserForm from '../../forms/userForm';
+import { CircularProgress } from '@material-ui/core';
 
 const containerStyle = { maxWidth: 1280, };
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
@@ -39,13 +41,17 @@ const Admin = props => {
   const { history, match } = props;
   const [selectedEl, setSelectedEl] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [tabSelected, setTabSelected] = useState(0);
+  const [isOpenUserDialog, setIsOpenUserDialog] = useState(false);
   const [isOpenAuthorDialog, setIsOpenAuthorDialog] = useState(false);
   const [isOpenCollectionDialog, setIsOpenCollectionDialog] = useState(false);
   const [isOpenNoteDialog, setIsOpenNoteDialog] = useState(false);
   const [isOpenQuoteDialog, setIsOpenQuoteDialog] = useState(false);
   const [_screenSize, setScreenSize] = useState(screenSize());
   const is = useRef(true);
+
+  const isAdmin = useMemo(() => user && user.roles.admin, [user]);
 
   useEffect(() => {
     if (tabSelected === 0) history.replace(`/admin/${tabs[0].name}`, null);
@@ -106,6 +112,12 @@ const Admin = props => {
     setSelectedId(son(id));
   };
 
+  const onToggleUserDialog = item => {
+    setIsOpenUserDialog(!isOpenUserDialog);
+    setSelectedId(son(item.uid));
+    setSelectedItem(item);
+  };
+
   const onToggleNoteDialog = (id, el) => {
     setIsOpenNoteDialog(!isOpenNoteDialog);
     setSelectedId(son(id));
@@ -117,12 +129,12 @@ const Admin = props => {
     setSelectedId(son(id));
   };
 
-  const isAdmin = useMemo(() => user && user.roles && user.roles.admin, [user]);
+  if (!user) return <div aria-hidden="true" className="loader"><CircularProgress /></div>
 
   if (!isAdmin) {
     return (
-      <div className="container empty">
-        <div className="card dark empty text-center">
+      <div className="container">
+        <div className="card flat empty text-center">
           <p>{icon.cancel}</p>
           <p>Area riservata agli amministratori</p>
         </div>
@@ -174,13 +186,13 @@ const Admin = props => {
         index={tabSelected}
         onChangeIndex={onTabSelectIndex}>
         <div className="card dark">
-          <UsersDash onToggleDialog={onToggleNoteDialog} inView={tabSelected === 0} />
+          <UsersDash onToggleDialog={onToggleUserDialog} onToggleNoteDialog={onToggleNoteDialog} inView={tabSelected === 0} />
         </div>
         <div className="card dark">
           <BooksDash user={user} openSnackbar={openSnackbar} inView={tabSelected === 1} />
         </div>
         <div className="card dark">
-          <AuthorsDash user={user} openSnackbar={openSnackbar} onToggleDialog={onToggleAuthorDialog} inView={tabSelected === 2} />
+          <AuthorsDash onToggleDialog={onToggleAuthorDialog} inView={tabSelected === 2} />
         </div>
         <div className="card dark">
           <CollectionsDash user={user} openSnackbar={openSnackbar} onToggleDialog={onToggleCollectionDialog} inView={tabSelected === 3} />
@@ -193,6 +205,7 @@ const Admin = props => {
         </div>
       </BindKeyboardSwipeableViews>
 
+      {isOpenUserDialog && <UserForm user={selectedItem} onToggle={onToggleUserDialog} />}
       {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={onToggleAuthorDialog} />}
       {isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={onToggleCollectionDialog} />}
       {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={onToggleNoteDialog} />}

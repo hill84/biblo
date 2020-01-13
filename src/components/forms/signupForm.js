@@ -7,14 +7,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
-import React, { Component } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { funcType } from '../../config/types';
 import SocialAuth from '../socialAuth';
+import SnackbarContext from '../../context/snackbarContext';
 
 const labelStyle = { marginRight: 0, };
 const formStyle = { marginTop: 20, };
@@ -31,72 +31,55 @@ const min = {
   chars: { password: 8 }
 };
 
-export default class SignupForm extends Component {
-	state = {
-    checkedTerms: false, 
-    data: {
-      uid: '',
-      displayName: '',
-      email: '',
-      password: '',
-      roles: {
-        admin: false,
-        editor: true,
-        premium: false
-      },
-      stats: {
-        ratings_num: 0,
-        reviews_num: 0,
-        shelf_num: 0,
-        wishlist_num: 0
-      }
-    },
-    loading: false,
-    errors: {},
-    authError: '',
-    redirectTo: null,
-    showPassword: false
+const roles = {
+  admin: false,
+  editor: true,
+  premium: false
+};
+
+const stats = {
+  ratings_num: 0,
+  reviews_num: 0,
+  shelf_num: 0,
+  wishlist_num: 0
+};
+
+const SignupForm = () => {
+  const { openSnackbar } = useContext(SnackbarContext);
+  const [terms, setTerms] = useState(false);
+  const [data, setData] = useState({ displayName: '', email: '', password: '' });
+  const [authError, setAuthError] = useState('');
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [redirectTo, setRedirectTo] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const is = useRef(true);
+  
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  const onToggleTerms = e => {
+    e.persist();
+    const { checked } = e.target;
+
+    setTerms(checked);
+    setErrors({ ...errors, terms: null });
   };
 
-  static propTypes = {
-    openSnackbar: funcType.isRequired
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  toggleCheckbox = e => {
-    e.persist();
-    const { name, checked } = e.target;
-
-    this.setState(prevState => ({ 
-      [name]: checked,
-      errors: { ...prevState.errors, [name]: null }
-    }));
-  }
-
-	onChange = e => {
+	const onChange = e => {
     e.persist();
     const { name, value } = e.target;
 
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        data: { ...prevState.data, [name]: value }, 
-        errors: { ...prevState.errors, [name]: null }
-      }));
-    }
+    setData({ ...data, [name]: value });
+    setErrors({ ...errors, [name]: null });
   };
   
-	validate = data => {
+	const validate = () => {
     const errors = {};
 
-    if (!this.state.checkedTerms) {
-      errors.checkedTerms = "Spunta la casella obbligatoria"; 
+    if (!terms) {
+      errors.terms = "Spunta la casella obbligatoria"; 
     }
 
     const name = data.displayName.toLowerCase();
@@ -107,7 +90,7 @@ export default class SignupForm extends Component {
       errors.displayName = "Nome utente non permesso"; 
       // TODO: check further forbidden names
     } else if (data.displayName.length > max.chars.displayName) {
-      errors.displayName = `Massimo ${max.chars.displayName} caratteri`
+      errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
     }
 
 		if (!data.email) {
@@ -124,36 +107,33 @@ export default class SignupForm extends Component {
       errors.password = `Minimo ${min.chars.password} caratteri`;
     } else if (data.password.length > max.chars.password) {
       errors.password = `Massimo ${max.chars.password} caratteri`;
-    }
-    // TODO: check password strength
+    } // TODO: check password strength
+
 		return errors;
   };
 
-	onSubmit = e => {
+	const onSubmit = e => {
     e.preventDefault();
-    const { data } = this.state;
-    const { openSnackbar } = this.props;
-    const errors = this.validate(data);
+    const errors = validate();
     
-    if (this._isMounted) this.setState({ authError: '', errors });
+    if (is.current) {
+      setAuthError('');
+      setErrors(errors);
+    }
     
 		if (Object.keys(errors).length === 0) {
-      if (this._isMounted) this.setState({ loading: true });
+      if (is.current) setLoading(true);
       auth.createUserWithEmailAndPassword(data.email, data.password).then(user => {
         if (!user) {
-          if (this._isMounted) {
-            this.setState({
-              authError: 'No user is signed in',
-              loading: false
-            });
+          if (is.current) {
+            setAuthError('No user is signed in');
+            setLoading(false);
           }
         }
       }).catch(err => {
-        if (this._isMounted) {
-          this.setState({
-            authError: handleFirestoreError(err),
-            loading: false
-          });
+        if (is.current) {
+          setAuthError(handleFirestoreError(err));
+          setLoading(false);
         }
       });
 
@@ -163,10 +143,10 @@ export default class SignupForm extends Component {
           userRef(user.uid).set({
             creationTime: timestamp,
             displayName: data.displayName,
-            email: user.email,
-            photoURL: '',
-            roles: data.roles,
-            stats: data.stats,
+            email: data.email,
+            photoURL: user.photoURL || '',
+            roles,
+            stats,
             termsAgreement: timestamp, 
             privacyAgreement: timestamp,
             uid: user.uid,
@@ -181,7 +161,7 @@ export default class SignupForm extends Component {
               url: `${app.url}/login/?email=${auth.currentUser.email}`
             };
             user.sendEmailVerification(actionCodeSettings).then(() => {
-              if (this._isMounted) this.setState({ redirectTo: '/verify-email' });
+              if (is.current) setRedirectTo('/verify-email');
             }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
           }
         }
@@ -189,109 +169,103 @@ export default class SignupForm extends Component {
 		}
 	};
 
-  handleClickShowPassword = () => {
-    if (this._isMounted) {
-      this.setState(prevState => ({ showPassword: !prevState.showPassword }));
-    }
-  };
+  const onToggleShowPassword = () => setShowPassword(!showPassword);
 
-  handleMouseDownPassword = e => e.preventDefault();
+  const onMouseDownShowPassword = e => e.preventDefault();
 
-	render() {
-    const { authError, checkedTerms, data, errors, loading, redirectTo, showPassword } = this.state;
+  if (redirectTo) return <Redirect to={redirectTo} />
 
-		if (redirectTo) return <Redirect to={redirectTo} />
-
-		return (
-			<>
-        {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-        <FormControlLabel 
-          className="text-left" 
-          style={labelStyle}
-          required
-          label={(
-            <span className="text-sm">
-              Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}
-            </span>
-          )}
-          control={(
-            <Checkbox
-              checked={checkedTerms}
-              onChange={this.toggleCheckbox}
-              name="checkedTerms"
+  return (
+    <>
+      {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+      <FormControlLabel 
+        className="text-left" 
+        style={labelStyle}
+        required
+        label={(
+          <span className="text-sm">
+            Accetto i <Link to="/terms">termini</Link> e confermo la visione della <Link to="/privacy">privacy</Link> di {app.name}
+          </span>
+        )}
+        control={(
+          <Checkbox
+            checked={terms}
+            onChange={onToggleTerms}
+            name="terms"
+          />
+        )}
+      />
+      {errors.terms && <FormHelperText className="message error">{errors.terms}</FormHelperText>}
+      
+      <form onSubmit={onSubmit} noValidate style={formStyle} ref={is}>
+        <SocialAuth disabled={!terms} />
+        <div className="form-group">
+          <FormControl className="input-field" margin="normal" fullWidth>
+            <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome e cognome</InputLabel>
+            <Input
+              id="displayName"
+              name="displayName"
+              type="text"
+              autoFocus
+              placeholder="Mario Rossi"
+              value={data.displayName}
+              onChange={onChange}
+              error={Boolean(errors.displayName)}
             />
-          )}
-        />
-        {errors.checkedTerms && <FormHelperText className="message error">{errors.checkedTerms}</FormHelperText>}
-        
-        <form onSubmit={this.onSubmit} noValidate style={formStyle}>
-          <SocialAuth disabled={!checkedTerms} />
-          <div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth>
-              <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nome e cognome</InputLabel>
-              <Input
-                id="displayName"
-                name="displayName"
-                type="text"
-                autoFocus
-                placeholder="Mario Rossi"
-                value={data.displayName}
-                onChange={this.onChange}
-                error={Boolean(errors.displayName)}
-              />
-              {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
-            </FormControl>
-          </div>
+            {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+          </FormControl>
+        </div>
 
-          <div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth>
-              <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="esempio@esempio.com"
-                value={data.email}
-                onChange={this.onChange}
-                error={Boolean(errors.email)}
-              />
-              {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
-            </FormControl>
-          </div>
+        <div className="form-group">
+          <FormControl className="input-field" margin="normal" fullWidth>
+            <InputLabel error={Boolean(errors.email)} htmlFor="email">Email</InputLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="esempio@esempio.com"
+              value={data.email}
+              onChange={onChange}
+              error={Boolean(errors.email)}
+            />
+            {errors.email && <FormHelperText className="message error">{errors.email}</FormHelperText>}
+          </FormControl>
+        </div>
 
-          <div className="form-group">
-            <FormControl className="input-field" margin="normal" fullWidth>
-              <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Almeno 8 caratteri"
-                value={data.password}
-                onChange={this.onChange}
-                error={Boolean(errors.password)}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={this.handleClickShowPassword}
-                      onMouseDown={this.handleMouseDownPassword}>
-                      {showPassword ? icon.eye : icon.eyeOff}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-              {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
-            </FormControl>
-          </div>
+        <div className="form-group">
+          <FormControl className="input-field" margin="normal" fullWidth>
+            <InputLabel error={Boolean(errors.password)} htmlFor="password">Password</InputLabel>
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Almeno 8 caratteri"
+              value={data.password}
+              onChange={onChange}
+              error={Boolean(errors.password)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={onToggleShowPassword}
+                    onMouseDown={onMouseDownShowPassword}>
+                    {showPassword ? icon.eye : icon.eyeOff}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {errors.password && <FormHelperText className="message error">{errors.password}</FormHelperText>}
+          </FormControl>
+        </div>
 
-          {authError && <div className="row"><div className="col message error">{authError}</div></div>}
+        {authError && <div className="row"><div className="col message error">{authError}</div></div>}
 
-          <div className="footer no-gutter">
-            <button type="button" className="btn btn-footer primary" onClick={this.onSubmit}>Registrati</button>
-          </div>
-        </form>
-			</>
-		);
-	}
+        <div className="footer no-gutter">
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Registrati</button>
+        </div>
+      </form>
+    </>
+  );
 }
+ 
+export default SignupForm;

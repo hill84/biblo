@@ -261,18 +261,20 @@ export default class QuotesDash extends Component {
           page={page}
         />
 
-        <Dialog
-          open={isOpenDeleteDialog}
-          keepMounted
-          onClose={this.onCloseDeleteDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
-          <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
-          </DialogActions>
-        </Dialog>
+        {isOpenDeleteDialog && (
+          <Dialog
+            open={isOpenDeleteDialog}
+            keepMounted
+            onClose={this.onCloseDeleteDialog}
+            aria-labelledby="delete-dialog-title"
+            aria-describedby="delete-dialog-description">
+            <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
+            <DialogActions className="dialog-footer flex no-gutter">
+              <button type="button" className="btn btn-footer flat" onClick={this.onCloseDeleteDialog}>Annulla</button>
+              <button type="button" className="btn btn-footer primary" onClick={this.onDelete}>Procedi</button>
+            </DialogActions>
+          </Dialog>
+        )}
 			</>
 		);
 	}

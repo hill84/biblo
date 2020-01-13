@@ -1,6 +1,6 @@
 import React, { Component, createRef, lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { authid, bookRef, collectionBookRef, isAuthenticated, reviewerRef, userBookRef, userRef } from '../config/firebase';
+import { bookRef, collectionBookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL, timestamp } from '../config/shared';
 import { bookType, boolType, funcType, objectType, stringType, /* userBookType, */ userType } from '../config/types';
 import BookForm from './forms/bookForm';
@@ -44,6 +44,7 @@ export default class Book extends Component {
     bid: stringType,
     book: bookType,
     history: objectType.isRequired,
+    isAuth: boolType,
     isEditing: boolType,
     location: objectType.isRequired,
     openSnackbar: funcType.isRequired,
@@ -54,6 +55,7 @@ export default class Book extends Component {
   static defaultProps = {
     bid: null,
     book: null,
+    isAuth: false,
     isEditing: false,
     user: null,
     // userBook: null
@@ -163,10 +165,14 @@ export default class Book extends Component {
             });
           }
         } else console.warn(`No book with bid ${this.props.bid}`);
+        
         this.setState({ loading: false }, () => {
           this.fetchUserBook(this.props.bid);
         });
       });
+    }
+    if (this.props.user && (this.props.user.uid !== (prevProps.user && prevProps.user.uid))) {
+      this.fetchUserBook(this.props.bid);
     }
   }
 
@@ -178,8 +184,11 @@ export default class Book extends Component {
   }
   
   fetchUserBook = bid => {
+    const { isAuth, user } = this.props;
+    const authid = user && user.uid;
     // console.log('fetchUserBook');
-    if (isAuthenticated() && bid) {
+
+    if (authid && isAuth && bid) {
       this.unsubUserBookFetch = userBookRef(authid, bid).onSnapshot(snap => {
         if (snap.exists) {
           if (this._isMounted) {
@@ -202,11 +211,12 @@ export default class Book extends Component {
   }
   
   addBookToShelf = bid => {
-    const { openSnackbar } = this.props;
+    const { isAuth, openSnackbar, user } = this.props;
+    const authid = user && user.uid;
 
-    if (isAuthenticated()) {
+    if (isAuth) {
       this.addBookToShelfRef.current.setAttribute('disabled', 'disabled');
-      let userWishlist_num = this.props.user.stats.wishlist_num;
+      let userWishlist_num = user.stats.wishlist_num;
       const bookReaders_num = this.state.book.readers_num + 1;
       // console.log('Book added to user shelf');
       if (this.state.userBook.bookInWishlist) {
@@ -227,7 +237,7 @@ export default class Book extends Component {
           // console.log(`Readers number increased to ${this.state.book.readers_num}`);
           
           userRef(authid).update({
-            'stats.shelf_num': this.props.user.stats.shelf_num + 1,
+            'stats.shelf_num': user.stats.shelf_num + 1,
             'stats.wishlist_num': userWishlist_num
           }).then(() => {
             // console.log('User shelf number increased');
@@ -239,16 +249,17 @@ export default class Book extends Component {
 	}
 
 	addBookToWishlist = bid => {
-    const { openSnackbar } = this.props;
+    const { isAuth, openSnackbar, user } = this.props;
+    const authid = user && user.uid;
 
-    if (isAuthenticated()) {
+    if (isAuth) {
       this.addBookToWishlistRef.current.setAttribute('disabled', 'disabled');
-      const userWishlist_num = this.props.user.stats.wishlist_num + 1;
-      /* let userShelf_num = this.props.user.stats.shelf_num;
+      const userWishlist_num = user.stats.wishlist_num + 1;
+      /* let userShelf_num = user.stats.shelf_num;
       let bookReaders_num = this.state.book.readers_num;
       let bookRating_num = this.state.book.rating_num;
       let bookRatings_num = this.state.book.ratings_num;
-      let userRatings_num = this.props.user.stats.ratings_num;
+      let userRatings_num = user.stats.ratings_num;
       let userBookRating_num = this.state.userBook.rating_num;
       let bookReviews_num = this.state.book.reviews_num;
       let userBookReview = this.state.userBook.review; 
@@ -326,10 +337,11 @@ export default class Book extends Component {
   removeBookFromWishlist = bid => this.removeBookFromUserBooks(bid, 'wishlist');
   
   removeBookFromUserBooks = (bid, bookshelf) => {
-    const { openSnackbar, user } = this.props;
+    const { isAuth, openSnackbar, user } = this.props;
     const { book, userBook } = this.state;
+    const authid = user && user.uid;
 
-    if (isAuthenticated()) {
+    if (isAuth) {
       let userShelf_num = user.stats.shelf_num;
       let userWishlist_num = user.stats.wishlist_num;
       let bookRating_num = book.rating_num;
@@ -398,9 +410,9 @@ export default class Book extends Component {
       if (bookshelf === 'shelf') {
         // console.log('will remove book and rating from user shelf stats');
         userRef(authid).update({
-          ...this.props.user,
+          ...user,
           stats: {
-            ...this.props.user.stats,
+            ...user.stats,
             shelf_num: userShelf_num,
             ratings_num: userRatings_num
           }
@@ -435,9 +447,9 @@ export default class Book extends Component {
       } else if (bookshelf === 'wishlist') {
         // console.log('will remove book from user wishlist stats');
         userRef(authid).update({
-          ...this.props.user,
+          ...user,
           stats: {
-            ...this.props.user.stats,
+            ...user.stats,
             wishlist_num: userWishlist_num
           }
         }).then(() => {
@@ -448,13 +460,14 @@ export default class Book extends Component {
   }
 
 	rateBook = (bid, rate) => {
-    const { openSnackbar } = this.props;
+    const { isAuth, openSnackbar, user } = this.props;
+    const authid = user && user.uid;
 
-    if (isAuthenticated()) {
+    if (isAuth) {
       let bookRating_num = this.state.book.rating_num;
       const userBookRating_num = this.state.userBook.rating_num;
       let bookRatings_num = this.state.book.ratings_num; 
-      let userRatings_num = this.props.user.stats.ratings_num; 
+      let userRatings_num = user.stats.ratings_num; 
       
       /* console.log({
         'bookRating_num': bookRating_num,
@@ -549,7 +562,7 @@ export default class Book extends Component {
 	
 	render() {
     const { book, isEditing, loading, seo, userBook } = this.state;
-    const { history, location } = this.props;
+    const { history, isAuth, location } = this.props;
 
     if (!loading && !book) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
@@ -578,7 +591,7 @@ export default class Book extends Component {
         <div className="content-background">
           <div className="bg" style={bgStyle} />
         </div>
-        {isEditing && isAuthenticated() ?
+        {isEditing && isAuth ?
           <BookForm
             isEditing={this.isEditing}
             book={book}

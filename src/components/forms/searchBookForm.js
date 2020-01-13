@@ -12,7 +12,7 @@ import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { arrToObj, capitalizeInitial, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages, timestamp } from '../../config/shared';
+import { arrToObj, capitalize, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages, timestamp } from '../../config/shared';
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 import '../../css/searchBook.css';
@@ -321,7 +321,7 @@ export default class SearchBookForm extends Component {
         // console.log(searchBy.key);
         let query;
         let optionLabel = searchBy.key;
-        const capitalizedSearchTextType = capitalizeInitial(searchTextType);
+        const capitalizedSearchTextType = capitalize(searchTextType);
         switch (searchBy.key) {
           case 'ISBN_13':
             query = booksRef.where(searchBy.where, '==', searchTextType); break;
@@ -329,7 +329,7 @@ export default class SearchBookForm extends Component {
             query = booksRef.where(`${searchBy.where}.${capitalizedSearchTextType}`, '==', true); 
             optionLabel = String(searchBy.where); break;
           case 'publisher':
-            query = booksRef.where(searchBy.where, '>=', capitalizeInitial(searchTextType)); break;
+            query = booksRef.where(searchBy.where, '>=', capitalize(searchTextType)); break;
           default:
             query = booksRef.where(searchBy.where, '>=', searchTextType); break;
         };

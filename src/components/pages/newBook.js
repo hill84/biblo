@@ -9,7 +9,7 @@ import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
 const NewBook = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
 	const { history, location } = props;
   const [book, setBook] = useState(null);
@@ -24,8 +24,19 @@ const NewBook = props => {
           <SearchBookForm onBookSelect={onBookSelect} user={user} newBook />
         </div>
       </ThemeProvider>
-      {book ? <Book book={book} user={user} history={history} location={location} openSnackbar={openSnackbar} isEditing />
-      : <p className="text-sm lighter-text text-center">Powered by <a href="https://books.google.com/">Google Books</a></p>}
+      {book ? (
+        <Book
+          book={book}
+          user={user}
+          isAuth={isAuth}
+          history={history}
+          location={location}
+          openSnackbar={openSnackbar}
+          isEditing
+        />
+      ) : ( 
+        <p className="text-sm lighter-text text-center">Powered by <a href="https://books.google.com/">Google Books</a></p>
+      )}
     </div>
   );
 }

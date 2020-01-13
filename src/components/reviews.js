@@ -1,16 +1,18 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { isAuthenticated, reviewersGroupRef, reviewersRef } from '../config/firebase';
+import { reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
+import UserContext from '../context/userContext';
 import PaginationControls from './paginationControls';
 import Review from './review';
 
 const desc = true;
 
 const Reviews = props => {
+  const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, container, limit, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
@@ -93,7 +95,7 @@ const Reviews = props => {
 
   const EmptyState = () => (
     <div className="info-row empty text-center">
-      Nessuna recensione<span className="hide-xs"> trovata</span>{!isAuthenticated() && !uid && <span>. <Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
+      Nessuna recensione<span className="hide-xs"> trovata</span>{!isAuth && !uid && <span>. <Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
     </div>
   );
 

@@ -61,7 +61,7 @@ export const historyType = PropTypes.shape({
 export const userType = shape({
   creationTime: number.isRequired,
   privacyAgreement: number.isRequired,
-  termsAgreement: number.isRequired,
+  termsAgreement: number, // not required with socialAuth
   uid: string.isRequired,
   displayName: string.isRequired,
   email: string.isRequired,

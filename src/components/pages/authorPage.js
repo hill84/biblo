@@ -3,7 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { authorFollowersRef, authorRef, booksRef, isAuthenticated } from '../../config/firebase';
+import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL, timestamp } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
@@ -21,7 +21,7 @@ const unsub = {
 };
 
 const AuthorPage = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const [author, setAuthor] = useState({
@@ -167,7 +167,7 @@ const AuthorPage = props => {
               <MinifiableText text={author.bio} source={author.source} maxChars={500} />
             </div>
 
-            {isAuthenticated() && 
+            {isAuth && 
               <div className="info-row">
                 <button 
                   type="button" 

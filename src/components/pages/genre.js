@@ -3,7 +3,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { booksRef, genreFollowersRef, genreRef, isAuthenticated } from '../../config/firebase';
+import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize, timestamp } from '../../config/shared';
@@ -26,7 +26,7 @@ const orderBy = [
 const skltnStyle = { display: 'inline-block', marginTop: '1.1em', };
 
 const Genre = props => {
-  const { user } = useContext(UserContext);
+  const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { match } = props;
   const [count, setCount] = useState(0);
@@ -289,7 +289,7 @@ const Genre = props => {
             />
           </div>
         )}
-        {isAuthenticated() && (
+        {isAuth && (
           <div className="info-row">
             <button
               type="button"

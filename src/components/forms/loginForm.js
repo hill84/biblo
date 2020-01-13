@@ -40,7 +40,7 @@ const LoginForm = props => {
     const params = new URLSearchParams(location.search);
     const email = params.get('email');
     
-    if (is.currenr && email) {
+    if (is.current && email) {
       setEmail(email);
     }
 
@@ -63,6 +63,7 @@ const LoginForm = props => {
   
   const validate = data => {
     const errors = {};
+
     if (!data.email) {
       errors.email = "Inserisci un indirizzo email";
     } else if (data.email.length > max.chars.email) {
@@ -70,6 +71,7 @@ const LoginForm = props => {
     } else if (!isEmail(data.email)) {
       errors.email = "Email non valida";
     }
+
     if (data.password) {
       if (data.password.length < min.chars.password) {
         errors.password = `Minimo ${min.chars.password} caratteri`;
@@ -77,6 +79,7 @@ const LoginForm = props => {
         errors.password = `Massimo ${max.chars.password} caratteri`;
       }
     } else errors.password = "Inserisci una password";
+    
 		return errors;
   };
 

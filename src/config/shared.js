@@ -31,7 +31,6 @@ export const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' }
 export const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
 // UTILITY
-export const needsEmailVerification = user => user && !user.emailVerified && user.providerData.length === 0;
 export const imageZoomDefaultStyles = { zoomContainer: { zIndex: 1200 }, overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } };
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
@@ -126,8 +125,8 @@ export const normalizeString = str => String(str).toLowerCase()
   .replace(/ñ/g,"n")
   .replace(/^-+/, '')         // Trim - from start of text
   .replace(/-+$/, '');        // Trim - from end of text
-export const normalizeCover = str => str && String(str).replace('http:', '').replace('&edge=curl', '');
-export const capitalizeInitial = str => str && String(str).charAt(0).toUpperCase() + String(str).slice(1);
+export const normalizeCover = str => str && str.replace('http:', '').replace('&edge=curl', '');
+export const capitalize = str => str && str[0].toUpperCase() + str.slice(1);
 export const capitalizeInitials = str => {
   str = str.split(' ');
   for (let i = 0, x = str.length; i < x; i++) {
