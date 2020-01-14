@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { userBooksRef, userRef } from '../config/firebase';
 import icon from '../config/icons';
 import { userBookTypes } from '../config/lists';
-import { booksPerRow, handleFirestoreError, normURL, timestamp } from '../config/shared';
+import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
 import { stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
@@ -140,7 +140,7 @@ const Shelf = props => {
                     console.warn(cBooks);
                     userRef(luid).collection('challenges').doc(cid).update({ 
                       books: cBooks, 
-                      completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? timestamp : 0
+                      completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Date.now() : 0
                     }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
                   } // else console.log('No challenge books to update');
                 }

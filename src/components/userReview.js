@@ -17,7 +17,7 @@ import 'emoji-mart/css/emoji-mart.css';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, join, timeSince, timestamp, urlRegex } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../config/shared';
 import { stringType, userBookType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
@@ -145,7 +145,7 @@ const UserReview = props => {
             bookTitle: userBook.title,
             covers: userBook.covers,
             createdByUid: authid,
-            created_num: timestamp,
+            created_num: Date.now(),
             displayName: user.displayName,
             photoURL: user.photoURL,
             rating_num: userBook.rating_num
@@ -156,7 +156,7 @@ const UserReview = props => {
           userBookRef(authid, bid).update({
             review: {
               ...review,
-              created_num: timestamp
+              created_num: Date.now()
             }
           }).then(() => {
             // console.log(`User review posted`);

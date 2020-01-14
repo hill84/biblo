@@ -12,7 +12,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { readingStates } from '../../config/lists';
-import { handleFirestoreError, timestamp } from '../../config/shared';
+import { handleFirestoreError } from '../../config/shared';
 import { funcType, numberType, shapeType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -85,7 +85,7 @@ const ReadingStateForm = props => {
 
   const validate = (start, end) => {
     const errors = {};
-    const today = timestamp;
+    const today = Date.now();
     if (start > today) { errors.start_num = "Data futura non valida"; }
     if (end > today) { errors.end_num = "Data futura non valida"; }
     if (end && start > end) { errors.end_num = "Data non valida"; }

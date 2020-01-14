@@ -8,7 +8,6 @@ import Select from '@material-ui/core/Select';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { noteRef, notesRef } from '../../config/firebase';
 import { noteTypes } from '../../config/lists';
-import { timestamp } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import SnackbarContext from '../../context/snackbarContext';
@@ -111,7 +110,7 @@ const NoteForm = props => {
         ref.set({
           nid: nid || newNoteRef.id,
           text: data.text,
-          created_num: timestamp,
+          created_num: Date.now(),
           createdBy: user.displayName,
           createdByUid: user.uid,
           tag: data.tag,

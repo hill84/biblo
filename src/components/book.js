@@ -1,7 +1,7 @@
 import React, { Component, createRef, lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { bookRef, collectionBookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
-import { app, handleFirestoreError, normURL, timestamp } from '../config/shared';
+import { app, handleFirestoreError, normURL } from '../config/shared';
 import { bookType, boolType, funcType, objectType, stringType, /* userBookType, */ userType } from '../config/types';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
@@ -225,7 +225,7 @@ export default class Book extends Component {
       
       userBookRef(authid, bid).set({
         ...this.state.userBook,
-        added_num: timestamp,
+        added_num: Date.now(),
         bookInShelf: true,
         bookInWishlist: false
       }).then(() => {
@@ -283,7 +283,7 @@ export default class Book extends Component {
         ...this.state.userBook,
         /* rating_num: userBookRating_num,
         review: userBookReview, */
-        added_num: timestamp,
+        added_num: Date.now(),
         bookInShelf: false,
         bookInWishlist: true
       }).then(() => {

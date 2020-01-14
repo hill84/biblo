@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { authorRef, authorsRef } from '../../config/firebase';
-import { getInitials, handleFirestoreError, normalizeString, timestamp } from '../../config/shared';
+import { getInitials, handleFirestoreError, normalizeString } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import SnackbarContext from '../../context/snackbarContext';
@@ -148,7 +148,7 @@ const AuthorForm = props => {
           displayName: data.displayName || '',
           edit: data.edit || true,
           // followers: data.followers || {},
-          lastEdit_num: timestamp,
+          lastEdit_num: Date.now(),
           lastEditBy: user.displayName,
           lastEditByUid: user.uid,
           photoURL: data.photoURL || '',

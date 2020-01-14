@@ -12,7 +12,7 @@ import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { arrToObj, capitalize, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages, timestamp } from '../../config/shared';
+import { arrToObj, capitalize, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 import '../../css/searchBook.css';
@@ -188,7 +188,7 @@ export default class SearchBookForm extends Component {
       EDIT: {
         createdBy: (user && user.displayName) || '',
         createdByUid: (user && user.uid) || '',
-        created_num: timestamp || 0
+        created_num: Date.now()
       },
       authors: searchBy.key === 'author' ? { searchTextType: true } : {},
       bid: '',
@@ -287,7 +287,7 @@ export default class SearchBookForm extends Component {
                 EDIT: {
                   createdBy: user.displayName || '',
                   createdByUid: user.uid || '',
-                  created_num: timestamp || 0
+                  created_num: Date.now()
                 },
                 authors: (b.authors && arrToObj(b.authors.map(author => author.split('.').join('')), item => ({ key: item, value: true }))) || {},
                 bid: '',

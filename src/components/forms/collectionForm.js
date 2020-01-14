@@ -8,7 +8,7 @@ import Select from '@material-ui/core/Select';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
-import { handleFirestoreError, timestamp } from '../../config/shared';
+import { handleFirestoreError } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -150,7 +150,7 @@ const CollectionForm = props => {
           edit: data.edit || true,
           // followers: data.followers || {},
           genres: data.genres || [],
-          lastEdit_num: timestamp,
+          lastEdit_num: Date.now(),
           lastEditBy: user.displayName,
           lastEditByUid: user.uid,
           // photoURL: data.photoURL || '',

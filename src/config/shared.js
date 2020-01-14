@@ -140,9 +140,7 @@ const calcMinutesToTime = minutes => `${(Math.floor(minutes/60)>0) ? `${Math.flo
 
 export const calcReadingTime = pages => calcMinutesToTime(pages * 1.25);
 
-export const timestamp = Date.now();
-
-export const calcAge = birthDate => Math.abs(new Date(timestamp - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
+export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
 
 export const timeSince = date => {
   const seconds = Math.floor((new Date() - date) / 1000);
@@ -175,7 +173,7 @@ export const msToTime = s => {
 };
 
 const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
-export const diffDays = (secondDate, firstDate = timestamp) => Math.round(Math.abs((firstDate - secondDate) / oneDay));
+export const diffDays = (secondDate, firstDate = Date.now()) => Math.round(Math.abs((firstDate - secondDate) / oneDay));
 
 export const screenSize = () => {
   const w = window.innerWidth;

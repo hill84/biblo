@@ -13,7 +13,7 @@ import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, notesRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, timestamp, truncateString } from '../../config/shared';
+import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -277,7 +277,7 @@ const Dashboard = props => {
           [luid]: {
             displayName: user.displayName,
             photoURL: user.photoURL,
-            timestamp
+            timestamp: Date.now()
           }
         };
 				computedFollowings = {
@@ -285,7 +285,7 @@ const Dashboard = props => {
           [fuid]: {
             displayName: fuser.displayName,
             photoURL: fuser.photoURL,
-            timestamp
+            timestamp: Date.now()
           }
         };
         snackbarMsg = `Segui ${fuser.displayName}`;
@@ -303,7 +303,7 @@ const Dashboard = props => {
           newNoteRef.set({
             nid: newNoteRef.id,
             text: noteMsg,
-            created_num: timestamp,
+            created_num: Date.now(),
             createdBy: user.displayName,
             createdByUid: luid,
             photoURL: user.photoURL,

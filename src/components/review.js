@@ -10,7 +10,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, timestamp, truncateString } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
 import { reviewType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
@@ -63,7 +63,7 @@ const Review = props => {
         newNoteRef.set({
           nid: newNoteRef.id,
           text: noteMsg,
-          created_num: timestamp,
+          created_num: Date.now(),
           createdBy: user.displayName,
           createdByUid: user.uid,
           photoURL: user.photoURL,
@@ -97,7 +97,7 @@ const Review = props => {
       const flag = {
         value,
         flaggedByUid: user.uid,
-        flagged_num: timestamp
+        flagged_num: Date.now()
       };
   
       if (bid && review && user) {

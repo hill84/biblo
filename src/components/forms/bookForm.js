@@ -23,7 +23,7 @@ import isURL from 'validator/lib/isURL';
 import firebase, { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, timestamp, urlRegex, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, urlRegex, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -443,7 +443,7 @@ const BookForm = props => {
             title_sort: normalizeString(book.title) || book.title_sort,
             EDIT: {
               ...EDIT,
-              lastEdit_num: timestamp,
+              lastEdit_num: Date.now(),
               lastEditBy: userDisplayName,
               lastEditByUid: userUid
             }
@@ -472,11 +472,11 @@ const BookForm = props => {
             covers: (imgPreview && Array(imgPreview)) || book.covers, 
             description: book.description, 
             EDIT: {
-              created_num: timestamp,
+              created_num: Date.now(),
               createdBy: userDisplayName,
               createdByUid: userUid,
               edit: true,
-              lastEdit_num: timestamp,
+              lastEdit_num: Date.now(),
               lastEditBy: userDisplayName,
               lastEditByUid: userUid
             },

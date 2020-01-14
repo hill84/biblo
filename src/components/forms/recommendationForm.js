@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, diffDays, getInitials, handleFirestoreError, normURL, timestamp, truncateString } from '../../config/shared';
+import { app, diffDays, getInitials, handleFirestoreError, normURL, truncateString } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -23,7 +23,7 @@ const RecommendationForm = props => {
     displayName,
     photoURL,
     amount: 5,
-    timestamp,
+    timestamp: Date.now(),
     recommends: []
   };
   const { book, onToggle } = props;
@@ -34,7 +34,7 @@ const RecommendationForm = props => {
   
   const count = quote && quote.recommends ? quote.recommends.length : 0;
 
-  const initQuote = useCallback(() => setQuote({ amount: 5, timestamp, recommends: [] }), [setQuote]);
+  const initQuote = useCallback(() => setQuote({ amount: 5, timestamp: Date.now(), recommends: [] }), [setQuote]);
   
   const fetch = useCallback(() => {
     setLoading(true);
@@ -68,7 +68,7 @@ const RecommendationForm = props => {
         displayName,
         photoURL,
         amount: 0,
-        timestamp
+        timestamp: Date.now()
       }).catch(err => {
         openSnackbar(handleFirestoreError(err), 'error');
       });
@@ -133,7 +133,7 @@ const RecommendationForm = props => {
         newNoteRef.set({
           nid: newNoteRef.id,
           text: noteMsg,
-          created_num: timestamp,
+          created_num: Date.now(),
           createdBy: user.displayName,
           createdByUid: uid,
           photoURL: user.photoURL,
