@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
-import { app, booksPerRow } from '../../config/shared';
+import { app, booksPerRow as _booksPerRow } from '../../config/shared';
 import Cover from '../cover';
 import { skltn_shelfRow } from '../skeletons';
 import UserContext from '../../context/userContext';
@@ -16,8 +16,6 @@ const Challenge = () => {
   const [userChallenge, setUserChallenge] = useState(null);
   const [userChallenges, setUserChallenges] = useState(null);
   const is = useRef(true);
-
-  const _booksPerRow = booksPerRow();
 
   const fetch = useCallback(() => {
     if (user) {

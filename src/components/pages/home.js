@@ -47,7 +47,7 @@ const Home = () => {
     }
   }, [emailVerified, user]);
 
-  const isScrollable = useMemo(() => isTouchDevice() || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
+  const isScrollable = useMemo(() => isTouchDevice() || screenSize === 'md' || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
 
   const Hero = useMemo(() => (
     <div className="container text-center">
@@ -86,7 +86,7 @@ const Home = () => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="Best seller" pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid="New" pagination={false} limit={7} inView={inView} scrollable />
             </div>
           }
         </InView>

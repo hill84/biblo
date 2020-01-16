@@ -4,13 +4,11 @@ import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
 import { genres } from '../config/lists';
-import { app, booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
+import { booksPerRow as _booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
-
-const _booksPerRow = booksPerRow;
 
 const BookCollection = props => {
   const { openSnackbar } = useContext(SnackbarContext);
@@ -36,10 +34,18 @@ const BookCollection = props => {
     // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
     const isGenre = genres.some(item => item.name === cid);
-    const baseRef = cid === 'Top' ? 
-      booksRef.orderBy('readers_num', 'desc') : isGenre ? 
-      booksRef.where('genres', 'array-contains', denormURL(cid)).orderBy('rating_num', desc ? 'desc' : 'asc').orderBy('EDIT.created_num', desc ? 'desc' : 'asc') : 
-      collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title');
+    let baseRef
+
+    switch (cid) {
+      case 'Top': baseRef = booksRef.orderBy('readers_num', 'desc'); break;
+      case 'New': baseRef = booksRef.orderBy('EDIT.created_num', 'desc'); break;
+      default: baseRef = isGenre ? (
+        booksRef.where('genres', 'array-contains', denormURL(cid)).orderBy('rating_num', desc ? 'desc' : 'asc').orderBy('EDIT.created_num', desc ? 'desc' : 'asc')
+      ) : ( 
+        collectionBooksRef(cid).orderBy(bcid, desc ? 'desc' : 'asc').orderBy('publication').orderBy('title')
+      ); break;
+    }
+    
     const lRef = baseRef.limit(limit);
     const paginatedRef = lRef.startAfter(startAfter);
     const ref = direction ? paginatedRef : lRef;
@@ -75,7 +81,7 @@ const BookCollection = props => {
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
 
-      if (cid === 'Top') {
+      if (cid === 'Top' || cid === 'New') {
         setState(prevState => ({ ...prevState, count: limit }));
         fetcher();
       } else if (!direction) {
@@ -119,11 +125,17 @@ const BookCollection = props => {
     <>
       <div className="head nav" role="navigation" ref={is}>
         <span className="counter last title"><span className="primary-text hide-sm">{isGenre ? 'Genere' : 'Collezione'}:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
-        {!loading && count > 0 &&
+        {!loading && count > 0 && (
           <div className="pull-right">
-            {(pagination && count > limit) || scrollable ?
-              cid === 'Top' ? `I ${limit} libri più letti su ${app.name}` : <button type="button" className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
-            :
+            {(pagination && count > limit) || scrollable ? (
+              cid === 'Top' ? (
+                `I più amati`
+              ) : cid === 'New' ? (
+                "Le nostre novità"
+              ) : ( 
+                <button type="button" className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
+              )
+            ) : (
               <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
                 <span>
                   <button
@@ -135,8 +147,8 @@ const BookCollection = props => {
                   </button>
                 </span>
               </Tooltip>
-            }
-            {pagination && count > limit &&
+            )}
+            {pagination && count > limit && (
               <>
                 <button 
                   type="button"
@@ -155,9 +167,9 @@ const BookCollection = props => {
                   {icon.chevronRight}
                 </button>
               </>
-            }
+            )}
           </div>
-        }
+        )}
       </div>
 
       <div className={`shelf collection hoverable-items ${scrollable ? 'scrollable' : ''}`}>
