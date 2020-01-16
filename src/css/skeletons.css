@@ -133,7 +133,7 @@
     --height: calc((var(--padV) * 2) + var(--avatarSize));
     --rowH: calc(var(--height) + 1px);
     --textH: 22px;
-    --padTextV: calc(var(--padH) + var(--avatarSize) + (var(--padH) * 2));
+    --padTextH: calc(var(--padH) + var(--avatarSize) + (var(--padH) * 2));
     --padTextV: calc(((var(--height) - var(--textH)) / 2) + 4px);
 
     height: var(--rowH);

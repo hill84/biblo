@@ -81,9 +81,13 @@ const Review = props => {
         }
         // console.log(`User ${user.uid} add like on review ${bid}/${review.createdByUid}`);
 
+        const likerURL = `/dashboard/${user.uid}`;
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-        const noteMsg = `<a href="/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 35)}</a>`;
+        const bookTitle = truncateString(review.bookTitle, 35);
+        const bookURL = `/book/${review.bid}/${normURL(review.bookTitle)}`;
+        const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="${bookURL}">${bookTitle}</a>`;
         const newNoteRef = notesRef(review.createdByUid).doc();
+
         newNoteRef.set({
           nid: newNoteRef.id,
           text: noteMsg,
@@ -305,6 +309,7 @@ const Review = props => {
                     <Comment
                       key={item.created_num}
                       bid={bid}
+                      reviewerDisplayName={review.displayName}
                       rid={review.createdByUid}
                       comment={item}
                       onEdit={onEditComment}

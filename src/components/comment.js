@@ -18,7 +18,7 @@ const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 const Comment = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, comment, onEdit, rid } = props;
+  const { bid, comment, onEdit, reviewerDisplayName, rid } = props;
   const likes_num = comment.likes ? comment.likes.length : 0;
   // const dislikes_num = comment.dislikes ? comment.dislikes.length : 0;
   const [flagLoading, setFlagLoading] = useState(false);
@@ -46,11 +46,12 @@ const Comment = props => {
 
         const likerURL = `/dashboard/${user.uid}`;
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-        const reviewerURL = `/dashboard/${comment.reviewerUid}`;
-        const reviewerDisplayName = truncateString(comment.reviewerDisplayName.split(' ')[0], 12);
+        const reviewerURL = `/dashboard/${rid}`;
+        const reviewer = truncateString(reviewerDisplayName.split(' ')[0], 12);
         const bookTitle = truncateString(comment.bookTitle, 35);
-        const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
-        const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace alla tua risposta alla recensione di <a href="${reviewerURL}">${reviewerDisplayName}</a> del libro <a href="${bookURL}">${bookTitle}</a>`;
+        const bookURL = `/book/${bid}/${normURL(comment.bookTitle)}`;
+        const isLikerReviewer = user.uid === rid;
+        const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace alla tua risposta alla ${isLikerReviewer ? 'sua recensione' : `recensione di <a href="${reviewerURL}">${reviewer}</a>`} del libro <a href="${bookURL}">${bookTitle}</a>`;
         const newNoteRef = notesRef(comment.createdByUid).doc();
         
         newNoteRef.set({
@@ -72,7 +73,7 @@ const Comment = props => {
         // console.log(`Comment likes updated`);
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid or cid');
-  }, [bid, comment, like, openSnackbar, rid, user]);
+  }, [bid, comment, like, openSnackbar, reviewerDisplayName, rid, user]);
 
   const onFlagRequest = () => setIsOpenFlagDialog(true);
 
@@ -210,6 +211,7 @@ const Comment = props => {
 Comment.propTypes = {
   bid: stringType.isRequired,
   comment: commentType.isRequired,
+  reviewerDisplayName: stringType.isRequired,
   rid: stringType.isRequired
 }
 
