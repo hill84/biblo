@@ -179,7 +179,7 @@ const QuoteForm = props => {
                 />
                 {errors.quote && <FormHelperText className="message error">{errors.quote}</FormHelperText>}
                 {leftChars.quote !== null && 
-                  <FormHelperText className={`message ${leftChars.quote < 0 ? 'alert' : 'neutral'}`}>
+                  <FormHelperText className={`message ${leftChars.quote < 0 ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.quote}
                   </FormHelperText>
                 }

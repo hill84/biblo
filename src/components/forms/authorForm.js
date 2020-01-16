@@ -220,7 +220,7 @@ const AuthorForm = props => {
                 />
                 {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
                 {(leftChars.bio !== null) && 
-                  <FormHelperText className={`message ${(leftChars.bio < 0) ? 'alert' : 'neutral'}`}>
+                  <FormHelperText className={`message ${(leftChars.bio < 0) ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.bio}
                   </FormHelperText>
                 }

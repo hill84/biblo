@@ -7,10 +7,10 @@
     &.main { min-height: 256px; }
     & .book { margin-bottom: 10px; }
   }
-  & .own.review {
+  /* & .own.review {
     &:hover .row { opacity: 1; }
     & .row { opacity: .3; transition: all .4s ease-in-out; }
-  }
+  } */
   & .book-profile .rating {
     display: flex;
     align-items: center;

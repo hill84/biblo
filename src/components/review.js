@@ -8,6 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import CommentForm from '../components/forms/commentForm';
 import { notesRef, reviewerCommentersRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
@@ -22,29 +23,40 @@ import Rating from './rating';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
+const limit = 20;
+
 const Review = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
+  const authid = useMemo(() => user && user.uid, [user]);
   const { bid, review, uid } = props;
+  const likes_num = review.likes ? review.likes.length : 0;
+  // const dislikes_num = review.dislikes ? review.dislikes.length : 0;
   const [flagLoading, setFlagLoading] = useState(false);
   const [comments, setComments] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [selectedRid, setSelectedRid] = useState(null);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
-  const [like, setLike] = useState(review.likes.length && review.likes.indexOf(user && user.uid) > -1 ? true : false || false);
-  const [likes_num, setLikes_num] = useState(review.likes.length || 0);
+  const [isEditingComment, setIsEditingComment] = useState(false);
+  const [like, setLike] = useState(likes_num && review.likes.indexOf(user && user.uid) > -1 ? true : false || false);
   const is = useRef(true);
 
   useEffect(() => {
     if (bid && selectedRid) {
-      console.log(bid, selectedRid);
-      reviewerCommentersRef(bid, selectedRid).limit(20).get().then(snap => {
+      if (is.current) setLoading(true);
+
+      reviewerCommentersRef(bid, selectedRid).limit(limit).onSnapshot(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
           setComments(items);
+          setLoading(false);
+        } else {
+          setComments(null);
+          setLoading(false);
         }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      });
     }
   }, [bid, selectedRid, openSnackbar]);
 
@@ -60,18 +72,14 @@ const Review = props => {
         likes = likes.filter(e => e !== user.uid);
         if (is.current) {
           setLike(false);
-          setLikes_num(likes.length);
         }
         // console.log(`User ${user.uid} remove like on review ${bid}/${review.createdByUid}`);
-        // console.log(`User likes decreased to ${likes.length}`);
       } else {
         likes = [...likes, user.uid];
         if (is.current) {
           setLike(true);
-          setLikes_num(likes.length);
         }
         // console.log(`User ${user.uid} add like on review ${bid}/${review.createdByUid}`);
-        // console.log(`User likes increased to ${likes.length}`);
 
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
         const noteMsg = `<a href="/dashboard/${user.uid}">${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href="/book/${review.bid}/${normURL(review.bookTitle)}">${truncateString(review.bookTitle, 35)}</a>`;
@@ -89,7 +97,7 @@ const Review = props => {
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }
-    // console.log({likes, 'likes_num': likes.length});
+
     if (bid && review.createdByUid) {
       reviewerRef(bid, review.createdByUid).update({ likes }).then(() => {
         // console.log(`Book review likes updated`);
@@ -99,10 +107,6 @@ const Review = props => {
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid or ruid');
   }, [bid, like, openSnackbar, review, user]);
-
-  const onAddResponse = () => {} // TODO
-
-  // const onSubmitResponse = () => {} // TODO
 
   const onFlagRequest = () => setIsOpenFlagDialog(true);
 
@@ -149,16 +153,27 @@ const Review = props => {
 
   const onToggleCommentsPanel = () => setSelectedRid(s => s === review.createdByUid ? null : review.createdByUid);
 
+  const onEditComment = () => {
+    if (is.current) setIsEditingComment(true);
+  };
+
+  const onCancelComment = () => {
+    if (is.current) setIsEditingComment(false);
+  };
+
   // const onCloseCommentsPanel = () => setSelectedRid(null);
 
-  const isOwner = useMemo(() => review.createdByUid === (user && user.uid), [review, user]);
+  const isOwner = useMemo(() => review.createdByUid === (user && user.uid), [review.createdByUid, user]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
-  const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === (user && user.uid), [review, user]);
+  const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === (user && user.uid), [review.flag, user]);
+  const commentList = useMemo(() => comments && comments.filter(item => isEditingComment ? item.createdByUid !== authid : item), [comments, isEditingComment, authid]);
+  const classNames = useMemo(() => `${isOwner ? 'own review' : 'review'} ${review.flag ? `flagged ${review.flag.value}` : ''}`, [isOwner, review]);
+  const selected = useMemo(() => selectedRid && selectedRid === review.createdByUid, [review.createdByUid, selectedRid]);
 
   return (
     <>
-      <div className={`${isOwner ? 'own review' : 'review'} ${review.flag ? `flagged ${review.flag.value}` : ''}`} ref={is}>
+      <div className={classNames} id={review.createdByUid} ref={is}>
         <div className="row">
           <div className="col-auto left">
             {!bid ?
@@ -180,7 +195,7 @@ const Review = props => {
           </div>
           <div className="col right">
             <div className="head row">
-              <Link to={uid ? `/book/${review.bid}/${normURL(review.bookTitle)}` : `/dashboard/${review.createdByUid}`} className="col-auto author">
+              <Link to={uid ? `/book/${review.bid}/${normURL(review.bookTitle)}` : `/dashboard/${review.createdByUid}`} className="col author">
                 <h3>
                   {uid ? review.bookTitle : review.displayName}
                   {/* isOwner && <span className="badge">TU</span> */}
@@ -189,7 +204,7 @@ const Review = props => {
               </Link>
               
               {review.rating_num > 0 && 
-                <div className="col text-right">
+                <div className="col-auto text-right">
                   <Rating ratings={{rating_num: review.rating_num}} labels />
                 </div>
               }
@@ -231,15 +246,15 @@ const Review = props => {
                   */}
                   {isEditor && !isOwner && (
                     <div className="counter">
-                      <button type="button" className="btn sm flat" onClick={onAddResponse}>
+                      <button type="button" className="btn sm flat" onClick={onEditComment} disabled={isEditingComment}>
                         <span className="show-sm">{icon.pencil}</span> <span className="hide-sm">Rispondi</span>
                       </button>
                     </div>
                   )}
-                  {review.comments_num && (
+                  {review.comments_num > 0 && (
                     <div className="counter">
-                      <button type="button" className="btn sm flat" onClick={onToggleCommentsPanel}>
-                        {selectedRid && selectedRid === review.createdByUid ? (
+                      <button type="button" className="btn sm flat" onClick={onToggleCommentsPanel} disabled={isEditingComment}>
+                        {selected ? (
                           <>
                             <span className="hide-sm">Nascondi</span>
                             <span className="show-sm">{icon.menuUp}</span>
@@ -273,11 +288,29 @@ const Review = props => {
                 <div className="col counter text-right date">{timeSince(review.created_num)}</div>
               </div>
             }
-            {selectedRid && selectedRid === review.createdByUid && comments && (
+            {isEditingComment && (
+              <CommentForm
+                bid={bid}
+                bookTitle={review.bookTitle}
+                rid={review.createdByUid}
+                onCancel={onCancelComment}
+              />
+            )}
+            {selectedRid && selectedRid === review.createdByUid && commentList && (
               <div className="comments">
-                {comments.map(item => (
-                  <Comment key={item.created_num} bid={bid} rid={review.createdByUid} comment={item} />
-                ))}
+                {loading ? (
+                  <div className="skltn comment" />
+                ) : (
+                  commentList.map(item => (
+                    <Comment
+                      key={item.created_num}
+                      bid={bid}
+                      rid={review.createdByUid}
+                      comment={item}
+                      onEdit={onEditComment}
+                    />
+                  ))
+                )}
               </div>
             )}
           </div>

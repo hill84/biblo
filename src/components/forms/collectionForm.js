@@ -239,7 +239,7 @@ const CollectionForm = props => {
                 />
                 {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
                 {(leftChars.desc !== null) && 
-                  <FormHelperText className={`message ${(leftChars.desc < 0) ? 'alert' : 'neutral'}`}>
+                  <FormHelperText className={`message ${(leftChars.desc < 0) ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.desc}
                   </FormHelperText>
                 }

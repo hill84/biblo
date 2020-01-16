@@ -41,15 +41,16 @@ const BookProfile = props => {
     addBookToWishlist,
     addBookToWishlistRef,
     addReview,
+    book,
     history,
     isEditing,
     loading,
+    location,
     rateBook,
     removeBookFromShelf,
     removeBookFromWishlist,
     removeReview
   } = props;
-  const { book, location } = props;
   // const [errors, setErrors] = useState({});
   const [ISBN, setISBN] = useState('ISBN_13');
   const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);

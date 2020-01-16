@@ -1,10 +1,5 @@
 import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -15,19 +10,21 @@ import { commentType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import FlagDialog from './flagDialog';
-import MinifiableText from './minifiableText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const Comment = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, comment, rid } = props;
+  const { bid, comment, onEdit, rid } = props;
+  const likes_num = comment.likes ? comment.likes.length : 0;
+  // const dislikes_num = comment.dislikes ? comment.dislikes.length : 0;
   const [flagLoading, setFlagLoading] = useState(false);
-  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+  const [actionsAnchorEl, setActionsAnchorEl] = useState(null);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
-  const [like, setLike] = useState(comment.likes.length && comment.likes.indexOf(user && user.uid) > -1 ? true : false || false);
-  const [likes_num, setLikes_num] = useState(comment.likes.length || 0);
+  const [like, setLike] = useState(likes_num && comment.likes.indexOf(user && user.uid) > -1 ? true : false || false);
   const is = useRef(true);
 
   useEffect(() => () => {
@@ -40,20 +37,12 @@ const Comment = props => {
     if (user) {
       if (like) {
         likes = likes.filter(e => e !== user.uid);
-        if (is.current) {
-          setLike(false);
-          setLikes_num(likes.length);
-        }
+        if (is.current) setLike(false);
         // console.log(`User ${user.uid} remove like on comment ${bid}/${comment.createdByUid}`);
-        // console.log(`User likes decreased to ${likes.length}`);
       } else {
         likes = [...likes, user.uid];
-        if (is.current) {
-          setLike(true);
-          setLikes_num(likes.length);
-        }
+        if (is.current) setLike(true);
         // console.log(`User ${user.uid} add like on comment ${bid}/${comment.createdByUid}`);
-        // console.log(`User likes increased to ${likes.length}`);
 
         const likerURL = `/dashboard/${user.uid}`;
         const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
@@ -61,7 +50,7 @@ const Comment = props => {
         const reviewerDisplayName = truncateString(comment.reviewerDisplayName.split(' ')[0], 12);
         const bookTitle = truncateString(comment.bookTitle, 35);
         const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
-        const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace al tuo commento alla recensione di <a href="${reviewerURL}">${reviewerDisplayName}</a> del libro <a href="${bookURL}">${bookTitle}</a>`;
+        const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace alla tua risposta alla recensione di <a href="${reviewerURL}">${reviewerDisplayName}</a> del libro <a href="${bookURL}">${bookTitle}</a>`;
         const newNoteRef = notesRef(comment.createdByUid).doc();
         
         newNoteRef.set({
@@ -77,10 +66,10 @@ const Comment = props => {
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
     }
-    // console.log({likes, 'likes_num': likes.length});
+
     if (bid && comment.createdByUid && rid) {
       reviewerCommenterRef(bid, rid, comment.createdByUid).update({ likes }).then(() => {
-        // console.log(`Review comment likes updated`);
+        // console.log(`Comment likes updated`);
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid or cid');
   }, [bid, comment, like, openSnackbar, rid, user]);
@@ -103,35 +92,36 @@ const Comment = props => {
           if (is.current) {
             setFlagLoading(false);
             setIsOpenFlagDialog(false);
-            openSnackbar('Commento segnalato agli amministratori', 'success');
+            openSnackbar('Risposta segnalata agli amministratori', 'success');
           }
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       } else console.warn('Cannot flag');
     }
   }, [bid, comment, openSnackbar, rid, user]);
 
-  const onDeleteRequest = () => setIsOpenDeleteDialog(true);
-
-  const onCloseDeleteDialog = () => setIsOpenDeleteDialog(false);
-
   const onDelete = () => {
-    if (is.current) setIsOpenDeleteDialog(false);
-    // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {
       reviewerCommenterRef(bid, rid, comment.createdByUid).delete().then(() => {
-        // console.log(`Book review deleted`);
+        // console.log(`Comment deleted`);
+        openSnackbar('Risposta cancellata', 'success');
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn(`No bid`);
   };
+
+  const onOpenActionsMenu = e => setActionsAnchorEl(e.currentTarget);
+
+  const onCloseActionsMenu = () => setActionsAnchorEl(null);
 
   const isOwner = useMemo(() => comment.createdByUid === (user && user.uid), [comment, user]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const flaggedByUser = useMemo(() => (comment.flag && comment.flag.flaggedByUid) === (user && user.uid), [comment, user]);
+  const classNames = useMemo(() => `${isOwner ? 'own comment' : 'comment'} ${comment.flag ? `flagged ${comment.flag.value}` : ''}`, [comment, isOwner]);
 
   return (
     <>
-      <div className={`${isOwner ? 'own comment' : 'comment'} ${comment.flag ? `flagged ${comment.flag.value}` : ''}`} ref={is}>
+      
+      <div className={classNames} id={`${rid}-${comment.createdByUid}`} ref={is}>
         <div className="row">
           <div className="col-auto left">
             <Link to={`/dashboard/${comment.createdByUid}`}>
@@ -140,17 +130,30 @@ const Comment = props => {
           </div>
           <div className="col right">
             <div className="head row">
-              <Link to={rid ? `/book/${comment.bid}/${normURL(comment.bookTitle)}` : `/dashboard/${comment.createdByUid}`} className="col-auto author">
-                <h3>
-                  {rid ? comment.bookTitle : comment.displayName}
-                  {/* isOwner && <span className="badge">TU</span> */}
-                  {!bid && <span className="date">{timeSince(comment.created_num)}</span>}
-                </h3>
+              <Link to={rid ? `/book/${comment.bid}/${normURL(comment.bookTitle)}` : `/dashboard/${comment.createdByUid}`} className="col author">
+                <h3>{comment.displayName}</h3>
               </Link>
+              {isEditor && (
+                <div className="col-auto">
+                  <button
+                    className="btn sm flat rounded icon"
+                    onClick={Boolean(actionsAnchorEl) ? onCloseActionsMenu : onOpenActionsMenu}>
+                    {Boolean(actionsAnchorEl) ? icon.close : icon.dotsVertical}
+                  </button>
+                  <Menu
+                    id="actions-menu"
+                    className="dropdown-menu"
+                    anchorEl={actionsAnchorEl}
+                    onClick={onCloseActionsMenu}
+                    open={Boolean(actionsAnchorEl)}
+                    onClose={onCloseActionsMenu}>
+                    {isOwner ? <MenuItem onClick={onEdit}>Modifica</MenuItem> : <MenuItem onClick={onFlagRequest}>Segnala</MenuItem>}
+                    {(isOwner || isAdmin) && <MenuItem onClick={onDelete}>Elimina</MenuItem>}
+                  </Menu>
+                </div>
+              )}
             </div>
-            <div className="info-row text">
-              <MinifiableText text={comment.text} maxChars={500} />
-            </div>
+            <div className="info-row text">{comment.text}</div>
             {bid && 
               <div className="foot row">
                 <div className="col-auto likes">
@@ -182,22 +185,6 @@ const Comment = props => {
                       </Tooltip>
                     </div> 
                   */}
-                  {isEditor && !isOwner && (
-                    <>
-                      <div className="counter show-on-hover">
-                        <button type="button" className="btn sm flat" onClick={onFlagRequest} disabled={flaggedByUser}>
-                          <span className="show-sm">{icon.flag}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
-                        </button>
-                      </div>
-                    </>
-                  )}
-                  {isEditor && (isOwner || isAdmin) && (
-                    <div className="counter show-on-hover">
-                      <button type="button" className="btn sm flat" onClick={onDeleteRequest}>
-                        <span className="show-sm">{icon.delete}</span> <span className="hide-sm">Elimina</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
                 <div className="col counter text-right date">{timeSince(comment.created_num)}</div>
               </div>
@@ -205,29 +192,6 @@ const Comment = props => {
           </div>
         </div>
       </div>
-
-      {isOpenDeleteDialog && (
-        <Dialog
-          open={isOpenDeleteDialog}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={onCloseDeleteDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">
-            Procedere con l&apos;eliminazione?
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="delete-dialog-description">
-              Cancellando il commento perderai tutti i like ricevuti.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
-          </DialogActions>
-        </Dialog>
-      )}
 
       {isOpenFlagDialog && (
         <FlagDialog 

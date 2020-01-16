@@ -104,12 +104,14 @@ const Reviews = props => {
       <div className={`reviews ${container ? 'card dark' : ''}`} ref={is}>
         {!loading && !items ? <EmptyState /> :
           <>
-            <div className="head">
-              {!bid && <h2>Ultime recensioni<span className="counter">({items ? items.length : limit} di {count || limit})</span></h2>}
-            </div>
+            {!bid && (
+              <div className="head">
+                <h2>Ultime recensioni<span className="counter">({items ? items.length : limit} di {count || limit})</span></h2>
+              </div>
+            )}
             {items && items.map(item => (
               <Review 
-                key={`${item.bid || 'nobid'}_${item.createdByUid}`}
+                key={item.createdByUid}
                 bid={bid}
                 uid={uid}
                 review={item} 
