@@ -111,7 +111,7 @@ const Reviews = props => {
             )}
             {items && items.map(item => (
               <Review 
-                key={item.createdByUid}
+                key={`${item.bid}-${item.createdByUid}`}
                 bid={bid}
                 uid={uid}
                 review={item} 

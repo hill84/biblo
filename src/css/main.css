@@ -1576,7 +1576,8 @@ input[type='number'] {
   border-radius: var(--radius);
 }
 .card.user-review .footer { margin-bottom: calc(var(--minPad) * -1); }
-.review, .comment { 
+.review, .comment {
+  --minPad: 14px;
   --avatarSize: 32px; 
   --bookWidth: 40px;
   --coverWidth: 40px;
@@ -1594,7 +1595,11 @@ input[type='number'] {
     padding-bottom: var(--minPad);
   }
   & .cover { --pad: 7px; font-size: 7px; }
-  & + .review, & .comment { margin-top: var(--minPad); padding-top: var(--minPad); border-top: 2px solid rgba(var(--blackClr), .05); }
+  & + .review, & .comment {
+    margin-top: var(--minPad);
+    padding-top: var(--minPad);
+    border-top: 2px solid rgba(var(--blackClr), .05);
+  }
   & .left { position: relative; padding-right: 0; }
   & .left .avatar.absolute {
     --avatarSize: 28px; 
