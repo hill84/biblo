@@ -26,7 +26,7 @@ import MinifiableText from '../minifiableText';
 import Rating from '../rating';
 import Reviews from '../reviews';
 import ShareButtons from '../shareButtons';
-import UserReview from '../userReview';
+import ReviewForm from '../forms/reviewForm';
 
 const NoMatch = lazy(() => import('../noMatch'));
 
@@ -41,15 +41,16 @@ const BookProfile = props => {
     addBookToWishlist,
     addBookToWishlistRef,
     addReview,
+    book,
     history,
     isEditing,
     loading,
+    location,
     rateBook,
     removeBookFromShelf,
     removeBookFromWishlist,
     removeReview
   } = props;
-  const { book, location } = props;
   // const [errors, setErrors] = useState({});
   const [ISBN, setISBN] = useState('ISBN_13');
   const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);
@@ -339,7 +340,7 @@ const BookProfile = props => {
             {book.bid && (
               <>
                 {isAuth && isEditor && userBook.bookInShelf && (
-                  <UserReview
+                  <ReviewForm
                     addReview={addReview}
                     bid={book.bid}
                     removeReview={removeReview}

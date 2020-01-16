@@ -5,7 +5,7 @@
     height: var(--shelf-rowHeight);
     overflow: hidden;
   }
-  &.area, &.shelf-row, &.rows, &.review, &.quote {
+  &.area, &.shelf-row, &.rows, &.review, &.comment, &.quote {
     &::before {
       content: '';
       position: absolute;
@@ -70,8 +70,8 @@
     background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
     background-repeat: no-repeat;
   }
-  &.rows, &.review, &.quote { margin-bottom: 10px; }
-  &.rows, &.review, &.quote, &.notification, &.avatar-row, &.dash {
+  &.rows, &.review, &.comment, &.quote { margin-bottom: 10px; }
+  &.rows, &.review, &.comment, &.quote, &.notification, &.avatar-row, &.dash {
     position: relative;
     overflow: hidden;
     width: 100%;
@@ -94,15 +94,28 @@
     &.three { --height: 55px; }
     &.four { --height: 77px; }
   }
-  &.review {
-    height: 118px;
+  &.review, &.comment {
+    --padV: 10px;
+    --textH: 14px;
+    --padTextH: calc(var(--avatarSize) + var(--minPad));
+    --height: calc(calc(var(--padV) * 2) + var(--avatarSize) + (var(--textH) * 4));
+
+    height: var(--height);
     background-image:
-      radial-gradient(circle 16px, var(--skltnClr) 99%, transparent 0), 
+      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
       linear-gradient(var(--skltnClr) 50%, transparent 50%),
       repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
       linear-gradient(var(--skltnClr) 50%, transparent 50%);
-    background-position: 0 14px, 46px 22px, 46px 56px, 46px 100px;
-    background-size: 32px 32px, 200px 32px, 100% 44px, calc(100% - 100px) 22px;
+    background-position:
+      0 var(--padV),
+      var(--padTextH) calc(var(--padV) + calc((var(--avatarSize) - var(--textH)) / 2)),
+      var(--padTextH) calc(var(--avatarSize) + calc(var(--padV) * 2)),
+      var(--padTextH) calc(calc(var(--padV) * 2) + var(--avatarSize) + (var(--textH) * 3));
+    background-size:
+      var(--avatarSize) var(--avatarSize),
+      200px calc(var(--padV) + var(--textH)),
+      100% calc(var(--textH) * 3),
+      calc(100% - 100px) 22px;
   }
   &.quote {
     height: 124px;
@@ -120,6 +133,7 @@
     --height: calc((var(--padV) * 2) + var(--avatarSize));
     --rowH: calc(var(--height) + 1px);
     --textH: 22px;
+    --padTextH: calc(var(--padH) + var(--avatarSize) + (var(--padH) * 2));
     --padTextV: calc(((var(--height) - var(--textH)) / 2) + 4px);
 
     height: var(--rowH);
@@ -130,10 +144,14 @@
       linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
     background-position:
       var(--padH) var(--padV), 
-      calc(var(--padH) + var(--avatarSize) + (var(--padH) * 2)) var(--padTextV), 
+      var(--padTextH) var(--padTextV), 
       100% var(--padTextV),
       0 var(--height);
-    background-size: var(--avatarSize) var(--avatarSize), 170px var(--textH), var(--rowH) var(--textH), 100% 1px;
+    background-size:
+      var(--avatarSize) var(--avatarSize),
+      170px var(--textH),
+      var(--rowH) var(--textH),
+      100% 1px;
   }
   &.avatar-row {
     --avatarSize: 40px;

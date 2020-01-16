@@ -86,9 +86,7 @@ const Layout = props => {
   const onToggleDrawer = () => setDrawerIsOpen(!drawerIsOpen);
   const onCloseDrawer = () => setDrawerIsOpen(false);
 
-  const onOpenMore = e => {
-    setMoreAnchorEl(e.currentTarget);
-  }
+  const onOpenMore = e => setMoreAnchorEl(e.currentTarget);
   const onCloseMore = () => setMoreAnchorEl(null);
 
   const onOpenNotes = e => {

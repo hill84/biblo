@@ -170,7 +170,7 @@ const NoteForm = props => {
                 />
                 {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
                 {(leftChars.text !== null) && 
-                  <FormHelperText className={`message ${(leftChars.text < 0) ? 'alert' : 'neutral'}`}>
+                  <FormHelperText className={`message ${(leftChars.text < 0) ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.text}
                   </FormHelperText>
                 }

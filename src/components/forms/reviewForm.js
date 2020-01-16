@@ -15,16 +15,16 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { reviewerRef, userBookRef } from '../config/firebase';
-import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../config/shared';
-import { stringType, userBookType } from '../config/types';
-import SnackbarContext from '../context/snackbarContext';
-import UserContext from '../context/userContext';
-import '../css/emojiMart.css';
-import emojiMartLocale from '../locales/emojiMart';
-import Overlay from './overlay';
-import Rating from './rating';
+import { reviewerRef, userBookRef } from '../../config/firebase';
+import icon from '../../config/icons';
+import { abbrNum, checkBadWords, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../../config/shared';
+import { stringType, userBookType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
+import UserContext from '../../context/userContext';
+import '../../css/emojiMart.css';
+import emojiMartLocale from '../../locales/emojiMart';
+import Overlay from '../overlay';
+import Rating from '../rating';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -49,23 +49,28 @@ const min = {
   }
 };
 
-const UserReview = props => {
+const ReviewForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, userBook } = props;
-  const [review, setReview] = useState({
-    bid: '',
+  const authid = useMemo(() => user && user.uid, [user]);
+  const initialReviewState = useMemo(() => ({
+    bid,
     bookTitle: '',
+    comments_num: 0,
     covers: [],
-    createdByUid: '',
+    createdByUid: authid,
     created_num: 0,
+    lastEditByUid: authid,
+    lastEdit_num: Date.now(),
     displayName: '',
     likes: [],
     photoURL: '',
     rating_num: 0,
     text: '',
     title: ''
-  });
+  }), [authid, bid]);
+  const [review, setReview] = useState(initialReviewState);
   const [leftChars, setLeftChars] = useState({ text: null, title: null });
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState(false);
@@ -75,34 +80,25 @@ const UserReview = props => {
   const [isEditing, setIsEditing] = useState(false);
   const is = useRef(true);
 
-  const authid = useMemo(() => user && user.uid, [user]);
-
-  const fetchUserReview = useCallback(() => {
+  const fetchReview = useCallback(() => {
     reviewerRef(bid, authid).onSnapshot(snap => {
       if (is.current) setLoading(true);
 
       if (snap.exists) {
         if (is.current) setReview(snap.data());
       } else if (is.current) {
-        setReview(review => ({
-          ...review,
-          created_num: 0,
-          likes: [],
-          rating_num: 0,
-          text: '',
-          title: ''
-        }));
+        setReview(initialReviewState);
       }
       if (is.current) {
         setLoading(false);
         setChanges(false);
       }
     });
-  }, [authid, bid]);
+  }, [authid, bid, initialReviewState]);
 
   useEffect(() => {
-    fetchUserReview();
-  }, [fetchUserReview]);
+    fetchReview();
+  }, [fetchReview]);
 
   const onEditing = () => {
     if (is.current) setIsEditing(true);
@@ -112,6 +108,7 @@ const UserReview = props => {
     const { text, title } = review;
     const errors = {};
     const urlMatches = text.match(urlRegex);
+    const badWords = checkBadWords(text);
 
     if (!text) {
       errors.text = "Aggiungi una recensione";
@@ -121,10 +118,14 @@ const UserReview = props => {
       errors.text = `Minimo ${min.chars.text} caratteri`;
     } else if (urlMatches) {
       errors.text = `Non inserire link (${join(urlMatches)})`;
+    } else if (badWords) {
+      errors.text = "Niente volgarità";
     }
+
     if (title && title.length > max.chars.title) {
       errors.title = `Massimo ${max.chars.title} caratteri`;
     }
+
     return errors;
   }, []);
 
@@ -138,25 +139,31 @@ const UserReview = props => {
       if (Object.keys(errors).length === 0) {
         if (is.current) setLoading(true);
 
-        if (bid) {
-          reviewerRef(bid, authid).set({
-            ...review,
-            bid: userBook.bid,
+        if (bid && user) {
+          const { comments_num, flag, likes, ...userBookReview } = review;
+          const updatedReview = {
             bookTitle: userBook.title,
             covers: userBook.covers,
-            createdByUid: authid,
-            created_num: Date.now(),
+            created_num: review.created_num || Date.now(),
             displayName: user.displayName,
+            lastEditByUid: authid,
+            lastEdit_num: Date.now(),
             photoURL: user.photoURL,
             rating_num: userBook.rating_num
+          };
+
+          reviewerRef(bid, authid).set({
+            ...review,
+            ...updatedReview
           }).then(() => {
             // console.log(`Book review created`);
+            openSnackbar('Recensione salvata', 'success')
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-          userBookRef(authid, bid).update({
+          userBookRef(authid, bid).update({ 
             review: {
-              ...review,
-              created_num: Date.now()
+              ...userBookReview,
+              ...updatedReview
             }
           }).then(() => {
             // console.log(`User review posted`);
@@ -170,13 +177,8 @@ const UserReview = props => {
             setLoading(false);
             setLeftChars({ text: null, title: null });
           }
-        } else console.warn(`No bid`);
+        } else console.warn(`No bid or user`);
       }
-    } else if (is.current) {
-      setErrors({});
-      setIsEditing(false);
-      setIsOpenEmojiPicker(false);
-      setLeftChars({ text: null, title: null });
     }
   }, [authid, bid, changes, openSnackbar, review, user, userBook, validate]);
 
@@ -202,24 +204,14 @@ const UserReview = props => {
   const onExitEditing = useCallback(() => {
     if (is.current) {
       if (!review.created_num) {
-        setReview(review => ({
-          ...review,
-          bid: '',
-          bookTitle: '',
-          covers: [],
-          created_num: 0,
-          likes: [],
-          rating_num: 0,
-          text: '',
-          title: ''
-        }));
+        setReview(initialReviewState);
       }
       setErrors({});
       setIsEditing(false);
       setIsOpenEmojiPicker(false);
       setLeftChars({ text: null, title: null });
     }
-  }, [review.created_num]);
+  }, [initialReviewState, review.created_num]);
 
   const onChangeMaxChars = e => {
     e.persist();
@@ -295,7 +287,7 @@ const UserReview = props => {
                     />
                   )}
                   {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
-                  {leftChars.text && <FormHelperText className={`message ${(leftChars.text < 0) ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {leftChars.text}</FormHelperText>}
+                  {leftChars.text < 0 && <FormHelperText className="message warning">Caratteri in eccesso: {-leftChars.text}</FormHelperText>}
                 </FormControl>
               </div>
               <div className="form-group">
@@ -312,7 +304,7 @@ const UserReview = props => {
                     error={Boolean(errors.title)}
                   />
                   {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
-                  {leftChars.title && <FormHelperText className={`message ${(leftChars.title) < 0 ? 'alert' : 'neutral'}`}>Caratteri rimanenti: {leftChars.title}</FormHelperText>}
+                  {leftChars.title && <FormHelperText className={`message ${(leftChars.title) < 0 ? 'warning' : 'neutral'}`}>Caratteri rimanenti: {leftChars.title}</FormHelperText>}
                 </FormControl>
               </div>
 
@@ -335,19 +327,23 @@ const UserReview = props => {
                         <h3>{user.displayName}</h3>
                       </div>
                       <div className="col text-right rating">
-                        <Rating ratings={{rating_num: userBook.rating_num}} labels />
+                        <Rating ratings={{ rating_num: userBook.rating_num }} labels />
                       </div>
                     </div>
                     <h4 className="title">{review.title}</h4>
                     <p className="text">{review.text}</p>
                     <div className="foot row">
                       <div className="col-auto likes">
-                        <div className="counter">
-                          <button type="button" className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp} {abbrNum(review.likes.length)}</button>
-                        </div>
-                        <div className="counter">
-                          <button type="button" className="btn sm flat" disabled>{icon.comment} 0</button>
-                        </div>
+                        <Tooltip title={`${review.likes.length} mi piace`}>
+                          <div className="counter">
+                            <button type="button" className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp} {abbrNum(review.likes.length)}</button>
+                          </div>
+                        </Tooltip>
+                        <Tooltip title={`${review.comments_num} rispost${review.comments_num === 1 ? 'a' : 'e'}`}>
+                          <div className="counter">
+                            <button type="button" className="btn sm flat" disabled>{icon.comment} {review.comments_num}</button>
+                          </div>
+                        </Tooltip>
                         <div className="counter">
                           <button type="button" className="btn sm flat" onClick={onEditing}>{icon.pencil} <span className="hide-sm">Modifica</span></button>
                         </div>
@@ -395,15 +391,13 @@ const UserReview = props => {
   );
 }
 
-UserReview.propTypes = {
-  // addReview: funcType.isRequired,
+ReviewForm.propTypes = {
   bid: stringType.isRequired,
-  // removeReview: funcType.isRequired,
   userBook: userBookType
 }
 
-UserReview.defaultProps = {
+ReviewForm.defaultProps = {
   userBook: null
 }
  
-export default UserReview;
+export default ReviewForm;

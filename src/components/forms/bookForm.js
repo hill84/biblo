@@ -844,7 +844,7 @@ const BookForm = props => {
                     />
                     {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
                     {leftChars.description !== null && 
-                      <FormHelperText className={`message ${(leftChars.description < 0) ? 'alert' : 'neutral'}`}>
+                      <FormHelperText className={`message ${(leftChars.description < 0) ? 'warning' : 'neutral'}`}>
                         Caratteri rimanenti: {leftChars.description}
                       </FormHelperText>
                     }
@@ -874,7 +874,7 @@ const BookForm = props => {
                     />
                     {errors.incipit && <FormHelperText className="message error">{errors.incipit}</FormHelperText>}
                     {leftChars.incipit !== null && 
-                      <FormHelperText className={`message ${(leftChars.incipit < 0) ? 'alert' : 'neutral'}`}>
+                      <FormHelperText className={`message ${(leftChars.incipit < 0) ? 'warning' : 'neutral'}`}>
                         Caratteri rimanenti: {leftChars.incipit}
                       </FormHelperText>
                     }
