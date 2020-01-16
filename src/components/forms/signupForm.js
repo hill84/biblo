@@ -195,7 +195,7 @@ const SignupForm = () => {
           />
         )}
       />
-      {errors.terms && <FormHelperText className="message error">{errors.terms}</FormHelperText>}
+      {errors.terms && <FormHelperText className="message error">{icon.arrowUp} {errors.terms}</FormHelperText>}
       
       <form onSubmit={onSubmit} noValidate style={formStyle} ref={is}>
         <SocialAuth disabled={!terms} />
