@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab:300&display=swap');
+@import 'media-queries.css';
+
+.book-incipit.dialog {
+  --faderHeight: 52px;
+
+  width: 480px;
+  height: 680px;
+  padding: 0;
+  transform-origin: top center;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    background: 0 0;
+  }
+  &:after, &:before {
+    content: '';
+    display: block;
+    position: sticky;
+    left: 0;
+    width: 100%;
+    height: var(--faderHeight);
+    pointer-events: none;
+    z-index: 1;
+  }
+  &:after {
+    top: calc(100% - var(--faderHeight));
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgb(var(--cardClr)) 90%);
+  }
+  &:before {
+    top: 0;
+    background: linear-gradient(to top, transparent 0%, rgb(var(--cardClr)) 90%);
+  }
+  & .head.nav {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  & p { 
+    padding-left: 35px; 
+    padding-right: 35px;
+    padding-bottom: 20px;
+    line-height: 150%;
+    &:last-child { padding-bottom: var(--faderHeight); }
+    &.incipit { 
+      padding-top: var(--faderHeight);
+      text-indent: 40px; 
+      text-align: justify;     
+      font-family: 'Roboto Slab', serif;
+      font-size: .9rem; 
+      white-space: pre-line;
+      word-wrap: break-word;
+      transition: font .2s ease-in-out;
+      /* user-select: none; */
+      &::first-letter { font-size: 2.5rem; }
+      &.big { font-size: 1.1rem; }
+    }
+    &.copyright { color: var(--lighterTextClr); font-size: .8rem; font-weight: 200; text-align: right; }
+  }
+  & .btn.audio { margin-right: 6px; }
+}
+
+@media (--to-l) {
+  .book-incipit.dialog { transform-origin: top center; }
+}
+
+@media (--to-m) {
+  .book-incipit.dialog {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+    & p.incipit { font-size: .9rem; }
+    & .big { font-size: 1.1rem; }
+    & .head.nav { opacity: .96; transform: translateY(0); }
+  }
+}
+
+@media (--to-s) {
+  .book-incipit.dialog p.incipit { font-size: .8rem; }
+}
+
+@media (--to-xxs) {
+  .book-incipit.dialog p.incipit { text-align: left; }
+}

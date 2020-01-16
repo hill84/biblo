@@ -615,10 +615,10 @@ hr.line {
   -webkit-overflow-scrolling: touch;
   box-shadow: 0 10px 50px 10px rgba(var(--blackClr), .15);
   will-change: opacity, transform;
-  transition: all .4s ease-in-out;
+  transition: all .3s ease-in-out;
   transform-origin: top center;
   transform: translateY(-50%);
-  animation: flipInX .4s ease-in-out;
+  animation: showDialog .2s ease-in-out;
   z-index: 10;
   &:hover .head.nav, & .sticky-content .head.nav {
     opacity: .96;
@@ -635,7 +635,7 @@ hr.line {
     left: 0;
     right: 0;
     padding: 7px;
-    transform: translateY(-100%);
+    transform: translateY(-50%);
     opacity: 0;
     box-shadow: 0 1px 3px rgba(var(--blackClr), .15);
     will-change: opacity, transform;
@@ -1206,69 +1206,6 @@ input[type='number'] {
 .counter:last-child:after, .counter.comma .counter:last-child:after, .counter.last:after, .counter.btn:after { content: none; }
 .counter.last + .counter { margin-left: 6px; }
 .counter.btn, .btn-row .btn { margin-top: 0; margin-bottom: 0; }
-
-.book-incipit {
-  --faderHeight: 52px;
-
-  width: 480px;
-  height: 680px;
-  padding: 0;
-  transform-origin: top left;
-  animation: flipInY .4s ease-in-out;
-  &::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    background: 0 0;
-  }
-  &:before, &:after {
-    content: '';
-    display: block;
-    position: sticky;
-    left: 0;
-    width: 100%;
-    height: var(--faderHeight);
-    transition: all 4s ease-in-out;
-    pointer-events: none;
-    z-index: 1;
-  }
-  &:after {
-    top: calc(100% - var(--faderHeight));
-    bottom: 0;
-    background: linear-gradient(to bottom, transparent 0%, rgb(var(--cardClr)) 90%);
-  }
-  &:before {
-    top: 0;
-    background: linear-gradient(to top, transparent 0%, rgb(var(--cardClr)) 90%);
-  }
-  &.dialog .head.nav {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  & p { 
-    padding-left: 35px; 
-    padding-right: 35px;
-    padding-bottom: 20px;
-    line-height: 150%;
-    &:last-child { padding-bottom: var(--faderHeight); }
-    &.incipit { 
-      padding-top: var(--faderHeight);
-      text-indent: 40px; 
-      text-align: justify;     
-      font-family: 'Roboto Slab', serif;
-      font-size: .9rem; 
-      white-space: pre-line;
-      word-wrap: break-word;
-      transition: font .4s ease-in-out;
-      /* user-select: none; */
-    }
-    &.incipit.big { font-size: 1.1rem; }
-    &.incipit::first-letter { font-size: 2.5rem; }
-    &.copyright { color: var(--lighterTextClr); font-size: .8rem; font-weight: 200; text-align: right; }
-  }
-  & .btn.audio { margin-right: 6px; }
-}
 
 .book-profile {
   &.dark {
@@ -2171,14 +2108,6 @@ progress {
 }
 @keyframes fadeIn { from { opacity: 0; } }
 @keyframes fadeOut { to { opacity: 0; } }
-@keyframes flipInY {
-  from { opacity: 0; transform: perspective(950px) scale(.12) rotateY(90deg) translateY(-50%); }
-  to { opacity: 1; transform: perspective(950px) scale(1) rotateY(0deg) translateY(-50%); }
-}
-@keyframes flipInX {
-  from { opacity: 0; transform: perspective(950px) scale(.12) rotateX(90deg) translateY(-50%); }
-  to { opacity: 1; transform: perspective(950px) scale(1) rotateX(0deg) translateY(-50%); }
-}
 @keyframes skltn_shelfRow { to { background-position: calc(100% + 150px) 0; } }
 @keyframes maxheightIn { to { max-height: 600px; } }
 @keyframes shake {
@@ -2186,6 +2115,10 @@ progress {
   20%, 80% { transform: translate3d(2px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
   40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+@keyframes showDialog {
+  from { opacity: 0; transform: scale(.5) translateY(-50%); }
+  to { opacity: 1; transform: scale(1) translateY(-50%); }
 }
 
 /* MEDIA QUERIES */
@@ -2324,7 +2257,6 @@ progress {
       &.flex { justify-content: center; }
     }
   }
-  .book-incipit { transform-origin: top center; animation-name: flipInX; }
   .shelf-row.stacked.books-per-row-4 { grid-template-columns: 1fr; }
   .basic-profile {
     & .username { font-size: 1.5rem; }
@@ -2395,15 +2327,6 @@ progress {
     & .subtitle { font-size: 1rem; }
     & .description { max-height: 1300px; }
   }
-  .book-incipit {
-    max-width: 100%;
-    max-height: 100%;
-    height: 100%;
-    width: 100%;
-    border-radius: 0;
-    & p { font-size: .9rem; }
-    & .big { font-size: 1.1rem; }
-  }
   .minifiable { max-height: 610px; }
   .head.nav + .shelf-row, .head.nav + .shelf, .head.nav + .table { margin-top: 38px; }
   .review { 
@@ -2420,7 +2343,6 @@ progress {
       & div:not(:first-child) { display: none; }
     }
   }
-  .book-incipit .head.nav { opacity: .96; transform: translateY(0); }
   .shelf.bubbles .bubble { --avatarSize: 70px; --bookWidth: 84px; }
   .bubble { --avatarSize: 70px; }
   .no-sticky-sm { position: initial; }
@@ -2438,7 +2360,6 @@ progress {
     --skltnAuthorY: 147px;
   }
   .text-center-xs { text-align: center; }
-  .book-incipit p { font-size: .8rem; }
   .minifiable { max-height: 755px; }
   .review .head h3 .date { display: none; }
   .book-profile .user.rating { --btnHeight: 44px; }
@@ -2448,9 +2369,6 @@ progress {
 @media (--to-xs) {
   :root { --booksPerRow-lg: 2; --bubblesPerRow-lg: 2; }
   .minifiable { max-height: 940px; }
-}
-@media (--to-xxs) {
-  .book-incipit p { text-align: left; }
 }
 
 @media (--from-xxl) { .show-xl { display: none; }}

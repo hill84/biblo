@@ -4,6 +4,7 @@ import { SayButton } from 'react-say';
 import icon from '../config/icons';
 import { incipitKey } from '../config/storage';
 import { funcType, stringType } from '../config/types';
+import '../css/incipit.css';
 import useLocalStorage from '../hooks/useLocalStorage';
 import Overlay from './overlay';
 
