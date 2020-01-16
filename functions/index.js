@@ -36,8 +36,12 @@ exports.incrementReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate
 
 exports.decrementReviews = ff.document('reviews/{bid}/reviewers/{uid}').onDelete(() => count({ doc: 'reviews', change: -1 }));
 
-exports.countUserReviews = ff.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => count({
-  doc: context.params.uid, change, collection: 'users', field: 'stats', nestedField: 'reviews_num' 
+exports.incrementUserReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => count({
+  doc: context.params.uid, change: 1, collection: 'users', field: 'stats', nestedField: 'reviews_num' 
+}));
+
+exports.decrementUserReviews = ff.document('reviews/{bid}/reviewers/{uid}').onDelete((snap, context) => count({
+  doc: context.params.uid, change: -1, collection: 'users', field: 'stats', nestedField: 'reviews_num' 
 }));
 
 exports.incrementBookReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => count({ 
