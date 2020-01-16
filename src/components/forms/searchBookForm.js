@@ -321,12 +321,12 @@ export default class SearchBookForm extends Component {
         // console.log(searchBy.key);
         let query;
         let optionLabel = searchBy.key;
-        const capitalizedSearchTextType = capitalize(searchTextType);
+        
         switch (searchBy.key) {
           case 'ISBN_13':
             query = booksRef.where(searchBy.where, '==', searchTextType); break;
           case 'author':
-            query = booksRef.where(`${searchBy.where}.${capitalizedSearchTextType}`, '==', true); 
+            query = booksRef.where(`${searchBy.where}.${capitalize(searchTextType)}`, '==', true); 
             optionLabel = String(searchBy.where); break;
           case 'publisher':
             query = booksRef.where(searchBy.where, '>=', capitalize(searchTextType)); break;
