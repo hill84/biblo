@@ -7,14 +7,15 @@ import TextField from '@material-ui/core/TextField';
 import { ThemeProvider } from '@material-ui/styles';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import React, { Component } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { arrToObj, capitalize, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
+import { arrToObj, capitalizeInitials, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { darkTheme, defaultTheme } from '../../config/themes';
-import { boolType, funcType, userType } from '../../config/types';
+import { boolType, funcType } from '../../config/types';
+import UserContext from '../../context/userContext';
 import '../../css/searchBook.css';
 
 const searchByOptions = [
@@ -24,73 +25,52 @@ const searchByOptions = [
   { key: 'publisher', type: 'inpublisher', label: 'Editore', hint: 'Newton Compton', where: 'publisher' }
 ];
 
-export default class SearchBookForm extends Component {
-  state = {
-    // searchAnchorEl: null,
-    searchByAnchorEl: null,
-    searchBy: { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
-    // searchText: '',
-    value: '',
-    loading: false,
-    maxSearchResults: 30,
-    suggestions: [],
-    redirectToReferrer: ''
-  }
+const unsub = {
+  timer: null,
+  booksFetch: null,
+  query: null
+};
 
-  static propTypes = {
-    new: boolType,
-    newBook: boolType,
-    onBookSelect: funcType,
-    user: userType
-  }
+const limit = 30;
 
-  static defaultProps = {
-    new: null,
-    newBook: false,
-    onBookSelect: null,
-    user: null
-  }
+const SearchBookForm = props => {
+  const { user } = useContext(UserContext);
+  const { newBook, onBookSelect } = props;
+  const [searchByAnchorEl, setSearchByAnchorEl] = useState(null);
+  const [searchBy, setSearchBy] = useState(searchByOptions[0]);
+  const [value, setValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [maxSearchResults, setMaxSearchResults] = useState(limit);
+  const [suggestions, setSuggestions] = useState([]);
+  const [redirectToReferrer, setRedirectToReferrer] = useState('');
+  const is = useRef(true);
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
+  useEffect(() => {
+    setValue('');
+  }, [searchBy.key]);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchBy.key !== this.state.searchBy.key) {
-      this.setState({ value: '' });
+  useEffect(() => () => {
+    is.current = false;
+    unsub.timer && clearTimeout(unsub.timer);
+    unsub.booksFetch && unsub.booksFetch();
+    unsub.query && unsub.query();
+  }, []);
+
+  // const onClickSearch = option => setSearchBy(option);
+  // const onCloseSearchMenu = () => setSearchAnchorEl(null);
+  // const onOpenSearchMenu = e => setSearchAnchorEl(e.currentTarget);
+
+  const onClickSearchBy = option => {
+    if (is.current) {
+      setSearchBy(option); 
+      setMaxSearchResults(option.key === 'ISBN_13' ? 1 : maxSearchResults); 
+      setSearchByAnchorEl(null);
     }
-  }
+  };
+  const onCloseSearchByMenu = () => setSearchByAnchorEl(null);
+  const onOpenSearchByMenu = e => setSearchByAnchorEl(e.currentTarget);
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.timer && clearTimeout(this.timer);
-    this.unsubBooksFetch && this.unsubBooksFetch();
-    this.unsubQuery && this.unsubQuery();
-  }
-
-  /* onClickSearch = option => {
-    if (this._isMounted) this.setState({ searchBy: option });
-  }
-  onCloseSearchMenu = () => {
-    if (this._isMounted) this.setState({ searchAnchorEl: null });
-  }
-  onOpenSearchMenu = e => {
-    if (this._isMounted) this.setState({ searchAnchorEl: e.currentTarget });
-  } */
-
-  onClickSearchBy = option => {
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        searchBy: option, 
-        maxSearchResults: option.key === 'ISBN_13' ? 1 : prevState.maxSearchResults, 
-        searchByAnchorEl: null 
-      }));
-    }
-  }
-  onCloseSearchByMenu = () => this.setState({ searchByAnchorEl: null });
-  onOpenSearchByMenu = e => this.setState({ searchByAnchorEl: e.currentTarget });
-
-  renderInput = inputProps => {
+  const renderInput = inputProps => {
     const { ref, label, ...other } = inputProps;
   
     return (
@@ -98,27 +78,27 @@ export default class SearchBookForm extends Component {
         <TextField fullWidth label={label} variant="outlined" InputProps={{ inputRef: ref, ...other }} />
       </ThemeProvider>
     );
-  }
+  };
 
-  renderSuggestionsContainer = options => {
+  const renderSuggestionsContainer = options => {
     const { containerProps, children } = options;
   
     return (
       <Paper {...containerProps} elevation={2}>{children}</Paper>
     );
-  }
-
-  onChange = (e, { newValue }) => {
-    if (this._isMounted) this.setState({ value: String(newValue) });
-  }
-    
-  shouldRenderSuggestions = value => {
-    return value && this.state.searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
   };
 
-  onSuggestionsFetchRequested = ({ value }) => this.fetchOptions(value); // this.setState({ suggestions: this.getSuggestions(value) });
+  const onChange = (e, { newValue }) => {
+    if (is.current) setValue(String(newValue));
+  };
+    
+  const shouldRenderSuggestions = value => {
+    return value && searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
+  };
 
-  /* getSuggestions = value => {
+  const onSuggestionsFetchRequested = ({ value }) => fetchOptions(value); // setSuggestions(getSuggestions(value));
+
+  /* const getSuggestions = value => {
     const inputValue = value.normalize();
     const inputLength = inputValue.length;
     let count = 0;
@@ -128,10 +108,9 @@ export default class SearchBookForm extends Component {
       if (keep) { count += 1; }
       return keep;
     });
-  } */
+  }; */
 
-  renderSuggestion = (b, { query, isHighlighted }) => {
-    const { searchBy } = this.state; 
+  const renderSuggestion = (b, { query, isHighlighted }) => { 
     if (b.value) return b.value;
     const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label
     // console.log(b.label);
@@ -158,32 +137,31 @@ export default class SearchBookForm extends Component {
     );
   }
 
-  getSuggestionValue = b => b.label;
+  const getSuggestionValue = b => b.label;
 
-  onSuggestionsClearRequested = () => {
-    clearTimeout(this.timer);
-    this.setState({ suggestions: [] });
+  const onSuggestionsClearRequested = () => {
+    unsub.timer && clearTimeout(unsub.timer);
+    setSuggestions([]);
   }
 
-  // strAsNum = str => Number(str.replace(/-|\s/g,"").trim());
-  // numAsISBN_13 = num => String(num).length === 10 ? String(`978${num}`) : String(num);
+  // const strAsNum = str => Number(str.replace(/-|\s/g,"").trim());
+  // const numAsISBN_13 = num => String(num).length === 10 ? String(`978${num}`) : String(num);
+  
+  const emptyBookCTA = (
+    <MenuItem className="menuitem-book empty" component="div">
+      <div className="primaryText">
+        <span className="title">Libro non trovato...</span>
+      </div>
+      <div className="secondaryText">
+        <button type="button" className="btn sm flat rounded">Crea nuovo</button>
+      </div>
+    </MenuItem>
+  );
 
-  fetchOptions = value => {
-    const { maxSearchResults, searchBy } = this.state;
-    const { newBook, user } = this.props;
+  const fetchOptions = value => {
     const searchText = value.normalize();
     const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : 
       typeof searchText === 'object' ? String(Object.keys(searchText.split('.').join(''))[0]) : String(searchText);
-    const emptyBookCTA = (
-      <MenuItem className="menuitem-book empty" component="div">
-        <div className="primaryText">
-          <span className="title">Libro non trovato...</span>
-        </div>
-        <div className="secondaryText">
-          <button type="button" className="btn sm flat rounded">Crea nuovo</button>
-        </div>
-      </MenuItem>
-    );
     const emptyBook = {
       ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
@@ -229,10 +207,11 @@ export default class SearchBookForm extends Component {
 
     if (!value) return;
     
-    this.timer && clearTimeout(this.timer);
+    unsub.timer && clearTimeout(unsub.timer);
 
-    this.timer = setTimeout(() => {
-      this.setState({ loading: true });
+    unsub.timer = setTimeout(() => {
+      setLoading(true);
+
       if (newBook) {
         const searchParams = {
           q: searchText, 
@@ -242,7 +221,7 @@ export default class SearchBookForm extends Component {
 
         // SEARCH FOR EXISTING BOOK
         if (searchBy.key === 'ISBN_13') {
-          this.unsubBooksFetch = booksRef.where(searchBy.where, '==', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
+          unsub.booksFetch = booksRef.where(searchBy.where, '==', searchTextType).limit(maxSearchResults).onSnapshot(snap => {
             // console.log({ snap });
             if (!snap.empty) {
               /* const options = [];
@@ -257,16 +236,15 @@ export default class SearchBookForm extends Component {
                   value: existingBookCTA
                 });
               });
-              this.setState({ loading: false, suggestions: options }); */
+              setLoading(false);
+              setSuggestions(options); */
 
               let referrer;
               snap.forEach(doc => {
                 referrer = `/book/${doc.data().bid}/${normURL(doc.data().title)}`
               });
 
-              if (this._isMounted) {
-                this.setState({ redirectToReferrer: referrer });
-              }
+              setRedirectToReferrer(referrer);
             }
           });
         }
@@ -315,8 +293,9 @@ export default class SearchBookForm extends Component {
               })
             });
           } else options.push(emptyBook);
-          if (this._isMounted) {
-            this.setState({ loading: false, suggestions: options });
+          if (is.current) {
+            setLoading(false);
+            setSuggestions(options);
           }
         });
       } else {
@@ -328,15 +307,15 @@ export default class SearchBookForm extends Component {
           case 'ISBN_13':
             query = booksRef.where(searchBy.where, '==', searchTextType); break;
           case 'author':
-            query = booksRef.where(`${searchBy.where}.${capitalize(searchTextType)}`, '==', true); 
+            query = booksRef.where(`${searchBy.where}.${capitalizeInitials(searchTextType.toLowerCase())}`, '==', true); 
             optionLabel = String(searchBy.where); break;
           case 'publisher':
-            query = booksRef.where(searchBy.where, '>=', capitalize(searchTextType)); break;
+            query = booksRef.where(searchBy.where, '>=', capitalizeInitials(searchTextType.toLowerCase())); break;
           default:
-            query = booksRef.where(searchBy.where, '>=', searchTextType); break;
+            query = booksRef.where(searchBy.where, '>=', searchTextType.toLowerCase()); break;
         };
 
-        this.unsubQuery = query.limit(maxSearchResults).onSnapshot(snap => {
+        unsub.query = query.limit(maxSearchResults).onSnapshot(snap => {
           const options = [];
           if (!snap.empty) {
             snap.forEach(doc => {
@@ -346,83 +325,102 @@ export default class SearchBookForm extends Component {
               });
             });
           } else options.push(emptyBook);
-          if (this._isMounted) {
-            this.setState({ loading: false, suggestions: options });
+          if (is.current) {
+            setLoading(false);
+            setSuggestions(options);
           }
         });
       }
     }, searchBy.key === 'ISBN_13' ? 500 : 1000);
-  }
+  };
 
-  onSuggestionSelected = (e, { suggestion, suggestionValue, suggestionIndex, /* sectionIndex, method */ }) => {
+  const onSuggestionSelected = (e, {
+    suggestion,
+    suggestionValue,
+    suggestionIndex,
+    // sectionIndex,
+    // method
+  }) => {
     if (suggestionIndex !== -1) {
-      if (this._isMounted) this.setState({ loading: false });
-      clearTimeout(this.timer);
-      this.props.onBookSelect(suggestion);
+      if (is.current) setLoading(false);
+      unsub.timer && clearTimeout(unsub.timer);
+      onBookSelect(suggestion);
     } else console.warn('Suggestion not found');
-  }
+  };
+  
+  const options = searchByOptions.map(option => (
+    <MenuItem 
+      key={option.type} 
+      value={option}
+      selected={option.type === searchBy.type}
+      onClick={() => onClickSearchBy(option)}>
+      {option.label}
+    </MenuItem>
+  ));
+  
+  const more = (
+    <MenuItem component="div">Mostra altri...</MenuItem>
+  );
 
-  render() {
-    const { loading, redirectToReferrer, searchBy, searchByAnchorEl, suggestions, value } = this.state;
-    const { newBook } = this.props;
-    const options = searchByOptions.map(option => (
-      <MenuItem 
-        key={option.type} 
-        value={option}
-        selected={option.type === searchBy.type}
-        onClick={() => this.onClickSearchBy(option)}>
-        {option.label}
-      </MenuItem>
-    ));
+  if (redirectToReferrer) return <Redirect to={redirectToReferrer} />
 
-    if (redirectToReferrer) return <Redirect to={redirectToReferrer} />
+  return (
+    <div className="container sm search-book-container">
+      <div className="form-group customScrollbar">
+        {loading && <div aria-hidden="true" className="loader"><CircularProgress style={{ height: 30, width: 30, }} /></div>}
 
-    return (
-      <div className="container sm search-book-container">
-        <div className="form-group customScrollbar">
-          {loading && <div aria-hidden="true" className="loader"><CircularProgress style={{ height: 30, width: 30, }} /></div>}
-
-          <Autosuggest
-            // alwaysRenderSuggestions={true}
-            renderInputComponent={this.renderInput}
-            suggestions={suggestions}
-            shouldRenderSuggestions={this.shouldRenderSuggestions}
-            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-            renderSuggestionsContainer={this.renderSuggestionsContainer}
-            getSuggestionValue={this.getSuggestionValue}
-            renderSuggestion={this.renderSuggestion}
-            onSuggestionSelected={this.onSuggestionSelected}
-            inputProps={{
-              className: 'input-field',
-              type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
-              label: `${newBook ? 'Aggiungi libro' : 'Cerca libro'} per ${searchBy.label}`,
-              placeholder: `Es: ${searchBy.hint}`,
-              value,
-              onChange: this.onChange,
-              endAdornment: <button type="button" className="btn sm flat search-by" onClick={this.onOpenSearchByMenu}>{searchBy.label}</button>
-            }}
-          />
-          {/* searchBy.key === 'ISBN_13' && Number.isNaN(Number(value)) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
-          {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) && (
-            <ThemeProvider theme={darkTheme}>
-              <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
-                {value.length} di 13 cifre
-              </FormHelperText>
-            </ThemeProvider>
-          )}
-
-          <ThemeProvider theme={defaultTheme}>
-            <Menu 
-              className="dropdown-menu" 
-              anchorEl={searchByAnchorEl} 
-              open={Boolean(searchByAnchorEl)} 
-              onClose={this.onCloseSearchByMenu}>
-              {options}
-            </Menu>
+        <Autosuggest
+          // alwaysRenderSuggestions={true}
+          renderInputComponent={renderInput}
+          suggestions={suggestions}
+          shouldRenderSuggestions={shouldRenderSuggestions}
+          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={onSuggestionsClearRequested}
+          renderSuggestionsContainer={renderSuggestionsContainer}
+          getSuggestionValue={getSuggestionValue}
+          renderSuggestion={renderSuggestion}
+          onSuggestionSelected={onSuggestionSelected}
+          inputProps={{
+            className: 'input-field',
+            type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
+            label: `${newBook ? 'Aggiungi libro' : 'Cerca libro'} per ${searchBy.label.toLowerCase()}`,
+            placeholder: `Es: ${searchBy.hint}`,
+            value,
+            onChange: onChange,
+            endAdornment: <button type="button" className="btn sm flat search-by" onClick={onOpenSearchByMenu}>{searchBy.label}</button>
+          }}
+        />
+        {/* searchBy.key === 'ISBN_13' && Number.isNaN(Number(value)) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
+        {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) && (
+          <ThemeProvider theme={darkTheme}>
+            <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
+              {value.length} di 13 cifre
+            </FormHelperText>
           </ThemeProvider>
-        </div>
+        )}
+
+        <ThemeProvider theme={defaultTheme}>
+          <Menu 
+            className="dropdown-menu" 
+            anchorEl={searchByAnchorEl} 
+            open={Boolean(searchByAnchorEl)} 
+            onClose={onCloseSearchByMenu}>
+            {options}
+          </Menu>
+        </ThemeProvider>
       </div>
-    )
-  }
+    </div>
+  );
 }
+
+SearchBookForm.propTypes = {
+  newBook: boolType,
+  onBookSelect: funcType
+}
+
+SearchBookForm.defaultProps = {
+  newBook: false,
+  onBookSelect: null
+}
+ 
+export default SearchBookForm;
