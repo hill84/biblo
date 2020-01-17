@@ -357,10 +357,6 @@ const SearchBookForm = props => {
       {option.label}
     </MenuItem>
   ));
-  
-  const more = (
-    <MenuItem component="div">Mostra altri...</MenuItem>
-  );
 
   if (redirectToReferrer) return <Redirect to={redirectToReferrer} />
 

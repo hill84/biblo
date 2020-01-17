@@ -12,6 +12,8 @@ import './css/main.css';
 import * as serviceWorker from './serviceWorker';
 import BrowserNotSupported from './components/browserNotSupported';
 
+const isProd = process.env.NODE_ENV === 'production';
+
 function getInternetExplorerVersion() {
   /* eslint-disable no-var */
   var rv = -1;
@@ -30,7 +32,7 @@ function getInternetExplorerVersion() {
   return rv;
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(window.__REACT_DEVTOOLS_GLOBAL_HOOK__)) {
@@ -41,12 +43,14 @@ if (process.env.NODE_ENV === 'production') {
 
 const history = createBrowserHistory();
 
-if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_GA_TRACKING_ID && readCookie('user-has-accepted-cookies') === 'true') {
-  ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, { debug: process.env.NODE_ENV !== 'production' });
-  ReactGA.pageview(window.location.pathname);
+if (isProd && process.env.REACT_APP_GA_TRACKING_ID && readCookie('user-has-accepted-cookies') === 'true') {
+  console.log('Initialize Google Analytics...');
+  ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, { debug: !isProd });
   history.listen(location => {
-    ReactGA.set({ page: location.pathname });
-    ReactGA.pageview(location.pathname);
+    setTimeout(() => { // REACT-HELMET PAGE TITLE SYNC HACK
+      ReactGA.set({ page: location.pathname });
+      ReactGA.pageview(location.pathname);
+    }, 1);
   });
 }
 

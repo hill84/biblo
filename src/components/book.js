@@ -588,7 +588,7 @@ export default class Book extends Component {
           </Helmet>
         )}
         
-        <div className="content-background">
+        <div className="content-background reveal fadeIn delay4">
           <div className="bg" style={bgStyle} />
         </div>
         {isEditing && isAuth ? (

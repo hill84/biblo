@@ -159,10 +159,6 @@ const BookProfile = props => {
       )}
     
       <div id="BookProfile">
-        {/* <div className="content-background">
-          <div className="bg" style={bgStyle} />
-        </div> */}
-
         {book && isOpenReadingState && (
           <ReadingStateForm
             bid={book.bid}
