@@ -1,6 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
@@ -120,7 +120,7 @@ const AuthorPage = props => {
 
   const onToggleView = () => setCoverview(!coverview);
 
-  const isEditor = hasRole(user, 'editor');
+  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const covers = books && books.map(book => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
   if (loading) {
@@ -152,7 +152,9 @@ const AuthorPage = props => {
       <div className="card dark author">
         <div className="row text-center-md">
           <div className="col-md-auto col-sm-12">
-            <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>{!author.photoURL && getInitials(author.displayName)}</Avatar>
+            <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>
+              {!author.photoURL && getInitials(author.displayName)}
+            </Avatar>
           </div>
           <div className="col">
             <div className="row">
@@ -167,34 +169,34 @@ const AuthorPage = props => {
               <MinifiableText text={author.bio} source={author.source} maxChars={500} />
             </div>
 
-            {isAuth && 
+            {isAuth && (
               <div className="info-row">
                 <button 
                   type="button" 
                   className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
                   onClick={onFollow} 
                   disabled={!user || !isEditor}>
-                  {follow ? 
+                  {follow ? (
                     <>
                       <span className="hide-on-hover">{icon.check} Segui</span>
                       <span className="show-on-hover">Smetti</span>
                     </> 
-                  : <span>{icon.plus} Segui</span> }
+                  ) : <span>{icon.plus} Segui</span> }
                 </button>
                 <div className="counter last inline">
                   <Bubbles limit={3} items={followers} />
                 </div>
               </div>
-            }
+            )}
           </div>
         </div>
       </div>
       
-      {loadingBooks ? 
+      {loadingBooks ? (
         <div aria-hidden="true" className="loader relative"><CircularProgress /></div>
-      :
+      ) : (
         <>
-          {books ? 
+          {books ? (
             <div className="card light">
               <div className="shelf">
                 <div className="collection hoverable-items">
@@ -218,14 +220,14 @@ const AuthorPage = props => {
                 </div>
               </div>
             </div>
-          :
+          ) : (
             <div className="info-row empty text-center pad-sm">
               <p>Non ci sono ancora libri di {author.displayName}</p>
               <Link to="/new-book" className="btn primary rounded">Aggiungi libro</Link>
             </div>
-          }
+          )}
         </>
-      }
+      )}
       <RandomQuote author={author.displayName} skeleton={false} className="card flat fadeIn slideUp reveal" />
     </div>
   );

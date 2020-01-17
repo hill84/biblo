@@ -560,20 +560,21 @@ const BookForm = props => {
   const onCloseChangesDialog = () => setIsOpenChangesDialog(false);
 
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
-  const maxPublication = useMemo(() => new Date(new Date().setMonth(new Date().getMonth() + 1)), []);
   
   const menuItemsMap = (arr, values) => arr.map(item => 
     <MenuItem 
-      value={item.name} 
-      key={item.id} 
-      // insetChildren={Boolean(values)} 
-      checked={values ? values.includes(item.name) : false}>
+    value={item.name} 
+    key={item.id} 
+    // insetChildren={Boolean(values)} 
+    checked={values ? values.includes(item.name) : false}>
       {item.name}
     </MenuItem>
   );
   
   if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
-
+  
+  const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
+  
   return (
     <>
       <div className="container top" ref={is}>

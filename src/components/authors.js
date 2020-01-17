@@ -78,11 +78,11 @@ const Authors = props => {
     <>
       <div className="head nav" role="navigation" ref={is}>
         <span className="counter last title primary-text">Autori</span> {items && <span className="count hide-xs">({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
-        {!loading && count > 0 &&
+        {!loading && count > 0 && (
           <div className="pull-right">
-            {(pagination && count > limit) || scrollable ?
+            {(pagination && count > limit) || scrollable ? (
               <Link to="/authors" className="btn sm flat counter">Vedi tutti</Link>
-            :
+            ) : (
               <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
                 <span>
                   <button
@@ -94,8 +94,8 @@ const Authors = props => {
                   </button>
                 </span>
               </Tooltip>
-            }
-            {pagination && count > limit &&
+            )}
+            {pagination && count > limit && (
               <>
                 <button 
                   type="button"
@@ -114,14 +114,14 @@ const Authors = props => {
                   {icon.chevronRight}
                 </button>
               </>
-            }
+            )}
           </div>
-        }
+        )}
       </div>
       <div className="bubbles row shelf scrollable">
         {loading ? skltn_bubbleRow : items ? (
           <div className="shelf-row hoverable-items avatars-row">
-            {items.map((item, index) => 
+            {items.map((item, index) => (
               <Link 
                 to={`/author/${normURL(item.displayName)}`} 
                 key={item.displayName} 
@@ -135,7 +135,7 @@ const Authors = props => {
                 </Avatar>
                 <div className="title">{item.displayName}</div>
               </Link>
-            )}
+            ))}
           </div>
         ) : (
           <div className="empty centered">Nessun autore</div>

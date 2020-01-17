@@ -1,6 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { InView } from 'react-intersection-observer';
 import icon from '../config/icons';
 import { abbrNum, joinObj } from '../config/shared';
@@ -10,13 +10,17 @@ import '../css/cover.css';
 
 const Cover = props => {
   const { animationDelay, bcid, book, full, index, info, loading, page, rating, showReaders } = props;
-  const cover = (book && book.covers && book.covers[0]) || '';
-  const delay = page && page > 1 ? 0 : index / 20;
+  const cover = useMemo(() => (book && book.covers && book.covers[0]) || '', [book]);
+  const delay = useMemo(() => page && page > 1 ? 0 : index / 20, [index, page]);
+  const hasBookmark = useMemo(() => book && book.readingState && book.readingState.state_num === 2, [book]);
+  const hasBcid = useMemo(() => bcid && bcid > 0 && bcid < 999, [bcid]);
+  const joinedAuthors = useMemo(() => book && joinObj(book.authors), [book]);
+  const readers_num = useMemo(() => book && abbrNum(book.readers_num), [book]);
 
   return (
     <div className="book"> 
       <InView triggerOnce rootMargin="130px">
-        {({ inView, ref }) =>
+        {({ inView, ref }) => (
           <div
             ref={ref}
             className="cover"
@@ -25,36 +29,36 @@ const Cover = props => {
               animationDelay: (animationDelay !== false) ? `${delay}s` : '',
               backgroundImage: inView ? cover ? `url(${cover})` : null : null, 
             }}>
-            {bcid && bcid > 0 && bcid < 999 ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
-            {book && book.readingState && book.readingState.state_num === 2 && <div className="bookmark" />}
+            {hasBcid ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
+            {hasBookmark && <div className="bookmark" />}
             {book && book.review && book.review.text && <div className="cover-review">Recensione</div>}
-            {book && showReaders && book.readers_num ? <div className="readers-num">{abbrNum(book.readers_num)} {icon.account}</div> : ''}
+            {book && showReaders && book.readers_num ? <div className="readers-num">{readers_num} {icon.account}</div> : ''}
             {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : <div className="overlay" />}
             {!cover && book && (
               <>
                 <h2 className="title">{book.title}</h2>
                 {book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
-                <span className="author">{joinObj(book.authors)}</span>
+                <span className="author">{joinedAuthors}</span>
                 {book.publisher && <span className="publisher">{book.publisher}</span>}
               </>
             )}
           </div>
-        }
+        )}
       </InView>
-      {info !== false && 
+      {info !== false && (
         <div className="info">
           <strong className="title">{book.title}</strong>
-          <span className="author"><span className="hide-sm">di</span> {joinObj(book.authors)}</span>
+          <span className="author"><span className="hide-sm">di</span> {joinedAuthors}</span>
           {full && book.publisher && <span className="publisher">{book.publisher}</span>}
-          {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ?
+          {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ? (
             <Tooltip title={`${book.readingState.progress_num}%`} placement="top">
               <progress max="100" value={book.readingState.progress_num} />
             </Tooltip>
-          : book.rating_num > 0 && rating !== false && 
+          ) : book.rating_num > 0 && rating !== false && (
             <Rating ratings={{ rating_num: book.rating_num, ratings_num: book.ratings_num }} />
-          }
+          )}
         </div>
-      }
+      )}
     </div>
   );
 }

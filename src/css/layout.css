@@ -37,12 +37,17 @@
   }
   & svg.svg-icon { --iconSize: 24px; }
   & button .dot { box-shadow: 0 0 0 3px rgb(var(--cardClr)); }
-  & a, & button, & .more-btn, & .drawer-btn { color: currentColor; }
+  & a, & button, & .more-btn, & .drawer-btn {
+    color: currentColor;
+    &:not(.primary):not(.secondary) {
+      &:hover, &.active:hover { color: rgb(var(--primaryClr)); }
+    }
+  }
   & .more-btn { margin-right: -12px; padding: 7px; }
   & .drawer-btn { margin-left: -12px; }
   & a {
     display: flex;
-    &:active { color: rgba(0,0,0,.3); }
+    &.active { background-color: rgba(var(--blackClr), .05); }
   }
   & .reveal { animation-duration: .3s; }
   & .avatar { --avatarSize: 34px; width: var(--avatarSize); height: var(--avatarSize); font-size: 1rem; }

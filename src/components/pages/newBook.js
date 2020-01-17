@@ -1,7 +1,4 @@
-import { ThemeProvider } from '@material-ui/styles';
 import React, { useContext, useState } from 'react';
-import icon from '../../config/icons';
-import { darkTheme } from '../../config/themes';
 import { historyType, locationType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -18,12 +15,11 @@ const NewBook = props => {
 
   return (
     <div className="container" id="newBookComponent">
-      {!book && <h2 className="text-center">{icon.plus} Crea la tua scheda libro</h2>}
-      <ThemeProvider theme={darkTheme}>
-        <div className="card sm dark search-book">
-          <SearchBookForm onBookSelect={onBookSelect} user={user} newBook />
-        </div>
-      </ThemeProvider>
+      
+      <div className="card sm flat search-book">
+        <SearchBookForm onBookSelect={onBookSelect} user={user} newBook />
+      </div>
+
       {book ? (
         <Book
           book={book}

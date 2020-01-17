@@ -1,5 +1,5 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { SayButton } from 'react-say';
 import icon from '../config/icons';
 import { incipitKey } from '../config/storage';
@@ -9,13 +9,14 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import Overlay from './overlay';
 
 const Incipit = props => {
+  const { copyrightHolder, incipit, onToggle, publication, title } = props;
   const [big, setBig] = useLocalStorage(incipitKey.fontBig, false);
   const [dark, setDark] = useLocalStorage(incipitKey.themeDark, false);
 
   const onToggleDarkTheme = () => setDark(!dark);
   const onToggleSize = () => setBig(!big);
 
-  const { copyrightHolder, incipit, onToggle, publication, title } = props;
+  const publicationYear = useMemo(() => publication && new Date(publication).getFullYear(), [publication]);
 
   return (
     <>
@@ -41,7 +42,7 @@ const Incipit = props => {
             </div>
           </div>
           <p className={`incipit ${big ? 'big' : 'regular'}`}>{incipit}</p>
-          {copyrightHolder && <p className="copyright">&copy; {publication && new Date(publication).getFullYear()} {copyrightHolder}</p>}
+          {copyrightHolder && <p className="copyright">&copy; {publicationYear} {copyrightHolder}</p>}
         </div>
       </div>
       <Overlay onClick={onToggle} />

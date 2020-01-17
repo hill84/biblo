@@ -239,7 +239,7 @@ const Shelf = props => {
                   onClick={onToggleView}>
                   {coverview ? icon.viewSequential : icon.viewGrid}
                 </button>
-                {shelf === 'bookInShelf' && 
+                {shelf === 'bookInShelf' && (
                   <>
                     <button 
                       type="button"
@@ -256,7 +256,7 @@ const Shelf = props => {
                       {filterByOptions}
                     </Menu>
                   </>
-                }
+                )}
                 <span className="counter last hide-sm">{count !== items.length ? `${items.length} di ` : ''}{count} libr{count !== 1 ? 'i' : 'o'}</span>
               </div>
               <div className="col-auto">
@@ -291,25 +291,25 @@ const Shelf = props => {
           </div>
           {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
             <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`} style={{ gridTemplateColumns: !count && '1fr', }}>
-              {isOwner &&
+              {isOwner && (
                 <Link to="/books/add">
                   <div className="book empty">
                     <div className="cover"><div className="add">+</div></div>
                     <div className="info"><b className="title">Aggiungi libro</b></div>
                   </div>
                 </Link>
-              }
+              )}
               {covers || (!isOwner && <EmptyState />)}
             </div>
           }
-          {pagination && 
+          {pagination && (
             <PaginationControls 
               count={count} 
               fetch={fetchUserBooks}
               limit={limit}
               page={page}
             />
-          }
+          )}
         </div>
       </div>
     </>

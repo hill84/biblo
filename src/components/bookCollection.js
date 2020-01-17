@@ -1,5 +1,5 @@
 import { Tooltip } from '@material-ui/core';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -12,21 +12,16 @@ import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 const BookCollection = props => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const [state, setState] = useState({
-    booksPerRow: props.booksPerRow,
-    limit:  props.limit || (props.pagination ? _booksPerRow() : 98),
-    collection: [],
-    count: 0,
-    desc: props.desc,
-    loading: true,
-    page: null,
-    // lastVisible: null
-  });
-
-  const { bcid, cid, inView, pagination, scrollable, stacked } = props;
-  const { booksPerRow, collection, count, desc, limit, loading, page } = state;
-
+  const { bcid, booksPerRow, cid, inView, pagination, scrollable, stacked } = props;
+  const [collection, setCollection] = useState([]);
+  const [count, setCount] = useState(0);
+  const [desc, setDesc] = useState(props.desc);
+  // const [lastVisible, setLastVisible] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(null);
   const is = useRef(true);
+
+  const limit = useMemo(() => props.limit || (pagination ? _booksPerRow() : 98), [pagination, props.limit]);
   
   const fetch = useCallback(e => {
     const direction = e && e.currentTarget.dataset.direction;
@@ -50,7 +45,7 @@ const BookCollection = props => {
     const paginatedRef = lRef.startAfter(startAfter);
     const ref = direction ? paginatedRef : lRef;
     
-    if (is.current) setState(prevState => ({ ...prevState, loading: true }));
+    if (is.current) setLoading(true);
 
     if (inView) {
       const fetcher = () => {
@@ -59,36 +54,30 @@ const BookCollection = props => {
             const books = [];
             snap.forEach(book => books.push(book.data()));
             if (is.current) {
-              setState(prevState => ({
-                ...prevState,
-                collection: books,
-                loading: false,
-                page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : ((prevState.page * prevState.limit) > prevState.count) ? prevState.page : prevState.page + 1 : 1,
-                // lastVisible: snap.docs[snap.docs.length - 1] || prevState.lastVisible
-              }));
+              setCollection(books);
+              // setLastVisible(snap.docs[snap.docs.length - 1] || lastVisible);
+              setLoading(false);
+              setPage(page => (direction ? prev ? page > 1 ? page - 1 : 1 : ((page * limit) > count) ? page : page + 1 : 1));
             }
             // console.log({ 'direction': direction, 'page': page });
           } else if (is.current) {
-            setState(prevState => ({ 
-              ...prevState,  
-              count: 0,
-              collection: [],
-              loading: false,
-              page: null,
-              // lastVisible: null
-            }));
+            // setLastVisible(null);
+            setCollection([]);
+            setCount(0);
+            setLoading(false);
+            setPage(null);
           }
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }
 
       if (cid === 'Top' || cid === 'New') {
-        setState(prevState => ({ ...prevState, count: limit }));
+        setCount(limit);
         fetcher();
       } else if (!direction) {
         lRef.get().then(fullSnap => {
           if (!fullSnap.empty) { 
             if (is.current) {
-              setState(prevState => ({ ...prevState, count: fullSnap.docs.length }));
+              setCount(fullSnap.docs.length);
               fetcher();
             }
           }
@@ -105,7 +94,7 @@ const BookCollection = props => {
     is.current = false;
   }, []);
 
-  const onToggleDesc = () => setState(prevState => ({ ...prevState, desc: !prevState.desc }));
+  const onToggleDesc = () => setDesc(!desc);
 
   const covers = (collection && collection.length ? (
     <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
@@ -119,7 +108,8 @@ const BookCollection = props => {
     <div className="info-row empty">Non ci sono libri in questa collezione.</div>
   ));
 
-  const isGenre = genres.some(item => item.name === cid);
+  const hasMore = useMemo(() => pagination && count > limit, [count, limit, pagination]);
+  const isGenre = useMemo(() => genres.some(item => item.name === cid), [cid]);
 
   return (
     <>
@@ -127,12 +117,8 @@ const BookCollection = props => {
         <span className="counter last title"><span className="primary-text hide-sm">{isGenre ? 'Genere' : 'Collezione'}:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
         {!loading && count > 0 && (
           <div className="pull-right">
-            {(pagination && count > limit) || scrollable ? (
-              cid === 'Top' ? (
-                `I più amati`
-              ) : cid === 'New' ? (
-                "Le nostre novità"
-              ) : ( 
+            {hasMore || scrollable ? (
+              cid === 'Top' ? "I più amati" : cid === 'New' ? "Le nostre novità" : ( 
                 <button type="button" className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
               )
             ) : (
@@ -148,7 +134,7 @@ const BookCollection = props => {
                 </span>
               </Tooltip>
             )}
-            {pagination && count > limit && (
+            {hasMore && (
               <>
                 <button 
                   type="button"

@@ -1,10 +1,7 @@
-import { ThemeProvider } from '@material-ui/styles';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import icon from '../../config/icons';
 import { app } from '../../config/shared';
-import { primaryTheme } from '../../config/themes';
 import { historyType, locationType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -22,22 +19,33 @@ const AddBook = props => {
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location } = props;
   const [book, setBook] = useState(null);
+  const [showNew, setShowNew] = useState(false);
+  const is = useRef(null);
+
+  useEffect(() => () => {
+    clearInterval(is.current);
+  }, []);
 
   const onBookSelect = book => setBook(book);
 
+  const onClick = () => {
+    is.current = setTimeout(() => {
+      setShowNew(true);
+    }, 4000);
+  };
+
   return (
-    <div className="container" id="addBookComponent">
+    <div className="container" id="addBookComponent" ref={is}>
       <Helmet>
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
         <link rel="canonical" href={app.url} />
       </Helmet>
-      {!book && <h2 className="text-center">{icon.magnify} Cerca un libro</h2>}
-      <ThemeProvider theme={primaryTheme}>
-        <div className="card sm primary search-book">
-          <SearchBookForm onBookSelect={onBookSelect} user={user} />
-        </div>
-      </ThemeProvider>
+      
+      <div className="card sm flat search-book" onClick={onClick}>
+        <SearchBookForm onBookSelect={onBookSelect} user={user} />
+      </div>
+
       {book ? (
         <Book
           bid={book.bid}
@@ -55,10 +63,12 @@ const AddBook = props => {
             <Link to="/collections" className="counter">Collezioni</Link>
             <Link to="/authors" className="counter">Autori</Link>
           </p>
-          <div className="text-center pad-v fadeIn reveal delay20">
-            <p>Non hai trovato il libro che cercavi?</p>
-            <p><Link to="/new-book" className="btn primary rounded">Crea la tua scheda libro</Link></p>
-          </div>
+          {showNew && (
+            <div className="text-center pad-v fadeIn reveal">
+              <p>Non hai trovato il libro che cercavi?</p>
+              <p><Link to="/new-book" className="btn primary rounded">Aggiungilo</Link></p>
+            </div>
+          )}
         </>
       )}
     </div>

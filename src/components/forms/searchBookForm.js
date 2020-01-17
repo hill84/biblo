@@ -13,15 +13,15 @@ import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
 import { arrToObj, capitalize, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
-import { defaultTheme } from '../../config/themes';
+import { darkTheme, defaultTheme } from '../../config/themes';
 import { boolType, funcType, userType } from '../../config/types';
 import '../../css/searchBook.css';
 
 const searchByOptions = [
-  { key: 'title', type: 'intitle', label: 'titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
+  { key: 'title', type: 'intitle', label: 'Titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
   { key: 'ISBN_13', type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13' },
-  { key: 'author', type: 'inauthor', label: 'autore', hint: 'Arthur Conan Doyle', where: 'authors' },
-  { key: 'publisher', type: 'inpublisher', label: 'editore', hint: 'Newton Compton', where: 'publisher' }
+  { key: 'author', type: 'inauthor', label: 'Autore', hint: 'Arthur Conan Doyle', where: 'authors' },
+  { key: 'publisher', type: 'inpublisher', label: 'Editore', hint: 'Newton Compton', where: 'publisher' }
 ];
 
 export default class SearchBookForm extends Component {
@@ -94,7 +94,9 @@ export default class SearchBookForm extends Component {
     const { ref, label, ...other } = inputProps;
   
     return (
-      <TextField fullWidth label={label} InputProps={{ inputRef: ref, ...other }} />
+      <ThemeProvider theme={darkTheme}>
+        <TextField fullWidth label={label} variant="outlined" InputProps={{ inputRef: ref, ...other }} />
+      </ThemeProvider>
     );
   }
 
@@ -378,7 +380,7 @@ export default class SearchBookForm extends Component {
     return (
       <div className="container sm search-book-container">
         <div className="form-group customScrollbar">
-          {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+          {loading && <div aria-hidden="true" className="loader"><CircularProgress style={{ height: 30, width: 30, }} /></div>}
 
           <Autosuggest
             // alwaysRenderSuggestions={true}
@@ -394,7 +396,7 @@ export default class SearchBookForm extends Component {
             inputProps={{
               className: 'input-field',
               type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
-              label: `${newBook ? 'Crea un libro' : 'Cerca un libro'} per ${searchBy.label}`,
+              label: `${newBook ? 'Aggiungi libro' : 'Cerca libro'} per ${searchBy.label}`,
               placeholder: `Es: ${searchBy.hint}`,
               value,
               onChange: this.onChange,
@@ -402,11 +404,13 @@ export default class SearchBookForm extends Component {
             }}
           />
           {/* searchBy.key === 'ISBN_13' && Number.isNaN(Number(value)) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
-          {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) &&
-            <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
-              {value.length} di 13 cifre
-            </FormHelperText>
-          }
+          {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) && (
+            <ThemeProvider theme={darkTheme}>
+              <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
+                {value.length} di 13 cifre
+              </FormHelperText>
+            </ThemeProvider>
+          )}
 
           <ThemeProvider theme={defaultTheme}>
             <Menu 

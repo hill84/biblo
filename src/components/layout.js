@@ -112,23 +112,23 @@ const Layout = props => {
           <Typography className="title" variant="h1" color="inherit">
             <Link to="/"><img src={logo} alt={app.name} /><sup>Beta</sup></Link>
           </Typography>
-          {user ? 
+          {user ? (
             <>
-              {user.roles.editor && 
+              {user.roles.editor && (
                 <Tooltip title="Aggiungi libro" placement="bottom">
                   <IconButton
                     className="search-btn popIn reveal hide-xs"
-                    component={Link} 
+                    component={NavLink} 
                     to="/new-book"
                     aria-label="New book">
                     {icon.plus}
                   </IconButton>
                 </Tooltip>
-              }
+              )}
               <Tooltip title="Cerca libro" placement="bottom">
                 <IconButton
                   className="search-btn popIn reveal delay1"
-                  component={Link} 
+                  component={NavLink} 
                   to="/books/add"
                   aria-label="Search">
                   {icon.magnify}
@@ -153,9 +153,9 @@ const Layout = props => {
                 open={Boolean(notesAnchorEl)}
                 onClose={onCloseNotes}>
                 {notes && toRead(notes).length ? (
-                  toRead(notes).map((item, i) =>
+                  toRead(notes).map((item, i) => (
                     <NoteMenuItem item={item} index={i} key={item.nid} animation />
-                  )
+                  ))
                 ) : (
                   <MenuItem>
                     <div className="row">
@@ -194,12 +194,12 @@ const Layout = props => {
                 <MenuItem onClick={signOut}>Esci</MenuItem>
               </Menu>
             </>
-          : 
+          ) : (
             <>
               <NavLink to="/login" className="btn flat hide-xs">Accedi</NavLink>
               <NavLink to="/signup" className="btn primary">Registrati</NavLink>
             </>
-          }
+          )}
         </Toolbar>
       </div>
       
@@ -209,7 +209,7 @@ const Layout = props => {
           open={drawerIsOpen}
           onClick={onCloseDrawer}>
           <nav className="list">
-            {user ? 
+            {user ? (
               <>
                 <NavLink to="/profile" className="auth-header">
                   <div className="background" style={{ backgroundImage: `url(${user.photoURL})`, }} />
@@ -236,7 +236,7 @@ const Layout = props => {
                   </MenuItem>
                 </NavLink>
               </>
-            :
+            ) : (
               <div className="auth-header-buttons">
                 <NavLink to="/login">
                   <MenuItem>
@@ -251,7 +251,7 @@ const Layout = props => {
                   </MenuItem>
                 </NavLink>
               </div>
-            }
+            )}
             <NavLink to="/" exact>
               <MenuItem>
                 <ListItemIcon>{icon.home}</ListItemIcon>
@@ -285,9 +285,7 @@ const Layout = props => {
         </Drawer>
       </ThemeProvider>
       
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
 
       <Footer />
 
@@ -313,9 +311,3 @@ Layout.defaultProps = {
 }
  
 export default Layout;
-
-
-
-
-
-

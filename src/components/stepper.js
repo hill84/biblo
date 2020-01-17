@@ -1,5 +1,5 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import icon from '../config/icons';
 import { funcType, numberType, stringType } from '../config/types';
 
@@ -34,7 +34,7 @@ const Stepper = props => {
 
   const onPrev = () => (props.onPrev && props.onPrev()) || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
 
-  const percentage = Math.round(100 / (steps / activeStep));
+  const percentage = useMemo(() => Math.round(100 / (steps / activeStep)), [activeStep, steps]);
 
   return (
     <div className={`stepper-container ${className}`} ref={is}>

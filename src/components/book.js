@@ -570,7 +570,7 @@ export default class Book extends Component {
 
 		return (
       <>
-        {seo &&
+        {seo && (
           <Helmet>
             <title>{app.name} | {book.title || 'Libro'}</title>
             <link rel="canonical" href={`${app.url}/genres`} />
@@ -586,17 +586,17 @@ export default class Book extends Component {
             <meta property="books:rating:value" content={seo.rating.value} />
             <meta property="books:rating:scale" content={seo.rating.scale} />
           </Helmet>
-        }
+        )}
         
         <div className="content-background">
           <div className="bg" style={bgStyle} />
         </div>
-        {isEditing && isAuth ?
+        {isEditing && isAuth ? (
           <BookForm
             isEditing={this.isEditing}
             book={book}
           />
-        :
+        ) : (
           <BookProfile 
             addBookToShelf={this.addBookToShelf} 
             addBookToShelfRef={this.addBookToShelfRef} 
@@ -614,7 +614,7 @@ export default class Book extends Component {
             book={book}
             userBook={userBook}
           />
-        }
+        )}
       </>
 		);
 	}

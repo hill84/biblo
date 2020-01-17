@@ -110,6 +110,23 @@ const Home = () => {
           </div>
         </div>
 
+
+        <InView triggerOnce rootMargin={rootMargin}>
+          {({ inView, ref }) =>
+            <div className="card dark card-fullwidth-sm" ref={ref}>
+              <Authors pagination={false} limit={9} inView={inView} scrollable />
+            </div>
+          }
+        </InView>
+
+        <InView triggerOnce rootMargin={rootMargin}>
+          {({ inView, ref }) =>
+            <div ref={ref}>
+              {inView && <Reviews limit={5} pagination skeleton />}
+            </div>
+          }
+        </InView>
+        
         <div className="row flex">
           <div className="col-12 col-lg-5 flex">
             <div className="card dark card-fullwidth-sm">
@@ -132,22 +149,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-
-        <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
-            <div className="card dark card-fullwidth-sm" ref={ref}>
-              <Authors pagination={false} limit={9} inView={inView} scrollable />
-            </div>
-          }
-        </InView>
-
-        <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
-            <div ref={ref}>
-              {inView && <Reviews limit={5} pagination skeleton />}
-            </div>
-          }
-        </InView>
 
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>

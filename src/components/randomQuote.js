@@ -47,13 +47,15 @@ const RandomQuote = props => {
 
   if (loading) return skeleton ? <div className="skltn quote" /> : null;
   if (!item) return null;
-
+  
+  const bookURL = `/book/${item.bid}/${normURL(item.bookTitle)}`;
+  
   return (
     <div className={`randomquote ${className}`} ref={is}>
       <div className="row">
-        {item.coverURL &&
+        {item.coverURL && (
           <div className="col-auto">
-            <Link to={`/book/${item.bid}/${normURL(item.bookTitle)}`} className="hoverable-items">
+            <Link to={bookURL} className="hoverable-items">
               <div className="book">
                 <div className="cover" style={{ backgroundImage: `url(${item.coverURL})`, }} title={item.bookTitle}>
                   <div className="overlay" />
@@ -61,14 +63,14 @@ const RandomQuote = props => {
               </div>
             </Link>
           </div>
-        }
+        )}
         <div className="col">
           <blockquote className="blockquote">
             <div className="q"><MinifiableText text={item.quote} limit={500} /></div>
             <p>
               {author ? '' : <span>– <Link to={`/author/${normURL(item.author)}`}>{item.author}</Link></span>}
               {!author && item.bookTitle && ', '}
-              {item.bookTitle && <em>{item.bid ? <Link to={`/book/${item.bid}/${normURL(item.bookTitle)}`}>{item.bookTitle}</Link> : item.bookTitle}</em>}
+              {item.bookTitle && <em>{item.bid ? <Link to={bookURL}>{item.bookTitle}</Link> : item.bookTitle}</em>}
             </p>
           </blockquote>
         </div>

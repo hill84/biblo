@@ -501,7 +501,7 @@ hr.line {
     box-shadow: none;
     padding-left: 0;
     padding-right: 0;
-    & .title { color: rgb(var(--primaryClr)); }
+    & > .title { color: rgb(var(--primaryClr)); }
     & .avatar { background-color: #bdbdbd; box-shadow: none; }
   }
   & h1, & h2, & h3, & h4, & h5, & h6 { color: var(--mainTextClr); }
@@ -721,7 +721,7 @@ button {
   &.flat {
     color: rgb(var(--linkClr));
     &:hover { background-color: rgba(var(--blackClr), .05); }
-    &:active, &.active { background-color: rgba(var(--blackClr), .03); color: rgba(var(--blackClr), .3); }
+    &:active, &.active { background-color: rgba(var(--blackClr), .03); color: rgb(var(--accentClr)); }
     &:active { background-color: rgba(var(--blackClr), .07); }
   }
   &.icon { padding-left: 0; padding-right: 0; min-width: var(--btnHeight); }
