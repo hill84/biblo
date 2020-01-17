@@ -12,7 +12,7 @@ import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
 const BookCollection = props => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bcid, booksPerRow, cid, inView, pagination, scrollable, stacked } = props;
+  const { bcid, booksPerRow, cid, inView, pagination, rating, scrollable, stacked } = props;
   const [collection, setCollection] = useState([]);
   const [count, setCount] = useState(0);
   const [desc, setDesc] = useState(props.desc);
@@ -100,7 +100,7 @@ const BookCollection = props => {
     <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
       {collection.map((book, i) => 
         <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}>
-          <Cover book={book} rating full={stacked} index={i} bcid={book.bcid} showReaders={cid === 'Top'} />
+          <Cover book={book} rating={rating} full={stacked} index={i} bcid={book.bcid} showReaders={cid === 'Top'} />
         </Link>
       )}
     </div>
@@ -173,6 +173,7 @@ BookCollection.propTypes = {
   inView: boolType,
   limit: numberType,
   pagination: boolType,
+  rating: boolType,
   scrollable: boolType,
   stacked: boolType
 }
@@ -184,6 +185,7 @@ BookCollection.defaultProps = {
   inView: true,
   limit: null,
   pagination: false,
+  rating: true,
   scrollable: false,
   stacked: false
 }

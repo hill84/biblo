@@ -86,7 +86,7 @@ const Home = () => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
             <div className="card dark card-fullwidth-sm" ref={ref}>
-              <BookCollection cid="New" pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid="New" pagination={false} limit={7} inView={inView} rating={false} scrollable />
             </div>
           }
         </InView>
@@ -109,7 +109,6 @@ const Home = () => {
             <p>Sfoglia il catalogo per scoprire il tuo prossimo libro preferito</p>
           </div>
         </div>
-
 
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) =>
