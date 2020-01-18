@@ -29,6 +29,30 @@
   }
 }
 
+.bookmark { 
+  height: 16px;
+  line-height: 16px;
+  width: 16px;
+  border-left-width: 8px;
+  border-right-width: 8px;
+  border-bottom-width: 4px;
+  border-style: solid;
+  border-color: rgb(var(--primaryDarkClr)); 
+  border-bottom-color: transparent !important;
+  border-radius: 1px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 10px;
+  color: #333;
+  text-indent: -3px;
+  overflow: visible;
+  user-select: none;
+  transition: all .2s ease-in-out;
+  z-index: 1;
+  &.accent { border-color: rgb(var(--accentClr)); height: 24px; }
+  & div { position: absolute; left: -10px; width: 24px; overflow: hidden; }
+}
+
 .cover {
   --pad: 14px;
   --radius: 2px;

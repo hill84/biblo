@@ -3,6 +3,7 @@ import Rater from 'react-rater';
 import { ratingLabels } from '../config/lists';
 import { abbrNum } from '../config/shared';
 import { boolType, ratingsType } from '../config/types';
+import '../css/rating.css';
 
 const Rating = props => {
   const { labels, ratings } = props;

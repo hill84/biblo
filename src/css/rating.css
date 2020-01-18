@@ -1,0 +1,46 @@
+/* RATING */
+.rating { 
+  line-height: 1.6; 
+  color: var(--lightTextClr); 
+  text-transform: uppercase;
+  will-change: opacity; 
+  animation: fadeIn .4s ease-in-out; 
+  user-select: none;
+}
+.book .rating { text-align: center; }
+.rating-labels {
+  display: inline;
+  & .rating-num { color: rgb(var(--accentClr)); }
+}
+.react-rater {
+  display: inline-block;
+  line-height: 1.2;
+  font-size: 1.2rem;
+  letter-spacing: .07rem;
+  user-select: none;
+  & > * { display: inline-block; }
+}
+.react-rater-star {
+  cursor: pointer;
+  color: rgba(var(--blackClr), .1);
+  position: relative; 
+  transition: color .2s ease-in-out;
+  &.will-be-active { color: rgb(var(--accentLightClr)); }
+  &.is-active { color: rgb(var(--accentClr)); }
+  &.is-active-half:before {
+    color: rgb(var(--accentClr));
+    content: '\2605';
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden; 
+  }
+}
+.rating .rating-num { /* color: rgb(var(--accentClr)); */ margin-left: 5px; }
+.rating .label { margin-left: 10px; }
+/* .user.rating .rating-num { color: rgb(var(--primaryClr)); } */
+.react-rater-star.is-disabled { cursor: default; }
+.user.rating .react-rater-star {
+  &.will-be-active { color: rgb(var(--primaryLightClr)); }
+  &.is-active, &.is-active-half:before { color: rgb(var(--primaryClr)); }
+}

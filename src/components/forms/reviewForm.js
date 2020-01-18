@@ -22,6 +22,7 @@ import { stringType, userBookType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/emojiMart.css';
+import '../../css/reviewForm.css';
 import emojiMartLocale from '../../locales/emojiMart';
 import Overlay from '../overlay';
 import Rating from '../rating';

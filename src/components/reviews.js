@@ -8,6 +8,7 @@ import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import PaginationControls from './paginationControls';
 import Review from './review';
+import '../css/reviews.css';
 
 const desc = true;
 

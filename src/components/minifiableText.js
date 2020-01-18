@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { boolType, numberType, stringType } from '../config/types';
+import '../css/minifiableText.css';
 
 const MinifiableText = props => {
   const is = useRef(true);

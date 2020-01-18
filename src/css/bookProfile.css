@@ -30,6 +30,25 @@
   &:hover { border-color: rgba(var(--blackClr), .1); }
 }
 
+.book-profile {
+  &.dark {
+    & .title, & .subtitle { font-weight: 300; }
+  }
+  & .title, & .subtitle {
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 130%;
+  }
+  & .title {
+    font-size: 2.2rem;
+    &.flex { align-items: center; }
+  }
+  & .subtitle { font-size: 1.35rem; color: var(--lightTextClr); }
+  & .rating { height: var(--btnHeight); line-height: var(--btnHeight); }
+  & .description { margin-top: .65em; margin-bottom: .65em; white-space: pre-line; word-wrap: break-word; }
+}
+
 @media (--to-l) {
   #BookProfile {
     & .share-buttons {
