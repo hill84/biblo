@@ -39,30 +39,39 @@ const unsub = {
 
 const skltnStyle = { margin: '.4em 0', };
 
+const max = {
+  followings: {
+    premium: 50,
+    standard: 10
+  }
+}
+
 const Dashboard = props => {
   const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const tab = match.params && match.params.tab;
-  const [uid, setUid] = useState(null);
-  const [luid, setLuid] = useState(null);
   const [duser, setDuser] = useState(null);
-  const [isOwner, setIsOwner] = useState(false);
   const [challenges, setChallenges] = useState([]);
   const [followers, setFollowers] = useState({});
-  // const [followersCount, setFollowersCount] = useState(0);
   // const [followersPage, setFollowersPage] = useState(1);
   const [followings, setFollowings] = useState({});
-  // const [followingsCount, setFollowingsCount] = useState(0);
   // const [followingsPage, setFollowingsPage] = useState(1);
   const [follow, setFollow] = useState(false);
   const [lfollowers, setLfollowers] = useState({});
   const [lfollowings, setLfollowings] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [tabSelected, setTabSelected] = useState(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
   const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
+
+  const uid = useMemo(() => match.params.uid, [match.params.uid]);
+  const luid = useMemo(() => user && user.uid, [user]);
+  const isOwner = useMemo(() => luid === uid, [luid, uid]);
+
+  const isAdmin = useMemo(() => user && user.roles.admin, [user]);
+  const isPremium = useMemo(() => user && user.roles.premium, [user]);
 
   useEffect(() => {
     const updateScreenSize = () => {
@@ -74,42 +83,50 @@ const Dashboard = props => {
     return () => {
       is.current = false;
       window.removeEventListener('resize', updateScreenSize);
+      unsub.userFetch && unsub.userFetch();
     }
+  }, []);
+
+  const calcProgress = useCallback(user => {
+    let count = 0;
+    const keys = Object.keys(user).filter(item => profileKeys.includes(item));
+    const tot = profileKeys.length;
+    
+    keys.forEach(i => { 
+      // console.log(i + ': ' + typeof user[i] + ' - ' + user[i]);
+      if (typeof user[i] === 'string') {
+        if (user[i] !== '') count++ 
+      } else if (Array.isArray(user[i])) {
+        if (user[i].length > 0) count++ 
+      } else count++
+    });
+    
+    if (tot) return Number((100 / tot * count).toFixed(0));
+    return 0;
   }, []);
 
   const fetchUser = useCallback(() => {
     if (uid) {
-      if (is.current) setLoading(true);
-  
-      unsub.userFetch && unsub.userFetch();
-      unsub.userFetch = userRef(uid).onSnapshot(snap => {
-        if (snap.exists) {
-          let count = 0;
-          const keys = Object.keys(snap.data()).filter(item => profileKeys.includes(item));
-          const tot = profileKeys.length;
-          // console.log(keys, profileKeys);
-          keys.forEach(i => { 
-            // console.log(i + ': ' + typeof snap.data()[i] + ' - ' + snap.data()[i]);
-            if (typeof snap.data()[i] === 'string') {
-              if (snap.data()[i] !== '') count++ 
-            } else if (Array.isArray(snap.data()[i])) {
-              if (snap.data()[i].length > 0) count++ 
-            } else count++
-          });
-          // console.log(count, tot);
-          setDuser(snap.data());
-          setIsOwner(luid ? luid === uid : false);
-          setLoading(false);
-          setProgress(Number((100 / tot * count).toFixed(0)));
-        } else {
-          setDuser(null);
-          setIsOwner(false);
-          setLoading(false);
-          setProgress(0);
+      if (luid === uid) {
+        if (is.current) {
+          setDuser(user);
+          setProgress(calcProgress(user));
         }
-      });
+      } else {
+        if (is.current) setLoading(true);
+        unsub.userFetch = userRef(uid).onSnapshot(snap => {
+          if (snap.exists) {
+            setDuser(snap.data());
+            setProgress(calcProgress(snap.data()));
+          } else {
+            setDuser(null);
+            setProgress(0);
+          }
+          setLoading(false);
+        });
+      }
     }
-  }, [luid, uid]);
+  }, [calcProgress, luid, uid, user]);
 
   const fetchFollowers = useCallback(() => {
     if (uid) {
@@ -117,11 +134,9 @@ const Dashboard = props => {
       unsub.uidFollowersFetch = followersRef(uid).onSnapshot(snap => {
         if (snap.exists) {
           setFollowers(snap.data());
-          // setFollowersCount(10); // TODO
           setFollow(luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false);
         } else {
           setFollowers({});
-          // setFollowersCount(0); 
           setFollow(false);
         }
       });
@@ -146,12 +161,9 @@ const Dashboard = props => {
       unsub.uidFollowingsFetch && unsub.uidFollowingsFetch();
       unsub.uidFollowingsFetch = followingsRef(uid).onSnapshot(snap => {
         if (snap.exists) {
-          setFollowings(snap.data()); 
-          // setFollowingsCount(10); // TODO
-          // console.log({ uid, followings: snap.data() });
+          setFollowings(snap.data());
         } else {
           setFollowings({});
-          // setFollowingsCount(0);
         }
       });
       
@@ -161,7 +173,6 @@ const Dashboard = props => {
         unsub.luidFollowingsFetch = followingsRef(luid).onSnapshot(snap => {
           if (snap.exists) {
             setLfollowings(snap.data());
-            // console.log({ luid, lfollowings: snap.data() });
           } else {
             setLfollowings({});
           }
@@ -177,37 +188,10 @@ const Dashboard = props => {
           const challenges = [];
           snap.forEach(doc => challenges.push(doc.data()));
           setChallenges(challenges);
-        } // else console.log(`No challenges for user ${luid}`);
+        }
       });
     }
   }, [luid]);
-  
-  const initUid = useCallback(() => {
-    if (match.params.uid !== uid) { 
-      setUid(match.params.uid);
-      setIsOwner(luid === match.params.uid);
-    }
-  }, [luid, match.params.uid, uid]);
-
-  const initLuid = useCallback(() => {
-    if (user !== duser) { 
-      if (user) {
-        setLuid(user.uid);
-        setIsOwner(user.uid === uid);
-      } else {
-        setLuid(null);
-        setIsOwner(false);
-      }
-    }
-  }, [duser, uid, user]);
-
-  useEffect(() => {
-    initUid();
-  }, [initUid]);
-
-  useEffect(() => {
-    initLuid();
-  }, [initLuid]);
   
   useEffect(() => {
     if (uid) {
@@ -293,34 +277,39 @@ const Dashboard = props => {
         followerDisplayName = truncateString(followerName, 12);
         noteMsg = `<a href="/dashboard/${luid}">${followerDisplayName}</a> ha iniziato a seguirti`;
 			}
-      // console.log({ computedFollowers, computedFollowings });
-	
-			// VISITED
-			followersRef(fuid).set(computedFollowers).then(() => {
-        // Send notification to the followed user    
-        if (noteMsg) {
-          const newNoteRef = notesRef(fuid).doc();
-          newNoteRef.set({
-            nid: newNoteRef.id,
-            text: noteMsg,
-            created_num: Date.now(),
-            createdBy: user.displayName,
-            createdByUid: luid,
-            photoURL: user.photoURL,
-            tag: ['follow'],
-            read: false,
-            uid: fuid
-          }).catch(err => console.warn(err));
-        }
-        // VISITOR
-        followingsRef(luid).set(computedFollowings).then(() => {
-          openSnackbar(snackbarMsg, 'success');
-        }).catch(err => console.warn(`Followings error: ${err}`)); 
-      }).catch(err => console.warn(`Followers error: ${err}`));
+
+      const maxFollowings = isPremium || isAdmin ? max.followings.premium : max.followings.standard;
+  
+      if (Object.keys(lfollowings).length < maxFollowings) {
+        // VISITED
+        followersRef(fuid).set(computedFollowers).then(() => {
+          // Send notification to the followed user    
+          if (noteMsg) {
+            const newNoteRef = notesRef(fuid).doc();
+            newNoteRef.set({
+              nid: newNoteRef.id,
+              text: noteMsg,
+              created_num: Date.now(),
+              createdBy: user.displayName,
+              createdByUid: luid,
+              photoURL: user.photoURL,
+              tag: ['follow'],
+              read: false,
+              uid: fuid
+            }).catch(err => console.warn(err));
+          }
+          // VISITOR
+          followingsRef(luid).set(computedFollowings).then(() => {
+            openSnackbar(snackbarMsg, 'success');
+          }).catch(err => console.warn(`Followings error: ${err}`)); 
+        }).catch(err => console.warn(`Followers error: ${err}`));
+      } else {
+        openSnackbar(`Limite massimo superato. ${(!isPremium || !isAdmin) && `Passa al piano premium per seguire più di ${maxFollowings} lettori`}`, 'error');
+      }
     } else {
       openSnackbar('Utente non autenticato', 'error');
     }
-  }, [duser, followers, followings, isAuth, lfollowers, lfollowings, luid, openSnackbar, uid, user]);
+  }, [duser, followers, followings, isAdmin, isAuth, isPremium, lfollowers, lfollowings, luid, openSnackbar, uid, user]);
 
   const historyPushTabIndex = useCallback(index => {
     const newPath = `/dashboard/${uid}/${tabs[index]}`;
@@ -382,14 +371,16 @@ const Dashboard = props => {
           </Link>
         </div> 
       ))}
-      {/* <PaginationControls // TODO
-        count={obj === followers ? followersCount : followingsCount} 
-        fetch={obj === followers ? fetchFollowers : fetchFollowings} 
-        limit={4}
-        loading={obj === followers ? followersLoading : followingsLoading}
-        oneWay
-        page={obj === followers ? followersPage : followingsPage}
-      /> */}
+      {/* 
+        <PaginationControls // TODO
+          count={obj === followers ? followersCount : followingsCount} 
+          fetch={obj === followers ? fetchFollowers : fetchFollowings} 
+          limit={4}
+          loading={obj === followers ? followersLoading : followingsLoading}
+          oneWay
+          page={obj === followers ? followersPage : followingsPage}
+        /> 
+      */}
     </>
   );
 

@@ -8,6 +8,17 @@ import BookProfile from './pages/bookProfile';
 
 const NoMatch = lazy(() => import('./noMatch'));
 
+const max = {
+  shelfBooks: {
+    premium: 500,
+    standard: 250
+  },
+  wishlistBooks: {
+    premium: 200,
+    standard: 100
+  }
+}
+
 export default class Book extends Component {
   state = {
     book: this.props.book,
@@ -217,34 +228,43 @@ export default class Book extends Component {
     if (isAuth) {
       this.addBookToShelfRef.current.setAttribute('disabled', 'disabled');
       let userWishlist_num = user.stats.wishlist_num;
+      const userShelf_num = user.stats.shelf_num + 1;
       const bookReaders_num = this.state.book.readers_num + 1;
-      // console.log('Book added to user shelf');
+
       if (this.state.userBook.bookInWishlist) {
         userWishlist_num -= 1;
       }
-      
-      userBookRef(authid, bid).set({
-        ...this.state.userBook,
-        added_num: Date.now(),
-        bookInShelf: true,
-        bookInWishlist: false
-      }).then(() => {
-        openSnackbar('Libro aggiunto in libreria', 'success');
 
-        bookRef(bid).update({
-          readers_num: bookReaders_num
+      const isAdmin = user.roles.admin;
+      const isPremium = user.roles.premium;
+      const maxShelfBooks = isPremium || isAdmin ? max.shelfBooks.premium : max.shelfBooks.standard;
+
+      if (userShelf_num > maxShelfBooks) {
+        openSnackbar(`Limite massimo superato${(isAdmin || isPremium) ? '' : `. Passa al livello premium per aggiungere più di ${maxShelfBooks} libri`}`, 'error');
+      } else {
+        userBookRef(authid, bid).set({
+          ...this.state.userBook,
+          added_num: Date.now(),
+          bookInShelf: true,
+          bookInWishlist: false
         }).then(() => {
-          // console.log(`Readers number increased to ${this.state.book.readers_num}`);
-          
-          userRef(authid).update({
-            'stats.shelf_num': user.stats.shelf_num + 1,
-            'stats.wishlist_num': userWishlist_num
+          openSnackbar('Libro aggiunto in libreria', 'success');
+  
+          bookRef(bid).update({
+            readers_num: bookReaders_num
           }).then(() => {
-            // console.log('User shelf number increased');
-            this.addBookToShelfRef.current && this.addBookToShelfRef.current.removeAttribute('disabled');
+            // console.log(`Readers number increased to ${this.state.book.readers_num}`);
+            
+            userRef(authid).update({
+              'stats.shelf_num': user.stats.shelf_num + 1,
+              'stats.wishlist_num': userWishlist_num
+            }).then(() => {
+              // console.log('User shelf number increased');
+              this.addBookToShelfRef.current && this.addBookToShelfRef.current.removeAttribute('disabled');
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }      
     } else console.warn(`Cannot addBookToShelf. User not authenticated`);
 	}
 
@@ -255,80 +275,88 @@ export default class Book extends Component {
     if (isAuth) {
       this.addBookToWishlistRef.current.setAttribute('disabled', 'disabled');
       const userWishlist_num = user.stats.wishlist_num + 1;
-      /* let userShelf_num = user.stats.shelf_num;
-      let bookReaders_num = this.state.book.readers_num;
-      let bookRating_num = this.state.book.rating_num;
-      let bookRatings_num = this.state.book.ratings_num;
-      let userRatings_num = user.stats.ratings_num;
-      let userBookRating_num = this.state.userBook.rating_num;
-      let bookReviews_num = this.state.book.reviews_num;
-      let userBookReview = this.state.userBook.review; 
-      
-      if (this.state.userBook.bookInShelf) {
-        userShelf_num -= 1;
-        bookReaders_num -= 1;
-      }
-      
-      if (this.state.book.rating_num > 0) {
-        bookRating_num -= userBookRating_num;
-        bookRatings_num -= 1;
-        userRatings_num -= 1;
-      }
-      
-      if (this.state.userBook.review !== {}) {
-        bookReviews_num -= 1;
-        userBookReview = {};
-      } */
-      userBookRef(authid, bid).set({
-        ...this.state.userBook,
-        /* rating_num: userBookRating_num,
-        review: userBookReview, */
-        added_num: Date.now(),
-        bookInShelf: false,
-        bookInWishlist: true
-      }).then(() => {
-        /* if (this._isMounted) {
-          this.setState(prevState => ({ 
-            userBook: { 
-              ...prevState.userBook, 
-              rating_num: userBookRating_num,
-              review: userBookReview,
-              bookInShelf: false,
-              bookInWishlist: true 
-            }
-          })); 
+      const isAdmin = user.roles.admin;
+      const isPremium = user.roles.premium;
+      const maxWishlistBooks = isPremium || isAdmin ? max.wishlistBooks.premium : max.wishlistBooks.standard;
+
+      if (userWishlist_num > maxWishlistBooks) {
+        openSnackbar(`Limite massimo superato${(isAdmin || isPremium) ? '' : `. Passa al livello premium per aggiungere più di ${maxWishlistBooks} libri`}`, 'error');
+      } else {
+        /* let userShelf_num = user.stats.shelf_num;
+        let bookReaders_num = this.state.book.readers_num;
+        let bookRating_num = this.state.book.rating_num;
+        let bookRatings_num = this.state.book.ratings_num;
+        let userRatings_num = user.stats.ratings_num;
+        let userBookRating_num = this.state.userBook.rating_num;
+        let bookReviews_num = this.state.book.reviews_num;
+        let userBookReview = this.state.userBook.review; 
+        
+        if (this.state.userBook.bookInShelf) {
+          userShelf_num -= 1;
+          bookReaders_num -= 1;
+        }
+        
+        if (this.state.book.rating_num > 0) {
+          bookRating_num -= userBookRating_num;
+          bookRatings_num -= 1;
+          userRatings_num -= 1;
+        }
+        
+        if (this.state.userBook.review !== {}) {
+          bookReviews_num -= 1;
+          userBookReview = {};
         } */
-        // console.log('Book added to user wishlist');
-        this.addBookToWishlistRef.current && this.addBookToWishlistRef.current.removeAttribute('disabled');
-        openSnackbar('Libro aggiunto in lista desideri', 'success');
-        userRef(authid).update({
-          /* 'stats.shelf_num': userShelf_num, */
-          'stats.wishlist_num': userWishlist_num,
-          /* 'stats.ratings_num': userRatings_num
+        userBookRef(authid, bid).set({
+          ...this.state.userBook,
+          /* rating_num: userBookRating_num,
+          review: userBookReview, */
+          added_num: Date.now(),
+          bookInShelf: false,
+          bookInWishlist: true
         }).then(() => {
-          // console.log('User wishlist number increased');
-          /* bookRef(bid).update({
-            rating_num: bookRating_num,
-            ratings_num: bookRatings_num,
-            readers_num: bookReaders_num
+          /* if (this._isMounted) {
+            this.setState(prevState => ({ 
+              userBook: { 
+                ...prevState.userBook, 
+                rating_num: userBookRating_num,
+                review: userBookReview,
+                bookInShelf: false,
+                bookInWishlist: true 
+              }
+            })); 
+          } */
+          // console.log('Book added to user wishlist');
+          this.addBookToWishlistRef.current && this.addBookToWishlistRef.current.removeAttribute('disabled');
+          openSnackbar('Libro aggiunto in lista desideri', 'success');
+          userRef(authid).update({
+            /* 'stats.shelf_num': userShelf_num, */
+            'stats.wishlist_num': userWishlist_num,
+            /* 'stats.ratings_num': userRatings_num
           }).then(() => {
-            if (this._isMounted) {
-              this.setState(prevState => ({ 
-                book: { 
-                  ...prevState.book,
-                  ratings_num: bookRatings_num,
-                  readers_num: bookReaders_num
-                },
-                userBook: { 
-                  ...prevState.userBook, 
-                  rating_num: userBookRating_num 
-                }
-              }));
-            }
-            //console.log('Rating and reader removed');
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
+            // console.log('User wishlist number increased');
+            /* bookRef(bid).update({
+              rating_num: bookRating_num,
+              ratings_num: bookRatings_num,
+              readers_num: bookReaders_num
+            }).then(() => {
+              if (this._isMounted) {
+                this.setState(prevState => ({ 
+                  book: { 
+                    ...prevState.book,
+                    ratings_num: bookRatings_num,
+                    readers_num: bookReaders_num
+                  },
+                  userBook: { 
+                    ...prevState.userBook, 
+                    rating_num: userBookRating_num 
+                  }
+                }));
+              }
+              //console.log('Rating and reader removed');
+            }).catch(err => openSnackbar(handleFirestoreError(err), 'error')); */
+          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }
     } else console.warn(`Cannot addBookToWishlist. User not authenticated`);
   }
 
