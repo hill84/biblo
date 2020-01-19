@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "private": true,
   "devDependencies": {
     "autoprefixer": "^9.7.4",
