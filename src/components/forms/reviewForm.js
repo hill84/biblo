@@ -86,7 +86,7 @@ const ReviewForm = props => {
       if (is.current) setLoading(true);
 
       if (snap.exists) {
-        if (is.current) setReview(snap.data());
+        if (is.current) setReview({ ...initialReviewState, ...snap.data() });
       } else if (is.current) {
         setReview(initialReviewState);
       }
