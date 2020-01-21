@@ -204,37 +204,76 @@ export const abbrNum = (num, decPlaces = 0) => {
 
 // MAP
 export const switchGenres = array => array.map(str => {
-  let g;
   switch (str) {
-    case "Architecture":                g = "Architettura"; break;
-    case "Art":                         
-    case "Performing Arts":             g = "Arte"; break;
+    case "Architecture, Byzantine":
+    case "Architecture, Classical":
+    case "Architecture, Gothic":
+    case "Architecture, Modern":
+    case "Architecture, Roman":
+    case "Architecture, Romanesque":
+    case "Architecture":                return "Architettura";
+    case "Aesthetics":
+    case "Art":
+    case "Art, Abstract":
+    case "Art, Ancient":
+    case "Art, European":
+    case "Art, Greek":
+    case "Art, Italian":
+    case "Art, Modern":
+    case "Art, Roman":
+    case "Cubism":
+    case "Design":
+    case "Photography of art":
+    case "Women in art":                return "Arte";
+    case "Dance":
+    case "Language Arts & Disciplines":
+    case "Performing Arts":
+    case "Drama":                       return "Teatro";
     case "Bibles":
-    case "Religion":                    g = "Religione e spiritualità"; break;
-    case "Biography & Autobiography":   g = "Biografie e autobiografie"; break;
-    case "Business & Economics":        g = "Economia e finanza"; break;
-    case "Comics & Graphic Novels":     g = "Fumetti e Graphic novel"; break;
-    case "Cooking":                     g = "Cucina"; break;
-    case "Family & Relationships":      g = "Famiglia e relazioni"; break;
-    case "Fiction":                     g = "Narrativa"; break;
-    case "History":                     g = "Storico"; break;
-    case "Humor":                       g = "Satira e umorismo"; break;
-    case "Informatics":                 g = "Informatica"; break;
-    case "Juvenile Fiction":            g = "Per ragazzi"; break;
-    case "Literary Criticism":          g = "Saggistica"; break;
-    case "Medical":                     g = "Medicina e salute"; break;
-    case "Mistery":                     g = "Mistero"; break;
-    case "Music":                       g = "Musica"; break;
-    case "Philosophy":                  g = "Filosofia"; break;
-    case "Politics":                    g = "Politica"; break;
-    case "Poetry":                      g = "Poesia"; break;
-    case "Science":                     g = "Scienza"; break; 
-    case "Science fiction":             g = "Fantascienza"; break; 
-    case "Social Science":              g = "Scienze sociali"; break;
-    case "Travel":                      g = "Viaggi"; break;
-    default:                            g = "Narrativa"; break;
+    case "Body, Mind & Spirit":
+    case "Religion":                    return "Religione e spiritualità";
+    case "Biography & Autobiography":   return "Biografie e autobiografie";
+    case "Business & Economics":        return "Economia e finanza";
+    case "Comics & Graphic Novels":     return "Fumetti e Graphic novel";
+    case "Cookery":
+    case "Cooking":                     return "Cucina";
+    case "Family & Relationships":      return "Famiglia e relazioni";
+    // case "Fiction":                     return "Narrativa";
+    case "History, Modern":
+    case "History":                     return "Storico";
+    case "Humor":                       return "Satira e umorismo";
+    case "Computers":
+    case "Informatics":                 return "Informatica";
+    case "Juvenile Nonfiction":
+    case "Juvenile Fiction":            return "Per ragazzi";
+    case "Essay":
+    case "Reference":
+    case "Literary Criticism":          return "Saggistica";
+    case "Health & Fitness":
+    case "Self-Help":
+    case "Medical":                     return "Medicina e salute";
+    case "Mistery":                     return "Mistero";
+    case "Music":                       return "Musica";
+    case "Philosophy":                  return "Filosofia";
+    case "Politics":                    return "Politica";
+    case "Poetry":                      return "Poesia";
+    
+    case "Algebra":
+    case "Arithmetic":
+    case "Astronomy":
+    case "Calculus":
+    case "Mathematics":
+    case "Physics":
+    case "Science":                     return "Scienza"; 
+    case "Science fiction":             return "Fantascienza";
+    case "Sports & Recreation":
+    case "Games":
+    case "Games & Activities":          return "Sport";
+    case "Social Science":              return "Scienze sociali";
+    case "True Crime":                  return "Thriller"
+    case "Travel":                      return "Viaggi";
+    default:                            return "Narrativa";
   }
-  return g;
 });
 
 export const switchLanguages = str => {

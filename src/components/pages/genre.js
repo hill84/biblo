@@ -23,7 +23,7 @@ const orderBy = [
   { type: 'rating_num', label: 'Valutazione'}, 
   { type: 'title', label: 'Titolo'}
 ];
-const skltnStyle = { display: 'inline-block', marginTop: '1.1em', };
+const skltnStyle = { display: 'inline-block', marginTop: '1.15em', };
 
 const Genre = props => {
   const { isAuth, user } = useContext(UserContext);
@@ -215,7 +215,6 @@ const Genre = props => {
     }
   };
 
-  const genreColor = useMemo(() => genres.filter(genre => genre.name === denormURL(match.params.gid))[0].color, [match]);
   
   const isScrollable = useMemo(() => isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm', [_screenSize]);
   
@@ -228,28 +227,29 @@ const Genre = props => {
       <Cover book={item} index={i} page={page} />
     </Link>
   )), [items, page]);
-
+  
   const orderByOptions = useMemo(() => orderBy.map((option, i) => (
     <MenuItem
-      key={option.type}
-      disabled={i === -1}
-      selected={i === orderByIndex}
-      onClick={e => onChangeOrderBy(e, i)}>
+    key={option.type}
+    disabled={i === -1}
+    selected={i === orderByIndex}
+    onClick={e => onChangeOrderBy(e, i)}>
       {option.label}
     </MenuItem>
   )), [orderByIndex]);
   
-  const title = useMemo(() => denormURL(match.params.gid), [match]);
+  const title = useMemo(() => denormURL(match.params.gid), [match.params.gid]);
+  const genreItem = useMemo(() => genres.filter(genre => genre.name === title)[0], [title]);
 
   const seo = useMemo(() => ({
-    canonical_name: genres.filter(genre => genre.name === title)[0].canonical,
+    canonical_name: genreItem && genreItem.canonical,
     description: `Scopri su ${app.name} i migliori libri di genere ${title.toLowerCase()}: nuove uscite e best seller`,
     image: null,
     title: `Libri di genere ${title.toLowerCase()}`,
     url: `${app.url}/genre/${normURL(match.params.gid)}`
-  }), [match, title]);
+  }), [genreItem, match, title]);
   
-  const cardStyle = useMemo(() => ({ borderTop: `4px solid ${genreColor}`, }), [genreColor]);
+  const cardStyle = useMemo(() => ({ borderTop: `4px solid ${genreItem ? genreItem.color : 'rgba(0, 0, 0, .1)'}`, }), [genreItem]);
   
   const linkStyle = useMemo(() => ({ color: !isScrollable ? 'white' : '', }), [isScrollable]);
   

@@ -163,6 +163,7 @@ export const genres = [
   { id: "ro", color: '#ef9a9a', name: "Rosa", canonical: "Romance" },
   { id: "sa", color: '#93B0D0', name: "Saggistica", canonical: "Essays" },
   { id: "sc", color: '#51b9de', name: "Scienza", canonical: "Science" },
+  { id: "sp", color: '#e4002b', name: "Sport", canonical: "Sports" },
   { id: "ss", color: '#d7A96D', name: "Scienze sociali", canonical: "Social Sciences" },
   { id: "st", color: '#b98054', name: "Storico", canonical: "History" },
   { id: "te", color: '#8d6e63', name: "Teatro", canonical: "Drama" },
