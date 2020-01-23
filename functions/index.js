@@ -114,11 +114,11 @@ exports.incrementCollections = ff.document('collections/{cid}').onCreate(() => c
 
 exports.decrementCollections = ff.document('collections/{cid}').onDelete(() => count({ doc: 'collections', change: -1 }));
 
-exports.incrementCollectionBooks = ff.document('collections/{cid}/books/{bid}').onCreate(() => count({ 
+exports.incrementCollectionBooks = ff.document('collections/{cid}/books/{bid}').onCreate((snap, context) => count({ 
   doc: context.params.cid, change: 1, collection: 'collections', field: 'books_num' 
 }));
 
-exports.decrementCollectionBooks = ff.document('collections/{cid}/books/{bid}').onDelete(() => count({ 
+exports.decrementCollectionBooks = ff.document('collections/{cid}/books/{bid}').onDelete((snap, context) => count({ 
   doc: context.params.cid, change: -1, collection: 'collections', field: 'books_num' 
 }));
 
