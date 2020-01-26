@@ -10,12 +10,12 @@ const NoMatch = lazy(() => import('./noMatch'));
 
 const max = {
   shelfBooks: {
-    premium: 500,
-    standard: 250
+    premium: 2000,
+    standard: 1000
   },
   wishlistBooks: {
-    premium: 200,
-    standard: 100
+    premium: 1000,
+    standard: 500
   }
 }
 
