@@ -339,6 +339,10 @@ ul.nolist {
   --pad: 7px;
   --avatarSize: 20px;
   --marginBottom: .4rem;
+
+  &.empty {
+    margin-top: var(--marginBottom);
+  }
 }
 .dense .avatar-row .avatar { font-size: .55rem; }
 .table {
@@ -578,6 +582,20 @@ hr.line {
 }
 
 /* TABS */
+.appbar {
+  & sup {
+    display: inline-block;
+    align-self: center;
+    background: rgb(var(--accentClr));
+    font-size: .45rem;
+    color: #333;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 9px;
+    margin-left: -4px;
+  }
+}
 .appbar.flat, .card.flat .head.nav {
   --cardClr: var(--canvasClr);
   background-color: transparent;

@@ -29,3 +29,8 @@ export const uidKey = 'uid';
 export const themeKey = 'theme'; // 'dark' | 'light' | 'mixed'
 
 export const recommendationQuoteKey = 'recommendation_quote';
+
+export const userBooksKey = {
+  books: 'userBooks_books',
+  timestamp: 'userBooks_timestamp'
+};

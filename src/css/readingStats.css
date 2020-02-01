@@ -1,0 +1,5 @@
+.stats-list {
+  & li {
+    line-height: 1.9;
+  }
+}

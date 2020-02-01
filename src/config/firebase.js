@@ -35,6 +35,8 @@ const timestamp = FieldValue.serverTimestamp(); // const timestamp = firebase.Se
 // Users
 const usersRef = db.collection('users');
 const userRef = uid => usersRef.doc(uid);
+const userChallenges = uid => userRef(uid).collection('challenges');
+const userChallenge = (uid, cid) => userChallenges(uid).doc(cid);
 
 // Shelves
 const userShelfRef = uid => db.collection('shelves').doc(uid);
@@ -114,6 +116,8 @@ export {
 	timestamp,
 	usersRef,
 	userRef,
+	userChallenges,
+	userChallenge,
 	userShelfRef,
 	userBooksRef,
 	userBookRef,

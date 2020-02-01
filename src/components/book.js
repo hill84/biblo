@@ -26,6 +26,8 @@ export default class Book extends Component {
       bid: '',
       authors: [],
       covers: [],
+      genres: [],
+      pages_num: 0,
       publisher: '',
       title: '',
       subtitle: '',
@@ -91,6 +93,8 @@ export default class Book extends Component {
           bid: props.book.bid,
           authors: props.book.authors,
           covers: !!props.book.covers[0] && Array(props.book.covers[0]),
+          genres: props.book.genres,
+          pages_num: props.book.pages_num,
           publisher: props.book.publisher,
           title: props.book.title,
           subtitle: props.book.subtitle
@@ -127,12 +131,14 @@ export default class Book extends Component {
               },
               userBook: {
                 ...prevState.userBook,
-                bid: snap.data().bid || '',
+                bid: snap.data().bid,
                 authors: snap.data().authors,
                 covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
+                genres: snap.data().genres,
+                pages_num: snap.data().pages_num,
                 publisher: snap.data().publisher,
                 title: snap.data().title,
-                subtitle: snap.data().subtitle
+                subtitle: snap.data().subtitle || ''
               }
             }));
           }
@@ -166,11 +172,13 @@ export default class Book extends Component {
               },
               userBook: {
                 ...prevState.userBook,
-                bid: snap.data().bid || '',
-                authors: snap.data().authors || {},
+                bid: snap.data().bid,
+                authors: snap.data().authors,
                 covers: (!!snap.data().covers[0] && Array(snap.data().covers[0])) || [],
-                publisher: snap.data().publisher || '',
-                title: snap.data().title || '',
+                genres: snap.data().genres,
+                pages_num: snap.data().pages_num,
+                publisher: snap.data().publisher,
+                title: snap.data().title,
                 subtitle: snap.data().subtitle || ''
               }
             });

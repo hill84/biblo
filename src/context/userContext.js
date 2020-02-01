@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { auth, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { ifLocalStorage, uidKey } from '../config/storage';
+import { uidKey } from '../config/storage';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const UserContext = createContext({ error: null, user: null });
 
@@ -12,13 +13,12 @@ export const UserProvider = props => {
   const { children } = props;
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [luid, setLuid] = useLocalStorage(uidKey, null);
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
 
   const needsEmailVerification = useMemo(() => currentUser && !currentUser.emailVerified && currentUser.providerData.length === 0, [currentUser]);
-
-  const uid = useMemo(() => currentUser && currentUser.uid, [currentUser]);
 
   const userProvided = useMemo(() => ({ 
     emailVerified, error, isAuth, user 
@@ -38,9 +38,10 @@ export const UserProvider = props => {
 
   useEffect(() => {
     auth.onIdTokenChanged(user => {
-      const uid = (user && user.uid) || ifLocalStorage(localStorage.getItem(uidKey));
+      const uid = (user && user.uid) || luid;
       if (user) {
         setCurrentUser(auth.currentUser);
+        setLuid(auth.currentUser.uid);
         if (uid && !needsEmailVerification) {
           setIsAuth(true);
           fetchUser(uid);
@@ -53,20 +54,12 @@ export const UserProvider = props => {
       } else {
         setIsAuth(false);
         setCurrentUser(null);
+        setLuid(null);
         setUser(null);
       }
     });
-
-    return () => fetchUser;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchUser, needsEmailVerification]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(uidKey, uid);
-    } catch(err) {
-      console.warn(err);
-    }
-  }, [uid]);
 
   return (
     <UserContext.Provider

@@ -10,14 +10,15 @@ import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
-import { followersRef, followingsRef, notesRef, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, notesRef, userRef, userChallenges } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { app, calcAge, capitalize, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
+import ReadingStats from '../readingStats';
 import Reviews from '../reviews';
 // import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
@@ -44,7 +45,7 @@ const max = {
     premium: 50,
     standard: 10
   }
-}
+};
 
 const Dashboard = props => {
   const { isAuth, user } = useContext(UserContext);
@@ -66,7 +67,7 @@ const Dashboard = props => {
   const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
 
-  const uid = useMemo(() => match.params.uid, [match.params.uid]);
+  const uid = match.params.uid;
   const luid = useMemo(() => user && user.uid, [user]);
   const isOwner = useMemo(() => luid === uid, [luid, uid]);
 
@@ -183,7 +184,7 @@ const Dashboard = props => {
 
   const fetchUserChallenges = useCallback(() => {
 		if (luid) {
-      unsub.collectionFetch = userRef(luid).collection('challenges').onSnapshot(snap => {
+      unsub.collectionFetch = userChallenges(luid).onSnapshot(snap => {
         if (!snap.empty) {
           const challenges = [];
           snap.forEach(doc => challenges.push(doc.data()));
@@ -348,50 +349,53 @@ const Dashboard = props => {
     <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>
   )), [duser]);
 
-  if (!duser && !loading) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
-  
-  const usersList = obj => (
-    <>
-      {Object.keys(obj).map(f => (
-        <div key={f} className="avatar-row">
-          <Link to={`/dashboard/${f}`} className="row ripple">
-            <div className="col">
-              <Avatar className="avatar" src={obj[f].photoURL} alt={obj[f].displayName}>{!obj[f].photoURL && getInitials(obj[f].displayName)}</Avatar>{obj[f].displayName}
-            </div>
-            {!isMini && 
-              <div className="col-auto">
-                <div className="timestamp hide-on-hover">{timeSince(obj[f].timestamp)}</div>
-                {isOwner && f !== luid && 
-                  <button type="button" className="btn flat show-on-hover" onClick={e => onFollowUser(e, f, obj[f])}>
-                    {obj === followers ? 'Segui' : 'Non seguire'}
-                  </button>
-                }
-              </div>
-            }
-          </Link>
-        </div> 
-      ))}
-      {/* 
-        <PaginationControls // TODO
-          count={obj === followers ? followersCount : followingsCount} 
-          fetch={obj === followers ? fetchFollowers : fetchFollowings} 
-          limit={4}
-          loading={obj === followers ? followersLoading : followingsLoading}
-          oneWay
-          page={obj === followers ? followersPage : followingsPage}
-        /> 
-      */}
-    </>
-  );
-
-  const ShelfDetails = () => (
+  const ShelfDetails = useMemo(() => () => (
     <div className="info-row footer centered shelfdetails">
       <span className="counter">{icon.book} <b>{duser ? duser.stats.shelf_num : 0}</b> <span className="hide-sm">Libri</span></span>
       <span className="counter">{icon.heart} <b>{duser ? duser.stats.wishlist_num : 0}</b> <span className="hide-sm">Desideri</span></span>
       <span className="counter">{icon.star} <b>{duser ? duser.stats.ratings_num : 0}</b> <span className="hide-sm">Valutazioni</span></span>
       <span className="counter">{icon.messageText} <b>{duser ? duser.stats.reviews_num : 0}</b> <span className="hide-sm">Recensioni</span></span>
     </div>
-  );
+  ), [duser]);
+
+  if (!duser && !loading) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
+  
+  const UsersList = props => {
+    const { users } = props; 
+    return (
+      <>
+        {Object.keys(users).map(f => (
+          <div key={f} className="avatar-row">
+            <Link to={`/dashboard/${f}`} className="row ripple">
+              <div className="col">
+                <Avatar className="avatar" src={users[f].photoURL} alt={users[f].displayName}>{!users[f].photoURL && getInitials(users[f].displayName)}</Avatar>{users[f].displayName}
+              </div>
+              {!isMini && 
+                <div className="col-auto">
+                  <div className="timestamp hide-on-hover">{timeSince(users[f].timestamp)}</div>
+                  {isOwner && f !== luid && 
+                    <button type="button" className="btn flat show-on-hover" onClick={e => onFollowUser(e, f, users[f])}>
+                      {users === followers ? 'Segui' : 'Non seguire'}
+                    </button>
+                  }
+                </div>
+              }
+            </Link>
+          </div> 
+        ))}
+        {/* 
+          <PaginationControls // TODO
+            count={users === followers ? followersCount : followingsCount} 
+            fetch={users === followers ? fetchFollowers : fetchFollowings} 
+            limit={4}
+            loading={users === followers ? followersLoading : followingsLoading}
+            oneWay
+            page={users === followers ? followersPage : followingsPage}
+          /> 
+        */}
+      </>
+    );
+  };
 
   const EmptyRow = () => (
     <div className="avatar-row empty">
@@ -401,10 +405,10 @@ const Dashboard = props => {
     </div>
   );
 
-  const TabLabel = (icon, label) => (
+  const TabLabel = props => (
     <>
-      <span className="icon show-md">{icon}</span>
-      <span className="label">{label}</span>
+      <span className="icon show-md">{props.icon}</span>
+      <span className="label">{props.label}</span>
     </>
   );
 
@@ -413,10 +417,18 @@ const Dashboard = props => {
       case 0: return 'La libreria';
       case 1: return 'La lista dei desideri';
       case 2: return 'Le attività';
-      case 3: return 'I contatti';
+      case 3: return 'Le statistiche';
+      case 4: return 'I contatti';
       default: return 'La dashboard';
     }
   };
+
+  const UnauthReadingStats = () => (
+    <div className="text-center">
+      <h2>Utente non autorizzato</h2>
+      {duser && <p>Solo {duser.displayName} può visualizzare le sue statistiche di lettura</p>}
+    </div>
+  );
 
   return (
     <div className="container" id="dashboardComponent" ref={is}>
@@ -424,7 +436,7 @@ const Dashboard = props => {
         <title>{app.name} | {duser ? `${tabSeoTitle()} di ${duser.displayName}` : 'Dashboard utente'}</title>
         <link rel="canonical" href={app.url} />
         <meta name="description" content={app.desc} />
-        {tabSelected && duser && <link rel="canonical" href={`${app.url}/dashboard/${duser.uid}/shelf`} />}
+        {tabSelected && <link rel="canonical" href={`${app.url}/dashboard/${uid}/shelf`} />}
       </Helmet>
       <div className="row">
         <div className="col-md col-12">
@@ -459,7 +471,7 @@ const Dashboard = props => {
                             {duser.country && <span className="counter">{duser.country}</span>}
                             {duser.continent && <span className="counter">{duser.continent}</span>}
                           </span>
-                          {duser.languages && <span className="counter">Parl{isOwner ? 'i' : 'a'} {joinToLowerCase(duser.languages)}</span>}
+                          {duser.languages && <span className="counter">{capitalize(joinToLowerCase(duser.languages))}</span>}
                           {creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
                           {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
                         </div>
@@ -520,10 +532,11 @@ const Dashboard = props => {
           variant="fullWidth"
           // variant="scrollable"
           scrollButtons="auto">
-          <Tab label={TabLabel(icon.book, 'Libreria')} />
-          <Tab label={TabLabel(icon.heart, 'Desideri')} />
-          <Tab label={TabLabel(icon.poll, 'Attività')} />
-          <Tab label={TabLabel(icon.account, 'Contatti')} />
+          <Tab label={<TabLabel icon={icon.book} label="Libreria" />} />
+          <Tab label={<TabLabel icon={icon.heart} label="Desideri" />} />
+          <Tab label={<TabLabel icon={icon.messageText} label="Attività" />} />
+          <Tab label={<TabLabel icon={icon.poll} label="Statistiche" />} disabled={!isOwner} />
+          <Tab label={<TabLabel icon={icon.account} label="Contatti" />} />
         </Tabs>
       </AppBar>
       <BindKeyboardSwipeableViews 
@@ -534,24 +547,27 @@ const Dashboard = props => {
         index={tabSelected}
         onChangeIndex={onTabSelectIndex}>
         <div className="card tab" dir={tabDir}>
-          {tabSelected === 0 && uid && <Shelf openSnackbar={openSnackbar} luid={luid} uid={uid} shelf="bookInShelf" />}
+          {tabSelected === 0 && <Shelf openSnackbar={openSnackbar} luid={luid} uid={uid} shelf="bookInShelf" />}
         </div>
         <div className="card tab" dir={tabDir}>
-          {tabSelected === 1 && uid && <Shelf openSnackbar={openSnackbar} luid={luid} uid={uid} shelf="bookInWishlist" />}
+          {tabSelected === 1 && <Shelf openSnackbar={openSnackbar} luid={luid} uid={uid} shelf="bookInWishlist" />}
         </div>
         <div className="card tab" dir={tabDir}>
-          {tabSelected === 2 && uid && <Reviews uid={uid} limit={3} container={false} pagination skeleton />}
+          {tabSelected === 2 && <Reviews uid={uid} limit={3} container={false} pagination skeleton />}
+        </div>
+        <div className="card tab" dir={tabDir}>
+          {tabSelected === 3 && (loading || isOwner ? <ReadingStats loading={loading} uid={uid} /> : <UnauthReadingStats />)}
         </div>
         <div className="card tab contacts-tab" dir={tabDir}>
-          {tabSelected === 3 && (
+          {tabSelected === 4 && (
             <div className="row">
               <div className="col-md-6 cols-12 contacts-tab-col">
                 <h4>Seguito da:</h4>
-                {loading ? contactsSkeleton : Object.keys(followers).length ? usersList(followers) : <EmptyRow />}
+                {loading ? contactsSkeleton : Object.keys(followers).length ? <UsersList users={followers} /> : <EmptyRow />}
               </div>
               <div className="col-md-6 col-12 contacts-tab-col">
                 <h4>Segue:</h4>
-                {loading ? contactsSkeleton : Object.keys(followings).length ? usersList(followings) : <EmptyRow />}
+                {loading ? contactsSkeleton : Object.keys(followings).length ? <UsersList users={followings} /> : <EmptyRow />}
               </div>
             </div>
           )}

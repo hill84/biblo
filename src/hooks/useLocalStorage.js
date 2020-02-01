@@ -25,7 +25,11 @@ const useLocalStorage = (key, initialValue) => {
       // Save state
       setStoredValue(valueToStore);
       // Save to local storage
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      if (valueToStore !== null) {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } else {
+        window.localStorage.removeItem(key);
+      }
     } catch (err) {
       // A more advanced implementation would handle the error case
       console.log(err);

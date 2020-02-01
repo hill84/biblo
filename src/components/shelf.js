@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { userBooksRef, userRef } from '../config/firebase';
+import { userBooksRef, userChallenge, userChallenges } from '../config/firebase';
 import icon from '../config/icons';
 import { userBookTypes } from '../config/lists';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
@@ -123,7 +123,7 @@ export default class Shelf extends Component {
                   page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
                 }), () => {
                   // GET CHALLENGES
-                  luid === uid && userRef(luid).collection('challenges').get().then(snap => {
+                  luid === uid && userChallenges(luid).get().then(snap => {
                     if (!snap.empty) {
                       const challenges = [];
                       snap.forEach(doc => challenges.push(doc.data()));
@@ -142,7 +142,7 @@ export default class Shelf extends Component {
                       });
                       if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
                         console.warn(cBooks);
-                        userRef(luid).collection('challenges').doc(cid).update({ 
+                        userChallenge(luid, cid).update({ 
                           books: cBooks, 
                           completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Date.now() : 0
                         }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));

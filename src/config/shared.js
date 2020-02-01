@@ -142,6 +142,8 @@ export const calcReadingTime = pages => calcMinutesToTime(pages * 1.25);
 
 export const calcAge = birthDate => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
 
+export const round = num => Math.round((num + Number.EPSILON) * 10) / 10;
+
 export const timeSince = date => {
   const seconds = Math.floor((new Date() - date) / 1000);
   let interval = Math.floor(seconds / 31536000);

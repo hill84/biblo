@@ -1,5 +1,5 @@
 export const roles = ['admin', 'editor', 'premium', 'public'];
-export const dashboardTabs = ['shelf', 'wishlist', 'activity', 'contacts'];
+export const dashboardTabs = ['shelf', 'wishlist', 'activity', 'statistics', 'contacts'];
 export const profileKeys = ['displayName', 'birth_date', 'continent', 'city', 'languages', 'photoURL', 'sex'];
 export const noteTypes = ['comment', 'follow', 'like', 'recommendation', 'welcome', 'test'];
 export const userBookTypes = ['Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consultazione'];
