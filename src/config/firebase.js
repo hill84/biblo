@@ -4,7 +4,19 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
 
-const config = {
+const isProd = process.env.NODE_ENV === 'production';
+
+const devConfig = {
+  appId: process.env.REACT_APP_FIREBASE_STAGING_APP_ID,
+  apiKey: process.env.REACT_APP_FIREBASE_STAGING_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_STAGING_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_STAGING_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_STAGING_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STAGING_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_STAGING_MESSAGING_SENDER_ID
+};
+
+const ProdConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -13,6 +25,8 @@ const config = {
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID
 };
+
+const config = isProd ? ProdConfig : devConfig;
 
 if (!firebase.apps.length) firebase.initializeApp(config);
 

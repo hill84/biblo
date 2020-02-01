@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "delibris-4fa3b"
+    "default": "delibris-4fa3b",
+    "staging": "delibris-staging"
   }
 }

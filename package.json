@@ -68,6 +68,12 @@
     "https": "export HTTPS=true && npm start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:staging": "firebase deploy -P staging",
+    "deploy:staging:hosting": "firebase deploy -P staging --only hosting",
+    "deploy:staging:functions": "firebase deploy -P staging --only functions",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

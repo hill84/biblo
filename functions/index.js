@@ -8,7 +8,7 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-// firebase deploy --only functions
+// firebase deploy --only functions:function1,functions:function2
 
 // HELPERS
 const ff = functions.region('europe-west1').firestore;
