@@ -15,7 +15,6 @@ import { Bar } from 'react-chartjs-2';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
-const chartLimit = 2;
 const shelf = 'bookInShelf';
 const votes = [1, 2, 3, 4, 5];
 const switchContainerStyle = { top: -22, left: 'inherit', right: -14, };
@@ -104,9 +103,9 @@ const ReadingStats = props => {
 
   const monthsArr = useMemo(() => months.map(m => m.id), []);
 
-  const currentYearBooks = useMemo(() => booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead]);
+  const currentYearBooks = useMemo(() => booksRead && booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead]);
 
-  const readByMonth = useMemo(() => monthsArr.map((month, i) => currentYearBooks.filter(book => new Date(book.readingState.end_num).getMonth() + 1 === i).length), [currentYearBooks, monthsArr]);
+  const readByMonth = useMemo(() => monthsArr && monthsArr.map((month, i) => currentYearBooks && currentYearBooks.filter(book => new Date(book.readingState.end_num).getMonth() + 1 === i).length), [currentYearBooks, monthsArr]);
   
   const item = useCallback(year => readByYear.filter(item => item.year === year)[0], [readByYear]);
   const pages = useCallback(item => item.books.reduce((acc, book) => {
@@ -117,7 +116,7 @@ const ReadingStats = props => {
   const ratings = useCallback(item => item.books && item.books.reduce((acc, book) => acc + book.rating_num, 0), []);
   const reviews_num = useCallback(item => item.books && item.books.reduce((acc, book) => acc + (book.review.text ? 1 : 0), 0), []);
   
-  const data = useMemo(() => yearsRead && monthsArr && {
+  const data = useMemo(() => ((rangeYear && yearsRead) || (!rangeYear && monthsArr)) && {
     labels: rangeYear ? yearsRead : monthsArr,
     datasets: [{
       backgroundColor: 'rgba(0, 151, 167, .5)',
@@ -142,9 +141,7 @@ const ReadingStats = props => {
     tooltips: { enabled: false }
   }), [rangeYear]);
   
-  const showChart = useMemo(() => rangeYear ? yearsRead.length >= chartLimit ? true : false : currentYearBooks.length >= chartLimit ? true : false, [currentYearBooks, rangeYear, yearsRead]);
-  
-  const tableSkltn = useMemo(() => [...Array(showChart ? 3 : 5)].map((e, i) => <li key={i} className="avatar-row skltn dash" />), [showChart]);
+  const tableSkltn = useMemo(() => [...Array(data ? 3 : 5)].map((e, i) => <li key={i} className="avatar-row skltn dash" />), [data]);
   
   if (!loading && !userBooks) return <div className="text-center">Statistiche non disponibili</div>
   
@@ -162,13 +159,13 @@ const ReadingStats = props => {
         <div className="col-lg-9 col-12">
           <div className="row">
             <div className="col-lg-11 col">
-              {data && showChart && (
+              {data && (
                 <div className="relative">
                   <span className="absolute-content pull-right text-sm" style={switchContainerStyle}>
                     <FormControlLabel control={
                       <>
                         <span className={rangeYear ? 'light-text' : ''}>12 mesi</span>
-                        <Switch checked={rangeYear} color="default" disabled={yearsRead.length < chartLimit} onChange={onToggleRange()} size="small" />
+                        <Switch checked={rangeYear} color="default" onChange={onToggleRange()} size="small" />
                         <span className={rangeYear ? '' : 'light-text'}>Anni</span>
                       </>
                     } />
