@@ -352,7 +352,7 @@ ul.nolist {
       --marginBottom: 0; 
       border-bottom: 1px solid var(--ultraLightestTextClr); 
     }
-    &.labels { color: var(--lighterTextClr); font-size: .76rem; user-select: none; border-bottom: 1px solid var(--lightestTextClr); }
+    &.labels { color: var(--lightTextClr); font-size: .76rem; user-select: none; border-bottom: 1px solid var(--lightestTextClr); }
   }
   & .locked:after {
     content: '';

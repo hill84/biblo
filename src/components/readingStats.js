@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import Rater from 'react-rater';
 import { userBooksRef } from '../config/firebase';
 import icon from '../config/icons';
-import { ratingLabels, readingStates } from '../config/lists';
+import { months, ratingLabels, readingStates } from '../config/lists';
 import { diffDays, handleFirestoreError, round } from '../config/shared';
 import { userBooksKey } from '../config/storage';
 import { boolType, stringType } from '../config/types';
@@ -11,9 +11,14 @@ import SnackbarContext from '../context/snackbarContext';
 import '../css/readingStats.css';
 import useLocalStorage from '../hooks/useLocalStorage';
 import UserContext from '../context/userContext';
+import { Bar } from 'react-chartjs-2';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+const chartLimit = 2;
 const shelf = 'bookInShelf';
 const votes = [1, 2, 3, 4, 5];
+const switchContainerStyle = { top: -22, left: 'inherit', right: -14, };
 
 const ReadingStats = props => {
   const { isAuth } = useContext(UserContext);
@@ -22,6 +27,7 @@ const ReadingStats = props => {
   const [loading, setLoading] = useState(isLoading);
   const [userBooks, setUserBooks] = useLocalStorage(`${uid}_${userBooksKey.books}`, null);
   const [timestamp, setTimestamp] = useLocalStorage(`${uid}_${userBooksKey.timestamp}`, null);
+  const [rangeYear, setRangeYear] = useState(false);
   const is = useRef(true);
 
   const isNewDay = useMemo(() => diffDays(new Date(timestamp)) > 0, [timestamp]);
@@ -63,6 +69,10 @@ const ReadingStats = props => {
   useEffect(() => () => {
     is.current = false;
   }, []);
+
+  const onToggleRange = name => e => {
+    setRangeYear(r => !r);
+  };
   
   const ratedBooks = useMemo(() => votes.map(num => userBooks ? userBooks.filter(item => item.rating_num === num).length : 0), [userBooks]);
 
@@ -91,6 +101,12 @@ const ReadingStats = props => {
     const books = booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === year);
     return ({ year, books_num: books.length, books });
   }), [booksRead, yearsRead]);
+
+  const monthsArr = useMemo(() => months.map(m => m.id), []);
+
+  const currentYearBooks = useMemo(() => booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead]);
+
+  const readByMonth = useMemo(() => monthsArr.map((month, i) => currentYearBooks.filter(book => new Date(book.readingState.end_num).getMonth() + 1 === i).length), [currentYearBooks, monthsArr]);
   
   const item = useCallback(year => readByYear.filter(item => item.year === year)[0], [readByYear]);
   const pages = useCallback(item => item.books.reduce((acc, book) => {
@@ -101,15 +117,44 @@ const ReadingStats = props => {
   const ratings = useCallback(item => item.books && item.books.reduce((acc, book) => acc + book.rating_num, 0), []);
   const reviews_num = useCallback(item => item.books && item.books.reduce((acc, book) => acc + (book.review.text ? 1 : 0), 0), []);
   
+  const data = useMemo(() => yearsRead && monthsArr && {
+    labels: rangeYear ? yearsRead : monthsArr,
+    datasets: [{
+      backgroundColor: 'rgba(0, 151, 167, .5)',
+      hoverBackgroundColor: 'rgba(0, 151, 167, .8)',
+      data: rangeYear ? readByYear.map(b => b.books_num) : readByMonth
+    }]
+  }, [monthsArr, rangeYear, readByMonth, readByYear, yearsRead]);
+  
+  const options = useMemo(() => ({
+    legend: {
+      display: false
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          min: 0,
+          suggestedMax: rangeYear ? 12 : 2,
+          stepSize: 1
+        }
+      }]
+    },
+    tooltips: { enabled: false }
+  }), [rangeYear]);
+  
+  const showChart = useMemo(() => rangeYear ? yearsRead.length >= chartLimit ? true : false : currentYearBooks.length >= chartLimit ? true : false, [currentYearBooks, rangeYear, yearsRead]);
+  
+  const tableSkltn = useMemo(() => [...Array(showChart ? 3 : 5)].map((e, i) => <li key={i} className="avatar-row skltn dash" />), [showChart]);
+  
   if (!loading && !userBooks) return <div className="text-center">Statistiche non disponibili</div>
-
-  const tableSkltn = [...Array(6)].map((e, i) => <li key={i} className="avatar-row skltn dash" />);
-
+  
   return (
     <div ref={is}>
       <div className="head row">
-        <h2 className="col">Statistiche <span className="hide-sm">di lettura</span> <Tooltip title={`Aggiornate ogni 24 ore. Conteggiano solo i libri segnati come "letti" con una "data di fine" nello "stato di lettura".`}><button className="link">{icon.informationOutline}</button></Tooltip></h2>
-        {timestamp && <span className="col-auto text-sm light-text">Aggiornate al {new Date(timestamp).toLocaleString()}</span>}
+        <h2 className="col">
+          Statistiche <span className="hide-sm">di lettura</span> <Tooltip title={`Aggiornate ogni 24 ore. Conteggiano solo i libri segnati come "letti" con una "data di fine" nello "stato di lettura".`}><button className="link">{icon.informationOutline}</button></Tooltip>
+        </h2>
+        {timestamp && <span className="col-auto text-sm light-text"><span className="hide-sm">Aggiornate al</span> {new Date(timestamp).toLocaleString()}</span>}
       </div>
 
       <div className="row">
@@ -117,6 +162,21 @@ const ReadingStats = props => {
         <div className="col-lg-9 col-12">
           <div className="row">
             <div className="col-lg-11 col">
+              {data && showChart && (
+                <div className="relative">
+                  <span className="absolute-content pull-right text-sm" style={switchContainerStyle}>
+                    <FormControlLabel control={
+                      <>
+                        <span className={rangeYear ? 'light-text' : ''}>12 mesi</span>
+                        <Switch checked={rangeYear} color="default" disabled={yearsRead.length < chartLimit} onChange={onToggleRange()} size="small" />
+                        <span className={rangeYear ? '' : 'light-text'}>Anni</span>
+                      </>
+                    } />
+                  </span>
+                  <Bar data={data} height={60} options={options} />
+                </div>
+              )}
+
               <ul className="table dense nolist font-sm">
                 <li className="labels">
                   <div className="row">

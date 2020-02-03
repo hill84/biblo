@@ -187,6 +187,21 @@ export const languages = [
   { id: "de", name: "Tedesco", nativeName: "Deutsch" } 
 ];
 
+export const months = [
+  { id: 'jan', eng: 'January', ita: 'Gennaio' }, 
+  { id: 'feb', eng: 'February', ita: 'Febbraio' }, 
+  { id: 'mar', eng: 'March', ita: 'Marzo' }, 
+  { id: 'apr', eng: 'April', ita: 'Aprile' }, 
+  { id: 'may', eng: 'May', ita: 'Maggio' }, 
+  { id: 'jun', eng: 'June', ita: 'Giugno' }, 
+  { id: 'jul', eng: 'July', ita: 'Luglio' }, 
+  { id: 'aug', eng: 'August', ita: 'Agosto' }, 
+  { id: 'sep', eng: 'September', ita: 'Settembre' }, 
+  { id: 'oct', eng: 'October', ita: 'Ottobre' }, 
+  { id: 'nov', eng: 'November', ita: 'Novembre' }, 
+  { id: 'dec', eng: 'December', ita: 'Dicembre'}
+];
+
 export const continents = [
   { id: "AF", name: "Africa" },
   // { id: "AN", name: "Antartide" },
