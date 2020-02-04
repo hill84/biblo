@@ -346,6 +346,11 @@ ul.nolist {
 }
 .dense .avatar-row .avatar { font-size: .55rem; }
 .table {
+  &.bordered {
+    border-radius: var(--radius);
+    border: 1px solid var(--lighterTextClr);
+    & .row { margin-left: 0; margin-right: 0; }
+  }
   & li {
     position: relative;
     &:not(:last-child) { 
@@ -501,6 +506,7 @@ hr.line {
   &.flat {
     --mainTextClr: rgba(var(--contrastedTextClr), .7);
     --cardClr: var(--canvasClr);
+
     background-color: transparent;
     box-shadow: none;
     padding-left: 0;
@@ -595,9 +601,13 @@ hr.line {
     border-radius: 9px;
     margin-left: -4px;
   }
+  & .flat {
+    &:active, &.active { background-color: rgba(var(--blackClr), .03); color: rgb(var(--accentClr)); }
+  }
 }
 .appbar.flat, .card.flat .head.nav {
   --cardClr: var(--canvasClr);
+
   background-color: transparent;
   box-shadow: none;
 }
@@ -739,7 +749,7 @@ button {
   &.flat {
     color: rgb(var(--linkClr));
     &:hover { background-color: rgba(var(--blackClr), .05); }
-    &:active, &.active { background-color: rgba(var(--blackClr), .03); color: rgb(var(--accentClr)); }
+    &:active, &.active { background-color: rgba(var(--blackClr), .03); }
     &:active { background-color: rgba(var(--blackClr), .07); }
   }
   &.icon { padding-left: 0; padding-right: 0; min-width: var(--btnHeight); }

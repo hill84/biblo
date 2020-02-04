@@ -23,10 +23,11 @@ const ReadingStats = props => {
   const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { loading: isLoading, uid } = props;
-  const [loading, setLoading] = useState(isLoading);
   const [userBooks, setUserBooks] = useLocalStorage(`${uid}_${userBooksKey.books}`, null);
   const [timestamp, setTimestamp] = useLocalStorage(`${uid}_${userBooksKey.timestamp}`, null);
+  const [loading, setLoading] = useState(isLoading);
   const [rangeYear, setRangeYear] = useState(false);
+  const [showTable, setShowTable] = useState(false);
   const is = useRef(true);
 
   const isNewDay = useMemo(() => diffDays(new Date(timestamp)) > 0, [timestamp]);
@@ -72,6 +73,8 @@ const ReadingStats = props => {
   const onToggleRange = name => e => {
     setRangeYear(r => !r);
   };
+
+  const onToggleTable = () => setShowTable(s => !s);
   
   const ratedBooks = useMemo(() => votes.map(num => userBooks ? userBooks.filter(item => item.rating_num === num).length : 0), [userBooks]);
 
@@ -103,9 +106,9 @@ const ReadingStats = props => {
 
   const monthsArr = useMemo(() => months.map(m => m.id), []);
 
-  const currentYearBooks = useMemo(() => booksRead && booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead]);
+  const currentYearBooks = useMemo(() => !rangeYear && booksRead && booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead, rangeYear]);
 
-  const readByMonth = useMemo(() => monthsArr && monthsArr.map((month, i) => currentYearBooks && currentYearBooks.filter(book => new Date(book.readingState.end_num).getMonth() + 1 === i).length), [currentYearBooks, monthsArr]);
+  const readByMonth = useMemo(() => !rangeYear && monthsArr && monthsArr.map((month, i) => currentYearBooks && currentYearBooks.filter(book => new Date(book.readingState.end_num).getMonth() === i).length), [currentYearBooks, monthsArr, rangeYear]);
   
   const item = useCallback(year => readByYear.filter(item => item.year === year)[0], [readByYear]);
   const pages = useCallback(item => item.books.reduce((acc, book) => {
@@ -126,14 +129,13 @@ const ReadingStats = props => {
   }, [monthsArr, rangeYear, readByMonth, readByYear, yearsRead]);
   
   const options = useMemo(() => ({
-    legend: {
-      display: false
-    },
+    maintainAspectRatio: false,
+    legend: { display: false },
     scales: {
       yAxes: [{
         ticks: {
           min: 0,
-          suggestedMax: rangeYear ? 12 : 2,
+          suggestedMax: rangeYear ? 6 : 2,
           stepSize: 1
         }
       }]
@@ -155,98 +157,106 @@ const ReadingStats = props => {
       </div>
 
       <div className="row">
-        
-        <div className="col-lg-9 col-12">
-          <div className="row">
-            <div className="col-lg-11 col">
-              {data && (
-                <div className="relative">
-                  <span className="absolute-content pull-right text-sm" style={switchContainerStyle}>
-                    <FormControlLabel control={
-                      <>
-                        <span className={rangeYear ? 'light-text' : ''}>12 mesi</span>
-                        <Switch checked={rangeYear} color="default" onChange={onToggleRange()} size="small" />
-                        <span className={rangeYear ? '' : 'light-text'}>Anni</span>
-                      </>
-                    } />
-                  </span>
-                  <Bar data={data} height={60} options={options} />
-                </div>
-              )}
-
-              <ul className="table dense nolist font-sm">
-                <li className="labels">
-                  <div className="row">
-                    <div className="col">Anno</div>
-                    <div className="col">Libri</div>
-                    <div className="col">Pagine</div>
-                    <div className="col hide-sm">Pag/mese</div>
-                    <div className="col">Voti</div>
-                    <div className="col hide-xs">Voto medio</div>
-                    <div className="col">Recensioni</div>
-                  </div>
-                </li>
-                {loading ? tableSkltn : yearsRead && yearsRead.length ? (
+        <div className="col">
+          {data && (
+            <div className="relative chart-container">
+              <span className="absolute-content pull-right text-sm" style={switchContainerStyle}>
+                <FormControlLabel control={
                   <>
-                    {yearsRead.map(year => (
-                      <li className="avatar-row" key={year}>
+                    <span className={rangeYear ? 'light-text' : 'primary-text'}>12 mesi</span>
+                    <Switch checked={rangeYear} color="default" onChange={onToggleRange()} size="small" />
+                    <span className={rangeYear ? 'primary-text' : 'light-text'}>{yearsRead && yearsRead.length} Anni</span>
+                  </>
+                } />
+              </span>
+              <Bar data={data} height={170} options={options} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {showTable ? (
+        <div className="row reveal fadeIn slideDown">
+          <div className="col-xl-9 col-lg-8 col-12">
+
+            <div className="row">
+              <div className="col-lg-11 col">
+                <h3>Statistiche avanzate</h3>
+                <ul className="table dense nolist font-sm">
+                  <li className="labels">
+                    <div className="row">
+                      <div className="col">Anno</div>
+                      <div className="col">Libri</div>
+                      <div className="col">Pagine</div>
+                      <div className="col hide-sm">Pag/mese</div>
+                      <div className="col">Voti</div>
+                      <div className="col hide-xs">Voto medio</div>
+                      <div className="col">Recensioni</div>
+                    </div>
+                  </li>
+                  {loading ? tableSkltn : yearsRead && yearsRead.length ? (
+                    <>
+                      {yearsRead.map(year => (
+                        <li className="avatar-row" key={year}>
+                          <div className="row">
+                            <div className="col"><b>{year}</b></div>
+                            <div className="col">{item(year).books_num}</div>
+                            <div className="col">{pages(item(year)) || 0}</div>
+                            <div className="col hide-sm">{pages(item(year)) ? round(pages(item(year)) / 12) : '-'}</div>
+                            <div className="col">{ratings_num(item(year))}</div>
+                            <div className="col hide-xs">{round(ratings(item(year)) / item(year).books_num)}</div>
+                            <div className="col">{reviews_num(item(year))}</div>
+                          </div>
+                        </li>
+                      ))}
+                      <li className="avatar-row">
                         <div className="row">
-                          <div className="col"><b>{year}</b></div>
-                          <div className="col">{item(year).books_num}</div>
-                          <div className="col">{pages(item(year)) || 0}</div>
-                          <div className="col hide-sm">{pages(item(year)) ? round(pages(item(year)) / 12) : '-'}</div>
-                          <div className="col">{ratings_num(item(year))}</div>
-                          <div className="col hide-xs">{round(ratings(item(year)) / item(year).books_num)}</div>
-                          <div className="col">{reviews_num(item(year))}</div>
+                          <div className="col"><b>Totale</b></div>
+                          <div className="col">{totalBooksRead}</div>
+                          <div className="col">{totalPagesRead}</div>
+                          <Tooltip title={`${totalPagesRead} pagine / ${yearsRead.length * 12} mesi`}><div className="col hide-sm">{avgPagesRead}</div></Tooltip>
+                          <div className="col">{totalRatings}</div>
+                          <div className="col hide-xs">{avgRating}</div>
+                          <div className="col">{totalReviews}</div>
                         </div>
                       </li>
-                    ))}
-                    <li className="avatar-row">
-                      <div className="row">
-                        <div className="col"><b>Totale</b></div>
-                        <div className="col">{totalBooksRead}</div>
-                        <div className="col">{totalPagesRead}</div>
-                        <Tooltip title={`${totalPagesRead} pagine / ${yearsRead.length * 12} mesi`}><div className="col hide-sm">{avgPagesRead}</div></Tooltip>
-                        <div className="col">{totalRatings}</div>
-                        <div className="col hide-xs">{avgRating}</div>
-                        <div className="col">{totalReviews}</div>
-                      </div>
-                    </li>
-                  </>
-                ) : <li className="empty avatar-row text-center">Nessun libro letto</li>}
-              </ul>
+                    </>
+                  ) : <li className="empty avatar-row text-center">Nessun libro letto</li>}
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="col">
-          <h3>Stato lettura</h3>
-          <ul className="nolist stats-list">
-            {readingStates.map((state, i) => (
-              <li key={i} className={booksByState[i] ? null : 'light-text'}><b>{booksByState[i]}</b> {state}</li>
-            ))}
-          </ul>
-        </div>
-        
-        <div className="col-lg-auto col">
-          <h3>Voti</h3>
-          {ratedBooks && (
+          <div className="col">
+            <h3>Stato lettura</h3>
             <ul className="nolist stats-list">
-              {ratedBooks.map((item, i) => (
-                <li key={i} className={item ? null : 'light-text disabled'}>
-                  <b>{item}</b> <Rater
-                    interactive={false}
-                    rating={i + 1}
-                    title={ratingLabels[i + 1]}
-                    total={ratedBooks.length}
-                  />
-                </li>
+              {readingStates.map((state, i) => (
+                <li key={i} className={booksByState[i] ? null : 'light-text'}><b>{booksByState[i]}</b> {state}</li>
               ))}
             </ul>
-          )}          
-        </div>
+          </div>
 
-      </div>
+          <div className="col col-lg-auto">
+            <h3>Voti</h3>
+            {ratedBooks && (
+              <ul className="nolist stats-list">
+                {ratedBooks.map((item, i) => (
+                  <li key={i} className={item ? null : 'light-text disabled'}>
+                    <b>{item}</b> <Rater
+                      interactive={false}
+                      rating={i + 1}
+                      title={ratingLabels[i + 1]}
+                      total={ratedBooks.length}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}          
+          </div>
+        </div>
+      ) : (
+        <button type="button" className="btn sm rounded flat centered" onClick={onToggleTable}>Mostra statistiche avanzate</button>
+      )}
     </div>
   );
 }
