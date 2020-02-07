@@ -63,7 +63,7 @@ const min = {
 const BookForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { book: _book, isEditing } = props;
+  const { book: _book, onEditing } = props;
   const [book, setBook] = useState({
     ISBN_10: _book.ISBN_10 || (_book.ISBN_13 ? isbn.parse(_book.ISBN_13) ? isbn.parse(_book.ISBN_13).asIsbn10() : 0 : 0), 
     ISBN_13: _book.ISBN_13 || 0, 
@@ -451,7 +451,7 @@ const BookForm = props => {
             if (is.current) {
               setLoading(false);
               setChanges([]);
-              isEditing();
+              onEditing();
               openSnackbar('Modifiche salvate', 'success');
             }
           }).catch(err => {
@@ -501,7 +501,7 @@ const BookForm = props => {
               setRedirectToBook(`${newBid}/${book.title}`)
               // setLoading(false);
               // setChanges([]);
-              // isEditing();
+              // onEditing();
               openSnackbar('Nuovo libro creato', 'success');
               // console.log(`New book created with bid ${newBid}`);
             }
@@ -548,14 +548,14 @@ const BookForm = props => {
         if (errors.incipit) setIsEditingIncipit(true)
         openSnackbar('Ricontrolla i dati inseriti', 'error');
       }
-    } else isEditing();
-  }, [book, changes, imgPreview, isEditing, openSnackbar, _book, user, validate]);
+    } else onEditing();
+  }, [book, changes, imgPreview, onEditing, openSnackbar, _book, user, validate]);
 
   const onExitEditing = useCallback(() => {
     if (changes.length) {
       if (is.current) setIsOpenChangesDialog(true);
-    } else isEditing();
-  }, [changes, isEditing]);
+    } else onEditing();
+  }, [changes, onEditing]);
 
   const onCloseChangesDialog = () => setIsOpenChangesDialog(false);
 
@@ -916,7 +916,7 @@ const BookForm = props => {
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={isEditing}>Esci</button>
+            <button type="button" className="btn btn-footer flat" onClick={onEditing}>Esci</button>
             <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva</button>
           </DialogActions>
         </Dialog>
@@ -927,7 +927,7 @@ const BookForm = props => {
 
 BookForm.propTypes = {
   book: bookType.isRequired,
-  isEditing: funcType.isRequired
+  onEditing: funcType.isRequired
 }
  
 export default BookForm;

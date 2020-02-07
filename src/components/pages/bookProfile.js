@@ -43,7 +43,7 @@ const BookProfile = props => {
     addReview,
     book,
     history,
-    isEditing,
+    onEditing,
     loading,
     location,
     rateBook,
@@ -106,8 +106,6 @@ const BookProfile = props => {
     ? `${location.pathname}/incipit` 
     : location.pathname.replace('/incipit', ''), null);
   };
-
-  const onEditing = () => isEditing();
 
   const onToggleReadingState = () => setIsOpenReadingState(!isOpenReadingState);
 
@@ -399,7 +397,7 @@ BookProfile.propTypes = {
   removeBookFromWishlist: funcType.isRequired,
   removeReview: funcType.isRequired,
   rateBook: funcType.isRequired,
-  isEditing: funcType.isRequired,
+  onEditing: funcType.isRequired,
   userBook: userBookType
 }
 
