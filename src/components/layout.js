@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { Link, NavLink } from 'react-router-dom';
 import { version } from '../../package.json';
@@ -27,6 +27,11 @@ import logo from '../images/logo.svg';
 import Footer from './footer';
 import NoteMenuItem from './noteMenuItem';
 
+const unsub = {
+  fetchNotes: null,
+  timer: null
+};
+
 const Layout = props => {
   const { error, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
@@ -37,43 +42,41 @@ const Layout = props => {
   const [notesAnchorEl, setNotesAnchorEl] = useState(null);
   const is = useRef(true);
 
+  const fetchNotes = useCallback(() => {
+    if (user) {
+      const notes = [];
+      roles.forEach(role => {
+        if (hasRole(user, role)) {
+          unsub.fetchNotes = notesRef(`__${role}`).orderBy('created_num', 'desc').limit(5).onSnapshot(snap => {
+            if (!snap.empty) {
+              snap.forEach(note => {
+                notes.push({ ...note.data(), role })
+              });
+            }
+          });
+        }
+      });
+      notesRef(user.uid).orderBy('created_num', 'desc').limit(10).get().then(snap => {
+        if (!snap.empty) {
+          snap.forEach(note => {
+            notes.push(note.data());
+          });
+          if (is.current) setNotes(notes);
+        }
+      }).catch(err => console.warn(err));
+    } else if (is.current) setNotes(null);
+  }, [user]);
+
   useEffect(() => {
-    let unsubNotesFetch;
-
-    const fetchNotes = () => {
-      if (user) {
-        const notes = [];
-        roles.forEach(role => {
-          if (hasRole(user, role)) {
-            unsubNotesFetch = notesRef(`__${role}`).orderBy('created_num', 'desc').limit(5).onSnapshot(snap => {
-              if (!snap.empty) {
-                snap.forEach(note => {
-                  notes.push({ ...note.data(), role })
-                });
-              }
-            });
-          }
-        });
-        notesRef(user.uid).orderBy('created_num', 'desc').limit(10).get().then(snap => {
-          if (!snap.empty) {
-            snap.forEach(note => {
-              notes.push(note.data());
-            });
-            if (is.current) setNotes(notes);
-          }
-        }).catch(err => console.warn(err));
-      } else if (is.current) setNotes(null);
-    }
-
-    const unsubTimer = setTimeout(() => {
+    unsub.timer = setTimeout(() => {
       fetchNotes();
     }, 1000);
 
     return () => {
-      unsubNotesFetch && unsubNotesFetch();
-      unsubTimer && clearTimeout(unsubTimer);
+      unsub.fetchNotes && unsub.fetchNotes();
+      unsub.timer && clearTimeout(unsub.timer);
     }
-  }, [user]);
+  }, [fetchNotes]);
 
   useEffect(() => {
     if (error) openSnackbar(error, 'error', 9000);
@@ -98,7 +101,7 @@ const Layout = props => {
   }
   const onCloseNotes = () => setNotesAnchorEl(null);
 
-  const toRead = notes => notes && notes.filter(note => !note.read || note.role);
+  const toRead = useCallback(notes => notes && notes.filter(note => !note.read || note.role), []);
 
   return (
     <div id="layoutComponent" ref={is}>
