@@ -3,18 +3,20 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import React, { Component } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userChallenge, userChallenges } from '../config/firebase';
 import icon from '../config/icons';
 import { userBookTypes } from '../config/lists';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
-import { funcType, stringType } from '../config/types';
+import { stringType } from '../config/types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
+import SnackbarContext from '../context/snackbarContext';
 
 const filterBy = userBookTypes;
+
 const orderBy = [ 
   { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar }, 
   { type: 'title', label: 'Titolo', icon: icon.formatTitle }, 
@@ -22,292 +24,326 @@ const orderBy = [
   { type: 'authors', label: 'Autore', icon: icon.accountEdit }
 ];
 
-export default class Shelf extends Component {
-  state = {
-    coverview: true,
-    desc: true,
-    filterByIndex: 0,
-    filterMenuAnchorEl: null,
-    isOwner: this.props.luid === this.props.uid,
-    limit: booksPerRow() * 2 - (this.props.luid === this.props.uid ? 1 : 0),
-    loading: true,
-    orderByIndex: 0,
-    orderMenuAnchorEl: null,
-    shelf: this.props.shelf || 'bookInShelf',
-    items: [],
-    count : 0,
-    pagination: true,
-    page: 1
-  }
+const unsub = {
+  userBooksFetch: null,
+  userBooksFullFetch: null
+};
 
-  static propTypes = {
-    openSnackbar: funcType.isRequired,
-    shelf: stringType,
-    luid: stringType,
-    uid: stringType.isRequired
-  }
+const pagination = true;
 
-  static defaultProps = {
-    shelf: null,
-    luid: null
-  }
+const Shelf = props => {
+  const { luid, uid } = props;
+  const isOwner = useMemo(() => luid === uid, [luid, uid]);
+  const { openSnackbar } = useContext(SnackbarContext);
+  const [coverview, setCoverview] = useState(true);
+  const [desc, setDesc] = useState(true);
+  const [filterByIndex, setFilterByIndex] = useState(0);
+  const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState(null);
+  const [limit, setLimit] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [orderByIndex, setOrderByIndex] = useState(0);
+  const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState(null);
+  const [items, setItems] = useState([]);
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const shelf = props.shelf || 'bookInShelf';
+  const is = useRef(true);
 
-  componentDidMount() {
-    this._isMounted = true;
-    this.fetchUserBooks();
-    window.addEventListener('resize', this.updateLimit);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { desc, filterByIndex, limit, orderByIndex } = this.state;
-    const { luid, uid } = this.props;
-    if (desc !== prevState.desc || filterByIndex !== prevState.filterByIndex || limit !== prevState.limit ||  orderByIndex !== prevState.orderByIndex || (luid && (luid !== prevProps.luid)) || uid !== prevProps.uid) {
-      this.fetchUserBooks();
-    } else if (!luid && (luid !== prevProps.luid)) {
-      if (this._isMounted) {
-        this.setState({ isOwner: false });
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.unsubUserBooksFullFetch && this.unsubUserBooksFullFetch();
-    this.unsubUserBooksFetch && this.unsubUserBooksFetch();
-    window.removeEventListener('resize', this.updateLimit);
-  }
-
-  updateLimit = () => {
-    const { luid, uid } = this.props;
-    this._isMounted && this.setState({ limit: booksPerRow() * 2 - (luid === uid ? 1 : 0) });
-  }
-
-  fetchUserBooks = e => {
-    const { desc, filterByIndex, limit, orderByIndex, page, shelf } = this.state;
-    const { luid, openSnackbar, uid } = this.props;
-    const direction = e && e.currentTarget.dataset.direction;
-
-    if (uid) {
-      const prev = direction === 'prev';
-      const startAt = direction ? prev ? ((page - 1) * limit) - limit : page * limit : 0;
-      const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
-      const shelfRef = filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
-      const empty = { 
-        isOwner: luid === uid,
-        count: 0, 
-        items: [],
-        loading: false,
-        page: 1
-      };
+  const updateLimit = useCallback(() => {
+    if (is.current) setLimit((booksPerRow() * 2) - (isOwner ? 1 : 0));
+  }, [isOwner]);
   
-      this.unsubUserBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
+  useEffect(() => {
+    window.addEventListener('resize', updateLimit());
+
+    return () => {
+      window.removeEventListener('resize', updateLimit());
+    }
+  }, [updateLimit]);
+
+  const fetchChallenges = useCallback(fullBooks => {
+    if (isOwner) {
+      userChallenges(luid).get().then(snap => {
+        if (!snap.empty) {
+          const challenges = [];
+          snap.forEach(doc => challenges.push(doc.data()));
+          // UPDATE READING STATE OF CHALLENGE BOOKS 
+          const { cid } = challenges[0];
+          const cBooks = { ...challenges[0].books };
+          Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
+            fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
+              cBooks[item.bid] = true;
+            });
+          });
+          Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
+            fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
+              cBooks[item.bid] = false;
+            });
+          });
+          if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
+            console.warn(cBooks);
+            userChallenge(luid, cid).update({ 
+              books: cBooks, 
+              completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Date.now() : 0
+            }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          } // else console.log('No challenge books to update');
+        }
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    }
+  }, [isOwner, luid, openSnackbar]);
+
+  const setEmptyState = useCallback(() => {
+    if (is.current) {
+      setCount(0);
+      setItems([]);
+      setLoading(false);
+      setPage(1);
+    }
+  }, []);
+
+  const shelfRef = useMemo(() => {
+    const baseRef = userBooksRef(uid).where(shelf, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
+    return filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
+  }, [desc, filterByIndex, orderByIndex, shelf, uid]);
+
+  const fetch = useCallback(() => {
+    if (uid && limit) {
+      unsub.userBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
         if (!fullSnap.empty) { 
-          if (this._isMounted) this.setState({ count: fullSnap.docs.length });
+          if (is.current) setCount(fullSnap.docs.length);
           const fullBooks = [];
           fullSnap.forEach(fullUserBook => fullBooks.push({ 
-            readingState: { state_num: fullUserBook.data().readingState.state_num }, bid: fullUserBook.id 
+            bid: fullUserBook.id, 
+            readingState: { state_num: fullUserBook.data().readingState.state_num }
           }));
           
-          const lastVisible = fullSnap.docs[startAt];
-          const ref = direction && lastVisible ? shelfRef.startAt(lastVisible) : shelfRef;
-          this.unsubUserBooksFetch = ref.limit(limit).onSnapshot(snap => {
-            if (this._isMounted) this.setState({ loading: true });
+          unsub.userBooksFetch = shelfRef.limit(limit).onSnapshot(snap => {
             if (!snap.empty) {
               const items = [];
               snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
-              if (this._isMounted) {
-                this.setState(prevState => ({ 
-                  isOwner: luid === uid,
-                  items,
-                  loading: false,
-                  page: direction ? prev ? prevState.page > 1 ? prevState.page - 1 : 1 : (prevState.page * prevState.limit) > prevState.count ? prevState.page : prevState.page + 1 : 1
-                }), () => {
-                  // GET CHALLENGES
-                  luid === uid && userChallenges(luid).get().then(snap => {
-                    if (!snap.empty) {
-                      const challenges = [];
-                      snap.forEach(doc => challenges.push(doc.data()));
-                      // UPDATE READING STATE OF CHALLENGE BOOKS 
-                      const { cid } = challenges[0];
-                      const cBooks = { ...challenges[0].books };
-                      Object.keys(cBooks).filter(bid => !cBooks[bid]).forEach(bid => {
-                        fullBooks.filter(item => item.bid === bid && item.readingState.state_num === 3).forEach(item => {
-                          cBooks[item.bid] = true;
-                        });
-                      });
-                      Object.keys(cBooks).filter(bid => cBooks[bid]).forEach(bid => {
-                        fullBooks.filter(item => item.bid === bid && item.readingState.state_num !== 3).forEach(item => {
-                          cBooks[item.bid] = false;
-                        });
-                      });
-                      if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
-                        console.warn(cBooks);
-                        userChallenge(luid, cid).update({ 
-                          books: cBooks, 
-                          completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Date.now() : 0
-                        }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-                      } // else console.log('No challenge books to update');
-                    }
-                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-                });
+              // console.log({ direction, limit, page, count });
+              if (is.current && count) {
+                setItems(items);
+                setLoading(false);
               }
-            } else if (this._isMounted) this.setState(empty);
+              fetchChallenges(fullBooks);
+            } else setEmptyState();
           });
-        } else if (this._isMounted) this.setState(empty);
+        } else setEmptyState();
       });
-    } else console.warn(`No uid: ${uid}`);
-  }
-
-  onChangeOrderBy = (e, i) => this._isMounted && this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
-
-  onChangeFilterBy = (e, i) => this._isMounted && this.setState({ filterByIndex: i, filterMenuAnchorEl: null, page: 1 });
-
-  onChangeSelect = name => e => {
-    const { value } = e.target;
-    
-    if (this._isMounted) {
-      this.setState(prevState => ({ 
-        // success: false, changes: true, 
-        user: { ...prevState.user, [name]: value },
-        errors: { ...prevState.errors, [name]: null } 
-      }));
     }
-	};
+  }, [count, fetchChallenges, limit, setEmptyState, shelfRef, uid]);
 
-  onToggleDesc = () => this._isMounted && this.setState(prevState => ({ desc: !prevState.desc }));
+  const getStartAtIndex = useCallback(prev => prev ? ((page - 1) * limit) - limit : page * limit, [limit, page]);
 
-  onToggleView = () => this._isMounted && this.setState(prevState => ({ coverview: !prevState.coverview }));
+  const fetchNext = useCallback(e => {
+    const direction = e && e.currentTarget.dataset.direction;
+    const prev = direction === 'prev';
 
-  onOpenOrderMenu = e => this._isMounted && this.setState({ orderMenuAnchorEl: e.currentTarget });
-  onCloseOrderMenu = () => this._isMounted && this.setState({ orderMenuAnchorEl: null });
+    if (uid && limit) {
+      unsub.userBooksFullFetch = shelfRef.onSnapshot(fullSnap => {
+        if (!fullSnap.empty) { 
+          if (is.current) setCount(fullSnap.docs.length);
+          const fullBooks = [];
+          fullSnap.forEach(fullUserBook => fullBooks.push({ 
+            bid: fullUserBook.id, 
+            readingState: { state_num: fullUserBook.data().readingState.state_num }
+          }));
 
-  onOpenFilterMenu = e => {
+          const ref = shelfRef.startAt(fullSnap.docs[getStartAtIndex(prev)]);
+          
+          unsub.userBooksFetch = ref.limit(limit).onSnapshot(snap => {
+            if (!snap.empty) {
+              const items = [];
+              snap.forEach(userBook => items.push({ ...userBook.data(), bid: userBook.id }));
+              // console.log({ direction, limit, page, count });
+              if (is.current && count) {
+                setItems(items);
+                setPage(page => (prev ? page > 1 ? page - 1 : 1 : page * limit > count ? page : page + 1));
+                setLoading(false);
+              }
+              fetchChallenges(fullBooks);
+            } else setEmptyState();
+          });
+        } else setEmptyState();
+      });
+    }
+  }, [count, fetchChallenges, getStartAtIndex, limit, setEmptyState, shelfRef, uid]);
+
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  useEffect(() => () => {
+    is.current = false;
+    unsub.userBooksFullFetch && unsub.userBooksFullFetch();
+    unsub.userBooksFetch && unsub.userBooksFetch();
+  }, []);
+
+  const onChangeOrderBy = useCallback((e, i) => {
+    if (is.current) {
+      setOrderByIndex(i);
+      setOrderMenuAnchorEl(null);
+      setPage(1);
+    }
+  }, []);
+
+  const onChangeFilterBy = useCallback((e, i) => {
+    if (is.current) {
+      setFilterByIndex(i);
+      setFilterMenuAnchorEl(null);
+      setPage(1);
+    }
+  }, []);
+
+  const onToggleDesc = useCallback(() => setDesc(desc => !desc), []);
+
+  const onToggleView = useCallback(() => setCoverview(coverview => !coverview), []);
+
+  const onOpenOrderMenu = useCallback(e => setOrderMenuAnchorEl(e.currentTarget), []);
+  
+  const onCloseOrderMenu = useCallback(() => setOrderMenuAnchorEl(null), []);
+
+  const onOpenFilterMenu = useCallback(e => {
     e.persist();
-    if (this._isMounted) this.setState({ filterMenuAnchorEl: e.currentTarget });
-  }
-  onCloseFilterMenu = () => this._isMounted && this.setState({ filterMenuAnchorEl: null });
+    if (is.current) setFilterMenuAnchorEl(e.currentTarget);
+  }, []);
 
-  render() {
-    const { coverview, desc, filterByIndex, filterMenuAnchorEl, isOwner, limit, loading, orderByIndex, orderMenuAnchorEl, page, pagination, shelf, items, count } = this.state;
+  const onCloseFilterMenu = useCallback(() => setFilterMenuAnchorEl(null), []);
 
-    const covers = items && items.length > 0 && items.map((book, i) => (
-      <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} index={i} rating={shelf === 'bookInShelf'} /></Link>
-    ));
-    const filterByOptions = filterBy.map((option, i) => (
-      <MenuItem
-        key={i}
-        disabled={i === -1}
-        selected={i === filterByIndex}
-        onClick={e => this.onChangeFilterBy(e, i)}>
-        {option}
-      </MenuItem>
-    ));
-    const orderByOptions = orderBy.map((option, i) => (
-      <MenuItem
-        key={option.type}
-        className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : ''}
-        disabled={i === -1}
-        selected={i === orderByIndex}
-        onClick={e => this.onChangeOrderBy(e, i)}>
-        <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
-        <Typography variant="inherit">{orderBy[i].label}</Typography>
-      </MenuItem>
-    ));
-    const EmptyState = () => (
-      <div className="info-row empty text-center">
-        Nessuna libro <span className="hide-xs">trovato</span>
-      </div>
-    );
+  const covers = useMemo(() => items && items.length > 0 && items.map((book, i) => (
+    <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}>
+      <Cover book={book} index={i} rating={shelf === 'bookInShelf'} />
+    </Link>
+  )), [items, shelf]);
 
-    return (
-      <>
-        <div className="shelf">
-          <div className="collection hoverable-items">
-            <div className="head nav">
-              <div className="row">
-                <div className="col">
-                  <button 
-                    type="button"
-                    className="btn sm flat counter icon" 
-                    disabled={!count}
-                    title={coverview ? 'Stack view' : 'Cover view'} 
-                    onClick={this.onToggleView}>
-                    {coverview ? icon.viewSequential : icon.viewGrid}
-                  </button>
-                  {shelf === 'bookInShelf' && 
-                    <>
-                      <button 
-                        type="button"
-                        className="btn sm flat counter" 
-                        // disabled={!count}
-                        onClick={this.onOpenFilterMenu}>
-                        {filterBy[filterByIndex]}
-                      </button>
-                      <Menu 
-                        className="dropdown-menu"
-                        anchorEl={filterMenuAnchorEl} 
-                        open={Boolean(filterMenuAnchorEl)} 
-                        onClose={this.onCloseFilterMenu}>
-                        {filterByOptions}
-                      </Menu>
-                    </>
-                  }
-                  <span className="counter last hide-sm">{count !== items.length ? `${items.length} di ` : ''}{count} libr{count !== 1 ? 'i' : 'o'}</span>
-                </div>
-                <div className="col-auto">
+  const filterByOptions = useMemo(() => filterBy.map((option, i) => (
+    <MenuItem
+      key={i}
+      disabled={i === -1}
+      selected={i === filterByIndex}
+      onClick={e => onChangeFilterBy(e, i)}>
+      {option}
+    </MenuItem>
+  )), [filterByIndex, onChangeFilterBy]);
+
+  const orderByOptions = useMemo(() => orderBy.map((option, i) => (
+    <MenuItem
+      key={option.type}
+      className={shelf !== 'bookInShelf' && option.type === 'rating_num' ? 'hide-always' : ''}
+      disabled={i === -1}
+      selected={i === orderByIndex}
+      onClick={e => onChangeOrderBy(e, i)}>
+      <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
+      <Typography variant="inherit">{orderBy[i].label}</Typography>
+    </MenuItem>
+  )), [onChangeOrderBy, orderByIndex, shelf]);
+
+  const EmptyState = useCallback(() => (
+    <div className="info-row empty text-center">
+      Nessuna libro <span className="hide-xs">trovato</span>
+    </div>
+  ), []);
+
+  return (
+    <div className="shelf" ref={is}>
+      <div className="collection hoverable-items">
+        <div className="head nav">
+          <div className="row">
+            <div className="col">
+              <button 
+                type="button"
+                className="btn sm flat counter icon" 
+                disabled={!count}
+                title={coverview ? 'Stack view' : 'Cover view'} 
+                onClick={onToggleView}>
+                {coverview ? icon.viewSequential : icon.viewGrid}
+              </button>
+              {shelf === 'bookInShelf' && (
+                <>
                   <button 
                     type="button"
                     className="btn sm flat counter" 
-                    onClick={this.onOpenOrderMenu} 
-                    disabled={count < 2}>
-                    <span className="hide-sm">Ordina per {orderBy[orderByIndex].label}</span>
-                    <span className="show-sm">{orderBy[orderByIndex].icon}</span>
+                    // disabled={!count}
+                    onClick={onOpenFilterMenu}>
+                    {filterBy[filterByIndex]}
                   </button>
                   <Menu 
                     className="dropdown-menu"
-                    anchorEl={orderMenuAnchorEl} 
-                    open={Boolean(orderMenuAnchorEl)} 
-                    onClose={this.onCloseOrderMenu}>
-                    {orderByOptions}
+                    anchorEl={filterMenuAnchorEl} 
+                    open={Boolean(filterMenuAnchorEl)} 
+                    onClose={onCloseFilterMenu}>
+                    {filterByOptions}
                   </Menu>
-                  <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
-                    <span>
-                      <button
-                        type="button"
-                        className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`}
-                        onClick={this.onToggleDesc}
-                        disabled={count < 2}>
-                        {icon.arrowDown}
-                      </button>
-                    </span>
-                  </Tooltip>
-                </div>
-              </div>
+                </>
+              )}
+              <span className="counter last hide-sm">{count !== items.length ? `${items.length} di ` : ''}{count} libr{count !== 1 ? 'i' : 'o'}</span>
             </div>
-            {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow :
-              <div className={`shelf-row ${coverview ? 'coverview' : 'stacked'}`} style={{ gridTemplateColumns: !count && '1fr', }}>
-                {isOwner &&
-                  <Link to="/books/add">
-                    <div className="book empty">
-                      <div className="cover"><div className="add">+</div></div>
-                      <div className="info"><b className="title">Aggiungi libro</b></div>
-                    </div>
-                  </Link>
-                }
-                {covers || (!isOwner && <EmptyState />)}
-              </div>
-            }
-            {pagination && 
-              <PaginationControls 
-                count={count} 
-                fetch={this.fetchUserBooks}
-                limit={limit}
-                page={page}
-              />
-            }
+            <div className="col-auto">
+              <button 
+                type="button"
+                className="btn sm flat counter" 
+                onClick={onOpenOrderMenu} 
+                disabled={count < 2}>
+                <span className="hide-sm">Ordina per {orderBy[orderByIndex].label}</span>
+                <span className="show-sm">{orderBy[orderByIndex].icon}</span>
+              </button>
+              <Menu 
+                className="dropdown-menu"
+                anchorEl={orderMenuAnchorEl} 
+                open={Boolean(orderMenuAnchorEl)} 
+                onClose={onCloseOrderMenu}>
+                {orderByOptions}
+              </Menu>
+              <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+                <span>
+                  <button
+                    type="button"
+                    className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`}
+                    onClick={onToggleDesc}
+                    disabled={count < 2}>
+                    {icon.arrowDown}
+                  </button>
+                </span>
+              </Tooltip>
+            </div>
           </div>
         </div>
-      </>
-    );
-  }
+        {loading ? !coverview ? skltn_shelfStack : skltn_shelfRow : (
+          <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`} style={{ gridTemplateColumns: !count && '1fr', }}>
+            {isOwner && (
+              <Link to="/books/add">
+                <div className="book empty">
+                  <div className="cover"><div className="add">+</div></div>
+                  <div className="info"><b className="title">Aggiungi libro</b></div>
+                </div>
+              </Link>
+            )}
+            {covers || (!isOwner && <EmptyState />)}
+          </div>
+        )}
+        {pagination && (
+          <PaginationControls 
+            count={count} 
+            fetch={fetchNext}
+            limit={limit}
+            page={page}
+          />
+        )}
+      </div>
+    </div>
+  );
 }
+
+Shelf.propTypes = {
+  shelf: stringType,
+  luid: stringType,
+  uid: stringType.isRequired
+}
+
+Shelf.defaultProps = {
+  shelf: null,
+  luid: null
+}
+ 
+export default Shelf;
