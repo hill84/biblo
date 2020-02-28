@@ -6,14 +6,191 @@
   xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" 
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
   xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-
-  <url> <loc>https://biblo.space/book/RlCS5M18sFjduVK6Qq2w/Doctor_Sleep</loc> </url>
-  <url> <loc>https://biblo.space/book/RfqeOL9roGSQvFASerAW/La_casa_degli_spiriti</loc> </url>
+  <url> <loc>https://biblo.space/book/J3TBQzfetTtrC0RdptpJ/Il_dominatore_delle_tenebre</loc> </url>
+  <url> <loc>https://biblo.space/book/bALhHUkrY6pHfNNZaLAA/Abisso</loc> </url>
+  <url> <loc>https://biblo.space/book/5WPD9dZS3Nzjh6CkqflV/Cecit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/q6J74QCuDe5I6s6epDT1/Gioco_come_sono</loc> </url>
+  <url> <loc>https://biblo.space/book/GwoDRl5srDMJkxZaD9dT/Factfulness</loc> </url>
+  <url> <loc>https://biblo.space/book/Tj994SEUgxm75a2b5Pmh/Bla_bla_bla</loc> </url>
+  <url> <loc>https://biblo.space/book/tFL2BSy5f3MJRqtsvtw2/La_resa_dei_conti</loc> </url>
+  <url> <loc>https://biblo.space/book/k0qVgg9T4dBZZmAEABdG/L'inganno_uccide</loc> </url>
+  <url> <loc>https://biblo.space/book/2GyCvFZdbunh5Bgnh370/Io_sono_leggenda</loc> </url>
+  <url> <loc>https://biblo.space/book/4XFaU42873B0xBVITWRp/Che_cosa_sono_gli_algoritmi</loc> </url>
+  <url> <loc>https://biblo.space/book/X9brM5NhIsax0K6h5DQ7/Spillover</loc> </url>
+  <url> <loc>https://biblo.space/book/N4cuCqkcL5LOjrS5wDXq/Da_te_solo_a_tutto_il_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/b1iL7el3AOyxy2vR0zfA/Collasso</loc> </url>
+  <url> <loc>https://biblo.space/book/YjL3P8ZzWCoBZF25464h/Crisi</loc> </url>
+  <url> <loc>https://biblo.space/book/Zpxz4pj7xOZSq6FcpOdE/Buonisti_un_ca**o</loc> </url>
+  <url> <loc>https://biblo.space/book/baeBB3QQ099rL5Q7wV8M/Le_colpe_degli_altri</loc> </url>
+  <url> <loc>https://biblo.space/book/Y0GUHmj4OuFNhvpdGsbY/La_piuma_magica_di_Gwendy</loc> </url>
+  <url> <loc>https://biblo.space/book/FLEbPkG2ArM3W2nMF4GU/Tempesta_e_furia</loc> </url>
+  <url> <loc>https://biblo.space/book/RAKUqkIZaqr4RoPS6TfT/Imperfezione</loc> </url>
+  <url> <loc>https://biblo.space/book/4jLKZ6Ji86p4w1UbNXuE/Armi,_acciaio_e_malattie</loc> </url>
+  <url> <loc>https://biblo.space/book/Yiespec43UVdipEWZozO/L'assassinio_del_Commendatore</loc> </url>
+  <url> <loc>https://biblo.space/book/psNwWRnTnLH6mBp5LneY/Altered_Carbon</loc> </url>
+  <url> <loc>https://biblo.space/book/hwJJGvgQs3Ie8UMam0E5/Angeli_spezzati</loc> </url>
+  <url> <loc>https://biblo.space/book/jMuLq5qar5Sg074lI7IY/Il_ritorno_delle_furie</loc> </url>
+  <url> <loc>https://biblo.space/book/FYNWVQKhw9ZThzMfQZoB/Il_tempo_della_guerra</loc> </url>
+  <url> <loc>https://biblo.space/book/cWTFOswcHEXofw2we7Sz/Il_priorato_dell'albero_delle_arance</loc> </url>
+  <url> <loc>https://biblo.space/book/fUILHfW66yr0I5xMc7FH/La_sostituta</loc> </url>
+  <url> <loc>https://biblo.space/book/X6NG1xu6RysOwSkjchZ6/Fiore_del_deserto</loc> </url>
+  <url> <loc>https://biblo.space/book/HoLZgVewfNhHNPbgPDHV/Find_Me._Ora</loc> </url>
+  <url> <loc>https://biblo.space/book/4O4G2HliThqmfETHAiuM/Il_diritto_di_opporsi</loc> </url>
+  <url> <loc>https://biblo.space/book/3ifYCMPG5w9SkZ4jAfkr/%C3%89lite._Amore_e_potere</loc> </url>
+  <url> <loc>https://biblo.space/book/UVn7fogP0mOmfYKzfRvS/%C3%89lite._Ossessione_e_potere</loc> </url>
+  <url> <loc>https://biblo.space/book/IyKG3pSaVi3cp2hUu5ys/L'ultima_regina</loc> </url>
+  <url> <loc>https://biblo.space/book/UIFef5UgQtnWikIswlCl/Il_battesimo_del_fuoco</loc> </url>
+  <url> <loc>https://biblo.space/book/rVAdSXpBONYcFOjhZJQi/Il_giorno_mangia_la_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/AhIJLkCuNU8kqUElue6b/La_fiamma_nel_buio</loc> </url>
+  <url> <loc>https://biblo.space/book/EpHsRpqnsZ6TGVmtxuu4/Il_genio_delle_donne</loc> </url>
+  <url> <loc>https://biblo.space/book/tuFpNXzXaS3deUUfuLDH/Racconti</loc> </url>
+  <url> <loc>https://biblo.space/book/VdFMb4eYmDjXLr2O6ju0/I_colori_dell'incendio</loc> </url>
+  <url> <loc>https://biblo.space/book/XDm9W1colPJ2nmoKAQvr/Salina._I_tre_esili</loc> </url>
+  <url> <loc>https://biblo.space/book/Q2bwr45D7Czje0VNCX25/Dietro_le_quinte_della_storia</loc> </url>
+  <url> <loc>https://biblo.space/book/wvjjepdnjDniovokkS3j/Dove_sono_i_bambini?</loc> </url>
+  <url> <loc>https://biblo.space/book/aVa0J0N0XXt4lCAAqveG/Missione_vendetta</loc> </url>
+  <url> <loc>https://biblo.space/book/80YjvAIEloZm1Z4JMoQM/Liliana_Segre._Il_mare_nero_dell'indifferenza</loc> </url>
+  <url> <loc>https://biblo.space/book/TL6bgZCvbvB94lYz5iMz/La_memoria_rende_liberi</loc> </url>
+  <url> <loc>https://biblo.space/book/i9apXANy1ET24oPAdieu/In_ogni_caso_nessun_rimorso</loc> </url>
+  <url> <loc>https://biblo.space/book/HwYX7zyJCiuLlzIkIX5H/Epidemia_mortale</loc> </url>
+  <url> <loc>https://biblo.space/book/s9oo8LpVHyHclMce5TDG/Il_canto_dell'usignolo</loc> </url>
+  <url> <loc>https://biblo.space/book/aziFo3z4ZugSxkXsSnu2/Inferno_sulla_terra</loc> </url>
+  <url> <loc>https://biblo.space/book/JMFIrqinsZl9cNl2DrNg/La_nube_purpurea</loc> </url>
+  <url> <loc>https://biblo.space/book/BUUFGGUGXb3qSZFD35qx/Ricordare_Parigi</loc> </url>
+  <url> <loc>https://biblo.space/book/Ak6GLOC4KsdsgW8hiCOD/La_scatola_delle_preghiere</loc> </url>
+  <url> <loc>https://biblo.space/book/HMmCWVpkNhHCGowlRzLa/I_migliori_anni</loc> </url>
+  <url> <loc>https://biblo.space/book/ndtycExo1W7uIlRJQ18s/Il_destino_del_faraone</loc> </url>
+  <url> <loc>https://biblo.space/book/cKLhIosdi1cjNsf4dSYY/Scomparsa</loc> </url>
+  <url> <loc>https://biblo.space/book/weNpGpR5YrjeIZ6AbXwJ/La_pietra_lunare_di_Satapur</loc> </url>
+  <url> <loc>https://biblo.space/book/nqx0fy9P4Th2nrGZtbbp/Le_vedove_di_Malabar_Hill</loc> </url>
+  <url> <loc>https://biblo.space/book/Gt83rlPbO9Xv2jZsUp8p/La_confraternita_degli_storici_curiosi</loc> </url>
+  <url> <loc>https://biblo.space/book/gWd49Qb5hxyUX5SZJwyC/Il_museo_delle_promesse_infrante</loc> </url>
+  <url> <loc>https://biblo.space/book/JcDcH53MF7yN0okmRHzk/L'architettrice</loc> </url>
+  <url> <loc>https://biblo.space/book/gB4GhOtaY62Wtqkbpkvo/Showboat,_la_vita_di_Kobe_Bryant</loc> </url>
+  <url> <loc>https://biblo.space/book/lZvmu7MmNXdV0AuqPSMW/Presenza_oscura</loc> </url>
+  <url> <loc>https://biblo.space/book/jY1uettwX3M241vVd4hJ/Un_trono_in_fiamme</loc> </url>
+  <url> <loc>https://biblo.space/book/svvg4kteXk7rbUVHsYvS/I_Lupi_di_Venezia</loc> </url>
+  <url> <loc>https://biblo.space/book/VLE2rokjztQKhV5IDDug/1793</loc> </url>
+  <url> <loc>https://biblo.space/book/q3mAtjZkursPHTSrc91M/Zarina</loc> </url>
+  <url> <loc>https://biblo.space/book/8ZpCWg76tCNVSmVPpSMP/Il_pittore_di_anime</loc> </url>
+  <url> <loc>https://biblo.space/book/e0s2hecd8qUwIHz95cj4/La_casa_degli_specchi</loc> </url>
+  <url> <loc>https://biblo.space/book/9htkWLgoJvHwhajhLnej/Il_profumo</loc> </url>
+  <url> <loc>https://biblo.space/book/hI1Ok3cAaPqbFiaM298b/Il_montacarichi</loc> </url>
+  <url> <loc>https://biblo.space/book/NpLps9fQ0YpYqTsx74tn/L'Italia_in_seconda_classe</loc> </url>
+  <url> <loc>https://biblo.space/book/skBqpmhpFIbbeNbx44Hg/Dove_tutto_%C3%A8_a_met%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/vMQM9VQPvLEHLsaMmDOr/Manuale_per_ragazze_rivoluzionarie</loc> </url>
+  <url> <loc>https://biblo.space/book/4jDmqixKVnOzXIKKftbE/L'infinito_senza_farci_caso</loc> </url>
+  <url> <loc>https://biblo.space/book/jgcshCwgu58X40fviaEh/Bellezza_rubata</loc> </url>
+  <url> <loc>https://biblo.space/book/JOZLM6xGhKABBj7wz8AU/La_signorina_Else</loc> </url>
+  <url> <loc>https://biblo.space/book/617TLl8UQGzOSvIS5UU3/Un_complicato_atto_d'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/8yXCCWAmr1tabRxhnlh3/Ragazze_elettriche</loc> </url>
+  <url> <loc>https://biblo.space/book/S5HaTO6UM028YZB5qMYw/E_poi,_Paulette...</loc> </url>
+  <url> <loc>https://biblo.space/book/xZGbb9eEykSCSAedm7Be/L'anello_di_Salomone</loc> </url>
+  <url> <loc>https://biblo.space/book/3Xw9141Dsqw5nW20csV8/L'amuleto_di_Samarcanda</loc> </url>
+  <url> <loc>https://biblo.space/book/bTMDatlS7ZvcT158ZPAZ/L'occhio_del_Golem</loc> </url>
+  <url> <loc>https://biblo.space/book/OVRmA3jCERbeV2QjkGg1/La_porta_di_Tolomeo</loc> </url>
+  <url> <loc>https://biblo.space/book/PbzFzFlynQWTWj9nFRWX/Cieli_perduti</loc> </url>
+  <url> <loc>https://biblo.space/book/jmmaVrXsBK8XxPWDwsFD/LSD</loc> </url>
+  <url> <loc>https://biblo.space/book/tTpg2dz8GkKUphhLJzjr/Non_ne_abbiamo_la_pi%C3%B9_pallida_idea</loc> </url>
+  <url> <loc>https://biblo.space/book/OOEWXBGqF4x9n9F7wNmd/L'infermiera_di_Hitler</loc> </url>
+  <url> <loc>https://biblo.space/book/TscorfAEHSsD9lztEJpn/Evil</loc> </url>
+  <url> <loc>https://biblo.space/book/MBOnfSB0DGJFJ1Zf9XEJ/Dark</loc> </url>
+  <url> <loc>https://biblo.space/book/vA7WNgahMSISpw2hH630/Magic</loc> </url>
+  <url> <loc>https://biblo.space/book/WsHYWRP0ifmASxzEtp3X/Legend</loc> </url>
+  <url> <loc>https://biblo.space/book/GUN3vm8hHMRuu4YIhH9R/L'accattone</loc> </url>
+  <url> <loc>https://biblo.space/book/YU2BshAKBSVJOOwypW8L/L'eremita</loc> </url>
+  <url> <loc>https://biblo.space/book/AJx5KgsPnhrOBwx8efwJ/Rien_ne_va_plus</loc> </url>
+  <url> <loc>https://biblo.space/book/qsdGHrwsPzDvwhaVH90G/Fate_il_vostro_gioco</loc> </url>
+  <url> <loc>https://biblo.space/book/qaL2tk1ZWF2NCi9yYKQR/L'anello_mancante</loc> </url>
+  <url> <loc>https://biblo.space/book/3u7s9SoDtLZpouiEam9q/Pulvis_et_umbra</loc> </url>
+  <url> <loc>https://biblo.space/book/0Q8HbvBPrGH3iKUtMskt/Castore_e_Polluce</loc> </url>
+  <url> <loc>https://biblo.space/book/pkXiJ4IeXtLJfBIktUe3/7-7-2007</loc> </url>
+  <url> <loc>https://biblo.space/book/ivcIbHIu0RhOxAanof3g/Cinque_indagini_romane_per_Rocco_Schiavone</loc> </url>
+  <url> <loc>https://biblo.space/book/Filyhz7XdfJtVFk54LHP/Rocco_va_in_vacanza</loc> </url>
+  <url> <loc>https://biblo.space/book/KUIALHWphd7VshOZDsO6/Era_di_maggio</loc> </url>
+  <url> <loc>https://biblo.space/book/R8ebPHrljvgDW0345vXe/Non_%C3%A8_stagione</loc> </url>
+  <url> <loc>https://biblo.space/book/eQufpbeMJHAkBgFPzdKF/La_costola_di_Adamo</loc> </url>
+  <url> <loc>https://biblo.space/book/BzLbJPbzAeQna8XkxaBC/Pista_nera</loc> </url>
+  <url> <loc>https://biblo.space/book/bJO1cqIdjCJXoQdcBrZo/In_mezzo_al_mare</loc> </url>
+  <url> <loc>https://biblo.space/book/5xGVCM5hakfkAYCigBzF/A_spasso_per_Wall_Street</loc> </url>
+  <url> <loc>https://biblo.space/book/6onRtxFZqzJ5HkUij962/Una_stanza_piena_di_gente</loc> </url>
+  <url> <loc>https://biblo.space/book/8DZir9MsaCPNtOOeMeql/Alle_porte_della_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/yJoS6JxeqS4YMFDXlgMk/Una_contessa_a_Chinatown</loc> </url>
+  <url> <loc>https://biblo.space/book/oAi3KnhnfHVvd4IivUlh/I_sogni_non_sono_in_discesa</loc> </url>
+  <url> <loc>https://biblo.space/book/NTQFobhMzDebwquRoZAd/Un_capitano</loc> </url>
+  <url> <loc>https://biblo.space/book/MZUmHUd2uNxN7G5LNk5b/Tutta_quella_brava_gente</loc> </url>
+  <url> <loc>https://biblo.space/book/PH08DdFYZtglFg9yAzyP/Il_mistero_dell'Ombra_dell'alba</loc> </url>
+  <url> <loc>https://biblo.space/book/N2eP9XwkuwkIe8pCt0CO/Kimi_Raikkonen._Iceman</loc> </url>
+  <url> <loc>https://biblo.space/book/KrovonLZDvyyydlyoRdO/Andate_tutti_affanculo</loc> </url>
+  <url> <loc>https://biblo.space/book/YJbeoWGeAOdpcB3e95g3/Nocturna</loc> </url>
+  <url> <loc>https://biblo.space/book/aikhiQUUOJppOrOnHfch/L'impero_del_sogno</loc> </url>
+  <url> <loc>https://biblo.space/book/CpWdRM9AGMdPUoCEDqXQ/Il_fantasma_di_Eymerich</loc> </url>
+  <url> <loc>https://biblo.space/book/wb88CfOc7ChZYQX4zdVw/Nella_casa_del_verme</loc> </url>
+  <url> <loc>https://biblo.space/book/iOH0RzlWMcQxyw2YLSXj/Quello_che_abbiamo_in_testa</loc> </url>
+  <url> <loc>https://biblo.space/book/8mkE7QTbDrVNq07SAvtD/Per_sole_donne</loc> </url>
+  <url> <loc>https://biblo.space/book/kQge5dFmekv64PE8XkXn/Il_bambino_soldato</loc> </url>
+  <url> <loc>https://biblo.space/book/v4D51I9wFbVZEi30OKaG/Romolo</loc> </url>
+  <url> <loc>https://biblo.space/book/NFrgtFUyWUX8iMQYtnXd/Fate_la_nanna</loc> </url>
+  <url> <loc>https://biblo.space/book/ySp8N7eTFVkWJwHCW08E/Ah_l'amore_l'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/hgRtfncB53KmpVraSTf9/Gli_amici_silenziosi</loc> </url>
+  <url> <loc>https://biblo.space/book/dSJ2uCD2FdgC9BwPEx3A/La_ricamatrice_di_Winchester</loc> </url>
+  <url> <loc>https://biblo.space/book/H9qKl0wCzB4rEYopqv7L/1849</loc> </url>
+  <url> <loc>https://biblo.space/book/p8NeXBf41rXnw6kamsaX/Quando_tutto_divent%C3%B2_blu</loc> </url>
+  <url> <loc>https://biblo.space/book/cWORt9EgszbkMAdRQ0b3/Watchmen</loc> </url>
+  <url> <loc>https://biblo.space/book/jnj17E2OMfdbxzJutfM3/V_for_vendetta</loc> </url>
+  <url> <loc>https://biblo.space/book/czRpzFgGL1h74bbsNr6h/Il_segno_della_croce</loc> </url>
+  <url> <loc>https://biblo.space/book/C9jM29BhGuaul0J87n0m/Il_mio_nome_%C3%A8_Jack_Reacher</loc> </url>
+  <url> <loc>https://biblo.space/book/qoUb63KlVzwFj8d5C3pT/Cinzia</loc> </url>
+  <url> <loc>https://biblo.space/book/VMV7UbKQyo8qHwAkjAYn/Va_Tutto_Bene</loc> </url>
+  <url> <loc>https://biblo.space/book/MYfePS3bx59a2y9LwG6L/Non_%C3%A8_Te_che_Aspettavo</loc> </url>
+  <url> <loc>https://biblo.space/book/Fz3BZhXmpSVE371ZBvL2/Un_Lavoro_Vero</loc> </url>
+  <url> <loc>https://biblo.space/book/0BLn0tnT5SIQlj3DOnVM/Berlino_2.0</loc> </url>
+  <url> <loc>https://biblo.space/book/rIlihFCyfQA3ptL8mWDE/Ira_Domini</loc> </url>
+  <url> <loc>https://biblo.space/book/nkaQkdheYQsR3CbGAEDR/L'animale_pi%C3%B9_pericoloso</loc> </url>
+  <url> <loc>https://biblo.space/book/jOSetGwYxzgCPY1amihs/Le_ricamatrici_della_Regina</loc> </url>
+  <url> <loc>https://biblo.space/book/UbOxh3KyYfAHT2NagOnd/Chernobyl_01:23:40</loc> </url>
+  <url> <loc>https://biblo.space/book/Sg10ix3XPeOi8M9D0BWh/La_Musa_degli_Incubi</loc> </url>
+  <url> <loc>https://biblo.space/book/RbTK9QeP3ZS4P6kUnymJ/Il_Sognatore</loc> </url>
+  <url> <loc>https://biblo.space/book/6gstqGQ5DnIpq5cTFWx3/Caligola_-_impero_e_follia</loc> </url>
+  <url> <loc>https://biblo.space/book/5IBmtlcovVJYBWTZ4XUK/La_bambina_e_il_nazista</loc> </url>
+  <url> <loc>https://biblo.space/book/YwrHnTQj9kavdeT8hzJN/Silenzi</loc> </url>
+  <url> <loc>https://biblo.space/book/Iz4RxeXrrksXtLQNNQCn/Il_grande_libro_dei_nonni</loc> </url>
+  <url> <loc>https://biblo.space/book/G0OIOmCbapP0Sy7E5FaY/La_Tosca</loc> </url>
+  <url> <loc>https://biblo.space/book/Ywxii0rizOE6yHGtcNr2/Central_Park</loc> </url>
+  <url> <loc>https://biblo.space/book/pFo6lgoEU8PUj1AaPRfp/Monteperdido</loc> </url>
+  <url> <loc>https://biblo.space/book/GQKLcsm1vfSP8eHvVupb/Affari_d'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/q3WyuOCBrqynLeT7gnZB/Le_sigarette_del_manager</loc> </url>
+  <url> <loc>https://biblo.space/book/PsxYSZbZ8ikHu6teL3vF/La_casa_delle_voci</loc> </url>
+  <url> <loc>https://biblo.space/book/wXHDULEnoo9FkJ2eK2ty/L'amico_immaginario</loc> </url>
+  <url> <loc>https://biblo.space/book/tusNM4ClcN6L8IPxF2rZ/Il_Vangelo_secondo_la_Scienza</loc> </url>
+  <url> <loc>https://biblo.space/book/nFoy9iLt8Z0N5fOZocMT/Il_giro_del_mondo_in_80_pensieri</loc> </url>
+  <url> <loc>https://biblo.space/book/gvTcKliGGiyPsHFKpVih/Caro_papa_teologo,_caro_matematico_ateo</loc> </url>
+  <url> <loc>https://biblo.space/book/WzyiXNRH0LpfUiEYwzKe/La_carovana_del_sale</loc> </url>
+  <url> <loc>https://biblo.space/book/HekDWQWOFYD9ZsSX3xBN/L'arte_di_viaggiare</loc> </url>
+  <url> <loc>https://biblo.space/book/LRJwJ77S2dTj5T7c1DYA/America_perduta</loc> </url>
+  <url> <loc>https://biblo.space/book/jIrqisaKn5kvA7kvy7iJ/La_misteriosa_morte_della_compagna_Guan</loc> </url>
+  <url> <loc>https://biblo.space/book/1ZTJriCsTJF0ehMXkyTs/Diario_di_Oaxaca</loc> </url>
+  <url> <loc>https://biblo.space/book/h15YbbpuyAENUGG4ONPp/Rhapsody_in_black</loc> </url>
+  <url> <loc>https://biblo.space/book/lpNbBXLBrjJyrCqzDhPA/La_frontiera</loc> </url>
+  <url> <loc>https://biblo.space/book/2xox1sWx8STQWqrjVrzI/Non_siamo_mai_stati_qui</loc> </url>
+  <url> <loc>https://biblo.space/book/lk88LHKseDUpbsTgHXpk/Iulia._Storia_di_un'imperatrice</loc> </url>
+  <url> <loc>https://biblo.space/book/A6m7JUNi1eXkBaNcdAaU/Antica_madre</loc> </url>
+  <url> <loc>https://biblo.space/book/gSOeBPLCgOONPZR3TR4z/Fiaba_di_morte</loc> </url>
+  <url> <loc>https://biblo.space/book/H92VnV28yS3xwOULzuwr/Petrademone_-_2_La_terra_del_non_ritorno</loc> </url>
+  <url> <loc>https://biblo.space/book/KnC9XaykLhXW7B5SkNCX/Petrademone_1_-_Il_libro_delle_porte</loc> </url>
+  <url> <loc>https://biblo.space/book/EL48tJpTGEefrEdXRXAh/Il_mondo_che_vogliamo</loc> </url>
+  <url> <loc>https://biblo.space/book/gOSkxU8WUU41hBwQHPsb/L'epidemia_sovranista</loc> </url>
+  <url> <loc>https://biblo.space/book/WLoQIw1LmYpDQUpAB6dZ/Leopardo_nero,_lupo_rosso</loc> </url>
+  <url> <loc>https://biblo.space/book/mNLdOfOFcmnpCLDThX13/La_misura_del_tempo</loc> </url>
+  <url> <loc>https://biblo.space/book/ySxVPa6Bz94lIA75TWOb/Il_segno_del_male</loc> </url>
+  <url> <loc>https://biblo.space/book/OB8LvcCvNquVRM4DJCBs/L'anno_in_cui_imparai_a_raccontare_storie</loc> </url>
+  <url> <loc>https://biblo.space/book/3Qtn4UYV2FPYqOsjgW5v/Assassinio_a_Villa_Borghese</loc> </url>
+  <url> <loc>https://biblo.space/book/d4yAqhNoagPBGUC8D7ew/Il_colibr%C3%AC</loc> </url>
+  <url> <loc>https://biblo.space/book/XY0QPqT0KeF9MdJMorUj/La_vita_bugiarda_degli_adulti</loc> </url>
+  <url> <loc>https://biblo.space/book/jbJMGHqr5JkgduUDGOHg/Eva_Luna</loc> </url>
   <url> <loc>https://biblo.space/book/liVK3bvbS1PAS6eL0aJe/La_casa_degli_spiriti</loc> </url>
   <url> <loc>https://biblo.space/book/Ru3iq0TkKif1tYBXkM3u/D'amore_e_ombra</loc> </url>
-  <url> <loc>https://biblo.space/book/jbJMGHqr5JkgduUDGOHg/Eva_Luna</loc> </url>
   <url> <loc>https://biblo.space/book/9JUu3dVh02cL7gqfH7eR/Lungo_petalo_di_mare</loc> </url>
-  <url> <loc>https://biblo.space/book/JFXlLJugtLhRdDd5Cq7O/Il_segreto_di_Isabel</loc> </url>
   <url> <loc>https://biblo.space/book/02JpTAbtzvjSPTBsrS2s/The_Irishman</loc> </url>
   <url> <loc>https://biblo.space/book/KC006m7v0vl9szyVgywd/Un_passato_da_spia</loc> </url>
   <url> <loc>https://biblo.space/book/tjATAcN7ZbTiL3bvZMcY/Piazza_Fontana</loc> </url>
@@ -22,21 +199,22 @@
   <url> <loc>https://biblo.space/book/0VrTUD0PKI2mym3d4Ykj/L'ultima_seduta_spiritica</loc> </url>
   <url> <loc>https://biblo.space/book/SRq1RkWC8mqph9PMdLMk/La_spia_corre_sul_campo</loc> </url>
   <url> <loc>https://biblo.space/book/CILpxgejXps8xPnFHADU/Sette_giorni_perfetti</loc> </url>
+  <url> <loc>https://biblo.space/book/JFXlLJugtLhRdDd5Cq7O/Il_segreto_di_Isabel</loc> </url>
   <url> <loc>https://biblo.space/book/jfQuongyXQhW6cNhD4WL/Le_sette_dinastie._La_lotta_per_il_potere_nel_grande_romanzo_dell'Italia_rinascimentale</loc> </url>
   <url> <loc>https://biblo.space/book/9lhwc7IM7mqTZQdrfuXC/Una_gran_voglia_di_vivere</loc> </url>
   <url> <loc>https://biblo.space/book/07pCQ67cRCZGPslPZMmt/LUNA?_S%C3%AC,_ci_siamo_andati!</loc> </url>
   <url> <loc>https://biblo.space/book/wwCyH3SGVP668DQYoPyF/Finch%C3%A9_sar%C3%A0_passata_la_tua_ira</loc> </url>
   <url> <loc>https://biblo.space/book/DG32xmsMXvfjvT65Vnjj/I_bottoni_di_Napoleone</loc> </url>
-  <url> <loc>https://biblo.space/book/XbULta8UDKFUUk2pELTl/L'Arminuta</loc> </url>
   <url> <loc>https://biblo.space/book/8ZKIQWLBfyklQ1rxo5mP/Accabadora</loc> </url>
+  <url> <loc>https://biblo.space/book/XbULta8UDKFUUk2pELTl/L'Arminuta</loc> </url>
   <url> <loc>https://biblo.space/book/9szvktKtzBWWQVEXNtO3/Il_coraggio_e_l'amore</loc> </url>
   <url> <loc>https://biblo.space/book/xDRUZRThd4QtnQJpZ4pG/Il_coltello</loc> </url>
-  <url> <loc>https://biblo.space/book/vLQRCE9kNWPPg9TcaaJe/I_leoni_di_Sicilia</loc> </url>
   <url> <loc>https://biblo.space/book/Jh2OVji5orqqROIoplGh/La_notte_pi%C3%B9_lunga</loc> </url>
   <url> <loc>https://biblo.space/book/Zx5N017DgqBg2vyeydoN/Macchine_mortali_-_Pianura_oscura</loc> </url>
   <url> <loc>https://biblo.space/book/oCccc6ujxAwkmemBJ0JD/Un_Green_New_Deal_globale</loc> </url>
   <url> <loc>https://biblo.space/book/BErSSC7GTy57RDMToFps/A_tutto_gas</loc> </url>
   <url> <loc>https://biblo.space/book/v90YxtgPbPMBepipmfP7/Noli_me_tangere</loc> </url>
+  <url> <loc>https://biblo.space/book/vLQRCE9kNWPPg9TcaaJe/I_leoni_di_Sicilia</loc> </url>
   <url> <loc>https://biblo.space/book/dtqBBft6Qt2TUJpOEvvK/Amazzonia</loc> </url>
   <url> <loc>https://biblo.space/book/txYZEzQbUAPnUOpBSZHN/Vanit%C3%A0_di_Duluoz</loc> </url>
   <url> <loc>https://biblo.space/book/f1Dz8t4VDxruOf4K4wRd/Visioni_di_Cody</loc> </url>
@@ -46,8 +224,8 @@
   <url> <loc>https://biblo.space/book/7l6TbFtyQDd4uZyZDAcz/Trastulli_di_animali</loc> </url>
   <url> <loc>https://biblo.space/book/DV2R0ibk8zMSVcRC137O/La_voce_delle_onde</loc> </url>
   <url> <loc>https://biblo.space/book/Pc9yuTWx6ujonYbVRo3R/La_scuola_della_carne</loc> </url>
-  <url> <loc>https://biblo.space/book/cVwOlvx4eMtR67iCGTYe/Ti_prendo_e_ti_porto_via</loc> </url>
   <url> <loc>https://biblo.space/book/IYmm0FuBp815LViahsva/Il_mare_dove_non_si_tocca</loc> </url>
+  <url> <loc>https://biblo.space/book/cVwOlvx4eMtR67iCGTYe/Ti_prendo_e_ti_porto_via</loc> </url>
   <url> <loc>https://biblo.space/book/FsJZ64FthnwdlpJFK7cF/Testa_a_testa</loc> </url>
   <url> <loc>https://biblo.space/book/wjSGwHrlbmFVk7LvsAU8/Luoghi_oscuri</loc> </url>
   <url> <loc>https://biblo.space/book/o4d4Wc5qUhHfxgCwgTjP/Sorridi_e_muori</loc> </url>
@@ -64,15 +242,15 @@
   <url> <loc>https://biblo.space/book/UYUEXwWAD6ISocv5Q37x/La_vendetta_del_Numero_Nove</loc> </url>
   <url> <loc>https://biblo.space/book/AecVQVTCZVIiLraiTjXq/Il_potere_del_Numero_Sei</loc> </url>
   <url> <loc>https://biblo.space/book/Abk2Znp9cxae1YHoypCA/Sono_Il_Numero_Quattro</loc> </url>
-  <url> <loc>https://biblo.space/book/LeCcuv8Pmq9nqCSGsqww/Pathfinder</loc> </url>
-  <url> <loc>https://biblo.space/book/SbPiVWkG4a1Gc4vOnIr1/Pathfinder:_Rovine</loc> </url>
   <url> <loc>https://biblo.space/book/yrkdgrt6Hpo5wPK07tvr/Pathfinder:_Visitatori</loc> </url>
+  <url> <loc>https://biblo.space/book/SbPiVWkG4a1Gc4vOnIr1/Pathfinder:_Rovine</loc> </url>
+  <url> <loc>https://biblo.space/book/LeCcuv8Pmq9nqCSGsqww/Pathfinder</loc> </url>
+  <url> <loc>https://biblo.space/book/vWd75u3dMTgIYXwuxzVz/Il_mare_infinito</loc> </url>
   <url> <loc>https://biblo.space/book/O7j2XowIUzwk2EOhBP9I/La_quinta_onda</loc> </url>
   <url> <loc>https://biblo.space/book/eJrdsEu3SnDwugyK6mM5/L'ultima_stella</loc> </url>
-  <url> <loc>https://biblo.space/book/vWd75u3dMTgIYXwuxzVz/Il_mare_infinito</loc> </url>
-  <url> <loc>https://biblo.space/book/jG4EkNiMJcXFbAbARxog/Nevernight._Mai_dimenticare</loc> </url>
   <url> <loc>https://biblo.space/book/EYIFkp7rG8ygx9XE8c5l/Nevernight._Alba_oscura</loc> </url>
   <url> <loc>https://biblo.space/book/t2rm9LZwZ8uDh6YQHZwo/Nevernight._I_grandi_giochi</loc> </url>
+  <url> <loc>https://biblo.space/book/jG4EkNiMJcXFbAbARxog/Nevernight._Mai_dimenticare</loc> </url>
   <url> <loc>https://biblo.space/book/nYiwNsCbyJwHCsDu2hRg/Il_processo</loc> </url>
   <url> <loc>https://biblo.space/book/R1o5FpRSUmdVJjT9CbKS/L'ospite_indesiderato</loc> </url>
   <url> <loc>https://biblo.space/book/br8SefDT32pFQantIMdx/La_traccia</loc> </url>
@@ -80,27 +258,21 @@
   <url> <loc>https://biblo.space/book/LgN0vHXhIfh49zYlLR6c/Il_signore_delle_maschere</loc> </url>
   <url> <loc>https://biblo.space/book/r8jvIQsLKPVLjyBlFt6P/Dracula</loc> </url>
   <url> <loc>https://biblo.space/book/p6SUlvd7644WwoIsip9V/Il_dottor_Faust</loc> </url>
-  <url> <loc>https://biblo.space/book/gvW2iapO935htUdktku9/Teatro_completo</loc> </url>
-  <url> <loc>https://biblo.space/book/Tg2jF9dbHVWIoYEeW8rG/L'idea_di_Medioevo</loc> </url>
-  <url> <loc>https://biblo.space/book/TLuLwwzCr5DzlmTWC0pD/Il_teatro_greco._Tragedie</loc> </url>
-  <url> <loc>https://biblo.space/book/ynoAH7Y7fdEahs4ReL5f/Il_falsario_e_il_manichino_di_cera</loc> </url>
   <url> <loc>https://biblo.space/book/QJjODikiPTL0TTPFZQf9/Fedro</loc> </url>
   <url> <loc>https://biblo.space/book/8p4F1rLUv3Rkfx268mhy/Apologia_di_Socrate-Critone</loc> </url>
   <url> <loc>https://biblo.space/book/pGCokAukxlfILJTBHWRj/Fedone</loc> </url>
   <url> <loc>https://biblo.space/book/lUxVZveYSLRNbuIsnwgu/Fedro</loc> </url>
   <url> <loc>https://biblo.space/book/pkFkF6IRgEnCpSkI6KcK/Simposio-Apologia_di_Socrate-Critone-Fedone</loc> </url>
-  <url> <loc>https://biblo.space/book/b9TvoF5r5Bapm4BxUzbz/Repubblica</loc> </url>
-  <url> <loc>https://biblo.space/book/L5i2RxjC2ZChLBQGnOIJ/La_Repubblica</loc> </url>
-  <url> <loc>https://biblo.space/book/wTAhygRmVRIujFlRKGew/I_miti_nordici</loc> </url>
   <url> <loc>https://biblo.space/book/t6I6duVwvVMwtcyqrOrs/Metafisica</loc> </url>
   <url> <loc>https://biblo.space/book/rLQ6NcU9eXEqk05X5DIp/Pensieri</loc> </url>
   <url> <loc>https://biblo.space/book/j4gmkj4gqzOef8yZ95b4/Rivoluzione</loc> </url>
   <url> <loc>https://biblo.space/book/kqHdhXzbp6jS9htQ7NVL/Italiani_voltagabbana</loc> </url>
   <url> <loc>https://biblo.space/book/utgInZauDDPQtSWTfQBC/Repubblica</loc> </url>
+  <url> <loc>https://biblo.space/book/b9TvoF5r5Bapm4BxUzbz/Repubblica</loc> </url>
   <url> <loc>https://biblo.space/book/128brvoddqeuQ5IX2qA2/Cos%C3%AC_parl%C3%B2_Zarathustra</loc> </url>
   <url> <loc>https://biblo.space/book/8cmGXxiWwyXxkUo7mRg7/Dei_delitti_e_delle_pene</loc> </url>
-  <url> <loc>https://biblo.space/book/Awkjdd0PLXRAeZ9rxkGx/L'anticristo</loc> </url>
   <url> <loc>https://biblo.space/book/UKraRzs0W4DfASIXXFAH/La_nascita_della_tragedia</loc> </url>
+  <url> <loc>https://biblo.space/book/Awkjdd0PLXRAeZ9rxkGx/L'anticristo</loc> </url>
   <url> <loc>https://biblo.space/book/NZUswJLWYu48JlJIQD8S/La_misura_dell'uomo</loc> </url>
   <url> <loc>https://biblo.space/book/La6sGl8cfhqYF2KaHnkx/Quel_che_sa_la_notte</loc> </url>
   <url> <loc>https://biblo.space/book/HyADCp2U3B9B9F2PtTuO/Sull'amore</loc> </url>
@@ -116,7 +288,7 @@
   <url> <loc>https://biblo.space/book/hQTVmc4qcYXhFdq062Es/Tredici_miliardi_di_anni</loc> </url>
   <url> <loc>https://biblo.space/book/bJBvaxWmQ1yee3duduae/L'anno_che_non_caddero_le_foglie</loc> </url>
   <url> <loc>https://biblo.space/book/OyGjyHIsaKdVECfoYWGB/E_se_covano_i_lupi</loc> </url>
-  <url> <loc>https://biblo.space/book/fEjZSz4p08bdnvVn8Av7/Che_animale_sei</loc> </url>
+  <url> <loc>https://biblo.space/book/fEjZSz4p08bdnvVn8Av7/Che_animale_sei?</loc> </url>
   <url> <loc>https://biblo.space/book/zeOTNTdYRsQbwlPnTh1w/Lo_scudo_di_Talos</loc> </url>
   <url> <loc>https://biblo.space/book/X0M9jWRuqnwGZu5bF49A/Le_paludi_di_Hesperia</loc> </url>
   <url> <loc>https://biblo.space/book/i3LP22hgWKyXUAsUd412/Zeus_e_altri_racconti</loc> </url>
@@ -129,20 +301,361 @@
   <url> <loc>https://biblo.space/book/HRL5rMRkNY0QTZshzaHL/Bugie_sepolte</loc> </url>
   <url> <loc>https://biblo.space/book/3WpHOtKJ7S3xV3nWAjK6/%C3%88_cos%C3%AC_che_si_fa</loc> </url>
   <url> <loc>https://biblo.space/book/u5AmJzaOu4B5zZkDGGTe/Una_ragazza_come_lei</loc> </url>
+  <url> <loc>https://biblo.space/book/diaH532GdjSdrgBdLPEh/Dracula</loc> </url>
+  <url> <loc>https://biblo.space/book/MoV3hFV4jxuhg137L8VK/Le_vite_dei_Cesari</loc> </url>
+  <url> <loc>https://biblo.space/book/Tg2jF9dbHVWIoYEeW8rG/L'idea_di_Medioevo</loc> </url>
+  <url> <loc>https://biblo.space/book/5fYhALJqgBVJ7RAouuXN/Le_porte_dei_templari</loc> </url>
+  <url> <loc>https://biblo.space/book/KpKr2P0nR3opSNu4PkPE/Anna_Karenina</loc> </url>
+  <url> <loc>https://biblo.space/book/k9wLjFZCRZ5QEX02whDW/La_fiera_della_vanit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/EF7tLJIMhHUsGlSwm9fO/Astrofisica_per_chi_va_di_fretta</loc> </url>
+  <url> <loc>https://biblo.space/book/GPSQqOi4uClL0v3OBQiX/Il_Consiglio_d'Egitto</loc> </url>
+  <url> <loc>https://biblo.space/book/O2ImOc2bt8BvcdqxEVAf/La_congiura_di_Catilina</loc> </url>
+  <url> <loc>https://biblo.space/book/69H4rWL4B114UcW33S6H/Harry_Potter_e_la_maledizione_dell'erede</loc> </url>
+  <url> <loc>https://biblo.space/book/ZALD0aQ8zWc3ID1RpUO1/Il_quidditch_attraverso_i_secoli</loc> </url>
+  <url> <loc>https://biblo.space/book/RorjKUzhsiqIrPGdu5KY/Gli_animali_fantastici:_dove_trovarli</loc> </url>
+  <url> <loc>https://biblo.space/book/KSJISDLX1DPTCMU4xYeG/Le_fiabe_di_Beda_il_Bardo</loc> </url>
+  <url> <loc>https://biblo.space/book/yglgMcsdITIC2YyTOUC2/Harry_Potter_e_i_Doni_della_Morte</loc> </url>
+  <url> <loc>https://biblo.space/book/EPUYzdqr1WvMzzxRvt1l/Harry_Potter_e_il_Principe_Mezzosangue</loc> </url>
+  <url> <loc>https://biblo.space/book/00JSpMMb8VegkAVirW9R/Harry_Potter_e_l'Ordine_della_Fenice</loc> </url>
+  <url> <loc>https://biblo.space/book/TXFYrGdswg5OlO2s2QQI/Harry_Potter_e_il_Calice_di_Fuoco</loc> </url>
+  <url> <loc>https://biblo.space/book/tAs4v7PRdMpFZjuxCWFt/Harry_Potter_e_il_prigioniero_di_Azkaban</loc> </url>
+  <url> <loc>https://biblo.space/book/dFMCR1IoOSF5lPTPvVGb/Harry_Potter_e_la_Camera_dei_Segreti</loc> </url>
+  <url> <loc>https://biblo.space/book/GvtWxI3sQgaI0XbgbScR/Harry_Potter_e_la_pietra_filosofale</loc> </url>
+  <url> <loc>https://biblo.space/book/JfFjXfQNzqIbbYuSApYG/Torino_esoterica</loc> </url>
+  <url> <loc>https://biblo.space/book/VZY0ROQuEZxoVkKhTdXr/Detective_in_poltrona</loc> </url>
   <url> <loc>https://biblo.space/book/i1AAgnsEWJE8ckbf0aHh/La_regina_dei_dannati</loc> </url>
   <url> <loc>https://biblo.space/book/V6YM4kLbW4zl49JDCdI8/Intervista_col_vampiro</loc> </url>
-  <url> <loc>https://biblo.space/book/GPSQqOi4uClL0v3OBQiX/Il_Consiglio_d'Egitto</loc> </url>
-  <url> <loc>https://biblo.space/book/KpKr2P0nR3opSNu4PkPE/Anna_Karenina</loc> </url>
-  <url> <loc>https://biblo.space/book/FHnvkku6kHoVg8mngRmr/La_lingua_geniale</loc> </url>
-  <url> <loc>https://biblo.space/book/Ae3ZuROxLTwbdwPoZ8Nt/Abolire_il_carcere</loc> </url>
-  <url> <loc>https://biblo.space/book/5fYhALJqgBVJ7RAouuXN/Le_porte_dei_templari</loc> </url>
+  <url> <loc>https://biblo.space/book/ynoAH7Y7fdEahs4ReL5f/Il_falsario_e_il_manichino_di_cera</loc> </url>
+  <url> <loc>https://biblo.space/book/wiilyZyviUvi4VSdLSW7/Il_rubino_di_fumo</loc> </url>
+  <url> <loc>https://biblo.space/book/0n5l2eENvv4GwgHqOKRt/I_personaggi_pi%C3%B9_malvagi_dell'antica_Roma</loc> </url>
+  <url> <loc>https://biblo.space/book/FndznH3bHKqn93BrifcC/Buona_Apocalisse_a_tutti!</loc> </url>
   <url> <loc>https://biblo.space/book/GaewjFNliiFv07xgpGzb/Racconti_straordinari</loc> </url>
-  <url> <loc>https://biblo.space/book/9XgkIov5eDXsCUwa0iqO/Hop-Frog</loc> </url>
+  <url> <loc>https://biblo.space/book/rk8HwDXgai1I5YyQOf6w/Ligeia</loc> </url>
   <url> <loc>https://biblo.space/book/3zRWwDszIQQQMPeAwlHM/Il_gatto_nero</loc> </url>
-  <url> <loc>https://biblo.space/book/LB08mWaVLn2Tf0SBjRU3/Fidanzati_dell'inverno</loc> </url>
-  <url> <loc>https://biblo.space/book/MeWjCcPsm6ra4oDuBme3/Macchine_mortali</loc> </url>
-  <url> <loc>https://biblo.space/book/O11rct1VzzQE0m4NZrzV/Le_origini_del_male</loc> </url>
-  <url> <loc>https://biblo.space/book/ODw8iLnv1zfkWESivxve/Il_problema_dei_tre_corpi</loc> </url>
+  <url> <loc>https://biblo.space/book/9XgkIov5eDXsCUwa0iqO/Hop-Frog</loc> </url>
+  <url> <loc>https://biblo.space/book/cNFsQ5oaThjAN0JLitLj/Gli_assassinii_della_Rue_Morgue</loc> </url>
+  <url> <loc>https://biblo.space/book/IAn8bYJeROLKuj9yISrp/Alessandro_e_Cesare</loc> </url>
+  <url> <loc>https://biblo.space/book/MKTQUd7PjQnrm0rVqSdX/Per_l'amor_di_un_Dio</loc> </url>
+  <url> <loc>https://biblo.space/book/CvbW6AkwDXFrK7vOY71I/Dialoghi_con_Leuc%C3%B2</loc> </url>
+  <url> <loc>https://biblo.space/book/TLuLwwzCr5DzlmTWC0pD/Il_teatro_greco._Tragedie</loc> </url>
+  <url> <loc>https://biblo.space/book/L5i2RxjC2ZChLBQGnOIJ/La_Repubblica</loc> </url>
+  <url> <loc>https://biblo.space/book/VBG7NSLex7s63HCLWfww/La_repubblica</loc> </url>
+  <url> <loc>https://biblo.space/book/cRfxEAlfVAnvxdfqVGzx/L'apprendista_di_Venezia</loc> </url>
+  <url> <loc>https://biblo.space/book/Kl50Ya8ZdjyIUiCXuNRt/Circe</loc> </url>
+  <url> <loc>https://biblo.space/book/m8HsUo2dIQIIrxpznU8r/Il_mistero_di_Torino</loc> </url>
+  <url> <loc>https://biblo.space/book/RyYGxrHpYsD87nuzFRub/L'amore_prima_di_noi</loc> </url>
+  <url> <loc>https://biblo.space/book/J3AHAwiORtKrKpSa89bn/Al%C3%A9xandros</loc> </url>
+  <url> <loc>https://biblo.space/book/gvW2iapO935htUdktku9/Teatro_completo</loc> </url>
+  <url> <loc>https://biblo.space/book/FHnvkku6kHoVg8mngRmr/La_lingua_geniale</loc> </url>
+  <url> <loc>https://biblo.space/book/qWcBnY1R0SsStNcMk94p/Idi_di_marzo</loc> </url>
+  <url> <loc>https://biblo.space/book/Ae3ZuROxLTwbdwPoZ8Nt/Abolire_il_carcere</loc> </url>
+  <url> <loc>https://biblo.space/book/WDGLdfm0YT6MwC7XWK29/Massoni._Societ%C3%A0_a_responsabilit%C3%A0_illimitata</loc> </url>
+  <url> <loc>https://biblo.space/book/wBh3wwtNihyFwuyhRCYm/Il_Principe</loc> </url>
+  <url> <loc>https://biblo.space/book/aAKF8MV4wZkUDSO1NP88/Il_mondo_inquieto_di_Shakespeare</loc> </url>
+  <url> <loc>https://biblo.space/book/bTHRxL4nsxmelShi7Myl/La_formula_dell'Arcanum</loc> </url>
+  <url> <loc>https://biblo.space/book/7h661ov7syGvoQ09i4YE/Necronomicon</loc> </url>
+  <url> <loc>https://biblo.space/book/vSiBg3jsjbSuXrBquf9I/Dafni_e_Cloe</loc> </url>
+  <url> <loc>https://biblo.space/book/GY65QREKeN6Sse17eh4M/Favole_fuorilegge</loc> </url>
+  <url> <loc>https://biblo.space/book/AfjPfmTXFlKHXAIPf1TD/Atlante_dei_luoghi_maledetti</loc> </url>
+  <url> <loc>https://biblo.space/book/5tLYLllH9mat5pzGxsuk/Il_codice_di_Giza</loc> </url>
+  <url> <loc>https://biblo.space/book/JtRzIzA2KznuGewzy4tz/Il_discepolo</loc> </url>
+  <url> <loc>https://biblo.space/book/tq8vnEPcubIv9FIVSO7d/Il_tempo_dei_presagi</loc> </url>
+  <url> <loc>https://biblo.space/book/X3XSnx3ZyEzO86l94HFd/Il_labirinto_delle_streghe</loc> </url>
+  <url> <loc>https://biblo.space/book/IR9zQdmzUlvd6QHkLxYH/Alla_corte_dei_Borgia</loc> </url>
+  <url> <loc>https://biblo.space/book/Q7DKtb95J4plA6g5AQeZ/Dal_big_bang_ai_buchi_neri</loc> </url>
+  <url> <loc>https://biblo.space/book/XfoOcE3c8aT4qAhpLzeZ/Dizionario_delle_cose_perdute</loc> </url>
+  <url> <loc>https://biblo.space/book/uO3gHhBiAPysYBVpDAUw/L'interpretazione_dei_sogni</loc> </url>
+  <url> <loc>https://biblo.space/book/StbPkCTTollwU1xVPJl7/Cesare_il_conquistatore</loc> </url>
+  <url> <loc>https://biblo.space/book/Ne7otbepT8kaiJsIJ3oG/Cesare_l'immortale</loc> </url>
+  <url> <loc>https://biblo.space/book/xP3XBumISwzD15yHr6QH/Il_grande_Gatsby</loc> </url>
+  <url> <loc>https://biblo.space/book/tWotB7r4VqdcErlLiJK0/Misteri,_crimini_e_storie_insolite_di_Torino</loc> </url>
+  <url> <loc>https://biblo.space/book/U3WWldT9vmstYVORcSCE/Viaggi_nello_spazio</loc> </url>
+  <url> <loc>https://biblo.space/book/TsODlKmkTIlwvnTMQgBy/La_Repubblica</loc> </url>
+  <url> <loc>https://biblo.space/book/6AT5rz9RFJercHBRe10Z/Le_argonautiche</loc> </url>
+  <url> <loc>https://biblo.space/book/V8DqvqRAsu9uZqJbJqHx/L'asino_d'oro,_o_Le_metamorfosi</loc> </url>
+  <url> <loc>https://biblo.space/book/XNMKpY0ALiY2xXzFXJBA/Elena</loc> </url>
+  <url> <loc>https://biblo.space/book/kIMmryeDAxurH9giY07M/La_storia_infinita</loc> </url>
+  <url> <loc>https://biblo.space/book/GKSGvnTINiKQ4MtuV5be/Lo_scienziato_come_ribelle</loc> </url>
+  <url> <loc>https://biblo.space/book/YEEH373bodxDg5lNxJdC/Robin_Hood</loc> </url>
+  <url> <loc>https://biblo.space/book/85LjzHGLu7i6JCh09uim/I_tre_moschettieri</loc> </url>
+  <url> <loc>https://biblo.space/book/K90QpLdyJ3FS5uGYQ0XO/Rebecca</loc> </url>
+  <url> <loc>https://biblo.space/book/p6lXnLyUL61WhlCNYbkG/Sherlock_Holmes</loc> </url>
+  <url> <loc>https://biblo.space/book/1L8WijZ8HZ72gQMouUXw/Il_piacere</loc> </url>
+  <url> <loc>https://biblo.space/book/6bKBbHg5T4a9aiE9NXBd/Vento_di_magia</loc> </url>
+  <url> <loc>https://biblo.space/book/ZFARdwnHvXPnfcvNQLQQ/Maledizione_Caravaggio</loc> </url>
+  <url> <loc>https://biblo.space/book/aZzd0lGeVwjd4eX8HIT1/Caravaggio_Enigma</loc> </url>
+  <url> <loc>https://biblo.space/book/Bn7p9YeZDiTvHQ5Obuap/La_massoneria</loc> </url>
+  <url> <loc>https://biblo.space/book/wTAhygRmVRIujFlRKGew/I_miti_nordici</loc> </url>
+  <url> <loc>https://biblo.space/book/y6TJBtpV2QDaFgh2qqcp/Alice_nel_paese_delle_meraviglie_e_Attraverso_lo_specchio</loc> </url>
+  <url> <loc>https://biblo.space/book/NYkN0NsNLe4mwIDMaQRa/Imprevisti_e_altre_catastrofi</loc> </url>
+  <url> <loc>https://biblo.space/book/R7ulNy5td8JRg9gjRwKE/L'ambiguo_malanno</loc> </url>
+  <url> <loc>https://biblo.space/book/rrFCeaNdLpbyezgKYQ62/Giulio_Cesare</loc> </url>
+  <url> <loc>https://biblo.space/book/Hpqo0VoF31zSmtAU1eIP/Il_barone_rampante</loc> </url>
+  <url> <loc>https://biblo.space/book/yMQa92Ur0NLxesbbFXct/Il_cavaliere_inesistente</loc> </url>
+  <url> <loc>https://biblo.space/book/ammtOeIDU8nw7Xoin9Iq/Il_barone_rampante</loc> </url>
+  <url> <loc>https://biblo.space/book/ZoBtXPscy4A6dtCvfhrH/Breve_storia_di_(quasi)_tutto</loc> </url>
+  <url> <loc>https://biblo.space/book/I6yhylMwYAink62jyyPK/Gli_affari_del_signor_Giulio_Cesare</loc> </url>
+  <url> <loc>https://biblo.space/book/lRTVBmKEpFRLsH49mR4S/Le_spade_incantate</loc> </url>
+  <url> <loc>https://biblo.space/book/g4GLAeMHrwecMKHDBW0Q/La_torcia</loc> </url>
+  <url> <loc>https://biblo.space/book/kzkCf9jKhMwXTCbbsAIh/Atene,_la_citt%C3%A0_inquieta</loc> </url>
+  <url> <loc>https://biblo.space/book/bvPGAgYWPZYVDwrRo9FD/I_marziani_siamo_noi</loc> </url>
+  <url> <loc>https://biblo.space/book/MX9NiTCS1qpW6d2OVYbc/Vita_segreta_degli_antichi_romani</loc> </url>
+  <url> <loc>https://biblo.space/book/juEkAgP2m4NfVwC3mFKt/Origini_e_storia_della_massoneria</loc> </url>
+  <url> <loc>https://biblo.space/book/kHjDA8WvmkmEHKgaDpEG/Mansfield_Park</loc> </url>
+  <url> <loc>https://biblo.space/book/pJBgB3ZzVVhsSUiqaa1e/La_lunga_oscura_pausa_caff%C3%A8_dell'anima</loc> </url>
+  <url> <loc>https://biblo.space/book/Bm1IPf7alp7BfYG2Q53U/Flatlandia</loc> </url>
+  <url> <loc>https://biblo.space/book/j7BYk5nkXg5YZjE1Zii2/Mao_Zedong_%C3%A8_arrabbiato</loc> </url>
+  <url> <loc>https://biblo.space/book/LXyoEyfdPwHvAxadG5ul/Brothers</loc> </url>
+  <url> <loc>https://biblo.space/book/l06YbaZc7PpNZkkvDCDB/Il_settimo_giorno</loc> </url>
+  <url> <loc>https://biblo.space/book/286zGmjPbvYBHnJh1Zyd/Cronache_di_un_venditore_di_sangue</loc> </url>
+  <url> <loc>https://biblo.space/book/hKk6KDmD1fNerZL2QvVY/L'eco_della_pioggia</loc> </url>
+  <url> <loc>https://biblo.space/book/K6mR9etQ2Sr2frARRgoM/Hunger_Games_3</loc> </url>
+  <url> <loc>https://biblo.space/book/jPtFKPpeuXKiBGjf2yqy/Hunger_Games_2</loc> </url>
+  <url> <loc>https://biblo.space/book/lZjA6jTMx2xdpxSb7uW3/Hunger_Games</loc> </url>
+  <url> <loc>https://biblo.space/book/T32alw3XmszZN5x0wBhZ/L'umiliazione</loc> </url>
+  <url> <loc>https://biblo.space/book/zXXIFLa7F9s0WBnBhqoz/Indignazione</loc> </url>
+  <url> <loc>https://biblo.space/book/50fm1LJF4Ic731pDDYyn/Quando_lei_era_buona</loc> </url>
+  <url> <loc>https://biblo.space/book/Jd2N1qcM9ZJc4OPddbqq/La_macchia_umana</loc> </url>
+  <url> <loc>https://biblo.space/book/pUNcLa5o6odHgT6nEHUx/Il_complotto_contro_l'America</loc> </url>
+  <url> <loc>https://biblo.space/book/ivCs6qjARpv5je0eIlLc/Ho_sposato_un_comunista</loc> </url>
+  <url> <loc>https://biblo.space/book/SSmgdqrSdsFK1StxB6Zs/Lettera_a_Berlino</loc> </url>
+  <url> <loc>https://biblo.space/book/P7aCKRyv00XXW8gj6oKk/Solar</loc> </url>
+  <url> <loc>https://biblo.space/book/T8OV0ryrcgssrjy6UrTP/Sabato</loc> </url>
+  <url> <loc>https://biblo.space/book/kIeSOmBVcbJLRuHQJwI5/Miele</loc> </url>
+  <url> <loc>https://biblo.space/book/q9M0Ez6NH09BpGwewrfC/La_ballata_di_Adam_Henry</loc> </url>
+  <url> <loc>https://biblo.space/book/AaUQyuPQ1dORDQDV9izW/Cortesie_per_gli_ospiti</loc> </url>
+  <url> <loc>https://biblo.space/book/5IbshizDUbX8vZoq8yGG/L'inventore_di_sogni</loc> </url>
+  <url> <loc>https://biblo.space/book/O6xUvhItVnrCdGD8UIVT/Espiazione</loc> </url>
+  <url> <loc>https://biblo.space/book/SibCnXlDK8UxrJfcATV1/Stagioni_diverse</loc> </url>
+  <url> <loc>https://biblo.space/book/cHEYlNUuLzwniFwBeQW3/Siamo_riflessi_di_luce</loc> </url>
+  <url> <loc>https://biblo.space/book/7WXumPFXxECjEypyTLEE/I_ragazzi_della_Nickel</loc> </url>
+  <url> <loc>https://biblo.space/book/GiKKwjZTSskDaM2nr8oz/Mi_vivi_dentro</loc> </url>
+  <url> <loc>https://biblo.space/book/sprgxVEDq9RkFHUm3CsN/Due_milioni_di_baci</loc> </url>
+  <url> <loc>https://biblo.space/book/sEMnc7cnp2xT8Xs1BT5r/Per_ultimo_il_cuore</loc> </url>
+  <url> <loc>https://biblo.space/book/YV3f83hR6cMKHgpgil6H/Il_canto_di_Penelope</loc> </url>
+  <url> <loc>https://biblo.space/book/RfoyoNF72GbFXpMgcryA/Seme_di_strega</loc> </url>
+  <url> <loc>https://biblo.space/book/N3bQ3U8Pffd1KKbR51Ho/I_testamenti</loc> </url>
+  <url> <loc>https://biblo.space/book/FGNIxgzdSu4q4qANVF2r/La_breve_seconda_vita_di_Bree_Tanner</loc> </url>
+  <url> <loc>https://biblo.space/book/DG9JeBNQUPZ47JUkIJnr/Breaking_Dawn</loc> </url>
+  <url> <loc>https://biblo.space/book/apvdIQeuZwM13H9oefWe/Eclipse</loc> </url>
+  <url> <loc>https://biblo.space/book/sBOazLTjCrctjg7pNHtz/New_Moon</loc> </url>
+  <url> <loc>https://biblo.space/book/mjhWi0QzB6IMyvxaPmqU/Twilight</loc> </url>
+  <url> <loc>https://biblo.space/book/60eIpsc4n0TAAgOnxatw/Il_prefetto</loc> </url>
+  <url> <loc>https://biblo.space/book/zRjgcqBzi6mqreI4hidA/Palinsesto</loc> </url>
+  <url> <loc>https://biblo.space/book/Huwf2BB1lsFjza154fVn/L'alba_del_disastro</loc> </url>
+  <url> <loc>https://biblo.space/book/QiVq8xYT0mk64Hxr355I/Il_respiro_della_cenere</loc> </url>
+  <url> <loc>https://biblo.space/book/UHjEva873BSSj5Ltvo4Y/Amnesia</loc> </url>
+  <url> <loc>https://biblo.space/book/VnEPzHekq6EKGcb7mVno/L'inganno_delle_tenebre</loc> </url>
+  <url> <loc>https://biblo.space/book/ew6TPMmBNOgkcYR81vJT/L'istinto_del_sangue</loc> </url>
+  <url> <loc>https://biblo.space/book/7OJIa16efvF8pOtYCCt3/Il_rituale_del_male</loc> </url>
+  <url> <loc>https://biblo.space/book/y8fhQhG4VA92MyI3SJex/La_linea_nera</loc> </url>
+  <url> <loc>https://biblo.space/book/y8xLzCJeYf7iVyk0pqGM/I_fiumi_di_porpora</loc> </url>
+  <url> <loc>https://biblo.space/book/6LPlzeNKhPriFXT9QppF/La_maledizione_delle_ombre</loc> </url>
+  <url> <loc>https://biblo.space/book/HzwIollQ9ga9ZmgiceRt/Re_dei_Re</loc> </url>
+  <url> <loc>https://biblo.space/book/WSNmRejlsp1p7TXl1Wq3/Il_gioco_del_mai</loc> </url>
+  <url> <loc>https://biblo.space/book/JVWMD9a8OjrypZ6c4UkW/Il_mistero_di_Capo_Spagna</loc> </url>
+  <url> <loc>https://biblo.space/book/u7Z4U5RFvu1LRzErklrL/Fahrenheit_451</loc> </url>
+  <url> <loc>https://biblo.space/book/7FI1dkT8wflhWKiPGsPq/Il_confine_del_futuro</loc> </url>
+  <url> <loc>https://biblo.space/book/GsxtbymjajXZ0nPOriin/Possiamo_salvare_il_mondo,_prima_di_cena</loc> </url>
+  <url> <loc>https://biblo.space/book/gjof696pCzRKEUUffe2S/La_parata</loc> </url>
+  <url> <loc>https://biblo.space/book/Q9fSrmW8BSkoT3CPQBca/La_ragazza_che_doveva_morire</loc> </url>
+  <url> <loc>https://biblo.space/book/ueYN4OLU7j5wxKNuLcZY/Il_lupo_nell'abbazia</loc> </url>
+  <url> <loc>https://biblo.space/book/0eV8T7mPBxuSV4NqIWGR/L'istituto</loc> </url>
+  <url> <loc>https://biblo.space/book/rbakFe35aO4ngltfIkC8/Oro_sporco</loc> </url>
+  <url> <loc>https://biblo.space/book/kaK7SBlH2TUdtJpFEiTb/Lo_studio_della_morte</loc> </url>
+  <url> <loc>https://biblo.space/book/lCe7TJwDyUuxTnBt43pk/Manuale_di_sopravvivenza_per_UX_designer</loc> </url>
+  <url> <loc>https://biblo.space/book/vkUzY3rZeNeJOq5HcqqK/Un_viaggio_attraverso_Cura_delle_Creature_Magiche</loc> </url>
+  <url> <loc>https://biblo.space/book/GbsxpJgXkD0MImENrFi8/Un_viaggio_attraverso_Divinazione_e_Astronomia</loc> </url>
+  <url> <loc>https://biblo.space/book/wzvPuIdmcPM9ZaTu8XiD/Un_viaggio_attraverso_Pozioni_ed_Erbologia</loc> </url>
+  <url> <loc>https://biblo.space/book/wAmkWbpFoctt5DM94wGm/Un_viaggio_attraverso_Incantesimi_e_Difesa_contro_le_Arti_Oscure</loc> </url>
+  <url> <loc>https://biblo.space/book/pnva0i1a1kIjaJE2tWkT/Il_tatuatore_di_Auschwitz</loc> </url>
+  <url> <loc>https://biblo.space/book/5I6gqaTHsk1xZJCE15Ig/Il_nostro_tempo_nel_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/RaVqacbwsicOnDjsocRL/L'ombra</loc> </url>
+  <url> <loc>https://biblo.space/book/mxnIZfn3WiIayh9ZH3Fl/Fiorire_d'inverno</loc> </url>
+  <url> <loc>https://biblo.space/book/5tQygz5F32wAbKN2f7E6/Perch%C3%A9_alle_zebre_non_viene_l'ulcera?</loc> </url>
+  <url> <loc>https://biblo.space/book/mV3dssj5oxRzzB2PKp51/Io,_te_e_il_mare</loc> </url>
+  <url> <loc>https://biblo.space/book/sE1vxXwDqdBg7wMnWWLd/Aria</loc> </url>
+  <url> <loc>https://biblo.space/book/h0NIRv5CtFhrAeel0vaR/Persone_normali</loc> </url>
+  <url> <loc>https://biblo.space/book/jlsSlijUnRDwaHrExY6f/Due_donne_alla_Casa_Bianca</loc> </url>
+  <url> <loc>https://biblo.space/book/VUkLwtDGknN4Q2z4nwAj/Un_luogo_chiamato_libert%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/Ge2lkeY1mZTkQI7RrC9g/La_caduta_dei_giganti</loc> </url>
+  <url> <loc>https://biblo.space/book/dkXkRfVbA6rZPZ2mV8Ra/I_giorni_dell'eternit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/UtU4Bg6AYFsOIu64WfFu/L'inverno_del_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/KOAOAgo4AsH6R1C18Wkj/La_cruna_dell'ago</loc> </url>
+  <url> <loc>https://biblo.space/book/BQmxuuFUslVRojxceUyS/Notte_sull'acqua</loc> </url>
+  <url> <loc>https://biblo.space/book/a7nzw5K7cPZqdBeOSNPV/Il_terzo_gemello</loc> </url>
+  <url> <loc>https://biblo.space/book/LnoMcckrCnCUDBkIngvz/Triplo</loc> </url>
+  <url> <loc>https://biblo.space/book/rXpKXis2JITPpgYtaP79/Una_fortuna_pericolosa</loc> </url>
+  <url> <loc>https://biblo.space/book/uscltHdxXurW00C5d0Tl/Il_martello_dell'Eden</loc> </url>
+  <url> <loc>https://biblo.space/book/MGWskm5i5NwoK0Pz6Bku/Nel_bianco</loc> </url>
+  <url> <loc>https://biblo.space/book/eNqBNuuNPkYCUVPAZPZ3/Il_codice_Rebecca</loc> </url>
+  <url> <loc>https://biblo.space/book/UGBBPKB1QsQUKrJRwCPs/Il_volo_del_calabrone</loc> </url>
+  <url> <loc>https://biblo.space/book/ljGdHZ6WcndvI9gr2s9l/Sulle_ali_delle_aquile</loc> </url>
+  <url> <loc>https://biblo.space/book/UBWEXm0yIdW9e1gD76xw/Lo_scandalo_Modigliani</loc> </url>
+  <url> <loc>https://biblo.space/book/7kSCk4B2HbNdxm1LbaOp/Le_gazze_ladre</loc> </url>
+  <url> <loc>https://biblo.space/book/2ZOmMfJB0XGLHMbGastA/Il_pianeta_dei_bruchi</loc> </url>
+  <url> <loc>https://biblo.space/book/dV3ASsr5eWm410JjeH4O/Da_molto_lontano</loc> </url>
+  <url> <loc>https://biblo.space/book/PyKbBtOPQHDYPZZgf8PK/Ballando_nel_buio</loc> </url>
+  <url> <loc>https://biblo.space/book/psPQzrBJn5gJFxCpxcnb/La_moglie_perfetta</loc> </url>
+  <url> <loc>https://biblo.space/book/xlL6Oqb2lZSJ2Fgvuoak/Il_male_non_dimentica</loc> </url>
+  <url> <loc>https://biblo.space/book/G66wmV5lmosDgkCp5qsh/Alle_radici_del_male</loc> </url>
+  <url> <loc>https://biblo.space/book/Bjwnh2Mffo0yJiqoHkJ8/Tu_sei_il_male</loc> </url>
+  <url> <loc>https://biblo.space/book/CkwAS9CLz5XsevCPZCqF/La_scelta</loc> </url>
+  <url> <loc>https://biblo.space/book/DcMXIfvMlYGvgZH7LcME/L'occhio_pi%C3%B9_azzurro</loc> </url>
+  <url> <loc>https://biblo.space/book/i5c7Vb7vCHIQcS2pPJjL/Jazz</loc> </url>
+  <url> <loc>https://biblo.space/book/jvVTd08lXhhRIwPi0mTt/Canto_di_Salomone</loc> </url>
+  <url> <loc>https://biblo.space/book/PnWrHGNFjFaRms52SHdr/Sula</loc> </url>
+  <url> <loc>https://biblo.space/book/UxNOKpDXYBq9FkYed94X/A_casa</loc> </url>
+  <url> <loc>https://biblo.space/book/NtpWSK7zSrinTnpUHtRK/La_finestra_rotta</loc> </url>
+  <url> <loc>https://biblo.space/book/m1hAvQpMVaJMsnuqCnWE/La_luna_fredda</loc> </url>
+  <url> <loc>https://biblo.space/book/kYswdsxPRG1gF2yfLagI/La_dodicesima_carta</loc> </url>
+  <url> <loc>https://biblo.space/book/eZ4BH9BCZNvARACSJIAu/L'uomo_scomparso</loc> </url>
+  <url> <loc>https://biblo.space/book/25XnoQNuki3N325Atq2E/La_scimmia_di_pietra</loc> </url>
+  <url> <loc>https://biblo.space/book/zgiTG81KK0bAuXLtddpC/La_sedia_vuota</loc> </url>
+  <url> <loc>https://biblo.space/book/JZqRJQAWnQ8IXIM9QqLv/Lo_scheletro_che_balla</loc> </url>
+  <url> <loc>https://biblo.space/book/XNWn4cLgCugz6rvbgbpi/Il_collezionista_di_ossa</loc> </url>
+  <url> <loc>https://biblo.space/book/YJBd2D7gy5ebOrsFSdIo/Gli_ingredienti_segreti_dell'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/lharM995O0LibqeI1Jpm/Con_te_fino_alla_fine_del_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/GFq4okd7N0Vg5XjFppVd/Basta_non_dire_ti_amo</loc> </url>
+  <url> <loc>https://biblo.space/book/H8CKeutdkt93Ik6zCNRg/Il_caff%C3%A8_dei_piccoli_miracoli</loc> </url>
+  <url> <loc>https://biblo.space/book/vF93QFJSCtTGdTdqipR1/La_ricetta_del_vero_amore</loc> </url>
+  <url> <loc>https://biblo.space/book/BIBZ6Bbn6vnRtwd9H61A/Una_sera_a_Parigi</loc> </url>
+  <url> <loc>https://biblo.space/book/VMRRjBimjCyRGWGK7nH3/La_felicit%C3%A0_delle_piccole_cose</loc> </url>
+  <url> <loc>https://biblo.space/book/5k7FrCbLarLxcOBoqsKI/Due_biglietti_per_la_felicit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/B0od7MGePPWBlifZ6hfN/Il_grande_futuro</loc> </url>
+  <url> <loc>https://biblo.space/book/QLzuuJRknFsupLrb5dXZ/La_ragazza_che_ballava_sui_cornicioni</loc> </url>
+  <url> <loc>https://biblo.space/book/zYW1xFTHJSqGaPXqxXkE/Melody</loc> </url>
+  <url> <loc>https://biblo.space/book/os7TGoeUFmj1JN0796sX/Guardami_negli_occhi</loc> </url>
+  <url> <loc>https://biblo.space/book/E9ACPjRmjhsCMIj5Yobu/Mouna</loc> </url>
+  <url> <loc>https://biblo.space/book/OhnkvPeeR2liQvnud1z3/La_notte_ritorna</loc> </url>
+  <url> <loc>https://biblo.space/book/1Py5NCO0SEqnBzdMIaTB/Io_sono_il_messaggero</loc> </url>
+  <url> <loc>https://biblo.space/book/RHafsrMfXFgjducDCgZ1/La_lettrice_di_mezzanotte</loc> </url>
+  <url> <loc>https://biblo.space/book/IzvNrmVnDd1mLxcDOwEX/I_giorni_sospesi</loc> </url>
+  <url> <loc>https://biblo.space/book/7CVm8uu9WKu36U2Yr7dJ/Revival</loc> </url>
+  <url> <loc>https://biblo.space/book/mD98Zi4u8o6LgIVMSgyJ/Fine_turno</loc> </url>
+  <url> <loc>https://biblo.space/book/ezY21kFlMKdwm0W1iyZn/Ma_liberaci_dal_male</loc> </url>
+  <url> <loc>https://biblo.space/book/zUGtIXUKnsnPTPAJtbn0/Stars</loc> </url>
+  <url> <loc>https://biblo.space/book/gZySA26kF7aCryifCJsP/Noi_siamo_infinito</loc> </url>
+  <url> <loc>https://biblo.space/book/a2CRoglXIKyioz7qfx3C/Sleeping_Beauties</loc> </url>
+  <url> <loc>https://biblo.space/book/0dCB10iGzc4usenHA8UB/Pastworld</loc> </url>
+  <url> <loc>https://biblo.space/book/bt4yrz9boKpm6rfRusvT/Cari_Mora</loc> </url>
+  <url> <loc>https://biblo.space/book/gyDZksKw6XtGAnANKQmg/La_stanza_delle_meraviglie</loc> </url>
+  <url> <loc>https://biblo.space/book/5TV2IIvSXSCYhXGSy9ns/L'uomo_di_gesso</loc> </url>
+  <url> <loc>https://biblo.space/book/i5sxUjSS9ZZ3EgTMTywN/L'amico_nascosto</loc> </url>
+  <url> <loc>https://biblo.space/book/ekLZjOXgjIijWb6oqdMa/La_ragazza_che_voleva_salvare_i_libri</loc> </url>
+  <url> <loc>https://biblo.space/book/ApsbZYZfPOzmm3wVKSbZ/Voce_umana</loc> </url>
+  <url> <loc>https://biblo.space/book/tfWa2qmHmpSLxl1jDfi3/La_grande_guerra</loc> </url>
+  <url> <loc>https://biblo.space/book/DzA5KPKRhdsHZZES5k8Q/Jerusalem</loc> </url>
+  <url> <loc>https://biblo.space/book/SQW9NqlUDXklZBU1z1i6/Dove_ti_ho_perso</loc> </url>
+  <url> <loc>https://biblo.space/book/nDBXwQCCbARCBlQ0yWz9/Macbeth</loc> </url>
+  <url> <loc>https://biblo.space/book/l8hZD5T1BjarPNT3TszH/Le_parole_di_Sara</loc> </url>
+  <url> <loc>https://biblo.space/book/Ec6fhp4Q1ZVqwhuvl6vH/Oltre_il_bosco</loc> </url>
+  <url> <loc>https://biblo.space/book/UFAdt4HQAbV5kccT4NJR/Ink</loc> </url>
+  <url> <loc>https://biblo.space/book/NhJb05vmWFg1UX0M3JOB/Spark</loc> </url>
+  <url> <loc>https://biblo.space/book/l5mFXTZCwnq7azdc0wQN/La_lunga_discesa</loc> </url>
+  <url> <loc>https://biblo.space/book/y572dtnDBeiJw49qMJ5w/Caraval</loc> </url>
+  <url> <loc>https://biblo.space/book/0YHshHdSamt6P9RKy3Wb/Il_valzer_dell'impiccato</loc> </url>
+  <url> <loc>https://biblo.space/book/KNjfZE0wYzBWDpaphdto/La_biblioteca_delle_anime</loc> </url>
+  <url> <loc>https://biblo.space/book/vhA3RqcZgYpQed1mhbxp/Hollow_City</loc> </url>
+  <url> <loc>https://biblo.space/book/X3LRRUBMqmN4v8AHXjPi/Miss_Peregrine</loc> </url>
+  <url> <loc>https://biblo.space/book/2AgLpI0Z1UOkGDXSZi2i/La_mappa_dei_giorni</loc> </url>
+  <url> <loc>https://biblo.space/book/Qrl7VBpVHUvHZfn8L5Lz/La_figlia_della_libert%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/4gK3cFgTsh8G7MLqpg4t/Solo_una_parola</loc> </url>
+  <url> <loc>https://biblo.space/book/tnq2qxnRgdzNu16bm9ub/Il_monastero_delle_ombre_perdute</loc> </url>
+  <url> <loc>https://biblo.space/book/QaXCE9xPLrjJwerDQCpr/Il_marchio_dell'inquisitore</loc> </url>
+  <url> <loc>https://biblo.space/book/p4Qp0eQzLcFH1I0rmDO6/L'eredit%C3%A0_dell'abate_nero</loc> </url>
+  <url> <loc>https://biblo.space/book/Wm27dAE0Z2uK5CuhnV5y/Quando_sarai_grande</loc> </url>
+  <url> <loc>https://biblo.space/book/BTNUsUaCDfTTSPk7SJKk/Il_mondo_di_Leonardo</loc> </url>
+  <url> <loc>https://biblo.space/book/q8iQKbWLrGMYZEIsi2FP/1Q84_-_Libro_3</loc> </url>
+  <url> <loc>https://biblo.space/book/W0gnVM9YMT7gLVGWgEEs/Sapiens._Da_animali_a_d%C3%A8i</loc> </url>
+  <url> <loc>https://biblo.space/book/vkZrYkFblMw7SrOl6MEi/L'isola_delle_anime</loc> </url>
+  <url> <loc>https://biblo.space/book/r4v2whGvwGX3oHi9Odk0/L'opera_d'arte_nell'epoca_della_sua_riproducibilit%C3%A0_tecnica</loc> </url>
+  <url> <loc>https://biblo.space/book/AHq7UsweqLhjJW7bjN4S/Scritti_autobiografici</loc> </url>
+  <url> <loc>https://biblo.space/book/Mk0VClX5qT6KmN5gniC0/Preghiera_per_%C4%8Cernobyl'</loc> </url>
+  <url> <loc>https://biblo.space/book/jDxWY0KhcdVr8LM8JNZj/Ma_%C3%A8_stupendo!</loc> </url>
+  <url> <loc>https://biblo.space/book/H6e57qAVYSVWkIkOAxtm/Le_palline_di_zucchero_della_Fata_Turchina</loc> </url>
+  <url> <loc>https://biblo.space/book/waZt8UnHjcbRnkdNQlx0/Il_ritorno_del_dinosauro</loc> </url>
+  <url> <loc>https://biblo.space/book/OclPt4wnQ7s74VIN6Zcw/I_cento_libri</loc> </url>
+  <url> <loc>https://biblo.space/book/Y7HFBNu8XirEXvz22y1n/Curarsi_con_i_libri</loc> </url>
+  <url> <loc>https://biblo.space/book/vvi31l8NvcjERHJ48u80/I_quattro_libri_delle_Piccole_donne</loc> </url>
+  <url> <loc>https://biblo.space/book/0cXxVKxKgfUnYGIw1SJf/Il_mercante_di_libri_maledetti</loc> </url>
+  <url> <loc>https://biblo.space/book/V88sAZCng2egVKpFZZNu/Storia_di_una_ladra_di_libri</loc> </url>
+  <url> <loc>https://biblo.space/book/JeOUFSkoE4Hr5IoNfmo2/L'annusatrice_di_libri</loc> </url>
+  <url> <loc>https://biblo.space/book/0vhBBwHW8KGF9cu8bhae/Quella_piccola_libreria_in_fondo_alla_strada</loc> </url>
+  <url> <loc>https://biblo.space/book/IZp9048eMWnZlO9z1rNu/La_libreria_dove_tutto_%C3%A8_possibile</loc> </url>
+  <url> <loc>https://biblo.space/book/yditknUIQVr8eSusdFAI/Il_club_delle_lettrici</loc> </url>
+  <url> <loc>https://biblo.space/book/v1nb7wgtsGAjx2RVAcFS/Una_vita_da_libraio</loc> </url>
+  <url> <loc>https://biblo.space/book/sD5MQFQN4PWIygWLqKO0/Mezzanotte_alla_Libreria_delle_Grandi_Idee</loc> </url>
+  <url> <loc>https://biblo.space/book/VkpO0Yd8ANVOOSu2ZjfU/Il_ladro_gentiluomo</loc> </url>
+  <url> <loc>https://biblo.space/book/Rr5godPBKEBGWnnGBSiw/Arabesque</loc> </url>
+  <url> <loc>https://biblo.space/book/JNqG37XpsOwCeSbPui87/Una_lunga_estate_crudele</loc> </url>
+  <url> <loc>https://biblo.space/book/N9mf6SSKFUijujYS1Tp3/Le_ossa_della_principessa</loc> </url>
+  <url> <loc>https://biblo.space/book/MiPrYlBNogPSjNjZwkX2/Sindrome_da_cuore_in_sospeso</loc> </url>
+  <url> <loc>https://biblo.space/book/1kbyH5LY6mM79QwyWMMS/Un_segreto_non_%C3%A8_per_sempre</loc> </url>
+  <url> <loc>https://biblo.space/book/kBve30C0LwCFgqDSz18v/L'allieva</loc> </url>
+  <url> <loc>https://biblo.space/book/QdtNc13CJw5srpL169Lq/Un_po'_di_follia_in_primavera</loc> </url>
+  <url> <loc>https://biblo.space/book/TispGo0hNXxyCOaKPLP4/Attacco_dalla_Cina</loc> </url>
+  <url> <loc>https://biblo.space/book/H2lAoAZHm6Yx2AEHu8Mb/Noi_siamo_tempesta</loc> </url>
+  <url> <loc>https://biblo.space/book/wgNkLHo5rQKNM2OVMl8i/Fedelt%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/xPkln4AnnRXRIak1xrdV/Il_cuoco_dell'Alcyon</loc> </url>
+  <url> <loc>https://biblo.space/book/WV0mKT1jA4wuvL96u5BC/Le_affinit%C3%A0_elettive</loc> </url>
+  <url> <loc>https://biblo.space/book/GXgK4s4G534M0WXr9Bul/Bel-Ami</loc> </url>
+  <url> <loc>https://biblo.space/book/4dn2vb8PDpuxPiA3ptUU/Il_grande_Gatsby</loc> </url>
+  <url> <loc>https://biblo.space/book/ZHeVJGaJrExXQN2VdIqv/I_dolori_del_giovane_Werther</loc> </url>
+  <url> <loc>https://biblo.space/book/Bxj2i2QRLzKhVxqVf5Qn/Amleto</loc> </url>
+  <url> <loc>https://biblo.space/book/0g7HcBkN3LKnsgXJWRBH/Pinocchio</loc> </url>
+  <url> <loc>https://biblo.space/book/fnCdktwY5qa3GSIzO3sv/Il_fantasma_di_Canterville_e_altri_racconti</loc> </url>
+  <url> <loc>https://biblo.space/book/srvDxtALsuKkl6Iosl8e/Sogno_di_una_notte_di_mezza_estate</loc> </url>
+  <url> <loc>https://biblo.space/book/UCcAOUbtf2xwCDTidDFl/Le_allegre_madame_di_Windsor</loc> </url>
+  <url> <loc>https://biblo.space/book/kqFECOTILVlgXzppkdvW/La_dodicesima_notte_ovvero_quel_che_volete</loc> </url>
+  <url> <loc>https://biblo.space/book/XfKgmAWanbLhD2L1vsWv/Troilo_e_Cressida</loc> </url>
+  <url> <loc>https://biblo.space/book/flaJWjvzq1iiAuNvnM9y/Coriolano</loc> </url>
+  <url> <loc>https://biblo.space/book/7b9JS6Bc4yM2QPjwzgyF/Cimbelino</loc> </url>
+  <url> <loc>https://biblo.space/book/a3Q6CLCwA4a1pPmd9aZk/Re_Lear</loc> </url>
+  <url> <loc>https://biblo.space/book/b6qFeYD0zv3FeeSYwK5V/Antonio_e_Cleopatra</loc> </url>
+  <url> <loc>https://biblo.space/book/T4h2bLeDdI4b1exzl9YT/Sonetti</loc> </url>
+  <url> <loc>https://biblo.space/book/k54nPDeSz5GcthqOZAkL/La_tempesta</loc> </url>
+  <url> <loc>https://biblo.space/book/EMvsXDb2bQLP90yYoJ4s/Molto_rumore_per_nulla</loc> </url>
+  <url> <loc>https://biblo.space/book/FysPkQz19UaCsZ0m0smD/Otello</loc> </url>
+  <url> <loc>https://biblo.space/book/um8S3mdV4PHUUug2otlT/Il_mercante_di_Venezia</loc> </url>
+  <url> <loc>https://biblo.space/book/saFXmEozzEVMLTV7axzm/Macbeth</loc> </url>
+  <url> <loc>https://biblo.space/book/A7ncCuWkrQs0bWJX1GMq/Romeo_e_Giulietta</loc> </url>
+  <url> <loc>https://biblo.space/book/kbEyausyTn9NTeIbXUlF/Alice_nel_paese_delle_meraviglie</loc> </url>
+  <url> <loc>https://biblo.space/book/R8cqLAelneNibhlHYFlX/Peter_Pan</loc> </url>
+  <url> <loc>https://biblo.space/book/GXCjekjaizpVV7iTQ0x8/Il_conte_di_Montecristo</loc> </url>
+  <url> <loc>https://biblo.space/book/kldPtss2dMtFQKAQ2zW7/L'isola_del_tesoro</loc> </url>
+  <url> <loc>https://biblo.space/book/PxbzjAoSJxzmjpgsAT4u/Racconti_del_terrore</loc> </url>
+  <url> <loc>https://biblo.space/book/xPfT7ZatO6Le7lrnQ8HM/Le_avventure_di_Gordon_Pym</loc> </url>
+  <url> <loc>https://biblo.space/book/X4rYJbl1TAX8WnRkdYEP/Ossi_di_seppia</loc> </url>
+  <url> <loc>https://biblo.space/book/giUQLlRt0gECFDxjAaZf/Vita_d'un_Uomo</loc> </url>
+  <url> <loc>https://biblo.space/book/mhDqSlgIwxIHEHqEUaF9/Tutte_le_poesie</loc> </url>
+  <url> <loc>https://biblo.space/book/Nqs8eddDwqHscCYMZmCP/Tutte_le_poesie</loc> </url>
+  <url> <loc>https://biblo.space/book/y2JRCtGYXfVEUJGn6UfF/I_racconti</loc> </url>
+  <url> <loc>https://biblo.space/book/1kY80KiRBgYJdYhqPVdt/Dracula</loc> </url>
+  <url> <loc>https://biblo.space/book/79BJzvsOvU3IUVylS5qb/Il_dottor_Jekyll_e_mr._Hyde</loc> </url>
+  <url> <loc>https://biblo.space/book/RUmKDhrnVLof1b6Bm2eH/Il_ritratto_di_Dorian_Gray</loc> </url>
+  <url> <loc>https://biblo.space/book/6UJZ3UZlWf9NFRfhLkIP/Jane_Eyre</loc> </url>
+  <url> <loc>https://biblo.space/book/PuB6kRDUKwKbK5u4yA7P/Cime_tempestose</loc> </url>
+  <url> <loc>https://biblo.space/book/UpCPEfZ0QahxX7NjoDKk/Manifesto_del_Partito_Comunista</loc> </url>
+  <url> <loc>https://biblo.space/book/Agbwdhi8Cmt94RnuocTA/Il_contratto_sociale</loc> </url>
+  <url> <loc>https://biblo.space/book/tN0QjOQ87OWnzyw7i6EW/Stato_e_anarchia</loc> </url>
+  <url> <loc>https://biblo.space/book/1Nrzm11yFMmPpahO1gA6/Origine_della_disuguaglianza</loc> </url>
+  <url> <loc>https://biblo.space/book/wcX3qDoZIn4wx5n5rsmN/Utopia</loc> </url>
+  <url> <loc>https://biblo.space/book/HnXftUVZkNXDKospulBR/La_citt%C3%A0_del_Sole</loc> </url>
+  <url> <loc>https://biblo.space/book/4gYwaNZZHc8oOqNc49lb/La_certosa_di_Parma</loc> </url>
+  <url> <loc>https://biblo.space/book/jEUOTEpuH0khbU6wtq0O/Il_rosso_e_il_nero</loc> </url>
+  <url> <loc>https://biblo.space/book/ePh1UvPk2lFyYe4HwOLs/I_fratelli_Karamazov</loc> </url>
+  <url> <loc>https://biblo.space/book/NgydkthSFlOGEU1xVHoX/Anna_Karenina</loc> </url>
+  <url> <loc>https://biblo.space/book/b6U3WN4QFaKGBTzzi4Od/Madame_Bovary</loc> </url>
+  <url> <loc>https://biblo.space/book/ycqEX9r5TOhtOOd10fjZ/La_metamorfosi_e_tutti_racconti_pubblicati_in_vita</loc> </url>
+  <url> <loc>https://biblo.space/book/TKD3DsAiZtn2PgrOg0u4/Il_castello</loc> </url>
+  <url> <loc>https://biblo.space/book/E7sAGwNDOozWJy83o6u8/Il_processo</loc> </url>
+  <url> <loc>https://biblo.space/book/oWKwo2FMwmz8m540xVEj/Il_mondo_sommerso</loc> </url>
+  <url> <loc>https://biblo.space/book/3u94SBO7eP1PfcYYiyNb/I_figli_di_Ringworld</loc> </url>
+  <url> <loc>https://biblo.space/book/0M67lqx7c9Al014ew5GZ/Il_trono_di_Ringworld</loc> </url>
+  <url> <loc>https://biblo.space/book/F53Q9xkTQUcvHcKiPFdW/I_segreti_dei_costruttori_di_Ringworld</loc> </url>
+  <url> <loc>https://biblo.space/book/uYeEbouvM6aZZWRaj2qA/I_burattinai</loc> </url>
+  <url> <loc>https://biblo.space/book/JU3vCsrvELjvRwZcOWbr/Guerra_eterna</loc> </url>
   <url> <loc>https://biblo.space/book/W3UpBSh5IB0T3GrhRoMI/Tempesta_di_neve_e_profumo_di_mandorle</loc> </url>
   <url> <loc>https://biblo.space/book/My93Ru8Aa2SblMzZbjLF/Ferro_e_sangue</loc> </url>
   <url> <loc>https://biblo.space/book/cWykduyU0uAzIX60sCCs/Happy_Nation</loc> </url>
@@ -150,34 +663,11 @@
   <url> <loc>https://biblo.space/book/pCUziBzDNcCjEauQQcEf/Freddo_Sud</loc> </url>
   <url> <loc>https://biblo.space/book/hcfh8IHKrPgsnWeJjRcT/Finch%C3%A9_morte_non_ci_separi</loc> </url>
   <url> <loc>https://biblo.space/book/WKDFFCj3mjQUyoOk5ewo/Il_testamento_di_Nobel</loc> </url>
-  <url> <loc>https://biblo.space/book/YG8nFa54wLw7hXBLB2xd/I_dodici_sospetti</loc> </url>
-  <url> <loc>https://biblo.space/book/djHC935qD7DP6EiOpy2T/Fondazione_Paradiso</loc> </url>
   <url> <loc>https://biblo.space/book/nWlOoqAOKzS72F8FS5qH/Il_Lupo_Rosso</loc> </url>
+  <url> <loc>https://biblo.space/book/djHC935qD7DP6EiOpy2T/Fondazione_Paradiso</loc> </url>
+  <url> <loc>https://biblo.space/book/YG8nFa54wLw7hXBLB2xd/I_dodici_sospetti</loc> </url>
   <url> <loc>https://biblo.space/book/1vqx68Nzudb352rpNDAv/Delitto_a_Stoccolma</loc> </url>
   <url> <loc>https://biblo.space/book/svkb4SBi8JGbX7NeZjGd/Studio_Sex</loc> </url>
-  <url> <loc>https://biblo.space/book/qlsqG9acfkVcWsZmP0jn/Shining</loc> </url>
-  <url> <loc>https://biblo.space/book/FLDJOUBQUbjUhNShGyx6/Uno,_nessuno_e_centomila</loc> </url>
-  <url> <loc>https://biblo.space/book/7GaJTkbj3NADGhhqPTPr/Wild_Cards_-_1._L'origine</loc> </url>
-  <url> <loc>https://biblo.space/book/70efoceJZFWZ0fLceRqt/La_giornata_d'uno_scrutatore</loc> </url>
-  <url> <loc>https://biblo.space/book/6wEdAZkN7PmrSLXkNKLJ/Il_Labirinto_degli_Spiriti</loc> </url>
-  <url> <loc>https://biblo.space/book/6M3uVakNnUpiSfDWeFrA/Orgoglio_e_pregiudizio</loc> </url>
-  <url> <loc>https://biblo.space/book/5rPqu5fWh5rNpbRdnUe8/La_governante_e_altre_commedie</loc> </url>
-  <url> <loc>https://biblo.space/book/5MfSiQkhMpKnMVxrHbLA/Un_delitto_avr%C3%A0_luogo</loc> </url>
-  <url> <loc>https://biblo.space/book/5A7dPPMK4GjuWSZgAys2/La_solitudine_dei_numeri_primi</loc> </url>
-  <url> <loc>https://biblo.space/book/4jyW6sbty3MNnpgtDYSO/La_signora_Dalloway</loc> </url>
-  <url> <loc>https://biblo.space/book/43UMS7qtsaL2GRxroS2z/I_quarantanove_racconti</loc> </url>
-  <url> <loc>https://biblo.space/book/3pZM7HqAdtgqKTOvGNgX/Wild_Cards_-_3._L'assalto</loc> </url>
-  <url> <loc>https://biblo.space/book/3oJ0aDpfC5md9ionv6Pl/Il_prigioniero_del_cielo</loc> </url>
-  <url> <loc>https://biblo.space/book/2ytC5L524GpblYrC0AS6/Senza_un_soldo_a_Parigi_e_a_Londra</loc> </url>
-  <url> <loc>https://biblo.space/book/2mIYndecHwdP5lnS1907/Aiuto,_Poirot!</loc> </url>
-  <url> <loc>https://biblo.space/book/1wVKsMbjJJuHMXKtQLej/Il_terrore_viene_per_posta</loc> </url>
-  <url> <loc>https://biblo.space/book/1oIsR0br1lTkeMdXTtUH/Sherlock_Holmes_e_la_congiura_dell'oppio</loc> </url>
-  <url> <loc>https://biblo.space/book/1ADL9W4o1wQodwYVObuN/Wild_Cards_-_8._Il_fante_con_un_occhio_solo</loc> </url>
-  <url> <loc>https://biblo.space/book/17T3TRrxoVDJERfOlcES/Vivere_per_raccontarla</loc> </url>
-  <url> <loc>https://biblo.space/book/0nIj8iwHUwOueVE0kVMu/La_vendetta_di_Sherlock_Holmes</loc> </url>
-  <url> <loc>https://biblo.space/book/0VrNHVt5Ogq2KxzXb4Cx/Guida_galattica_per_gli_autostoppisti</loc> </url>
-  <url> <loc>https://biblo.space/book/0LxWNrCmMzJr0BfLvZMk/Una_boccata_d'aria</loc> </url>
-  <url> <loc>https://biblo.space/book/06j2IyeJxHdBDmAGqBUW/Cent'anni_di_solitudine</loc> </url>
   <url> <loc>https://biblo.space/book/gUIi9G0KUokVl7ieoeFU/Il_sogno_di_argento</loc> </url>
   <url> <loc>https://biblo.space/book/qafye47JTcUBCaIXklSd/Il_ragazzo_dei_mondi_infiniti</loc> </url>
   <url> <loc>https://biblo.space/book/QSY7K0rSfFZ3CJGxTZAx/Odd_e_il_Gigante_di_Ghiaccio</loc> </url>
@@ -187,12 +677,11 @@
   <url> <loc>https://biblo.space/book/2JPz9XPwIMA6uoyNDK2S/L'unico_ricordo_di_Flora_Banks</loc> </url>
   <url> <loc>https://biblo.space/book/Kl0Eb011W56JzAPZPbc5/La_vita_segreta_degli_scrittori</loc> </url>
   <url> <loc>https://biblo.space/book/GiRj7l4tIMdNzIvKttyJ/La_menzogna_dell'identit%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/FprRIiyr3FfIvEGZpvZA/Scarlet_volume_1</loc> </url>
+  <url> <loc>https://biblo.space/book/aEWZmPdVNxwUNJ2oBu90/Quantica</loc> </url>
   <url> <loc>https://biblo.space/book/Jz2mc97iyuNGL479HFL3/Breve_storia_dell'inconscio</loc> </url>
-  <url> <loc>https://biblo.space/book/8RCuj1SocQOyeRztyIZP/Stranger_Things</loc> </url>
+  <url> <loc>https://biblo.space/book/8RCuj1SocQOyeRztyIZP/Stranger_Things_-_Il_libro_ufficiale</loc> </url>
   <url> <loc>https://biblo.space/book/tPxtb4d0LH3YTZGoOK0U/LinkedIn</loc> </url>
   <url> <loc>https://biblo.space/book/KItKvd62G1rXkgZKakab/La_Cina_in_dieci_parole</loc> </url>
-  <url> <loc>https://biblo.space/book/O5vUbdSKoZ2z9UkYZKdD/Sherlock_Holmes</loc> </url>
   <url> <loc>https://biblo.space/book/NIf0SUpMHndB01Xp8Jd7/Capire,_Fare_e_Reinventare_il_Fumetto</loc> </url>
   <url> <loc>https://biblo.space/book/mOSQhwPwhsctbdjMpKd5/Il_mondo_in_un_dollaro</loc> </url>
   <url> <loc>https://biblo.space/book/1hjUuzOXjZYq4BwCZz5V/Keynes_o_Hayek</loc> </url>
@@ -209,172 +698,196 @@
   <url> <loc>https://biblo.space/book/PXXTZKG5UPR9PrNs5MWO/A_un_metro_da_te</loc> </url>
   <url> <loc>https://biblo.space/book/rGLQWT2MnGUznJhcnxW2/La_posta_del_cuore_di_Mrs_Bird</loc> </url>
   <url> <loc>https://biblo.space/book/avVQd8dmsv0Q3hlrY6Mh/The_Perfect_Date</loc> </url>
-  <url> <loc>https://biblo.space/book/MIlzXzWa2uSJfB5BeDhg/La_verit%C3%A0_del_ghiaccio</loc> </url>
-  <url> <loc>https://biblo.space/book/YAfgURznm4poMWF8yMkU/Sei_personaggi_in_cerca_d'autore_-_Enrico_IV</loc> </url>
-  <url> <loc>https://biblo.space/book/M09ScTEV0l7OSw8H6aMC/Il_signore_delle_mosche</loc> </url>
-  <url> <loc>https://biblo.space/book/APSjTe4kgEVLsc31AShs/Di_l%C3%A0_dal_fiume_e_tra_gli_alberi</loc> </url>
-  <url> <loc>https://biblo.space/book/06enQrwMV1wIL9aFELlI/Lady_Hamilton</loc> </url>
-  <url> <loc>https://biblo.space/book/08J9swQNXb4hO62xh6n6/Dove_nasce_la_nuova_fisica</loc> </url>
-  <url> <loc>https://biblo.space/book/09gijXDM0NTQp4hrgx3R/Il_codice_da_Vinci</loc> </url>
-  <url> <loc>https://biblo.space/book/0mygbKChbHBNzyQUr8Bw/L'assassinio_del_Commendatore</loc> </url>
-  <url> <loc>https://biblo.space/book/0QXl9A0QPVWtc9JWrULU/Una_storia_di_amore_e_di_tenebra</loc> </url>
-  <url> <loc>https://biblo.space/book/13N9k1RjifUYOWiSq5nj/Dietro_le_quinte_dell'universo</loc> </url>
-  <url> <loc>https://biblo.space/book/14eGt7B8a7Oh1nCaedX8/L'infinito_viaggiare</loc> </url>
-  <url> <loc>https://biblo.space/book/27AERt53n5M614WMpMad/Decameron</loc> </url>
-  <url> <loc>https://biblo.space/book/2lfzDb6xAz9AX41S0wgL/La_fattoria_degli_animali</loc> </url>
-  <url> <loc>https://biblo.space/book/2Twg4fBZDYRiPgs69c6o/Notre-Dame_de_Paris</loc> </url>
-  <url> <loc>https://biblo.space/book/3dYTmJtElOpPqIVqqxBx/La_bustina_di_Minerva</loc> </url>
-  <url> <loc>https://biblo.space/book/3wZ8UbJ76yulItO1RaMJ/Il_pendolo_di_Foucault</loc> </url>
-  <url> <loc>https://biblo.space/book/4rmv0Hf332hMJZjcKBDl/1Q84</loc> </url>
-  <url> <loc>https://biblo.space/book/50XRGPYFy6eSYKXQE047/La_realtà_non_è_come_ci_appare</loc> </url>
-  <url> <loc>https://biblo.space/book/5AIjJPzxb90JNcIpEGcV/Ulisse</loc> </url>
-  <url> <loc>https://biblo.space/book/5Jhp8ZmKrAYalkY1mHTT/Alice_nel_paese_delle_meraviglie</loc> </url>
-  <url> <loc>https://biblo.space/book/5kRx42iDwx5ehb7UfAcE/Senza_via_di_scampo</loc> </url>
-  <url> <loc>https://biblo.space/book/6amE6A304uquKSqHZ2Ur/Superintelligenza</loc> </url>
-  <url> <loc>https://biblo.space/book/6kg9chz1FB85c32GNPCN/Il_nome_della_rosa</loc> </url>
-  <url> <loc>https://biblo.space/book/6Mqp5heiACuEOG2L2hMY/I_cospiratori</loc> </url>
-  <url> <loc>https://biblo.space/book/6VlImuXEkXR4UfzEoV95/Il_Milione</loc> </url>
-  <url> <loc>https://biblo.space/book/6xwfTmw3L6evy4bEcphw/Harry_Potter_e_la_Pietra_Filosofale</loc> </url>
-  <url> <loc>https://biblo.space/book/72waRX6p1Y7ibX2EVbiH/Un_comunista_in_mutande</loc> </url>
-  <url> <loc>https://biblo.space/book/74wotqBHUNFd6AVkyqZS/Caravaggio_segreto</loc> </url>
-  <url> <loc>https://biblo.space/book/7eH4ukTn6m5ko3bUAQhG/Neurobiologia_del_tempo</loc> </url>
-  <url> <loc>https://biblo.space/book/7kMD1NyEZOrV9oyG4ual/Lutero</loc> </url>
-  <url> <loc>https://biblo.space/book/7P8jCgRc4bmxuhhl3iqZ/Alieni</loc> </url>
-  <url> <loc>https://biblo.space/book/7QroE5EyHGD8W8jPvT6z/La_teoria_del_tutto</loc> </url>
-  <url> <loc>https://biblo.space/book/7t9CEm1edFvcqW7BpR2R/Il_mondo_nuovo_-_Ritorno_al_mondo_nuovo</loc> </url>
-  <url> <loc>https://biblo.space/book/7U3rZdwrqgLxBpcquQ06/Dieci_piccoli_indiani</loc> </url>
-  <url> <loc>https://biblo.space/book/7w53L425SRhJUpfOCjgF/Racconto_di_due_città</loc> </url>
-  <url> <loc>https://biblo.space/book/7wLCwb1SwPbXBpe7pGpM/La_guerra_dei_mondi</loc> </url>
-  <url> <loc>https://biblo.space/book/827yUjuzD9wXfEOOdIyM/Discorso_sul_metodo</loc> </url>
-  <url> <loc>https://biblo.space/book/84Jhoda9CWRC3noGqSmF/La_fisica_del_diavolo</loc> </url>
-  <url> <loc>https://biblo.space/book/8sNuuEx6BjoDOtGRtjRc/Raffaello_segreto</loc> </url>
-  <url> <loc>https://biblo.space/book/9aZ2N1qhabp8AXdGJZfA/Finalmente_ho_capito!_La_Filosofia</loc> </url>
-  <url> <loc>https://biblo.space/book/a1QrEJbVkjRRykhthJ4i/A_piedi_nudi_su_Marte</loc> </url>
-  <url> <loc>https://biblo.space/book/a7UrR9otOO994KWz6JfH/Darwin</loc> </url>
-  <url> <loc>https://biblo.space/book/aALKJvza0vqnG9NwK3He/Oltre_la_particella_di_Dio</loc> </url>
-  <url> <loc>https://biblo.space/book/aIQTgIwmSZQpPjCegsBo/Belli_e_dannati</loc> </url>
-  <url> <loc>https://biblo.space/book/AW2wyii5nPYMpPj4nYP4/I_cinque_guerrieri</loc> </url>
-  <url> <loc>https://biblo.space/book/BB2KMbQC8sCETwueqYes/I_versi_satanici</loc> </url>
-  <url> <loc>https://biblo.space/book/BbCMoibsW0WGOWOrJ3N7/Le_17_equazioni_che_hanno_cambiato_il_mondo</loc> </url>
-  <url> <loc>https://biblo.space/book/BcZz0d4uijfSW4ZU5gXI/L'uomo_che_ride</loc> </url>
-  <url> <loc>https://biblo.space/book/BDqATzMH8WJ2oqQzch69/Su_Nettuno_piovono_diamanti</loc> </url>
-  <url> <loc>https://biblo.space/book/BjdYsXz5mTiWh6gl5cX2/E_l'uomo_creò_l'uomo</loc> </url>
-  <url> <loc>https://biblo.space/book/BMpxu5piIhrrPKOhJYV2/Vita_di_Leonardo</loc> </url>
-  <url> <loc>https://biblo.space/book/BqRsyKoYgt9lMRn00XqH/Il_percorso_dell'amore</loc> </url>
-  <url> <loc>https://biblo.space/book/bqV334h9tg9liyQ78shg/L'origine_delle_specie</loc> </url>
-  <url> <loc>https://biblo.space/book/bSvjyQBBJ8tzGbSML9cM/Trappola_per_volpi</loc> </url>
-  <url> <loc>https://biblo.space/book/BvQQ6cXC42aaEAxr7dJn/Luna</loc> </url>
-  <url> <loc>https://biblo.space/book/BYBeV2raTa8plGsO4UIG/Autostop_con_Buddha</loc> </url>
-  <url> <loc>https://biblo.space/book/C2d5vWE0EjWIk8gHIcl3/Leibniz</loc> </url>
-  <url> <loc>https://biblo.space/book/djc1UTScf43PPm2sudLy/Il_quarto_uomo</loc> </url>
-  <url> <loc>https://biblo.space/book/doSGban2g32mJDg9mg95/Breaking_News</loc> </url>
-  <url> <loc>https://biblo.space/book/DyF4wYjEwtcg2OHACtjB/Sesso_e_intimit%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/e0rIqauA7OhEFe2Zi3J7/La_nascita_imperfetta_delle_cose</loc> </url>
-  <url> <loc>https://biblo.space/book/E810JrbwRM14T2N2a4dH/Nel_segno_della_pecora</loc> </url>
-  <url> <loc>https://biblo.space/book/ECcDtpbrRpVQeAXbH28m/L'Universo_matematico</loc> </url>
-  <url> <loc>https://biblo.space/book/eZEdHsGZMJfeXRUBRP6w/La_svastica_sul_sole</loc> </url>
-  <url> <loc>https://biblo.space/book/f7hIoHJIoL1Yf8ogK5rI/L'arte_nel_cesso</loc> </url>
-  <url> <loc>https://biblo.space/book/G2xrC9oznIly1df98mvR/Ubik</loc> </url>
-  <url> <loc>https://biblo.space/book/GmcQG08f3QDvP7snKUnt/Don_Chisciotte_della_Mancia</loc> </url>
-  <url> <loc>https://biblo.space/book/gmXw9ONvx89L24Vuafn3/La_minaccia_del_drago</loc> </url>
-  <url> <loc>https://biblo.space/book/gNKXqz8INnk47DDduKVH/Le_sette_prove</loc> </url>
-  <url> <loc>https://biblo.space/book/GZZilwjRcJAddhUWwORO/L'assassinio_del_Commendatore</loc> </url>
-  <url> <loc>https://biblo.space/book/H1oQtQodBlxWtn9eYP01/Come_si_fa_una_tesi_di_laurea</loc> </url>
-  <url> <loc>https://biblo.space/book/HO2JikEATxMDzGjhh5xo/The_Game</loc> </url>
-  <url> <loc>https://biblo.space/book/HtGMfy2JAJrKdasb72Sm/Un_caffè_nero_per_Poirot</loc> </url>
-  <url> <loc>https://biblo.space/book/i1hxiaVxSx0Qb7mGC3jP/Hotel_Copenaghen</loc> </url>
-  <url> <loc>https://biblo.space/book/i5vlk15CLt8uudvmYnTY/Il_padre_Goriot</loc> </url>
-  <url> <loc>https://biblo.space/book/IjkO6wIYmfTnYTWgqvmV/Un_oscuro_scrutare</loc> </url>
-  <url> <loc>https://biblo.space/book/IOoSPgWQaGZx8kKenI7Q/Umberto_Eco</loc> </url>
-  <url> <loc>https://biblo.space/book/IuGlBB5VVXhMsy5RBfRC/Donne_d'Oriente</loc> </url>
-  <url> <loc>https://biblo.space/book/J6gPPux19uYQzuxf3FQy/Expo_58</loc> </url>
-  <url> <loc>https://biblo.space/book/Jckxg1kBBW04eWBDTKCA/Il_grande_disegno</loc> </url>
-  <url> <loc>https://biblo.space/book/JEFrfx0IEPQfFrBKEWLj/La_regina_crocifissa</loc> </url>
-  <url> <loc>https://biblo.space/book/JlGUWw6oeAj3maP5MQtn/1984</loc> </url>
-  <url> <loc>https://biblo.space/book/JTzvbXOMbFH4SpCI2CeP/Uomini_senza_donne</loc> </url>
-  <url> <loc>https://biblo.space/book/k2eMV2Se8fXXVolm8hZ9/Tropico_del_Cancro</loc> </url>
-  <url> <loc>https://biblo.space/book/kmjLayiIC210xplFBHin/Le_tre_stimmate_di_Palmer_Eldritch</loc> </url>
-  <url> <loc>https://biblo.space/book/lDseWW6dfM1vmiVOL71f/Lo_Hobbit</loc> </url>
-  <url> <loc>https://biblo.space/book/lmx9bI3xL9439xh2CxQP/L'incredibile_cena_dei_fisici_quantistici</loc> </url>
-  <url> <loc>https://biblo.space/book/LplUd3mr15bFEiSfpejx/Inferno</loc> </url>
-  <url> <loc>https://biblo.space/book/m2OTaGRQwMLqV6CGF2le/Il_pozzo_della_solitudine</loc> </url>
-  <url> <loc>https://biblo.space/book/mcS8JRkpJfc4JeO0KiqO/Il_ritratto_di_Dorian_Gray</loc> </url>
-  <url> <loc>https://biblo.space/book/mK80gLwa2HiSrpFI2ZKq/La_natura_dello_spazio_e_del_tempo</loc> </url>
-  <url> <loc>https://biblo.space/book/MnphV6oEPLPpSxnhX6bP/Pape_Satàn_Aleppe</loc> </url>
-  <url> <loc>https://biblo.space/book/Ncp3p70dheR6hOxLpVDl/Numero_undici</loc> </url>
-  <url> <loc>https://biblo.space/book/Nex8V1QLP4RyYZfa4kuE/Tua</loc> </url>
-  <url> <loc>https://biblo.space/book/nHQkkB1lNlxwGUVPPzDw/Storie_e_vite_di_superdonne_che_hanno_fatto_la_scienza</loc> </url>
-  <url> <loc>https://biblo.space/book/njjlIG1IOnNFnqxnC1tg/Il_Quinto_Giorno</loc> </url>
-  <url> <loc>https://biblo.space/book/nkZ4ZVGPchpa3QKtzfAC/L'uomo_invisibile</loc> </url>
-  <url> <loc>https://biblo.space/book/NnNyynRC5uN0x7yPVJ5J/Il_sogno_della_camera_rossa</loc> </url>
-  <url> <loc>https://biblo.space/book/nTgEwx3PFCIIgjRSdkzc/Il_Signore_degli_Anelli</loc> </url>
-  <url> <loc>https://biblo.space/book/o5SQf3E7AyIWx0PJSUG7/Sette_brevi_lezioni_di_fisica</loc> </url>
-  <url> <loc>https://biblo.space/book/O6TpVPgDvqHGm0mQ0VvP/La_ragnatela_cosmica</loc> </url>
-  <url> <loc>https://biblo.space/book/oCD8bC4euwhce7ThzKdU/Il_Trono_di_Spade_-_1</loc> </url>
-  <url> <loc>https://biblo.space/book/ODqleJJ4eszG2qc4jZSL/L'ordine_del_tempo</loc> </url>
-  <url> <loc>https://biblo.space/book/oOasxCnuAm1ak6r1Oshb/La_macchina_del_tempo</loc> </url>
-  <url> <loc>https://biblo.space/book/OqvYmhdiupI0ghMBcTlq/Cento_colpi_di_spazzola_prima_di_andare_a_dormire</loc> </url>
-  <url> <loc>https://biblo.space/book/oxacKUrQBFNZHerqDRX4/Elogio_della_follia</loc> </url>
-  <url> <loc>https://biblo.space/book/P0Umnudxsb7FAIqJiRXo/La_fisica_del_nulla</loc> </url>
-  <url> <loc>https://biblo.space/book/pG19aI3XCY2GVB0vhbqU/Sei_pezzi_facili</loc> </url>
-  <url> <loc>https://biblo.space/book/q5pVuIWkVZQ9PXjLQClg/L'uomo_di_Marte</loc> </url>
-  <url> <loc>https://biblo.space/book/qq97efzBxuy7rusEBrBV/Il_simbolo_perduto</loc> </url>
-  <url> <loc>https://biblo.space/book/rCaFmEfteQdeB5ukmIGO/L'esercito_dei_mercenari</loc> </url>
-  <url> <loc>https://biblo.space/book/rJaXax3kuCuxEc9zBm3T/Come_il_jazz_pu%C3%B2_cambiarti_la_vita</loc> </url>
-  <url> <loc>https://biblo.space/book/rYb3pAo4wKZeFZno4J3C/Lolita</loc> </url>
-  <url> <loc>https://biblo.space/book/S0kTReL6ki8XuVlZQpcl/Lotteria_dello_spazio</loc> </url>
-  <url> <loc>https://biblo.space/book/S0M33BimWpc4Yyr8gTVz/Hegel</loc> </url>
-  <url> <loc>https://biblo.space/book/sD2JraYuB8ylALcmNPvt/Le_sei_pietre_sacre</loc> </url>
-  <url> <loc>https://biblo.space/book/sJ9d1xpHw5NPrvROD9Vr/Via_col_vento</loc> </url>
-  <url> <loc>https://biblo.space/book/Slw9KYzVGD2pv8ZKjMXh/Il_futuro_che_verrà</loc> </url>
-  <url> <loc>https://biblo.space/book/SRd8oTHSUQPKJTPrx03s/D'un_tratto_nel_folto_del_bosco</loc> </url>
-  <url> <loc>https://biblo.space/book/stIb3MdsH9mPS973xym8/Descartes</loc> </url>
-  <url> <loc>https://biblo.space/book/SyNMeDcmyNfo0yF06XtT/L'universo_elegante</loc> </url>
-  <url> <loc>https://biblo.space/book/t7pHmBlyuCm2uxmCohPJ/Altrove,_forse</loc> </url>
-  <url> <loc>https://biblo.space/book/TfS0cu0YNcPuC1kiSC6a/Betib%C3%B9</loc> </url>
-  <url> <loc>https://biblo.space/book/TGCDWwTdH72ZEx1VbqQk/Baudolino</loc> </url>
-  <url> <loc>https://biblo.space/book/TJR9SPNPvAIwoOfC8UDW/Che_cos'è_la_scienza._La_rivoluzione_di_Anassimandro</loc> </url>
-  <url> <loc>https://biblo.space/book/Tu60yAB78miodyy5a0wC/L'esegesi</loc> </url>
-  <url> <loc>https://biblo.space/book/UbdLcmr59bjNiu0I96Vq/Averro%C3%A8_o_il_segretario_del_diavolo</loc> </url>
-  <url> <loc>https://biblo.space/book/uBzlukbWYceKlvhxqR2V/L'ultimo_giorno_di_un_condannato</loc> </url>
-  <url> <loc>https://biblo.space/book/udHwqtgvwuzAL8rFAu4H/I_giocatori_di_Titano</loc> </url>
+  <url> <loc>https://biblo.space/book/jwZIcH3ebBA2C8PS0YOe/Buio_sulla_citt%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/n5zJZMU5CzrcJq5B7Rum/Kursk</loc> </url>
+  <url> <loc>https://biblo.space/book/daDCn6l0QqNv9JgqjjJR/Sono_un'assassina?</loc> </url>
+  <url> <loc>https://biblo.space/book/puVQTEfYjSuyGU8suUkH/La_sirena_e_Mrs_Hancock</loc> </url>
+  <url> <loc>https://biblo.space/book/Jc418ZHXdG2TbliUrWjo/Atlas_Obscura</loc> </url>
+  <url> <loc>https://biblo.space/book/hWmOalloRwpLcc07wChO/I_Goonies</loc> </url>
+  <url> <loc>https://biblo.space/book/Nr6tBWOlukI9QTHuKCko/Ritorno_al_futuro</loc> </url>
+  <url> <loc>https://biblo.space/book/FsfFUE5qeHTnt6SC1so2/Guardati_dal_Beluga_Magico</loc> </url>
+  <url> <loc>https://biblo.space/book/xK0tk0Z3YWpgxm9HYTTm/L'Uomo_illustrato</loc> </url>
+  <url> <loc>https://biblo.space/book/PYEBcVnyPz41GtME6Y2S/Viaggiando_oltre_il_cielo</loc> </url>
+  <url> <loc>https://biblo.space/book/pXnHYiDtpqc6hKbv0sqT/Guida_per_giovani_astronauti</loc> </url>
+  <url> <loc>https://biblo.space/book/weEC5eJVeu67a5Ib4jeX/First_man_-_Il_primo_uomo</loc> </url>
+  <url> <loc>https://biblo.space/book/SlszOlMVtCT5awkSssYf/Gramsci</loc> </url>
+  <url> <loc>https://biblo.space/book/DDDxGFfmOaCeWmbbsEXM/Hitler</loc> </url>
+  <url> <loc>https://biblo.space/book/e7w4ighrVZo61CuTdY12/Comma_22._Catch_22</loc> </url>
+  <url> <loc>https://biblo.space/book/zuhJUHjbaX2GNF0kJnmy/Il_segreto_dell'inquisitore</loc> </url>
+  <url> <loc>https://biblo.space/book/AcEqJGkbg9PLs42RtyR3/Perle_ai_porci</loc> </url>
+  <url> <loc>https://biblo.space/book/R9Qc9FIOVjPX3Jn5Pq4j/Ghiaccio-nove</loc> </url>
+  <url> <loc>https://biblo.space/book/pmJpOA2NMEUpXx90Vly5/Mattatoio_n._5</loc> </url>
+  <url> <loc>https://biblo.space/book/5f9meDL1ah0HmQz1Siwe/La_somma_dei_giorni</loc> </url>
+  <url> <loc>https://biblo.space/book/H9uI9gvY2rX0dhPwHyBp/Il_Regno_del_Drago_d'oro</loc> </url>
+  <url> <loc>https://biblo.space/book/d5NcXp0zwyO3SPCYJ4cL/In%C3%A9s_dell'anima_mia</loc> </url>
+  <url> <loc>https://biblo.space/book/4AXQ8UBvDbAHgGmvQrAm/La_foresta_dei_pigmei</loc> </url>
+  <url> <loc>https://biblo.space/book/M7uhapIFNRTJfKMmhxhS/Il_mio_paese_inventato</loc> </url>
+  <url> <loc>https://biblo.space/book/qaVRiWOnzKovR1pKoijQ/D%E2%80%99amore_e_ombra</loc> </url>
+  <url> <loc>https://biblo.space/book/iXNKOYKzgAqI6CTLKS8t/La_figlia_della_fortuna</loc> </url>
+  <url> <loc>https://biblo.space/book/bT30AofyXHJIwg1hwNGB/La_citt%C3%A0_delle_Bestie</loc> </url>
+  <url> <loc>https://biblo.space/book/Go98cQJtTPjxTzR4qwUi/L'isola_sotto_il_mare</loc> </url>
+  <url> <loc>https://biblo.space/book/1wdFO0wX9QTqeQ6lWZJG/Il_quaderno_di_Maya</loc> </url>
+  <url> <loc>https://biblo.space/book/RfqeOL9roGSQvFASerAW/La_casa_degli_spiriti</loc> </url>
+  <url> <loc>https://biblo.space/book/eI3OAtb5gv6j6h7WulFz/La_cucina_del_buon_gusto</loc> </url>
+  <url> <loc>https://biblo.space/book/ivonn0cyDpFMarZ18xi8/Vento_scomposto</loc> </url>
+  <url> <loc>https://biblo.space/book/zwM4uxwEthw4D5c4yc3I/Boccamurata</loc> </url>
+  <url> <loc>https://biblo.space/book/cakMJ37ndshvjtBuhsBv/Il_veleno_dell'oleandro</loc> </url>
+  <url> <loc>https://biblo.space/book/7fJCc3zlowL6uQxE4q3G/Via_XX_Settembre</loc> </url>
+  <url> <loc>https://biblo.space/book/VnQUxeBNvjg8oiP9mtdB/La_monaca</loc> </url>
+  <url> <loc>https://biblo.space/book/01OrWcu3K1UjMbN53OkZ/La_Mennulara</loc> </url>
+  <url> <loc>https://biblo.space/book/w33B8vf6g63CxaXl9Hpi/La_zia_marchesa</loc> </url>
+  <url> <loc>https://biblo.space/book/x2eO4JHUJWxYcULDOpij/Caff%C3%A8_amaro</loc> </url>
+  <url> <loc>https://biblo.space/book/pMWWSbKAV2X6k1BQqR9l/Non_%C3%A8_la_fine_del_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/p4aZQySaZDhdjB63slKU/Adesso</loc> </url>
+  <url> <loc>https://biblo.space/book/kCdd3pobLV54NbCR9VSl/Santa_degli_impossibili</loc> </url>
+  <url> <loc>https://biblo.space/book/tWseOgDJrTNO1nOHvHqB/Parigi_%C3%A8_sempre_una_buona_idea</loc> </url>
+  <url> <loc>https://biblo.space/book/M3muCZE6k4uwtsWdkkoe/Va'_dove_ti_porta_il_cuore</loc> </url>
+  <url> <loc>https://biblo.space/book/6KK40jQoRePW1dQNX0EE/Sarrasine</loc> </url>
+  <url> <loc>https://biblo.space/book/KNpKbEOtgts2VAJk0imB/Se_niente_importa</loc> </url>
+  <url> <loc>https://biblo.space/book/55EyfbKrPoTSDZ2h7JLq/Ogni_cosa_%C3%A8_illuminata</loc> </url>
+  <url> <loc>https://biblo.space/book/Ffz5Dj0GtuBi1odco8HK/Molto_forte,_incredibilmente_vicino</loc> </url>
+  <url> <loc>https://biblo.space/book/GuLnx9l0RovjFrC4CDCC/Lo_scandalo_del_secolo</loc> </url>
+  <url> <loc>https://biblo.space/book/nwmkrzj9iUXStFx5Wi09/Dell'amore_e_di_altri_demoni</loc> </url>
+  <url> <loc>https://biblo.space/book/OMm4qqaOm4AIZOrgVMkb/Il_generale_nel_suo_labirinto</loc> </url>
+  <url> <loc>https://biblo.space/book/voQmznkTQycaZOGROUFN/Cronaca_di_una_morte_annunciata</loc> </url>
+  <url> <loc>https://biblo.space/book/Ji2DfSDHEDIBFClPJ6Fv/Memoria_delle_mie_puttane_tristi</loc> </url>
+  <url> <loc>https://biblo.space/book/LSyKdbczONaSbIfKVMUf/Nessuno_scrive_al_colonnello</loc> </url>
+  <url> <loc>https://biblo.space/book/KEgqs4Hx8LsjI9XgkGMH/L%E2%80%99autunno_del_patriarca</loc> </url>
+  <url> <loc>https://biblo.space/book/2ULt2kCratvrgW4DdjaT/Poesie</loc> </url>
+  <url> <loc>https://biblo.space/book/8aI3ahm0vQMCEXpOB9AE/Storie_della_guerra_di_Spagna._La_quinta_colonna</loc> </url>
+  <url> <loc>https://biblo.space/book/tlVZ8gTF0e5vwC7UA2aL/Morte_nel_pomeriggio</loc> </url>
+  <url> <loc>https://biblo.space/book/IgjaMI6unizF9JRCkvHD/Avere_non_avere</loc> </url>
+  <url> <loc>https://biblo.space/book/DLi148DkM9bVxW1aqdEm/I_50_libri_che_hanno_cambiato_il_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/PuNGmctOVST8h65PVaQw/Opinioni_di_un_clown</loc> </url>
+  <url> <loc>https://biblo.space/book/WitOxp5eFcBq6kY0h7mH/Pensieri_lenti_e_veloci</loc> </url>
+  <url> <loc>https://biblo.space/book/fr1ADWaxLUOBqBDKS1uF/Verdi_colline_d'Africa</loc> </url>
+  <url> <loc>https://biblo.space/book/yaJ5W09ZdPE2shMyyrAu/Fiesta</loc> </url>
+  <url> <loc>https://biblo.space/book/hLp08SX1y2QLkp1LUEvT/Ventuno_racconti</loc> </url>
+  <url> <loc>https://biblo.space/book/BHCpDA6tJhrrWczgraBF/I_quarantanove_racconti</loc> </url>
+  <url> <loc>https://biblo.space/book/8KGSWnhBPoepPXmTWs6I/La_scommessa_della_decrescita</loc> </url>
+  <url> <loc>https://biblo.space/book/73cUz4g7ogIzUbkcbVch/Elon_Musk</loc> </url>
+  <url> <loc>https://biblo.space/book/fifoDHPG0k6ot7klcVC8/Churchill,_il_vizio_della_democrazia</loc> </url>
+  <url> <loc>https://biblo.space/book/ssjSAg9NQ7yBJKz3G6WZ/SPAM_-_Stop_plastica_a_mare</loc> </url>
+  <url> <loc>https://biblo.space/book/9fL9DP5pKQMRuairTg7g/Una_spia_americana</loc> </url>
+  <url> <loc>https://biblo.space/book/nn6dUtVyMZnNUH29tPKW/Il_segno_dei_quattro</loc> </url>
+  <url> <loc>https://biblo.space/book/LvRMmYzPwyOCfP3tN1ZR/Uno_studio_in_rosso</loc> </url>
+  <url> <loc>https://biblo.space/book/qrk486PtRgSRDHciVixy/La_Valle_della_paura</loc> </url>
+  <url> <loc>https://biblo.space/book/fZ2VBD3oi5msSMAZhFqC/Il_Circolo_Pickwick</loc> </url>
+  <url> <loc>https://biblo.space/book/ZiamJLMTaK9sKnRGzuvn/Oliver_Twist</loc> </url>
+  <url> <loc>https://biblo.space/book/y8UtnVS08IvHsHwiLFOt/Il_canto_di_Natale</loc> </url>
+  <url> <loc>https://biblo.space/book/DVCjDvyswrZSjMwNj5ij/Le_avventure_di_Tom_Sawyer</loc> </url>
+  <url> <loc>https://biblo.space/book/h5oM73AvMuorrocOJ2pu/Le_avventure_di_Huckleberry_Finn</loc> </url>
+  <url> <loc>https://biblo.space/book/5ckeuPw7cG5fy0bFnGnO/Il_giardino_segreto</loc> </url>
+  <url> <loc>https://biblo.space/book/nWXo8B3Zo1xSbA2kgTvW/Ancillary_justice</loc> </url>
+  <url> <loc>https://biblo.space/book/EpPGkLlX2z3ot5P8Ko9f/Ancillary_Sword</loc> </url>
+  <url> <loc>https://biblo.space/book/OJDbYz4GxExJ46bymGv1/La_Luna_%C3%A8_una_severa_maestra</loc> </url>
+  <url> <loc>https://biblo.space/book/LDuJ6EmsuuoPaD43Gpl1/Le_sabbie_di_Marte</loc> </url>
+  <url> <loc>https://biblo.space/book/pSNJs4owEi6miewWgKkz/Universo</loc> </url>
+  <url> <loc>https://biblo.space/book/ZVexZMsMoByVeAgeXKjY/Lo_stallo_dell'impero</loc> </url>
+  <url> <loc>https://biblo.space/book/AEbicjAfDaDGaIGPZYoP/Le_guide_del_tramonto</loc> </url>
+  <url> <loc>https://biblo.space/book/om1PvKPGRujT9isx7uZD/Il_signor_parroco_ha_dato_di_matto</loc> </url>
+  <url> <loc>https://biblo.space/book/lviPvih4ERcet2nHRef8/I_reietti_dell'altro_pianeta</loc> </url>
+  <url> <loc>https://biblo.space/book/ZwlRRKyKzUL2TBsF4lf9/Percy_Jackson_e_gli_dei_dell'Olimpo_-_5</loc> </url>
+  <url> <loc>https://biblo.space/book/xZl8SQ8k3OpA8ZNv6oNx/Percy_Jackson_e_gli_dei_dell'Olimpo_-_4</loc> </url>
+  <url> <loc>https://biblo.space/book/T18v8xO5BTGDIxB2PbNh/Percy_Jackson_e_gli_dei_dell'Olimpo_-_3</loc> </url>
+  <url> <loc>https://biblo.space/book/usjNyXpQ6isa6xn0xZWD/Percy_Jackson_e_gli_dei_dell'Olimpo_-_2</loc> </url>
+  <url> <loc>https://biblo.space/book/g9o2oG2mZKxSgRzMQdqg/Percy_Jackson_e_gli_dei_dell'Olimpo_-_1</loc> </url>
+  <url> <loc>https://biblo.space/book/3qrSvg1OW4Pylf3H3hlB/Il_potere_del_drago</loc> </url>
+  <url> <loc>https://biblo.space/book/H9ZHV5rLEwca2UrDF76J/La_saga_di_Terramare</loc> </url>
+  <url> <loc>https://biblo.space/book/rRw5ikCvVSPWcwv6gC87/Dirk_Gently,_Agenzia_Investigativa_Olistica</loc> </url>
+  <url> <loc>https://biblo.space/book/oYMyusC3sY4cteiDQ9XG/Praticamente_innocuo</loc> </url>
+  <url> <loc>https://biblo.space/book/MLtd27zH50Dptao0pKa4/Addio,_e_grazie_per_tutto_il_pesce</loc> </url>
+  <url> <loc>https://biblo.space/book/b9MTrn4W4glQd8RoSuIm/La_vita,_l'Universo_e_tutto_quanto</loc> </url>
+  <url> <loc>https://biblo.space/book/MctXJJ0oyKKPzk8Fepjv/Ristorante_al_termine_dell'Universo</loc> </url>
+  <url> <loc>https://biblo.space/book/0VrNHVt5Ogq2KxzXb4Cx/Guida_galattica_per_gli_autostoppisti</loc> </url>
+  <url> <loc>https://biblo.space/book/OpG4N5T70bmDicjn4HOg/Guida_galattica_per_gli_autostoppisti</loc> </url>
+  <url> <loc>https://biblo.space/book/JXGrozGAd51vx1BdpLIc/Dente_per_dente</loc> </url>
+  <url> <loc>https://biblo.space/book/mlsJIQlcNy1CYgOaaGIk/Poesie_d'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/xhWpK6oT6eKuBhHMK9Vh/La_Divina_Commedia._Paradiso</loc> </url>
+  <url> <loc>https://biblo.space/book/7uZU2BuruN3x62iPzc3V/La_Divina_Commedia._Purgatorio</loc> </url>
+  <url> <loc>https://biblo.space/book/K9obvR0Bdy6IQHqOImus/La_Divina_Commedia._Inferno</loc> </url>
+  <url> <loc>https://biblo.space/book/420JmxUhxUq0D2YIPA3p/Antologia_di_Spoon_River</loc> </url>
+  <url> <loc>https://biblo.space/book/H2Vz5H0XhZEOJ4fED6Mu/Iliade</loc> </url>
+  <url> <loc>https://biblo.space/book/4GZOT6JewpbRnbLZm6QK/Eneide</loc> </url>
+  <url> <loc>https://biblo.space/book/CodZgEIVuvkvqGxuYd48/Antologia_di_Spoon_River</loc> </url>
+  <url> <loc>https://biblo.space/book/j8ZuN1OCMWBjDM0NJGfB/Siamo_pronti_per_un_figlio?</loc> </url>
+  <url> <loc>https://biblo.space/book/bfxH8fS9ZAVRJXf9N9fh/101_modi_per_addormentare_il_tuo_bambino</loc> </url>
+  <url> <loc>https://biblo.space/book/BnpMYIqTF6N0tCLp6fQq/Manuale_di_sopravvivenza_per_nonni_di_oggi</loc> </url>
+  <url> <loc>https://biblo.space/book/zNGTWDESBgKN1mJ58E02/Bulli_2.0</loc> </url>
+  <url> <loc>https://biblo.space/book/RdaVAHev9bsfB6L4y0iy/Borgia</loc> </url>
+  <url> <loc>https://biblo.space/book/4WYwTxQouUdA98BHpl8i/I_sapori_dimenticati</loc> </url>
+  <url> <loc>https://biblo.space/book/8fxMIYQ2kqYgPyXMyiMi/I_pani_dimenticati._Un_viaggio_attraverso_l'Italia_per_riscoprire_i_sapori_di_una_volta</loc> </url>
+  <url> <loc>https://biblo.space/book/GpYnYhB2AsyzNWLimGnC/Le_farine_dimenticate</loc> </url>
+  <url> <loc>https://biblo.space/book/gzAJhzu2jf7yQXOIAFe1/I_dolci_dimenticati</loc> </url>
+  <url> <loc>https://biblo.space/book/NfG5AVPDxNiTwJzi0Zt1/I_piatti_dimenticati</loc> </url>
+  <url> <loc>https://biblo.space/book/wjWT8dhRJHCtqQyn44lv/Il_Cucchiaio_verde</loc> </url>
+  <url> <loc>https://biblo.space/book/oIAFleQjqbf5IhME6PBn/A_tavola_si_sta_insieme</loc> </url>
+  <url> <loc>https://biblo.space/book/aJBUeTakoMa8avfQ7A44/Tutto_il_sapore_che_vuoi</loc> </url>
+  <url> <loc>https://biblo.space/book/lEqTW1zCisx6IdeEfGBU/Il_territorio_dell'architettura</loc> </url>
+  <url> <loc>https://biblo.space/book/TnxvMm5jCdG48bRwACag/Enciclopedia_pratica_per_progettare_e_costruire</loc> </url>
+  <url> <loc>https://biblo.space/book/zebi4Nnf7cBCLPZpLcyk/Architectura_in_nuce</loc> </url>
   <url> <loc>https://biblo.space/book/uFmbmiNiiPu3URgSIAE4/Notre-Dame_de_Paris</loc> </url>
-  <url> <loc>https://biblo.space/book/Unoi0qlISRUkIKsFJmDj/Michelangelo_io_sono_fuoco</loc> </url>
-  <url> <loc>https://biblo.space/book/UoXNDhNHtQfNvTA1lLnQ/Appia</loc> </url>
-  <url> <loc>https://biblo.space/book/UxKSgWWJko5lANCAuYGq/La_tirannia_della_farfalla</loc> </url>
-  <url> <loc>https://biblo.space/book/V5Pr7vvw6C7vKKWLCCpe/Il_gatto_di_Montaigne</loc> </url>
-  <url> <loc>https://biblo.space/book/VGAx9pTod8WlRiOcDjgu/Silenzio_Assoluto</loc> </url>
-  <url> <loc>https://biblo.space/book/VtE98ahYlWVFQtfPaSLq/Gli_occhi_di_Rembrandt</loc> </url>
-  <url> <loc>https://biblo.space/book/VZOBKlnhKJPGsznnz6DC/Il_diavolo_nella_cattedrale</loc> </url>
-  <url> <loc>https://biblo.space/book/wBva9gcQmHRBv8jyL07d/Il_Ciclope</loc> </url>
-  <url> <loc>https://biblo.space/book/wCEgLjIedMDrB3lzRgiP/Il_cimitero_di_Praga</loc> </url>
-  <url> <loc>https://biblo.space/book/Wfu8qXMHwRnnMnPXJBeh/Occhio_nel_cielo</loc> </url>
-  <url> <loc>https://biblo.space/book/wq66tWvYelOF1K0qG9Ki/La_trilogia_di_Valis</loc> </url>
-  <url> <loc>https://biblo.space/book/XBxyg3Y5Hc53YP1Gta08/I_Sumeri</loc> </url>
-  <url> <loc>https://biblo.space/book/XbzC55umPxexuAwUTnVA/Limit</loc> </url>
-  <url> <loc>https://biblo.space/book/XlwMTGzTmvEA2JYe9l1Y/Il_richiamo_della_foresta</loc> </url>
-  <url> <loc>https://biblo.space/book/xTLZII8NVZx4SAxz33f2/La_casa_della_saggezza</loc> </url>
-  <url> <loc>https://biblo.space/book/XxazMzHlAiLKKJ6YmZOI/La_fisica_della_vita</loc> </url>
-  <url> <loc>https://biblo.space/book/Y736aiCYIWX4ComzLG28/Leonardo_segreto</loc> </url>
-  <url> <loc>https://biblo.space/book/Y7l4ZtDlh8zUAP8oHa9G/La_bicicletta_di_Einstein</loc> </url>
-  <url> <loc>https://biblo.space/book/YBHwg0liIdmLmWiDy9Bm/Ma_gli_androidi_sognano_pecore_elettriche?</loc> </url>
-  <url> <loc>https://biblo.space/book/YCAtBtMcdRhA5KEEOtuc/Le_vedove_del_gioved%C3%AC</loc> </url>
-  <url> <loc>https://biblo.space/book/yFHLADVHLqbEgxWLMwnE/Ascesa_e_caduta_dei_dinosauri</loc> </url>
-  <url> <loc>https://biblo.space/book/YgHaX2ownoLZDWHZusBN/Il_mio_lungo_viaggio</loc> </url>
-  <url> <loc>https://biblo.space/book/Yt0CDWCwC5rCDwKQhXNH/La_ragazza_con_l'orecchino_di_perla</loc> </url>
-  <url> <loc>https://biblo.space/book/yvEECzt53WoE7nNqnQl1/Cronache_del_dopobomba</loc> </url>
-  <url> <loc>https://biblo.space/book/Z143Ik7Ly12ZvhcmaDwO/L'isola_del_dottor_Moreau</loc> </url>
+  <url> <loc>https://biblo.space/book/BcZz0d4uijfSW4ZU5gXI/L'uomo_che_ride</loc> </url>
+  <url> <loc>https://biblo.space/book/2Twg4fBZDYRiPgs69c6o/Notre-Dame_de_Paris</loc> </url>
+  <url> <loc>https://biblo.space/book/uBzlukbWYceKlvhxqR2V/L'ultimo_giorno_di_un_condannato</loc> </url>
+  <url> <loc>https://biblo.space/book/i5vlk15CLt8uudvmYnTY/Il_padre_Goriot</loc> </url>
   <url> <loc>https://biblo.space/book/z8UGehk0UD5qHBnKncaj/Eug%C3%A9nie_Grandet</loc> </url>
-  <url> <loc>https://biblo.space/book/zBbFmbdS4qC9XlYQN4km/L'amante_di_Lady_Chatterley</loc> </url>
-  <url> <loc>https://biblo.space/book/ZiFBFY1AETY5pBtNM5ag/Il_piccolo_principe</loc> </url>
-  <url> <loc>https://biblo.space/book/ZiN0C54Bx5Yst09cLPsl/Il_leone,_la_strega_e_l'armadio._Le_cronache_di_Narnia</loc> </url>
+  <url> <loc>https://biblo.space/book/rCaFmEfteQdeB5ukmIGO/L'esercito_dei_mercenari</loc> </url>
+  <url> <loc>https://biblo.space/book/sD2JraYuB8ylALcmNPvt/Le_sei_pietre_sacre</loc> </url>
+  <url> <loc>https://biblo.space/book/gNKXqz8INnk47DDduKVH/Le_sette_prove</loc> </url>
+  <url> <loc>https://biblo.space/book/AW2wyii5nPYMpPj4nYP4/I_cinque_guerrieri</loc> </url>
+  <url> <loc>https://biblo.space/book/gmXw9ONvx89L24Vuafn3/La_minaccia_del_drago</loc> </url>
+  <url> <loc>https://biblo.space/book/njjlIG1IOnNFnqxnC1tg/Il_Quinto_Giorno</loc> </url>
+  <url> <loc>https://biblo.space/book/Z143Ik7Ly12ZvhcmaDwO/L'isola_del_dottor_Moreau</loc> </url>
+  <url> <loc>https://biblo.space/book/oOasxCnuAm1ak6r1Oshb/La_macchina_del_tempo</loc> </url>
+  <url> <loc>https://biblo.space/book/7wLCwb1SwPbXBpe7pGpM/La_guerra_dei_mondi</loc> </url>
+  <url> <loc>https://biblo.space/book/nkZ4ZVGPchpa3QKtzfAC/L'uomo_invisibile</loc> </url>
+  <url> <loc>https://biblo.space/book/VZOBKlnhKJPGsznnz6DC/Il_diavolo_nella_cattedrale</loc> </url>
+  <url> <loc>https://biblo.space/book/doSGban2g32mJDg9mg95/Breaking_News</loc> </url>
+  <url> <loc>https://biblo.space/book/XbzC55umPxexuAwUTnVA/Limit</loc> </url>
+  <url> <loc>https://biblo.space/book/djc1UTScf43PPm2sudLy/Il_quarto_uomo</loc> </url>
+  <url> <loc>https://biblo.space/book/VGAx9pTod8WlRiOcDjgu/Silenzio_Assoluto</loc> </url>
+  <url> <loc>https://biblo.space/book/UxKSgWWJko5lANCAuYGq/La_tirannia_della_farfalla</loc> </url>
+  <url> <loc>https://biblo.space/book/5kRx42iDwx5ehb7UfAcE/Senza_via_di_scampo</loc> </url>
+  <url> <loc>https://biblo.space/book/6Mqp5heiACuEOG2L2hMY/I_cospiratori</loc> </url>
+  <url> <loc>https://biblo.space/book/JEFrfx0IEPQfFrBKEWLj/La_regina_crocifissa</loc> </url>
   <url> <loc>https://biblo.space/book/zrEPRa9Szww5R1em92g7/Io,_Ges%C3%B9</loc> </url>
-  <url> <loc>https://biblo.space/book/541E6MctNiL38XPWuqPl/Musica_e_trance</loc> </url>
-  <url> <loc>https://biblo.space/book/8FTHo8aNsC603u87oGKV/La_grammatica_della_musica</loc> </url>
+  <url> <loc>https://biblo.space/book/IuGlBB5VVXhMsy5RBfRC/Donne_d'Oriente</loc> </url>
+  <url> <loc>https://biblo.space/book/06enQrwMV1wIL9aFELlI/Lady_Hamilton</loc> </url>
+  <url> <loc>https://biblo.space/book/UbdLcmr59bjNiu0I96Vq/Averro%C3%A8_o_il_segretario_del_diavolo</loc> </url>
+  <url> <loc>https://biblo.space/book/bSvjyQBBJ8tzGbSML9cM/Trappola_per_volpi</loc> </url>
+  <url> <loc>https://biblo.space/book/XBxyg3Y5Hc53YP1Gta08/I_Sumeri</loc> </url>
+  <url> <loc>https://biblo.space/book/9aZ2N1qhabp8AXdGJZfA/Finalmente_ho_capito!_La_Filosofia</loc> </url>
+  <url> <loc>https://biblo.space/book/BMpxu5piIhrrPKOhJYV2/Vita_di_Leonardo</loc> </url>
+  <url> <loc>https://biblo.space/book/74wotqBHUNFd6AVkyqZS/Caravaggio_segreto</loc> </url>
+  <url> <loc>https://biblo.space/book/Y736aiCYIWX4ComzLG28/Leonardo_segreto</loc> </url>
+  <url> <loc>https://biblo.space/book/8sNuuEx6BjoDOtGRtjRc/Raffaello_segreto</loc> </url>
+  <url> <loc>https://biblo.space/book/Unoi0qlISRUkIKsFJmDj/Michelangelo_io_sono_fuoco</loc> </url>
+  <url> <loc>https://biblo.space/book/VtE98ahYlWVFQtfPaSLq/Gli_occhi_di_Rembrandt</loc> </url>
+  <url> <loc>https://biblo.space/book/f7hIoHJIoL1Yf8ogK5rI/L'arte_nel_cesso</loc> </url>
+  <url> <loc>https://biblo.space/book/6VlImuXEkXR4UfzEoV95/Il_Milione</loc> </url>
+  <url> <loc>https://biblo.space/book/14eGt7B8a7Oh1nCaedX8/L'infinito_viaggiare</loc> </url>
+  <url> <loc>https://biblo.space/book/wBva9gcQmHRBv8jyL07d/Il_Ciclope</loc> </url>
+  <url> <loc>https://biblo.space/book/UoXNDhNHtQfNvTA1lLnQ/Appia</loc> </url>
+  <url> <loc>https://biblo.space/book/BYBeV2raTa8plGsO4UIG/Autostop_con_Buddha</loc> </url>
+  <url> <loc>https://biblo.space/book/stIb3MdsH9mPS973xym8/Descartes</loc> </url>
+  <url> <loc>https://biblo.space/book/a7UrR9otOO994KWz6JfH/Darwin</loc> </url>
+  <url> <loc>https://biblo.space/book/S0M33BimWpc4Yyr8gTVz/Hegel</loc> </url>
+  <url> <loc>https://biblo.space/book/7kMD1NyEZOrV9oyG4ual/Lutero</loc> </url>
+  <url> <loc>https://biblo.space/book/C2d5vWE0EjWIk8gHIcl3/Leibniz</loc> </url>
+  <url> <loc>https://biblo.space/book/IOoSPgWQaGZx8kKenI7Q/Umberto_Eco</loc> </url>
+  <url> <loc>https://biblo.space/book/V5Pr7vvw6C7vKKWLCCpe/Il_gatto_di_Montaigne</loc> </url>
+  <url> <loc>https://biblo.space/book/Nex8V1QLP4RyYZfa4kuE/Tua</loc> </url>
+  <url> <loc>https://biblo.space/book/72waRX6p1Y7ibX2EVbiH/Un_comunista_in_mutande</loc> </url>
+  <url> <loc>https://biblo.space/book/YCAtBtMcdRhA5KEEOtuc/Le_vedove_del_gioved%C3%AC</loc> </url>
+  <url> <loc>https://biblo.space/book/TfS0cu0YNcPuC1kiSC6a/Betib%C3%B9</loc> </url>
+  <url> <loc>https://biblo.space/book/OqvYmhdiupI0ghMBcTlq/Cento_colpi_di_spazzola_prima_di_andare_a_dormire</loc> </url>
   <url> <loc>https://biblo.space/book/cOKevnXkG3ZqxuAWqvET/Breve_storia_della_musica</loc> </url>
   <url> <loc>https://biblo.space/book/Pdr8sQKg6Y3QHlNZKwQZ/Born_to_Run</loc> </url>
   <url> <loc>https://biblo.space/book/OpWqeVmiRjjyI6R2wN9f/Jazz</loc> </url>
+  <url> <loc>https://biblo.space/book/rJaXax3kuCuxEc9zBm3T/Come_il_jazz_pu%C3%B2_cambiarti_la_vita</loc> </url>
   <url> <loc>https://biblo.space/book/Qyy5nmkZBA78mj7IZByY/Musica_dentro</loc> </url>
+  <url> <loc>https://biblo.space/book/541E6MctNiL38XPWuqPl/Musica_e_trance</loc> </url>
   <url> <loc>https://biblo.space/book/6XpUanUNtVie1NBHMcbm/Come_imparare_a_leggere_la_musica</loc> </url>
   <url> <loc>https://biblo.space/book/TTdvADicyutKAZjOySh0/Inseguendo_quel_suono</loc> </url>
   <url> <loc>https://biblo.space/book/E5Q3J2SQ69qFM32MKCEG/La_musica_fa_crescere_i_pomodori</loc> </url>
@@ -382,16 +895,17 @@
   <url> <loc>https://biblo.space/book/dpSlUcF5ghXCjZAhupEu/La_musica_dai_numeri</loc> </url>
   <url> <loc>https://biblo.space/book/897OexPboqI4nAGR4TEv/Neuroscienze_cognitive_della_musica</loc> </url>
   <url> <loc>https://biblo.space/book/cwqmFKmW3FIiyRiYHrYI/Psicologia_della_musica</loc> </url>
+  <url> <loc>https://biblo.space/book/8FTHo8aNsC603u87oGKV/La_grammatica_della_musica</loc> </url>
   <url> <loc>https://biblo.space/book/5Ky4jJXLOt7R1SJKwscQ/Neve_di_primavera</loc> </url>
-  <url> <loc>https://biblo.space/book/b52nwuvBPvGzLtWwNt13/Musica</loc> </url>
   <url> <loc>https://biblo.space/book/d6AKV2mErvCBoZSVCaB4/Confessioni_di_una_maschera</loc> </url>
+  <url> <loc>https://biblo.space/book/b52nwuvBPvGzLtWwNt13/Musica</loc> </url>
   <url> <loc>https://biblo.space/book/hKJUUAYmxQ0on9F59uwU/Next</loc> </url>
   <url> <loc>https://biblo.space/book/j8xc0APesLbcHJTbnElJ/L'anima_di_Hegel_e_le_mucche_del_Wisconsin</loc> </url>
   <url> <loc>https://biblo.space/book/coM8NAY2NncZAHqCPr2w/Melville</loc> </url>
   <url> <loc>https://biblo.space/book/8CJ6e9S2j01xLpa7deoH/City</loc> </url>
   <url> <loc>https://biblo.space/book/m9AIbRTcJQG2LsKMFp4a/Emmaus</loc> </url>
   <url> <loc>https://biblo.space/book/alrmPPLnR5N0DYfhfxNu/Questa_storia</loc> </url>
-  <url> <loc>https://biblo.space/book/Jit3VgrEWRSVGriRA4qc/Smith&amp;Wesson</loc> </url>
+  <url> <loc>https://biblo.space/book/Jit3VgrEWRSVGriRA4qc/Smith&Wesson</loc> </url>
   <url> <loc>https://biblo.space/book/F9GCnuGy5HZdFaGJCjFp/Una_certa_idea_di_mondo</loc> </url>
   <url> <loc>https://biblo.space/book/jHxrKccUVosTh2Jo8m4H/Castelli_di_rabbia</loc> </url>
   <url> <loc>https://biblo.space/book/Yibxco9uwCrYDrVcfmuM/La_Sposa_giovane</loc> </url>
@@ -410,10 +924,6 @@
   <url> <loc>https://biblo.space/book/VjPOJtDJrA2F7Kke7mHi/Marcovaldo</loc> </url>
   <url> <loc>https://biblo.space/book/9r2Kl2OrxH6SW1suOO4Y/La_speculazione_edilizia</loc> </url>
   <url> <loc>https://biblo.space/book/GTAMARJILd9B4Q2o5Hb2/Lezioni_americane</loc> </url>
-  <url> <loc>https://biblo.space/book/InZqQtgp7a767n1TNSHx/Norwegian_Wood</loc> </url>
-  <url> <loc>https://biblo.space/book/u1p43GTLUm8Q7yi5tfLO/Harry_Potter_e_il_Calice_di_Fuoco</loc> </url>
-  <url> <loc>https://biblo.space/book/pewPqweanMyAiFAFFmxs/Fahrenheit_451</loc> </url>
-  <url> <loc>https://biblo.space/book/7w53L425SRhJUpfOCjgF/Racconto_di_due_citt%C3%A0</loc> </url>
   <url> <loc>https://biblo.space/book/4WkZVXoNMGttWTWwEnvE/Segreti_e_tesori_del_Vaticano</loc> </url>
   <url> <loc>https://biblo.space/book/y64h3h60KQzIrKQd7b7B/L'avventura_del_Colosseo</loc> </url>
   <url> <loc>https://biblo.space/book/ZcHNXzQL9eKqk3AiP94m/Io,_Leonardo_da_Vinci</loc> </url>
@@ -458,28 +968,28 @@
   <url> <loc>https://biblo.space/book/T64aIzGQGhUj5aEIViQ1/La_boutique_del_mistero</loc> </url>
   <url> <loc>https://biblo.space/book/U4X6eQvFTGcv1GXl2pOg/Il_deserto_dei_Tartari</loc> </url>
   <url> <loc>https://biblo.space/book/0VEs9Cmnc2x0jO7Qhh3l/Un_amore</loc> </url>
-  <url> <loc>https://biblo.space/book/NmU1yni52z7DdKGfCbIo/Un_caso_speciale_per_la_ghostwriter</loc> </url>
   <url> <loc>https://biblo.space/book/1FjgDT521SUf3ehjUiPY/La_scrittrice_del_mistero</loc> </url>
   <url> <loc>https://biblo.space/book/90sWZqkdQ2wGBPMrvdsM/Non_ditelo_allo_scrittore</loc> </url>
-  <url> <loc>https://biblo.space/book/AODGJLB2aS7VKsNhcAIb/L'imprevedibile_piano_della_scrittrice_senza_nome</loc> </url>
   <url> <loc>https://biblo.space/book/dCatUOE0VAR8cLfNwdwM/Scrivere_%C3%A8_un_mestiere_pericoloso</loc> </url>
+  <url> <loc>https://biblo.space/book/AODGJLB2aS7VKsNhcAIb/L'imprevedibile_piano_della_scrittrice_senza_nome</loc> </url>
+  <url> <loc>https://biblo.space/book/NmU1yni52z7DdKGfCbIo/Un_caso_speciale_per_la_ghostwriter</loc> </url>
   <url> <loc>https://biblo.space/book/GCs7f0MZNzFNPuN06Ljr/Architettura_e_potere</loc> </url>
   <url> <loc>https://biblo.space/book/Ppz2YdIf3ZWETxpDCEtj/Architettura_e_felicit%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/4oM7UJ7dXdWBgzCdtqB0/La_mente_del_bambino</loc> </url>
-  <url> <loc>https://biblo.space/book/LgSNrthhhXF9zbKezNem/Il_bambino_in_famiglia</loc> </url>
-  <url> <loc>https://biblo.space/book/hzp48ZSMHA45GusLajRL/Il_segreto_dell'infanzia</loc> </url>
-  <url> <loc>https://biblo.space/book/mbVeHhavvLMiEvXPbjRH/L'autoeducazione</loc> </url>
-  <url> <loc>https://biblo.space/book/uiN0z4qXBtriz6hPjCcx/La_scoperta_del_bambino</loc> </url>
+  <url> <loc>https://biblo.space/book/BDqATzMH8WJ2oqQzch69/Su_Nettuno_piovono_diamanti</loc> </url>
   <url> <loc>https://biblo.space/book/dh0go2YJmsqN0iFcXvEJ/Il_bello_di_uscire_dagli_schemi</loc> </url>
   <url> <loc>https://biblo.space/book/WMlIZLWlJ7CPihNqBjAB/Liberarsi_dalla_dipendenza_affettiva</loc> </url>
   <url> <loc>https://biblo.space/book/iaF6d7JQ8VWhcczp6iHw/L%E2%80%99uomo_che_scambi%C3%B2_sua_moglie_per_un_cappello</loc> </url>
   <url> <loc>https://biblo.space/book/MoLiRHTDk3CNv6YUAMSa/Introversi_e_felici</loc> </url>
   <url> <loc>https://biblo.space/book/6cr8nwWAmOGXwL2xbnpX/Il_mondo_incantato</loc> </url>
   <url> <loc>https://biblo.space/book/moNflgIDqKgQcMhMgwgc/Un_genitore_quasi_perfetto</loc> </url>
-  <url> <loc>https://biblo.space/book/N0darMIpapXvh8PIxYHe/La_coscienza_di_Zeno</loc> </url>
-  <url> <loc>https://biblo.space/book/7GEGVIqPpB5saKqqO3mW/L'interpretazione_dei_sogni</loc> </url>
+  <url> <loc>https://biblo.space/book/LgSNrthhhXF9zbKezNem/Il_bambino_in_famiglia</loc> </url>
+  <url> <loc>https://biblo.space/book/hzp48ZSMHA45GusLajRL/Il_segreto_dell'infanzia</loc> </url>
+  <url> <loc>https://biblo.space/book/uiN0z4qXBtriz6hPjCcx/La_scoperta_del_bambino</loc> </url>
+  <url> <loc>https://biblo.space/book/4oM7UJ7dXdWBgzCdtqB0/La_mente_del_bambino</loc> </url>
+  <url> <loc>https://biblo.space/book/mbVeHhavvLMiEvXPbjRH/L'autoeducazione</loc> </url>
   <url> <loc>https://biblo.space/book/GBVGt88TOO5waTNQhUvo/La_sottile_arte_di_fare_quello_che_c***o_ti_pare</loc> </url>
   <url> <loc>https://biblo.space/book/T1nRA0KePRNklzbjpX3f/Mi_dicevano_che_ero_troppo_sensibile</loc> </url>
+  <url> <loc>https://biblo.space/book/DyF4wYjEwtcg2OHACtjB/Sesso_e_intimit%C3%A0</loc> </url>
   <url> <loc>https://biblo.space/book/UJzAzD7Jt5CqnaXdojlV/A_tu_per_tu_con_la_paura</loc> </url>
   <url> <loc>https://biblo.space/book/elbnf8SDb8JHqJB3mESZ/Piccolo_manuale_per_imparare_a_fare_e_a_ricevere_critiche</loc> </url>
   <url> <loc>https://biblo.space/book/7LTQtYviuzmTbGnbsECQ/Piccolo_manuale_per_non_farsi_mettere_i_piedi_in_testa</loc> </url>
@@ -487,152 +997,348 @@
   <url> <loc>https://biblo.space/book/3QCBFGQZE3BRtpoHSC23/L'arte_di_andare_avanti</loc> </url>
   <url> <loc>https://biblo.space/book/UDU5JOKw4y2QbxgLgySs/Mastermind</loc> </url>
   <url> <loc>https://biblo.space/book/yljKz8N3gw2bOeKsEWnr/La_scienza_della_fortuna</loc> </url>
+  <url> <loc>https://biblo.space/book/7eH4ukTn6m5ko3bUAQhG/Neurobiologia_del_tempo</loc> </url>
   <url> <loc>https://biblo.space/book/3tYkiXJf4r5WIc9U8d52/L'illusione_di_Dio</loc> </url>
-  <url> <loc>https://biblo.space/book/3Y0H9syPbKQLUc4T7mk2/L'orologiaio_cieco._Creazione_o_evoluzione</loc> </url>
+  <url> <loc>https://biblo.space/book/3Y0H9syPbKQLUc4T7mk2/L'orologiaio_cieco._Creazione_o_evoluzione?</loc> </url>
   <url> <loc>https://biblo.space/book/PuKVYzD5WWR7zC0ictn0/Il_gene_egoista</loc> </url>
   <url> <loc>https://biblo.space/book/TJR9SPNPvAIwoOfC8UDW/Che_cos'%C3%A8_la_scienza._La_rivoluzione_di_Anassimandro</loc> </url>
-  <url> <loc>https://biblo.space/book/135vr1e0KnEmlPWFHwGQ/Che_cos'%C3%A8_il_tempo?_Che_cos%27%C3%A8_lo_spazio?</loc> </url>
-  <url> <loc>https://biblo.space/book/yCIcjDXTdm4lwNw22jhd/L'identit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/135vr1e0KnEmlPWFHwGQ/Che_cos'%C3%A8_il_tempo?_Che_cos'%C3%A8_lo_spazio?</loc> </url>
+  <url> <loc>https://biblo.space/book/pG19aI3XCY2GVB0vhbqU/Sei_pezzi_facili</loc> </url>
   <url> <loc>https://biblo.space/book/03VpTvg784nBrAlWvk7b/La_lentezza</loc> </url>
-  <url> <loc>https://biblo.space/book/TKVNg7XNuPnaEwWVRo1v/L'ignoranza</loc> </url>
-  <url> <loc>https://biblo.space/book/Y1NEl7muen2fbwBehWyZ/Lo_scherzo</loc> </url>
-  <url> <loc>https://biblo.space/book/UPtpEztDaHQceaLaRfv9/Amori_ridicoli</loc> </url>
-  <url> <loc>https://biblo.space/book/RMDXpPdhfxsCkOP3rd95/Hackers._I_ribelli_digitali</loc> </url>
-  <url> <loc>https://biblo.space/book/taXUcxD1OjFFFW3meU1O/Before</loc> </url>
-  <url> <loc>https://biblo.space/book/uSKFoy1lmYUn0JW5zZb9/After_5._Amore_infinito</loc> </url>
-  <url> <loc>https://biblo.space/book/DAWI4I81IlsqLMuHdYnk/After_4._Anime_perdute</loc> </url>
-  <url> <loc>https://biblo.space/book/PEdISw6UotcNt9EBK1Lz/After_3._Come_mondi_lontani</loc> </url>
-  <url> <loc>https://biblo.space/book/sNMSP593wNF1epf3UFwS/After_2._Un_cuore_in_mille_pezzi</loc> </url>
-  <url> <loc>https://biblo.space/book/ekOIkwguZo3mDf9uPrfi/After</loc> </url>
-  <url> <loc>https://biblo.space/book/GyuwFxCODh55rlXlMGA2/Faccio_la_mia_cosa</loc> </url>
-  <url> <loc>https://biblo.space/book/SesK6dZ2kX0g7NZMxN1S/Osama_bin_Laden</loc> </url>
-  <url> <loc>https://biblo.space/book/wkCXxHnR5pzB8GLFhncf/Uno,_nessuno_e_centomila</loc> </url>
-  <url> <loc>https://biblo.space/book/WspbEBIGt5p9vTXC8iSe/Impresa_e_industria_in_Italia</loc> </url>
-  <url> <loc>https://biblo.space/book/kFTZoeAOxdoT03XKikXH/L'insostenibile_leggerezza_dell'essere</loc> </url>
-  <url> <loc>https://biblo.space/book/w638epRWDQxLt3xmrlPW/L'immortalit%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/gHxpfiHmcZfVQ9wpCrX2/ZeroZeroZero</loc> </url>
-  <url> <loc>https://biblo.space/book/sXcqFX1uUbxE4hJVpa52/Vieni_via_con_me</loc> </url>
-  <url> <loc>https://biblo.space/book/VZNNnfCQWgpFiQKnKyyG/Bacio_feroce</loc> </url>
-  <url> <loc>https://biblo.space/book/UiCzRunqt7syA9E3OPpX/La_paranza_dei_bambini</loc> </url>
-  <url> <loc>https://biblo.space/book/o4GLTPYgABCxp0DtwGjT/I_miti_di_Cthulhu</loc> </url>
-  <url> <loc>https://biblo.space/book/Sle3ei8r3NSJYRL4MmJ0/Le_febbri_della_memoria</loc> </url>
-  <url> <loc>https://biblo.space/book/OwcXN5gVF7CBdesybAnh/Il_grande_Gatsby</loc> </url>
-  <url> <loc>https://biblo.space/book/9DsvoGyaf6kBUxZCvvMg/Homeland</loc> </url>
-  <url> <loc>https://biblo.space/book/ed5e9rc8eSkZVZ0LYuSE/Little_Brother</loc> </url>
-  <url> <loc>https://biblo.space/book/VDYYyDpKcp9qQiHrjqyb/Content</loc> </url>
-  <url> <loc>https://biblo.space/book/vz1aBRn1RP4WViRcDN3X/Imparare_l'hacking</loc> </url>
-  <url> <loc>https://biblo.space/book/lgMtEORKgFD6I7VstI8G/Alan_Turing</loc> </url>
-  <url> <loc>https://biblo.space/book/6amE6A304uquKSqHZ2Ur/Superintelligenza</loc> </url>
-  <url> <loc>https://biblo.space/book/GNkN4YfTyF3UDqVOR7yb/La_logica_della_lampara</loc> </url>
-  <url> <loc>https://biblo.space/book/gDFCLykyxukFsmvj2mR5/Alba_nera</loc> </url>
-  <url> <loc>https://biblo.space/book/9A2rHBAW0uq49RNi9RFl/Breve_storia_amorosa_dei_vasi_comunicanti</loc> </url>
-  <url> <loc>https://biblo.space/book/6QLLK9D2C2cAbpZlhXvm/Il_filo_infinito</loc> </url>
-  <url> <loc>https://biblo.space/book/dkCvzCCUtlmAwBxC1iQC/Dove_sono_tutti_quanti</loc> </url>
-  <url> <loc>https://biblo.space/book/P0Umnudxsb7FAIqJiRXo/La_fisica_del_nulla</loc> </url>
-  <url> <loc>https://biblo.space/book/XxazMzHlAiLKKJ6YmZOI/La_fisica_della_vita</loc> </url>
-  <url> <loc>https://biblo.space/book/fk7qfPwIALeXZlbOlvsA/Il_libro_dei_viaggi_nel_tempo_di_Roma</loc> </url>
-  <url> <loc>https://biblo.space/book/oyf3Lj1BGE0Rf8jwUPmA/Il_libro_dei_viaggi_nel_tempo</loc> </url>
-  <url> <loc>https://biblo.space/book/m8xgT5e5Ojd9tJv5XtVl/La_storia_del_mondo_in_dodici_mappe</loc> </url>
-  <url> <loc>https://biblo.space/book/jro8aAkjspF2QnNOz3IE/Il_grande_incendio</loc> </url>
-  <url> <loc>https://biblo.space/book/9NvTXzUTZIchhmocLMuC/La_Rivoluzione_francese</loc> </url>
-  <url> <loc>https://biblo.space/book/ubCSMFhU8Rg5dDo7axvz/Il_libro_dei_secoli</loc> </url>
-  <url> <loc>https://biblo.space/book/Slw9KYzVGD2pv8ZKjMXh/Il_futuro_che_verr%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/2djhSAuYDofdnjR4NaQ7/La_fisica_dei_perplessi</loc> </url>
-  <url> <loc>https://biblo.space/book/3uE1ob7KgnGOlwjZANFb/Il_Tao_della_fisica</loc> </url>
-  <url> <loc>https://biblo.space/book/37rlHME6ww36yuoA86k4/L'universo_a_portata_di_mano</loc> </url>
-  <url> <loc>https://biblo.space/book/6BwwznkdRcMCaJQ7I2lm/Come_capire_E=mc2</loc> </url>
-  <url> <loc>https://biblo.space/book/W0gnVM9YMT7gLVGWgEEs/Sapiens._Da_animali_a_d%C3%A8i</loc> </url>
-  <url> <loc>https://biblo.space/book/vkZrYkFblMw7SrOl6MEi/L'isola_delle_anime</loc> </url>
-  <url> <loc>https://biblo.space/book/r4v2whGvwGX3oHi9Odk0/L'opera_d'arte_nell'epoca_della_sua_riproducibilit%C3%A0_tecnica</loc> </url>
-  <url> <loc>https://biblo.space/book/AHq7UsweqLhjJW7bjN4S/Scritti_autobiografici</loc> </url>
-  <url> <loc>https://biblo.space/book/Mk0VClX5qT6KmN5gniC0/Preghiera_per_%C4%8Cernobyl'</loc> </url>
-  <url> <loc>https://biblo.space/book/jDxWY0KhcdVr8LM8JNZj/Ma_%C3%A8_stupendo!</loc> </url>
-  <url> <loc>https://biblo.space/book/H6e57qAVYSVWkIkOAxtm/Le_palline_di_zucchero_della_Fata_Turchina</loc> </url>
-  <url> <loc>https://biblo.space/book/waZt8UnHjcbRnkdNQlx0/Il_ritorno_del_dinosauro</loc> </url>
-  <url> <loc>https://biblo.space/book/OclPt4wnQ7s74VIN6Zcw/I_cento_libri</loc> </url>
-  <url> <loc>https://biblo.space/book/Y7HFBNu8XirEXvz22y1n/Curarsi_con_i_libri</loc> </url>
-  <url> <loc>https://biblo.space/book/vvi31l8NvcjERHJ48u80/I_quattro_libri_delle_Piccole_donne</loc> </url>
-  <url> <loc>https://biblo.space/book/0cXxVKxKgfUnYGIw1SJf/Il_mercante_di_libri_maledetti</loc> </url>
-  <url> <loc>https://biblo.space/book/V88sAZCng2egVKpFZZNu/Storia_di_una_ladra_di_libri</loc> </url>
-  <url> <loc>https://biblo.space/book/JeOUFSkoE4Hr5IoNfmo2/L'annusatrice_di_libri</loc> </url>
-  <url> <loc>https://biblo.space/book/0vhBBwHW8KGF9cu8bhae/Quella_piccola_libreria_in_fondo_alla_strada</loc> </url>
-  <url> <loc>https://biblo.space/book/IZp9048eMWnZlO9z1rNu/La_libreria_dove_tutto_%C3%A8_possibile</loc> </url>
-  <url> <loc>https://biblo.space/book/yditknUIQVr8eSusdFAI/Il_club_delle_lettrici</loc> </url>
-  <url> <loc>https://biblo.space/book/v1nb7wgtsGAjx2RVAcFS/Una_vita_da_libraio</loc> </url>
-  <url> <loc>https://biblo.space/book/sD5MQFQN4PWIygWLqKO0/Mezzanotte_alla_Libreria_delle_Grandi_Idee</loc> </url>
-  <url> <loc>https://biblo.space/book/JNqG37XpsOwCeSbPui87/Una_lunga_estate_crudele</loc> </url>
-  <url> <loc>https://biblo.space/book/MiPrYlBNogPSjNjZwkX2/Sindrome_da_cuore_in_sospeso</loc> </url>
-  <url> <loc>https://biblo.space/book/VkpO0Yd8ANVOOSu2ZjfU/Il_ladro_gentiluomo</loc> </url>
-  <url> <loc>https://biblo.space/book/Rr5godPBKEBGWnnGBSiw/Arabesque</loc> </url>
-  <url> <loc>https://biblo.space/book/QdtNc13CJw5srpL169Lq/Un_po'_di_follia_in_primavera</loc> </url>
-  <url> <loc>https://biblo.space/book/N9mf6SSKFUijujYS1Tp3/Le_ossa_della_principessa</loc> </url>
-  <url> <loc>https://biblo.space/book/1kbyH5LY6mM79QwyWMMS/Un_segreto_non_%C3%A8_per_sempre</loc> </url>
-  <url> <loc>https://biblo.space/book/kBve30C0LwCFgqDSz18v/L'allieva</loc> </url>
-  <url> <loc>https://biblo.space/book/TispGo0hNXxyCOaKPLP4/Attacco_dalla_Cina</loc> </url>
-  <url> <loc>https://biblo.space/book/H2lAoAZHm6Yx2AEHu8Mb/Noi_siamo_tempesta</loc> </url>
-  <url> <loc>https://biblo.space/book/wgNkLHo5rQKNM2OVMl8i/Fedelt%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/xPkln4AnnRXRIak1xrdV/Il_cuoco_dell'Alcyon</loc> </url>
-  <url> <loc>https://biblo.space/book/tN0QjOQ87OWnzyw7i6EW/Stato_e_anarchia</loc> </url>
-  <url> <loc>https://biblo.space/book/WV0mKT1jA4wuvL96u5BC/Le_affinit%C3%A0_elettive</loc> </url>
-  <url> <loc>https://biblo.space/book/GXgK4s4G534M0WXr9Bul/Bel-Ami</loc> </url>
-  <url> <loc>https://biblo.space/book/4dn2vb8PDpuxPiA3ptUU/Il_grande_Gatsby</loc> </url>
-  <url> <loc>https://biblo.space/book/ZHeVJGaJrExXQN2VdIqv/I_dolori_del_giovane_Werther</loc> </url>
-  <url> <loc>https://biblo.space/book/Bxj2i2QRLzKhVxqVf5Qn/Amleto</loc> </url>
-  <url> <loc>https://biblo.space/book/0g7HcBkN3LKnsgXJWRBH/Pinocchio</loc> </url>
-  <url> <loc>https://biblo.space/book/fnCdktwY5qa3GSIzO3sv/Il_fantasma_di_Canterville_e_altri_racconti</loc> </url>
-  <url> <loc>https://biblo.space/book/srvDxtALsuKkl6Iosl8e/Sogno_di_una_notte_di_mezza_estate</loc> </url>
-  <url> <loc>https://biblo.space/book/UCcAOUbtf2xwCDTidDFl/Le_allegre_madame_di_Windsor</loc> </url>
-  <url> <loc>https://biblo.space/book/kqFECOTILVlgXzppkdvW/La_dodicesima_notte_ovvero_quel_che_volete</loc> </url>
-  <url> <loc>https://biblo.space/book/XfKgmAWanbLhD2L1vsWv/Troilo_e_Cressida</loc> </url>
-  <url> <loc>https://biblo.space/book/flaJWjvzq1iiAuNvnM9y/Coriolano</loc> </url>
-  <url> <loc>https://biblo.space/book/7b9JS6Bc4yM2QPjwzgyF/Cimbelino</loc> </url>
-  <url> <loc>https://biblo.space/book/a3Q6CLCwA4a1pPmd9aZk/Re_Lear</loc> </url>
-  <url> <loc>https://biblo.space/book/T4h2bLeDdI4b1exzl9YT/Sonetti</loc> </url>
-  <url> <loc>https://biblo.space/book/b6qFeYD0zv3FeeSYwK5V/Antonio_e_Cleopatra</loc> </url>
-  <url> <loc>https://biblo.space/book/k54nPDeSz5GcthqOZAkL/La_tempesta</loc> </url>
-  <url> <loc>https://biblo.space/book/EMvsXDb2bQLP90yYoJ4s/Molto_rumore_per_nulla</loc> </url>
-  <url> <loc>https://biblo.space/book/FysPkQz19UaCsZ0m0smD/Otello</loc> </url>
-  <url> <loc>https://biblo.space/book/um8S3mdV4PHUUug2otlT/Il_mercante_di_Venezia</loc> </url>
-  <url> <loc>https://biblo.space/book/saFXmEozzEVMLTV7axzm/Macbeth</loc> </url>
-  <url> <loc>https://biblo.space/book/A7ncCuWkrQs0bWJX1GMq/Romeo_e_Giulietta</loc> </url>
-  <url> <loc>https://biblo.space/book/kbEyausyTn9NTeIbXUlF/Alice_nel_paese_delle_meraviglie</loc> </url>
-  <url> <loc>https://biblo.space/book/R8cqLAelneNibhlHYFlX/Peter_Pan</loc> </url>
-  <url> <loc>https://biblo.space/book/GXCjekjaizpVV7iTQ0x8/Il_conte_di_Montecristo</loc> </url>
-  <url> <loc>https://biblo.space/book/kldPtss2dMtFQKAQ2zW7/L'isola_del_tesoro</loc> </url>
-  <url> <loc>https://biblo.space/book/PxbzjAoSJxzmjpgsAT4u/Racconti_del_terrore</loc> </url>
-  <url> <loc>https://biblo.space/book/xPfT7ZatO6Le7lrnQ8HM/Le_avventure_di_Gordon_Pym</loc> </url>
-  <url> <loc>https://biblo.space/book/X4rYJbl1TAX8WnRkdYEP/Ossi_di_seppia</loc> </url>
-  <url> <loc>https://biblo.space/book/giUQLlRt0gECFDxjAaZf/Vita_d'un_Uomo</loc> </url>
-  <url> <loc>https://biblo.space/book/mhDqSlgIwxIHEHqEUaF9/Tutte_le_poesie</loc> </url>
-  <url> <loc>https://biblo.space/book/Nqs8eddDwqHscCYMZmCP/Tutte_le_poesie</loc> </url>
-  <url> <loc>https://biblo.space/book/y2JRCtGYXfVEUJGn6UfF/I_racconti</loc> </url>
-  <url> <loc>https://biblo.space/book/1kY80KiRBgYJdYhqPVdt/Dracula</loc> </url>
-  <url> <loc>https://biblo.space/book/79BJzvsOvU3IUVylS5qb/Il_dottor_Jekyll_e_mr._Hyde</loc> </url>
-  <url> <loc>https://biblo.space/book/RUmKDhrnVLof1b6Bm2eH/Il_ritratto_di_Dorian_Gray</loc> </url>
-  <url> <loc>https://biblo.space/book/6UJZ3UZlWf9NFRfhLkIP/Jane_Eyre</loc> </url>
-  <url> <loc>https://biblo.space/book/PuB6kRDUKwKbK5u4yA7P/Cime_tempestose</loc> </url>
-  <url> <loc>https://biblo.space/book/UpCPEfZ0QahxX7NjoDKk/Manifesto_del_Partito_Comunista</loc> </url>
-  <url> <loc>https://biblo.space/book/Agbwdhi8Cmt94RnuocTA/Il_contratto_sociale</loc> </url>
-  <url> <loc>https://biblo.space/book/1Nrzm11yFMmPpahO1gA6/Origine_della_disuguaglianza</loc> </url>
-  <url> <loc>https://biblo.space/book/wcX3qDoZIn4wx5n5rsmN/Utopia</loc> </url>
-  <url> <loc>https://biblo.space/book/HnXftUVZkNXDKospulBR/La_citt%C3%A0_del_Sole</loc> </url>
-  <url> <loc>https://biblo.space/book/4gYwaNZZHc8oOqNc49lb/La_certosa_di_Parma</loc> </url>
-  <url> <loc>https://biblo.space/book/jEUOTEpuH0khbU6wtq0O/Il_rosso_e_il_nero</loc> </url>
-  <url> <loc>https://biblo.space/book/ePh1UvPk2lFyYe4HwOLs/I_fratelli_Karamazov</loc> </url>
-  <url> <loc>https://biblo.space/book/NgydkthSFlOGEU1xVHoX/Anna_Karenina</loc> </url>
-  <url> <loc>https://biblo.space/book/b6U3WN4QFaKGBTzzi4Od/Madame_Bovary</loc> </url>
-  <url> <loc>https://biblo.space/book/ycqEX9r5TOhtOOd10fjZ/La_metamorfosi_e_tutti_racconti_pubblicati_in_vita</loc> </url>
-  <url> <loc>https://biblo.space/book/lEqTW1zCisx6IdeEfGBU/Il_territorio_dell'architettura</loc> </url>
-  <url> <loc>https://biblo.space/book/TKD3DsAiZtn2PgrOg0u4/Il_castello</loc> </url>
-  <url> <loc>https://biblo.space/book/E7sAGwNDOozWJy83o6u8/Il_processo</loc> </url>
-  <url> <loc>https://biblo.space/book/oWKwo2FMwmz8m540xVEj/Il_mondo_sommerso</loc> </url>
-  <url> <loc>https://biblo.space/book/3u94SBO7eP1PfcYYiyNb/I_figli_di_Ringworld</loc> </url>
-  <url> <loc>https://biblo.space/book/0M67lqx7c9Al014ew5GZ/Il_trono_di_Ringworld</loc> </url>
-  <url> <loc>https://biblo.space/book/F53Q9xkTQUcvHcKiPFdW/I_segreti_dei_costruttori_di_Ringworld</loc> </url>
-  <url> <loc>https://biblo.space/book/uYeEbouvM6aZZWRaj2qA/I_burattinai</loc> </url>
-  <url> <loc>https://biblo.space/book/JU3vCsrvELjvRwZcOWbr/Guerra_eterna</loc> </url>
-  <url> <loc>https://biblo.space/book/W3UpBSh5IB0T3GrhRoMI/Tempesta_di_neve_e_profumo_di_mandorle</loc> </url>
-  <url> <loc>https://biblo.space/book/My93Ru8Aa2SblMzZbjLF/Ferro_e_sangue</loc> </url>
+  <url> <loc>https://biblo.space/book/yCIcjDXTdm4lwNw22jhd/L'identit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/wBnRN7r8g1Y6AdkIeirN/Il_dono</loc> </url>
+  <url> <loc>https://biblo.space/book/ulhZu2yH7gESoTe6zbvr/Amore</loc> </url>
+  <url> <loc>https://biblo.space/book/lT5oJoXyqATcHWpZ62YX/Amatissima</loc> </url>
+  <url> <loc>https://biblo.space/book/3kph7C0vUX21jNqdisGL/L'informatore</loc> </url>
+  <url> <loc>https://biblo.space/book/uKdv7yo90JMoIs0v0QEx/Bianco_letale</loc> </url>
+  <url> <loc>https://biblo.space/book/waBg1uAAEHLkQ73w0Rpo/La_via_del_male</loc> </url>
+  <url> <loc>https://biblo.space/book/2oRbK7dSTX33cJRlyRzc/Il_richiamo_del_cuculo</loc> </url>
+  <url> <loc>https://biblo.space/book/i5GvPOBxC7LbRp8681rk/Il_baco_da_seta</loc> </url>
+  <url> <loc>https://biblo.space/book/qfFRbi8uITvN3mXPaTyN/La_stanza_segreta_dello_zar</loc> </url>
+  <url> <loc>https://biblo.space/book/Hg5WXL07qATBOQebbUEl/Scorie_radioattive</loc> </url>
+  <url> <loc>https://biblo.space/book/UCU80zXUTpXnOMhNzG3x/Moby_Duck</loc> </url>
+  <url> <loc>https://biblo.space/book/tK1hjQ164jhXrlNoA7Yz/Zoo</loc> </url>
+  <url> <loc>https://biblo.space/book/rAWw5LcVTWFRYOqZXqNF/Sniper_Elite</loc> </url>
+  <url> <loc>https://biblo.space/book/k7hSomZJGfO47EtTNKxA/Nella_gabbia</loc> </url>
+  <url> <loc>https://biblo.space/book/61dfTbzoyPU3jMZywXIJ/Cos%C3%AC_immobile_tra_le_mie_braccia</loc> </url>
+  <url> <loc>https://biblo.space/book/0otWFjaKthIDIzK5DJwl/Codice_a_zero</loc> </url>
+  <url> <loc>https://biblo.space/book/mv67rzqidxeupy5ZqAk4/Capitalismo_immateriale</loc> </url>
+  <url> <loc>https://biblo.space/book/DaT8OkZquFDPJ1GMOFOX/Come_la_penso</loc> </url>
+  <url> <loc>https://biblo.space/book/b2yc3aFeQKYkCjU0GRrg/Sei_donne_che_hanno_cambiato_il_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/X0igYVpk6dbBaA4BCbtD/La_storia_infinita</loc> </url>
+  <url> <loc>https://biblo.space/book/7Ti2ln0JHLPto6t5AOda/Le_posizioni_dell'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/PabMbX9F5VdxhhjsL89Z/Dopo_tanta_nebbia</loc> </url>
+  <url> <loc>https://biblo.space/book/r8DseGiPGZex1CcfBwry/Mare_nero</loc> </url>
+  <url> <loc>https://biblo.space/book/6WsTuRSoi9w1sUqv0q6l/Spaghetti_all'Assassina</loc> </url>
+  <url> <loc>https://biblo.space/book/4TU4KHBdIiFok6zzJYlV/Gioco_pericoloso</loc> </url>
+  <url> <loc>https://biblo.space/book/NdiYsjDaXXC8Nugs1Yyx/Uva_noir</loc> </url>
+  <url> <loc>https://biblo.space/book/7K2EJdt8MwfcMOBgIYIx/Giallo_ciliegia</loc> </url>
+  <url> <loc>https://biblo.space/book/MruNOGVQPxvP5qv62n2y/La_circonferenza_delle_arance</loc> </url>
+  <url> <loc>https://biblo.space/book/dCdyKLAzXB0rOSgGG4CK/Il_cinese</loc> </url>
+  <url> <loc>https://biblo.space/book/3r0Pit3w0dgm0hMXjF6O/Il_fantasma_del_ponte_di_ferro</loc> </url>
+  <url> <loc>https://biblo.space/book/Lf2xPSn8gRlfPhBO6FfL/Sbirre</loc> </url>
+  <url> <loc>https://biblo.space/book/ruAjp2lngGWfLLJGBkU0/Ragione_da_vendere</loc> </url>
+  <url> <loc>https://biblo.space/book/tfHoZHMjUe0QZF37kFII/Il_maestro_del_silenzio</loc> </url>
+  <url> <loc>https://biblo.space/book/GqwPQD4CLSdygwLzjIDH/L'ultima_volont%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/CCasa1V1NBAI4oYCbVan/Un_giorno_di_festa</loc> </url>
+  <url> <loc>https://biblo.space/book/mjW5trkdydfXsDBooUcT/La_citt%C3%A0_%C3%A8_dei_bianchi</loc> </url>
+  <url> <loc>https://biblo.space/book/rfzWyeRvmHWfoN7VIVOg/L'uomo_che_dorme</loc> </url>
+  <url> <loc>https://biblo.space/book/vsnFoBemwTMsnlgcz5L1/Di_punto_in_bianco</loc> </url>
+  <url> <loc>https://biblo.space/book/ww7u5ljVTigg3byHoGjf/Pizzica_amara</loc> </url>
+  <url> <loc>https://biblo.space/book/F0Tmp2lHsJntb96k5ygr/Notte_senza_fine</loc> </url>
+  <url> <loc>https://biblo.space/book/RMva6gwfcPwPuPXFh1DA/La_stanza_di_ossidiana</loc> </url>
+  <url> <loc>https://biblo.space/book/64O3wB9iBwM8JajQYkiH/La_costa_cremisi</loc> </url>
+  <url> <loc>https://biblo.space/book/IO1Mk0H5jmtYPeKwVysV/Labirinto_blu</loc> </url>
+  <url> <loc>https://biblo.space/book/Q1xLBw0tDgKpwyEhwDw9/Nel_fuoco</loc> </url>
+  <url> <loc>https://biblo.space/book/lqqrX466Y5riA9uq9p0E/Due_tombe</loc> </url>
+  <url> <loc>https://biblo.space/book/EKbpeq7IngOjW4iOQexw/La_mano_tagliata</loc> </url>
+  <url> <loc>https://biblo.space/book/Gjje3JfzhyNMj29OoHL0/L'isola_della_follia</loc> </url>
+  <url> <loc>https://biblo.space/book/gCKfsyUyH0D3RAF35Pwb/Il_sotterraneo_dei_vivi</loc> </url>
+  <url> <loc>https://biblo.space/book/Hye3WrCGHnQburxD1pJc/La_ruota_del_buio</loc> </url>
+  <url> <loc>https://biblo.space/book/GG7enQhKbg1rIYxQWdge/Il_libro_dei_morti</loc> </url>
+  <url> <loc>https://biblo.space/book/hm0xfo2dXdKqK01FiWzE/La_danza_della_morte</loc> </url>
+  <url> <loc>https://biblo.space/book/UhZURriMy23yHQrH93SU/Dossier_Brimstone</loc> </url>
+  <url> <loc>https://biblo.space/book/1p1OPOeNN5rDwt1RePTD/Natura_morta</loc> </url>
+  <url> <loc>https://biblo.space/book/Poyx4gpeiymply0ITaI3/La_stanza_degli_orrori</loc> </url>
+  <url> <loc>https://biblo.space/book/PyFCnx7TVO3rTI3oZU9N/Reliquary</loc> </url>
+  <url> <loc>https://biblo.space/book/kdoVJQsQtSEFnQdZ7uhI/Relic</loc> </url>
+  <url> <loc>https://biblo.space/book/TvYjwX5VYR6WYZ8QNkYj/Il_cacciatore_di_orfani</loc> </url>
+  <url> <loc>https://biblo.space/book/BfbbL5JU0uuQgyNPWn1V/Il_party</loc> </url>
+  <url> <loc>https://biblo.space/book/JhfzRuV8c6VYRLhFVlid/Scontro_frontale</loc> </url>
+  <url> <loc>https://biblo.space/book/fF6rkVVc3zdX9rpFKIAh/Comandante_supremo</loc> </url>
+  <url> <loc>https://biblo.space/book/VTObt9L9nKxTkeYgS3jc/Clear_Shot</loc> </url>
+  <url> <loc>https://biblo.space/book/MnLit0t0TAZ6iy3I8tTD/Un_mondo_di_ghiaccio</loc> </url>
+  <url> <loc>https://biblo.space/book/PCU0cOv97AT5t6qKcVNd/La_chiave_dell'inferno</loc> </url>
+  <url> <loc>https://biblo.space/book/rp1HdYR55WiK3pprYn5d/La_citt%C3%A0_perduta_del_dio_scimmia</loc> </url>
+  <url> <loc>https://biblo.space/book/Mx74ALYvAYzPSROjDEmF/La_notte_uccide</loc> </url>
+  <url> <loc>https://biblo.space/book/hB9we8XvdEXfaAgAoyRU/Senza_tregua</loc> </url>
+  <url> <loc>https://biblo.space/book/ugQHQr6AI5O50sVkRmZz/Il_silenzio_uccide</loc> </url>
+  <url> <loc>https://biblo.space/book/VPs2atUW87jXPzR0UXr1/Il_tuo_cuore_mi_appartiene</loc> </url>
+  <url> <loc>https://biblo.space/book/6ao9YX4xAO8tooVeVZzO/Una_ragionevole_paura</loc> </url>
+  <url> <loc>https://biblo.space/book/iE2W17npnDSTQKu5EJu7/L'_inganno_uccide</loc> </url>
+  <url> <loc>https://biblo.space/book/rvMQKGzTDxl253eNb5SJ/Instinct</loc> </url>
+  <url> <loc>https://biblo.space/book/rp5vw2ixWDKcPxSg9WnM/L'uomo_che_scrive_ai_morti</loc> </url>
+  <url> <loc>https://biblo.space/book/GEaHcajbxf8OjPhgsxV4/Il_Dittatore</loc> </url>
+  <url> <loc>https://biblo.space/book/BFkQvA3s2wbfdNKDKar4/Il_confine</loc> </url>
+  <url> <loc>https://biblo.space/book/nS51Ly08YXgiH1AOibup/Le_figlie_del_capitano</loc> </url>
+  <url> <loc>https://biblo.space/book/BWOIHAa7aEoU5azeDrBx/Mythos</loc> </url>
+  <url> <loc>https://biblo.space/book/b6Kv0aagvn0QOSvMTn1Z/I_muri_che_dividono_il_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/laVU8ngIq9zLtJZjKS3D/Le_10_mappe_che_spiegano_il_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/wCHMkvBd5QkYAdQy3rJm/Il_silenzio_dei_larici</loc> </url>
+  <url> <loc>https://biblo.space/book/z8FN82fEcPxXQGj5xYVe/Eleanor_Oliphant_sta_benissimo</loc> </url>
+  <url> <loc>https://biblo.space/book/02eyU6EUI0B0OmhbR3JH/Fiori_sopra_l'inferno</loc> </url>
+  <url> <loc>https://biblo.space/book/Id3vWOraU5mZ1qRC3ccT/La_cacciatrice_di_storie_perdute</loc> </url>
+  <url> <loc>https://biblo.space/book/w80x5UkZoXT2aaiR4ebM/La_sarta_di_Dachau</loc> </url>
+  <url> <loc>https://biblo.space/book/8Hiw00U7zJAt7EusPV1u/SMS_Storie_Mostruosamente_Sbagliate</loc> </url>
+  <url> <loc>https://biblo.space/book/z2wkffLchjrukm8zyIwq/Tutto_quello_che_siamo</loc> </url>
+  <url> <loc>https://biblo.space/book/2ezqoc4YYEen9exqKryJ/Non_tutti_gli_uomini_vengono_per_nuocere</loc> </url>
+  <url> <loc>https://biblo.space/book/TXTc3bO92DBU1qUiOIBR/Il_peso_specifico_dell'amore</loc> </url>
+  <url> <loc>https://biblo.space/book/w1HGxmjyDB1hdfPHHMOt/Il_nostro_momento_imperfetto</loc> </url>
+  <url> <loc>https://biblo.space/book/G9EJP8tEbLcdjtF9CmiQ/La_chiave_dei_ricordi</loc> </url>
+  <url> <loc>https://biblo.space/book/OHibzyOf0UmUlrA03YC0/Un_anno_felice</loc> </url>
+  <url> <loc>https://biblo.space/book/zAIRbyEStBZD0HilqDKl/Di_Undici_Foglie</loc> </url>
+  <url> <loc>https://biblo.space/book/kz8hM4IeYG2iVzNwgjvj/Conquistati_dalla_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/Agz6v304200mOOXLJMGp/Darkness</loc> </url>
+  <url> <loc>https://biblo.space/book/xyxkRd6zp1KrQ4VOTy4M/Vivere_senza_plastica</loc> </url>
+  <url> <loc>https://biblo.space/book/AhI0ZRZINS1d59mrCFaK/Il_sogno_della_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/ZmcvI0t7OsnGjoPUX1jR/Chiamare_le_cose_con_il_loro_nome</loc> </url>
+  <url> <loc>https://biblo.space/book/fwZjk0TZ6ivzeIE56Yh7/La_scatola_dei_bottoni_di_Gwendy</loc> </url>
+  <url> <loc>https://biblo.space/book/QqqdHJIMW1TJswGrlm1Z/Ferryman</loc> </url>
+  <url> <loc>https://biblo.space/book/P0GMhqLInFdFHvg9mnt9/It</loc> </url>
+  <url> <loc>https://biblo.space/book/JYXRG9poC5Z5dH3CSCyH/Odio_volare</loc> </url>
+  <url> <loc>https://biblo.space/book/aLKOzxtoiDGXbMIcEUqA/Imperium</loc> </url>
+  <url> <loc>https://biblo.space/book/hpgTXe4QkiUjGHSCRRYa/Dictator</loc> </url>
+  <url> <loc>https://biblo.space/book/XqNWd21zr7ypWNle77dl/Conclave</loc> </url>
+  <url> <loc>https://biblo.space/book/DmrpyEmAUOT9LgwXiPG9/L'ufficiale_e_la_spia</loc> </url>
+  <url> <loc>https://biblo.space/book/fJFGIdTGH7qeKW0099Nk/Conspirata</loc> </url>
+  <url> <loc>https://biblo.space/book/ecagQnOC3aw4EOIMUvZv/Monaco</loc> </url>
+  <url> <loc>https://biblo.space/book/JdCFAgHMUz0Plpqn2GXv/Roma</loc> </url>
+  <url> <loc>https://biblo.space/book/2tFCDgOT45z8yhBjYRcU/La_volpe</loc> </url>
+  <url> <loc>https://biblo.space/book/qcO32o8LOu1TV7vBa0m5/Lo_stupore_della_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/rArT5NsqNOimrHYy87qT/I_comunisti_sulla_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/DFATRn7rQ6epuFCWzkNF/La_luna_di_Oriana</loc> </url>
+  <url> <loc>https://biblo.space/book/LbMedQUifnPYMEiDnhtt/La_pietra_di_luna</loc> </url>
+  <url> <loc>https://biblo.space/book/OJmXsSBrDamNaRsRTNTZ/Ranocchi_sulla_luna</loc> </url>
+  <url> <loc>https://biblo.space/book/JDeYkpsQWV0N9mxKGPPw/Un_delitto_per_Natale</loc> </url>
+  <url> <loc>https://biblo.space/book/mzA85qAInrf2FhTKFRic/La_paziente_privata</loc> </url>
+  <url> <loc>https://biblo.space/book/EpqrAsd0sGy0lWiCs1F9/Morte_di_un_medico_legale</loc> </url>
+  <url> <loc>https://biblo.space/book/EqHzQrnvNDbzWfHbvhIS/Una_notte_di_luna_per_l'ispettore_Dalgliesh</loc> </url>
+  <url> <loc>https://biblo.space/book/hc76erovviwJ06NJ0HG7/Camminare_sulla_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/XSIr4bXhFZbC7kaZgY3k/L'ultimo_uomo_sulla_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/Q9SlR3W6ieaWUxOm3D7N/Intorno_alla_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/Bf3f2WwafpH0c62J95XF/Dalla_Terra_alla_Luna</loc> </url>
+  <url> <loc>https://biblo.space/book/XEQfIiTucIm7W2FVdeGn/Di_Luna_in_luna</loc> </url>
+  <url> <loc>https://biblo.space/book/qACplLnipfsNR3Nf0bm2/Buchi_neri,_%C2%ABwormholes%C2%BB_e_macchine_del_tempo</loc> </url>
+  <url> <loc>https://biblo.space/book/mbqu1KDtn8nBdMUmuArC/Viaggiare_nello_spaziotempo</loc> </url>
+  <url> <loc>https://biblo.space/book/Ghjxx4ZyZz3SBQbE4Rh9/Buchi_neri_e_salti_temporali</loc> </url>
+  <url> <loc>https://biblo.space/book/0w0ouivgKmq5R7KbdPMp/Quantum</loc> </url>
+  <url> <loc>https://biblo.space/book/ek7eyz4QwENTiZky431g/Risvegli</loc> </url>
+  <url> <loc>https://biblo.space/book/s4pPlVY4miSG8Ssly309/Allucinazioni</loc> </url>
+  <url> <loc>https://biblo.space/book/cwXm1DFM6YoLGHcUrmtp/Oriana_Fallaci_intervista_s%C3%A9_stessa._L'apocalisse</loc> </url>
+  <url> <loc>https://biblo.space/book/RzTXhKtEyDGmh5VdTmNU/Intervista_con_il_potere</loc> </url>
+  <url> <loc>https://biblo.space/book/XeJW4SHCT9OqP1LwA2nL/Saigon_e_cos%C3%AC_sia</loc> </url>
+  <url> <loc>https://biblo.space/book/f7JcdCqJfVB28MXSJRYm/La_Forza_della_Ragione</loc> </url>
+  <url> <loc>https://biblo.space/book/bQcgVmSJdorgb7sCyQcd/Solo_io_posso_scrivere_la_mia_storia</loc> </url>
+  <url> <loc>https://biblo.space/book/mLJzDNWbuvUhsYFRLNWE/Se_il_sole_muore</loc> </url>
+  <url> <loc>https://biblo.space/book/myT1bz9c8nBsp4iFv80t/Insciallah</loc> </url>
+  <url> <loc>https://biblo.space/book/DZxETnrKEspdWKiYLOpz/La_paura_%C3%A8_un_peccato</loc> </url>
+  <url> <loc>https://biblo.space/book/xAlnDOjoiRfaxJcX9Eud/I_sette_peccati_di_Hollywood</loc> </url>
+  <url> <loc>https://biblo.space/book/QIarC0u6XO8FR6F85qCG/Le_radici_dell'odio</loc> </url>
+  <url> <loc>https://biblo.space/book/a3dmlYSNmM3InOWyOoS1/Lettera_a_un_bambino_mai_nato</loc> </url>
+  <url> <loc>https://biblo.space/book/u6hXKEBQikOIjdsX7ur9/Intervista_con_la_storia</loc> </url>
+  <url> <loc>https://biblo.space/book/4fQNdFHI7eOugj1VfrEn/La_Rabbia_e_l'Orgoglio</loc> </url>
+  <url> <loc>https://biblo.space/book/ID4IMTQ9TNc27PXOP5Zp/Niente_e_cos%C3%AC_sia</loc> </url>
+  <url> <loc>https://biblo.space/book/6X3NH2ERo22WTWUGcVIX/Il_sesso_inutile</loc> </url>
+  <url> <loc>https://biblo.space/book/pT22GH2gGbbY59ubcjS8/Un_uomo</loc> </url>
+  <url> <loc>https://biblo.space/book/3HvboqCtFzQQZrIGPN4X/Quel_giorno_sulla_luna</loc> </url>
+  <url> <loc>https://biblo.space/book/J0LPsYXJ8ts2AvI2vBIN/Viaggio_in_America</loc> </url>
+  <url> <loc>https://biblo.space/book/Mme6zqmd296H1x5IYZvl/Penelope_alla_guerra</loc> </url>
+  <url> <loc>https://biblo.space/book/jBqAOBPWNYFF7T6JyGg9/Storia_della_mia_ansia</loc> </url>
+  <url> <loc>https://biblo.space/book/wEBBNbmxOwdsMkxkxPMr/Denti_bianchi</loc> </url>
+  <url> <loc>https://biblo.space/book/WKlj9Sboh83Xo7qDZ5zK/Il_ragazzo_leone</loc> </url>
+  <url> <loc>https://biblo.space/book/naGhwOa0jikje9WA0V5r/Oceani_in_fiamme</loc> </url>
+  <url> <loc>https://biblo.space/book/wBpq1sfmJ1TPwqCkm2rw/Il_segreto_di_Osiride</loc> </url>
+  <url> <loc>https://biblo.space/book/vPZCsyZJcLAh6quoJDm4/Quasi_innocente</loc> </url>
+  <url> <loc>https://biblo.space/book/tY20ochX6wsNxhzdJ4gV/Profumo_di_cioccolato</loc> </url>
+  <url> <loc>https://biblo.space/book/HLNXfP5AeomI2sZ86tKD/La_citt%C3%A0_senza_cioccolato</loc> </url>
+  <url> <loc>https://biblo.space/book/qX74IMo3fqV0caMpOJ3b/Wolf</loc> </url>
+  <url> <loc>https://biblo.space/book/e7w3OTK4npRZ9qEith1e/La_seconda_mezzanotte</loc> </url>
+  <url> <loc>https://biblo.space/book/fjwStrq6gvPgc4XSPGZk/Il_bambino_che_sognava_la_fine_del_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/iQdJCnW7gmvUVeDRX3fs/Una_storia_romantica</loc> </url>
+  <url> <loc>https://biblo.space/book/qD4UzVL3okqEQbe0RDUb/Il_rumore_sordo_della_battaglia</loc> </url>
+  <url> <loc>https://biblo.space/book/qCcENBAOWVTrGg2HgiZV/Il_sopravvissuto</loc> </url>
+  <url> <loc>https://biblo.space/book/BA4rcALVFSTapSJtcGKd/Il_padre_infedele</loc> </url>
+  <url> <loc>https://biblo.space/book/neMgM99XmZgCVbfNEfMz/M._Il_figlio_del_secolo</loc> </url>
+  <url> <loc>https://biblo.space/book/qJFJXb8iF9jkpHNtTRDk/Stranger_things_-_La_guida_completa</loc> </url>
+  <url> <loc>https://biblo.space/book/GrzAdCretbdHbbq8qSCt/Stranger_Things_-_La_vita_segreta_di_Max</loc> </url>
+  <url> <loc>https://biblo.space/book/iMlEaLBrBhrzWXqhJ7N6/Stranger_Things_-_Messaggi_dal_sotto_sopra</loc> </url>
+  <url> <loc>https://biblo.space/book/OBBVyyjG6ibXfv8PuMEg/Stranger_Things_-_Suspicious_Minds</loc> </url>
+  <url> <loc>https://biblo.space/book/SKBYqEPprrnuMwKO6Qlu/Stranger_Things_-_Ricordi_dal_sottosopra</loc> </url>
+  <url> <loc>https://biblo.space/book/mG9tp1fIByDFpXNgnLdw/Stranger_Things_-_Piccolo_manuale_di_sopravvivenza</loc> </url>
+  <url> <loc>https://biblo.space/book/5kAAl23O2Z4zrip6vhti/Stranger_Things_-_Buio_sulla_citt%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/ICtKWjLZkq8fxsfNeZBO/Stranger_Things_-_Il_sottosopra</loc> </url>
+  <url> <loc>https://biblo.space/book/ZPxNc573GoIm4JgCnKLV/Stelle_minori</loc> </url>
+  <url> <loc>https://biblo.space/book/lovA8Kvt463bSpXjGPVk/Sunfall</loc> </url>
+  <url> <loc>https://biblo.space/book/M2PWf3VkMOKqdalfwn07/Il_Principe_e_la_Sarta</loc> </url>
+  <url> <loc>https://biblo.space/book/F3yVN2e4055vbeqoHCyb/Pigiama_Computer_Biscotti</loc> </url>
+  <url> <loc>https://biblo.space/book/36ioXHlTuAbplANjBagu/Racconti_dell'alloggio_segreto</loc> </url>
+  <url> <loc>https://biblo.space/book/9SjNpbWdMix3F8nTYkbJ/Diario</loc> </url>
+  <url> <loc>https://biblo.space/book/cdpnUO9bauODhHaGv6XG/Tutti_gli_scritti</loc> </url>
+  <url> <loc>https://biblo.space/book/7DQMLPtwBIrZQWWDMYra/Il_Maestro_e_Margherita</loc> </url>
+  <url> <loc>https://biblo.space/book/EVdPwS88vvsSqmvT1ANB/Tenera_%C3%A8_la_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/S4EVGQymO0u95AwdYIjq/La_fanta-scienza_di_H.G._Wells</loc> </url>
+  <url> <loc>https://biblo.space/book/XcCC09kV12lDFP3MxjKD/L'isola_del_dottor_Moreau</loc> </url>
+  <url> <loc>https://biblo.space/book/1iBgwWYWq37MqlZ458yc/Il_rimedio_miracoloso</loc> </url>
+  <url> <loc>https://biblo.space/book/zBcdh7v3fda7neVqI45K/Cat_Person</loc> </url>
+  <url> <loc>https://biblo.space/book/mKhZ1h7YoPLZH1J6ms6f/Nudo_tra_i_lupi</loc> </url>
+  <url> <loc>https://biblo.space/book/NcziYTqdSVuvyA0gMUH5/Il_dio_del_deserto</loc> </url>
+  <url> <loc>https://biblo.space/book/zAZd9jwKeh23NsmCAgrD/Il_cacciatore_del_buio</loc> </url>
+  <url> <loc>https://biblo.space/book/lwLAyVOAtiCRDWT2f1lL/Nella_mente_dell'ipnotista</loc> </url>
+  <url> <loc>https://biblo.space/book/pLl5EfGwfl62aa7DazDQ/%C3%88_cos%C3%AC_che_si_uccide</loc> </url>
+  <url> <loc>https://biblo.space/book/rlS1tLFjB12Na1JohvAs/Il_maestro_delle_ombre</loc> </url>
+  <url> <loc>https://biblo.space/book/zMRKnDOapNjXxJj3KLHw/Il_leone_d'oro</loc> </url>
+  <url> <loc>https://biblo.space/book/hqup2Jx0xgB5MulOpIt6/La_forma_del_buio</loc> </url>
+  <url> <loc>https://biblo.space/book/Xv2sBYp5Zk62vz5DmVA3/La_luce_dell'impero</loc> </url>
+  <url> <loc>https://biblo.space/book/ikwjGSK0O3k5nEap5Tdy/Il_giorno_della_tigre</loc> </url>
+  <url> <loc>https://biblo.space/book/2Pu0IGOpuo6CHEnUB9GL/Figlie_del_mare</loc> </url>
+  <url> <loc>https://biblo.space/book/FD8hFrCQi4hY3meGoA9x/Cos%C3%AC_crudele_%C3%A8_la_fine</loc> </url>
+  <url> <loc>https://biblo.space/book/zueR86w5iz205NstOsJj/La_notte_del_predatore</loc> </url>
+  <url> <loc>https://biblo.space/book/9q3llUVnzMc2Tl8JMZeW/Grido_di_guerra</loc> </url>
+  <url> <loc>https://biblo.space/book/zbjiiJLMpScO3TKgHn81/Il_presidente_%C3%A8_scomparso</loc> </url>
+  <url> <loc>https://biblo.space/book/0jEq7JiZZAoBxcBtqFQh/Il_cappotto</loc> </url>
+  <url> <loc>https://biblo.space/book/OzvpAH6yW7nBS26g9Q2z/La_mite</loc> </url>
+  <url> <loc>https://biblo.space/book/J7VTLBXfwyeVjrHHrkpp/L'eterno_marito_-_La_moglie_di_un_altro_e_il_marito_sotto_il_letto</loc> </url>
+  <url> <loc>https://biblo.space/book/viQm1gm5F68DAgR1mSGY/Ricordi_dal_sottosuolo</loc> </url>
+  <url> <loc>https://biblo.space/book/BqG2Ef4fyMLmGmKMHMmK/Il_sosia</loc> </url>
+  <url> <loc>https://biblo.space/book/Ex9DiQR2QewEsILh9o8Y/Povera_gente</loc> </url>
+  <url> <loc>https://biblo.space/book/JaMPQ9ENmVkVH9s2KQ0V/Memorie_da_una_casa_di_morti</loc> </url>
+  <url> <loc>https://biblo.space/book/nEiV0FVRyTMX03f8fSG2/I_demoni</loc> </url>
+  <url> <loc>https://biblo.space/book/XCCkZFJKNVEpPAFCWjiE/Note_invernali_su_impressioni_estive</loc> </url>
+  <url> <loc>https://biblo.space/book/jOxdd56RxlNp1OGaeD6C/L'idiota</loc> </url>
+  <url> <loc>https://biblo.space/book/x9INpnUJ2AeNoyTqyzMB/Le_notti_bianche</loc> </url>
+  <url> <loc>https://biblo.space/book/y3xo1woUytaPKCVBHfno/Il_giocatore</loc> </url>
+  <url> <loc>https://biblo.space/book/6qSFZPFL09VsmJDNQRQr/Guerra_e_pace</loc> </url>
+  <url> <loc>https://biblo.space/book/XfN5RaYCagbB8v0U5C94/In_tutto_c'%C3%A8_stata_bellezza</loc> </url>
+  <url> <loc>https://biblo.space/book/8HDqPKUAzbdHG9pU4066/La_banalit%C3%A0_del_male</loc> </url>
+  <url> <loc>https://biblo.space/book/0azVLwaFeSV2VNFjsnCz/La_morte_di_Ivan_Il'ic</loc> </url>
+  <url> <loc>https://biblo.space/book/RityTO4IIsA7vuDnMkxa/Delitto_e_castigo</loc> </url>
+  <url> <loc>https://biblo.space/book/s15yjWVivBSybFQNNYhA/Faust</loc> </url>
+  <url> <loc>https://biblo.space/book/8ak331ecWkbr9QceTCAN/Faust_e_Urfaust</loc> </url>
+  <url> <loc>https://biblo.space/book/RtSl4LLJEqsYZ6GXA9PA/Walden_-_La_disobbedienza_civile</loc> </url>
+  <url> <loc>https://biblo.space/book/GLbW9fF2w9UNhQdOOQ2Z/Sepolcri_-_Odi_-_Sonetti</loc> </url>
+  <url> <loc>https://biblo.space/book/ncuaVfw2mJgqteBfg8Cl/Ultime_lettere_di_Jacopo_Ortis</loc> </url>
+  <url> <loc>https://biblo.space/book/ValW7wUbp33LJLT8EcC2/I_dolori_del_giovane_Werther</loc> </url>
+  <url> <loc>https://biblo.space/book/HzoJTHZNY3AZFHCT41HY/Viaggio_in_Italia</loc> </url>
+  <url> <loc>https://biblo.space/book/9b7X1NScOUDHadwFeV8F/Guerra_e_pace</loc> </url>
+  <url> <loc>https://biblo.space/book/0S4dxYplTxIh1jpYBnu2/Le_affinit%C3%A0_elettive</loc> </url>
+  <url> <loc>https://biblo.space/book/z9pIYQcVg5bVoj5ZL1qZ/Fisica_semplice_per_menti_curiose</loc> </url>
+  <url> <loc>https://biblo.space/book/c0nCJceB8ANyZaO7zrhj/La_fisica_dei_supereroi</loc> </url>
+  <url> <loc>https://biblo.space/book/7eT7B69Gnh7SOzIDD5w1/La_fisica_nelle_cose_di_ogni_giorno</loc> </url>
+  <url> <loc>https://biblo.space/book/UqxaXrJQ7Hih7Aq8s98g/Ragdoll</loc> </url>
+  <url> <loc>https://biblo.space/book/eWMwHNFzeNFhuHQWEFON/Ninfa_dormiente</loc> </url>
+  <url> <loc>https://biblo.space/book/MIkyP2VXqGttg9DZHDSB/Il_re_di_denari</loc> </url>
+  <url> <loc>https://biblo.space/book/0s6DaRBuCseZYJjuZOEf/L'Angelo</loc> </url>
+  <url> <loc>https://biblo.space/book/hFDyaGptndZ4Wjz0cA0o/Uccidi_il_padre</loc> </url>
+  <url> <loc>https://biblo.space/book/hAqyR1HV0fgm2MZOfXyQ/Le_avventure_di_Washington_Black</loc> </url>
+  <url> <loc>https://biblo.space/book/ShzTfZHrM8GXtUa80pAv/Doppia_verit%C3%A0</loc> </url>
+  <url> <loc>https://biblo.space/book/CIU4UOlBb5Ju50v4XEVp/Il_lato_oscuro_dell'addio</loc> </url>
+  <url> <loc>https://biblo.space/book/VmK2A1qqGKWzJlBO1GmY/La_citt%C3%A0_buia</loc> </url>
+  <url> <loc>https://biblo.space/book/23bq88xjHN7DAL54PIiI/Cronaca_nera</loc> </url>
+  <url> <loc>https://biblo.space/book/L9tmdon9e96pGveAYzPn/Il_passaggio</loc> </url>
+  <url> <loc>https://biblo.space/book/GgQlvueGcsDNxxc8FbSC/La_strategia_di_Bosch</loc> </url>
+  <url> <loc>https://biblo.space/book/iIBzi9jLyaE6cPGfyVZz/Il_ragno</loc> </url>
+  <url> <loc>https://biblo.space/book/iFrOZBPCSdSTrG1Dppvn/La_citt%C3%A0_delle_ossa</loc> </url>
+  <url> <loc>https://biblo.space/book/z0SXfZPTojkfpyKZBmPx/Utente_sconosciuto</loc> </url>
+  <url> <loc>https://biblo.space/book/n4KTu1JSisfUUGcZtFSr/La_memoria_del_topo</loc> </url>
+  <url> <loc>https://biblo.space/book/crEkTADeRm3iPxulRz5q/Il_respiro_del_drago</loc> </url>
+  <url> <loc>https://biblo.space/book/1BEBxBn3nHRqy6Rb29da/La_bionda_di_cemento</loc> </url>
+  <url> <loc>https://biblo.space/book/5plC4twbMUfcmG0Wjoim/Il_dio_della_colpa</loc> </url>
+  <url> <loc>https://biblo.space/book/f3y6KtbmftvDUVQSrFcb/L'ombra_del_coyote</loc> </url>
+  <url> <loc>https://biblo.space/book/uG6hVdvR0JzAa90mOtO5/La_caduta</loc> </url>
+  <url> <loc>https://biblo.space/book/9hF1kFvCVVlRAfOOQGmK/La_lista</loc> </url>
+  <url> <loc>https://biblo.space/book/zak4Xw8jqfAJo2GjB7fH/La_scatola_nera</loc> </url>
+  <url> <loc>https://biblo.space/book/ZxNGIRLR0aDxGeYdVx89/La_svolta</loc> </url>
+  <url> <loc>https://biblo.space/book/aCDj9E2evsMbDgLQIEWi/Avvocato_di_difesa</loc> </url>
+  <url> <loc>https://biblo.space/book/6LlCwVHPJrDeC9ZMukNh/L'uomo_di_paglia</loc> </url>
+  <url> <loc>https://biblo.space/book/RjHGaZrJkH4vhFEzjdMg/Lame_di_luce</loc> </url>
+  <url> <loc>https://biblo.space/book/W0s3VYb5VxoBtIVZiNQw/Il_poeta_%C3%A8_tornato</loc> </url>
+  <url> <loc>https://biblo.space/book/SzxG5aW0bb31MeEQkbVl/Debito_di_sangue</loc> </url>
+  <url> <loc>https://biblo.space/book/adkwCkjRaBCTlm6A76Of/Ghiaccio_nero</loc> </url>
+  <url> <loc>https://biblo.space/book/r6jxmHJyxsokQXeGhyT6/Musica_dura</loc> </url>
+  <url> <loc>https://biblo.space/book/2Y0DVHSe2mwHExOfkHof/Vuoto_di_luna</loc> </url>
+  <url> <loc>https://biblo.space/book/V5W5xmGvd8mY6AVgqvlt/L'uomo_del_labirinto</loc> </url>
+  <url> <loc>https://biblo.space/book/HiF2NAP5IGhdumMtidwv/L'ultimo_giro_della_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/0d9rllQQNtPn4IqVTpXe/Il_ricatto</loc> </url>
+  <url> <loc>https://biblo.space/book/YeqTtFUUh0cjSHc32uY6/Il_re_dei_torti</loc> </url>
+  <url> <loc>https://biblo.space/book/sys9UNxJrAOjApf8XJR2/Io_confesso</loc> </url>
+  <url> <loc>https://biblo.space/book/JW7z5ogxQ4Qzr8HYtCET/I_segreti_di_Gray_Mountain</loc> </url>
+  <url> <loc>https://biblo.space/book/0pvnMy4c7zrhrrGqajhI/L'ombra_del_sicomoro</loc> </url>
+  <url> <loc>https://biblo.space/book/dBYrB4Pajee17r6INsX0/L'avvocato_di_strada</loc> </url>
+  <url> <loc>https://biblo.space/book/n7qb6Rjvg4wPoDnnSWsu/L'avvocato_canaglia</loc> </url>
+  <url> <loc>https://biblo.space/book/6yBKBhn4w4STszQMCzva/Il_rapporto_Pelican</loc> </url>
+  <url> <loc>https://biblo.space/book/xHkkZDUaS9Yzf5shsalo/L'uomo_della_pioggia</loc> </url>
+  <url> <loc>https://biblo.space/book/DfvWe1qIrUuxSayG2EiJ/La_grande_truffa</loc> </url>
+  <url> <loc>https://biblo.space/book/5QFxQKzrBJ92ivun2ELj/La_colonna_di_fuoco</loc> </url>
+  <url> <loc>https://biblo.space/book/tk0kxfI7v4L59mzYdk0R/Mondo_senza_fine</loc> </url>
+  <url> <loc>https://biblo.space/book/KhV7396psn33PkprhZuL/I_pilastri_della_terra</loc> </url>
+  <url> <loc>https://biblo.space/book/sCfvXXZDeDqc2RKptIEN/Come_sfasciare_un_paese_in_sette_mosse</loc> </url>
+  <url> <loc>https://biblo.space/book/10R4jWmdu59Qg5p8WbUf/In_mare_aperto</loc> </url>
+  <url> <loc>https://biblo.space/book/MtR5SUCOQotWCXGUORVT/Intrigo</loc> </url>
+  <url> <loc>https://biblo.space/book/GftOOTQUPZVfVKyHI1Tk/Sepolcro</loc> </url>
+  <url> <loc>https://biblo.space/book/OJooeNGtMWjxIzQhTjgq/Morte_bianca</loc> </url>
+  <url> <loc>https://biblo.space/book/gleudSOw7AZabeJyhEEW/La_leggenda_dell'Azteco</loc> </url>
+  <url> <loc>https://biblo.space/book/zhS3aj5S00GgoOIEfskb/Fuga</loc> </url>
+  <url> <loc>https://biblo.space/book/VYSjyM4eS8UrAlrbLgW0/I_predatori</loc> </url>
+  <url> <loc>https://biblo.space/book/0hRj7Z59Harmj6fUK0vZ/Il_cacciatore</loc> </url>
+  <url> <loc>https://biblo.space/book/kdh2jp3RSTZUyZUeqb6O/Giungla</loc> </url>
+  <url> <loc>https://biblo.space/book/KXrUOCI3RL2ftU5FBc7L/Alba_di_fuoco</loc> </url>
+  <url> <loc>https://biblo.space/book/WvKIlIlzMnKe3CJrAOH9/Missione_Odessa</loc> </url>
+  <url> <loc>https://biblo.space/book/FAqiPX5QRTCp0vYEYliy/Attentato</loc> </url>
+  <url> <loc>https://biblo.space/book/xyHsQ0QmcVR8ns5Yq8HM/No_Middle_Name</loc> </url>
+  <url> <loc>https://biblo.space/book/HQ5ObDP8Nc0P17vvqSZy/La_prova_decisiva</loc> </url>
+  <url> <loc>https://biblo.space/book/r6NqXQPUxtG5oZvNaXQk/Via_di_fuga</loc> </url>
+  <url> <loc>https://biblo.space/book/Rk0xbCdBDEkl1Tgs8U8j/Il_nemico</loc> </url>
+  <url> <loc>https://biblo.space/book/dR1BQY0LJN15rTkxyybf/A_prova_di_killer</loc> </url>
+  <url> <loc>https://biblo.space/book/UFjcxhy1XmRK8erJGlJA/La_verit%C3%A0_non_basta</loc> </url>
+  <url> <loc>https://biblo.space/book/jrD2U2jONyVcOveMcrZC/L'ora_decisiva</loc> </url>
+  <url> <loc>https://biblo.space/book/vIkxdcWP1Ntk6QG6TePz/La_vittima_designata</loc> </url>
+  <url> <loc>https://biblo.space/book/hUuTFDuH3CjKBsg61EyB/Destinazione_inferno</loc> </url>
+  <url> <loc>https://biblo.space/book/SJH9q5CedkfScECq26Ku/Il_ricercato</loc> </url>
+  <url> <loc>https://biblo.space/book/EFw1zLBkfVHdPIL5RKJl/Personal</loc> </url>
+  <url> <loc>https://biblo.space/book/WmOS9sRC83U3BBhXL0MX/Vendetta_a_freddo</loc> </url>
+  <url> <loc>https://biblo.space/book/PVRP7QUb8MSqaexmCVbO/Colpo_secco</loc> </url>
+  <url> <loc>https://biblo.space/book/sUeAWLTIg3GazmaQi6RA/Una_ragione_per_morire</loc> </url>
+  <url> <loc>https://biblo.space/book/JzbZ7CuBgsacgbh9DtKd/Punto_di_non_ritorno</loc> </url>
+  <url> <loc>https://biblo.space/book/uh7KwnC2U3To5UEKGvgk/Un_passo_di_troppo</loc> </url>
+  <url> <loc>https://biblo.space/book/z9MrHSWaCliU2QDzkH8F/Trappola_mortale</loc> </url>
+  <url> <loc>https://biblo.space/book/tbwH6rxbz5n8bSdY2Trg/Non_sfidarmi</loc> </url>
+  <url> <loc>https://biblo.space/book/IsEmA0a7JnjMLpk6cN6I/Niente_da_perdere</loc> </url>
+  <url> <loc>https://biblo.space/book/7GlkYLL22IsAfQaBkBRy/Zona_pericolosa</loc> </url>
+  <url> <loc>https://biblo.space/book/NcNJETL5ftacc5sURQV0/Prova_a_fermarmi</loc> </url>
+  <url> <loc>https://biblo.space/book/AZ43pr7GThPbPVlN5okm/Inarrestabile</loc> </url>
+  <url> <loc>https://biblo.space/book/YDdWzV46w2yXfjUvCM4O/La_via_d'oro</loc> </url>
+  <url> <loc>https://biblo.space/book/KiCiCEjSHq7kVIv1eWsZ/La_stirpe_di_Salomone</loc> </url>
+  <url> <loc>https://biblo.space/book/TC77dN8gyPVeQlQ2cLd9/I_dodici_segni</loc> </url>
+  <url> <loc>https://biblo.space/book/BSrTcsXdalTlhQXrSrIk/Il_rilegatore</loc> </url>
+  <url> <loc>https://biblo.space/book/cX8jSOcy89mDozrhLOwz/L'ultima_mano_di_burraco</loc> </url>
+  <url> <loc>https://biblo.space/book/cMTdIt67jksJfoQT2UQm/Costretta_al_silenzio</loc> </url>
+  <url> <loc>https://biblo.space/book/wxGNiE8nf2KDz52NgsPU/Scomparsa</loc> </url>
+  <url> <loc>https://biblo.space/book/rP2MzAjcOC58Gy0dXYVU/Dopo_la_tempesta</loc> </url>
+  <url> <loc>https://biblo.space/book/o2HL4ZX94qER0SuKOZme/Solo_per_pochi</loc> </url>
+  <url> <loc>https://biblo.space/book/Jm4SdmkOH4gJ0yaqdcyu/La_lunga_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/2YEtd0CVNRhQScgiSCDk/Inganno</loc> </url>
+  <url> <loc>https://biblo.space/book/6BIRr7P8XWYTE3bzYXA5/Il_segreto_nascosto</loc> </url>
+  <url> <loc>https://biblo.space/book/5ey6qdhiLYdds0SBZ59Q/Una_strada_oscura</loc> </url>
+  <url> <loc>https://biblo.space/book/N4u95WdcdXkzZWtEIwyb/L'anima_del_male</loc> </url>
+  <url> <loc>https://biblo.space/book/P23vgDp9dsPXCDhEMkST/Il_delitto_di_Saccargia</loc> </url>
+  <url> <loc>https://biblo.space/book/YWYnBHnVWMX8ku6fAUlj/Il_tesoro_d'Italia</loc> </url>
+  <url> <loc>https://biblo.space/book/LimOuYMOnYvGNRJUyUxm/Dall'ombra_alla_luce</loc> </url>
+  <url> <loc>https://biblo.space/book/ywhpM4Ha5EAPVRpADWUo/Viaggio_sentimentale_nell'Italia_dei_desideri</loc> </url>
+  <url> <loc>https://biblo.space/book/eRvWP90kKwivJW0S4sZW/Dal_mito_alla_favola_bella</loc> </url>
+  <url> <loc>https://biblo.space/book/lM390saJDoWDXtUScDLM/La_donna_di_Gilles</loc> </url>
+  <url> <loc>https://biblo.space/book/IvsCZRuWcElo6B6oqq9X/Il_Novecento</loc> </url>
+  <url> <loc>https://biblo.space/book/oifOgbC8eIGmeemgTa5a/Il_Novecento</loc> </url>
+  <url> <loc>https://biblo.space/book/4qp5WFpREKUSIS5CgHv4/A_piedi_nudi_nell'arte._Una_passeggiata_alla_scoperta_dei_capolavori_antichi_e_moderni</loc> </url>
   <url> <loc>https://biblo.space/book/mVJs0BqpKV6mqKSZk7xb/Io_ti_voglio</loc> </url>
   <url> <loc>https://biblo.space/book/xZgb5OWnIuf6emRt1YgM/Io_ti_sento</loc> </url>
   <url> <loc>https://biblo.space/book/FwTsnF9CA1fm5m3DBWCz/Io_ti_guardo</loc> </url>
@@ -641,9 +1347,9 @@
   <url> <loc>https://biblo.space/book/0apzg0bsNqGiO66NY82o/Un_posto_nel_mondo</loc> </url>
   <url> <loc>https://biblo.space/book/lvNWNBq8bfjqEKib0HWT/Il_tempo_che_vorrei</loc> </url>
   <url> <loc>https://biblo.space/book/AWPe5gpgBaReQAJhkYWM/Quando_tutto_inizia</loc> </url>
+  <url> <loc>https://biblo.space/book/w27sNFvaflFNRjIe42Qk/Le_prime_luci_del_mattino</loc> </url>
   <url> <loc>https://biblo.space/book/1T8laEt2dv8Kz3B4QcZE/La_strada_verso_casa</loc> </url>
   <url> <loc>https://biblo.space/book/zFpntvdgOZndt5WRbgkR/%C3%88_una_vita_che_ti_aspetto</loc> </url>
-  <url> <loc>https://biblo.space/book/w27sNFvaflFNRjIe42Qk/Le_prime_luci_del_mattino</loc> </url>
   <url> <loc>https://biblo.space/book/ZYXqMjTkbCeEIjgRzl9Y/Per_dieci_minuti</loc> </url>
   <url> <loc>https://biblo.space/book/lv5Xb2tWux2qfsEeopH3/Dimmi_che_credi_al_destino</loc> </url>
   <url> <loc>https://biblo.space/book/38YbStScbyko6fC8geIZ/%C3%88_tutta_vita</loc> </url>
@@ -660,33 +1366,33 @@
   <url> <loc>https://biblo.space/book/7yDoDWnVqZbumKjyWtlf/L'arte_di_correre</loc> </url>
   <url> <loc>https://biblo.space/book/7OVXVvjfi9OaMKiPGZY7/Tutti_i_figli_di_Dio_danzano</loc> </url>
   <url> <loc>https://biblo.space/book/fWnJ5rreqqoFy8OSTRmP/Ritratti_in_jazz</loc> </url>
-  <url> <loc>https://biblo.space/book/ykpKc3lvvX4AHzOPSASQ/Vento_&amp;_Flipper</loc> </url>
-  <url> <loc>https://biblo.space/book/G4Fe7O0SvN8lxw1NzWCT/L'incolore_Tazaki_Tsukuru_e_i_suoi_anni_di_pellegrinaggio</loc> </url>
-  <url> <loc>https://biblo.space/book/b6szwOxwgobbduOiFoZR/La_fine_del_mondo_e_il_paese_delle_meraviglie</loc> </url>
-  <url> <loc>https://biblo.space/book/KkkNezvuNhteGPmKwKzV/After_Dark</loc> </url>
-  <url> <loc>https://biblo.space/book/0r1ONRNktuahxMYzmr0Y/Sonno</loc> </url>
+  <url> <loc>https://biblo.space/book/ykpKc3lvvX4AHzOPSASQ/Vento_&_Flipper</loc> </url>
   <url> <loc>https://biblo.space/book/TtvZZlivFwIOGEe3NOC8/Dance_Dance_Dance</loc> </url>
-  <url> <loc>https://biblo.space/book/DzuJ6XzDYnURb4FDPwVj/Il_pianto_dell'alba</loc> </url>
-  <url> <loc>https://biblo.space/book/LvldVvL2UvpR6toS6odE/Scintille</loc> </url>
-  <url> <loc>https://biblo.space/book/MLumrnIAyizXNK8Shtvj/Il_confine</loc> </url>
-  <url> <loc>https://biblo.space/book/4jkPElc84Tbjs0tZMMVv/Divorare_il_cielo</loc> </url>
-  <url> <loc>https://biblo.space/book/aXNUadHysmgGQ050QTgr/Mio_fratello_rincorre_i_dinosauri</loc> </url>
+  <url> <loc>https://biblo.space/book/0r1ONRNktuahxMYzmr0Y/Sonno</loc> </url>
+  <url> <loc>https://biblo.space/book/G4Fe7O0SvN8lxw1NzWCT/L'incolore_Tazaki_Tsukuru_e_i_suoi_anni_di_pellegrinaggio</loc> </url>
+  <url> <loc>https://biblo.space/book/KkkNezvuNhteGPmKwKzV/After_Dark</loc> </url>
+  <url> <loc>https://biblo.space/book/b6szwOxwgobbduOiFoZR/La_fine_del_mondo_e_il_paese_delle_meraviglie</loc> </url>
   <url> <loc>https://biblo.space/book/iWCWWNzvepZXOuNm0jQT/Skin</loc> </url>
   <url> <loc>https://biblo.space/book/JbdW2YQQCRwRyxnvIZEI/L'aggiustacuori</loc> </url>
   <url> <loc>https://biblo.space/book/LM8TFiLTFiQrGDSqhDQs/L'ultima_legione</loc> </url>
   <url> <loc>https://biblo.space/book/pWt4omWIvZChoFO5i2eq/Una_giornata_nell'antica_Roma</loc> </url>
+  <url> <loc>https://biblo.space/book/LvldVvL2UvpR6toS6odE/Scintille</loc> </url>
   <url> <loc>https://biblo.space/book/Bm0v9lCyxPhcLAqTkAMt/Marcovaldo,_ovvero,_Le_stagioni_in_citt%C3%A0</loc> </url>
   <url> <loc>https://biblo.space/book/JLxAWkwzlYReFhfdniM6/Il_ritratto_di_Dorian_Gray</loc> </url>
   <url> <loc>https://biblo.space/book/xsHmhLxyBJrNwnixT6ID/La_corte_di_nebbia_e_furia</loc> </url>
+  <url> <loc>https://biblo.space/book/aXNUadHysmgGQ050QTgr/Mio_fratello_rincorre_i_dinosauri</loc> </url>
   <url> <loc>https://biblo.space/book/lGNviY0wUTTDjyVdfnTc/La_targa</loc> </url>
   <url> <loc>https://biblo.space/book/axdSyCHfRTISIcayHvM7/Certi_momenti</loc> </url>
   <url> <loc>https://biblo.space/book/lOoxoevLltf8JxObqm3q/I_racconti_di_Nen%C3%A9</loc> </url>
   <url> <loc>https://biblo.space/book/EiuXUAO0grF9YHLsMWtC/Limbo</loc> </url>
   <url> <loc>https://biblo.space/book/mbL4qw1nDkocEyBoBkcm/Sorelle_sbagliate</loc> </url>
+  <url> <loc>https://biblo.space/book/DzuJ6XzDYnURb4FDPwVj/Il_pianto_dell'alba</loc> </url>
   <url> <loc>https://biblo.space/book/Fr2ckMYbGvbukb3yxRMb/Fatto_in_casa_da_Benedetta</loc> </url>
   <url> <loc>https://biblo.space/book/J8V9et5UB2o6Y5B39IZT/Fatto_in_casa_da_Benedetta</loc> </url>
   <url> <loc>https://biblo.space/book/FEYmhR350zQTI0w4rLn6/Il_sigillo_del_cielo</loc> </url>
   <url> <loc>https://biblo.space/book/ikTaXSTQpzTULEpWGrrY/La_stanza_delle_farfalle</loc> </url>
+  <url> <loc>https://biblo.space/book/MLumrnIAyizXNK8Shtvj/Il_confine</loc> </url>
+  <url> <loc>https://biblo.space/book/4jkPElc84Tbjs0tZMMVv/Divorare_il_cielo</loc> </url>
   <url> <loc>https://biblo.space/book/6gyvTOKC8eqsVUKTRLs2/King</loc> </url>
   <url> <loc>https://biblo.space/book/tir0Op4ZqEVTGrRd6pkZ/Crisis</loc> </url>
   <url> <loc>https://biblo.space/book/RJigACZerBK8fL01SlIn/Dracul</loc> </url>
@@ -700,124 +1406,105 @@
   <url> <loc>https://biblo.space/book/ygy04FZItHpP57SxdHko/Nel_paese_della_persuasione</loc> </url>
   <url> <loc>https://biblo.space/book/1ewGg7Jczv8IjHMTSG8B/Lincoln_nel_Bardo</loc> </url>
   <url> <loc>https://biblo.space/book/U9dQaRm4drU3JEvy37V7/4_3_2_1</loc> </url>
-  <url> <loc>https://biblo.space/book/ifmxswcKCctneQHFzSLX/Trappola_per_topi</loc> </url>
-  <url> <loc>https://biblo.space/book/tfWa2qmHmpSLxl1jDfi3/La_grande_guerra</loc> </url>
-  <url> <loc>https://biblo.space/book/e7w4ighrVZo61CuTdY12/Comma_22._Catch_22</loc> </url>
-  <url> <loc>https://biblo.space/book/z7NBmwGs5uEikLepaQCa/Il_Tempo_ritrovato</loc> </url>
-  <url> <loc>https://biblo.space/book/cMo6bzBYIvKV2Kss3NsQ/Albertine_scomparsa</loc> </url>
-  <url> <loc>https://biblo.space/book/CifxZZaKB0GsIZoTWsbl/La_Prigioniera</loc> </url>
-  <url> <loc>https://biblo.space/book/01cj8jIMilHNX6fnPoGN/Sodoma_e_Gomorra</loc> </url>
-  <url> <loc>https://biblo.space/book/BoAYXf5Ac1Sy1oIQjGSo/La_parte_di_Guermantes</loc> </url>
-  <url> <loc>https://biblo.space/book/EKwZPBtoIxISm7fQvYta/All'ombra_delle_fanciulle_in_fiore</loc> </url>
   <url> <loc>https://biblo.space/book/su8fHs4seATHSJH0WfhB/Dalla_parte_di_Swann</loc> </url>
+  <url> <loc>https://biblo.space/book/cMo6bzBYIvKV2Kss3NsQ/Albertine_scomparsa</loc> </url>
+  <url> <loc>https://biblo.space/book/BoAYXf5Ac1Sy1oIQjGSo/La_parte_di_Guermantes</loc> </url>
+  <url> <loc>https://biblo.space/book/CifxZZaKB0GsIZoTWsbl/La_Prigioniera</loc> </url>
+  <url> <loc>https://biblo.space/book/z7NBmwGs5uEikLepaQCa/Il_Tempo_ritrovato</loc> </url>
+  <url> <loc>https://biblo.space/book/EKwZPBtoIxISm7fQvYta/All'ombra_delle_fanciulle_in_fiore</loc> </url>
+  <url> <loc>https://biblo.space/book/01cj8jIMilHNX6fnPoGN/Sodoma_e_Gomorra</loc> </url>
   <url> <loc>https://biblo.space/book/Q5RJ3GEbOl5HENrm9tyP/Alla_ricerca_del_tempo_perduto</loc> </url>
   <url> <loc>https://biblo.space/book/N4Pv02DZ27AAExGRU0Y2/Il_piacere_della_lettura</loc> </url>
-  <url> <loc>https://biblo.space/book/9msvFOX6BdXxUauyi0lk/A_Panda_piace..._fare_i_fumetti_degli_altri_(e_viceversa)</loc> </url>
-  <url> <loc>https://biblo.space/book/2r4VBXDO4NE8NAdvdDDJ/Breve_storia_di_chiunque_sia_mai_vissuto</loc> </url>
-  <url> <loc>https://biblo.space/book/dgtkPo8icIZzsB7TuPDU/Il_paradiso_degli_orchi</loc> </url>
-  <url> <loc>https://biblo.space/book/7xJEotLKAqg51LcPjDgO/La_fata_carabina</loc> </url>
-  <url> <loc>https://biblo.space/book/bAx602UL1KPaV06JAvfY/La_prosivendola</loc> </url>
-  <url> <loc>https://biblo.space/book/FeK8QbyrArtci7ydcIAt/Signor_Malauss%C3%A8ne</loc> </url>
+  <url> <loc>https://biblo.space/book/Dhypfa8J4YTPHGrFUWbL/Discorso_sul_metodo</loc> </url>
+  <url> <loc>https://biblo.space/book/zurUUs8DEiBqqqnwkh1H/Elettronica_wearable</loc> </url>
+  <url> <loc>https://biblo.space/book/9yooMuDlq4anh9mvm0pr/Riparare_(quasi)_ogni_cosa</loc> </url>
+  <url> <loc>https://biblo.space/book/5yxN7EP4DPvFaoozDSpP/Stampa_3D._Guida_completa</loc> </url>
+  <url> <loc>https://biblo.space/book/l2SVTpNVxHb0uvytA5ok/Arduino._Trucchi_e_segreti</loc> </url>
+  <url> <loc>https://biblo.space/book/jDnN3vMMurpBOLr7Kuvs/Elettronica_per_maker</loc> </url>
+  <url> <loc>https://biblo.space/book/RXVTe0GZiNXPFhAefha7/Il_manuale_di_Arduino</loc> </url>
+  <url> <loc>https://biblo.space/book/cGAmiJl5Wl0AHHiE9Bs0/Php_&_Mysql</loc> </url>
+  <url> <loc>https://biblo.space/book/JKImXBOLK3cv0kdeefgF/JavaScript_&_JQuery</loc> </url>
+  <url> <loc>https://biblo.space/book/m5fTR7wzXFFvOEIOVGhJ/HTML_e_CSS</loc> </url>
+  <url> <loc>https://biblo.space/book/xdldULiyDx8w308WErZu/L'arte_dell'hacking</loc> </url>
+  <url> <loc>https://biblo.space/book/aJAt7tiONq0evi6WPdqi/L'arte_dell'inganno</loc> </url>
+  <url> <loc>https://biblo.space/book/tApSU5RA6rI1tQKsHEmI/Leaks</loc> </url>
+  <url> <loc>https://biblo.space/book/mlsEU7PHeI16apc6Aq3x/#Cybercrime</loc> </url>
+  <url> <loc>https://biblo.space/book/TzNQnsQmXTfeS8IyYiph/Don't_make_me_think</loc> </url>
+  <url> <loc>https://biblo.space/book/DIftt3pf8BQc9CRaQDcX/Blockchain._Guida_pratica_tecnico_giuridica_all'uso</loc> </url>
+  <url> <loc>https://biblo.space/book/TBcPm3I7S0GyVjaLDx1E/Capire_Ethereum_Smart_Contract_ICO_e_DApp</loc> </url>
+  <url> <loc>https://biblo.space/book/YMlLeMRI6t3nupuIYkRL/Capire_Blockchain</loc> </url>
+  <url> <loc>https://biblo.space/book/ILRRoy55j0LpFi73y7p6/Ethereum</loc> </url>
+  <url> <loc>https://biblo.space/book/ry3bA2ZFQ6xuGXx7SB3i/Vendere_tutto._Jeff_Bezos_e_l'era_di_Amazon</loc> </url>
+  <url> <loc>https://biblo.space/book/mwdjYfcjyI0YxyPuL4E5/Bowie</loc> </url>
+  <url> <loc>https://biblo.space/book/IQ9dc5ahbuCNXnrDdr4R/Frida_Kahlo</loc> </url>
+  <url> <loc>https://biblo.space/book/lOLon6PE5Ike8mCxEOTI/L'architetto_dell'invisibile</loc> </url>
+  <url> <loc>https://biblo.space/book/5u4igE6IRcgGNBi87Ls6/Un_bacio_tra_le_stelle</loc> </url>
+  <url> <loc>https://biblo.space/book/KwYvnDlZZKuAlkqBVKxd/La_bellezza_come_metodo</loc> </url>
+  <url> <loc>https://biblo.space/book/BS26Tm9N8q4UvJqnyJXK/Entanglement</loc> </url>
+  <url> <loc>https://biblo.space/book/LVOhz70TtdTJL30eFUaU/Il_papa_della_fisica</loc> </url>
+  <url> <loc>https://biblo.space/book/EWL4FNYZxJUepHVeMgU0/Astrobufale</loc> </url>
+  <url> <loc>https://biblo.space/book/7CpkUS3m8rnt1i5qRtIS/Volevo_solo_pedalare..._ma_sono_inciampato_in_una_seconda_vita</loc> </url>
+  <url> <loc>https://biblo.space/book/yWluto1GJAwjUuPgCBpU/%C2%ABQuel_ficcanaso_di_Zanardi%C2%BB</loc> </url>
+  <url> <loc>https://biblo.space/book/o0sEyCd7BxweFH3YpUoZ/Open</loc> </url>
+  <url> <loc>https://biblo.space/book/xd3ufu61vks2KIeiONPm/Se_sembra_impossibile_allora_si_pu%C3%B2_fare</loc> </url>
+  <url> <loc>https://biblo.space/book/PRchJH5vDrAh0QChnLf3/Fare_marketing_rimanendo_brave_persone</loc> </url>
+  <url> <loc>https://biblo.space/book/3nrc2ZrZ7n9fr57wyfZ6/Come_ce_l'hanno_fatta_57_imprenditori_italiani</loc> </url>
+  <url> <loc>https://biblo.space/book/TnzFZR9N40UfTjzKDKLL/Come_ce_l'hanno_fatta_51_imprenditori_italiani</loc> </url>
+  <url> <loc>https://biblo.space/book/SeTRA18E8Of8THVhtjCc/Da_zero_a_uno</loc> </url>
+  <url> <loc>https://biblo.space/book/ULNeL8Jpqw5EpFHD8B8G/Il_metodo_Warren_Buffett</loc> </url>
+  <url> <loc>https://biblo.space/book/TkA27vAfwxgbKq3w3Bq4/Il_business_diverte</loc> </url>
+  <url> <loc>https://biblo.space/book/R10ftJsfe3puGYjKdrLh/La_vera_storia_del_genio_che_ha_fondato_McDonald's%C2%AE</loc> </url>
+  <url> <loc>https://biblo.space/book/w2WY6JsdTzYfjAjZaHKK/L'arte_della_vittoria</loc> </url>
+  <url> <loc>https://biblo.space/book/VAzSag4ZRWmqyME0MJDf/Nudge._La_spinta_gentile</loc> </url>
+  <url> <loc>https://biblo.space/book/x60Euy5OtZYu9xBbi2ZK/Di_tutte_le_ricchezze</loc> </url>
+  <url> <loc>https://biblo.space/book/6GJ8pahPf2MRvHn98ot5/Storia_di_un_corpo</loc> </url>
+  <url> <loc>https://biblo.space/book/LLnnwMjs94tO32o9GHjY/La_casa_dei_sette_ponti</loc> </url>
+  <url> <loc>https://biblo.space/book/N3WHdaAYKIBy1c8vQlvc/L'angelo_del_fango</loc> </url>
+  <url> <loc>https://biblo.space/book/SdhybvntfrAIuQ0tiqc0/Non_%C3%A8_tempo_di_morire</loc> </url>
+  <url> <loc>https://biblo.space/book/Pu14hAPRMYtgv3CGNXu0/L'ultima_scelta</loc> </url>
+  <url> <loc>https://biblo.space/book/nRn8ulmFEqBfF0PyLUJC/Nero_di_maggio</loc> </url>
+  <url> <loc>https://biblo.space/book/BQNtw5FIu2LCQ5tzzHlT/Musica_nera</loc> </url>
+  <url> <loc>https://biblo.space/book/LyQ713NgmWel1yB6PS1o/Il_ritorno_del_colonnello_Arcieri</loc> </url>
+  <url> <loc>https://biblo.space/book/tGQuc4eErCXPbwfs89b6/La_nave_dei_vinti</loc> </url>
+  <url> <loc>https://biblo.space/book/TMs72IETd0QVtkBuDwYm/Il_lungo_inganno</loc> </url>
+  <url> <loc>https://biblo.space/book/GgXJ9yxFbAIL5zEgMhaO/Cosa_sai_della_notte</loc> </url>
+  <url> <loc>https://biblo.space/book/vNkhjROux09V4mJwsZ6q/Quel_che_resta_della_vita</loc> </url>
+  <url> <loc>https://biblo.space/book/IrrgzZCdKRAFiUStOos2/Quantic_Love</loc> </url>
+  <url> <loc>https://biblo.space/book/2PKvJzDdGeUE5jMS5li3/Chiedi_alla_luna</loc> </url>
+  <url> <loc>https://biblo.space/book/F44h1xiDFUXIXxbr1TCF/Adorata_nemica_mia</loc> </url>
+  <url> <loc>https://biblo.space/book/RHSWr2XYgKAwFEtJ8gN8/L'uomo_delle_nuvole</loc> </url>
+  <url> <loc>https://biblo.space/book/e1CGWjRrzgMLieXrOlVC/L'inganno_della_morte</loc> </url>
+  <url> <loc>https://biblo.space/book/WgNkZakvXTQ9LO4QzVAQ/Amore</loc> </url>
+  <url> <loc>https://biblo.space/book/oRXNVVmOkjpECBtQkjMZ/Ancora_una_volta_il_mare</loc> </url>
+  <url> <loc>https://biblo.space/book/JQ1R4iKsLQZX9g3Gxcf5/Storia_di_Irene</loc> </url>
+  <url> <loc>https://biblo.space/book/gkyJvcVQoFUHAWD5qaE7/Per_dieci_minuti</loc> </url>
+  <url> <loc>https://biblo.space/book/j1KFl6oTYB64d5BMeiC1/Non_dirmi_che_hai_paura</loc> </url>
+  <url> <loc>https://biblo.space/book/y7n14oAYSAPZBFc1xVHW/La_cena_delle_bugie</loc> </url>
+  <url> <loc>https://biblo.space/book/VHYnPNK2tLQT02AQ9lsi/La_profezia_del_libro_perduto</loc> </url>
+  <url> <loc>https://biblo.space/book/HdbO3rWKDawq767k7icp/Piccola_guerra_lampo_per_radere_al_suolo_la_Sicilia</loc> </url>
+  <url> <loc>https://biblo.space/book/JlKY2YFXqqVM6W1cCY0a/Il_traduttore</loc> </url>
+  <url> <loc>https://biblo.space/book/o2GQWTe3JWpYPNBkVPop/Donne_che_comprano_fiori</loc> </url>
+  <url> <loc>https://biblo.space/book/tiHCtynuXd00Mmfg5jUn/Comici_spaventati_guerrieri</loc> </url>
+  <url> <loc>https://biblo.space/book/FPJZI12yvLiAdrsAjp39/La_grammatica_di_Dio</loc> </url>
+  <url> <loc>https://biblo.space/book/tpfwhH07Fs3iAfxj0eI5/Margherita_Dolcevita</loc> </url>
+  <url> <loc>https://biblo.space/book/4nB8bdiVfPXKnBzBTcul/Bar_sport</loc> </url>
+  <url> <loc>https://biblo.space/book/c0w7VdTkSsAvD43KwsfK/La_lunga_notte_del_dottor_Galvan</loc> </url>
   <url> <loc>https://biblo.space/book/12eG1oS63tSeGzI7gpMG/La_passione_secondo_Th%C3%A9r%C3%A8se</loc> </url>
-  <url> <loc>https://biblo.space/book/naGhwOa0jikje9WA0V5r/Oceani_in_fiamme</loc> </url>
-  <url> <loc>https://biblo.space/book/wBpq1sfmJ1TPwqCkm2rw/Il_segreto_di_Osiride</loc> </url>
-  <url> <loc>https://biblo.space/book/vPZCsyZJcLAh6quoJDm4/Quasi_innocente</loc> </url>
-  <url> <loc>https://biblo.space/book/tY20ochX6wsNxhzdJ4gV/Profumo_di_cioccolato</loc> </url>
-  <url> <loc>https://biblo.space/book/HLNXfP5AeomI2sZ86tKD/La_citt%C3%A0_senza_cioccolato</loc> </url>
-  <url> <loc>https://biblo.space/book/qX74IMo3fqV0caMpOJ3b/Wolf</loc> </url>
-  <url> <loc>https://biblo.space/book/neMgM99XmZgCVbfNEfMz/M._Il_figlio_del_secolo</loc> </url>
-  <url> <loc>https://biblo.space/book/e7w3OTK4npRZ9qEith1e/La_seconda_mezzanotte</loc> </url>
-  <url> <loc>https://biblo.space/book/fjwStrq6gvPgc4XSPGZk/Il_bambino_che_sognava_la_fine_del_mondo</loc> </url>
-  <url> <loc>https://biblo.space/book/iQdJCnW7gmvUVeDRX3fs/Una_storia_romantica</loc> </url>
-  <url> <loc>https://biblo.space/book/qD4UzVL3okqEQbe0RDUb/Il_rumore_sordo_della_battaglia</loc> </url>
-  <url> <loc>https://biblo.space/book/qCcENBAOWVTrGg2HgiZV/Il_sopravvissuto</loc> </url>
-  <url> <loc>https://biblo.space/book/BA4rcALVFSTapSJtcGKd/Il_padre_infedele</loc> </url>
-  <url> <loc>https://biblo.space/book/qJFJXb8iF9jkpHNtTRDk/Stranger_things_-_La_guida_completa</loc> </url>
-  <url> <loc>https://biblo.space/book/GrzAdCretbdHbbq8qSCt/Stranger_Things_-_La_vita_segreta_di_Max</loc> </url>
-  <url> <loc>https://biblo.space/book/SKBYqEPprrnuMwKO6Qlu/Stranger_Things_-_Ricordi_dal_sottosopra</loc> </url>
-  <url> <loc>https://biblo.space/book/iMlEaLBrBhrzWXqhJ7N6/Stranger_Things_-_Messaggi_dal_sotto_sopra</loc> </url>
-  <url> <loc>https://biblo.space/book/OBBVyyjG6ibXfv8PuMEg/Stranger_Things_-_Suspicious_Minds</loc> </url>
-  <url> <loc>https://biblo.space/book/5kAAl23O2Z4zrip6vhti/Stranger_Things_-_Buio_sulla_citt%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/ICtKWjLZkq8fxsfNeZBO/Stranger_Things_-_Il_sottosopra</loc> </url>  
-  <url> <loc>https://biblo.space/book/8RCuj1SocQOyeRztyIZP/Stranger_Things_-_Il_libro_ufficiale</loc> </url>
-  <url> <loc>https://biblo.space/book/QdjHJsegIvtkPUc8VAd7/La_quinta_stagione</loc> </url>
-  <url> <loc>https://biblo.space/book/ZPxNc573GoIm4JgCnKLV/Stelle_minori</loc> </url>
-  <url> <loc>https://biblo.space/book/lovA8Kvt463bSpXjGPVk/Sunfall</loc> </url>
-  <url> <loc>https://biblo.space/book/M2PWf3VkMOKqdalfwn07/Il_Principe_e_la_Sarta</loc> </url>
-  <url> <loc>https://biblo.space/book/F3yVN2e4055vbeqoHCyb/Pigiama_Computer_Biscotti</loc> </url>
-  <url> <loc>https://biblo.space/book/36ioXHlTuAbplANjBagu/Racconti_dell'alloggio_segreto</loc> </url>
-  <url> <loc>https://biblo.space/book/9SjNpbWdMix3F8nTYkbJ/Diario</loc> </url>
-  <url> <loc>https://biblo.space/book/cdpnUO9bauODhHaGv6XG/Tutti_gli_scritti</loc> </url>
-  <url> <loc>https://biblo.space/book/7DQMLPtwBIrZQWWDMYra/Il_Maestro_e_Margherita</loc> </url>  
-  <url> <loc>https://biblo.space/book/EVdPwS88vvsSqmvT1ANB/Tenera_%C3%A8_la_notte</loc> </url>
-  <url> <loc>https://biblo.space/book/XcCC09kV12lDFP3MxjKD/L'isola_del_dottor_Moreau</loc> </url>
-  <url> <loc>https://biblo.space/book/1iBgwWYWq37MqlZ458yc/Il_rimedio_miracoloso</loc> </url>
-  <url> <loc>https://biblo.space/book/zBcdh7v3fda7neVqI45K/Cat_Person</loc> </url>
-  <url> <loc>https://biblo.space/book/mKhZ1h7YoPLZH1J6ms6f/Nudo_tra_i_lupi</loc> </url>
-  <url> <loc>https://biblo.space/book/NcziYTqdSVuvyA0gMUH5/Il_dio_del_deserto</loc> </url>
-  <url> <loc>https://biblo.space/book/zAZd9jwKeh23NsmCAgrD/Il_cacciatore_del_buio</loc> </url>
-  <url> <loc>https://biblo.space/book/lwLAyVOAtiCRDWT2f1lL/Nella_mente_dell'ipnotista</loc> </url>
-  <url> <loc>https://biblo.space/book/pLl5EfGwfl62aa7DazDQ/%C3%88_cos%C3%AC_che_si_uccide</loc> </url>
-  <url> <loc>https://biblo.space/book/rlS1tLFjB12Na1JohvAs/Il_maestro_delle_ombre</loc> </url>  
-  <url> <loc>https://biblo.space/book/zMRKnDOapNjXxJj3KLHw/Il_leone_d'oro</loc> </url>
-  <url> <loc>https://biblo.space/book/ohFqfKrhaFjuDfC3WE4P/L'ultimo_faraone</loc> </url>
-  <url> <loc>https://biblo.space/book/hqup2Jx0xgB5MulOpIt6/La_forma_del_buio</loc> </url>
-  <url> <loc>https://biblo.space/book/Xv2sBYp5Zk62vz5DmVA3/La_luce_dell'impero</loc> </url>
-  <url> <loc>https://biblo.space/book/ikwjGSK0O3k5nEap5Tdy/Il_giorno_della_tigre</loc> </url>
-  <url> <loc>https://biblo.space/book/2Pu0IGOpuo6CHEnUB9GL/Figlie_del_mare</loc> </url>
-  <url> <loc>https://biblo.space/book/FD8hFrCQi4hY3meGoA9x/Cos%C3%AC_crudele_%C3%A8_la_fine</loc> </url>
-  <url> <loc>https://biblo.space/book/zueR86w5iz205NstOsJj/La_notte_del_predatore</loc> </url>
-  <url> <loc>https://biblo.space/book/9q3llUVnzMc2Tl8JMZeW/Grido_di_guerra</loc> </url>
-  <url> <loc>https://biblo.space/book/zbjiiJLMpScO3TKgHn81/Il_presidente_%C3%A8_scomparso</loc> </url>  
-  <url> <loc>https://biblo.space/book/tbwH6rxbz5n8bSdY2Trg/Non_sfidarmi</loc> </url>
-  <url> <loc>https://biblo.space/book/gleudSOw7AZabeJyhEEW/La_leggenda_dell'Azteco</loc> </url>
-  <url> <loc>https://biblo.space/book/0jEq7JiZZAoBxcBtqFQh/Il_cappotto</loc> </url>
-  <url> <loc>https://biblo.space/book/OzvpAH6yW7nBS26g9Q2z/La_mite</loc> </url>
-  <url> <loc>https://biblo.space/book/J7VTLBXfwyeVjrHHrkpp/L'eterno_marito_-_La_moglie_di_un_altro_e_il_marito_sotto_il_letto</loc> </url>
-  <url> <loc>https://biblo.space/book/viQm1gm5F68DAgR1mSGY/Ricordi_dal_sottosuolo</loc> </url>
-  <url> <loc>https://biblo.space/book/BqG2Ef4fyMLmGmKMHMmK/Il_sosia</loc> </url>
-  <url> <loc>https://biblo.space/book/Ex9DiQR2QewEsILh9o8Y/Povera_gente</loc> </url>
-  <url> <loc>https://biblo.space/book/JaMPQ9ENmVkVH9s2KQ0V/Memorie_da_una_casa_di_morti</loc> </url>
-  <url> <loc>https://biblo.space/book/nEiV0FVRyTMX03f8fSG2/I_demoni</loc> </url>
-  <url> <loc>https://biblo.space/book/XCCkZFJKNVEpPAFCWjiE/Note_invernali_su_impressioni_estive</loc> </url>
-  <url> <loc>https://biblo.space/book/x9INpnUJ2AeNoyTqyzMB/Le_notti_bianche</loc> </url>
-  <url> <loc>https://biblo.space/book/y3xo1woUytaPKCVBHfno/Il_giocatore</loc> </url>
-  <url> <loc>https://biblo.space/book/6qSFZPFL09VsmJDNQRQr/Guerra_e_pace</loc> </url>
-  <url> <loc>https://biblo.space/book/XfN5RaYCagbB8v0U5C94/In_tutto_c'%C3%A8_stata_bellezza</loc> </url>
-  <url> <loc>https://biblo.space/book/I0aMFltfzSXF4XitBzTi/La_banalit%C3%A0_del_male</loc> </url>
-  <url> <loc>https://biblo.space/book/8HDqPKUAzbdHG9pU4066/La_banalit%C3%A0_del_male</loc> </url>
-  <url> <loc>https://biblo.space/book/9b7X1NScOUDHadwFeV8F/Guerra_e_pace</loc> </url>
-  <url> <loc>https://biblo.space/book/5NsXymi2zy7xnsX0VOT2/Anna_Karenina</loc> </url>
-  <url> <loc>https://biblo.space/book/0azVLwaFeSV2VNFjsnCz/La_morte_di_Ivan_Il'ic</loc> </url>
-  <url> <loc>https://biblo.space/book/RityTO4IIsA7vuDnMkxa/Delitto_e_castigo</loc> </url>
-  <url> <loc>https://biblo.space/book/s15yjWVivBSybFQNNYhA/Faust</loc> </url>
-  <url> <loc>https://biblo.space/book/8ak331ecWkbr9QceTCAN/Faust_e_Urfaust</loc> </url>
-  <url> <loc>https://biblo.space/book/GLbW9fF2w9UNhQdOOQ2Z/Sepolcri_-_Odi_-_Sonetti</loc> </url>
-  <url> <loc>https://biblo.space/book/RtSl4LLJEqsYZ6GXA9PA/Walden_-_La_disobbedienza_civile</loc> </url>
-  <url> <loc>https://biblo.space/book/ncuaVfw2mJgqteBfg8Cl/Ultime_lettere_di_Jacopo_Ortis</loc> </url>
-  <url> <loc>https://biblo.space/book/ValW7wUbp33LJLT8EcC2/I_dolori_del_giovane_Werther</loc> </url>
-  <url> <loc>https://biblo.space/book/HzoJTHZNY3AZFHCT41HY/Viaggio_in_Italia</loc> </url>
-  <url> <loc>https://biblo.space/book/0S4dxYplTxIh1jpYBnu2/Le_affinit%C3%A0_elettive</loc> </url>
-  <url> <loc>https://biblo.space/book/z9pIYQcVg5bVoj5ZL1qZ/Fisica_semplice_per_menti_curiose</loc> </url>
-  <url> <loc>https://biblo.space/book/c0nCJceB8ANyZaO7zrhj/La_fisica_dei_supereroi</loc> </url>
-  <url> <loc>https://biblo.space/book/7eT7B69Gnh7SOzIDD5w1/La_fisica_nelle_cose_di_ogni_giorno</loc> </url>
-  <url> <loc>https://biblo.space/book/XxazMzHlAiLKKJ6YmZOI/La_fisica_della_vita</loc> </url>
-  <url> <loc>https://biblo.space/book/eWMwHNFzeNFhuHQWEFON/Ninfa_dormiente</loc> </url>
-  <url> <loc>https://biblo.space/book/MIkyP2VXqGttg9DZHDSB/Il_re_di_denari</loc> </url>
-  <url> <loc>https://biblo.space/book/hFDyaGptndZ4Wjz0cA0o/Uccidi_il_padre</loc> </url>
-  <url> <loc>https://biblo.space/book/0s6DaRBuCseZYJjuZOEf/L'Angelo</loc> </url>
-  <url> <loc>https://biblo.space/book/hAqyR1HV0fgm2MZOfXyQ/Le_avventure_di_Washington_Black</loc> </url>
-  <url> <loc>https://biblo.space/book/ShzTfZHrM8GXtUa80pAv/Doppia_verit%C3%A0</loc> </url>
-  <url> <loc>https://biblo.space/book/CIU4UOlBb5Ju50v4XEVp/Il_lato_oscuro_dell'addio</loc> </url>
-  <url> <loc>https://biblo.space/book/VmK2A1qqGKWzJlBO1GmY/La_citt%C3%A0_buia</loc> </url>
-  <url> <loc>https://biblo.space/book/23bq88xjHN7DAL54PIiI/Cronaca_nera</loc> </url>
-  <url> <loc>https://biblo.space/book/L9tmdon9e96pGveAYzPn/Il_passaggio</loc> </url>
-  <url> <loc>https://biblo.space/book/GgQlvueGcsDNxxc8FbSC/La_strategia_di_Bosch</loc> </url>
-  <url> <loc>https://biblo.space/book/iIBzi9jLyaE6cPGfyVZz/Il_ragno</loc> </url>
-  <url> <loc>https://biblo.space/book/iFrOZBPCSdSTrG1Dppvn/La_citt%C3%A0_delle_ossa</loc> </url>
-  <url> <loc>https://biblo.space/book/z0SXfZPTojkfpyKZBmPx/Utente_sconosciuto</loc> </url>
-  <url> <loc>https://biblo.space/book/n4KTu1JSisfUUGcZtFSr/La_memoria_del_topo</loc> </url>
-  <url> <loc>https://biblo.space/book/crEkTADeRm3iPxulRz5q/Il_respiro_del_drago</loc> </url>
-  <url> <loc>https://biblo.space/book/1BEBxBn3nHRqy6Rb29da/La_bionda_di_cemento</loc> </url>
-  <url> <loc>https://biblo.space/book/5plC4twbMUfcmG0Wjoim/Il_dio_della_colpa</loc> </url>
+  <url> <loc>https://biblo.space/book/FeK8QbyrArtci7ydcIAt/Signor_Malauss%C3%A8ne</loc> </url>
+  <url> <loc>https://biblo.space/book/bAx602UL1KPaV06JAvfY/La_prosivendola</loc> </url>
+  <url> <loc>https://biblo.space/book/7xJEotLKAqg51LcPjDgO/La_fata_carabina</loc> </url>
+  <url> <loc>https://biblo.space/book/dgtkPo8icIZzsB7TuPDU/Il_paradiso_degli_orchi</loc> </url>
+  <url> <loc>https://biblo.space/book/M90NA9DebnePabaXCPmb/Il_caso_Malauss%C3%A8ne</loc> </url>
+  <url> <loc>https://biblo.space/book/YSZlAiLEjE9wsuRULG94/Prendiluna</loc> </url>
+  <url> <loc>https://biblo.space/book/zYgcLGDCSYYFTkO69WYX/La_perfezione_non_%C3%A8_di_questo_mondo</loc> </url>
+  <url> <loc>https://biblo.space/book/52jufnFHfHNucFOBWAYY/Magari_domani_resto</loc> </url>
+  <url> <loc>https://biblo.space/book/Z36lvyKv2wi73R6vJfEM/Era_mia_madre</loc> </url>
+  <url> <loc>https://biblo.space/book/9iiYFH6yMaZ93XTLTyew/La_prima_regola_degli_Shardana</loc> </url>
+  <url> <loc>https://biblo.space/book/ezRmYuOpFwvxyaINH5g2/La_vita_prodigiosa_di_Isidoro_Sifflotin</loc> </url>
+  <url> <loc>https://biblo.space/book/3BGsKC3D4e9eLAqbUNNi/Il_taglio_di_dio</loc> </url>
+  <url> <loc>https://biblo.space/book/HKk6l0iwmKnuz91Tlwd6/Il_bacio_d'acciaio</loc> </url>
+  <url> <loc>https://biblo.space/book/BCN9KJZfaI2ltCUjpuOV/L'ombra_del_collezionista</loc> </url>
+  <url> <loc>https://biblo.space/book/sYGphphzYNLxQk44oMX4/La_stanza_della_morte</loc> </url>
+  <url> <loc>https://biblo.space/book/IwzLVDxjV3mYWpMfC3tc/Il_filo_che_brucia</loc> </url>
+  <url> <loc>https://biblo.space/book/em6jerfXshSiYoy3eMbS/La_memoria_rende_liberi</loc> </url>
 </urlset>

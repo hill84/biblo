@@ -8,32 +8,46 @@
   xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url> <loc>https://biblo.space/collection/After</loc> </url>
   <url> <loc>https://biblo.space/collection/Alla_ricerca_del_tempo_perduto</loc> </url>
+  <url> <loc>https://biblo.space/collection/Aloysius_Pendergast</loc> </url>
   <url> <loc>https://biblo.space/collection/Best_seller</loc> </url>
   <url> <loc>https://biblo.space/collection/Ciclo_dello_Spazio_conosciuto</loc> </url>
   <url> <loc>https://biblo.space/collection/Cronache_del_ghiaccio_e_del_fuoco</loc> </url>
   <url> <loc>https://biblo.space/collection/Fenoglio</loc> </url>
-  <url> <loc>https://biblo.space/collection/Fjällbacka</loc> </url>
+  <url> <loc>https://biblo.space/collection/Fj%C3%A4llbacka</loc> </url>
+  <url> <loc>https://biblo.space/collection/Guida_galattica_per_gli_autostoppisti</loc> </url>
   <url> <loc>https://biblo.space/collection/Harry_Potter</loc> </url>
   <url> <loc>https://biblo.space/collection/I_casi_di_Girolamo_Svampa</loc> </url>
-  <url> <loc>https://biblo.space/collection/Il_ciclo_di_Malauss%C3%A8ne</loc></url>
+  <url> <loc>https://biblo.space/collection/Il_ciclo_di_Malauss%C3%A8ne</loc> </url>
   <url> <loc>https://biblo.space/collection/Il_cimitero_dei_libri_dimenticati</loc> </url>
+  <url> <loc>https://biblo.space/collection/Il_commissario_Balistreri</loc> </url>
+  <url> <loc>https://biblo.space/collection/Il_commissario_Lolita_Lobosco</loc> </url>
   <url> <loc>https://biblo.space/collection/Il_problema_dei_tre_corpi</loc> </url>
+  <url> <loc>https://biblo.space/collection/Il_vicequestore_Rocco_Schiavone</loc> </url>
   <url> <loc>https://biblo.space/collection/Indomite</loc> </url>
+  <url> <loc>https://biblo.space/collection/Kingsbridge</loc> </url>
   <url> <loc>https://biblo.space/collection/L'allieva</loc> </url>
   <url> <loc>https://biblo.space/collection/L'amica_geniale</loc> </url>
   <url> <loc>https://biblo.space/collection/L'attraversaspecchi</loc> </url>
   <url> <loc>https://biblo.space/collection/La_torre_nera</loc> </url>
+  <url> <loc>https://biblo.space/collection/Le_avventure_di_Jack_Reacher</loc> </url>
   <url> <loc>https://biblo.space/collection/Le_inchieste_di_Annika_Bengtzon</loc> </url>
+  <url> <loc>https://biblo.space/collection/Le_indagini_di_Lincoln_Rhyme</loc> </url>
   <url> <loc>https://biblo.space/collection/Le_indagini_di_Pepe_Carvalho</loc> </url>
   <url> <loc>https://biblo.space/collection/Libri_proibiti</loc> </url>
+  <url> <loc>https://biblo.space/collection/Lorien_Legacies</loc> </url>
   <url> <loc>https://biblo.space/collection/Millennium</loc> </url>
+  <url> <loc>https://biblo.space/collection/Miss_Peregrine</loc> </url>
   <url> <loc>https://biblo.space/collection/Montalbano</loc> </url>
   <url> <loc>https://biblo.space/collection/Outlander</loc> </url>
+  <url> <loc>https://biblo.space/collection/Pathfinder</loc> </url>
+  <url> <loc>https://biblo.space/collection/Percy_Jackson_e_gli_dei_dell'Olimpo</loc> </url>
   <url> <loc>https://biblo.space/collection/Premio_Strega</loc> </url>
   <url> <loc>https://biblo.space/collection/Stranger_Things</loc> </url>
   <url> <loc>https://biblo.space/collection/The_Expanse</loc> </url>
   <url> <loc>https://biblo.space/collection/The_Wicked_+_The_Divine</loc> </url>
   <url> <loc>https://biblo.space/collection/Trilogia_dell'Area_X</loc> </url>
+  <url> <loc>https://biblo.space/collection/Twilight</loc> </url>
+  <url> <loc>https://biblo.space/collection/Un_viaggio_attraverso</loc> </url>
   <url> <loc>https://biblo.space/collection/Un'indagine_per_Vani</loc> </url>
   <url> <loc>https://biblo.space/collection/Wild_Cards</loc> </url>
 </urlset>
