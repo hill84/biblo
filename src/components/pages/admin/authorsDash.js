@@ -5,15 +5,16 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { CSVLink } from 'react-csv';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { getInitials, handleFirestoreError, imageZoomDefaultStyles, normalizeString, normURL, timeSince } from '../../../config/shared';
+import { app, getInitials, handleFirestoreError, imageZoomDefaultStyles, normalizeString, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
+import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
-import SnackbarContext from '../../../context/snackbarContext';
 
 const limitBy = [ 15, 25, 50, 100, 250, 500];
 
@@ -214,6 +215,10 @@ const AuthorsDash = props => {
     ))
   );
 
+  const sitemapData = items && items.map(item => ([
+    `<url> <loc>${app.url}/author/${normURL(item.displayName)}</loc> </url>`
+  ]));
+
   return (
     <>
       <div className="head nav">
@@ -229,17 +234,20 @@ const AuthorsDash = props => {
               {limitByOptions}
             </Menu>
           </div>
-          <div className="col-auto">
-            <button type="button" className="btn sm flat counter" onClick={onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-            <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc}>{icon.arrowDown}</button>
-            <Menu 
-              className="dropdown-menu"
-              anchorEl={orderMenuAnchorEl} 
-              open={Boolean(orderMenuAnchorEl)} 
-              onClose={onCloseOrderMenu}>
-              {orderByOptions}
-            </Menu>
-          </div>
+          {items && (
+            <div className="col-auto">
+              <CSVLink data={sitemapData} className="counter" filename="sitemap_authors.csv">Sitemap</CSVLink>
+              <button type="button" className="btn sm flat counter" onClick={onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={onToggleDesc}>{icon.arrowDown}</button>
+              <Menu 
+                className="dropdown-menu"
+                anchorEl={orderMenuAnchorEl} 
+                open={Boolean(orderMenuAnchorEl)} 
+                onClose={onCloseOrderMenu}>
+                {orderByOptions}
+              </Menu>
+            </div>
+          )}
         </div>
       </div>
       

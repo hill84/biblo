@@ -4,11 +4,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
+import { CSVLink } from 'react-csv';
 import ImageZoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
+import { app, handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -242,13 +243,19 @@ export default class BooksDash extends Component {
       ))
     );
 
+    const sitemapData = items && items.map(item => ([
+      `<url> <loc>${app.url}/book/${item.bid}/${normURL(item.title)}</loc> </url>`
+    ]));
+
 		return (
       <>
         <div className="head nav">
           <div className="row">
             <div className="col">
               <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
-              <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>{limit} <span className="hide-xs">per pagina</span></button>
+              <button type="button" className="btn sm flat counter last" onClick={this.onOpenLimitMenu}>
+                {limit} <span className="hide-xs">per pagina</span>
+              </button>
               <Menu 
                 className="dropdown-menu"
                 anchorEl={limitMenuAnchorEl} 
@@ -257,17 +264,23 @@ export default class BooksDash extends Component {
                 {limitByOptions}
               </Menu>
             </div>
-            <div className="col-auto">
-              <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-              <Menu 
-                className="dropdown-menu"
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
-                onClose={this.onCloseOrderMenu}>
-                {orderByOptions}
-              </Menu>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
-            </div>
+            
+            {items && (
+              <div className="col-auto">
+                <CSVLink data={sitemapData} className="counter" filename="sitemap_books.csv">Sitemap</CSVLink>
+                <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}>
+                  <span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}
+                </button>
+                <Menu 
+                  className="dropdown-menu"
+                  anchorEl={orderMenuAnchorEl} 
+                  open={Boolean(orderMenuAnchorEl)} 
+                  onClose={this.onCloseOrderMenu}>
+                  {orderByOptions}
+                </Menu>
+                <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
+              </div>
+            )}
           </div>
         </div>
 

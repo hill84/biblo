@@ -6,10 +6,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
+import { CSVLink } from 'react-csv';
 import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { handleFirestoreError, normURL } from '../../../config/shared';
+import { app, handleFirestoreError, normURL } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import PaginationControls from '../../paginationControls';
 
@@ -198,6 +199,10 @@ export default class collectionsDash extends Component {
       ))
     );
 
+    const sitemapData = items && items.map(item => ([
+      `<url> <loc>${app.url}/collection/${normURL(item.title)}</loc> </url>`
+    ]));
+
 		return (
       <>
         <div className="head nav">
@@ -213,17 +218,20 @@ export default class collectionsDash extends Component {
                 {limitByOptions}
               </Menu>
             </div>
-            <div className="col-auto">
-              <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
-              <Menu 
-                className="dropdown-menu"
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
-                onClose={this.onCloseOrderMenu}>
-                {orderByOptions}
-              </Menu>
-              <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
-            </div>
+            {items && (
+              <div className="col-auto">
+                <CSVLink data={sitemapData} className="counter" filename="sitemap_collections.csv">Sitemap</CSVLink>
+                <button type="button" className="btn sm flat counter" onClick={this.onOpenOrderMenu}><span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}</button>
+                <Menu 
+                  className="dropdown-menu"
+                  anchorEl={orderMenuAnchorEl} 
+                  open={Boolean(orderMenuAnchorEl)} 
+                  onClose={this.onCloseOrderMenu}>
+                  {orderByOptions}
+                </Menu>
+                <button type="button" className={`btn sm flat counter icon rounded ${desc ? 'desc' : 'asc'}`} title={desc ? 'Ascendente' : 'Discendente'} onClick={this.onToggleDesc}>{icon.arrowDown}</button>
+              </div>
+            )}
           </div>
         </div>
         
