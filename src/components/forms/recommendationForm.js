@@ -32,7 +32,7 @@ const RecommendationForm = props => {
   const [followings, setFollowings] = useState(null);
   const is = useRef(true);
   
-  const count = quote && quote.recommends ? quote.recommends.length : 0;
+  const count = quote?.recommends ? quote?.recommends.length : 0;
 
   const initQuote = useCallback(() => setQuote({ amount: 5, timestamp: Date.now(), recommends: [] }), [setQuote]);
   

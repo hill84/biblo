@@ -6,7 +6,7 @@ import { abbrNum, getInitials } from '../../config/shared';
 import { arrayType, numberType, stringType } from '../../config/types';
 
 const Bubbles = props => {
-  const count = props.items && props.items.length;
+  const count = props.items?.length;
   const text = count && <><b>{abbrNum(count)}</b> <span className="light-text">{props.label}</span></>;
 
   return (

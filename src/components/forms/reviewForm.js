@@ -54,7 +54,7 @@ const ReviewForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, userBook } = props;
-  const authid = useMemo(() => user && user.uid, [user]);
+  const authid = useMemo(() => user?.uid, [user]);
   const initialReviewState = useMemo(() => ({
     bid,
     bookTitle: '',
@@ -123,7 +123,7 @@ const ReviewForm = props => {
       errors.text = "Niente volgarità";
     }
 
-    if (title && title.length > max.chars.title) {
+    if (title?.length > max.chars.title) {
       errors.title = `Massimo ${max.chars.title} caratteri`;
     }
 

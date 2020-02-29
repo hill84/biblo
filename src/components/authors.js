@@ -27,7 +27,7 @@ const Authors = props => {
   const onToggleDesc = () => setState(prevState => ({ ...prevState, desc: !prevState.desc }));
   
   const fetch = useCallback((/* e */) => {
-    // const direction = e && e.currentTarget.dataset.direction;
+    // const direction = e?.currentTarget.dataset.direction;
     // const prev = direction === 'prev';
     // TODO: paginated fetch
 

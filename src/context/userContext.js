@@ -18,7 +18,7 @@ export const UserProvider = props => {
   const [isAuth, setIsAuth] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
 
-  const needsEmailVerification = useMemo(() => currentUser && !currentUser.emailVerified && currentUser.providerData.length === 0, [currentUser]);
+  const needsEmailVerification = useMemo(() => !currentUser?.emailVerified && currentUser?.providerData.length === 0, [currentUser]);
 
   const userProvided = useMemo(() => ({ 
     emailVerified, error, isAuth, user 
@@ -38,7 +38,7 @@ export const UserProvider = props => {
 
   useEffect(() => {
     auth.onIdTokenChanged(user => {
-      const uid = (user && user.uid) || luid;
+      const uid = user?.uid || luid;
       if (user) {
         setCurrentUser(auth.currentUser);
         setLuid(auth.currentUser.uid);
@@ -58,7 +58,7 @@ export const UserProvider = props => {
         setUser(null);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [fetchUser, needsEmailVerification]);
 
   return (

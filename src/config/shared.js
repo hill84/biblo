@@ -38,7 +38,7 @@ export const copyToClipboard = text => typeof window !== "undefined" && navigato
   // console.log('Async: Copying to clipboard was successful!');
 }, err => console.warn('Async: Could not copy text: ', err));
 const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
-export const getInitials = text => text && text.split(' ').map(w => w.charAt(0)).join('');
+export const getInitials = text => text?.split(' ').map(w => w.charAt(0)).join('');
 export const objToArr = obj => Object.keys(obj);
 export const arrToObj = (arr, fn) => {
   const obj = {};
@@ -59,7 +59,7 @@ export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
   return obj;
 }; */
 
-export const hasRole = (user, role) => user && user.roles && user.roles[role] === true;
+export const hasRole = (user, role) => user?.roles?.[role] === true;
 
 export const asyncForEach = async (array, callback) => {
   const results = [];

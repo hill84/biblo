@@ -36,7 +36,7 @@ const Collection = props => {
 
   const { cid } = match.params;
 
-  const uid = user && user.uid;
+  const uid = user?.uid;
 
   const fetch = useCallback(() => {
     let unsubCollectionFollowersFetch;
@@ -172,7 +172,7 @@ const Collection = props => {
       <Helmet>
         <title>{app.name} | {collection ? collection.title : 'Collezione'}</title>
         <link rel="canonical" href={`${app.url}/collections`} />
-        <meta name="description" content={collection && collection.description ? truncateString(collection.description, 155) : app.desc} />
+        <meta name="description" content={collection?.description ? truncateString(collection.description, 155) : app.desc} />
       </Helmet>
       <div className="row">
         <div className="col">

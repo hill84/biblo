@@ -25,7 +25,7 @@
 		"jsx-a11y/anchor-is-valid": ["error", { "specialLink": ["to"] }],
 		"linebreak-style": ["off", "windows"],
 		"lines-between-class-members": "off",
-		"max-nesting-depth": 3,
+		// "max-nesting-depth": 1,
     "no-console": "off",
     "no-nested-ternary": "off",
     "no-underscore-dangle": "off",

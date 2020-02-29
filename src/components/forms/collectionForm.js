@@ -108,14 +108,14 @@ const CollectionForm = props => {
       errors.title = "Inserisci il titolo"; 
     } else if (isDuplicate) {
       errors.title = "Collezione già presente";
-    } else if (data.title && data.title.length > max.chars.title) {
+    } else if (data.title?.length > max.chars.title) {
       errors.title = `Massimo ${max.chars.title} caratteri`;
     }
     if (!data.description) { 
       errors.description = "Inserisci una descrizione"; 
-    } else if (data.description && data.description.length > max.chars.desc) {
+    } else if (data.description?.length > max.chars.desc) {
       errors.description = `Massimo ${max.chars.desc} caratteri`;
-    } else if (data.description && data.description.length < min.chars.desc) {
+    } else if (data.description?.length < min.chars.desc) {
       errors.description = `Minimo ${min.chars.desc} caratteri`;
     }
     if (!data.genres) {
@@ -238,11 +238,11 @@ const CollectionForm = props => {
                   error={Boolean(errors.description)}
                 />
                 {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
-                {(leftChars.desc !== null) && 
+                {(leftChars.desc !== null) && (
                   <FormHelperText className={`message ${(leftChars.desc < 0) ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.desc}
                   </FormHelperText>
-                }
+                )}
               </FormControl>
             </div>
           </div>

@@ -34,9 +34,9 @@ const ProfileForm = props => {
   // const [authError, setAutherror] = useState('');
   const is = useRef(true);
 
-  const isAdmin = useMemo(() => contextUser.roles.admin, [contextUser]);
-  const luid = useMemo(() => contextUser && contextUser.uid, [contextUser]);
-  const uid = useMemo(() => user && user.uid, [user]);
+  const isAdmin = useMemo(() => contextUser?.roles.admin, [contextUser]);
+  const luid = useMemo(() => contextUser?.uid, [contextUser]);
+  const uid = useMemo(() => user?.uid, [user]);
 
   useEffect(() => () => {
     is.current = false;
@@ -78,7 +78,7 @@ const ProfileForm = props => {
     } else if (calcAge(user.birth_date) > 119) {
       errors.birth_date = "E chi sei.. Matusalemme?"; 
     }
-		if (user.city && user.city.length > 150) errors.city = "Lunghezza massima 150 caratteri";
+		if (user.city?.length > 150) errors.city = "Lunghezza massima 150 caratteri";
 		return errors;
 	};
 
@@ -223,9 +223,7 @@ const ProfileForm = props => {
                 error={Boolean(errors.displayName)}
               />
               {!isAdmin && (
-                <>
-                  {user.displayName && <FormHelperText className="message">Per modificare il <span className="hide-sm">nominativo</span><span className="show-sm">nome</span> scrivi a <a href={`mailto:${app.email}?subject=Biblo: modifica nominativo utente`}>{app.email}</a>.</FormHelperText>}
-                </>
+                user.displayName && <FormHelperText className="message">Per modificare il <span className="hide-sm">nominativo</span><span className="show-sm">nome</span> scrivi a <a href={`mailto:${app.email}?subject=Biblo: modifica nominativo utente`}>{app.email}</a>.</FormHelperText>
               )}
               {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
             </FormControl>
@@ -275,7 +273,7 @@ const ProfileForm = props => {
 
           <div className="form-group">
             <FormControl className="select-field" margin="normal" fullWidth>
-              <InputLabel htmlFor="languages">{`Lingue conosciute ${user.languages && user.languages.length > 1 ? ` (${user.languages.length})` : ""}`}</InputLabel>
+              <InputLabel htmlFor="languages">{`Lingue conosciute ${user.languages?.length > 1 ? ` (${user.languages.length})` : ""}`}</InputLabel>
               <Select
                 id="languages"
                 placeholder="es: Italiano, Spagnolo"
@@ -300,7 +298,7 @@ const ProfileForm = props => {
             </FormControl>
           </div>
 
-          {(user.continent === 'Europa' || user.continent === 'Nordamerica') && 
+          {(user.continent === 'Europa' || user.continent === 'Nordamerica') && (
             <div className="form-group">
               <FormControl className="select-field" margin="normal" fullWidth>
                 <InputLabel htmlFor="nation">Nazione</InputLabel>
@@ -309,15 +307,15 @@ const ProfileForm = props => {
                   placeholder="es: Italia"
                   value={user.country || ''}
                   onChange={onChangeSelect("country")}>
-                  {(user.continent === 'Europa') && menuItemsMap(europeanCountries)}
-                  {(user.continent === 'Nordamerica') && menuItemsMap(northAmericanCountries)}
+                  {user.continent === 'Europa' && menuItemsMap(europeanCountries)}
+                  {user.continent === 'Nordamerica' && menuItemsMap(northAmericanCountries)}
                 </Select>
               </FormControl>
             </div>
-          }
+          )}
 
           <div className="form-group">
-            {(user.country) && (user.country === "Italia‎") ?
+            {user.country && user.country === "Italia‎" ? (
               <FormControl className="select-field" margin="normal" fullWidth>
                 <InputLabel htmlFor="city">Provincia</InputLabel>
                 <Select
@@ -328,7 +326,7 @@ const ProfileForm = props => {
                   {menuItemsMap(italianProvinces)}
                 </Select>
               </FormControl>
-            :
+            ) : (
               <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.city)} htmlFor="city">Città</InputLabel>
                 <Input
@@ -342,7 +340,7 @@ const ProfileForm = props => {
                 />
                 {errors.city && <FormHelperText className="message error">{errors.city}</FormHelperText>}
               </FormControl>
-            }
+            )}
           </div>
 
           <div>&nbsp;</div>

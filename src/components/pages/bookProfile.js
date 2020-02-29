@@ -131,14 +131,14 @@ const BookProfile = props => {
 
   const onChangeISBN = e => setISBN(e.target.value);
 
-  const _lastEditBy = book && book.EDIT.lastEditBy;
-  const _createdBy = book && book.EDIT.createdBy;
+  const _lastEditBy = book?.EDIT.lastEditBy;
+  const _createdBy = book?.EDIT.createdBy;
   const lastEditBy = useMemo(() => truncateString(_lastEditBy, 12), [_lastEditBy]);
   const createdBy = useMemo(() => truncateString(_createdBy, 12), [_createdBy]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const hasBid = useMemo(() => book && Boolean(book.bid), [book]);
-  const isLocked = useMemo(() => book && !book.EDIT.edit && !isAdmin, [book, isAdmin]);
+  const isLocked = useMemo(() => !book?.EDIT.edit && !isAdmin, [book, isAdmin]);
 
   if (!book && !loading) return <NoMatch title="Libro non trovato" history={history} location={location} />
 
@@ -180,11 +180,11 @@ const BookProfile = props => {
                 <div
                   tabIndex={0}
                   role="button"
-                  className={`text-center ${book ? setFormatClass(book.format) : 'book'}-format ${book && book.incipit ? 'hoverable-items' : ''}`}
-                  onClick={book && book.incipit ? onToggleIncipit : null}
-                  onKeyDown={book && book.incipit ? onToggleIncipit : null}>
+                  className={`text-center ${book ? setFormatClass(book.format) : 'book'}-format ${book?.incipit ? 'hoverable-items' : ''}`}
+                  onClick={book?.incipit ? onToggleIncipit : null}
+                  onKeyDown={book?.incipit ? onToggleIncipit : null}>
                   <Cover book={book} rating={false} info={false} />
-                  {book && book.incipit && <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>}
+                  {book?.incipit && <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>}
                 </div>
                 
                 {book && (
@@ -207,7 +207,7 @@ const BookProfile = props => {
 
               <div className="col book-profile">
                 <h2 className="title flex">{loading ? <span className="skltn area" /> : book.title}</h2>
-                {book && book.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
+                {book?.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                 {loading ? (
                   <div className="skltn rows" style={{ marginTop: '2em', }} />
                 ) : book && (
@@ -307,13 +307,13 @@ const BookProfile = props => {
                     <div className="info-row bookdetails">
                       <span className="counter">{icon.reader} <b>{abbrNum(book ? book.readers_num : 0)}</b> <span className="hide-sm">Lettori</span></span>
                       <span className="counter">{icon.messageTextOutline} <b>{abbrNum(book ? book.reviews_num : 0)}</b> <span className="hide-sm">Recensioni</span></span>
-                      {book && book.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
+                      {book?.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                     </div>
                   </>
                 )}
               </div>
 
-              {book && book.EDIT && (
+              {book?.EDIT && (
                 <div className="edit-info">
                   {icon.informationOutline}
                   <div className="show-on-hover">

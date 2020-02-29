@@ -1,17 +1,17 @@
 import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Grow from '@material-ui/core/Grow';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
-import { commentType, stringType } from '../config/types';
+import { commentType, funcType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import FlagDialog from './flagDialog';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
@@ -24,7 +24,7 @@ const Comment = props => {
   const [flagLoading, setFlagLoading] = useState(false);
   const [actionsAnchorEl, setActionsAnchorEl] = useState(null);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
-  const [like, setLike] = useState(likes_num && comment.likes.indexOf(user && user.uid) > -1 ? true : false || false);
+  const [like, setLike] = useState(likes_num && comment.likes.indexOf(user?.uid) > -1 ? true : false || false);
   const is = useRef(true);
 
   useEffect(() => () => {
@@ -113,10 +113,10 @@ const Comment = props => {
 
   const onCloseActionsMenu = () => setActionsAnchorEl(null);
 
-  const isOwner = useMemo(() => comment.createdByUid === (user && user.uid), [comment, user]);
+  const isOwner = useMemo(() => comment.createdByUid === (user?.uid), [comment, user]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
-  const flaggedByUser = useMemo(() => (comment.flag && comment.flag.flaggedByUid) === (user && user.uid), [comment, user]);
+  const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
   const classNames = useMemo(() => `${isOwner ? 'own comment' : 'comment'} ${comment.flag ? `flagged ${comment.flag.value}` : ''}`, [comment, isOwner]);
 
   return (
@@ -137,9 +137,10 @@ const Comment = props => {
               {isEditor && (
                 <div className="col-auto">
                   <button
+                    type="button"
                     className="btn sm flat rounded icon"
-                    onClick={Boolean(actionsAnchorEl) ? onCloseActionsMenu : onOpenActionsMenu}>
-                    {Boolean(actionsAnchorEl) ? icon.close : icon.dotsVertical}
+                    onClick={actionsAnchorEl ? onCloseActionsMenu : onOpenActionsMenu}>
+                    {actionsAnchorEl ? icon.close : icon.dotsVertical}
                   </button>
                   <Menu
                     id="actions-menu"
@@ -201,7 +202,7 @@ const Comment = props => {
           onClose={onCloseFlagDialog} 
           onFlag={onFlag} 
           TransitionComponent={Transition} 
-          value={flaggedByUser ? comment.flag && comment.flag.value : ''}
+          value={flaggedByUser ? comment.flag?.value : ''}
         />
       )}
     </>
@@ -211,6 +212,7 @@ const Comment = props => {
 Comment.propTypes = {
   bid: stringType.isRequired,
   comment: commentType.isRequired,
+  onEdit: funcType.isRequired,
   reviewerDisplayName: stringType.isRequired,
   rid: stringType.isRequired
 }

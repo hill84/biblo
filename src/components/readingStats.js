@@ -1,5 +1,8 @@
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
 import Rater from 'react-rater';
 import { userBooksRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -8,12 +11,9 @@ import { diffDays, handleFirestoreError, round } from '../config/shared';
 import { userBooksKey } from '../config/storage';
 import { boolType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
+import UserContext from '../context/userContext';
 import '../css/readingStats.css';
 import useLocalStorage from '../hooks/useLocalStorage';
-import UserContext from '../context/userContext';
-import { Bar } from 'react-chartjs-2';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const shelf = 'bookInShelf';
 const votes = [1, 2, 3, 4, 5];
@@ -53,7 +53,7 @@ const ReadingStats = props => {
         }
       });
     } else setLoading(isLoading || false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [isLoading, isNewDay, openSnackbar, timestamp, uid, userBooks]);
 
   useEffect(() => {
@@ -63,14 +63,14 @@ const ReadingStats = props => {
         setTimestamp(null);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [isAuth]);
 
   useEffect(() => () => {
     is.current = false;
   }, []);
 
-  const onToggleRange = name => e => {
+  const onToggleRange = () => () => { // name => e =>
     setRangeYear(r => !r);
   };
 
@@ -79,45 +79,45 @@ const ReadingStats = props => {
   const ratedBooks = useMemo(() => votes.map(num => userBooks ? userBooks.filter(item => item.rating_num === num).length : 0), [userBooks]);
 
   const booksByState = useMemo(() => readingStates.map((state, i) => (
-    userBooks && userBooks.filter(item => (
+    userBooks?.filter(item => (
       item.readingState.state_num === (i + 1)
     )).length
   )), [userBooks]);
 
-  const booksRead = useMemo(() => userBooks && userBooks.filter(book => book.readingState.end_num), [userBooks]);
+  const booksRead = useMemo(() => userBooks?.filter(book => book.readingState.end_num), [userBooks]);
   
   const yearsRead = useMemo(() => booksRead && [...new Set(booksRead.reduce((res, book) => {
     if (book.readingState.end_num) res.push(new Date(book.readingState.end_num).getFullYear());
     return res;
   }, []))].sort((a, b) => b - a), [booksRead]);
   
-  const totalBooksRead = useMemo(() => booksRead && booksRead.length, [booksRead]);
-  const totalPagesRead = useMemo(() => booksRead && booksRead.reduce((acc, book) => acc + book.pages_num, 0), [booksRead]);
+  const totalBooksRead = useMemo(() => booksRead?.length, [booksRead]);
+  const totalPagesRead = useMemo(() => booksRead?.reduce((acc, book) => acc + book.pages_num, 0), [booksRead]);
   const avgPagesRead = useMemo(() => booksRead && round(totalPagesRead / (yearsRead.length * 12)), [booksRead, totalPagesRead, yearsRead]);
-  const totalRatings = useMemo(() => booksRead && booksRead.reduce((acc, book) => acc + (book.rating_num ? 1 : 0), 0), [booksRead]);
-  const totalRating_num = useMemo(() => booksRead && booksRead.reduce((acc, book) => acc + book.rating_num, 0), [booksRead]);
+  const totalRatings = useMemo(() => booksRead?.reduce((acc, book) => acc + (book.rating_num ? 1 : 0), 0), [booksRead]);
+  const totalRating_num = useMemo(() => booksRead?.reduce((acc, book) => acc + book.rating_num, 0), [booksRead]);
   const avgRating = useMemo(() => booksRead && round(totalRating_num / totalRatings), [booksRead, totalRating_num, totalRatings]);
-  const totalReviews = useMemo(() => booksRead && booksRead.reduce((acc, book) => acc + (book.review.text ? 1 : 0), 0), [booksRead]);
+  const totalReviews = useMemo(() => booksRead?.reduce((acc, book) => acc + (book.review.text ? 1 : 0), 0), [booksRead]);
 
-  const readByYear = useMemo(() => yearsRead && yearsRead.map(year => {
+  const readByYear = useMemo(() => yearsRead?.map(year => {
     const books = booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === year);
     return ({ year, books_num: books.length, books });
   }), [booksRead, yearsRead]);
 
   const monthsArr = useMemo(() => months.map(m => m.id), []);
 
-  const currentYearBooks = useMemo(() => !rangeYear && booksRead && booksRead.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead, rangeYear]);
+  const currentYearBooks = useMemo(() => !rangeYear && booksRead?.filter(book => new Date(book.readingState.end_num).getFullYear() === new Date().getFullYear()), [booksRead, rangeYear]);
 
-  const readByMonth = useMemo(() => !rangeYear && monthsArr && monthsArr.map((month, i) => currentYearBooks && currentYearBooks.filter(book => new Date(book.readingState.end_num).getMonth() === i).length), [currentYearBooks, monthsArr, rangeYear]);
+  const readByMonth = useMemo(() => !rangeYear && monthsArr?.map((month, i) => currentYearBooks?.filter(book => new Date(book.readingState.end_num).getMonth() === i).length), [currentYearBooks, monthsArr, rangeYear]);
   
   const item = useCallback(year => readByYear.filter(item => item.year === year)[0], [readByYear]);
   const pages = useCallback(item => item.books.reduce((acc, book) => {
     if (book.pages_num) return acc + book.pages_num;
     return null;
   }, 0), []);
-  const ratings_num = useCallback(item => item.books && item.books.reduce((acc, book) => acc + (book.rating_num ? 1 : 0), 0), []);
-  const ratings = useCallback(item => item.books && item.books.reduce((acc, book) => acc + book.rating_num, 0), []);
-  const reviews_num = useCallback(item => item.books && item.books.reduce((acc, book) => acc + (book.review.text ? 1 : 0), 0), []);
+  const ratings_num = useCallback(item => item.books?.reduce((acc, book) => acc + (book.rating_num ? 1 : 0), 0), []);
+  const ratings = useCallback(item => item.books?.reduce((acc, book) => acc + book.rating_num, 0), []);
+  const reviews_num = useCallback(item => item.books?.reduce((acc, book) => acc + (book.review.text ? 1 : 0), 0), []);
   
   const data = useMemo(() => ((rangeYear && yearsRead) || (!rangeYear && monthsArr)) && {
     labels: rangeYear ? yearsRead : monthsArr,
@@ -151,7 +151,7 @@ const ReadingStats = props => {
     <div ref={is}>
       <div className="head row">
         <h2 className="col">
-          Statistiche <span className="hide-sm">di lettura</span> <Tooltip title={`Aggiornate ogni 24 ore. Conteggiano solo i libri segnati come "letti" con una "data di fine" nello "stato di lettura".`}><button className="link">{icon.informationOutline}</button></Tooltip>
+          Statistiche <span className="hide-sm">di lettura</span> <Tooltip title={`Aggiornate ogni 24 ore. Conteggiano solo i libri segnati come "letti" con una "data di fine" nello "stato di lettura".`}><button type="button" className="link">{icon.informationOutline}</button></Tooltip>
         </h2>
         {timestamp && <span className="col-auto text-sm light-text"><span className="hide-sm">Aggiornate al</span> {new Date(timestamp).toLocaleString()}</span>}
       </div>
@@ -165,7 +165,7 @@ const ReadingStats = props => {
                   <>
                     <span className={rangeYear ? 'light-text' : 'primary-text'}>12 mesi</span>
                     <Switch checked={rangeYear} color="default" onChange={onToggleRange()} size="small" />
-                    <span className={rangeYear ? 'primary-text' : 'light-text'}>{yearsRead && yearsRead.length} Anni</span>
+                    <span className={rangeYear ? 'primary-text' : 'light-text'}>{yearsRead?.length} Anni</span>
                   </>
                 } />
               </span>
@@ -194,7 +194,7 @@ const ReadingStats = props => {
                       <div className="col">Recensioni</div>
                     </div>
                   </li>
-                  {loading ? tableSkltn : yearsRead && yearsRead.length ? (
+                  {loading ? tableSkltn : yearsRead?.length ? (
                     <>
                       {yearsRead.map(year => (
                         <li className="avatar-row" key={year}>

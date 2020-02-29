@@ -1,3 +1,4 @@
+import { CircularProgress } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
@@ -15,14 +16,13 @@ import AuthorForm from '../../forms/authorForm';
 import CollectionForm from '../../forms/collectionForm';
 import NoteForm from '../../forms/noteForm';
 import QuoteForm from '../../forms/quoteForm';
+import UserForm from '../../forms/userForm';
 import AuthorsDash from './authorsDash';
 import BooksDash from './booksDash';
 import CollectionsDash from './collectionsDash';
 import NotesDash from './notesDash';
 import QuotesDash from './quotesDash';
 import UsersDash from './usersDash';
-import UserForm from '../../forms/userForm';
-import { CircularProgress } from '@material-ui/core';
 
 const containerStyle = { maxWidth: 1280, };
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
@@ -51,7 +51,7 @@ const Admin = props => {
   const [_screenSize, setScreenSize] = useState(screenSize());
   const is = useRef(true);
 
-  const isAdmin = useMemo(() => user && user.roles.admin, [user]);
+  const isAdmin = useMemo(() => user?.roles.admin, [user]);
 
   useEffect(() => {
     if (tabSelected === 0) history.replace(`/admin/${tabs[0].name}`, null);

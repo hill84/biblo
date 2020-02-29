@@ -112,7 +112,7 @@ const AuthorForm = props => {
       errors.displayName = "Inserisci il nominativo"; 
     } else if (isDuplicate) {
       errors.displayName = "Autore già presente";
-    } else if (data.displayName && data.displayName.length > max.chars.displayName) {
+    } else if (data.displayName?.length > max.chars.displayName) {
       errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
     }
     if (!data.sex) {
@@ -120,9 +120,9 @@ const AuthorForm = props => {
     }
     if (!data.bio) { 
       errors.bio = "Inserisci una biografia"; 
-    } else if (data.bio && data.bio.length > max.chars.bio) {
+    } else if (data.bio?.length > max.chars.bio) {
       errors.bio = `Massimo ${max.chars.bio} caratteri`;
-    } else if (data.bio && data.bio.length < min.chars.bio) {
+    } else if (data.bio?.length < min.chars.bio) {
       errors.bio = `Minimo ${min.chars.bio} caratteri`;
     }
 		return errors;

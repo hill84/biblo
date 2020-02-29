@@ -3,7 +3,9 @@
   "version": "0.12.11",
   "private": true,
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.8.3",
     "autoprefixer": "^9.7.4",
+    "customize-cra": "^0.9.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.10.0",

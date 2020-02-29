@@ -12,7 +12,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { notesRef, reviewerCommenterRef, reviewerRef, userBookRef } from '../../config/firebase';
 import { checkBadWords, getInitials, handleFirestoreError, join, normURL, truncateString, urlRegex } from '../../config/shared';
 import { darkTheme } from '../../config/themes';
-import { stringType, funcType } from '../../config/types';
+import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 
@@ -34,7 +34,7 @@ const CommentForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, bookTitle, onCancel, rid } = props;
-  const authid = useMemo(() => user && user.uid, [user]);
+  const authid = useMemo(() => user?.uid, [user]);
   const initialCommentState = useMemo(() => ({
     bid,
     bookTitle,
@@ -210,8 +210,8 @@ const CommentForm = props => {
                       id="text"
                       name="text"
                       type="text"
-                      autoFocus={true}
-                      placeholder={`Aggiungi una risposta pubblica...`}
+                      autoFocus
+                      placeholder="Aggiungi una risposta pubblica..."
                       value={comment.text || ''}
                       onChange={onChangeMaxChars}
                       error={Boolean(errors.text)}

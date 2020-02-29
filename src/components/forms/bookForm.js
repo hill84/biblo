@@ -248,7 +248,7 @@ const BookForm = props => {
       errors.title = `Lunghezza massima ${max.chars.title} caratteri`;
     }
 
-    if (book.subtitle && book.subtitle.length > max.chars.subtitle) {
+    if (book.subtitle?.length > max.chars.subtitle) {
       errors.subtitle = `Lunghezza massima ${max.chars.subtitle} caratteri`;
     }
 
@@ -308,11 +308,11 @@ const BookForm = props => {
       }
     }
 
-    if (book.languages && (book.languages.length > max.items.languages)) {
+    if (book.languages?.length > max.items.languages) {
       errors.languages = `Massimo ${max.items.languages} lingue`;
     }
 
-    if (book.genres && (book.genres.length > max.items.genres)) {
+    if (book.genres?.length > max.items.genres) {
       errors.genres = `Massimo ${max.items.genres} generi`;
     }
 
@@ -432,8 +432,8 @@ const BookForm = props => {
       if (Object.keys(errors).length === 0) {
         let newBid = '';
         const bookCover = book.covers[0];
-        const userUid = (user && user.uid) || '';
-        const userDisplayName = (user && user.displayName) || '';
+        const userUid = user?.uid || '';
+        const userDisplayName = user?.displayName || '';
 
         if (_book.bid) {
           const { covers, EDIT, title_sort, ...restBook } = book;
@@ -583,7 +583,7 @@ const BookForm = props => {
           <div className="container md">
             <div className={`edit-book-cover ${errors.upload ? 'error' : ''} ${setFormatClass(book.format)}-format`}>
               <Cover book={book} loading={imgLoading} />
-              {isAdmin && book.bid &&
+              {isAdmin && book.bid && (
                 <button type="button" className={`btn sm centered rounded ${imgProgress === 100 ? 'success' : 'flat'}`}>
                   <input type="file" accept="image/*" className="upload" onChange={onImageChange} />
                   {
@@ -591,7 +591,7 @@ const BookForm = props => {
                   }
                   <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
                 </button>
-              }
+              )}
             </div>
             <div className="edit-book-info">
               <div className="form-group">
@@ -791,7 +791,7 @@ const BookForm = props => {
                   {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
                 </FormControl>
               </div>
-              {isAdmin &&
+              {isAdmin && (
                 <>
                   <div className="form-group">
                     <FormControl className="chip-input" margin="normal" fullWidth>
@@ -827,8 +827,8 @@ const BookForm = props => {
                     </FormControl>
                   </div>
                 </>
-              }
-              {isEditingDescription ?
+              )}
+              {isEditingDescription ? (
                 <div className="form-group">
                   <FormControl className="input-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.description)} htmlFor="description">Descrizione</InputLabel>
@@ -844,21 +844,21 @@ const BookForm = props => {
                       multiline
                     />
                     {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
-                    {leftChars.description !== null && 
+                    {leftChars.description !== null && (
                       <FormHelperText className={`message ${(leftChars.description < 0) ? 'warning' : 'neutral'}`}>
                         Caratteri rimanenti: {leftChars.description}
                       </FormHelperText>
-                    }
+                    )}
                   </FormControl>
                 </div>
-              :
+              ) : (
                 <div className="info-row">
                   <button type="button" className="btn flat rounded centered" onClick={onToggleDescription}>
                     {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
                   </button>
                 </div>
-              }
-              {isEditingIncipit ? 
+              )}
+              {isEditingIncipit ? (
                 <div className="form-group">
                   <FormControl className="input-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.incipit)} htmlFor="incipit">Incipit</InputLabel>
@@ -874,20 +874,20 @@ const BookForm = props => {
                       multiline
                     />
                     {errors.incipit && <FormHelperText className="message error">{errors.incipit}</FormHelperText>}
-                    {leftChars.incipit !== null && 
+                    {leftChars.incipit !== null && (
                       <FormHelperText className={`message ${(leftChars.incipit < 0) ? 'warning' : 'neutral'}`}>
                         Caratteri rimanenti: {leftChars.incipit}
                       </FormHelperText>
-                    }
+                    )}
                   </FormControl>
                 </div>
-              :
+              ) : (
                 <div className="info-row">
                   <button type="button" className="btn flat rounded centered" onClick={onToggleIncipit}>
                     {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
                   </button>
                 </div>
-              }
+              )}
 
             </div>
           </div>
@@ -895,11 +895,11 @@ const BookForm = props => {
             <button type="button" onClick={onSubmit} className="btn btn-footer primary">{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
           </div>
         </form>
-        {book.bid && 
+        {book.bid && (
           <div className="form-group">
             <button type="button" onClick={onExitEditing} className="btn flat rounded centered">Annulla</button>
           </div>
-        }
+        )}
       </div>
 
       {isOpenChangesDialog && (

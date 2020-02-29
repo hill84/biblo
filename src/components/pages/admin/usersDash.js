@@ -61,7 +61,7 @@ const UsersDash = props => {
   const limit = useMemo(() => limitBy[limitByIndex], [limitByIndex]);
 
   const fetch = useCallback(e => {
-    const direction = e && e.currentTarget.dataset.direction;
+    const direction = e?.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const ref = usersRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
     const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);

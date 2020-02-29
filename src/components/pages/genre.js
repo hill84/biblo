@@ -222,7 +222,7 @@ const Genre = props => {
   
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   
-  const covers = useMemo(() => items && items.map((item, i) => (
+  const covers = useMemo(() => items?.map((item, i) => (
     <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}>
       <Cover book={item} index={i} page={page} />
     </Link>
@@ -242,7 +242,7 @@ const Genre = props => {
   const genreItem = useMemo(() => genres.filter(genre => genre.name === title)[0], [title]);
 
   const seo = useMemo(() => ({
-    canonical_name: genreItem && genreItem.canonical,
+    canonical_name: genreItem?.canonical,
     description: `Scopri su ${app.name} i migliori libri di genere ${title.toLowerCase()}: nuove uscite e best seller`,
     image: null,
     title: `Libri di genere ${title.toLowerCase()}`,
@@ -280,7 +280,7 @@ const Genre = props => {
         <Genres scrollable={isScrollable} />
         {loadingGenre ? (
           <div className="skltn three rows" style={skltnStyle} /> 
-        ) : genre && genre.description && (
+        ) : genre?.description && (
           <div className="info-row text">
             <MinifiableText
               text={genre.description}
@@ -326,7 +326,7 @@ const Genre = props => {
                       {coverview ? icon.viewSequential : icon.viewGrid}
                     </button>
                     <span className="counter">
-                      {items ? items.length : 0} libr{items && items.length === 1 ? 'o' : 'i'} {items && count > items.length ? `di ${count}` : ''}
+                      {items ? items.length : 0} libr{items?.length === 1 ? 'o' : 'i'} {items && count > items.length ? `di ${count}` : ''}
                     </span>
                   </div>
                   <div className="col-auto">
@@ -370,7 +370,7 @@ const Genre = props => {
         </div>
       )}
 
-      {genre && count > 0 && items && items.length < count &&
+      {genre && count > 0 && items?.length < count && (
         <PaginationControls 
           count={count} 
           fetch={fetchNext} 
@@ -379,7 +379,7 @@ const Genre = props => {
           oneWay
           page={page}
         />
-      }
+      )}
     </div>
   );
 }

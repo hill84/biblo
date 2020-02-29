@@ -121,7 +121,7 @@ const AuthorPage = props => {
   const onToggleView = () => setCoverview(!coverview);
 
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
-  const covers = books && books.map(book => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
+  const covers = books?.map(book => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
   if (loading) {
     return <div aria-hidden="true" className="loader"><CircularProgress /></div>
@@ -130,7 +130,7 @@ const AuthorPage = props => {
     return <NoMatch title="Autore non trovato" history={history} location={location} />
   }
 
-  const seo = author && author.displayName && {
+  const seo = author?.displayName && {
     description: `Scopri su ${app.name} i libri di ${author.displayName}`,
     image: author.photoURL,
     title: `${app.name} | ${author.displayName}`,
