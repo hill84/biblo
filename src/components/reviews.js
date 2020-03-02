@@ -103,14 +103,14 @@ const Reviews = props => {
   return (
     <>
       <div className={`reviews ${container ? 'card dark' : ''}`} ref={is}>
-        {!loading && !items ? <EmptyState /> :
+        {!loading && !items ? <EmptyState /> : (
           <>
             {!bid && (
               <div className="head">
                 <h2>Ultime recensioni<span className="counter">({items ? items.length : limit} di {count || limit})</span></h2>
               </div>
             )}
-            {items && items.map(item => (
+            {items?.map(item => (
               <Review 
                 key={`${item.bid}-${item.createdByUid}`}
                 bid={bid}
@@ -120,9 +120,9 @@ const Reviews = props => {
             ))}
             {loading && skeleton && skeletons}
           </>
-        }
+        )}
       </div>
-      {pagination && count > 0 && items && items.length < count &&
+      {pagination && count > 0 && items?.length < count && (
         <PaginationControls 
           count={count} 
           fetch={fetchNext} 
@@ -131,7 +131,7 @@ const Reviews = props => {
           oneWay
           page={page}
         />
-      }
+      )}
     </>
   );
 }

@@ -101,7 +101,7 @@ const Layout = props => {
   }
   const onCloseNotes = () => setNotesAnchorEl(null);
 
-  const toRead = useCallback(notes => notes && notes.filter(note => !note.read || note.role), []);
+  const toRead = useCallback(notes => notes?.filter(note => !note.read || note.role), []);
 
   return (
     <div id="layoutComponent" ref={is}>
@@ -224,14 +224,14 @@ const Layout = props => {
                     </div>
                   </div>
                 </NavLink>
-                {user.roles.admin && 
+                {user.roles.admin && (
                   <NavLink to="/admin">
                     <MenuItem>
                       <ListItemIcon>{icon.gauge}</ListItemIcon>
                       <Typography variant="inherit">Amministrazione</Typography>
                     </MenuItem>
                   </NavLink>
-                }
+                )}
                 <NavLink to={`/dashboard/${user.uid}/shelf`}>
                   <MenuItem>
                     <ListItemIcon>{icon.homeAccount}</ListItemIcon>

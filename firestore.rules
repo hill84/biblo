@@ -7,7 +7,7 @@ service cloud.firestore {
     match /users/{uid} {
     	allow read;
       allow create: if isValidUser();
-      allow update: if isValidUser() && ((isEditor() && isAdmin()) || isOwner(uid));
+      allow update: if isUpdatableUser() && ((isEditor() && isAdmin()) || isOwner(uid));
     	allow delete: if (isEditor() && isAdmin()) || isOwner(uid);
 
       match /challenges/{cid} {
@@ -151,16 +151,21 @@ service cloud.firestore {
     }
 
     /// FUNCTIONS ///
-    function isSignedIn() {
-      return request.auth != null;
-    }
+    
+    // function isSignedIn() { return request.auth != null; }
 
+    // function emailVerified() { return request.auth.token.email_verified; }
+    
+    // function currentUser() { return request.auth; }
+    
+    // function userHasRole(role) { return getUserData().roles[role] == true; }
+
+    // function userHasAnyRole(roles) { return getUserData().roles.keys().hasAny(roles); }
+
+    // function userHasAllRoles(roles) { return getUserData().roles.keys().hasAll(roles); }
+    
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-    }
-
-    function userHasRole(role) {
-      return getUserData().roles[role] == true;
     }
 
     function isAdmin() {
@@ -171,24 +176,8 @@ service cloud.firestore {
       return getUserData().roles['editor'] == true;
     }
 
-    function isPremium() {
-      return getUserData().roles['premium'] == true;
-    }
-
-    function userHasAnyRole(roles) {
-      return getUserData().roles.keys().hasAny(roles);
-    }
-
-    function userHasAllRoles(roles) {
-      return getUserData().roles.keys().hasAll(roles);
-    }
-
     function isOwner(uid) {
       return request.auth.uid == uid;
-    }
-
-    function emailVerified() {
-      return request.auth.token.email_verified;
     }
 
     function existingData() {
@@ -197,10 +186,6 @@ service cloud.firestore {
 
     function incomingData() {
       return request.resource.data;
-    }
-
-    function currentUser() {
-      return request.auth;
     }
 
     function isValidUser() {
@@ -212,6 +197,10 @@ service cloud.firestore {
         'roles', 
         'stats'
       ]);
+    }
+
+    function isUpdatableUser() {
+      return isValidUser() && incomingData().creationTime == existingData().creationTime;
     }
 
     function isValidBook() {
@@ -228,12 +217,12 @@ service cloud.firestore {
         'reviews_num',
         'ratings_num',
         'rating_num'
-      ])
+      ]) 
       && incomingData().pages_num is int
       && incomingData().readers_num is int
       && incomingData().reviews_num is int
       && incomingData().ratings_num is int
-      && incomingData().rating_num is int
+      && incomingData().rating_num is int;
     }
   }  
 }

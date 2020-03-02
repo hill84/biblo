@@ -10,9 +10,9 @@ import '../css/cover.css';
 
 const Cover = props => {
   const { animationDelay, bcid, book, full, index, info, loading, page, rating, showReaders } = props;
-  const cover = useMemo(() => (book && book.covers && book.covers[0]) || '', [book]);
+  const cover = useMemo(() => book?.covers?.[0] || '', [book]);
   const delay = useMemo(() => page && page > 1 ? 0 : index / 20, [index, page]);
-  const hasBookmark = useMemo(() => book && book.readingState && book.readingState.state_num === 2, [book]);
+  const hasBookmark = useMemo(() => book?.readingState?.state_num === 2, [book]);
   const hasBcid = useMemo(() => bcid && bcid > 0 && bcid < 999, [bcid]);
   const joinedAuthors = useMemo(() => book && joinObj(book.authors), [book]);
   const readers_num = useMemo(() => book && abbrNum(book.readers_num), [book]);
@@ -31,8 +31,8 @@ const Cover = props => {
             }}>
             {hasBcid ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
             {hasBookmark && <div className="bookmark" />}
-            {book && book.review && book.review.text && <div className="cover-review">Recensione</div>}
-            {book && showReaders && book.readers_num ? <div className="readers-num">{readers_num} {icon.account}</div> : ''}
+            {book?.review?.text && <div className="cover-review">Recensione</div>}
+            {showReaders && book?.readers_num ? <div className="readers-num">{readers_num} {icon.account}</div> : ''}
             {loading ? <div aria-hidden="true" className="loader"><CircularProgress /></div> : <div className="overlay" />}
             {!cover && book && (
               <>
@@ -50,7 +50,7 @@ const Cover = props => {
           <strong className="title">{book.title}</strong>
           <span className="author"><span className="hide-sm">di</span> {joinedAuthors}</span>
           {full && book.publisher && <span className="publisher">{book.publisher}</span>}
-          {book.readingState && book.readingState.state_num === 2 && book.readingState.progress_num > 0 ? (
+          {book.readingState?.state_num === 2 && book.readingState?.progress_num > 0 ? (
             <Tooltip title={`${book.readingState.progress_num}%`} placement="top">
               <progress max="100" value={book.readingState.progress_num} />
             </Tooltip>

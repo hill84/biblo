@@ -137,7 +137,7 @@ const Shelf = props => {
   const getStartAtIndex = useCallback(prev => prev ? ((page - 1) * limit) - limit : page * limit, [limit, page]);
 
   const fetchNext = useCallback(e => {
-    const direction = e && e.currentTarget.dataset.direction;
+    const direction = e?.currentTarget.dataset.direction;
     const prev = direction === 'prev';
 
     if (uid && limit) {
@@ -211,7 +211,7 @@ const Shelf = props => {
 
   const onCloseFilterMenu = useCallback(() => setFilterMenuAnchorEl(null), []);
 
-  const covers = useMemo(() => items && items.length > 0 && items.map((book, i) => (
+  const covers = useMemo(() => items?.length > 0 && items?.map((book, i) => (
     <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}>
       <Cover book={book} index={i} rating={shelf === 'bookInShelf'} />
     </Link>

@@ -12,7 +12,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { notesRef, reviewerCommenterRef, reviewerRef, userBookRef } from '../../config/firebase';
 import { checkBadWords, getInitials, handleFirestoreError, join, normURL, truncateString, urlRegex } from '../../config/shared';
 import { darkTheme } from '../../config/themes';
-import { stringType, funcType } from '../../config/types';
+import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 
@@ -34,7 +34,7 @@ const CommentForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, bookTitle, onCancel, rid } = props;
-  const authid = useMemo(() => user && user.uid, [user]);
+  const authid = useMemo(() => user?.uid, [user]);
   const initialCommentState = useMemo(() => ({
     bid,
     bookTitle,
@@ -119,24 +119,26 @@ const CommentForm = props => {
           }).then(() => {
             openSnackbar('Risposta salvata', 'success');
 
-            const likerURL = `/dashboard/${user.uid}`;
-            const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-            const bookTitle = truncateString(comment.bookTitle, 35);
-            const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
-            const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha risposto alla tua recensione del libro <a href="${bookURL}">${bookTitle}</a>`;
-            const newNoteRef = notesRef(rid).doc();
-            
-            newNoteRef.set({
-              nid: newNoteRef.id,
-              text: noteMsg,
-              created_num: Date.now(),
-              createdBy: user.displayName,
-              createdByUid: user.uid,
-              photoURL: user.photoURL,
-              tag: ['comment'],
-              read: false,
-              uid: comment.createdByUid
-            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+            if (rid !== authid) {
+              const likerURL = `/dashboard/${user.uid}`;
+              const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
+              const bookTitle = truncateString(comment.bookTitle, 35);
+              const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
+              const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha ${comment.created_num ? 'modificato la risposta' : 'risposto'} alla tua recensione del libro <a href="${bookURL}">${bookTitle}</a>`;
+              const newNoteRef = notesRef(rid).doc();
+              
+              newNoteRef.set({
+                nid: newNoteRef.id,
+                text: noteMsg,
+                created_num: Date.now(),
+                createdBy: user.displayName,
+                createdByUid: user.uid,
+                photoURL: user.photoURL,
+                tag: ['comment'],
+                read: false,
+                uid: comment.createdByUid
+              }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+            }
 
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
@@ -210,8 +212,8 @@ const CommentForm = props => {
                       id="text"
                       name="text"
                       type="text"
-                      autoFocus={true}
-                      placeholder={`Aggiungi una risposta pubblica...`}
+                      autoFocus
+                      placeholder="Aggiungi una risposta pubblica..."
                       value={comment.text || ''}
                       onChange={onChangeMaxChars}
                       error={Boolean(errors.text)}

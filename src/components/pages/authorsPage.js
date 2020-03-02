@@ -57,7 +57,7 @@ export default class AuthorsPage extends Component {
   fetch = e => { 
     const { openSnackbar } = this.props;
     const { desc, firstVisible, lastVisible, orderByIndex } = this.state;
-    const direction = e && e.currentTarget.dataset.direction;
+    const direction = e?.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const ref = authorsRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
     const paginatedRef = ref.startAfter(prev ? firstVisible : lastVisible);
@@ -164,7 +164,7 @@ export default class AuthorsPage extends Component {
               </div>
 
               <div className="bubbles boxed shelf-row avatars-row hoverable-items">
-                {items && items.map((item, index) => (
+                {items?.map((item, index) => (
                   <Link to={`/author/${normURL(item.displayName)}`} key={item.displayName} data-index={index} className="bubble">
                     <Avatar className="avatar centered" src={item.photoURL} alt={item.displayName}>
                       {!item.photoURL && getInitials(item.displayName)}

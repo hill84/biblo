@@ -107,7 +107,7 @@ const QuoteForm = props => {
       }
     }
 
-    if (data.bookTitle && data.bookTitle.length > max.chars.bookTitle) {
+    if (data.bookTitle?.length > max.chars.bookTitle) {
       errors.bookTitle = `Massimo ${max.chars.bookTitle} caratteri`
     }
 
@@ -178,11 +178,11 @@ const QuoteForm = props => {
                   error={Boolean(errors.quote)}
                 />
                 {errors.quote && <FormHelperText className="message error">{errors.quote}</FormHelperText>}
-                {leftChars.quote !== null && 
+                {leftChars.quote !== null && (
                   <FormHelperText className={`message ${leftChars.quote < 0 ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.quote}
                   </FormHelperText>
-                }
+                )}
               </FormControl>
             </div>
           </div>

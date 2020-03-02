@@ -9,7 +9,7 @@ const PaginationControls = props => {
   return (
     (count > limit || forceVisibility) && (
       <div className={`info-row footer centered pagination ${loading ? 'loading' : 'loaded'}`}>
-        {!oneWay &&
+        {!oneWay && (
           <>
             <button 
               type="button"
@@ -22,7 +22,7 @@ const PaginationControls = props => {
             </button>
             <span className="page">{page} di {(count % limit > 0 ? 1 : 0) + ((count - count % limit) / limit)}</span>
           </>
-        }
+        )}
         <button 
           type="button"
           disabled={(loading || page >= (count / limit)) && 'disabled'} 

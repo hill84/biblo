@@ -96,57 +96,6 @@ const SearchBookForm = props => {
     return value && searchBy.key === 'ISBN_13' ? value.length === 13 : String(value).trim().length > 1;
   };
 
-  const onSuggestionsFetchRequested = ({ value }) => fetchOptions(value); // setSuggestions(getSuggestions(value));
-
-  /* const getSuggestions = value => {
-    const inputValue = value.normalize();
-    const inputLength = inputValue.length;
-    let count = 0;
-  
-    return inputLength === 0 ? [] : suggestions.filter(suggestion => {
-      const keep = count < 5 && suggestion.label.toLowerCase().slice(0, inputLength) === inputValue;
-      if (keep) { count += 1; }
-      return keep;
-    });
-  }; */
-
-  const renderSuggestion = (b, { query, isHighlighted }) => { 
-    if (b.value) return b.value;
-    const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label
-    // console.log(b.label);
-    const matches = match(label, query);
-    const parts = parse(label, matches);
-    const searchTextHighlighted = parts.map((part, index) => part.highlight ? 
-      <strong key={String(index)}>{part.text}</strong>
-    :
-      <span key={String(index)}>{part.text}</span>
-    );
-  
-    return (
-      <MenuItem key={b.bid} className={`menuitem-book ${match(b.label, query)}`} selected={isHighlighted} component="div">
-        <div className="primaryText">
-          {b.covers[0] && <img className="thumbnail" src={b.covers[0]} alt={b.title} />}
-          <span className="title">
-            {searchBy.key === 'title' ? searchTextHighlighted : b.title}
-          </span>
-        </div>
-        <div className="secondaryText">
-          {searchBy.key === 'title' || searchBy.key === 'author' ? Object.keys(b.authors).length ? `di ${Object.keys(b.authors)[0]}` : null : searchTextHighlighted}
-        </div>
-      </MenuItem>
-    );
-  }
-
-  const getSuggestionValue = b => b.label;
-
-  const onSuggestionsClearRequested = () => {
-    unsub.timer && clearTimeout(unsub.timer);
-    setSuggestions([]);
-  }
-
-  // const strAsNum = str => Number(str.replace(/-|\s/g,"").trim());
-  // const numAsISBN_13 = num => String(num).length === 10 ? String(`978${num}`) : String(num);
-  
   const emptyBookCTA = (
     <MenuItem className="menuitem-book empty" component="div">
       <div className="primaryText">
@@ -162,12 +111,13 @@ const SearchBookForm = props => {
     const searchText = value.normalize();
     const searchTextType = searchBy.key === 'ISBN_13' ? Number(searchText) : 
       typeof searchText === 'object' ? String(Object.keys(searchText.split('.').join(''))[0]) : String(searchText);
+    
     const emptyBook = {
       ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
       EDIT: {
-        createdBy: (user && user.displayName) || '',
-        createdByUid: (user && user.uid) || '',
+        createdBy: user?.displayName || '',
+        createdByUid: user?.uid || '',
         created_num: Date.now()
       },
       authors: searchBy.key === 'author' ? { searchTextType: true } : {},
@@ -254,13 +204,13 @@ const SearchBookForm = props => {
           headers: { 'Content-Type': 'application/json' }
         }).then(res => res.json()).then(json => {
           const options = [];
-          if (json.items && json.items.length > 0) {
+          if (json.items?.length > 0) {
             // console.log(json.items);
             json.items.forEach(item => {
               const b = item.volumeInfo;
               const iis = b.industryIdentifiers;
-              const ISBN_13 = (iis && iis.filter(ii => ii.type === 'ISBN_13')) || [];
-              const ISBN_10 = (iis && iis.filter(ii => ii.type === 'ISBN_10')) || [];
+              const ISBN_13 = (iis?.filter(ii => ii.type === 'ISBN_13')) || [];
+              const ISBN_10 = (iis?.filter(ii => ii.type === 'ISBN_10')) || [];
               options.push({
                 ISBN_13: (ISBN_13.length && Number(ISBN_13[0].identifier)) || 0,
                 ISBN_10: (ISBN_10.length && Number(ISBN_10[0].identifier)) || 0,
@@ -334,9 +284,60 @@ const SearchBookForm = props => {
     }, searchBy.key === 'ISBN_13' ? 500 : 1000);
   };
 
+  const onSuggestionsFetchRequested = ({ value }) => fetchOptions(value); // setSuggestions(getSuggestions(value));
+
+  /* const getSuggestions = value => {
+    const inputValue = value.normalize();
+    const inputLength = inputValue.length;
+    let count = 0;
+  
+    return inputLength === 0 ? [] : suggestions.filter(suggestion => {
+      const keep = count < 5 && suggestion.label.toLowerCase().slice(0, inputLength) === inputValue;
+      if (keep) { count += 1; }
+      return keep;
+    });
+  }; */
+
+  const renderSuggestion = (b, { query, isHighlighted }) => { 
+    if (b.value) return b.value;
+    const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label
+    // console.log(b.label);
+    const matches = match(label, query);
+    const parts = parse(label, matches);
+    const searchTextHighlighted = parts.map((part, index) => part.highlight ? 
+      <strong key={String(index)}>{part.text}</strong>
+    :
+      <span key={String(index)}>{part.text}</span>
+    );
+  
+    return (
+      <MenuItem key={b.bid} className={`menuitem-book ${match(b.label, query)}`} selected={isHighlighted} component="div">
+        <div className="primaryText">
+          {b.covers[0] && <img className="thumbnail" src={b.covers[0]} alt={b.title} />}
+          <span className="title">
+            {searchBy.key === 'title' ? searchTextHighlighted : b.title}
+          </span>
+        </div>
+        <div className="secondaryText">
+          {searchBy.key === 'title' || searchBy.key === 'author' ? Object.keys(b.authors).length ? `di ${Object.keys(b.authors)[0]}` : null : searchTextHighlighted}
+        </div>
+      </MenuItem>
+    );
+  }
+
+  const getSuggestionValue = b => b.label;
+
+  const onSuggestionsClearRequested = () => {
+    unsub.timer && clearTimeout(unsub.timer);
+    setSuggestions([]);
+  }
+
+  // const strAsNum = str => Number(str.replace(/-|\s/g,"").trim());
+  // const numAsISBN_13 = num => String(num).length === 10 ? String(`978${num}`) : String(num);
+
   const onSuggestionSelected = (e, {
     suggestion,
-    suggestionValue,
+    // suggestionValue,
     suggestionIndex,
     // sectionIndex,
     // method
@@ -382,7 +383,7 @@ const SearchBookForm = props => {
             label: `${newBook ? 'Aggiungi libro' : 'Cerca libro'} per ${searchBy.label.toLowerCase()}`,
             placeholder: `Es: ${searchBy.hint}`,
             value,
-            onChange: onChange,
+            onChange,
             endAdornment: <button type="button" className="btn sm flat search-by" onClick={onOpenSearchByMenu}>{searchBy.label}</button>
           }}
         />

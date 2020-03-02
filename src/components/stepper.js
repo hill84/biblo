@@ -30,9 +30,9 @@ const Stepper = props => {
     is.current = false;
   }, []);
 
-  const onNext = () => (props.onNext && props.onNext()) || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep + 1 })));
+  const onNext = () => props.onNext?.() || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep + 1 })));
 
-  const onPrev = () => (props.onPrev && props.onPrev()) || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
+  const onPrev = () => props.onPrev?.() || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
 
   const percentage = useMemo(() => Math.round(100 / (steps / activeStep)), [activeStep, steps]);
 

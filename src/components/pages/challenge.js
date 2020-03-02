@@ -132,7 +132,7 @@ const Challenge = () => {
         </div>
       </div>
 
-      {!loading && userChallenges && userChallenges.length > 0 && (
+      {!loading && userChallenges?.length > 0 && (
         <>
           <h2>Sfide completate</h2>
           {userChallenges.map((item, i) => (
@@ -256,11 +256,11 @@ export default Challenge;
 
         <div className="row">
           <div className="col"><h2>Sfida</h2></div>
-          {userChallenge && 
+          {userChallenge && (
             <div className="col text-right">
               <h4 className="counter light-text">Accettata il {new Date(userChallenge.created_num).toLocaleDateString()}</h4>
             </div>
-          }
+          )}
         </div>
         <div className="card dark card-fullwidth-sm">
           <div className="head nav">
@@ -268,7 +268,7 @@ export default Challenge;
               <div className="col">
                 <span className="primary-text hide-sm">Sfida:</span> <span className="counter last title">{userChallenge ? userChallenge.title : 'non trovata'}</span> <span className="count hide-xs">({userChallenge ? count(userChallenge.books) : 0} libri)</span>
               </div>
-              {userChallenge &&
+              {userChallenge && (
                 <div className="col-4 col-sm-4 col-md-3 col-lg-2">
                   <div className="row">
                     <div className="col flex">
@@ -279,7 +279,7 @@ export default Challenge;
                     </div>
                   </div>
                 </div>
-              }
+              )}
             </div>
           </div>
               
@@ -298,7 +298,7 @@ export default Challenge;
           </div>
         </div>
 
-        {!loading && userChallenges && 
+        {!loading && userChallenges && (
           <>
             <h2>Sfide completate</h2>
             {userChallenges.map((item, i) =>
@@ -307,16 +307,16 @@ export default Challenge;
                   <div className="col">
                     <span className="primary-text hide-sm">Sfida:</span> <span className="counter last title">{item.title}</span> <span className="count hide-xs">({count(item.books)} libri)</span>
                   </div>
-                  {item.completed_num !== 0 && 
+                  {item.completed_num !== 0 && (
                     <div className="col text-right">
                       <span className="counter light-text">Completata il {new Date(item.completed_num).toLocaleDateString()}</span>
                     </div>
-                  }
+                  )}
                 </div>
               </div>
             )}
           </>
-        }
+        )}
       </div>
     );
   }

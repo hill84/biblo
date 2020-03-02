@@ -10,11 +10,11 @@ import ImageZoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
-import { followersRef, followingsRef, notesRef, userRef, userChallenges } from '../../config/firebase';
+import { followersRef, followingsRef, notesRef, userChallenges, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { app, calcAge, capitalize, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
-import { historyType, locationType, matchType } from '../../config/types';
+import { arrayType, historyType, locationType, matchType, objectType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
@@ -51,7 +51,7 @@ const Dashboard = props => {
   const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
-  const tab = match.params && match.params.tab;
+  const tab = match.params?.tab;
   const [duser, setDuser] = useState(null);
   const [challenges, setChallenges] = useState([]);
   const [followers, setFollowers] = useState({});
@@ -67,12 +67,12 @@ const Dashboard = props => {
   const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
 
-  const uid = match.params.uid;
-  const luid = useMemo(() => user && user.uid, [user]);
+  const { uid } = match.params;
+  const luid = useMemo(() => user?.uid, [user]);
   const isOwner = useMemo(() => luid === uid, [luid, uid]);
 
-  const isAdmin = useMemo(() => user && user.roles.admin, [user]);
-  const isPremium = useMemo(() => user && user.roles.premium, [user]);
+  const isAdmin = useMemo(() => user?.roles.admin, [user]);
+  const isPremium = useMemo(() => user?.roles.premium, [user]);
 
   useEffect(() => {
     const updateScreenSize = () => {
@@ -337,7 +337,7 @@ const Dashboard = props => {
     }
   }, [historyPushTabIndex]);
 
-  const challengeBooks = useMemo(() => challenges && challenges.length && challenges.filter(challenge => challenge.completed_num !== challenge.books.length)[0].books, [challenges]);
+  const challengeBooks = useMemo(() => challenges?.length && challenges?.filter(challenge => challenge.completed_num !== challenge.books.length)[0].books, [challenges]);
   const challengeBooks_num = useMemo(() => challengeBooks && Object.keys(challengeBooks).length, [challengeBooks]);
   const challengeReadBooks_num = useMemo(() => challengeBooks && Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length, [challengeBooks]);
   const challengeProgress = useMemo(() => challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0, [challengeBooks_num, challengeReadBooks_num]);
@@ -370,16 +370,16 @@ const Dashboard = props => {
               <div className="col">
                 <Avatar className="avatar" src={users[f].photoURL} alt={users[f].displayName}>{!users[f].photoURL && getInitials(users[f].displayName)}</Avatar>{users[f].displayName}
               </div>
-              {!isMini && 
+              {!isMini && (
                 <div className="col-auto">
                   <div className="timestamp hide-on-hover">{timeSince(users[f].timestamp)}</div>
-                  {isOwner && f !== luid && 
+                  {isOwner && f !== luid && (
                     <button type="button" className="btn flat show-on-hover" onClick={e => onFollowUser(e, f, users[f])}>
                       {users === followers ? 'Segui' : 'Non seguire'}
                     </button>
-                  }
+                  )}
                 </div>
-              }
+              )}
             </Link>
           </div> 
         ))}
@@ -397,6 +397,10 @@ const Dashboard = props => {
     );
   };
 
+  UsersList.propTypes = {
+    users: arrayType.isRequired
+  }
+
   const EmptyRow = () => (
     <div className="avatar-row empty">
       <div className="row">
@@ -411,6 +415,11 @@ const Dashboard = props => {
       <span className="label">{props.label}</span>
     </>
   );
+
+  TabLabel.propTypes = {
+    icon: objectType.isRequired,
+    label: stringType.isRequired
+  }
 
   const tabSeoTitle = () => {
     switch (tabSelected) {

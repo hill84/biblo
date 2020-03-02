@@ -42,7 +42,7 @@ const AddBook = props => {
         <link rel="canonical" href={app.url} />
       </Helmet>
       
-      <div className="card sm flat search-book" onClick={onClick}>
+      <div role="button" tabIndex={0} className="card sm flat search-book" onClick={onClick} onKeyDown={onClick}>
         <SearchBookForm onBookSelect={onBookSelect} user={user} />
       </div>
 

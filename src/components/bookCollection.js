@@ -24,7 +24,7 @@ const BookCollection = props => {
   const limit = useMemo(() => props.limit || (pagination ? _booksPerRow() : 98), [pagination, props.limit]);
   
   const fetch = useCallback(e => {
-    const direction = e && e.currentTarget.dataset.direction;
+    const direction = e?.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
@@ -96,7 +96,7 @@ const BookCollection = props => {
 
   const onToggleDesc = () => setDesc(!desc);
 
-  const covers = (collection && collection.length ? (
+  const covers = (collection?.length ? (
     <div className={`shelf-row books-per-row-${booksPerRow} ${stacked ? 'stacked' : 'abreast'}`}>
       {collection.map((book, i) => 
         <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}>

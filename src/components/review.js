@@ -8,7 +8,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import CommentForm from '../components/forms/commentForm';
 import { notesRef, reviewerCommentersRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
@@ -18,6 +17,7 @@ import UserContext from '../context/userContext';
 import Comment from './comment';
 import Cover from './cover';
 import FlagDialog from './flagDialog';
+import CommentForm from './forms/commentForm';
 import MinifiableText from './minifiableText';
 import Rating from './rating';
 
@@ -28,7 +28,7 @@ const limit = 20;
 const Review = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const authid = useMemo(() => user && user.uid, [user]);
+  const authid = useMemo(() => user?.uid, [user]);
   const { bid, review, uid } = props;
   const likes_num = review.likes ? review.likes.length : 0;
   // const dislikes_num = review.dislikes ? review.dislikes.length : 0;
@@ -39,14 +39,14 @@ const Review = props => {
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
   const [isEditingComment, setIsEditingComment] = useState(false);
-  const [like, setLike] = useState(likes_num && review.likes.indexOf(user && user.uid) > -1 ? true : false || false);
+  const [like, setLike] = useState(likes_num && review.likes.indexOf(user?.uid) > -1 ? true : false || false);
   const is = useRef(true);
 
   useEffect(() => {
     if (bid && selectedRid) {
       if (is.current) setLoading(true);
 
-      reviewerCommentersRef(bid, selectedRid).limit(limit).onSnapshot(snap => {
+      reviewerCommentersRef(bid, selectedRid).orderBy('created_num', 'asc').limit(limit).onSnapshot(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
@@ -167,11 +167,11 @@ const Review = props => {
 
   // const onCloseCommentsPanel = () => setSelectedRid(null);
 
-  const isOwner = useMemo(() => review.createdByUid === (user && user.uid), [review.createdByUid, user]);
+  const isOwner = useMemo(() => review.createdByUid === user?.uid, [review.createdByUid, user]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
-  const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === (user && user.uid), [review.flag, user]);
-  const commentList = useMemo(() => comments && comments.filter(item => isEditingComment ? item.createdByUid !== authid : item), [comments, isEditingComment, authid]);
+  const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === user?.uid, [review.flag, user]);
+  const commentList = useMemo(() => comments?.filter(item => isEditingComment ? item.createdByUid !== authid : item), [comments, isEditingComment, authid]);
   const classNames = useMemo(() => `${isOwner ? 'own review' : 'review'} ${review.flag ? `flagged ${review.flag.value}` : ''}`, [isOwner, review]);
   const selected = useMemo(() => selectedRid && selectedRid === review.createdByUid, [review.createdByUid, selectedRid]);
 
@@ -207,17 +207,17 @@ const Review = props => {
                 </h3>
               </Link>
               
-              {review.rating_num > 0 && 
+              {review.rating_num > 0 && (
                 <div className="col-auto text-right">
                   <Rating ratings={{rating_num: review.rating_num}} labels />
                 </div>
-              }
+              )}
             </div>
             {review.title && <h4 className="title">{review.title}</h4>}
             <div className="info-row text">
               <MinifiableText text={review.text} maxChars={500} />
             </div>
-            {bid && 
+            {bid && (
               <div className="foot row">
                 <div className="col-auto likes">
                   <div className="counter">
@@ -248,7 +248,7 @@ const Review = props => {
                       </Tooltip>
                     </div> 
                   */}
-                  {isEditor && !isOwner && (
+                  {isEditor && (!isOwner || review.comments_num > 0) && (
                     <div className="counter">
                       <button type="button" className="btn sm flat" onClick={onEditComment} disabled={isEditingComment}>
                         <span className="show-sm">{icon.pencil}</span> <span className="hide-sm">Rispondi</span>
@@ -258,17 +258,7 @@ const Review = props => {
                   {review.comments_num > 0 && (
                     <div className="counter">
                       <button type="button" className="btn sm flat" onClick={onToggleCommentsPanel} disabled={isEditingComment}>
-                        {selected ? (
-                          <>
-                            <span className="hide-sm">Nascondi</span>
-                            <span className="show-sm">{icon.menuUp}</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="hide-sm">Visualizza</span>
-                            <span className="show-sm">{icon.menuDown}</span>
-                          </>
-                        )} {`${review.comments_num} rispost${review.comments_num > 1 ? 'e' : 'a'}`}
+                        {selected ? icon.menuUp : icon.menuDown} {`${review.comments_num} rispost${review.comments_num > 1 ? 'e' : 'a'}`}
                       </button>
                     </div>
                   )}
@@ -289,9 +279,13 @@ const Review = props => {
                     </div>
                   )}
                 </div>
-                <div className="col counter text-right date">{timeSince(review.created_num)}</div>
+                <div className="col counter text-right date">
+                  <span className="hide-xs" title={`modificata ${timeSince(review.lastEdit_num)}`}>
+                    {review.created_num !== review.lastEdit_num && '(modificata)'}
+                  </span> {timeSince(review.created_num)}
+                </div>
               </div>
-            }
+            )}
             {isEditingComment && (
               <CommentForm
                 bid={bid}
@@ -352,7 +346,7 @@ const Review = props => {
           onClose={onCloseFlagDialog} 
           onFlag={onFlag} 
           TransitionComponent={Transition} 
-          value={flaggedByUser ? review.flag && review.flag.value : ''}
+          value={flaggedByUser ? review.flag?.value : ''}
         />
       )}
     </>

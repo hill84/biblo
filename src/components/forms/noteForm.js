@@ -80,9 +80,9 @@ const NoteForm = props => {
     
     if (!data.text) { 
       errors.text = "Inserisci il testo"; 
-    } else if (data.text && data.text.length > max.chars.text) {
+    } else if (data.text?.length > max.chars.text) {
       errors.text = `Lunghezza massima ${max.chars.text} caratteri`;
-    } else if (data.text && data.text.length < min.chars.text) {
+    } else if (data.text?.length < min.chars.text) {
       errors.text = `Lunghezza minima ${min.chars.text} caratteri`;
     }
     if (!data.tag) { 
@@ -169,11 +169,11 @@ const NoteForm = props => {
                   error={Boolean(errors.text)}
                 />
                 {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
-                {(leftChars.text !== null) && 
+                {(leftChars.text !== null) && (
                   <FormHelperText className={`message ${(leftChars.text < 0) ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.text}
                   </FormHelperText>
-                }
+                )}
               </FormControl>
             </div>
           </div>

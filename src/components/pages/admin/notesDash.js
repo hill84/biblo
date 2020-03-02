@@ -60,7 +60,7 @@ export default class NotesDash extends Component {
     
   fetch = e => {
     const { desc, firstVisible, lastVisible, limitByIndex } = this.state;
-    const direction = e && e.currentTarget.dataset.direction;
+    const direction = e?.currentTarget.dataset.direction;
     const limit = limitBy[limitByIndex];
     const prev = direction === 'prev';
     const ref = notificationsRef.orderBy('count', desc === prev ? 'asc' : 'desc').limit(limit);
@@ -178,7 +178,7 @@ export default class NotesDash extends Component {
               {icon.chevronDown}
             </div>
           </div>
-          {item.notes && item.notes.length > 0 && 
+          {item.notes?.length > 0 && (
             <ul className="expandible">
               {item.notes.map((note, i) =>
                 <li key={note.nid} className={note.read ? 'read' : 'not-read'}>
@@ -200,7 +200,7 @@ export default class NotesDash extends Component {
                 </li>
               )}
             </ul>
-          }
+          )}
         </li>
       ))
     );

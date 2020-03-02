@@ -5,7 +5,7 @@ import '../css/minifiableText.css';
 const MinifiableText = props => {
   const is = useRef(true);
   const { maxChars, source, text, defaultMinified } = props;
-  const [minified, setMinified] = useState(defaultMinified === false ? defaultMinified : (text && text.length > (maxChars || 700)));
+  const [minified, setMinified] = useState(defaultMinified === false ? defaultMinified : (text?.length > (maxChars || 700)));
 
   const minifyText = useCallback(() => {
     if (is.current) setMinified(text.length > maxChars);
@@ -16,7 +16,7 @@ const MinifiableText = props => {
   }, [minifyText]);
 
   useEffect(() => {
-    if (is.current) setMinified(defaultMinified === false ? defaultMinified : (text && text.length > (maxChars || 700)));
+    if (is.current) setMinified(defaultMinified === false ? defaultMinified : (text?.length > (maxChars || 700)));
   }, [maxChars, text, defaultMinified]);
 
   useEffect(() => () => {
@@ -32,7 +32,7 @@ const MinifiableText = props => {
   return (
     <>
       <span className={`minifiable ${minified ? 'minified' : 'expanded'}`} ref={is}>{text}</span>
-      {source && 
+      {source && (
         <span className="text-sm pull-right m-b-negative">
           <a href="https://it.wikipedia.org/wiki/Licenze_Creative_Commons">
             <span className="show-sm">&copy;</span>
@@ -40,7 +40,7 @@ const MinifiableText = props => {
           </a>&nbsp;
           <a href={source} target="_blank" rel="noopener noreferrer">{source.indexOf('wikipedia') > -1 ? 'Wikipedia' : 'Fonte'}</a>
         </span>
-      }
+      )}
       {minified && <><br/><button type="button" className="link" onClick={onMinify}>Mostra tutto</button></>}
     </>
   );

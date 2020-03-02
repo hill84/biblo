@@ -167,7 +167,7 @@ const ReadingStateForm = props => {
                   </MuiPickersUtilsProvider>
                   {errors.start_num && <FormHelperText className="message error">{errors.start_num}</FormHelperText>}
                 </div>
-                {state_num === 3 &&
+                {state_num === 3 && (
                   <div className="form-group col-6">
                     <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
                       <DatePicker 
@@ -194,9 +194,9 @@ const ReadingStateForm = props => {
                     </MuiPickersUtilsProvider>
                     {errors.end_num && <FormHelperText className="message error">{errors.end_num}</FormHelperText>}
                   </div>
-                }
+                )}
               </div>
-              {state_num === 2 &&
+              {state_num === 2 && (
                 <Stepper
                   value={progress_num} 
                   onPrev={onPrev} 
@@ -205,7 +205,7 @@ const ReadingStateForm = props => {
                   steps={steps}
                   className="form-control" 
                 />
-              }
+              )}
             </>
           }
         </div>

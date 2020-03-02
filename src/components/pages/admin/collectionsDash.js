@@ -64,7 +64,7 @@ export default class collectionsDash extends Component {
     
   fetch = e => {
     const { desc, firstVisible, lastVisible, limitByIndex, orderByIndex } = this.state;
-    const direction = e && e.currentTarget.dataset.direction;
+    const direction = e?.currentTarget.dataset.direction;
     const prev = direction === 'prev';
     const limit = limitBy[limitByIndex];
     const ref = collectionsRef.orderBy(orderBy[orderByIndex].type, desc === prev ? 'asc' : 'desc').limit(limit);
@@ -199,7 +199,7 @@ export default class collectionsDash extends Component {
       ))
     );
 
-    const sitemapData = items && items.map(item => ([
+    const sitemapData = items?.map(item => ([
       `<url> <loc>${app.url}/collection/${normURL(item.title)}</loc> </url>`
     ]));
 

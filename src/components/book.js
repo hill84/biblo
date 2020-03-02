@@ -51,7 +51,7 @@ const Book = props => {
   const [seo, setSeo] = useState(props.book && {
     author: Object.keys(props.book.authors),
     description: `Scopri su ${app.name} la trama e le recensioni di ${props.book.title}, scritto da ${Object.keys(props.book.authors)[0]}, pubblicato da ${props.book.publisher}`,
-    image: props.book.covers.length && props.book.covers[0],
+    image: props.book.covers?.[0],
     isbn: props.book.ISBN_13,
     rating: { scale: '5', value: props.book.rating_num },
     release_date: props.book.publication ? new Date(props.book.publication).toLocaleDateString() : '',
@@ -62,10 +62,10 @@ const Book = props => {
   const addBookToWishlistRef = useRef(null);
   const is = useRef(true);
 
-  const authid = useMemo(() => user && user.uid, [user]);
-  const isAdmin = useMemo(() => user && user.roles.admin, [user]);
-  const isPremium = useMemo(() => user && user.roles.premium, [user]);
-  const _bid = useMemo(() => book && book.bid, [book]);
+  const authid = useMemo(() => user?.uid, [user]);
+  const isAdmin = useMemo(() => user?.roles.admin, [user]);
+  const isPremium = useMemo(() => user?.roles.premium, [user]);
+  const _bid = useMemo(() => book?.bid, [book]);
 
   const fetchUserBook = useCallback(bid => {
     if (authid && isAuth && bid) {
@@ -102,7 +102,7 @@ const Book = props => {
             setSeo({
               author: Object.keys(snap.data().authors),
               description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,
-              image: snap.data().covers.length && snap.data().covers[0],
+              image: snap.data().covers?.[0],
               isbn: snap.data().ISBN_13,
               rating: { scale: '5', value: snap.data().rating_num },
               release_date: snap.data().publication ? new Date(snap.data().publication).toLocaleDateString() : '',
@@ -449,7 +449,6 @@ Book.propTypes = {
   bid: stringType,
   book: bookType,
   history: objectType.isRequired,
-  isAuth: boolType,
   isEditing: boolType,
   location: objectType.isRequired,
   // userBook: userBookType
@@ -458,7 +457,6 @@ Book.propTypes = {
 Book.defaultProps = {
   bid: null,
   book: null,
-  isAuth: false,
   isEditing: false,
   // userBook: null
 }

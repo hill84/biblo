@@ -31,7 +31,7 @@ const Notifications = () => {
   const [page, setPage] = useState(1);
   const is = useRef(true);
 
-  const authid = useMemo(() => user && user.uid, [user]);
+  const authid = useMemo(() => user?.uid, [user]);
 
   const fetch = useCallback(() => {
     if (authid) {
@@ -157,7 +157,7 @@ const Notifications = () => {
           <div className="head nav">
             <div className="row">
               <div className="col">
-                <span className="counter">{items ? items.length : 0} notific{items && items.length === 1 ? 'a' : 'he'} {items && count > items.length ? `di ${count}` : ''}</span>
+                <span className="counter">{items ? items.length : 0} notific{items?.length === 1 ? 'a' : 'he'} {items && count > items.length ? `di ${count}` : ''}</span>
               </div>
               <div className="col-auto">
                 <button type="button" className="btn sm flat counter" onClick={onOpenOrderMenu} disabled={!items || items.length < 2}>
@@ -182,7 +182,7 @@ const Notifications = () => {
         </div>
       </div>
 
-      {count > 0 && items && items.length < count &&
+      {count > 0 && items?.length < count && (
         <PaginationControls 
           count={count} 
           fetch={fetchNext} 
@@ -191,7 +191,7 @@ const Notifications = () => {
           oneWay
           page={page}
         />
-      }
+      )}
     </div>
   );
 }
