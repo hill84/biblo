@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, diffDays, getInitials, handleFirestoreError, normURL, truncateString } from '../../config/shared';
+import { app, diffDates, getInitials, handleFirestoreError, normURL, truncateString } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -55,7 +55,7 @@ const RecommendationForm = props => {
     fetch();
   }, [fetch]);
   
-  const isNewDay = diffDays(new Date(quote.timestamp)) > 0;
+  const isNewDay = diffDates(24, new Date(quote.timestamp)) > 0;
   
   useEffect(() => {
     if (!quote.timestamp || isNewDay) {

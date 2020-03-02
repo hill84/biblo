@@ -174,8 +174,8 @@ export const msToTime = s => {
   return 'non disponibile';
 };
 
-const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
-export const diffDays = (secondDate, firstDate = Date.now()) => Math.round(Math.abs((firstDate - secondDate) / oneDay));
+const time = hours => hours * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+export const diffDates = (hours, secondDate, firstDate = Date.now()) => Math.round(Math.abs((firstDate - secondDate) / time(hours)));
 
 export const screenSize = () => {
   const w = window.innerWidth;

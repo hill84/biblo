@@ -114,6 +114,7 @@ const Comment = props => {
   const onCloseActionsMenu = () => setActionsAnchorEl(null);
 
   const isOwner = useMemo(() => comment.createdByUid === (user?.uid), [comment, user]);
+  const isReviewer = useMemo(() => comment.createdByUid === rid, [comment, rid]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
@@ -121,7 +122,6 @@ const Comment = props => {
 
   return (
     <>
-      
       <div className={classNames} id={`${rid}-${comment.createdByUid}`} ref={is}>
         <div className="row">
           <div className="col-auto left">
@@ -132,7 +132,7 @@ const Comment = props => {
           <div className="col right">
             <div className="head row">
               <Link to={rid ? `/book/${comment.bid}/${normURL(comment.bookTitle)}` : `/dashboard/${comment.createdByUid}`} className="col author">
-                <h3>{comment.displayName}</h3>
+                <h3 style={{ color: isReviewer ? 'rgb(var(--accentClr))' : null }}>{comment.displayName}</h3>
               </Link>
               {isEditor && (
                 <div className="col-auto">
@@ -156,7 +156,7 @@ const Comment = props => {
               )}
             </div>
             <div className="info-row text">{comment.text}</div>
-            {bid && 
+            {bid && (
               <div className="foot row">
                 <div className="col-auto likes">
                   <div className="counter">
@@ -174,7 +174,7 @@ const Comment = props => {
                   </div>
                   {/* 
                     <div className="counter">
-                      <Tooltip title={dislike ? 'Annulla mi piace' : 'Mi piace'}>
+                      <Tooltip title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
                         <span>
                           <button 
                             type="button"
@@ -188,9 +188,13 @@ const Comment = props => {
                     </div> 
                   */}
                 </div>
-                <div className="col counter text-right date">{timeSince(comment.created_num)}</div>
+                <div className="col counter text-right date">
+                  <span className="hide-xs" title={`modificata ${timeSince(comment.lastEdit_num)}`}>
+                    {comment.created_num !== comment.lastEdit_num && '(modificata)'}
+                  </span> {timeSince(comment.created_num)}
+                </div>
               </div>
-            }
+            )}
           </div>
         </div>
       </div>

@@ -46,7 +46,7 @@ const Review = props => {
     if (bid && selectedRid) {
       if (is.current) setLoading(true);
 
-      reviewerCommentersRef(bid, selectedRid).limit(limit).onSnapshot(snap => {
+      reviewerCommentersRef(bid, selectedRid).orderBy('created_num', 'asc').limit(limit).onSnapshot(snap => {
         if (!snap.empty) {
           const items = [];
           snap.forEach(item => items.push(item.data()));
@@ -248,7 +248,7 @@ const Review = props => {
                       </Tooltip>
                     </div> 
                   */}
-                  {isEditor && !isOwner && (
+                  {isEditor && (!isOwner || review.comments_num > 0) && (
                     <div className="counter">
                       <button type="button" className="btn sm flat" onClick={onEditComment} disabled={isEditingComment}>
                         <span className="show-sm">{icon.pencil}</span> <span className="hide-sm">Rispondi</span>
@@ -258,17 +258,7 @@ const Review = props => {
                   {review.comments_num > 0 && (
                     <div className="counter">
                       <button type="button" className="btn sm flat" onClick={onToggleCommentsPanel} disabled={isEditingComment}>
-                        {selected ? (
-                          <>
-                            <span className="hide-sm">Nascondi</span>
-                            <span className="show-sm">{icon.menuUp}</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="hide-sm">Visualizza</span>
-                            <span className="show-sm">{icon.menuDown}</span>
-                          </>
-                        )} {`${review.comments_num} rispost${review.comments_num > 1 ? 'e' : 'a'}`}
+                        {selected ? icon.menuUp : icon.menuDown} {`${review.comments_num} rispost${review.comments_num > 1 ? 'e' : 'a'}`}
                       </button>
                     </div>
                   )}
@@ -289,7 +279,11 @@ const Review = props => {
                     </div>
                   )}
                 </div>
-                <div className="col counter text-right date">{timeSince(review.created_num)}</div>
+                <div className="col counter text-right date">
+                  <span className="hide-xs" title={`modificata ${timeSince(review.lastEdit_num)}`}>
+                    {review.created_num !== review.lastEdit_num && '(modificata)'}
+                  </span> {timeSince(review.created_num)}
+                </div>
               </div>
             )}
             {isEditingComment && (

@@ -7,7 +7,7 @@ import Rater from 'react-rater';
 import { userBooksRef } from '../config/firebase';
 import icon from '../config/icons';
 import { months, ratingLabels, readingStates } from '../config/lists';
-import { diffDays, handleFirestoreError, round } from '../config/shared';
+import { diffDates, handleFirestoreError, round } from '../config/shared';
 import { userBooksKey } from '../config/storage';
 import { boolType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
@@ -30,7 +30,7 @@ const ReadingStats = props => {
   const [showTable, setShowTable] = useState(false);
   const is = useRef(true);
 
-  const isNewDay = useMemo(() => diffDays(new Date(timestamp)) > 0, [timestamp]);
+  const isNewDay = useMemo(() => diffDates(24, new Date(timestamp)) > 0, [timestamp]);
 
   useEffect(() => {
     if (!timestamp || !userBooks || isNewDay) {

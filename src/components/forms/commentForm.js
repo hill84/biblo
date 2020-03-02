@@ -119,24 +119,26 @@ const CommentForm = props => {
           }).then(() => {
             openSnackbar('Risposta salvata', 'success');
 
-            const likerURL = `/dashboard/${user.uid}`;
-            const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
-            const bookTitle = truncateString(comment.bookTitle, 35);
-            const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
-            const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha risposto alla tua recensione del libro <a href="${bookURL}">${bookTitle}</a>`;
-            const newNoteRef = notesRef(rid).doc();
-            
-            newNoteRef.set({
-              nid: newNoteRef.id,
-              text: noteMsg,
-              created_num: Date.now(),
-              createdBy: user.displayName,
-              createdByUid: user.uid,
-              photoURL: user.photoURL,
-              tag: ['comment'],
-              read: false,
-              uid: comment.createdByUid
-            }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+            if (rid !== authid) {
+              const likerURL = `/dashboard/${user.uid}`;
+              const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
+              const bookTitle = truncateString(comment.bookTitle, 35);
+              const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
+              const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha ${comment.created_num ? 'modificato la risposta' : 'risposto'} alla tua recensione del libro <a href="${bookURL}">${bookTitle}</a>`;
+              const newNoteRef = notesRef(rid).doc();
+              
+              newNoteRef.set({
+                nid: newNoteRef.id,
+                text: noteMsg,
+                created_num: Date.now(),
+                createdBy: user.displayName,
+                createdByUid: user.uid,
+                photoURL: user.photoURL,
+                tag: ['comment'],
+                read: false,
+                uid: comment.createdByUid
+              }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+            }
 
           }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
