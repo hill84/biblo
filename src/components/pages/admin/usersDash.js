@@ -7,11 +7,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
+import { asyncForEach, dateOptions, getInitials, handleFirestoreError, timeOptions } from '../../../config/shared';
 import { funcType } from '../../../config/types';
 import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
@@ -257,13 +257,11 @@ const UsersDash = props => {
       <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
         <div className="row">
           <div className="col-auto avatar-container">
-            <Avatar className="avatar" /* src={item.photoURL} */ alt={item.displayName}>
+            <Avatar className="avatar">
               {item.photoURL ? 
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: item.photoURL, className: 'thumb' }}
-                  zoomImage={{ className: 'magnified avatar' }}
-                />
+                <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                  <img alt={item.displayName} src={item.photoURL} className="avatar thumb" />
+                </Zoom>
               : getInitials(item.displayName)}
             </Avatar>
           </div>

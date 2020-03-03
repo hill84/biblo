@@ -31,7 +31,6 @@ export const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' }
 export const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
 // UTILITY
-export const imageZoomDefaultStyles = { zoomContainer: { zIndex: 1200 }, overlay: { backgroundColor: 'rgba(38,50,56,0.8)' } };
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
 export const copyToClipboard = text => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {

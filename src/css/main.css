@@ -1,4 +1,5 @@
 @import 'media-queries.css';
+@import 'react-medium-image-zoom/dist/styles.css';
 
 :root {
   /* Colors */
@@ -295,16 +296,11 @@ ul.nolist {
     width: var(--avatarSize);
     height: var(--avatarSize);
   }
-  &.magnified {
-    border-radius: 99px;
-    background-color: rgb(var(--canvasLighterClr));
-    box-shadow: 0 .2px .6px rgba(var(--blackClr), .3);
+  &.thumb { 
+    width: 100%;
+    min-height: 100%;
+    border-radius: 99px; 
   }
-}
-.avatar-container .avatar .thumb { 
-  width: 100%;
-  min-height: 100%;
-  border-radius: 99px; 
 }
 
 .card .avatar { background-color: rgba(var(--blackClr), .1); color: rgba(var(--blackClr), .3); }
@@ -1615,9 +1611,9 @@ progress {
 .mock-cover {
   background-color: rgb(var(--bookClr));
   background-size: cover;
-  &.xs { width: 14px; height: 20px; border-radius: 1px; }
+  &.xs { width: 14.4px; height: 20px; border-radius: 1px; }
   &.prepend-input { margin-top: 16px; width: 30px; height: 48px; border-radius: 2px; }
-  & .thumb { width: 100%; }
+  & img { width: 100%; }
 }
 
 /* GENRES */
@@ -1796,6 +1792,7 @@ progress {
 .text-sm { font-size: 80%; }
 .text-xs { font-size: 70%; }
 .text-xxs { font-size: 60%; }
+.text-regular { font-weight: 200; }
 .overflow-hidden { overflow: hidden; }
 .absolute-content {
   position: absolute;

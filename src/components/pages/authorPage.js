@@ -2,19 +2,20 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
+import SnackbarContext from '../../context/snackbarContext';
+import UserContext from '../../context/userContext';
 import '../../css/authorPage.css';
 import Cover from '../cover';
 import MinifiableText from '../minifiableText';
 import NoMatch from '../noMatch';
 import RandomQuote from '../randomQuote';
 import Bubbles from './bubbles';
-import UserContext from '../../context/userContext';
-import SnackbarContext from '../../context/snackbarContext';
 
 const unsub = {
   authorFollowersFetch : null
@@ -152,8 +153,12 @@ const AuthorPage = props => {
       <div className="card dark author">
         <div className="row text-center-md">
           <div className="col-md-auto col-sm-12">
-            <Avatar className="avatar centered" src={author.photoURL} alt={author.displayName}>
-              {!author.photoURL && getInitials(author.displayName)}
+            <Avatar className="avatar centered">
+              {author.photoURL ? (
+                <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                  <img alt={author.displayName} src={author.photoURL} className="avatar thumb" />
+                </Zoom>
+              ) : getInitials(author.displayName)}
             </Avatar>
           </div>
           <div className="col">

@@ -5,11 +5,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
 import { CSVLink } from 'react-csv';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { app, handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
+import { app, handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -197,13 +197,9 @@ export default class BooksDash extends Component {
         <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs overflow-hidden" style={{ position: 'relative', backgroundImage: `url(${item.covers[0]})`, }}>
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: item.covers[0], className: 'thumb hidden' }}
-                  zoomImage={{ className: 'magnified' }}
-                />
-              </div>
+              <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                <img alt="cover" src={item.covers[0]} className="mock-cover xs" />
+              </Zoom>
             </div>
             <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">
               {item.title}

@@ -6,14 +6,14 @@ import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, notesRef, userChallenges, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, capitalize, getInitials, imageZoomDefaultStyles, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
 import { arrayType, historyType, locationType, matchType, objectType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -460,11 +460,9 @@ const Dashboard = props => {
                   <div className="col-auto">
                     <Avatar className="avatar" /* src={duser.photoURL} */ alt={duser ? duser.displayName : 'Avatar'}>
                       {!loading ? duser.photoURL ? 
-                        <ImageZoom
-                          defaultStyles={imageZoomDefaultStyles}
-                          image={{ src: duser.photoURL, className: 'thumb' }}
-                          zoomImage={{ className: 'magnified avatar' }}
-                        />
+                        <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                          <img alt="avatar" src={duser.photoURL} className="avatar thumb" />
+                        </Zoom>
                       : getInitials(duser.displayName) : ''}
                     </Avatar>
                   </div>

@@ -6,11 +6,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { CSVLink } from 'react-csv';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { app, getInitials, handleFirestoreError, imageZoomDefaultStyles, normalizeString, normURL, timeSince } from '../../../config/shared';
+import { app, getInitials, handleFirestoreError, normalizeString, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
@@ -187,13 +187,11 @@ const AuthorsDash = props => {
       <li key={item.displayName} className={`avatar-row ${item.edit ? '' : 'locked'}`}>
         <div className="row">
           <div className="col-auto hide-xs avatar-container">
-            <Avatar className="avatar" alt={item.displayName}>
+            <Avatar className="avatar">
               {item.photoURL ? 
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: item.photoURL, className: 'thumb' }}
-                  zoomImage={{ className: 'magnified avatar' }}
-                />
+                <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                  <img alt={item.displayName} src={item.photoURL} className="avatar thumb" />
+                </Zoom>
               : getInitials(item.displayName)}
             </Avatar>
           </div>
