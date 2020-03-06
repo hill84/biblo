@@ -9,11 +9,12 @@ import Rating from './rating';
 import '../css/cover.css';
 
 const Cover = props => {
-  const { animationDelay, bcid, book, full, index, info, loading, page, rating, showReaders } = props;
+  const { animationDelay, bcid, book, full, index, info, loading, page, rating, showMedal, showReaders } = props;
   const cover = useMemo(() => book?.covers?.[0] || '', [book]);
   const delay = useMemo(() => page && page > 1 ? 0 : index / 20, [index, page]);
   const hasBookmark = useMemo(() => book?.readingState?.state_num === 2, [book]);
-  const hasBcid = useMemo(() => bcid && bcid > 0 && bcid < 999, [bcid]);
+  const hasAward = useMemo(() => book?.awards?.length > 0, [book]);
+  const hasBcid = useMemo(() => bcid > 0 && bcid < 999, [bcid]);
   const joinedAuthors = useMemo(() => book && joinObj(book.authors), [book]);
   const readers_num = useMemo(() => book && abbrNum(book.readers_num), [book]);
 
@@ -29,7 +30,8 @@ const Cover = props => {
               animationDelay: (animationDelay !== false) ? `${delay}s` : '',
               backgroundImage: inView ? cover ? `url(${cover})` : null : null, 
             }}>
-            {hasBcid ? <div className="bookmark accent"><div>{bcid}</div></div> : ''}
+            {hasAward && showMedal && <div className="medal accent">{icon.medal}</div>}
+            {hasBcid && <div className="bookmark accent"><div>{bcid}</div></div>}
             {hasBookmark && <div className="bookmark" />}
             {book?.review?.text && <div className="cover-review">Recensione</div>}
             {showReaders && book?.readers_num ? <div className="readers-num">{readers_num} {icon.account}</div> : ''}
@@ -73,6 +75,7 @@ Cover.propTypes = {
   info: boolType,
   page: numberType,
   rating: boolType,
+  showMedal: boolType,
   showReaders: boolType
 }
 
@@ -91,6 +94,7 @@ Cover.defaultProps = {
   loading: false,
   page: null,
   rating: null,
+  showMedal: true,
   showReaders: false
 }
  

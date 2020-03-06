@@ -190,7 +190,7 @@ const Comment = props => {
                 </div>
                 <div className="col counter text-right date">
                   <span className="hide-xs" title={`modificata ${timeSince(comment.lastEdit_num)}`}>
-                    {comment.created_num !== comment.lastEdit_num && '(modificata)'}
+                    {comment.lastEdit_num && (comment.created_num !== comment.lastEdit_num) && '(modificata)'}
                   </span> {timeSince(comment.created_num)}
                 </div>
               </div>

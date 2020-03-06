@@ -4,6 +4,15 @@ export const profileKeys = ['displayName', 'birth_date', 'continent', 'city', 'l
 export const noteTypes = ['comment', 'follow', 'like', 'recommendation', 'welcome', 'test'];
 export const userBookTypes = ['Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consultazione'];
 export const readingStates = ['Non iniziato', 'In lettura', 'Finito', 'Abbandonato', 'Da consultazione'];
+export const awards = [
+  { id: 'and', name: 'Premio Andersen' },
+  { id: 'ban', name: 'Premio Bancarella' },
+  { id: 'cal', name: 'Premio Italo Calvino' },
+  { id: 'cam', name: 'Premio Campiello' },
+  { id: 'nob', name: 'Premio Nobel per la letteratura' },
+  { id: 'pul', name: 'Premio Pulitzer' },
+  { id: 'str', name: 'Premio Strega' }
+];
 
 export const firestoreErrorMessages = {
   // https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestoreException.Code
@@ -115,76 +124,76 @@ export const firestoreErrorMessages = {
 };
 
 export const ratingLabels = { 
-  0: "Nessun voto", 
-  '0.5': "Orrendo", 
-  1: "Pessimo", 
-  '1.5': "Scarso",
-  2: "Insufficiente", 
-  '2.5': "Mediocre",
-  3: "Sufficiente", 
-  '3.5': "Discreto", 
-  4: "Buono", 
-  '4.5': "Molto Buono",
-  5: "Ottimo" 
+  0: 'Nessun voto', 
+  '0.5': 'Orrendo', 
+  1: 'Pessimo', 
+  '1.5': 'Scarso',
+  2: 'Insufficiente', 
+  '2.5': 'Mediocre',
+  3: 'Sufficiente', 
+  '3.5': 'Discreto', 
+  4: 'Buono', 
+  '4.5': 'Molto Buono',
+  5: 'Ottimo' 
 };
 
 export const formats = [
-  { id: "0", name: "Libro" },
-  { id: "1", name: "Rivista" },
-  { id: "3", name: "Ebook" },
-  { id: "4", name: "Audiolibro" }
+  { id: '0', name: 'Libro' },
+  { id: '1', name: 'Rivista' },
+  { id: '3', name: 'Ebook' },
+  { id: '4', name: 'Audiolibro' }
 ];
 
 export const genres = [
-  { id: "ac", color: '#62A7B5', name: "Architettura", canonical: "Architecture" },
-  { id: "ar", color: '#539E91', name: "Arte", canonical: "Fine Art" },
-  { id: "av", color: '#74C493', name: "Avventura", canonical: "Adventure" },
-  { id: "bi", color: '#c5e1a5', name: "Biografie e autobiografie", canonical: "Biography &amp; Memoir" },
-  { id: "cu", color: '#e6ee9c', name: "Cucina", canonical: "Cooking &amp; Cookbooks" },
-  { id: "ef", color: '#52b586', name: "Economia e finanza", canonical: "Economics" }, 
-  { id: "er", color: '#E279A3', name: "Erotico", canonical: "Erotica" },
-  { id: "fa", color: '#F19670', name: "Famiglia e relazioni", canonical: "Family &amp; Relationships" },
-  { id: "sf", color: '#7986cb', name: "Fantascienza", canonical: "Science Fiction" },
-  { id: "fy", color: '#bb7ed6', name: "Fantasy", canonical: "Fantasy" },
-  { id: "fi", color: '#de7070', name: "Filosofia", canonical: "Philosophy" },
-  { id: "fu", color: '#E09A6A', name: "Fumetti e Graphic novel", canonical: "Graphic Novels" },
-  { id: "gl", color: '#FFCA28', name: "Giallo", canonical: "Mistery" },
-  { id: "ho", color: '#d45858', name: "Horror", canonical: "Horror" },
-  { id: "in", color: '#C3C7CA', name: "Informatica", canonical: "Computer Science" },
-  { id: "ju", color: '#4db6ac', name: "Per ragazzi", canonical: "Children's Fiction" },
-  { id: "ms", color: '#5c8e8b', name: "Medicina e salute", canonical: "Medical Sciences" },
-  { id: "mi", color: '#546E7A', name: "Mistero", canonical: "Mystery" },
-  { id: "mu", color: '#7C9FB0', name: "Musica", canonical: "Music" },
-  { id: "na", color: '#5698C4', name: "Narrativa", canonical: "Fiction &amp; Literature" },
-  { id: "po", color: '#74B8BF', name: "Poesia", canonical: "Poetry" },
-  { id: "pl", color: '#9ABF88', name: "Politica", canonical: "Political Science" },
-  { id: "ps", color: '#7DCEAB', name: "Psicologia", canonical: "Psychology" },
-  { id: "re", color: '#ffe082', name: "Religione e spiritualità" },
-  { id: "ro", color: '#ef9a9a', name: "Rosa", canonical: "Romance" },
-  { id: "sa", color: '#93B0D0', name: "Saggistica", canonical: "Essays" },
-  { id: "sc", color: '#51b9de', name: "Scienza", canonical: "Science" },
-  { id: "sp", color: '#e4002b', name: "Sport", canonical: "Sports" },
-  { id: "ss", color: '#d7A96D', name: "Scienze sociali", canonical: "Social Sciences" },
-  { id: "st", color: '#b98054', name: "Storico", canonical: "History" },
-  { id: "te", color: '#8d6e63', name: "Teatro", canonical: "Drama" },
-  { id: "th", color: '#bba466', name: "Thriller", canonical: "Thrillers &amp; Suspense" },
-  { id: "um", color: '#9ec16c', name: "Satira e umorismo", canonical: "Satire &amp; Humor" },
-  { id: "vi", color: '#32ccc3', name: "Viaggi", canonical: "Travel" }
+  { id: 'ac', color: '#62A7B5', name: "Architettura", canonical: "Architecture" },
+  { id: 'ar', color: '#539E91', name: "Arte", canonical: "Fine Art" },
+  { id: 'av', color: '#74C493', name: "Avventura", canonical: "Adventure" },
+  { id: 'bi', color: '#c5e1a5', name: "Biografie e autobiografie", canonical: "Biography &amp; Memoir" },
+  { id: 'cu', color: '#e6ee9c', name: "Cucina", canonical: "Cooking &amp; Cookbooks" },
+  { id: 'ef', color: '#52b586', name: "Economia e finanza", canonical: "Economics" }, 
+  { id: 'er', color: '#E279A3', name: "Erotico", canonical: "Erotica" },
+  { id: 'fa', color: '#F19670', name: "Famiglia e relazioni", canonical: "Family &amp; Relationships" },
+  { id: 'sf', color: '#7986cb', name: "Fantascienza", canonical: "Science Fiction" },
+  { id: 'fy', color: '#bb7ed6', name: "Fantasy", canonical: "Fantasy" },
+  { id: 'fi', color: '#de7070', name: "Filosofia", canonical: "Philosophy" },
+  { id: 'fu', color: '#E09A6A', name: "Fumetti e Graphic novel", canonical: "Graphic Novels" },
+  { id: 'gl', color: '#FFCA28', name: "Giallo", canonical: "Mistery" },
+  { id: 'ho', color: '#d45858', name: "Horror", canonical: "Horror" },
+  { id: 'in', color: '#C3C7CA', name: "Informatica", canonical: "Computer Science" },
+  { id: 'ju', color: '#4db6ac', name: "Per ragazzi", canonical: "Children's Fiction" },
+  { id: 'ms', color: '#5c8e8b', name: "Medicina e salute", canonical: "Medical Sciences" },
+  { id: 'mi', color: '#546E7A', name: "Mistero", canonical: "Mystery" },
+  { id: 'mu', color: '#7C9FB0', name: "Musica", canonical: "Music" },
+  { id: 'na', color: '#5698C4', name: "Narrativa", canonical: "Fiction &amp; Literature" },
+  { id: 'po', color: '#74B8BF', name: "Poesia", canonical: "Poetry" },
+  { id: 'pl', color: '#9ABF88', name: "Politica", canonical: "Political Science" },
+  { id: 'ps', color: '#7DCEAB', name: "Psicologia", canonical: "Psychology" },
+  { id: 're', color: '#ffe082', name: "Religione e spiritualità" },
+  { id: 'ro', color: '#ef9a9a', name: "Rosa", canonical: "Romance" },
+  { id: 'sa', color: '#93B0D0', name: "Saggistica", canonical: "Essays" },
+  { id: 'sc', color: '#51b9de', name: "Scienza", canonical: "Science" },
+  { id: 'sp', color: '#e4002b', name: "Sport", canonical: "Sports" },
+  { id: 'ss', color: '#d7A96D', name: "Scienze sociali", canonical: "Social Sciences" },
+  { id: 'st', color: '#b98054', name: "Storico", canonical: "History" },
+  { id: 'te', color: '#8d6e63', name: "Teatro", canonical: "Drama" },
+  { id: 'th', color: '#bba466', name: "Thriller", canonical: "Thrillers &amp; Suspense" },
+  { id: 'um', color: '#9ec16c', name: "Satira e umorismo", canonical: "Satire &amp; Humor" },
+  { id: 'vi', color: '#32ccc3', name: "Viaggi", canonical: "Travel" }
 ];
 
 export const languages = [
-  { id: "ar", name: "Arabo", nativeName: "العربية" },
-  { id: "zh", name: "Cinese", nativeName: "中文 (Zhōngwén)" },
-  { id: "ko", name: "Coreano", nativeName: "한국어 (韓國語)" },
-  { id: "fr", name: "Francese", nativeName: "Français" },
-  { id: "ja", name: "Giapponese", nativeName: "日本語 (にほんご)" },
-  { id: "el", name: "Greco", nativeName: "ελληνικά" },
-  { id: "en", name: "Inglese", nativeName: "English" },
-  { id: "it", name: "Italiano", nativeName: "Italiano" },
-  { id: "pt", name: "Portoghese", nativeName: "Português" },
-  { id: "ru", name: "Russo", nativeName: "русский язык" },
-  { id: "es", name: "Spagnolo", nativeName: "Español" },
-  { id: "de", name: "Tedesco", nativeName: "Deutsch" } 
+  { id: 'ar', name: 'Arabo', nativeName: "العربية" },
+  { id: 'zh', name: 'Cinese', nativeName: "中文 (Zhōngwén)" },
+  { id: 'ko', name: 'Coreano', nativeName: "한국어 (韓國語)" },
+  { id: 'fr', name: 'Francese', nativeName: "Français" },
+  { id: 'ja', name: 'Giapponese', nativeName: "日本語 (にほんご)" },
+  { id: 'el', name: 'Greco', nativeName: "ελληνικά" },
+  { id: 'en', name: 'Inglese', nativeName: "English" },
+  { id: 'it', name: 'Italiano', nativeName: "Italiano" },
+  { id: 'pt', name: 'Portoghese', nativeName: "Português" },
+  { id: 'ru', name: 'Russo', nativeName: "русский язык" },
+  { id: 'es', name: 'Spagnolo', nativeName: "Español" },
+  { id: 'de', name: 'Tedesco', nativeName: "Deutsch" } 
 ];
 
 export const months = [

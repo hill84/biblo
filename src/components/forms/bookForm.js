@@ -22,7 +22,7 @@ import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
 import firebase, { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { formats, genres, languages } from '../../config/lists';
+import { formats, genres, languages, awards } from '../../config/lists';
 import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, urlRegex, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
@@ -44,6 +44,7 @@ const max = {
   },
   items: {
     authors: 5,
+    awards: 5,
     collections: 5,
     genres: 3,
     languages: 4
@@ -77,6 +78,7 @@ const BookForm = props => {
       lastEdit_num: _book.lastEdit || 0
     },
     authors: _book.authors || {}, 
+    awards: _book.awards || [],
     bid: _book.bid || '', 
     collections: _book.collections || [],
     covers: _book.covers || [], 
@@ -312,6 +314,10 @@ const BookForm = props => {
       errors.languages = `Massimo ${max.items.languages} lingue`;
     }
 
+    if (book.awards?.length > max.items.awards) {
+      errors.awards = `Massimo ${max.items.awards} premi`;
+    }
+
     if (book.genres?.length > max.items.genres) {
       errors.genres = `Massimo ${max.items.genres} generi`;
     }
@@ -467,6 +473,7 @@ const BookForm = props => {
             ISBN_10: String(book.ISBN_10),
             ISBN_13: book.ISBN_13, 
             authors: book.authors, 
+            awards: book.awards,
             bid: newBid,
             collections: book.collections,
             covers: (imgPreview && Array(imgPreview)) || book.covers, 
@@ -563,10 +570,10 @@ const BookForm = props => {
   
   const menuItemsMap = (arr, values) => arr.map(item => 
     <MenuItem 
-    value={item.name} 
-    key={item.id} 
-    // insetChildren={Boolean(values)} 
-    checked={values ? values.includes(item.name) : false}>
+      value={item.name} 
+      key={item.id} 
+      // insetChildren={Boolean(values)} 
+      checked={values ? values.includes(item.name) : false}>
       {item.name}
     </MenuItem>
   );
@@ -748,7 +755,7 @@ const BookForm = props => {
                 </div>
               </div>
               <div className="row">
-                <div className="form-group col-sm-6">
+                <div className="form-group col-sm-8">
                   <FormControl className="select-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.languages)} htmlFor="languages">Lingua</InputLabel>
                     <Select
@@ -762,7 +769,7 @@ const BookForm = props => {
                     {errors.languages && <FormHelperText className="message error">{errors.languages}</FormHelperText>}
                   </FormControl>
                 </div>
-                <div className="form-group col-sm-6">
+                <div className="form-group col-sm-4">
                   <FormControl className="select-field" margin="normal" fullWidth>
                     <InputLabel error={Boolean(errors.format)} htmlFor="format">Formato</InputLabel>
                     <Select
@@ -824,6 +831,21 @@ const BookForm = props => {
                         onChange={onChange}
                       />
                       {errors.trailerURL && <FormHelperText className="message error">{errors.trailerURL}</FormHelperText>}
+                    </FormControl>
+                  </div>
+
+                  <div className="form-group">
+                    <FormControl className="select-field" margin="normal" fullWidth>
+                      <InputLabel error={Boolean(errors.awards)} htmlFor="awards">Premi vinti</InputLabel>
+                      <Select
+                        id="awards"
+                        error={Boolean(errors.awards)}
+                        value={book.awards}
+                        onChange={onChangeSelect("awards")}
+                        multiple>
+                        {menuItemsMap(awards, book.awards)}
+                      </Select>
+                      {errors.awards && <FormHelperText className="message error">{errors.awards}</FormHelperText>}
                     </FormControl>
                   </div>
                 </>

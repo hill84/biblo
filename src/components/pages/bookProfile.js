@@ -84,7 +84,7 @@ const BookProfile = props => {
       setIsOpenRemoveDialog(false);
       removeBookFromShelf(book.bid);
     }
-  }
+  };
 
   const onRemoveBookFromShelfRequest = () => setIsOpenRemoveDialog(true);
 
@@ -137,7 +137,7 @@ const BookProfile = props => {
   const createdBy = useMemo(() => truncateString(_createdBy, 12), [_createdBy]);
   const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
-  const hasBid = useMemo(() => book && Boolean(book.bid), [book]);
+  const hasBid = useMemo(() => Boolean(book?.bid), [book]);
   const isLocked = useMemo(() => !book?.EDIT.edit && !isAdmin, [book, isAdmin]);
 
   if (!book && !loading) return <NoMatch title="Libro non trovato" history={history} location={location} />
@@ -175,7 +175,25 @@ const BookProfile = props => {
 
         <div className="container top">
           <div className="card light main text-center-md">
-            <div className="row">
+            <div className="row relative">
+              {((book?.EDIT && isAdmin) || book?.awards) && (
+                <div className="absolute-content right bookdetails" style={{ zIndex: 1, }}>
+                  {book?.awards?.map(award => (
+                    <Tooltip title={award} key={award}>
+                      <span className="counter popIn reveal delay2 accent-text">{icon.medal}</span>
+                    </Tooltip>
+                  ))}
+                  {book?.EDIT && isAdmin && (
+                    <Tooltip interactive title={book.EDIT.lastEdit_num ? (
+                      <span>Modificato da <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(new Date(book.EDIT.lastEdit_num))}</span> 
+                    ) : (
+                      <span>Creato da <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{createdBy}</Link> {timeSince(new Date(book.EDIT.created_num))}</span>
+                    )}>
+                      <span className="counter">{icon.informationOutline}</span>
+                    </Tooltip>
+                  )}
+                </div>
+              )}
               <div className="col-md-auto col-sm-12" style={{ marginBottom: 15, }}>
                 <div
                   tabIndex={0}
@@ -183,7 +201,7 @@ const BookProfile = props => {
                   className={`text-center ${book ? setFormatClass(book.format) : 'book'}-format ${book?.incipit ? 'hoverable-items' : ''}`}
                   onClick={book?.incipit ? onToggleIncipit : null}
                   onKeyDown={book?.incipit ? onToggleIncipit : null}>
-                  <Cover book={book} rating={false} info={false} />
+                  <Cover book={book} rating={false} showMedal={false} info={false} />
                   {book?.incipit && <button type="button" className="btn xs rounded flat centered btn-incipit">Leggi incipit</button>}
                 </div>
                 
@@ -312,19 +330,6 @@ const BookProfile = props => {
                   </>
                 )}
               </div>
-
-              {book?.EDIT && (
-                <div className="edit-info">
-                  {icon.informationOutline}
-                  <div className="show-on-hover">
-                    {book.EDIT.lastEdit_num ? (
-                      <span>Modificato da <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(new Date(book.EDIT.lastEdit_num))}</span> 
-                    ) : (
-                      <span>Creato da <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{createdBy}</Link> {timeSince(new Date(book.EDIT.created_num))}</span>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
