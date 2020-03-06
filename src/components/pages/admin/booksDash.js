@@ -5,11 +5,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
 import { CSVLink } from 'react-csv';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { app, handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
+import { app, handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -20,7 +20,11 @@ const orderBy = [
   { type: 'EDIT.lastEditByUid', label: 'Modificato da'},
   { type: 'EDIT.created_num', label: 'Data creazione'}, 
   { type: 'EDIT.createdByUid', label: 'Creato da'},  
-  { type: 'title', label: 'Titolo'}
+  { type: 'title', label: 'Titolo'},
+  { type: 'rating_num', label: 'Voto'},
+  { type: 'ratings_num', label: 'Voti'},
+  { type: 'readers_num', label: 'Lettori'},
+  { type: 'reviews_num', label: 'Recensioni'}
 ];
 
 export default class BooksDash extends Component {
@@ -47,13 +51,13 @@ export default class BooksDash extends Component {
 
 	componentDidMount() { 
     this._isMounted = true;
-    if (this.props.inView) this.fetch()
+    if (this.props.inView) this.fetch();
   }
   
   componentDidUpdate(prevProps, prevState) {
     const { desc, items, limitByIndex, orderByIndex } = this.state;
     if (desc !== prevState.desc || limitByIndex !== prevState.limitByIndex || orderByIndex !== prevState.orderByIndex) {
-      if (this.props.inView) this.fetch()
+      if (this.props.inView) this.fetch();
     }
     if (this.props.inView !== prevProps.inView && !items) {
       if (this.props.inView) this.fetch();
@@ -197,13 +201,9 @@ export default class BooksDash extends Component {
         <li key={item.bid} className={`avatar-row ${item.EDIT.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs overflow-hidden" style={{ position: 'relative', backgroundImage: `url(${item.covers[0]})`, }}>
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: item.covers[0], className: 'thumb hidden' }}
-                  zoomImage={{ className: 'magnified' }}
-                />
-              </div>
+              <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                <img alt="cover" src={item.covers[0]} className="mock-cover xs" />
+              </Zoom>
             </div>
             <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">
               {item.title}
@@ -211,25 +211,35 @@ export default class BooksDash extends Component {
             <Link to={`/author/${normURL(Object.keys(item.authors)[0])}`} className="col">
               {Object.keys(item.authors)[0]}
             </Link>
+            <div className="col-lg col-md-2 hide-md">
+              <div className="row text-center monotype">
+                <div className={`col ${!item.rating_num && 'lightest-text'}`}>
+                  {Math.round(item.rating_num / item.ratings_num * 10) / 10 || 0}
+                </div>
+                <div className={`col ${!item.ratings_num && 'lightest-text'}`}>{item.ratings_num}</div>
+                <div className={`col ${!item.readers_num && 'lightest-text'}`}>{item.readers_num}</div>
+                <div className={`col ${!item.reviews_num && 'lightest-text'}`}>{item.reviews_num}</div>
+              </div>
+            </div>
             <div className="col hide-md monotype" title={item.bid}>
               <CopyToClipboard text={item.bid}/>
             </div>
             <div className="col hide-md monotype" title={item.ISBN_13}>
               <CopyToClipboard text={item.ISBN_13}/>
             </div>
-            <div className="col hide-md monotype" title={item.ISBN_10}>
+            {/* <div className="col-1 hide-md monotype" title={item.ISBN_10}>
               <CopyToClipboard text={item.ISBN_10} />
-            </div>
-            <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm">
+            </div> */}
+            <Link to={`/dashboard/${item.EDIT.createdByUid}`} title={item.EDIT.createdByUid} className="col hide-sm col-lg-1">
               {item.EDIT.createdBy}
             </Link>
-            <div className="col hide-sm col-lg-1">
+            <div className="col col-lg-1 hide-sm">
               <div className="timestamp">{new Date(item.EDIT.created_num).toLocaleDateString()}</div>
             </div>
-            <Link to={`/dashboard/${item.EDIT.lastEditByUid}`} title={item.EDIT.lastEditByUid} className="col">
+            <Link to={`/dashboard/${item.EDIT.lastEditByUid}`} title={item.EDIT.lastEditByUid} className="col col-lg-1">
               {item.EDIT.lastEditBy}
             </Link>
-            <div className="col col-sm-2 col-lg-1 text-right">
+            <div className="col col-lg-1 text-right">
               <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit} data-title={item.title}>
@@ -290,13 +300,21 @@ export default class BooksDash extends Component {
               <div className="col-auto"><div className="mock-cover xs hidden" /></div>
               <div className="col">Titolo</div>
               <div className="col">Autore</div>
+              <div className="col-lg col-md-2 hide-md">
+                <div className="row text-center">
+                  <div className="col" title="Voto">{icon.star}</div>
+                  <div className="col" title="Voti">{icon.starOutline}</div>
+                  <div className="col" title="Lettori">{icon.reader}</div>
+                  <div className="col" title="Recensioni">{icon.review}</div>
+                </div>
+              </div>
               <div className="col hide-md">Bid</div>
               <div className="col hide-md">ISBN-13</div>
-              <div className="col hide-md">ISBN-10</div>
-              <div className="col hide-sm">Creato da</div>
-              <div className="col hide-sm col-lg-1">Creato</div>
-              <div className="col">Modificato da</div>
-              <div className="col col-sm-2 col-lg-1 text-right">Modificato</div>
+              {/* <div className="col-1 hide-md">ISBN-10</div> */}
+              <div className="col col-lg-1 hide-sm">Creato da</div>
+              <div className="col col-lg-1 hide-sm">Creato</div>
+              <div className="col col-lg-1">Modificato da</div>
+              <div className="col col-lg-1 text-right">Modificato</div>
             </div>
           </li>
           {itemsList}

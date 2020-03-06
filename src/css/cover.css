@@ -29,6 +29,15 @@
   }
 }
 
+.medal {
+  color: #333;
+  user-select: none;
+  transition: all .2s ease-in-out;
+  z-index: 1;
+  &.accent { color: rgb(var(--accentClr)); }
+  & svg.svg-icon { --iconSize: 20px; margin: 0; }
+}
+
 .bookmark { 
   height: 16px;
   line-height: 16px;
@@ -133,6 +142,7 @@
     font-weight: 200; 
     will-change: opacity, transform;
   }
+  & .medal { position: absolute; top: -2px; left: 7px; }
   & .bookmark { position: absolute; top: -1px; right: 9px; }
   &:hover .bookmark { height: 10px; color: transparent; }
 }

@@ -7,11 +7,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { asyncForEach, dateOptions, getInitials, handleFirestoreError, imageZoomDefaultStyles, timeOptions } from '../../../config/shared';
+import { asyncForEach, dateOptions, getInitials, handleFirestoreError, timeOptions } from '../../../config/shared';
 import { funcType } from '../../../config/types';
 import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
@@ -22,7 +22,7 @@ const limitBy = [ 15, 25, 50, 100, 250, 500 ];
 const orderBy = [ 
   { type: 'creationTime', label: 'Data'}, 
   { type: 'displayName', label: 'Nome'}, 
-  { type: 'uid', label: 'uid'}, 
+  { type: 'uid', label: 'Uid'}, 
   { type: 'email', label: 'Email'},
   { type: 'stats.shelf_num', label: 'Libri'},
   { type: 'stats.wishlist_num', label: 'Desideri'},
@@ -257,13 +257,11 @@ const UsersDash = props => {
       <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
         <div className="row">
           <div className="col-auto avatar-container">
-            <Avatar className="avatar" /* src={item.photoURL} */ alt={item.displayName}>
+            <Avatar className="avatar">
               {item.photoURL ? 
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: item.photoURL, className: 'thumb' }}
-                  zoomImage={{ className: 'magnified avatar' }}
-                />
+                <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                  <img alt={item.displayName} src={item.photoURL} className="avatar thumb" />
+                </Zoom>
               : getInitials(item.displayName)}
             </Avatar>
           </div>
@@ -282,11 +280,13 @@ const UsersDash = props => {
             <button type="button" className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={onChangeRole} title="admin">A</button>
           </div>
           <div className="col col-sm-3 col-lg-2 hide-xs">
-            <div className="row text-center">
+            <div className="row text-center monotype">
               <div className={`col ${!item.stats.shelf_num && 'lightest-text'}`}>{item.stats.shelf_num}</div>
               <div className={`col ${!item.stats.wishlist_num && 'lightest-text'}`}>{item.stats.wishlist_num}</div>
               <div className={`col ${!item.stats.reviews_num && 'lightest-text'}`}>{item.stats.reviews_num}</div>
               <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
+              <div className={`col hide-md ${!item.termsAgreement && 'lightest-text'}`} title={item.termsAgreement && new Date(item.termsAgreement).toLocaleString()}>{icon[item.termsAgreement ? 'check' : 'close']}</div>
+              <div className={`col hide-md ${!item.privacyAgreement && 'lightest-text'}`} title={item.privacyAgreement && new Date(item.privacyAgreement).toLocaleString()}>{icon[item.privacyAgreement ? 'check' : 'close']}</div>
             </div>
           </div>
           <div className="col col-sm-2 text-right">
@@ -389,6 +389,8 @@ const UsersDash = props => {
                 <div className="col" title="Desideri">{icon.heart}</div>
                 <div className="col" title="Recensioni">{icon.review}</div>
                 <div className="col hide-md" title="Voti">{icon.star}</div>
+                <div className="col hide-md" title="Termini">{icon.clipboardCheck}</div>
+                <div className="col hide-md" title="Privacy">{icon.shieldAccount}</div>
               </div>
             </div>
             <div className="col col-sm-2 text-right">Creato</div>

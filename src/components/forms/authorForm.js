@@ -7,14 +7,14 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
-import { getInitials, handleFirestoreError, normalizeString } from '../../config/shared';
+import { handleFirestoreError, normalizeString } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
-import UserContext from '../../context/userContext';
 import SnackbarContext from '../../context/snackbarContext';
+import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 
-const avatarImgStyle = { width: '100%', height: '100%', };
 const max = { chars: {
   bio: 1000,
   displayName: 50
@@ -247,11 +247,15 @@ const AuthorForm = props => {
           </div>
 
           <div className="row">
-            <div className="col-auto">
-              <Avatar className="image avatar prepend-input" alt="Avatar">
-                {data.photoURL ? <img src={data.photoURL} alt="avatar" style={avatarImgStyle} /> : getInitials(data.displayName)}
-              </Avatar>
-            </div>
+            {data.photoURL && (
+              <div className="col-auto">
+                <Avatar className="image avatar prepend-input">
+                  <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                    <img alt="avatar" src={data.photoURL} className="avatar thumb" />
+                  </Zoom>
+                </Avatar>
+              </div>
+            )}
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>

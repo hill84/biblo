@@ -95,10 +95,7 @@ const Book = props => {
       unsub.bookFetch = bookRef(bid).onSnapshot(snap => {
         if (snap.exists) {
           if (is.current) {
-            setBook(book => ({
-              ...book,
-              ...snap.data()
-            }));
+            setBook(snap.data());
             setSeo({
               author: Object.keys(snap.data().authors),
               description: `Scopri su ${app.name} la trama e le recensioni di ${snap.data().title}, scritto da ${Object.keys(snap.data().authors)[0]}, pubblicato da ${snap.data().publisher}`,

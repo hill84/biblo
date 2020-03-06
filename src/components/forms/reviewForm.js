@@ -50,6 +50,8 @@ const min = {
   }
 };
 
+const formControlStyle = { zIndex: 1, };
+
 const ReviewForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
@@ -252,7 +254,7 @@ const ReviewForm = props => {
           isEditing ? (
             <form>
               <div className="form-group">
-                <FormControl className="input-field" margin="normal" fullWidth>
+                <FormControl className="input-field" margin="normal" fullWidth style={formControlStyle}>
                   <InputLabel error={Boolean(errors.text)} htmlFor="text">Recensione</InputLabel>
                   <Input
                     id="text"

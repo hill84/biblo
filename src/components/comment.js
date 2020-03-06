@@ -131,8 +131,8 @@ const Comment = props => {
           </div>
           <div className="col right">
             <div className="head row">
-              <Link to={rid ? `/book/${comment.bid}/${normURL(comment.bookTitle)}` : `/dashboard/${comment.createdByUid}`} className="col author">
-                <h3 style={{ color: isReviewer ? 'rgb(var(--accentClr))' : null }}>{comment.displayName}</h3>
+              <Link to={`/dashboard/${comment.createdByUid}`} className="col author">
+                <h3>{comment.displayName} {isReviewer && <span className="text-sm text-regular light-text">(recensore)</span>}</h3>
               </Link>
               {isEditor && (
                 <div className="col-auto">
@@ -190,7 +190,7 @@ const Comment = props => {
                 </div>
                 <div className="col counter text-right date">
                   <span className="hide-xs" title={`modificata ${timeSince(comment.lastEdit_num)}`}>
-                    {comment.created_num !== comment.lastEdit_num && '(modificata)'}
+                    {comment.lastEdit_num && (comment.created_num !== comment.lastEdit_num) && '(modificata)'}
                   </span> {timeSince(comment.created_num)}
                 </div>
               </div>

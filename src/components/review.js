@@ -281,7 +281,7 @@ const Review = props => {
                 </div>
                 <div className="col counter text-right date">
                   <span className="hide-xs" title={`modificata ${timeSince(review.lastEdit_num)}`}>
-                    {review.created_num !== review.lastEdit_num && '(modificata)'}
+                    {review.lastEdit_num && (review.created_num !== review.lastEdit_num) && '(modificata)'}
                   </span> {timeSince(review.created_num)}
                 </div>
               </div>

@@ -4,11 +4,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { Component } from 'react';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { handleFirestoreError, imageZoomDefaultStyles, normURL, timeSince } from '../../../config/shared';
+import { handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -180,13 +180,9 @@ export default class QuotesDash extends Component {
         <li key={item.qid} className={`${item.edit ? '' : 'locked'}`}>
           <div className="row">
             <div className="col-auto">
-              <div className="mock-cover xs overflow-hidden" style={{ position: 'relative', backgroundImage: `url(${item.coverURL})`, }}>
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: item.coverURL, className: 'thumb hidden' }}
-                  zoomImage={{ className: 'magnified' }}
-                />
-              </div>
+              <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                <img alt="cover" src={item.coverURL} className="mock-cover xs" />
+              </Zoom>
             </div>
             {item.bid ? <Link to={`/book/${item.bid}/${normURL(item.title)}`} className="col">{item.bookTitle}</Link> : <div className="col">{item.bookTitle}</div>}
             <Link to={`/author/${normURL(item.author)}`} className="col">{item.author}</Link>

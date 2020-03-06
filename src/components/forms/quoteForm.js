@@ -4,9 +4,9 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import ImageZoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
+
 import { quoteRef, quotesRef } from '../../config/firebase';
-import { imageZoomDefaultStyles } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -153,8 +153,8 @@ const QuoteForm = props => {
         }).catch(error => console.warn(error));
       } else if (is.current) setLoading(false);
     } else onToggle();
-	};
-
+  };
+  
   return (
     <>
       <Overlay onClick={onToggle} />
@@ -236,15 +236,13 @@ const QuoteForm = props => {
             </div>
           </div>
           <div className="row">
-            <div className="col-auto">
-              <div className="mock-cover xs overflow-hidden prepend-input" style={{ position: 'relative', backgroundImage: `url(${data.coverURL})`, }}>
-                <ImageZoom
-                  defaultStyles={imageZoomDefaultStyles}
-                  image={{ src: data.coverURL, className: 'thumb hidden' }}
-                  zoomImage={{ className: 'magnified' }}
-                />
+            {data.coverURL && (
+              <div className="col-auto">
+                <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                  <img alt="cover" src={data.coverURL} className="mock-cover xs prepend-input" />
+                </Zoom>
               </div>
-            </div>
+            )}
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.coverURL)} htmlFor="coverURL">URL Copertina</InputLabel>
