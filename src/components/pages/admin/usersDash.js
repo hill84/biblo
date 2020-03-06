@@ -22,7 +22,7 @@ const limitBy = [ 15, 25, 50, 100, 250, 500 ];
 const orderBy = [ 
   { type: 'creationTime', label: 'Data'}, 
   { type: 'displayName', label: 'Nome'}, 
-  { type: 'uid', label: 'uid'}, 
+  { type: 'uid', label: 'Uid'}, 
   { type: 'email', label: 'Email'},
   { type: 'stats.shelf_num', label: 'Libri'},
   { type: 'stats.wishlist_num', label: 'Desideri'},
@@ -280,11 +280,13 @@ const UsersDash = props => {
             <button type="button" className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={onChangeRole} title="admin">A</button>
           </div>
           <div className="col col-sm-3 col-lg-2 hide-xs">
-            <div className="row text-center">
+            <div className="row text-center monotype">
               <div className={`col ${!item.stats.shelf_num && 'lightest-text'}`}>{item.stats.shelf_num}</div>
               <div className={`col ${!item.stats.wishlist_num && 'lightest-text'}`}>{item.stats.wishlist_num}</div>
               <div className={`col ${!item.stats.reviews_num && 'lightest-text'}`}>{item.stats.reviews_num}</div>
               <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
+              <div className={`col hide-md ${!item.termsAgreement && 'lightest-text'}`} title={item.termsAgreement && new Date(item.termsAgreement).toLocaleString()}>{icon[item.termsAgreement ? 'check' : 'close']}</div>
+              <div className={`col hide-md ${!item.privacyAgreement && 'lightest-text'}`} title={item.privacyAgreement && new Date(item.privacyAgreement).toLocaleString()}>{icon[item.privacyAgreement ? 'check' : 'close']}</div>
             </div>
           </div>
           <div className="col col-sm-2 text-right">
@@ -387,6 +389,8 @@ const UsersDash = props => {
                 <div className="col" title="Desideri">{icon.heart}</div>
                 <div className="col" title="Recensioni">{icon.review}</div>
                 <div className="col hide-md" title="Voti">{icon.star}</div>
+                <div className="col hide-md" title="Termini">{icon.clipboardCheck}</div>
+                <div className="col hide-md" title="Privacy">{icon.shieldAccount}</div>
               </div>
             </div>
             <div className="col col-sm-2 text-right">Creato</div>
