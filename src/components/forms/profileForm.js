@@ -11,7 +11,7 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
 import React, { useContext, useRef, useMemo, useState, useEffect } from 'react';
-import firebase, { storageRef, userRef } from '../../config/firebase';
+import { storageRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { app, calcAge, getInitials, validateImg } from '../../config/shared';
@@ -94,8 +94,8 @@ const ProfileForm = props => {
           setImgLoading(true);
           setErrors({ ...errors, upload: null });
         }
-        const uploadTask = storageRef(`users/${uid}`, 'avatar').put(file);
-        const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
+        const uploadTask = storageRef.child(`users/${uid}/avatar`).put(file);
+        const unsubUploadTask = uploadTask.on('state_changed', snap => {
           if (is.current) {
             setImgProgress((snap.bytesTransferred / snap.totalBytes) * 100);
           }

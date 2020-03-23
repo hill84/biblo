@@ -45,6 +45,7 @@ const CommentForm = props => {
     displayName: '',
     likes: [],
     photoURL: '',
+    rid,
     text: ''
   }), [authid, bid, bookTitle]);
   const [comment, setComment] = useState(initialCommentState);

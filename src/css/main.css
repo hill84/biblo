@@ -358,19 +358,21 @@ ul.nolist {
     }
     &.labels { color: var(--lightTextClr); font-size: .76rem; user-select: none; border-bottom: 1px solid var(--lightestTextClr); }
   }
-  & .locked:after {
+  & .locked:after, & .deleted:after {
+    --size: 4px;
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
     right: -14px;
-    width: 5px;
-    height: 5px;
-    border-radius: 9px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: var(--size);
     margin: auto;
-    background-color: rgb(var(--accentClr));
     animation: fadeIn .2s ease-out;
   }
+  & .locked:after { background-color: rgb(var(--alertClr)); }
+  & .deleted:after { background-color: rgb(var(--errorClr)); }
   & .row, & li .row { border-radius: 0; transition: all .1s ease-in; }
   & .row {
     &:hover { background-color: rgba(var(--blackClr), .04); }

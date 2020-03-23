@@ -20,9 +20,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
-import firebase, { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
+import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { formats, genres, languages, awards } from '../../config/lists';
+import { awards, formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, urlRegex, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
@@ -385,8 +385,8 @@ const BookForm = props => {
           setImgLoading(true);
           setErrors(errors => ({ ...errors, upload: null }));
         }
-        const uploadTask = storageRef(`books/${_book.bid || book.bid}`, 'cover').put(file);
-        const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
+        const uploadTask = storageRef.child(`books/${_book.bid || book.bid}/cover`).put(file);
+        const unsubUploadTask = uploadTask.on('state_changed', snap => {
           if (is.current) { 
             setImgProgress(snap.bytesTransferred / snap.totalBytes * 100);
           }

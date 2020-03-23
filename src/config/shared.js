@@ -90,11 +90,9 @@ export const validateImg = (file, maxMB = 1) => {
 
   if (file) {
     const maxBytes = maxMB * 1048576;
-    const fileExtension = file.name.split('.').pop();
-    const ext = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'];
-    if (ext.indexOf(fileExtension.toLowerCase()) === -1) {
-      // console.warn(`Image file extension not supperted: ${fileExtension}`);
-      error = `Tipo file non valido: ${fileExtension}`;
+    if (!file.type.match('image.*')) {
+      // console.warn(`File type not valid: ${file.type}`);
+      error = `Tipo file non valido: ${file.type}`;
     } else if (file.size > maxBytes) {
       // console.warn('File size too big');
       error = `File troppo pesante. Max ${maxMB}MB.`;

@@ -103,6 +103,10 @@ const ReviewForm = props => {
     fetchReview();
   }, [fetchReview]);
 
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
   const onEditing = () => {
     if (is.current) setIsEditing(true);
   };
@@ -287,6 +291,9 @@ const ReviewForm = props => {
                       style={EmojiPickerStyle}
                       onSelect={addEmoji}
                       i18n={emojiMartLocale}
+                      showPreview={false}
+                      showSkinTones={false}
+                      theme="light"
                     />
                   )}
                   {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
