@@ -13,8 +13,8 @@ import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, notesRef, userChallenges, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
-import { arrayType, historyType, locationType, matchType, objectType, stringType } from '../../config/types';
+import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { historyType, locationType, matchType, objectType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
@@ -398,7 +398,7 @@ const Dashboard = props => {
   };
 
   UsersList.propTypes = {
-    users: arrayType.isRequired
+    users: objectType.isRequired
   }
 
   const EmptyRow = () => (
@@ -459,15 +459,21 @@ const Dashboard = props => {
                 <div className="row">
                   <div className="col-auto">
                     <Avatar className="avatar" /* src={duser.photoURL} */ alt={duser ? duser.displayName : 'Avatar'}>
-                      {!loading ? duser.photoURL ? 
+                      {!loading ? duser.photoURL ? (
                         <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
                           <img alt="avatar" src={duser.photoURL} className="avatar thumb" />
                         </Zoom>
-                      : getInitials(duser.displayName) : ''}
+                      ) : getInitials(duser.displayName) : ''}
                     </Avatar>
                   </div>
                   <div className="col">
-                    <h2 className="username">{loading ? <span className="skltn area" /> : duser.displayName}</h2>
+                    <h2 className="username">
+                      {loading ? <span className="skltn area" /> : (
+                        <span>{duser.displayName} {duser?.roles.author && (
+                          <Tooltip title={<span>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></span>} className="check-decagram primary-text" interactive>{icon.checkDecagram}</Tooltip>
+                        )}</span>
+                      )} 
+                    </h2>
                     {!loading ? (
                       <>
                         <div className="info-row hide-xs">
@@ -519,11 +525,15 @@ const Dashboard = props => {
                 <div className="progress-container">
                   <div className="progress-base" />
                   <CircularProgress variant="static" value={progress < 100 ? progress : !challengeCompleted ? challengeProgress : 0} size={60} max={100} thickness={3} />
-                  <div className="progress-value">{progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader}</div>
+                  <div className="progress-value">
+                    {progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader}
+                  </div>
                 </div>
                 <div className="info-row">
                   <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Nessuna sfida'}</div>
-                  <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded">{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
+                  <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded">
+                    {progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}
+                  </Link>
                 </div>
               </div>
             </div>
