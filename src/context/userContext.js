@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { auth, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import { uidKey } from '../config/storage';
+import { elementType } from '../config/types';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const UserContext = createContext({ error: null, user: null });
@@ -70,5 +70,5 @@ export const UserProvider = props => {
 }
 
 UserProvider.propTypes = {
-  children: PropTypes.element.isRequired
+  children: elementType.isRequired
 }

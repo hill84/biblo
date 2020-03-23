@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
-import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { genres } from '../config/lists';
 import { normURL } from '../config/shared';
+import { boolType, stringType } from '../config/types';
 
 const Genres = forwardRef((props, ref) => (
   <div className={`genres badges ${props.scrollable ? 'scrollable' : 'fullview'} ${props.className}`} ref={ref}>
@@ -13,8 +13,8 @@ const Genres = forwardRef((props, ref) => (
 ));
 
 Genres.propTypes = {
-  className: PropTypes.string,
-  scrollable: PropTypes.bool
+  className: stringType,
+  scrollable: boolType
 }
 
 Genres.defaultProps = {

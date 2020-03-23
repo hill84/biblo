@@ -1,6 +1,5 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
-import PropTypes from 'prop-types';
 import React, { lazy, Suspense, useContext } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -20,7 +19,7 @@ import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import { app } from './config/shared';
 import { defaultTheme } from './config/themes';
-import { locationType } from './config/types';
+import { boolType, funcType, locationType, objectType, oneOfType, stringType } from './config/types';
 import SnackbarContext, { SnackbarProvider } from './context/snackbarContext';
 import UserContext, { UserProvider } from './context/userContext';
 
@@ -119,9 +118,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 };
 
 PrivateRoute.propTypes = {
-  component: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object
+  component: oneOfType([
+    funcType,
+    objectType
   ]).isRequired,
   location: locationType
 };
@@ -145,14 +144,14 @@ const RouteWithProps = ({ path, exact, strict, component: Component, location, .
 };
 
 RouteWithProps.propTypes = {
-  component: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object
+  component: oneOfType([
+    funcType,
+    objectType
   ]).isRequired,
-  exact: PropTypes.bool,
+  exact: boolType,
   location: locationType,
-  path: PropTypes.string.isRequired,
-  strict: PropTypes.bool
+  path: stringType.isRequired,
+  strict: boolType
 };
 
 RouteWithProps.defaultProps = {
