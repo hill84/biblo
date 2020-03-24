@@ -46,26 +46,33 @@ db.settings({/* my settings... */});
 const { FieldValue } = firebase.firestore;
 const timestamp = FieldValue.serverTimestamp(); // const timestamp = firebase.ServerValue;
 
+// Admin
+const adminRef = db.collection('admin');
+const adminDeletedRef = collection => adminRef.doc('deleted').collection(collection);
+const adminDeletedUserRef = uid => adminDeletedRef('users').doc(uid);
+
 // Users
 const usersRef = db.collection('users');
 const userRef = uid => usersRef.doc(uid);
 const userChallenges = uid => userRef(uid).collection('challenges');
 const userChallenge = (uid, cid) => userChallenges(uid).doc(cid);
 
+// Followers
+const followersRef = uid => db.collection('followers').doc(uid);
+const followersGroupRef = db.collectionGroup('followers');
+
+// Followings
+const followingsRef = uid => db.collection('followings').doc(uid);
+
 // Shelves
 const userShelfRef = uid => db.collection('shelves').doc(uid);
 const userBooksRef = uid => userShelfRef(uid).collection('books');
 const userBookRef = (uid, bid) => userBooksRef(uid).doc(bid);
 
-// Followers
-const followersRef = uid => db.collection('followers').doc(uid);
-
-// Followings
-const followingsRef = uid => db.collection('followings').doc(uid);
-
 // Books
 const booksRef = db.collection('books');
 const bookRef = bid => booksRef.doc(bid);
+const booksGroupRef = db.collectionGroup('books');
 
 // Collections
 const collectionsRef = db.collection('collections');
@@ -79,9 +86,10 @@ const reviewsRef = db.collection('reviews');
 const reviewRef = bid => reviewsRef.doc(bid);
 const reviewersRef = bid => reviewRef(bid).collection('reviewers');
 const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
+const reviewersGroupRef = db.collectionGroup('reviewers');
 const reviewerCommentersRef = (bid, uid) => reviewerRef(bid, uid).collection('commenters');
 const reviewerCommenterRef = (bid, uid, cid) => reviewerRef(bid, uid).collection('commenters').doc(cid);
-const reviewersGroupRef = db.collectionGroup('reviewers');
+const commentersGroupRef = db.collectionGroup('commenters');
 
 // Authors
 const authorsRef = db.collection('authors');
@@ -116,8 +124,7 @@ const userRecommendationsRef = uid => db.collection('recommendations').doc(uid);
 const countRef = cid => db.collection('counters').doc(cid);
 
 /* STORAGE */
-const storage = firebase.storage();
-const storageRef = (folder, file) => storage.ref(`${folder}/${file}`);
+const storageRef = firebase.storage().ref();
 
 /* EXPORT */
 export {
@@ -128,6 +135,7 @@ export {
 	signOut,
 	FieldValue,
 	timestamp,
+	adminDeletedUserRef,
 	usersRef,
 	userRef,
 	userChallenges,
@@ -135,8 +143,7 @@ export {
 	userShelfRef,
 	userBooksRef,
 	userBookRef,
-	followersRef,
-	followingsRef,
+	booksGroupRef,
 	booksRef,
 	bookRef,
 	collectionsRef,
@@ -144,6 +151,10 @@ export {
 	collectionBooksRef,
 	collectionFollowersRef,
 	collectionBookRef,
+	commentersGroupRef,
+	followersRef,
+	followingsRef,
+	followersGroupRef,
 	reviewsRef,
 	reviewRef,
 	reviewersRef,

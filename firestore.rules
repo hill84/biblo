@@ -73,17 +73,26 @@ service cloud.firestore {
     match /reviews/{bid} {
     	allow read;
       allow write: if isEditor();
+    }
 
-      match /reviewers/{uid}/commenters/{cid} {
-        allow read;
-        allow update: if isEditor();
-        allow create, delete: if isEditor() && (isAdmin() || isOwner(cid));
-      }
+    match /{path=**}/books {
+      allow read;
     }
 
     match /{path=**}/reviewers/{uid} {
       allow read;
-      allow write: if isEditor();
+      allow update: if isEditor();
+      allow create, delete: if isEditor() && (isAdmin() || isOwner(cid));
+    }
+
+    match /{path=**}/commenters/{uid} {
+      allow read;
+      allow update: if isEditor();
+      allow create, delete: if isEditor() && (isAdmin() || isOwner(cid));
+    }
+
+    match /{path=**}/followers/{uid} {
+      allow read;
     }
     
     match /authors/{aid} {

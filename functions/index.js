@@ -60,34 +60,40 @@ exports.decrementReviewsComments = ff.document('reviews/{bid}/reviewers/{uid}/co
   doc: context.params.uid, change: -1, collection: `reviews/${context.params.bid}/reviewers`, field: 'comments_num' 
 }));
 
-/* exports.feedReviews = ff.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
-  const { bid } = context.params;
-  const feedRef = admin.firestore().collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
-  const item = change.after.data();
+// ADMIN
+exports.incrementDeletedUsers = ff.document('admin/deleted/users/{uid}').onCreate(() => count({ doc: 'deleted-users', change: 1 }));
 
-  if (change.after.exists && !change.before.exists) return feedRef.set(item); // add review to feed
-  if (!change.after.exists && change.before.exists) return feedRef.delete(); // remove review from feed
-  return feedRef.update(item);
+exports.decrementDeletedUsers = ff.document('admin/deleted/users/{uid}').onDelete(() => count({ doc: 'deleted-users', change: -1 }));
+
+exports.flagReview = ff.document('reviews/{bid}/reviewers/{uid}').onUpdate((change, context) => {
+  if (change.before.exists && change.after.exists) {
+    const { bid, uid } = context.params;
+    const { flag } = change.after.data();
+    const ref = admin.firestore().doc(`admin/flagged/reviews/${bid}/reviewers/${uid}`);
+
+    if (flag) {
+      const data = { bid, uid, ...flag };
+      return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-reviews', change: 1 }));
+    } 
+    return ref.delete().then(() => count({ doc: 'flagged-reviews', change: -1 }));
+  }
+  return false;
 });
 
-exports.truncateFeedReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => {
-  const latestReviewsRef = admin.firestore().collection('feeds').doc('latestReviews');
-  const reviewsRef = latestReviewsRef.collection('reviews');
-    
-  return reviewsRef.orderBy('created_num', 'desc').get().then(snap => {
-    const oldReviews = [];
-    let count = snap.size;
+exports.flagComment = ff.document('reviews/{bid}/reviewers/{uid}/commenters/{cid}').onUpdate((change, context) => {
+  if (change.before.exists && change.after.exists) {
+    const { bid, cid, uid } = context.params;
+    const { flag } = change.after.data();
+    const ref = admin.firestore().doc(`admin/flagged/reviews/${bid}/reviewers/${uid}/commenters/${cid}`);
 
-    snap.forEach(doc => oldReviews.push(doc.data()));
-    if (oldReviews.length > 12) {
-      reviewsRef.doc(oldReviews[oldReviews.length - 1].bid).delete();
-      count = count - 1;
+    if (flag) {
+      const data = { bid, cid, uid, ...flag };
+      return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-comments', change: 1 }));
     }
-    const lastActivity = oldReviews[0].created_num;
-    const data = { count, lastActivity };
-    return latestReviewsRef.update(data);
-  }).catch(err => console.log(err));
-}); */
+    return ref.delete().then(() => count({ doc: 'flagged-comments', change: -1 }));
+  }
+  return false;
+});
 
 // NOTIFICATIONS
 exports.incrementNotifications = ff.document('notifications/{nid}').onCreate(() => count({ doc: 'notifications', change: 1 }));
@@ -170,6 +176,21 @@ exports.decrementUsers = ff.document('users/{uid}').onDelete(() => count({ doc: 
 exports.clearUserAuth = ff.document('users/{uid}').onDelete((snap, context) => admin.auth().deleteUser(context.params.uid));
 
 exports.clearUserFiles = ff.document('users/{uid}').onDelete((snap, context) => admin.storage().bucket().deleteFiles({ prefix: `users/${context.params.uid}` }));
+
+exports.clearUserData = ff.document('users/{uid}').onDelete((snap, context) => {
+  const { uid } = context.params;
+  const { creationTime, displayName, email } = snap.data();
+
+  admin.firestore().collection('shelves').doc(uid).delete(); // delete user shelf
+  admin.firestore().collection('followers').doc(uid).delete(); // delete user followers
+  admin.firestore().collection('followings').doc(uid).delete(); // delete user followings
+  admin.firestore().collection('notifications').doc(uid).delete(); // delete user notifications
+  admin.firestore().collection('recommendations').doc(uid).delete(); // delete user recommendations
+
+  const data = { creationTime, displayName, email, deletionTime: Date.now(), uid };
+
+  return admin.firestore().collection('admin').doc('deleted').collection('users').doc(uid).set(data, { merge: true });
+});
 
 // AUTHORS
 exports.incrementAuthors = ff.document('authors/{aid}').onCreate(() => count({ doc: 'authors', change: 1 }));

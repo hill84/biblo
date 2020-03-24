@@ -1,9 +1,9 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { boolType, numberType, stringType } from '../config/types';
+import { boolType, numberType, oneOfType, stringType, arrayType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import PaginationControls from './paginationControls';
@@ -23,15 +23,21 @@ const Reviews = props => {
   const [lastVisible, setLastVisible] = useState(null);
   const is = useRef(true);
 
-  const fetch = useCallback(() => {
-    const ref = bid ? reviewersRef(bid) : uid ? reviewersGroupRef.where('createdByUid', '==', uid) : reviewersGroupRef;
-    const setEmptyState = err => {
-      setItems(null);
-      setLoading(false);
-      setLastVisible(null);
-      if (err) openSnackbar(handleFirestoreError(err), 'error');
-    };
+  const qop = useMemo(() => typeof uid === 'string' ? '==' : 'in', [uid]);
+
+  const ref = useMemo(() => bid ? reviewersRef(bid) : uid ? (
+    reviewersGroupRef.where('createdByUid', qop, uid) 
+  ) : reviewersGroupRef, [bid, uid]);
   
+  const setEmptyState = useCallback(err => {
+    setItems(null);
+    setLoading(false);
+    setLastVisible(null);
+    setPage(1);
+    if (err) openSnackbar(handleFirestoreError(err), 'error');
+  }, []);
+
+  const fetch = useCallback(() => {
     ref.onSnapshot(fullSnap => { // TODO: remove fullSnap
       // console.log(fullSnap);
       if (!fullSnap.empty) {
@@ -44,7 +50,7 @@ const Reviews = props => {
             if (is.current) {
               setItems(items);
               setLoading(false);
-              setLastVisible(snap.docs[snap.docs.length-1]);
+              setLastVisible(snap.docs[snap.docs.length - 1]);
             }
           }
         }).catch(err => {
@@ -52,10 +58,9 @@ const Reviews = props => {
         });
       } else if (is.current) setEmptyState();
     });
-  }, [bid, limit, openSnackbar, uid]);
+  }, [limit, openSnackbar, ref, setEmptyState]);
 
   const fetchNext = useCallback(() => {
-    const ref = bid ? reviewersRef(bid) : uid ? reviewersGroupRef.where('createdByUid', '==', uid) : reviewersGroupRef;
 
     if (is.current) setLoading(true);
     
@@ -66,19 +71,15 @@ const Reviews = props => {
           setItems(items);
           setLoading(false);
           setPage((page * limit) > count ? page : page + 1);
-          setLastVisible(nextSnap.docs[nextSnap.docs.length-1] || lastVisible);
+          setLastVisible(nextSnap.docs[nextSnap.docs.length - 1] || lastVisible);
         }
       } else if (is.current) {
-        setItems(null);
-        setLoading(false);
-        setPage(null);
-        setLastVisible(null);
+        if (is.current) setEmptyState();
       }
 		}).catch(err => {
-      if (is.current) setLoading(false);
-      openSnackbar(handleFirestoreError(err), 'error');
+      if (is.current) setEmptyState(err);
     });
-  }, [bid, count, items, lastVisible, limit, openSnackbar, page, uid]);
+  }, [count, items, lastVisible, limit, openSnackbar, page, ref, setEmptyState]);
 
   useEffect(() => {
     fetch();
@@ -114,7 +115,7 @@ const Reviews = props => {
               <Review 
                 key={`${item.bid}-${item.createdByUid}`}
                 bid={bid}
-                uid={uid}
+                uid={typeof uid === 'string' ? uid : null}
                 review={item} 
               />
             ))}
@@ -142,7 +143,10 @@ Reviews.propTypes = {
   limit: numberType,
   pagination: boolType,
   skeleton: boolType,
-  uid: stringType
+  uid: oneOfType([
+    stringType,
+    arrayType
+  ])
 }
 
 Reviews.defaultProps = {
