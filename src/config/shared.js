@@ -18,13 +18,13 @@ export const app = {
 const lang = typeof window !== "undefined" && (navigator.language || navigator.userLanguage).split('-')[0];
 
 // JUNCTION
-export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
+export const join = arr => arr?.length > 1 ? [arr?.slice(0, -1).join(', '), arr?.slice(-1)[0]].join(arr?.length < 2 ? '' : ' e ') : String(arr || '');
 export const joinObj = obj => {
   const arr = Object.keys(obj);
   return obj && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0]
 };
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
-export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
+export const joinComma = arr => arr?.length > 1 ? arr?.join(', ') : arr;
 
 // OPTIONS
 export const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' };

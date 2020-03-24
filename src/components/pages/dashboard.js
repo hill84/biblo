@@ -61,7 +61,7 @@ const Dashboard = props => {
   const [follow, setFollow] = useState(false);
   const [lfollowers, setLfollowers] = useState({});
   const [lfollowings, setLfollowings] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [tabSelected, setTabSelected] = useState(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
   const [screenSize, setScreenSize] = useState(_screenSize());
@@ -112,6 +112,7 @@ const Dashboard = props => {
         if (is.current) {
           setDuser(user);
           setProgress(calcProgress(user));
+          setLoading(false);
         }
       } else {
         if (is.current) setLoading(true);
