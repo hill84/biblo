@@ -315,7 +315,7 @@ ul.nolist {
   border-color: rgba(var(--blackClr), .1);
   line-height: var(--avatarSize);
   margin-bottom: var(--marginBottom); 
-  & svg { --iconSize: 12px; }
+  & .avatar svg { --iconSize: 12px; }
   & .btns { overflow: visible; }
   & .btn { margin-top: 0; margin-bottom: 0; }
   & .tip { display: none !important; }

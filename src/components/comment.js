@@ -7,7 +7,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncateString } from '../config/shared';
 import { commentType, funcType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
@@ -16,7 +16,7 @@ import FlagDialog from './flagDialog';
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const Comment = props => {
-  const { user } = useContext(UserContext);
+  const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, comment, onEdit, reviewerDisplayName, rid } = props;
   const likes_num = comment.likes ? comment.likes.length : 0;
@@ -100,6 +100,19 @@ const Comment = props => {
     }
   }, [bid, comment, openSnackbar, rid, user]);
 
+  const onRemoveFlag = useCallback(() => {
+    if (bid && comment && rid && isAdmin) {
+      const { flag, ...rest } = comment;
+      if (is.current) setFlagLoading(true);
+      reviewerCommenterRef(bid, rid, comment.createdByUid).set(rest).then(() => {
+        if (is.current) {
+          setFlagLoading(false);
+          openSnackbar('Segnalazione rimossa', 'success');
+        }
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    } else console.warn('Cannot remove flag');
+  }, [bid, comment, isAdmin, openSnackbar, rid]);
+
   const onDelete = () => {
     if (bid) {
       reviewerCommenterRef(bid, rid, comment.createdByUid).delete().then(() => {
@@ -115,8 +128,6 @@ const Comment = props => {
 
   const isOwner = useMemo(() => comment.createdByUid === (user?.uid), [comment, user]);
   const isReviewer = useMemo(() => comment.createdByUid === rid, [comment, rid]);
-  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
-  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
   const classNames = useMemo(() => `${isOwner ? 'own comment' : 'comment'} ${comment.flag ? `flagged ${comment.flag.value}` : ''}`, [comment, isOwner]);
 
@@ -149,7 +160,7 @@ const Comment = props => {
                     onClick={onCloseActionsMenu}
                     open={Boolean(actionsAnchorEl)}
                     onClose={onCloseActionsMenu}>
-                    {isOwner ? <MenuItem onClick={onEdit}>Modifica</MenuItem> : <MenuItem onClick={onFlagRequest}>Segnala</MenuItem>}
+                    {isOwner ? <MenuItem onClick={onEdit}>Modifica</MenuItem> : !flaggedByUser && <MenuItem onClick={onFlagRequest}>Segnala</MenuItem>}
                     {(isOwner || isAdmin) && <MenuItem onClick={onDelete}>Elimina</MenuItem>}
                   </Menu>
                 </div>
@@ -187,6 +198,13 @@ const Comment = props => {
                       </Tooltip>
                     </div> 
                   */}
+                  {isEditor && !isOwner && isAdmin && flaggedByUser && (
+                    <div className="counter">
+                      <Tooltip title="Rimuovi segnalazione">
+                        <button type="button" className="btn sm flat" onClick={onRemoveFlag}>{icon.flag}</button>
+                      </Tooltip>
+                    </div>
+                  )}
                 </div>
                 <div className="col counter text-right date">
                   <span className="hide-xs" title={`modificata ${timeSince(comment.lastEdit_num)}`}>

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normURL, screenSize } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, isTouchDevice, normURL, screenSize } from '../../config/shared';
 import { matchType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
@@ -26,7 +26,7 @@ const orderBy = [
 const skltnStyle = { display: 'inline-block', marginTop: '1.15em', };
 
 const Genre = props => {
-  const { isAuth, user } = useContext(UserContext);
+  const { isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { match } = props;
   const [count, setCount] = useState(0);
@@ -219,8 +219,6 @@ const Genre = props => {
   const isScrollable = useMemo(() => isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm', [_screenSize]);
   
   const isTextMinified = useMemo(() => _screenSize === 'xs' || _screenSize === 'sm' || _screenSize === 'md', [_screenSize]);
-  
-  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   
   const covers = useMemo(() => items?.map((item, i) => (
     <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}>

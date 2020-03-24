@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -19,7 +19,7 @@ import Bubbles from './bubbles';
 const NoMatch = lazy(() => import('../noMatch'));
 
 const Collection = props => {
-  const { user } = useContext(UserContext);
+  const { isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const [collection, setCollection] = useState(null);
@@ -151,8 +151,6 @@ const Collection = props => {
   };
 
   const isScrollable = isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm';
-  
-  const isEditor = hasRole(user, 'editor');
 
   const filterByOptions = genres.map(option => (
     <MenuItem

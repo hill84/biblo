@@ -21,7 +21,7 @@ import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 
 const ProfileForm = props => {
-  const { user: contextUser } = useContext(UserContext);
+  const { isAdmin, user: contextUser } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const [user, setUser] = useState(props.user);
   const [imgLoading, setImgLoading] = useState(false);
@@ -34,7 +34,6 @@ const ProfileForm = props => {
   // const [authError, setAutherror] = useState('');
   const is = useRef(true);
 
-  const isAdmin = useMemo(() => contextUser?.roles.admin, [contextUser]);
   const luid = useMemo(() => contextUser?.uid, [contextUser]);
   const uid = useMemo(() => user?.uid, [user]);
 

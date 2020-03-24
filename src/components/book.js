@@ -27,7 +27,7 @@ const unsub = {
 };
 
 const Book = props => {
-  const { isAuth, user } = useContext(UserContext);
+  const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, history, location } = props;
   const [book, setBook] = useState(props.book);
@@ -63,8 +63,6 @@ const Book = props => {
   const is = useRef(true);
 
   const authid = useMemo(() => user?.uid, [user]);
-  const isAdmin = useMemo(() => user?.roles.admin, [user]);
-  const isPremium = useMemo(() => user?.roles.premium, [user]);
   const _bid = useMemo(() => book?.bid, [book]);
 
   const fetchUserBook = useCallback(bid => {

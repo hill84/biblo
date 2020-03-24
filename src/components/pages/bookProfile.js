@@ -11,7 +11,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
+import { abbrNum, app, calcReadingTime, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
 import { bookType, boolType, funcType, locationType, objectType, refType, userBookType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -33,7 +33,7 @@ const NoMatch = lazy(() => import('../noMatch'));
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const BookProfile = props => {
-  const { isAuth, user } = useContext(UserContext);
+  const { isAdmin, isAuth, isEditor } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const {
     addBookToShelf,
@@ -135,8 +135,6 @@ const BookProfile = props => {
   const _createdBy = book?.EDIT.createdBy;
   const lastEditBy = useMemo(() => truncateString(_lastEditBy, 12), [_lastEditBy]);
   const createdBy = useMemo(() => truncateString(_createdBy, 12), [_createdBy]);
-  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
-  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const hasBid = useMemo(() => Boolean(book?.bid), [book]);
   const isLocked = useMemo(() => !book?.EDIT.edit && !isAdmin, [book, isAdmin]);
 

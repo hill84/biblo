@@ -2,7 +2,7 @@ import { CircularProgress } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
@@ -36,7 +36,7 @@ const tabs = [
 ];
 
 const Admin = props => {
-  const { user } = useContext(UserContext);
+  const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, match } = props;
   const [selectedEl, setSelectedEl] = useState(null);
@@ -50,8 +50,6 @@ const Admin = props => {
   const [isOpenQuoteDialog, setIsOpenQuoteDialog] = useState(false);
   const [_screenSize, setScreenSize] = useState(screenSize());
   const is = useRef(true);
-
-  const isAdmin = useMemo(() => user?.roles.admin, [user]);
 
   useEffect(() => {
     if (tabSelected === 0) history.replace(`/admin/${tabs[0].name}`, null);
