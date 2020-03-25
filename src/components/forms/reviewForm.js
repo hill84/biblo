@@ -15,6 +15,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { abbrNum, checkBadWords, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../../config/shared';
@@ -54,7 +55,7 @@ const formControlStyle = { zIndex: 1, };
 
 const ReviewForm = props => {
   const { user } = useContext(UserContext);
-  const { openSnackbar } = useContext(SnackbarContext);
+  const { closeSnackbar, openSnackbar, snackbarIsOpen } = useContext(SnackbarContext);
   const { bid, userBook } = props;
   const authid = useMemo(() => user?.uid, [user]);
   const initialReviewState = useMemo(() => ({
@@ -88,7 +89,9 @@ const ReviewForm = props => {
       if (is.current) setLoading(true);
 
       if (snap.exists) {
-        if (is.current) setReview({ ...initialReviewState, ...snap.data() });
+        if (is.current) {
+          setReview({ ...initialReviewState, ...snap.data() });
+        }
       } else if (is.current) {
         setReview(initialReviewState);
       }
@@ -107,9 +110,15 @@ const ReviewForm = props => {
     is.current = false;
   }, []);
 
-  const onEditing = () => {
-    if (is.current) setIsEditing(true);
-  };
+  useEffect(() => {
+    if (isEditing && !user?.photoURL) {
+      const msg = <span>Non hai <span className="hide-sm">ancora caricato</span> una foto profilo.</span>;
+      const action = <Link to="/profile" type="button" className="btn sm flat" onClick={closeSnackbar}>Aggiungila</Link>;
+      openSnackbar(msg, 'info', 4000, action);
+    }
+  }, [closeSnackbar, isEditing, openSnackbar]);
+
+  const onEditing = () => setIsEditing(true);
 
   const validate = useCallback(review => {
     const { text, title } = review;
@@ -225,6 +234,7 @@ const ReviewForm = props => {
     const { name, value } = e.target;
     
     if (is.current) {
+      if (snackbarIsOpen) closeSnackbar();
       setReview({ ...review, [name]: value });
       setErrors({ ...errors, [name]: null }); 
       setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });

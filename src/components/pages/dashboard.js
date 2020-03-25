@@ -49,7 +49,7 @@ const max = {
 
 const Dashboard = props => {
   const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
-  const { openSnackbar } = useContext(SnackbarContext);
+  const { closeSnackbar, openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const tab = match.params?.tab;
   const [duser, setDuser] = useState(null);
@@ -213,14 +213,14 @@ const Dashboard = props => {
   }, [history, tabSelected, uid]);
 
   useEffect(() => {
-    if (user && isOwner && !user.photoURL) {
-      const msg = 'Non hai ancora caricato una foto profilo.'
-      const action = <Link to="/profile" type="button" className="btn sm flat">Fallo adesso</Link>;
+    if (isOwner && !user?.photoURL) {
+      const msg = <span>Non hai <span className="hide-sm">ancora caricato</span> una foto profilo.</span>;
+      const action = <Link to="/profile" type="button" className="btn sm flat" onClick={closeSnackbar}>Aggiungila</Link>;
       setTimeout(() => {
         openSnackbar(msg, 'info', 6000, action);
       }, 3000);
     }
-  }, [isOwner, openSnackbar, user]);
+  }, [closeSnackbar, isOwner, openSnackbar]);
 
   useEffect(() => {
     if (tabs.indexOf(tab) !== -1) {
