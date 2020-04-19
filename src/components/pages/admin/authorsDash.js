@@ -77,7 +77,7 @@ const AuthorsDash = props => {
           setPage(1);
           setLoading(false);
         }
-      });
+      }, err => console.warn(err));
     };
     
     if (!direction) {

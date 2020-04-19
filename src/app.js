@@ -13,6 +13,8 @@ import Collection from './components/pages/collection';
 import Dashboard from './components/pages/dashboard';
 import Genre from './components/pages/genre';
 import GenresPage from './components/pages/genresPage';
+import Group from './components/pages/group';
+import Groups from './components/pages/groups';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
 import Profile from './components/pages/profile';
@@ -78,6 +80,8 @@ const App = () => (
                   <Route path="/signup" component={Signup} />
                   <Route path="/terms" component={TermsPage} />
                   <Route path="/verify-email" component={VerifyEmailPage} />
+                  <Route path="/group/:gid" component={Group} />
+                  <Route path="/groups" component={Groups} />
                   <RouteWithProps path="/authors" component={AuthorsPage} /> {/* CLASS */}
                   <PrivateRoute path="/admin" exact component={Admin} />
                   <PrivateRoute path="/admin/:tab" component={Admin} />

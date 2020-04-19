@@ -279,7 +279,7 @@ const SearchBookForm = props => {
             setLoading(false);
             setSuggestions(options);
           }
-        });
+        }, err => console.warn(err));
       }
     }, searchBy.key === 'ISBN_13' ? 500 : 1000);
   };

@@ -10,7 +10,7 @@ import Input from '@material-ui/core/Input';
 import { ThemeProvider } from '@material-ui/styles';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { notesRef, reviewerCommenterRef, reviewerRef, userBookRef } from '../../config/firebase';
-import { checkBadWords, getInitials, handleFirestoreError, join, normURL, truncateString, urlRegex } from '../../config/shared';
+import { checkBadWords, extractUrls, getInitials, handleFirestoreError, join, normURL, truncateString } from '../../config/shared';
 import { darkTheme } from '../../config/themes';
 import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
@@ -47,7 +47,7 @@ const CommentForm = props => {
     photoURL: '',
     rid,
     text: ''
-  }), [authid, bid, bookTitle]);
+  }), [authid, bid, bookTitle, rid]);
   const [comment, setComment] = useState(initialCommentState);
   const [leftChars, setLeftChars] = useState({ text: null });
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
@@ -70,7 +70,7 @@ const CommentForm = props => {
           setLoading(false);
           setChanges(false);
         }
-      });
+      }, err => console.warn(err));
     }
   }, [bid, initialCommentState, rid, user.uid]);
 
@@ -81,7 +81,7 @@ const CommentForm = props => {
   const validate = useCallback(comment => {
     const { text } = comment;
     const errors = {};
-    const urlMatches = text.match(urlRegex);
+    const urlMatches = extractUrls(text);
     const badWords = checkBadWords(text);
 
     if (!text) {
@@ -140,16 +140,17 @@ const CommentForm = props => {
                 uid: comment.createdByUid
               }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
             }
-
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
-          if (is.current) {
-            setChanges(false);
-            setErrors({});
-            onCancel();
-            setLoading(false);
-            setLeftChars({ text: null });
-          }
+          }).catch(err => {
+            openSnackbar(handleFirestoreError(err), 'error');
+          }).finally(() => {
+            if (is.current) {
+              setChanges(false);
+              setErrors({});
+              onCancel();
+              setLoading(false);
+              setLeftChars({ text: null });
+            }
+          });
         } else console.warn(`No bid, rid or user`);
       }
     }

@@ -3,7 +3,7 @@
 
 {
 	"extends": ["airbnb", "prettier", "prettier/react"],
-	"plugins": ["prettier"],
+	"plugins": ["prettier", "react-hooks"],
 	"parser": "babel-eslint",
 	"parserOptions": {
 		"ecmaVersion": 2020,
@@ -13,22 +13,23 @@
 		}
 	},
 	"env": {
-		"es6": true,
 		"browser": true,
-		"node": true
+		"commonjs": true,
+		"node": true,
+		"es6": true
 	},
 	"rules": {
 		"camelcase": "off",
 		"declaration-block-trailing-semicolon": "off",
 		"import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-    "import/prefer-default-export": "warn",
+		"import/prefer-default-export": "warn",
 		"jsx-a11y/anchor-is-valid": ["error", { "specialLink": ["to"] }],
 		"linebreak-style": ["off", "windows"],
 		"lines-between-class-members": "off",
 		// "max-nesting-depth": 1,
-    "no-console": "off",
-    "no-nested-ternary": "off",
-    "no-underscore-dangle": "off",
+		"no-console": "off",
+		"no-nested-ternary": "off",
+		"no-underscore-dangle": "off",
 		"no-unused-vars": "warn",
 		"no-unused-expressions": "off",
 		"no-param-reassign": "off",
@@ -36,17 +37,19 @@
 		"no-restricted-globals": "warn",
 		"no-shadow": "off",
 		"no-else-return": "off",
-    "prefer-destructuring": "warn",
-    "react/destructuring-assignment": "off",
+		"prefer-destructuring": "warn",
+		"react/destructuring-assignment": "off",
 		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
 		"react/jsx-props-no-spreading": "off",
 		"react/no-access-state-in-setstate": "warn",
-    "react/no-array-index-key": "off",
-    "react/no-danger": "off",
+		"react/no-array-index-key": "off",
+		"react/no-danger": "off",
 		"react/no-did-update-set-state": "off",
-    "react/require-default-props": "warn",
+		"react/require-default-props": "warn",
 		"react/state-in-constructor": "off",
 		"react/static-property-placement": "off",
-    "spaced-comment": "warn"
+		"react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+		"react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+		"spaced-comment": "warn"
 	}
 }

@@ -56,17 +56,16 @@ const Collection = props => {
         });
         if (is.current) {
           setCollection(snap.data());
-          setLoading(false);
         }
       } else if (is.current) {
         setCollection(null);
         setFollowers(null);
         setFollow(false);
-        setLoading(false);
       }
     }).catch(err => {
-      setLoading(false);
       openSnackbar(handleFirestoreError(err), 'error');
+    }).finally(() => {
+      if (is.current) setLoading(false);
     });
 
     const filter = filterByName && genres.filter(item => item.name === filterByName)[0].name;
@@ -114,6 +113,7 @@ const Collection = props => {
         collectionFollowersRef(denormURL(cid)).doc(uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       } else {
         collectionFollowersRef(denormURL(cid)).doc(uid).set({
+          cid: denormURL(cid),
           uid,
           displayName: user.displayName,
           photoURL: user.photoURL,

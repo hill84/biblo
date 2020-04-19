@@ -9,7 +9,7 @@ import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { app, handleFirestoreError, normURL, timeSince } from '../../../config/shared';
+import { app, handleFirestoreError, isToday, normURL, timeSince } from '../../../config/shared';
 import { boolType, funcType } from '../../../config/types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
@@ -234,13 +234,13 @@ export default class BooksDash extends Component {
               {item.EDIT.createdBy}
             </Link>
             <div className="col col-lg-1 hide-sm">
-              <div className="timestamp">{new Date(item.EDIT.created_num).toLocaleDateString()}</div>
+              <div className="timestamp">{isToday(item?.EDIT?.created_num) ? new Date(item.EDIT.created_num).toLocaleTimeString() : new Date(item.EDIT.created_num).toLocaleDateString()}</div>
             </div>
             <Link to={`/dashboard/${item.EDIT.lastEditByUid}`} title={item.EDIT.lastEditByUid} className="col col-lg-1">
               {item.EDIT.lastEditBy}
             </Link>
             <div className="col col-lg-1 text-right">
-              <div className="timestamp">{timeSince(item.EDIT.lastEdit_num)}</div>
+              <div className="timestamp">{isToday(item?.EDIT?.lastEdit_num) ? new Date(item.EDIT.lastEdit_num).toLocaleTimeString() : timeSince(item.EDIT.lastEdit_num)}</div>
             </div>
             <div className="absolute-row right btns xs" data-id={item.bid} data-state={item.EDIT.edit} data-title={item.title}>
               <button type="button" className="btn icon green" onClick={this.onView} title="Anteprima">{icon.eye}</button>

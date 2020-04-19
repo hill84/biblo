@@ -54,8 +54,7 @@ const adminDeletedUserRef = uid => adminDeletedRef('users').doc(uid);
 // Users
 const usersRef = db.collection('users');
 const userRef = uid => usersRef.doc(uid);
-const userChallenges = uid => userRef(uid).collection('challenges');
-const userChallenge = (uid, cid) => userChallenges(uid).doc(cid);
+
 
 // Followers
 const followersRef = uid => db.collection('followers').doc(uid);
@@ -79,6 +78,7 @@ const collectionsRef = db.collection('collections');
 const collectionRef = cid => collectionsRef.doc(cid);
 const collectionBooksRef = cid => collectionRef(cid).collection('books');
 const collectionFollowersRef = cid => collectionRef(cid).collection('followers');
+const collectionFollowerRef = (cid, uid) => collectionFollowersRef(cid).doc(uid);
 const collectionBookRef = (cid, bid) => collectionBooksRef(cid).doc(bid);
 
 // Reviews
@@ -88,13 +88,14 @@ const reviewersRef = bid => reviewRef(bid).collection('reviewers');
 const reviewerRef = (bid, uid) => reviewersRef(bid).doc(uid);
 const reviewersGroupRef = db.collectionGroup('reviewers');
 const reviewerCommentersRef = (bid, uid) => reviewerRef(bid, uid).collection('commenters');
-const reviewerCommenterRef = (bid, uid, cid) => reviewerRef(bid, uid).collection('commenters').doc(cid);
+const reviewerCommenterRef = (bid, uid, cid) => reviewerCommentersRef(bid, uid).doc(cid);
 const commentersGroupRef = db.collectionGroup('commenters');
 
 // Authors
 const authorsRef = db.collection('authors');
 const authorRef = aid => authorsRef.doc(aid);
 const authorFollowersRef = aid => authorRef(aid).collection('followers');
+const authorFollowerRef = (aid, uid) => authorFollowersRef(aid).doc(uid);
 
 // Quotes
 const quotesRef = db.collection('quotes');
@@ -110,15 +111,24 @@ const notesGroupRef = db.collectionGroup('notes');
 // Challenges
 const challengesRef = db.collection('challenges');
 const challengeRef = cid => challengesRef.doc(cid);
-const userChallengesRef = uid => db.collection('users').doc(uid).collection('challenges');
+const userChallengesRef = uid => userRef(uid).collection('challenges');
 const userChallengeRef = (uid, cid) => userChallengesRef(uid).doc(cid);
 
 // Genres
 const genreRef = gid => db.collection('genres').doc(gid);
 const genreFollowersRef = gid => genreRef(gid).collection('followers');
+const genreFollowerRef = (gid, uid) => genreFollowersRef(gid).doc(uid);
 
 // Recommendations
 const userRecommendationsRef = uid => db.collection('recommendations').doc(uid);
+
+// Groups
+const groupsRef = db.collection('groups');
+const groupRef = gid => groupsRef.doc(gid);
+const groupFollowersRef = gid => groupRef(gid).collection('followers');
+const groupFollowerRef = (gid, uid) => groupFollowersRef(gid).doc(uid);
+const groupDiscussionsRef = gid => groupRef(gid).collection('discussions');
+const groupDiscussionRef = (gid, did) => groupDiscussionsRef(gid).doc(did);
 
 // Counters
 const countRef = cid => db.collection('counters').doc(cid);
@@ -138,8 +148,6 @@ export {
 	adminDeletedUserRef,
 	usersRef,
 	userRef,
-	userChallenges,
-	userChallenge,
 	userShelfRef,
 	userBooksRef,
 	userBookRef,
@@ -150,6 +158,7 @@ export {
 	collectionRef,
 	collectionBooksRef,
 	collectionFollowersRef,
+	collectionFollowerRef,
 	collectionBookRef,
 	commentersGroupRef,
 	followersRef,
@@ -165,6 +174,7 @@ export {
 	authorsRef,
 	authorRef,
 	authorFollowersRef,
+	authorFollowerRef,
 	quotesRef,
 	quoteRef,
 	notificationsRef,
@@ -178,7 +188,14 @@ export {
 	userChallengeRef,
 	genreRef,
 	genreFollowersRef,
+	genreFollowerRef,
+	groupDiscussionsRef,
+	groupDiscussionRef,
 	userRecommendationsRef,
+	groupsRef,
+	groupRef,
+	groupFollowersRef,
+	groupFollowerRef,
 	countRef,
 	storageRef,
 };

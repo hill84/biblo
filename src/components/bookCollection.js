@@ -56,7 +56,6 @@ const BookCollection = props => {
             if (is.current) {
               setCollection(books);
               // setLastVisible(snap.docs[snap.docs.length - 1] || lastVisible);
-              setLoading(false);
               setPage(page => (direction ? prev ? page > 1 ? page - 1 : 1 : ((page * limit) > count) ? page : page + 1 : 1));
             }
             // console.log({ 'direction': direction, 'page': page });
@@ -64,10 +63,13 @@ const BookCollection = props => {
             // setLastVisible(null);
             setCollection([]);
             setCount(0);
-            setLoading(false);
             setPage(null);
           }
-        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+        }).catch(err => {
+          openSnackbar(handleFirestoreError(err), 'error');
+        }).finally(() => {
+          if (is.current) setLoading(false);
+        });
       }
 
       if (cid === 'Top' || cid === 'New') {

@@ -119,18 +119,17 @@ const Genre = props => {
               if (is.current) {
                 setItems(items);
                 setLastVisible(snap.docs[snap.docs.length-1]);
-                setLoading(false);
                 setPage(1);
               }
             } else if (is.current) {
               setCount(0);
               setItems(null);
-              setLoading(false);
               setPage(1);
             }
           }).catch(err => {
-            setLoading(false);
             openSnackbar(handleFirestoreError(err), 'error');
+          }).finally(() => {
+            if (is.current) setLoading(false);
           });
         } else if (is.current) {
           setFollow(false);
@@ -165,21 +164,18 @@ const Genre = props => {
           nextSnap.forEach(item => items.push(item.data()));
           if (is.current) {
             setItems(items);
-            setLoading(false);
             setPage((page * limit) > count ? page : page + 1);
             setLastVisible(nextSnap.docs[nextSnap.docs.length - 1] || lastVisible);
           }
         } else if (is.current) {
           setItems(null);
-          setLoading(false);
           setPage(null);
           setLastVisible(null);
         }
       }).catch(err => {
-        if (is.current) {
-          setLoading(false);
-          openSnackbar(handleFirestoreError(err), 'error');
-        }
+        if (is.current) openSnackbar(handleFirestoreError(err), 'error');
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
     } else console.warn(`No gid`);
   }
@@ -207,6 +203,7 @@ const Genre = props => {
     } else {
       // console.log('follow', gid);
       genreFollowersRef(id).doc(user.uid).set({
+        gid: id,
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
@@ -214,7 +211,6 @@ const Genre = props => {
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
-
   
   const isScrollable = useMemo(() => isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm', [_screenSize]);
   

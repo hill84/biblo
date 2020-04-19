@@ -18,7 +18,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, checkBadWords, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../../config/shared';
+import { abbrNum, checkBadWords, extractUrls, getInitials, handleFirestoreError, join, timeSince } from '../../config/shared';
 import { stringType, userBookType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -99,7 +99,7 @@ const ReviewForm = props => {
         setLoading(false);
         setChanges(false);
       }
-    });
+    }, err => console.warn(err));
   }, [authid, bid, initialReviewState]);
 
   useEffect(() => {
@@ -116,14 +116,14 @@ const ReviewForm = props => {
       const action = <Link to="/profile" type="button" className="btn sm flat" onClick={closeSnackbar}>Aggiungila</Link>;
       openSnackbar(msg, 'info', 4000, action);
     }
-  }, [closeSnackbar, isEditing, openSnackbar]);
+  }, [closeSnackbar, isEditing, openSnackbar, user]);
 
   const onEditing = () => setIsEditing(true);
 
   const validate = useCallback(review => {
     const { text, title } = review;
     const errors = {};
-    const urlMatches = text.match(urlRegex);
+    const urlMatches = extractUrls(text);
     const badWords = checkBadWords(text);
 
     if (!text) {
@@ -172,27 +172,28 @@ const ReviewForm = props => {
             ...review,
             ...updatedReview
           }).then(() => {
-            // console.log(`Book review created`);
             openSnackbar('Recensione salvata', 'success')
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          }).catch(err => {
+            openSnackbar(handleFirestoreError(err), 'error');
+          });
 
           userBookRef(authid, bid).update({ 
             review: {
               ...userBookReview,
               ...updatedReview
             }
-          }).then(() => {
-            // console.log(`User review posted`);
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
-          if (is.current) {
-            setChanges(false);
-            setErrors({});
-            setIsEditing(false);
-            setIsOpenEmojiPicker(false);
-            setLoading(false);
-            setLeftChars({ text: null, title: null });
-          }
+          }).catch(err => {
+            openSnackbar(handleFirestoreError(err), 'error');
+          }).finally(() => {
+            if (is.current) {
+              setChanges(false);
+              setErrors({});
+              setIsEditing(false);
+              setIsOpenEmojiPicker(false);
+              setLoading(false);
+              setLeftChars({ text: null, title: null });
+            }
+          });
         } else console.warn(`No bid or user`);
       }
     }
@@ -281,19 +282,18 @@ const ReviewForm = props => {
                     onClick={onClick}
                     error={Boolean(errors.text)}
                     multiline
-                    endAdornment={
+                    endAdornment={(
                       <InputAdornment position="end">
                         <Tooltip title={isOpenEmojiPicker ? 'Chiudi' : 'Aggiungi emoji'} placement="top">
                           <IconButton
-                            aria-label="toggle password visibility"
+                            aria-label="toggle emoji-picker visibility"
                             onClick={toggleEmojiPicker}
-                            onMouseDown={onMouseDown}
-                          >
+                            onMouseDown={onMouseDown}>
                             {isOpenEmojiPicker ? icon.close : icon.stickerEmoji}
                           </IconButton>
                         </Tooltip>
                       </InputAdornment>
-                    }
+                    )}
                   />
                   {isOpenEmojiPicker && (
                     <Picker

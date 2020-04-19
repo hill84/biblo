@@ -43,13 +43,14 @@ const QuoteForm = props => {
       if (is.current) setLoading(true);
       
       quoteRef(id).get().then(snap => {
-        if (!snap.empty) {
-          if (is.current) {
-            setData(snap.data());
-            setLoading(false);
-          }
+        if (!snap.empty && is.current) {
+          setData(snap.data());
         }
-      }).catch(err => console.warn(err));
+      }).catch(err => {
+        console.warn(err);
+      }).finally(() => {
+        if (is.current) setLoading(false);
+      });
     }
   }, [id]);
 
@@ -148,9 +149,12 @@ const QuoteForm = props => {
           quote: data.quote || ''
         }).then(() => {
           onToggle();
-          if (is.current) setLoading(false);
           openSnackbar(data.qid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-        }).catch(error => console.warn(error));
+        }).catch(error => {
+          console.warn(error);
+        }).finally(() => {
+          if (is.current) setLoading(false);
+        });
       } else if (is.current) setLoading(false);
     } else onToggle();
   };
@@ -250,7 +254,7 @@ const QuoteForm = props => {
                   id="coverURL"
                   name="coverURL"
                   type="text"
-                  placeholder="Es: //firebasestorage.googleapis.com/.../books%2Fcover.jpg"
+                  placeholder="Es: https://firebasestorage.googleapis.com/.../books%2Fcover.jpg"
                   value={data.coverURL}
                   onChange={onChange}
                   error={Boolean(errors.coverURL)}

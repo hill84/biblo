@@ -10,7 +10,7 @@ import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
-import { followersRef, followingsRef, notesRef, userChallenges, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, notesRef, userChallengesRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
@@ -122,7 +122,7 @@ const Dashboard = props => {
             setProgress(0);
           }
           setLoading(false);
-        });
+        }, err => console.warn(err));
       }
     }
   }, [calcProgress, luid, uid, user]);
@@ -180,9 +180,9 @@ const Dashboard = props => {
     }
   }, [luid, uid]);
 
-  const fetchUserChallenges = useCallback(() => {
+  const fetchuserChallengesRef = useCallback(() => {
 		if (luid) {
-      unsub.collectionFetch = userChallenges(luid).onSnapshot(snap => {
+      unsub.collectionFetch = userChallengesRef(luid).onSnapshot(snap => {
         if (!snap.empty) {
           const challenges = [];
           snap.forEach(doc => challenges.push(doc.data()));
@@ -197,9 +197,9 @@ const Dashboard = props => {
       fetchUser();
       fetchFollowers();
       fetchFollowings();
-      fetchUserChallenges();
+      fetchuserChallengesRef();
     }
-  }, [fetchUser, fetchFollowers, fetchFollowings, fetchUserChallenges, uid]);
+  }, [fetchUser, fetchFollowers, fetchFollowings, fetchuserChallengesRef, uid]);
 
   useEffect(() => {
     if (uid) {
@@ -220,7 +220,7 @@ const Dashboard = props => {
         openSnackbar(msg, 'info', 6000, action);
       }, 3000);
     }
-  }, [closeSnackbar, isOwner, openSnackbar]);
+  }, [closeSnackbar, isOwner, openSnackbar, user]);
 
   useEffect(() => {
     if (tabs.indexOf(tab) !== -1) {
@@ -233,8 +233,8 @@ const Dashboard = props => {
   }, [tab, tabSelected]);
 
   useEffect(() => {
-    fetchUserChallenges();
-  }, [fetchUserChallenges]);
+    fetchuserChallengesRef();
+  }, [fetchuserChallengesRef]);
 
   const onFollowUser = useCallback((e, fuid = duser.uid, fuser = duser) => {
     e.preventDefault();
@@ -343,9 +343,6 @@ const Dashboard = props => {
   const isMini = useMemo(() => isTouchDevice() || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
   const contactsSkeleton = useMemo(() => [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />), []);
   const creationYear = useMemo(() => duser && String(new Date(duser.creationTime).getFullYear()), [duser]);
-  const Roles = useMemo(() => duser?.roles && Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
-    <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>
-  )), [duser]);
 
   const ShelfDetails = useMemo(() => () => (
     <div className="info-row footer centered shelfdetails">
@@ -363,16 +360,26 @@ const Dashboard = props => {
     return (
       <>
         {Object.keys(users).map(f => (
-          <div key={f} className="avatar-row">
+          <div key={f} className="avatar-row rounded">
             <Link to={`/dashboard/${f}`} className="row ripple">
               <div className="col">
-                <Avatar className="avatar" src={users[f].photoURL} alt={users[f].displayName}>{!users[f].photoURL && getInitials(users[f].displayName)}</Avatar>{users[f].displayName}
+                <Avatar
+                  className="avatar"
+                  src={users[f].photoURL}
+                  alt={users[f].displayName}>
+                  {!users[f].photoURL && users[f].displayName ? getInitials(users[f].displayName) : icon.accountOff}
+                </Avatar> 
+                {users[f].displayName}
               </div>
               {!isMini && (
                 <div className="col-auto">
                   <div className="timestamp hide-on-hover">{timeSince(users[f].timestamp)}</div>
                   {isOwner && f !== luid && (
-                    <button type="button" className="btn flat show-on-hover" onClick={e => onFollowUser(e, f, users[f])}>
+                    <button
+                      type="button"
+                      className="btn flat rounded show-on-hover"
+                      onClick={e => onFollowUser(e, f, users[f])}
+                      disabled={users === followers && Object.keys(followings).includes(f)}>
                       {users === followers ? 'Segui' : 'Non seguire'}
                     </button>
                   )}
@@ -446,30 +453,38 @@ const Dashboard = props => {
         {tabSelected && <link rel="canonical" href={`${app.url}/dashboard/${uid}/shelf`} />}
       </Helmet>
       <div className="row">
-        <div className="col-md col-12">
+        <div className={isOwner ? 'col-lg-10 col-md-9 col' : 'col'}>
           <div className="card dark basic-profile-card">
             <div className="basic-profile">
               {duser && (
-                <Tooltip title="Ruolo utente" placement="left">
-                  <div className="role-badges">{Roles} {!duser.roles?.editor && <div className="badge red">Utente bloccato</div>}</div>
-                </Tooltip>
+                <div className="absolute-top-right">
+                  {!duser.roles?.editor ? (
+                    <div className="badge red">Utente bloccato</div> 
+                  ) : isOwner && progress === 100 && (
+                    <Link to="/profile" className="btn sm flat counter">{icon.pencil} Modifica</Link> 
+                  )}
+                </div>
               )}
               <div className="row">
                 <div className="col-auto">
                   <Avatar className="avatar" alt={duser ? duser.displayName : 'Avatar'}>
                     {!loading ? duser.photoURL ? (
                       <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
-                        <img alt="avatar" src={duser.photoURL} className="avatar thumb" />
+                        <img alt="" src={duser.photoURL} className="avatar thumb" />
                       </Zoom>
                     ) : getInitials(duser.displayName) : ''}
                   </Avatar>
                 </div>
-                <div className="col">
+                <div className="col col-right">
                   <h2 className="username">
                     {loading ? <span className="skltn area" /> : (
-                      <span>{duser.displayName} {duser?.roles?.author && (
-                        <Tooltip title={<span>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></span>} className="check-decagram primary-text" interactive>{icon.checkDecagram}</Tooltip>
-                      )}</span>
+                      <span>
+                        {duser.displayName} {duser.roles?.author && (
+                          <Tooltip className="check-decagram primary-text" interactive title={(
+                            <>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></>
+                          )}>{icon.checkDecagram}</Tooltip>
+                        )}
+                      </span>
                     )} 
                   </h2>
                   {loading ? <div className="skltn three rows" style={skltnStyle} /> : (
@@ -482,29 +497,31 @@ const Dashboard = props => {
                           {duser.country && <span className="counter">{duser.country}</span>}
                           {duser.continent && <span className="counter">{duser.continent}</span>}
                         </span>
-                        {duser.languages && <span className="counter">{capitalize(joinToLowerCase(duser.languages))}</span>}
-                        {creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
-                        {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
+                        {duser.languages && !isMini && <span className="counter">{capitalize(joinToLowerCase(duser.languages))}</span>}
+                        {creationYear && !isMini && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
                       </div>
-                      <div className="info-row">
+                      <div className="info-row ellipsis">
                         {!isOwner && isAuth && (
                           <button 
                             type="button"
                             className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
                             // disabled={!isAuth}
                             onClick={onFollowUser}>
-                            {follow ? (
+                            {!follow ? <span>{icon.plus} Segui</span> : (
                               <>
                                 <span className="hide-on-hover">{icon.check} Segui</span>
                                 <span className="show-on-hover">Smetti</span>
                               </> 
-                            ) : ( 
-                              <span>{icon.plus} Segui</span>
                             )}
                           </button>
                         )}
                         <span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
-                        {screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
+                        {!isMini && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
+                        {duser.website && <span className="counter">{!isMini && <b>{icon.web}</b>} <a href={duser.website} target="_blank" rel="noopener noreferrer">web<span className="hide-md">site</span></a></span>}
+                        {duser.youtube && <span className="counter">{!isMini && <b>{icon.youtube}</b>} <a href={`https://www.youtube.com/channel/${duser.youtube}`} target="_blank" rel="noopener noreferrer">youtube</a></span>}
+                        {duser.instagram && <span className="counter">{!isMini && <b>{icon.instagram}</b>} <a href={`https://www.instagram.com/${duser.instagram}`} target="_blank" rel="noopener noreferrer">instagram</a></span>}
+                        {duser.twitch && <span className="counter">{!isMini && <b>{icon.twitch}</b>} <a href={`https://www.twitch.tv/${duser.twitch}`} target="_blank" rel="noopener noreferrer">twitch</a></span>}
+                        {duser.facebook && <span className="counter">{!isMini && <b>{icon.facebook}</b>} <a href={`https://www.facebook.com/${duser.facebook}`} target="_blank" rel="noopener noreferrer">facebook</a></span>}
                       </div>
                     </>
                   )}
@@ -572,9 +589,9 @@ const Dashboard = props => {
         <div className="card tab contacts-tab" dir={tabDir}>
           {tabSelected === 4 && (
             <div className="row">
-              <div className="col-md-6 cols-12 contacts-tab-col">
+              <div className="col-md-6 col-12 contacts-tab-col">
                 <h4>Seguito da:</h4>
-                {loading ? contactsSkeleton : Object.keys(followers).length ? <UsersList users={followers} /> : <EmptyRow />}
+                {loading ? contactsSkeleton : Object.keys(followers).length ? <UsersList users={followers} followings={followings} /> : <EmptyRow />}
               </div>
               <div className="col-md-6 col-12 contacts-tab-col">
                 <h4>Segue:</h4>

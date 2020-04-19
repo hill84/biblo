@@ -56,7 +56,7 @@ const BookProfile = props => {
   const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);
   const [isOpenReadingState, setIsOpenReadingState] = useState(false);
   const [isOpenRecommendation, setIsOpenRecommendation] = useState(false);
-  const [isOpenIncipit, setIsOpenIncipit] = useState(location ? location.pathname.indexOf('/incipit') !== -1 : false);
+  const [isOpenIncipit, setIsOpenIncipit] = useState(location?.pathname?.indexOf('/incipit') !== -1);
   const [userBook, setUserBook] = useState(props.userBook);
   const is = useRef(true);
 
@@ -321,9 +321,9 @@ const BookProfile = props => {
                     )}
 
                     <div className="info-row bookdetails">
-                      <span className="counter">{icon.reader} <b>{abbrNum(book ? book.readers_num : 0)}</b> <span className="hide-sm">Lettori</span></span>
-                      <span className="counter">{icon.messageTextOutline} <b>{abbrNum(book ? book.reviews_num : 0)}</b> <span className="hide-sm">Recensioni</span></span>
-                      {book?.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
+                      <span className="counter">{icon.reader} <b>{abbrNum(book.readers_num || 0)}</b> <span className="hide-sm">Lettor{book.readers_num === 1 ? 'e' : 'i'}</span></span>
+                      <span className="counter">{icon.messageTextOutline} <b>{abbrNum(book.reviews_num || 0)}</b> <span className="hide-sm">Recension{book.reviews_num === 1 ? 'e' : 'i'}</span></span>
+                      {book.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                     </div>
                   </>
                 )}
@@ -368,11 +368,11 @@ const BookProfile = props => {
           onClose={onCloseRemoveDialog}
           aria-labelledby="remove-dialog-title"
           aria-describedby="remove-dialog-description">
-          <DialogTitle id="remove-dialog-title">
+          <DialogTitle>
             Procedere con la rimozione?
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="remove-dialog-description">
+            <DialogContentText>
               Rimuovendo il libro perderai il voto, la recensione e lo stato di lettura.
             </DialogContentText>
           </DialogContent>

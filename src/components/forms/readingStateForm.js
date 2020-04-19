@@ -106,11 +106,11 @@ const ReadingStateForm = props => {
           'readingState.progress_num': progress_num
         }).then(() => {
           // console.log(`UserBook readingState updated`);
-          if (is.current) setLoading(false);
           onToggle();
         }).catch(err => {
-          if (is.current) setLoading(false);
           openSnackbar(handleFirestoreError(err), 'error');
+        }).finally(() => {
+          if (is.current) setLoading(false);
         });
       }
     } else onToggle();

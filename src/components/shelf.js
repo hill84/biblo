@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { userBooksRef, userChallenge, userChallenges } from '../config/firebase';
+import { userBooksRef, userChallengeRef, userChallengesRef } from '../config/firebase';
 import icon from '../config/icons';
 import { userBookTypes } from '../config/lists';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
@@ -63,7 +63,7 @@ const Shelf = props => {
 
   const fetchChallenges = useCallback(fullBooks => {
     if (isOwner) {
-      userChallenges(luid).get().then(snap => {
+      userChallengesRef(luid).get().then(snap => {
         if (!snap.empty) {
           const challenges = [];
           snap.forEach(doc => challenges.push(doc.data()));
@@ -82,7 +82,7 @@ const Shelf = props => {
           });
           if (JSON.stringify(cBooks) !== JSON.stringify(challenges[0].books)) {
             console.warn(cBooks);
-            userChallenge(luid, cid).update({ 
+            userChallengeRef(luid, cid).update({ 
               books: cBooks, 
               completed_num: Object.keys(cBooks).filter(bid => !cBooks[bid]).length === 0 ? Date.now() : 0
             }).then().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -164,9 +164,9 @@ const Shelf = props => {
               }
               fetchChallenges(fullBooks);
             } else setEmptyState();
-          });
+          }, err => console.warn(err));
         } else setEmptyState();
-      });
+      }, err => console.warn(err));
     }
   }, [count, fetchChallenges, getStartAtIndex, limit, setEmptyState, shelfRef, uid]);
 

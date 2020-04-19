@@ -55,7 +55,7 @@ const AuthorPage = props => {
           const followers = [];
           snap.forEach(follower => followers.push(follower.data()));
           setFollowers(followers); 
-          setFollow(user && followers.filter(follower => follower.uid === user.uid).length > 0);
+          setFollow(user && followers.some(follower => follower.uid === user.uid));
         } else {
           setFollowers(null);
           setFollow(false);
@@ -69,14 +69,14 @@ const AuthorPage = props => {
       if (snap.exists) {
         if (is.current) {
           setAuthor(snap.data());
-          setLoading(false);
-          fetchFollowers();
         }
-			} else {
-        if (is.current) setLoading(false);
-        fetchFollowers();
-      }
-    }).catch(err => console.warn(err));
+			}
+      fetchFollowers();
+    }).catch(err => {
+      console.warn(err);
+    }).finally(() => {
+      if (is.current) setLoading(false);
+    });
   }, [author.displayName, fetchFollowers]);
 
   useEffect(() => {
@@ -111,6 +111,7 @@ const AuthorPage = props => {
     } else {
       // console.log('follow', aid);
       authorFollowersRef(id).doc(user.uid).set({
+        aid: id,
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,

@@ -281,4 +281,34 @@ export const collectionType = shape({
   title: string.isRequired
 });
 
+export const groupType = shape({
+  gid: string.isRequired,
+  title: string.isRequired,
+  description: string.isRequired,
+  rules: string,
+  photoURL: string,
+  followers_num: number.isRequired,
+  type: oneOf(['private', 'public']).isRequired,
+  location: string,
+  created_num: number.isRequired,
+  owner: string.isRequired,
+  ownerUid: string.isRequired,
+  lastEdit_num: number,
+  lastEditBy: string,
+  lastEditByUid: string,
+  moderators: arrayOfType(string)
+});
+
+export const discussionType = shape({
+  did: string.isRequired,
+  createdByUid: string.isRequired,
+  created_num: number.isRequired,
+  displayName: string.isRequired,
+  lastEdit_num: number,
+  lastEditByUid: string,
+  flag: flagType,
+  photoURL: string,
+  text: string.isRequired
+});
+
 export const refType = oneOfType([func, object]);

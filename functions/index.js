@@ -8,8 +8,6 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-// firebase deploy --only functions:function1,functions:function2
-
 // HELPERS
 const ff = functions.region('europe-west1').firestore;
 
@@ -17,7 +15,7 @@ const count = props => {
   const { doc, change, collection = 'counters', field = 'count', nestedField } = props;
   let increment;
 
-  if (change == 1 || change == -1) {
+  if (change === 1 || change === -1) {
     increment = change;
   } else {
     if (change.after.exists && !change.before.exists) { increment = 1 } else 
@@ -91,6 +89,21 @@ exports.flagComment = ff.document('reviews/{bid}/reviewers/{uid}/commenters/{cid
       return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-comments', change: 1 }));
     }
     return ref.delete().then(() => count({ doc: 'flagged-comments', change: -1 }));
+  }
+  return false;
+});
+
+exports.flagDiscussion = ff.document('groups/{gid}/discussions/{did}').onUpdate((change, context) => {
+  if (change.before.exists && change.after.exists) {
+    const { did, gid } = context.params;
+    const { flag } = change.after.data();
+    const ref = admin.firestore().doc(`admin/flagged/groups/${gid}/discussions/${did}`);
+
+    if (flag) {
+      const data = { did, gid, ...flag };
+      return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-discussions', change: 1 }));
+    }
+    return ref.delete().then(() => count({ doc: 'flagged-discussions', change: -1 }));
   }
   return false;
 });
@@ -184,7 +197,6 @@ exports.clearUserData = ff.document('users/{uid}').onDelete((snap, context) => {
   admin.firestore().collection('shelves').doc(uid).delete(); // delete user shelf
   admin.firestore().collection('followers').doc(uid).delete(); // delete user followers
   admin.firestore().collection('followings').doc(uid).delete(); // delete user followings
-  admin.firestore().collection('notifications').doc(uid).delete(); // delete user notifications
   admin.firestore().collection('recommendations').doc(uid).delete(); // delete user recommendations
 
   const data = { creationTime, displayName, email, deletionTime: Date.now(), uid };
@@ -206,3 +218,16 @@ exports.decrementQuotes = ff.document('quotes/{qid}').onDelete(() => count({ doc
 exports.incrementChallenges = ff.document('challenges/{cid}').onCreate(() => count({ doc: 'challenges', change: 1 }));
 
 exports.decrementChallenges = ff.document('challenges/{cid}').onDelete(() => count({ doc: 'challenges', change: -1 }));
+
+// GROUPS
+exports.incrementGroups = ff.document('groups/{gid}').onCreate(() => count({ doc: 'groups', change: 1 }));
+
+exports.decrementGroups = ff.document('groups/{gid}').onDelete(() => count({ doc: 'groups', change: -1 }));
+
+exports.incrementGroupFollowers = ff.document('groups/{gid}/followers/{uid}').onCreate((snap, context) => count({ 
+  doc: context.params.gid, change: 1, collection: 'groups', field: 'followers_num' 
+}));
+
+exports.decrementGroupFollowers = ff.document('groups/{gid}/followers/{uid}').onDelete((snap, context) => count({ 
+  doc: context.params.gid, change: -1, collection: 'groups', field: 'followers_num' 
+}));

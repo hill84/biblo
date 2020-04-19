@@ -50,15 +50,11 @@ const SocialAuth = props => {
 				}
 			}
 		}).then(() => {
-      if (is.current) {
-        setLoading(false);
-        setRedirectToReferrer(true);
-      }
+      if (is.current) setRedirectToReferrer(true);
 		}).catch(err => {
-      if (is.current) {
-        setLoading(false);
-        openSnackbar(handleFirestoreError(err), 'error');
-      }
+      if (is.current) openSnackbar(handleFirestoreError(err), 'error');
+    }).finally(() => {
+      if (is.current) setLoading(false);
     });
   }, [openSnackbar]);
   

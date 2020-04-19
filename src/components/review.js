@@ -56,6 +56,8 @@ const Review = props => {
           setComments(null);
           setLoading(false);
         }
+      }, err => {
+        openSnackbar(handleFirestoreError(err), 'error');
       });
     }
   }, [bid, selectedRid, openSnackbar]);

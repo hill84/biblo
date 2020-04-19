@@ -23,7 +23,7 @@ import isURL from 'validator/lib/isURL';
 import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { awards, formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, handleFirestoreError, join, normalizeString, numRegex, setFormatClass, urlRegex, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -128,7 +128,7 @@ const BookForm = props => {
     e.preventDefault();
 
     if (is.current) {
-      setIsEditingDescription(isEditingDescription => (!isEditingDescription));
+      setIsEditingDescription(isEditingDescription => !isEditingDescription);
     }
   };
   
@@ -136,7 +136,7 @@ const BookForm = props => {
     e.persist();
     e.preventDefault();
     
-    if (is.current) setIsEditingIncipit(isEditingIncipit => (!isEditingIncipit));
+    if (is.current) setIsEditingIncipit(isEditingIncipit => !isEditingIncipit);
   };
 
   const setChange = useCallback((name, value) => {
@@ -361,7 +361,7 @@ const BookForm = props => {
     }
 
     ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
-      const urlMatches = book[text].match(urlRegex);
+      const urlMatches = extractUrls(book[text]);
       const badWords = checkBadWords(book[text]);
       if (urlMatches) {
         errors[text] = `Non inserire link (${join(urlMatches)})`;
@@ -455,16 +455,16 @@ const BookForm = props => {
             }
           }).then(() => {
             if (is.current) {
-              setLoading(false);
               setChanges([]);
               onEditing();
               openSnackbar('Modifiche salvate', 'success');
             }
           }).catch(err => {
             if (is.current) {
-              setLoading(false);
               openSnackbar(handleFirestoreError(err), 'error');
             }
+          }).finally(() => {
+            if (is.current) setLoading(false);
           });
         } else {
           const newBookRef = booksRef.doc();

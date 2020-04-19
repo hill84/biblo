@@ -1,6 +1,5 @@
 @import 'media-queries.css';
 
-/* BASIC PROFILE */
 .basic-profile {
   & .username {
     display: flex;
@@ -13,7 +12,12 @@
     overflow: hidden;
   }
   & .email { color: var(--lightTextClr); }
-  & .role-badges { position: absolute; top: 10px; right: 10px; z-index: 1; }
+  & .absolute-top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+  }
   & .avatar:not(img) { 
     margin-left: auto; 
     margin-right: auto; 
@@ -27,9 +31,11 @@
       border-radius: 99px; 
     }
   }
+  & .col-right {
+    max-width: calc(100% - 16px - var(--avatarSize));
+  }
 }
 
-/* CONTACTS */
 .contacts-tab-col {
   overflow: auto;
   &::before, &::after {
@@ -62,8 +68,17 @@
   padding-bottom: .4rem; 
   border-bottom-width: 1px;
   &:last-child { border-bottom: 0; }
-  & .avatar { float: left; will-change: opacity; animation: fadeIn .3s ease-in-out; }
-  & .btn { position: relative; margin-left: 2px; margin-right: 2px; }
+  & .avatar {
+    float: left;
+    margin-right: 14px;
+    will-change: opacity;
+    animation: fadeIn .3s ease-in-out;
+  }
+  & .btn {
+    position: relative;
+    margin-left: 2px;
+    margin-right: 2px;
+  }
   & .timestamp { 
     position: absolute; 
     right: 14px; 
@@ -72,14 +87,10 @@
   }
 }
 
-#dashboardComponent .contacts-tab .avatar-row .avatar { margin-right: 14px; }
-
 @media (--from-l) {
-  #dashboardComponent {
-    & .contacts-tab-col {
-      max-height: calc(100vh - 450px);
-      &:first-child { padding-right: var(--pad); }
-      &:last-child { padding-left: var(--pad); }
-    }
+  .contacts-tab-col {
+    max-height: calc(100vh - 450px);
+    &:first-child { padding-right: var(--pad); }
+    &:last-child { padding-left: var(--pad); }
   }
 }

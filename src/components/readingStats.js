@@ -41,16 +41,14 @@ const ReadingStats = props => {
           // console.log(items);
           if (is.current) {
             setUserBooks(items);
-            setLoading(false);
             setTimestamp(Date.now());
           }
         }
       }).catch(err => {
         openSnackbar(handleFirestoreError(err), 'error');
-        if (is.current) {
-          setUserBooks(null);
-          setLoading(false);
-        }
+        if (is.current) setUserBooks(null);
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
     } else setLoading(isLoading || false);
     // eslint-disable-next-line

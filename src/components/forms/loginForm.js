@@ -95,16 +95,12 @@ const LoginForm = props => {
 		if (Object.keys(errors).length === 0) {
       if (is.current) setLoading(true);
 			auth.signInWithEmailAndPassword(email, password).then(() => {
-        if (is.current) {
-          setLoading(false);
-          setRedirectToReferrer(true);
-        }
+        if (is.current) setRedirectToReferrer(true);
 			}).catch(err => {
-        if (is.current) {
-          setAuthError(handleFirestoreError(err));
-          setLoading(false);
-        }
-			});
+        if (is.current) setAuthError(handleFirestoreError(err));
+			}).finally(() => {
+        if (is.current) setLoading(false);
+      });
 		}
 	};
   

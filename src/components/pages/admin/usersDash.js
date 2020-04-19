@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
-import { auth, commentersGroupRef, countRef, noteRef, notesRef, reviewerCommenterRef, reviewerRef, reviewersGroupRef, userNotificationsRef, userRef, usersRef } from '../../../config/firebase';
+import { auth, authorFollowerRef, collectionFollowersRef, commentersGroupRef, countRef, followersGroupRef, genreFollowerRef, noteRef, notesRef, reviewerCommenterRef, reviewerRef, reviewersGroupRef, userNotificationsRef, userRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, timeOptions } from '../../../config/shared';
 import { funcType } from '../../../config/types';
@@ -60,15 +60,15 @@ const UsersDash = props => {
 
   const limit = useMemo(() => limitBy[limitByIndex], [limitByIndex]);
 
-  const onDeleteSuccess = msg => {
+  const onDeleteSuccess = useCallback(msg => {
     console.log(`%c✔ ${msg} deleted`, 'color: green');
     openSnackbar(`${msg} deleted`, 'success');
-  };
+  }, [openSnackbar]);
 
-  const onDeleteError = (msg, err) => {
+  const onDeleteError = useCallback((msg, err) => {
     console.log(`%c✖ ${msg} not deleted`, 'color: red');
     openSnackbar(handleFirestoreError(err), 'error');
-  };
+  }, [openSnackbar]);
 
   const fetch = useCallback(e => {
     const direction = e?.currentTarget.dataset.direction;
@@ -98,7 +98,7 @@ const UsersDash = props => {
           setState(initialState);
           setLoading(false);
         }
-      });
+      }, err => console.warn(err));
     };
     
     if (!direction) {
@@ -111,9 +111,12 @@ const UsersDash = props => {
         } else if (is.current) {
           setCount(0);
           setState(initialState);
-          setLoading(false);
         }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => {
+        openSnackbar(handleFirestoreError(err), 'error');
+      }).finally(() => {
+        if (is.current) setLoading(false);
+      });
     } else fetcher();
   }, [desc, firstVisible, lastVisible, limit, openSnackbar, orderByIndex, state]);
   
@@ -188,31 +191,44 @@ const UsersDash = props => {
   const onDelete = useCallback(() => {
     if (is.current) setIsOpenDeleteDialog(false);
 
-    const { /* displayName, email,  */uid } = selected;
+    const { uid } = selected;
     
     userRef(uid).delete().then(() => onDeleteSuccess('User')).catch(err => onDeleteError('User', err));
-
-    // followersGroupRef.where('uid', '==', uid).delete().then(() => onDeleteSuccess('Followers')).catch(err => onDeleteError('Followers', err));
 
     reviewersGroupRef.where('createdByUid', '==', uid).get().then(snap => {
       if (!snap.empty) {
         snap.forEach(item => {
+          // console.log(`• review deleted`);
           const { bid, createdByUid } = item.data();
           reviewerRef(bid, createdByUid).delete().catch(err => onDeleteError(`Review ${item.id}`, err));
         });
-        onDeleteSuccess(`${snap.docs.length} reviews`)
+        onDeleteSuccess(`${snap.docs.length} reviews`);
       }
     }).catch(err => onDeleteError('Reviews', err));
 
     commentersGroupRef.where('createdByUid', '==', uid).get().then(snap => {
       if (!snap.empty) {
         snap.forEach(item => {
+          // console.log(`• comment deleted`);
           const { bid, createdByUid, rid } = item.data();
           reviewerCommenterRef(bid, rid, createdByUid).delete().catch(err => onDeleteError(`Comment ${item.id}`, err));
         });
-        onDeleteSuccess(`${snap.docs.length} comments`)
+        onDeleteSuccess(`${snap.docs.length} comments`);
       }
     }).catch(err => onDeleteError('Comments', err));
+
+    followersGroupRef.where('uid', '==', uid).get().then(snap => {
+      if (!snap.empty) {
+        snap.forEach(item => {
+          const { aid, cid, gid, uid } = item.data();
+          // console.log(`• ${aid ? 'author' : cid ? 'collection' : gid ? 'genre' : 'unknow'} deleted`);
+          if (aid) authorFollowerRef(aid, uid).delete().catch(err => onDeleteError(`Author follow ${item.id}`, err));
+          if (gid) genreFollowerRef(gid, uid).delete().catch(err => onDeleteError(`Genre follow ${item.id}`, err));
+          if (cid) collectionFollowersRef(cid).doc(uid).delete().catch(err => onDeleteError(`Collection follow ${item.id}`, err));
+        });
+        onDeleteSuccess(`${snap.docs.length} follows`);
+      }
+    }).catch(err => onDeleteError('Follows', err));
 
     userNotificationsRef(uid).get().then(snap => {
       if (!snap.empty) {
@@ -222,8 +238,8 @@ const UsersDash = props => {
               const notes = [];
               snap.forEach(item => notes.push(item.id));
               // console.log(notes);
-              const deleteUserNotes = async () => {
-                await asyncForEach(snap, item => {
+              (async () => {
+                await asyncForEach((snap, item) => {
                   noteRef(uid, item.id).delete().then(() => {
                     // console.log(`• note ${item.id} deleted`);
                   }).catch(err => onDeleteError(`• note ${item.id}`, err));
@@ -234,8 +250,7 @@ const UsersDash = props => {
                 userNotificationsRef(uid).delete().then(() => {
                   onDeleteSuccess('Notifications collection');
                 }).catch(err => onDeleteError('Notifications collection', err));
-              }
-              deleteUserNotes();
+              })();
             } else console.warn('Operation aborted: too many docs');
           } else console.log('No notes');
         }).catch(err => onDeleteError('Notes', err));
@@ -243,7 +258,7 @@ const UsersDash = props => {
     }).catch(err => onDeleteError('Notifications', err));
     
     onCloseDeleteDialog();
-  }, [openSnackbar, selected]);
+  }, [onDeleteError, onDeleteSuccess, selected]);
 
   const onChangeRole = e => {
     const { uid } = e.currentTarget?.parentNode?.dataset;
@@ -290,7 +305,7 @@ const UsersDash = props => {
             </Avatar>
           </div>
           <Link to={`/dashboard/${item.uid}`} className="col col-lg-2" title={item.displayName}>
-            {item.displayName}
+            {item.displayName} {item.roles?.author && icon.checkDecagram}
           </Link>
           <div className="col monotype hide-sm">
             <CopyToClipboard text={item.uid} />
@@ -298,10 +313,10 @@ const UsersDash = props => {
           <div className="col monotype hide-sm">
             <CopyToClipboard text={item.email} />
           </div>
-          <div role="group" className="col col-md-2 col-lg-1 btns xs text-center" data-uid={item.uid}>
-            <button type="button" className={`btn rounded icon ${item.roles?.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles?.editor} onClick={onChangeRole} title="editor">E</button>
-            <button type="button" className={`btn rounded icon ${item.roles?.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles?.premium} onClick={onChangeRole} title="premium">P</button>
-            <button type="button" className={`btn rounded icon ${item.roles?.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles?.admin} onClick={onChangeRole} title="admin">A</button>
+          <div role="group" className="col col-md-2 col-lg-1 btns xs rounded text-center" data-uid={item.uid}>
+            <button type="button" className={`btn ${item.roles?.editor ? '' : 'flat'}`} data-role="editor" onClick={onChangeRole} title="editor">E</button>
+            <button type="button" className={`btn ${item.roles?.premium ? '' : 'flat'}`} data-role="premium" onClick={onChangeRole} title="premium">P</button>
+            <button type="button" className={`btn ${item.roles?.admin ? '' : 'flat'}`} data-role="admin" onClick={onChangeRole} title="admin">A</button>
           </div>
           <div className="col col-sm-3 hide-xs">
             <div className="row text-center monotype">
