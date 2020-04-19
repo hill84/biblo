@@ -16,14 +16,14 @@ import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
-import firebase, { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
+import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { formats, genres, languages, awards } from '../../config/lists';
-import { arrToObj, checkBadWords, handleFirestoreError, hasRole, join, normalizeString, numRegex, setFormatClass, urlRegex, validateImg } from '../../config/shared';
+import { awards, formats, genres, languages } from '../../config/lists';
+import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -62,7 +62,7 @@ const min = {
 }
 
 const BookForm = props => {
-  const { user } = useContext(UserContext);
+  const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { book: _book, onEditing } = props;
   const [book, setBook] = useState({
@@ -128,7 +128,7 @@ const BookForm = props => {
     e.preventDefault();
 
     if (is.current) {
-      setIsEditingDescription(isEditingDescription => (!isEditingDescription));
+      setIsEditingDescription(isEditingDescription => !isEditingDescription);
     }
   };
   
@@ -136,7 +136,7 @@ const BookForm = props => {
     e.persist();
     e.preventDefault();
     
-    if (is.current) setIsEditingIncipit(isEditingIncipit => (!isEditingIncipit));
+    if (is.current) setIsEditingIncipit(isEditingIncipit => !isEditingIncipit);
   };
 
   const setChange = useCallback((name, value) => {
@@ -361,7 +361,7 @@ const BookForm = props => {
     }
 
     ['description', 'publisher', 'subtitle', 'title'].forEach(text => {
-      const urlMatches = book[text].match(urlRegex);
+      const urlMatches = extractUrls(book[text]);
       const badWords = checkBadWords(book[text]);
       if (urlMatches) {
         errors[text] = `Non inserire link (${join(urlMatches)})`;
@@ -385,8 +385,8 @@ const BookForm = props => {
           setImgLoading(true);
           setErrors(errors => ({ ...errors, upload: null }));
         }
-        const uploadTask = storageRef(`books/${_book.bid || book.bid}`, 'cover').put(file);
-        const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
+        const uploadTask = storageRef.child(`books/${_book.bid || book.bid}/cover`).put(file);
+        const unsubUploadTask = uploadTask.on('state_changed', snap => {
           if (is.current) { 
             setImgProgress(snap.bytesTransferred / snap.totalBytes * 100);
           }
@@ -455,16 +455,16 @@ const BookForm = props => {
             }
           }).then(() => {
             if (is.current) {
-              setLoading(false);
               setChanges([]);
               onEditing();
               openSnackbar('Modifiche salvate', 'success');
             }
           }).catch(err => {
             if (is.current) {
-              setLoading(false);
               openSnackbar(handleFirestoreError(err), 'error');
             }
+          }).finally(() => {
+            if (is.current) setLoading(false);
           });
         } else {
           const newBookRef = booksRef.doc();
@@ -565,8 +565,6 @@ const BookForm = props => {
   }, [changes, onEditing]);
 
   const onCloseChangesDialog = () => setIsOpenChangesDialog(false);
-
-  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
   
   const menuItemsMap = (arr, values) => arr.map(item => 
     <MenuItem 

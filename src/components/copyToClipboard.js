@@ -1,6 +1,6 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { useContext } from 'react';
-import { numberType, stringType, _oneOfType } from '../config/types';
+import { numberType, oneOfType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 
 const copy = (text, openSnackbar) => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
@@ -24,7 +24,7 @@ const CopyToClipboard = props => {
 };
 
 CopyToClipboard.propTypes = {
-  text: _oneOfType([stringType, numberType])
+  text: oneOfType([stringType, numberType])
 }
 
 CopyToClipboard.defaultProps = {

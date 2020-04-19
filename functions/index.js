@@ -8,8 +8,6 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-// firebase deploy --only functions:function1,functions:function2
-
 // HELPERS
 const ff = functions.region('europe-west1').firestore;
 
@@ -17,7 +15,7 @@ const count = props => {
   const { doc, change, collection = 'counters', field = 'count', nestedField } = props;
   let increment;
 
-  if (change == 1 || change == -1) {
+  if (change === 1 || change === -1) {
     increment = change;
   } else {
     if (change.after.exists && !change.before.exists) { increment = 1 } else 
@@ -60,34 +58,55 @@ exports.decrementReviewsComments = ff.document('reviews/{bid}/reviewers/{uid}/co
   doc: context.params.uid, change: -1, collection: `reviews/${context.params.bid}/reviewers`, field: 'comments_num' 
 }));
 
-/* exports.feedReviews = ff.document('reviews/{bid}/reviewers/{uid}').onWrite((change, context) => {
-  const { bid } = context.params;
-  const feedRef = admin.firestore().collection('feeds').doc('latestReviews').collection('reviews').doc(bid);
-  const item = change.after.data();
+// ADMIN
+exports.incrementDeletedUsers = ff.document('admin/deleted/users/{uid}').onCreate(() => count({ doc: 'deleted-users', change: 1 }));
 
-  if (change.after.exists && !change.before.exists) return feedRef.set(item); // add review to feed
-  if (!change.after.exists && change.before.exists) return feedRef.delete(); // remove review from feed
-  return feedRef.update(item);
+exports.decrementDeletedUsers = ff.document('admin/deleted/users/{uid}').onDelete(() => count({ doc: 'deleted-users', change: -1 }));
+
+exports.flagReview = ff.document('reviews/{bid}/reviewers/{uid}').onUpdate((change, context) => {
+  if (change.before.exists && change.after.exists) {
+    const { bid, uid } = context.params;
+    const { flag } = change.after.data();
+    const ref = admin.firestore().doc(`admin/flagged/reviews/${bid}/reviewers/${uid}`);
+
+    if (flag) {
+      const data = { bid, uid, ...flag };
+      return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-reviews', change: 1 }));
+    } 
+    return ref.delete().then(() => count({ doc: 'flagged-reviews', change: -1 }));
+  }
+  return false;
 });
 
-exports.truncateFeedReviews = ff.document('reviews/{bid}/reviewers/{uid}').onCreate((snap, context) => {
-  const latestReviewsRef = admin.firestore().collection('feeds').doc('latestReviews');
-  const reviewsRef = latestReviewsRef.collection('reviews');
-    
-  return reviewsRef.orderBy('created_num', 'desc').get().then(snap => {
-    const oldReviews = [];
-    let count = snap.size;
+exports.flagComment = ff.document('reviews/{bid}/reviewers/{uid}/commenters/{cid}').onUpdate((change, context) => {
+  if (change.before.exists && change.after.exists) {
+    const { bid, cid, uid } = context.params;
+    const { flag } = change.after.data();
+    const ref = admin.firestore().doc(`admin/flagged/reviews/${bid}/reviewers/${uid}/commenters/${cid}`);
 
-    snap.forEach(doc => oldReviews.push(doc.data()));
-    if (oldReviews.length > 12) {
-      reviewsRef.doc(oldReviews[oldReviews.length - 1].bid).delete();
-      count = count - 1;
+    if (flag) {
+      const data = { bid, cid, uid, ...flag };
+      return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-comments', change: 1 }));
     }
-    const lastActivity = oldReviews[0].created_num;
-    const data = { count, lastActivity };
-    return latestReviewsRef.update(data);
-  }).catch(err => console.log(err));
-}); */
+    return ref.delete().then(() => count({ doc: 'flagged-comments', change: -1 }));
+  }
+  return false;
+});
+
+exports.flagDiscussion = ff.document('groups/{gid}/discussions/{did}').onUpdate((change, context) => {
+  if (change.before.exists && change.after.exists) {
+    const { did, gid } = context.params;
+    const { flag } = change.after.data();
+    const ref = admin.firestore().doc(`admin/flagged/groups/${gid}/discussions/${did}`);
+
+    if (flag) {
+      const data = { did, gid, ...flag };
+      return ref.set(data, { merge: true }).then(() => count({ doc: 'flagged-discussions', change: 1 }));
+    }
+    return ref.delete().then(() => count({ doc: 'flagged-discussions', change: -1 }));
+  }
+  return false;
+});
 
 // NOTIFICATIONS
 exports.incrementNotifications = ff.document('notifications/{nid}').onCreate(() => count({ doc: 'notifications', change: 1 }));
@@ -171,6 +190,20 @@ exports.clearUserAuth = ff.document('users/{uid}').onDelete((snap, context) => a
 
 exports.clearUserFiles = ff.document('users/{uid}').onDelete((snap, context) => admin.storage().bucket().deleteFiles({ prefix: `users/${context.params.uid}` }));
 
+exports.clearUserData = ff.document('users/{uid}').onDelete((snap, context) => {
+  const { uid } = context.params;
+  const { creationTime, displayName, email } = snap.data();
+
+  admin.firestore().collection('shelves').doc(uid).delete(); // delete user shelf
+  admin.firestore().collection('followers').doc(uid).delete(); // delete user followers
+  admin.firestore().collection('followings').doc(uid).delete(); // delete user followings
+  admin.firestore().collection('recommendations').doc(uid).delete(); // delete user recommendations
+
+  const data = { creationTime, displayName, email, deletionTime: Date.now(), uid };
+
+  return admin.firestore().collection('admin').doc('deleted').collection('users').doc(uid).set(data, { merge: true });
+});
+
 // AUTHORS
 exports.incrementAuthors = ff.document('authors/{aid}').onCreate(() => count({ doc: 'authors', change: 1 }));
 
@@ -185,3 +218,16 @@ exports.decrementQuotes = ff.document('quotes/{qid}').onDelete(() => count({ doc
 exports.incrementChallenges = ff.document('challenges/{cid}').onCreate(() => count({ doc: 'challenges', change: 1 }));
 
 exports.decrementChallenges = ff.document('challenges/{cid}').onDelete(() => count({ doc: 'challenges', change: -1 }));
+
+// GROUPS
+exports.incrementGroups = ff.document('groups/{gid}').onCreate(() => count({ doc: 'groups', change: 1 }));
+
+exports.decrementGroups = ff.document('groups/{gid}').onDelete(() => count({ doc: 'groups', change: -1 }));
+
+exports.incrementGroupFollowers = ff.document('groups/{gid}/followers/{uid}').onCreate((snap, context) => count({ 
+  doc: context.params.gid, change: 1, collection: 'groups', field: 'followers_num' 
+}));
+
+exports.decrementGroupFollowers = ff.document('groups/{gid}/followers/{uid}').onDelete((snap, context) => count({ 
+  doc: context.params.gid, change: -1, collection: 'groups', field: 'followers_num' 
+}));

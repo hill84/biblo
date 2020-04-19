@@ -11,7 +11,7 @@ import Rater from 'react-rater';
 import { Link } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, app, calcReadingTime, hasRole, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
+import { abbrNum, app, calcReadingTime, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
 import { bookType, boolType, funcType, locationType, objectType, refType, userBookType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -33,7 +33,7 @@ const NoMatch = lazy(() => import('../noMatch'));
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const BookProfile = props => {
-  const { isAuth, user } = useContext(UserContext);
+  const { isAdmin, isAuth, isEditor } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const {
     addBookToShelf,
@@ -56,7 +56,7 @@ const BookProfile = props => {
   const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);
   const [isOpenReadingState, setIsOpenReadingState] = useState(false);
   const [isOpenRecommendation, setIsOpenRecommendation] = useState(false);
-  const [isOpenIncipit, setIsOpenIncipit] = useState(location ? location.pathname.indexOf('/incipit') !== -1 : false);
+  const [isOpenIncipit, setIsOpenIncipit] = useState(location?.pathname?.indexOf('/incipit') !== -1);
   const [userBook, setUserBook] = useState(props.userBook);
   const is = useRef(true);
 
@@ -135,8 +135,6 @@ const BookProfile = props => {
   const _createdBy = book?.EDIT.createdBy;
   const lastEditBy = useMemo(() => truncateString(_lastEditBy, 12), [_lastEditBy]);
   const createdBy = useMemo(() => truncateString(_createdBy, 12), [_createdBy]);
-  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
-  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const hasBid = useMemo(() => Boolean(book?.bid), [book]);
   const isLocked = useMemo(() => !book?.EDIT.edit && !isAdmin, [book, isAdmin]);
 
@@ -323,9 +321,9 @@ const BookProfile = props => {
                     )}
 
                     <div className="info-row bookdetails">
-                      <span className="counter">{icon.reader} <b>{abbrNum(book ? book.readers_num : 0)}</b> <span className="hide-sm">Lettori</span></span>
-                      <span className="counter">{icon.messageTextOutline} <b>{abbrNum(book ? book.reviews_num : 0)}</b> <span className="hide-sm">Recensioni</span></span>
-                      {book?.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
+                      <span className="counter">{icon.reader} <b>{abbrNum(book.readers_num || 0)}</b> <span className="hide-sm">Lettor{book.readers_num === 1 ? 'e' : 'i'}</span></span>
+                      <span className="counter">{icon.messageTextOutline} <b>{abbrNum(book.reviews_num || 0)}</b> <span className="hide-sm">Recension{book.reviews_num === 1 ? 'e' : 'i'}</span></span>
+                      {book.pages_num && <span className="counter">{icon.timer} <span className="hide-sm">Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                     </div>
                   </>
                 )}
@@ -370,11 +368,11 @@ const BookProfile = props => {
           onClose={onCloseRemoveDialog}
           aria-labelledby="remove-dialog-title"
           aria-describedby="remove-dialog-description">
-          <DialogTitle id="remove-dialog-title">
+          <DialogTitle>
             Procedere con la rimozione?
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="remove-dialog-description">
+            <DialogContentText>
               Rimuovendo il libro perderai il voto, la recensione e lo stato di lettura.
             </DialogContentText>
           </DialogContent>

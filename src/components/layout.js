@@ -33,7 +33,7 @@ const unsub = {
 };
 
 const Layout = props => {
-  const { error, user } = useContext(UserContext);
+  const { error, isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { children } = props;
   const [notes, setNotes] = useState(null);
@@ -71,11 +71,6 @@ const Layout = props => {
     unsub.timer = setTimeout(() => {
       fetchNotes();
     }, 1000);
-
-    return () => {
-      unsub.fetchNotes && unsub.fetchNotes();
-      unsub.timer && clearTimeout(unsub.timer);
-    }
   }, [fetchNotes]);
 
   useEffect(() => {
@@ -84,6 +79,8 @@ const Layout = props => {
   
   useEffect(() => () => {
     is.current = false;
+    unsub.fetchNotes && unsub.fetchNotes();
+    unsub.timer && clearTimeout(unsub.timer);
   }, []);
 
   const onToggleDrawer = () => setDrawerIsOpen(!drawerIsOpen);
@@ -117,7 +114,7 @@ const Layout = props => {
           </Typography>
           {user ? (
             <>
-              {user.roles.editor && (
+              {isEditor && (
                 <Tooltip title="Aggiungi libro" placement="bottom">
                   <IconButton
                     className="search-btn popIn reveal hide-xs"
@@ -172,6 +169,16 @@ const Layout = props => {
                 <Link to="/notifications"><MenuItem className="footer">Mostra tutte</MenuItem></Link> 
               </Menu>
 
+              <Tooltip title="Gruppi" placement="bottom">
+                <IconButton
+                  className="groups-btn popIn reveal delay3 hide-xxs"
+                  component={NavLink} 
+                  to="/groups"
+                  aria-label="Groups">
+                  {icon.accountGroup}
+                </IconButton>
+              </Tooltip>
+
               <Tooltip title={user.displayName} placement="bottom">
                 <IconButton
                   className="more-btn"
@@ -179,10 +186,10 @@ const Layout = props => {
                   aria-owns={moreAnchorEl ? 'more-menu' : null}
                   aria-haspopup="true"
                   onClick={onOpenMore}>
-                  <Avatar className="avatar popIn reveal delay3" src={user.photoURL} alt={user.displayName}>
+                  <Avatar className="avatar popIn reveal delay4" src={user.photoURL} alt={user.displayName}>
                     {!user.photoURL && getInitials(user.displayName)}
                   </Avatar>
-                  {!user.roles.editor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock}</div>}
+                  {!isEditor && <div className="badge dot red" title="Modifiche disabilitate">{icon.lock}</div>}
                 </IconButton>
               </Tooltip>
               <Menu
@@ -199,8 +206,8 @@ const Layout = props => {
             </>
           ) : (
             <>
-              <NavLink to="/login" className="btn flat hide-xs">Accedi</NavLink>
-              <NavLink to="/signup" className="btn primary">Registrati</NavLink>
+              <NavLink to="/login" className="btn rounded flat hide-xs">Accedi</NavLink>
+              <NavLink to="/signup" className="btn rounded primary">Registrati</NavLink>
             </>
           )}
         </Toolbar>
@@ -224,7 +231,7 @@ const Layout = props => {
                     </div>
                   </div>
                 </NavLink>
-                {user.roles.admin && (
+                {isAdmin && (
                   <NavLink to="/admin">
                     <MenuItem>
                       <ListItemIcon>{icon.gauge}</ListItemIcon>
@@ -234,7 +241,7 @@ const Layout = props => {
                 )}
                 <NavLink to={`/dashboard/${user.uid}/shelf`}>
                   <MenuItem>
-                    <ListItemIcon>{icon.homeAccount}</ListItemIcon>
+                    <ListItemIcon>{icon.bookshelf}</ListItemIcon>
                     <Typography variant="inherit">La mia libreria</Typography>
                   </MenuItem>
                 </NavLink>
@@ -261,6 +268,12 @@ const Layout = props => {
                 <Typography variant="inherit">Home</Typography>
               </MenuItem>
             </NavLink>
+            <NavLink to="/groups" exact>
+              <MenuItem>
+                <ListItemIcon>{icon.accountGroup}</ListItemIcon>
+                <Typography variant="inherit">Gruppi <span className="badge sm rounded accent">New</span></Typography>
+              </MenuItem>
+            </NavLink>
             <NavLink to="/genres" exact>
               <MenuItem>
                 <ListItemIcon>{icon.libraryShelves}</ListItemIcon>
@@ -273,12 +286,26 @@ const Layout = props => {
                 <Typography variant="inherit">Autori</Typography>
               </MenuItem>
             </NavLink>
+            {/* <NavLink to="/collections" exact>
+              <MenuItem>
+                <ListItemIcon>{icon.bookmarkMultiple}</ListItemIcon>
+                <Typography variant="inherit">Collezioni</Typography>
+              </MenuItem>
+            </NavLink> */}
             <NavLink to="/donations" exact>
               <MenuItem>
                 <ListItemIcon>{icon.heart}</ListItemIcon>
                 <Typography variant="inherit">Donazioni</Typography>
               </MenuItem>
             </NavLink>
+            {isAdmin && (
+              <NavLink to="/icons" exact>
+                <MenuItem>
+                  <ListItemIcon>{icon.emoticon}</ListItemIcon>
+                  <Typography variant="inherit">Icone</Typography>
+                </MenuItem>
+              </NavLink>
+            )}
 
             <MenuItem disableRipple className="bottom-item">
               <div className="version">v {version}</div>

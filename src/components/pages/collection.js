@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, hasRole, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -19,7 +19,7 @@ import Bubbles from './bubbles';
 const NoMatch = lazy(() => import('../noMatch'));
 
 const Collection = props => {
-  const { user } = useContext(UserContext);
+  const { isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const [collection, setCollection] = useState(null);
@@ -56,17 +56,16 @@ const Collection = props => {
         });
         if (is.current) {
           setCollection(snap.data());
-          setLoading(false);
         }
       } else if (is.current) {
         setCollection(null);
         setFollowers(null);
         setFollow(false);
-        setLoading(false);
       }
     }).catch(err => {
-      setLoading(false);
       openSnackbar(handleFirestoreError(err), 'error');
+    }).finally(() => {
+      if (is.current) setLoading(false);
     });
 
     const filter = filterByName && genres.filter(item => item.name === filterByName)[0].name;
@@ -114,6 +113,7 @@ const Collection = props => {
         collectionFollowersRef(denormURL(cid)).doc(uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       } else {
         collectionFollowersRef(denormURL(cid)).doc(uid).set({
+          cid: denormURL(cid),
           uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
@@ -151,8 +151,6 @@ const Collection = props => {
   };
 
   const isScrollable = isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm';
-  
-  const isEditor = hasRole(user, 'editor');
 
   const filterByOptions = genres.map(option => (
     <MenuItem

@@ -44,7 +44,7 @@ const RecommendationForm = props => {
         setQuote(snap.data());
         setLoading(false);
       }
-    });
+    }, err => console.warn(err));
     
     return () => {
       unsubFetch && unsubFetch();
@@ -81,12 +81,11 @@ const RecommendationForm = props => {
     const unsubFetchFollowings = followingsRef(uid).onSnapshot(snap => {
       if (snap.exists) {
         setFollowings(snap.data());
-        setLoading(false);
       } else {
         setFollowings(null);
-        setLoading(false);
       }
-    });
+      setLoading(false);
+    }, err => console.warn(err));
 
     return () => {
       unsubFetchFollowings && unsubFetchFollowings();

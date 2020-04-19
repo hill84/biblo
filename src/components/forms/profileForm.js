@@ -10,31 +10,30 @@ import Select from '@material-ui/core/Select';
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useContext, useRef, useMemo, useState, useEffect } from 'react';
-import firebase, { storageRef, userRef } from '../../config/firebase';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { storageRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
-import { app, calcAge, getInitials, validateImg } from '../../config/shared';
+import { app, calcAge, getInitials, urlRegex, validateImg } from '../../config/shared';
 import { userType } from '../../config/types';
-import '../../css/profileForm.css';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
+import '../../css/profileForm.css';
 
 const ProfileForm = props => {
-  const { user: contextUser } = useContext(UserContext);
+  const { isAdmin, user: contextUser } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const [user, setUser] = useState(props.user);
   const [imgLoading, setImgLoading] = useState(false);
-  const [imgPreview, setImgPreview] = useState(props.user.photoURL);
+  const [imgPreview, setImgPreview] = useState(user.photoURL);
   const [imgProgress, setImgProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const [changes, setChanges] = useState(false);
   const [saved, setSaved] = useState(false);
   const [errors, setErrors] = useState({});
-  // const [authError, setAutherror] = useState('');
+  const [isEditingSocial, setIsEditingSocial] = useState(false);
   const is = useRef(true);
 
-  const isAdmin = useMemo(() => contextUser?.roles.admin, [contextUser]);
   const luid = useMemo(() => contextUser?.uid, [contextUser]);
   const uid = useMemo(() => user?.uid, [user]);
 
@@ -43,33 +42,32 @@ const ProfileForm = props => {
   }, []);
 
   const setChange = (name, value) => {
-    if (is.current) {
-      setSaved(false);
-      setChanges(true);
-      setUser({ ...user, [name]: value });
-      setErrors({ ...errors, [name]: null });
-    }
+    setUser({ ...user, [name]: value });
+    if (errors[name]) setErrors({ ...errors, [name]: null });
+    setSaved(false);
+    setChanges(true);
   };
 
   const onChange = e => {
     e.persist();
     const { name, value } = e.target;
     setChange(name, value);
-	};
+  };
 
-	const onChangeDate = name => date => {
+  const onChangeDate = name => date => {
     const value = String(date);
     setChange(name, value);
   };
 
-	const onChangeSelect = name => e => {
+  const onChangeSelect = name => e => {
     e.persist();
     const { value } = e.target;
     setChange(name, value);
-	};
+  };
 
-	const validate = user => {
-		const errors = {};
+  const validate = user => {
+    const errors = {};
+
     if (!user.displayName) errors.displayName = "Inserisci un nome utente";
     if (Date(user.birth_date) > new Date()) { 
       errors.birth_date = "Data di nascita non valida" 
@@ -78,13 +76,18 @@ const ProfileForm = props => {
     } else if (calcAge(user.birth_date) > 119) {
       errors.birth_date = "E chi sei.. Matusalemme?"; 
     }
-		if (user.city?.length > 150) errors.city = "Lunghezza massima 150 caratteri";
-		return errors;
-	};
+    if (user.city?.length > 150) errors.city = "Lunghezza massima 150 caratteri";
+    if (user.website && !user.website.match(urlRegex)) errors.website = "URL non valido";
+    if (user.youtube?.includes('youtube.com')) errors.youtube = `Rimuovi "https://www.youtube.com/channel/"`;
+    if (user.instagram?.includes('instagram.com')) errors.instagram = `Rimuovi "https://www.instagram.com/"`;
+    if (user.twitch?.includes('twitch.tv')) errors.twitch = `Rimuovi "https://www.twitch.tv/"`;
+    if (user.facebook?.includes('facebook.com')) errors.facebook = `Rimuovi "https://www.facebook.com/"`;
+    return errors;
+  };
 
-	const onImageChange = e => {
+  const onImageChange = e => {
     e.preventDefault();
-		const file = e.target.files[0];
+    const file = e.target.files[0];
     
     if (file) {
       const error = validateImg(file, 1);
@@ -94,8 +97,8 @@ const ProfileForm = props => {
           setImgLoading(true);
           setErrors({ ...errors, upload: null });
         }
-        const uploadTask = storageRef(`users/${uid}`, 'avatar').put(file);
-        const unsubUploadTask = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, snap => {
+        const uploadTask = storageRef.child(`users/${uid}/avatar`).put(file);
+        const unsubUploadTask = uploadTask.on('state_changed', snap => {
           if (is.current) {
             setImgProgress((snap.bytesTransferred / snap.totalBytes) * 100);
           }
@@ -134,47 +137,51 @@ const ProfileForm = props => {
     }
   };
   
-	const onSubmit = e => {
+  const onSubmit = e => {
     e.preventDefault();
     const errors = validate(user);
     
     if (is.current) setErrors(errors);
     
-		if (Object.keys(errors).length === 0) {
-      if (is.current) setLoading(true);
+    if (Object.keys(errors).length === 0) {
+      if (is.current) {
+        setLoading(true);
+        setIsEditingSocial(false);
+      }
 
-			userRef(uid).set({
-				...user,
-				photoURL: imgPreview || '',
-				sex: user.sex || '',
-				birth_date: user.birth_date || '',
-				city: user.city || '',
-				country: user.country || ''
-			}).then(() => {
+      userRef(uid).set({
+        ...user,
+        photoURL: imgPreview || '',
+        sex: user.sex || '',
+        birth_date: user.birth_date || '',
+        city: user.city || '',
+        country: user.country || ''
+      }).then(() => {
         if (is.current) {
           setImgProgress(0);
-          setLoading(false);
           setChanges(false);
           setSaved(true);
           openSnackbar('Modifiche salvate', 'success');
         }
-				// setRedirectToReferrer(true);
-			}).catch(err => {
+        // setRedirectToReferrer(true);
+      }).catch(err => {
         if (is.current) {
-          // setAuthError(err.message);
-          setLoading(false);
           openSnackbar(err.message, 'error');
         }
-			});
-		} else openSnackbar('Ricontrolla i dati inseriti', 'error');
+      }).finally(() => {
+        if (is.current) setLoading(false);
+      });
+    } else openSnackbar('Ricontrolla i dati inseriti', 'error');
   };
+
+  const onToggleSocial = () => setIsEditingSocial(isEditingSocial => !isEditingSocial);
   
-  // const menuItemsMap = arr => arr.map(item => <MenuItem value={item.id} key={item.id} primaryText={item.name} />);
   const menuItemsMap = (arr, values) => arr.map(item => 
     <MenuItem 
-      value={item.name} 
-      key={item.id} 
-      checked={values ? values.includes(item.name) : false}>
+      value={item.name}
+      title={item.nativeName}
+      key={item.id}
+      checked={values?.includes(item.name)}>
       {item.name}
     </MenuItem>
   );
@@ -190,14 +197,14 @@ const ProfileForm = props => {
           <div className="col-auto">
             <div className={`upload-avatar ${errors.upload ? 'error' : imgProgress === 100 ? 'success' : ''}`}>
               <Avatar className="avatar" src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
-              {imgLoading ? 
+              {imgLoading ? (
                 <div aria-hidden="true" className="loader"><CircularProgress /></div>
-              : 
+              ) : (
                 <div className="overlay">
                   <span title="Carica un'immagine">+</span>
                   <input type="file" accept="image/*" className="upload" onChange={onImageChange}/>
                 </div>
-              }
+              )}
             </div>
           </div>
           <div className="col">
@@ -230,7 +237,7 @@ const ProfileForm = props => {
           </div>
 
           <div className="row">
-            <div className="col-6 form-group">
+            <div className="col form-group">
               <FormControl className="select-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
                 <Select
@@ -247,7 +254,7 @@ const ProfileForm = props => {
               </FormControl>
             </div>
 
-            <div className="col-6 form-group">
+            <div className="col form-group">
               <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
                 <DatePicker 
                   className="date-picker"
@@ -285,34 +292,36 @@ const ProfileForm = props => {
             </FormControl>
           </div>
 
-          <div className="form-group">
-            <FormControl className="select-field" margin="normal" fullWidth>
-              <InputLabel htmlFor="continent">Continente</InputLabel>
-              <Select
-                id="continent"
-                placeholder="es: Europa"
-                value={user.continent || ''}
-                onChange={onChangeSelect("continent")}>
-                {menuItemsMap(continents)}
-              </Select>
-            </FormControl>
-          </div>
-
-          {(user.continent === 'Europa' || user.continent === 'Nordamerica') && (
-            <div className="form-group">
+          <div className="row">
+            <div className="col form-group">
               <FormControl className="select-field" margin="normal" fullWidth>
-                <InputLabel htmlFor="nation">Nazione</InputLabel>
+                <InputLabel htmlFor="continent">Continente</InputLabel>
                 <Select
-                  id="nation"
-                  placeholder="es: Italia"
-                  value={user.country || ''}
-                  onChange={onChangeSelect("country")}>
-                  {user.continent === 'Europa' && menuItemsMap(europeanCountries)}
-                  {user.continent === 'Nordamerica' && menuItemsMap(northAmericanCountries)}
+                  id="continent"
+                  placeholder="es: Europa"
+                  value={user.continent || ''}
+                  onChange={onChangeSelect("continent")}>
+                  {menuItemsMap(continents)}
                 </Select>
               </FormControl>
             </div>
-          )}
+
+            {(user.continent === 'Europa' || user.continent === 'Nordamerica') && (
+              <div className="col form-group">
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel htmlFor="nation">Nazione</InputLabel>
+                  <Select
+                    id="nation"
+                    placeholder="es: Italia"
+                    value={user.country || ''}
+                    onChange={onChangeSelect("country")}>
+                    {user.continent === 'Europa' && menuItemsMap(europeanCountries)}
+                    {user.continent === 'Nordamerica' && menuItemsMap(northAmericanCountries)}
+                  </Select>
+                </FormControl>
+              </div>
+            )}
+          </div>
 
           <div className="form-group">
             {user.country && user.country === "Italia‎" ? (
@@ -343,16 +352,112 @@ const ProfileForm = props => {
             )}
           </div>
 
+          {isEditingSocial ? (
+            <>
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.website)} htmlFor="website">Sito internet o blog</InputLabel>
+                  <Input
+                    id="website"
+                    name="website"
+                    type="url"
+                    placeholder={`es: ${app.url}`}
+                    value={user.website || ''}
+                    onChange={onChange}
+                    error={Boolean(errors.website)}
+                  />
+                  {errors.website && <FormHelperText className="message error">{errors.website}</FormHelperText>}
+                </FormControl>
+              </div>
+
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.youtube)} htmlFor="youtube">Canale Youtube</InputLabel>
+                  <Input
+                    id="youtube"
+                    name="youtube"
+                    type="url"
+                    autoComplete="https://www.youtube.com/channel/"
+                    placeholder="es: bibloSpace"
+                    value={user.youtube || ''}
+                    onChange={onChange}
+                    error={Boolean(errors.youtube)}
+                  />
+                  {errors.youtube && <FormHelperText className="message error">{errors.youtube}</FormHelperText>}
+                </FormControl>
+              </div>
+
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.instagram)} htmlFor="instagram">Profilo Instagram</InputLabel>
+                  <Input
+                    id="instagram"
+                    name="instagram"
+                    type="url"
+                    autoComplete="https://www.instagram.com/"
+                    placeholder="es: bibloSpace"
+                    value={user.instagram || ''}
+                    onChange={onChange}
+                    error={Boolean(errors.instagram)}
+                  />
+                  {errors.instagram && <FormHelperText className="message error">{errors.instagram}</FormHelperText>}
+                </FormControl>
+              </div>
+
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.twitch)} htmlFor="twitch">Canale Twitch</InputLabel>
+                  <Input
+                    id="twitch"
+                    name="twitch"
+                    type="url"
+                    autoComplete="https://www.twitch.tv/"
+                    placeholder="es: bibloSpace"
+                    value={user.twitch || ''}
+                    onChange={onChange}
+                    error={Boolean(errors.twitch)}
+                  />
+                  {errors.twitch && <FormHelperText className="message error">{errors.twitch}</FormHelperText>}
+                </FormControl>
+              </div>
+
+              <div className="form-group">
+                <FormControl className="input-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.facebook)} htmlFor="facebook">Pagina Facebook</InputLabel>
+                  <Input
+                    id="facebook"
+                    name="facebook"
+                    type="url"
+                    autoComplete="https://www.facebook.com/"
+                    placeholder="es: bibloSpace"
+                    value={user.facebook || ''}
+                    onChange={onChange}
+                    error={Boolean(errors.facebook)}
+                  />
+                  {errors.facebook && <FormHelperText className="message error">{errors.facebook}</FormHelperText>}
+                </FormControl>
+              </div>
+            </>
+          ) : (
+            <div className="info-row">
+              <button type="button" className="btn flat rounded centered" onClick={onToggleSocial}>
+                {(user.website || user.youtube || user.instagram || user.twitch || user.facebook) ? 'Modifica' : 'Aggiungi'} profili social
+              </button>
+            </div>
+          )}
+          
           <div>&nbsp;</div>
 
-          {luid === uid && <FormHelperText className="message">Per cancellare l&apos;account scrivi a <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.</FormHelperText>}
-
-          <div>&nbsp;</div>
+          {luid === uid && (
+            <FormHelperText className="message">
+              Per cancellare l&apos;account scrivi a <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.
+            </FormHelperText>
+          )}
 
         </form>
       </div>
       <div className="footer no-gutter">
-        <button type="button" className={`btn btn-footer primary ${saved && !changes && 'success'}`} disabled={!changes && 'disabled'} onClick={onSubmit}>{saved ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
+        <button type="button" className={`btn btn-footer ${saved && !changes ? 'success' : 'primary'}`} disabled={!changes} onClick={onSubmit}>{saved ? 'Modifiche salvate' : 'Salva le modifiche'}</button>
       </div>
     </>
   );
@@ -361,5 +466,5 @@ const ProfileForm = props => {
 ProfileForm.propTypes = {
   user: userType.isRequired
 }
- 
+
 export default ProfileForm;

@@ -15,9 +15,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, checkBadWords, getInitials, handleFirestoreError, join, timeSince, urlRegex } from '../../config/shared';
+import { abbrNum, checkBadWords, extractUrls, getInitials, handleFirestoreError, join, timeSince } from '../../config/shared';
 import { stringType, userBookType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -54,7 +55,7 @@ const formControlStyle = { zIndex: 1, };
 
 const ReviewForm = props => {
   const { user } = useContext(UserContext);
-  const { openSnackbar } = useContext(SnackbarContext);
+  const { closeSnackbar, openSnackbar, snackbarIsOpen } = useContext(SnackbarContext);
   const { bid, userBook } = props;
   const authid = useMemo(() => user?.uid, [user]);
   const initialReviewState = useMemo(() => ({
@@ -88,7 +89,9 @@ const ReviewForm = props => {
       if (is.current) setLoading(true);
 
       if (snap.exists) {
-        if (is.current) setReview({ ...initialReviewState, ...snap.data() });
+        if (is.current) {
+          setReview({ ...initialReviewState, ...snap.data() });
+        }
       } else if (is.current) {
         setReview(initialReviewState);
       }
@@ -96,21 +99,31 @@ const ReviewForm = props => {
         setLoading(false);
         setChanges(false);
       }
-    });
+    }, err => console.warn(err));
   }, [authid, bid, initialReviewState]);
 
   useEffect(() => {
     fetchReview();
   }, [fetchReview]);
 
-  const onEditing = () => {
-    if (is.current) setIsEditing(true);
-  };
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  useEffect(() => {
+    if (isEditing && !user?.photoURL) {
+      const msg = <span>Non hai <span className="hide-sm">ancora caricato</span> una foto profilo.</span>;
+      const action = <Link to="/profile" type="button" className="btn sm flat" onClick={closeSnackbar}>Aggiungila</Link>;
+      openSnackbar(msg, 'info', 4000, action);
+    }
+  }, [closeSnackbar, isEditing, openSnackbar, user]);
+
+  const onEditing = () => setIsEditing(true);
 
   const validate = useCallback(review => {
     const { text, title } = review;
     const errors = {};
-    const urlMatches = text.match(urlRegex);
+    const urlMatches = extractUrls(text);
     const badWords = checkBadWords(text);
 
     if (!text) {
@@ -159,27 +172,28 @@ const ReviewForm = props => {
             ...review,
             ...updatedReview
           }).then(() => {
-            // console.log(`Book review created`);
             openSnackbar('Recensione salvata', 'success')
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+          }).catch(err => {
+            openSnackbar(handleFirestoreError(err), 'error');
+          });
 
           userBookRef(authid, bid).update({ 
             review: {
               ...userBookReview,
               ...updatedReview
             }
-          }).then(() => {
-            // console.log(`User review posted`);
-          }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
-          if (is.current) {
-            setChanges(false);
-            setErrors({});
-            setIsEditing(false);
-            setIsOpenEmojiPicker(false);
-            setLoading(false);
-            setLeftChars({ text: null, title: null });
-          }
+          }).catch(err => {
+            openSnackbar(handleFirestoreError(err), 'error');
+          }).finally(() => {
+            if (is.current) {
+              setChanges(false);
+              setErrors({});
+              setIsEditing(false);
+              setIsOpenEmojiPicker(false);
+              setLoading(false);
+              setLeftChars({ text: null, title: null });
+            }
+          });
         } else console.warn(`No bid or user`);
       }
     }
@@ -221,6 +235,7 @@ const ReviewForm = props => {
     const { name, value } = e.target;
     
     if (is.current) {
+      if (snackbarIsOpen) closeSnackbar();
       setReview({ ...review, [name]: value });
       setErrors({ ...errors, [name]: null }); 
       setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
@@ -267,19 +282,18 @@ const ReviewForm = props => {
                     onClick={onClick}
                     error={Boolean(errors.text)}
                     multiline
-                    endAdornment={
+                    endAdornment={(
                       <InputAdornment position="end">
                         <Tooltip title={isOpenEmojiPicker ? 'Chiudi' : 'Aggiungi emoji'} placement="top">
                           <IconButton
-                            aria-label="toggle password visibility"
+                            aria-label="toggle emoji-picker visibility"
                             onClick={toggleEmojiPicker}
-                            onMouseDown={onMouseDown}
-                          >
+                            onMouseDown={onMouseDown}>
                             {isOpenEmojiPicker ? icon.close : icon.stickerEmoji}
                           </IconButton>
                         </Tooltip>
                       </InputAdornment>
-                    }
+                    )}
                   />
                   {isOpenEmojiPicker && (
                     <Picker
@@ -287,6 +301,9 @@ const ReviewForm = props => {
                       style={EmojiPickerStyle}
                       onSelect={addEmoji}
                       i18n={emojiMartLocale}
+                      showPreview={false}
+                      showSkinTones={false}
+                      theme="light"
                     />
                   )}
                   {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}

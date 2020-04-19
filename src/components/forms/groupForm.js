@@ -1,3 +1,4 @@
+import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -6,9 +7,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { collectionRef, collectionsRef } from '../../config/firebase';
-import { genres } from '../../config/lists';
-import { handleFirestoreError } from '../../config/shared';
+import Zoom from 'react-medium-image-zoom';
+import { Redirect } from 'react-router-dom';
+import { groupRef, groupsRef } from '../../config/firebase';
+import { capitalize,    handleFirestoreError } from '../../config/shared';
 import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -16,38 +18,43 @@ import Overlay from '../overlay';
 
 const max = {
   chars: {
-    desc: 1000,
-    title: 100
-  },
-  items: { genres: 3 }
-};
-const min = {
-  chars: { desc: 50 },
-  items: { books_num: 4 }
+    title: 50,
+    description: 1000,
+    rules: 1000
+  }
 };
 
-const CollectionForm = props => {
-  const { user } = useContext(UserContext);
+const min = {
+  chars: {
+    title: 5,
+    description: 50,
+  }
+};
+
+const GroupForm = props => {
+  const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { id, onToggle } = props;
   const [data, setData] = useState({
-    books_num: 0,
+    title: '',
     description: '',
-    edit: true,
-    genres: [],
-    title: ''
+    rules: '',
+    type: 'public',
+    location: '',
+    photoURL: ''
   });
-  const [leftChars, setLeftChars] = useState({ desc: null });
+  const [leftChars, setLeftChars] = useState({ description: null, rules: null });
   const [loading, setLoading] = useState(false);
   const [changes, setChanges] = useState(false);
   const [errors, setErrors] = useState({});
+  const [redirectToReferrer, setRedirectToReferrer] = useState(null);
   const is = useRef(true);
 
   const fetch = useCallback(() => {
     if (typeof id === 'string') {
       if (is.current) setLoading(true);
 
-      collectionRef(id).get().then(snap => {
+      groupRef(id).get().then(snap => {
         if (!snap.empty && is.current) {
           setData(snap.data());
         }
@@ -59,7 +66,15 @@ const CollectionForm = props => {
     }
   }, [id]);
 
-	const onChange = e => {
+  useEffect(() => {
+    fetch();
+  }, [fetch, id]);
+
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
+
+  const onChange = e => {
     e.persist();
     const { name, value } = e.target;
 
@@ -69,7 +84,7 @@ const CollectionForm = props => {
       setErrors({ ...errors, [name]: null });
     }
   };
-
+  
   const onChangeMaxChars = e => {
     e.persist();
     const { name, value } = e.target;
@@ -94,7 +109,7 @@ const CollectionForm = props => {
   };
 
   const checkTitle = async title => {
-    const result = await collectionsRef.where('title', '==', title).limit(1).get().then(snap => {
+    const result = await groupsRef.where('title', '==', title).limit(1).get().then(snap => {
       if (!snap.empty) return true;
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -103,31 +118,26 @@ const CollectionForm = props => {
 
 	const validate = async data => {
     const errors = {};
-    const isDuplicate = typeof id === 'string' ? false : await checkTitle(data.title);
+    const isDuplicate = id ? false : await checkTitle(data.title);
 
     if (!data.title) { 
       errors.title = "Inserisci il titolo"; 
     } else if (isDuplicate) {
-      errors.title = "Collezione già presente";
+      errors.title = "Gruppo già presente";
     } else if (data.title?.length > max.chars.title) {
       errors.title = `Massimo ${max.chars.title} caratteri`;
+    } else if (data.title?.length < min.chars.title) {
+      errors.title = `Minimo ${min.chars.title} caratteri`;
     }
     if (!data.description) { 
       errors.description = "Inserisci una descrizione"; 
-    } else if (data.description?.length > max.chars.desc) {
-      errors.description = `Massimo ${max.chars.desc} caratteri`;
-    } else if (data.description?.length < min.chars.desc) {
-      errors.description = `Minimo ${min.chars.desc} caratteri`;
+    } else if (data.description?.length > max.chars.description) {
+      errors.description = `Massimo ${max.chars.description} caratteri`;
+    } else if (data.description?.length < min.chars.description) {
+      errors.description = `Minimo ${min.chars.description} caratteri`;
     }
-    if (!data.genres) {
-      errors.genres = "Scegli almeno un genere";
-    } else if (data.genres.length > max.items.genres) {
-      errors.genres = `Massimo ${max.items.genres} generi`;
-    }
-    if (!data.books_num) {
-      errors.books_num = "Inserisci libri";
-    } else if (data.books_num < min.items.books_num) {
-      errors.books_num = `Minimo ${min.items.books_num} libri`;
+    if (data.rules?.length > max.chars.rules) {
+      errors.rules = `Massimo ${max.chars.rules} caratteri`;
     }
 		return errors;
   };
@@ -142,22 +152,31 @@ const CollectionForm = props => {
       if (is.current) setErrors(errors);
       
       if (Object.keys(errors).length === 0) {
-        const ref = data.title ? collectionRef(data.title) : collectionsRef.doc();
+        if (is.current) setLoading(true);
+        const ref = id ? groupRef(id) : groupsRef.doc();
         ref.set({
-          books_num: data.books_num || 0,
+          gid: id || ref.id,
+          title: capitalize(data.title) || '',
           description: data.description || '',
-          title: data.title || '',
-          edit: data.edit || true,
-          // followers: data.followers || {},
-          genres: data.genres || [],
+          rules: data.rules || '',
+          photoURL: data.photoURL || '',
+          followers_num: data.followers_num || 0,
+          type: data.type || 'public',
+          location: data.location || '',
+          created_num: data.created_num || Date.now(),
+          owner: data.owner || user.displayName,
+          ownerUid: data.ownerUid || user.uid,
           lastEdit_num: Date.now(),
           lastEditBy: user.displayName,
           lastEditByUid: user.uid,
-          // photoURL: data.photoURL || '',
-          // source: data.source || ''
+          moderators: data.moderators || [data.ownerUid || user.uid]
         }).then(() => {
-          onToggle();
-          openSnackbar(data.title ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+          if (id) {
+            onToggle();
+            openSnackbar(data.title ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+          } else {
+            setRedirectToReferrer(ref.id);
+          }
         }).catch(err => {
           console.warn(err);
         }).finally(() => {
@@ -166,41 +185,25 @@ const CollectionForm = props => {
       } else if (is.current) setLoading(false);
     } else onToggle();
   };
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  useEffect(() => () => {
-    is.current = false;
-  }, []);
-
-  const menuItemsMap = (arr, values) => arr.map(item => 
-    <MenuItem 
-      value={item.name} 
-      key={item.id} 
-      // insetChildren={Boolean(values)} 
-      checked={values ? values.includes(item.name) : false}>
-      {item.name}
-    </MenuItem>
-  );
+  
+  if (redirectToReferrer) return <Redirect to={`group/${redirectToReferrer}`} />
 
   return (
     <>
       <Overlay onClick={onToggle} />
-      <div role="dialog" aria-describedby="new collection" className="dialog light" ref={is}>
+      <div role="dialog" aria-describedby="new group" className="dialog light" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
         <div className="content">
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo</InputLabel>
+                <InputLabel error={Boolean(errors.title)} htmlFor="title">Nome del gruppo*</InputLabel>
                 <Input
                   id="title"
                   name="title"
                   type="text"
                   autoFocus
-                  placeholder="Es: Cronache del ghiaccio e del fuoco"
+                  placeholder="Es: Il mio gruppo"
                   value={data.title}
                   onChange={onChange}
                   error={Boolean(errors.title)}
@@ -208,32 +211,33 @@ const CollectionForm = props => {
                 {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
               </FormControl>
             </div>
-            <div className="form-group col col-sm-3">
-              <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.books_num)} htmlFor="books_num">Libri</InputLabel>
-                <Input
-                  id="books_num"
-                  name="books_num"
-                  type="number"
-                  placeholder="Es: 5"
-                  value={data.books_num}
-                  onChange={onChange}
-                  error={Boolean(errors.books_num)}
-                />
-                {errors.books_num && <FormHelperText className="message error">{errors.books_num}</FormHelperText>}
-              </FormControl>
-            </div>
+            {isAdmin && (
+              <div className="form-group col col-sm-3">
+                <FormControl className="select-field" margin="normal" fullWidth>
+                  <InputLabel error={Boolean(errors.type)} htmlFor="type">Tipo</InputLabel>
+                  <Select
+                    id="type"
+                    value={data.type}
+                    onChange={onChangeSelect("type")}
+                    error={Boolean(errors.type)}>
+                    <MenuItem value="public">Pubblico</MenuItem>
+                    <MenuItem value="private">Privato</MenuItem>
+                  </Select>
+                  {errors.type && <FormHelperText className="message error">{errors.type}</FormHelperText>}
+                </FormControl>
+              </div>
+            )}
           </div>
 
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.description)} htmlFor="desccription">Descrizione</InputLabel>
+                <InputLabel error={Boolean(errors.description)} htmlFor="description">Descrizione*</InputLabel>
                 <Input
                   id="description"
                   name="description"
                   type="text"
-                  placeholder={`Inserisci la descrizione (max ${max.chars.desc} caratteri)...`}
+                  placeholder={`Inserisci la descrizione (max ${max.chars.description} caratteri)...`}
                   value={data.description}
                   onChange={onChangeMaxChars}
                   rowsMax={20}
@@ -241,46 +245,36 @@ const CollectionForm = props => {
                   error={Boolean(errors.description)}
                 />
                 {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
-                {(leftChars.desc !== null) && (
-                  <FormHelperText className={`message ${(leftChars.desc < 0) ? 'warning' : 'neutral'}`}>
-                    Caratteri rimanenti: {leftChars.desc}
+                {(leftChars.description !== null) && 
+                  <FormHelperText className={`message ${(leftChars.description < 0) ? 'warning' : 'neutral'}`}>
+                    Caratteri rimanenti: {leftChars.description}
                   </FormHelperText>
-                )}
+                }
               </FormControl>
             </div>
           </div>
 
           <div className="row">
             <div className="form-group col">
-              <FormControl className="select-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.genres)} htmlFor="genres">Genere (max {max.items.genres})</InputLabel>
-                <Select
-                  id="genres"
-                  value={data.genres}
-                  onChange={onChangeSelect("genres")}
-                  multiple
-                  error={Boolean(errors.genres)}>
-                  {menuItemsMap(genres, data.genres)}
-                </Select>
-                {errors.genres && <FormHelperText className="message error">{errors.genres}</FormHelperText>}
-              </FormControl>
-            </div>
-          </div>
-
-          {/* <div className="row">
-            <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.source)} htmlFor="source">URL fonte</InputLabel>
+                <InputLabel error={Boolean(errors.rules)} htmlFor="rules">Regole</InputLabel>
                 <Input
-                  id="source"
-                  name="source"
+                  id="rules"
+                  name="rules"
                   type="text"
-                  placeholder="Es: https://it.wikipedia.org/wiki/Cronache_del_ghiaccio_e_del_fuoco"
-                  value={data.source}
-                  onChange={onChange}
-                  error={Boolean(errors.source)}
+                  placeholder={`Inserisci la descrizione (max ${max.chars.rules} caratteri)...`}
+                  value={data.rules}
+                  onChange={onChangeMaxChars}
+                  rowsMax={20}
+                  multiline
+                  error={Boolean(errors.rules)}
                 />
-                {errors.source && <FormHelperText className="message error">{errors.source}</FormHelperText>}
+                {errors.rules && <FormHelperText className="message error">{errors.rules}</FormHelperText>}
+                {(leftChars.rules !== null) && 
+                  <FormHelperText className={`message ${(leftChars.rules < 0) ? 'warning' : 'neutral'}`}>
+                    Caratteri rimanenti: {leftChars.rules}
+                  </FormHelperText>
+                }
               </FormControl>
             </div>
           </div>
@@ -288,12 +282,39 @@ const CollectionForm = props => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
+                <InputLabel error={Boolean(errors.location)} htmlFor="location">Località</InputLabel>
+                <Input
+                  id="location"
+                  name="location"
+                  type="text"
+                  placeholder="Es: Torino"
+                  value={data.location}
+                  onChange={onChange}
+                  error={Boolean(errors.location)}
+                />
+                {errors.location && <FormHelperText className="message error">{errors.location}</FormHelperText>}
+              </FormControl>
+            </div>
+          </div>
+
+          <div className="row">
+            {data.photoURL && (
+              <div className="col-auto">
+                <Avatar className="image avatar prepend-input">
+                  <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                    <img alt="avatar" src={data.photoURL} className="avatar thumb" />
+                  </Zoom>
+                </Avatar>
+              </div>
+            )}
+            <div className="form-group col">
+              <FormControl className="input-field" margin="normal" fullWidth>
                 <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>
                 <Input
                   id="photoURL"
                   name="photoURL"
                   type="text"
-                  placeholder="Es: https://firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
+                  placeholder="Es: https://firebasestorage.googleapis.com/.../groups%2Fgroup.jpg"
                   value={data.photoURL}
                   onChange={onChange}
                   error={Boolean(errors.photoURL)}
@@ -301,7 +322,8 @@ const CollectionForm = props => {
                 {errors.photoURL && <FormHelperText className="message error">{errors.photoURL}</FormHelperText>}
               </FormControl>
             </div>
-          </div> */}
+          </div>
+
         </div>
         <div className="footer no-gutter">
           <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
@@ -311,13 +333,13 @@ const CollectionForm = props => {
   );
 }
 
-CollectionForm.propTypes = {
+GroupForm.propTypes = {
   onToggle: funcType.isRequired,
   id: stringType
 }
 
-CollectionForm.defaultProps = {
+GroupForm.defaultProps = {
   id: null
 }
-
-export default CollectionForm;
+ 
+export default GroupForm;

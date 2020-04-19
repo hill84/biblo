@@ -10,7 +10,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommentersRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, hasRole, normURL, timeSince, truncateString } from '../config/shared';
+import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncateString } from '../config/shared';
 import { reviewType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
@@ -26,7 +26,7 @@ const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 const limit = 20;
 
 const Review = props => {
-  const { user } = useContext(UserContext);
+  const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const authid = useMemo(() => user?.uid, [user]);
   const { bid, review, uid } = props;
@@ -56,6 +56,8 @@ const Review = props => {
           setComments(null);
           setLoading(false);
         }
+      }, err => {
+        openSnackbar(handleFirestoreError(err), 'error');
       });
     }
   }, [bid, selectedRid, openSnackbar]);
@@ -124,7 +126,7 @@ const Review = props => {
         flagged_num: Date.now()
       };
   
-      if (bid && review && user) {
+      if (bid && review) {
         if (is.current) setFlagLoading(true);
         reviewerRef(bid, review.createdByUid).update({ flag }).then(() => {
           if (is.current) {
@@ -136,6 +138,19 @@ const Review = props => {
       } else console.warn('Cannot flag');
     }
   }, [bid, openSnackbar, review, user]);
+
+  const onRemoveFlag = useCallback(() => {
+    if (bid && review && isAdmin) {
+      if (is.current) setFlagLoading(true);
+      const { flag, ...rest } = review;
+      reviewerRef(bid, review.createdByUid).set(rest).then(() => {
+        if (is.current) {
+          setFlagLoading(false);
+          openSnackbar('Segnalazione rimossa', 'success');
+        }
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    } else console.warn('Cannot remove flag');
+  }, [bid, isAdmin, openSnackbar, review]);
 
   const onDeleteRequest = () => setIsOpenDeleteDialog(true);
 
@@ -168,8 +183,6 @@ const Review = props => {
   // const onCloseCommentsPanel = () => setSelectedRid(null);
 
   const isOwner = useMemo(() => review.createdByUid === user?.uid, [review.createdByUid, user]);
-  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
-  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const flaggedByUser = useMemo(() => (review.flag && review.flag.flaggedByUid) === user?.uid, [review.flag, user]);
   const commentList = useMemo(() => comments?.filter(item => isEditingComment ? item.createdByUid !== authid : item), [comments, isEditingComment, authid]);
   const classNames = useMemo(() => `${isOwner ? 'own review' : 'review'} ${review.flag ? `flagged ${review.flag.value}` : ''}`, [isOwner, review]);
@@ -180,7 +193,7 @@ const Review = props => {
       <div className={classNames} id={review.createdByUid} ref={is}>
         <div className="row">
           <div className="col-auto left">
-            {!bid ?
+            {!bid ? (
               <Link to={`/book/${review.bid}/${normURL(review.bookTitle)}`} className="hoverable-items">
                 <Cover info={false} book={{
                   bid: review.bid,
@@ -191,11 +204,11 @@ const Review = props => {
                 }} />
                 {!uid && <Avatar className="avatar absolute" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>}
               </Link>
-            :
+            ) : (
               <Link to={`/dashboard/${review.createdByUid}`}>
                 <Avatar className="avatar" src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
               </Link>
-            }
+            )}
           </div>
           <div className="col right">
             <div className="head row">
@@ -262,14 +275,19 @@ const Review = props => {
                       </button>
                     </div>
                   )}
-                  {isEditor && !isOwner && (
-                    <>
-                      <div className="counter show-on-hover">
-                        <button type="button" className="btn sm flat" onClick={onFlagRequest} disabled={flaggedByUser}>
-                          <span className="show-sm">{icon.flag}</span> <span className="hide-sm">Segnala{flaggedByUser ? 'ta' : ''}</span>
-                        </button>
-                      </div>
-                    </>
+                  {isEditor && !isOwner && isAdmin && flaggedByUser && (
+                    <div className="counter">
+                      <Tooltip title="Rimuovi segnalazione">
+                        <button type="button" className="btn sm flat" onClick={onRemoveFlag}>{icon.flag}</button>
+                      </Tooltip>
+                    </div>
+                  )}
+                  {isEditor && !isOwner && !flaggedByUser && (
+                    <div className="counter show-on-hover">
+                      <button type="button" className="btn sm flat" onClick={onFlagRequest} disabled={flaggedByUser}>
+                        <span className="show-sm">{icon.flag}</span> <span className="hide-sm">Segnala</span>
+                      </button>
+                    </div>
                   )}
                   {isEditor && (isOwner || isAdmin) && (
                     <div className="counter show-on-hover">

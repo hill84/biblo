@@ -16,7 +16,7 @@ const NoteMenuItem = forwardRef((props, ref) => {
           {(item.photoURL || (item.tag && (item.tag.indexOf('follow') > -1 || item.tag.indexOf('like') > -1))) ?
             <Link to={`/dashboard/${item.createdByUid}`} className="bubble">
               <Avatar className="image avatar" alt={item.createdBy}>
-                {item.photoURL ? <img src={item.photoURL} alt="avatar" /> : getInitials(item.createdBy)}
+                {item.photoURL ? <img src={item.photoURL} alt="" /> : getInitials(item.createdBy)}
               </Avatar>
             </Link>
             : <span className="icon">{icon.bell}</span>

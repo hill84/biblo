@@ -1,11 +1,11 @@
-.card.reviews {
+.card.discussions {
   --minPad: 14px;
   
   padding-top: var(--minPad);
   padding-bottom: var(--minPad);
 }
-.reviews {
-  & .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
+.discussions {
+  & .discussion { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
   & .head {
     & h2 { margin-bottom: 1rem; }
     & .counter { 
@@ -17,19 +17,11 @@
     }
   }
 }
-.review .comments {
-  margin: 0 calc(var(--pad) * -1) calc(var(--minPad) * -1) calc(var(--minPad) * -1);
-  padding: 0 var(--pad) var(--minPad) var(--minPad);
-  background-color: rgb(var(--cardClr));
-  border-radius: var(--radius);
-}
 
-.review, .comment {
+.discussion {
   --minPad: 14px;
   --avatarSize: 32px; 
   --bookWidth: 40px;
-  --coverWidth: 40px;
-  --coverHeight: 62px;
 
   border-radius: var(--radius);
   &.flagged {
@@ -42,8 +34,7 @@
     padding-right: var(--pad);
     padding-bottom: var(--minPad);
   }
-  & .cover { --pad: 7px; font-size: 7px; }
-  & + .review, & .comment {
+  & + .discussion {
     margin-top: var(--minPad);
     padding-top: var(--minPad);
     border-top: 2px solid rgba(var(--blackClr), .05);
@@ -94,20 +85,4 @@
     & .ratings-num { display: none; }
   }
   & .text { font-weight: 300; margin-top: .2rem; white-space: pre-line; word-wrap: break-word; }
-  & .foot {
-    color: var(--lighterTextClr);
-    font-size: .82rem;
-    & .counter { display: inline-block; }
-    & .counter + .counter { margin-left: 3px; }
-    & .counter:after { content: none; }
-    & .btn { --btnFontSize: .75rem; --btnHeight: 26px; --btnPad: .5rem; margin-top: 0; margin-bottom: 0; }
-    & .btn:disabled { color: var(--lighterTextClr); cursor: unset; opacity: 1; }
-    & .thumb { margin-left: calc(-1 * var(--btnPad)); }
-    & .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
-  }
-}
-.comment {
-  --avatarSize: 24px;
-
-  & .btns { margin-top: .2em; }
 }

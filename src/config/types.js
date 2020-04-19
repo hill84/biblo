@@ -1,61 +1,63 @@
 import PropTypes from 'prop-types';
 import { noteTypes } from './lists'
 
-const { array, arrayOf, bool, func, shape, number, object, objectOf, oneOf, oneOfType, string } = PropTypes;
+const { array, arrayOf, bool, element, func, node, number, object, objectOf, oneOf: _oneOf, oneOfType: _oneOfType, shape, string } = PropTypes; 
 
 export const arrayType = array;
 export const arrayOfType = arrayOf;
-export const funcType = func;
-export const stringType = string;
 export const boolType = bool;
+export const elementType = element;
+export const funcType = func;
+export const nodeType = node;
 export const numberType = number;
 export const objectType = object;
 export const objectOfType = objectOf;
+export const oneOf = props => _oneOf(props);
+export const oneOfType = props => _oneOfType(props);
 export const shapeType = props => shape(props);
-export const _oneOf = props => oneOf(props);
-export const _oneOfType = props => oneOfType(props);
+export const stringType = string;
 
-export const locationType = PropTypes.shape({
-  hash: PropTypes.string,
-  key: PropTypes.string, // only in createBrowserHistory and createMemoryHistory
-  pathname: PropTypes.string.isRequired,
-  search: PropTypes.string,
-  state: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.bool,
-    PropTypes.number,
-    PropTypes.object,
-    PropTypes.string,
+export const locationType = shape({
+  hash: string,
+  key: string, // only in createBrowserHistory and createMemoryHistory
+  pathname: string.isRequired,
+  search: string,
+  state: oneOfType([
+    array,
+    bool,
+    number,
+    object,
+    string,
   ]), // only in createBrowserHistory and createMemoryHistory
 });
 
-export const childrenType = PropTypes.oneOfType([
-  PropTypes.arrayOf(PropTypes.node),
-  PropTypes.node
+export const childrenType = oneOfType([
+  arrayOf(node),
+  node
 ]);
 
-export const matchType = PropTypes.shape({
-  isExact: PropTypes.bool,
-  params: PropTypes.object.isRequired,
-  path: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
+export const matchType = shape({
+  isExact: bool,
+  params: object.isRequired,
+  path: string.isRequired,
+  url: string.isRequired,
 });
 
-export const historyType = PropTypes.shape({
-  action: PropTypes.oneOf(['PUSH', 'REPLACE', 'POP']).isRequired,
-  block: PropTypes.func.isRequired,
-  canGo: PropTypes.func, // only in createMemoryHistory
-  createHref: PropTypes.func.isRequired,
-  entries: PropTypes.arrayOf(locationType), // only in createMemoryHistory
-  go: PropTypes.func.isRequired,
-  goBack: PropTypes.func.isRequired,
-  goForward: PropTypes.func.isRequired,
-  index: PropTypes.number, // only in createMemoryHistory
-  length: PropTypes.number,
-  listen: PropTypes.func.isRequired,
+export const historyType = shape({
+  action: oneOf(['PUSH', 'REPLACE', 'POP']).isRequired,
+  block: func.isRequired,
+  canGo: func, // only in createMemoryHistory
+  createHref: func.isRequired,
+  entries: arrayOf(locationType), // only in createMemoryHistory
+  go: func.isRequired,
+  goBack: func.isRequired,
+  goForward: func.isRequired,
+  index: number, // only in createMemoryHistory
+  length: number,
+  listen: func.isRequired,
   location: locationType.isRequired,
-  push: PropTypes.func.isRequired,
-  replace: PropTypes.func.isRequired,
+  push: func.isRequired,
+  replace: func.isRequired,
 });
 
 export const userType = shape({
@@ -75,6 +77,7 @@ export const userType = shape({
   roles: shape({
     admin: bool.isRequired,
     editor: bool.isRequired,
+    author: bool,
     premium: bool
   }).isRequired,
   stats: shape({
@@ -262,7 +265,7 @@ export const noteType = shape({
   createdBy: string.isRequired,
   createdByUid: string.isRequired,
   photoURL: string,
-  tag: arrayOf(_oneOf(noteTypes)), // .isRequired,
+  tag: arrayOf(oneOf(noteTypes)), // .isRequired,
   read: bool.isRequired,
   uid: string
 });
@@ -278,4 +281,34 @@ export const collectionType = shape({
   title: string.isRequired
 });
 
-export const refType = PropTypes.oneOfType([PropTypes.func, PropTypes.object]);
+export const groupType = shape({
+  gid: string.isRequired,
+  title: string.isRequired,
+  description: string.isRequired,
+  rules: string,
+  photoURL: string,
+  followers_num: number.isRequired,
+  type: oneOf(['private', 'public']).isRequired,
+  location: string,
+  created_num: number.isRequired,
+  owner: string.isRequired,
+  ownerUid: string.isRequired,
+  lastEdit_num: number,
+  lastEditBy: string,
+  lastEditByUid: string,
+  moderators: arrayOfType(string)
+});
+
+export const discussionType = shape({
+  did: string.isRequired,
+  createdByUid: string.isRequired,
+  created_num: number.isRequired,
+  displayName: string.isRequired,
+  lastEdit_num: number,
+  lastEditByUid: string,
+  flag: flagType,
+  photoURL: string,
+  text: string.isRequired
+});
+
+export const refType = oneOfType([func, object]);

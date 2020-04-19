@@ -1,6 +1,5 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
-import PropTypes from 'prop-types';
 import React, { lazy, Suspense, useContext } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -14,13 +13,15 @@ import Collection from './components/pages/collection';
 import Dashboard from './components/pages/dashboard';
 import Genre from './components/pages/genre';
 import GenresPage from './components/pages/genresPage';
+import Group from './components/pages/group';
+import Groups from './components/pages/groups';
 import Home from './components/pages/home';
 import Login from './components/pages/login';
 import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import { app } from './config/shared';
 import { defaultTheme } from './config/themes';
-import { locationType } from './config/types';
+import { boolType, funcType, locationType, objectType, oneOfType, stringType } from './config/types';
 import SnackbarContext, { SnackbarProvider } from './context/snackbarContext';
 import UserContext, { UserProvider } from './context/userContext';
 
@@ -79,6 +80,8 @@ const App = () => (
                   <Route path="/signup" component={Signup} />
                   <Route path="/terms" component={TermsPage} />
                   <Route path="/verify-email" component={VerifyEmailPage} />
+                  <Route path="/group/:gid" component={Group} />
+                  <Route path="/groups" component={Groups} />
                   <RouteWithProps path="/authors" component={AuthorsPage} /> {/* CLASS */}
                   <PrivateRoute path="/admin" exact component={Admin} />
                   <PrivateRoute path="/admin/:tab" component={Admin} />
@@ -119,9 +122,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 };
 
 PrivateRoute.propTypes = {
-  component: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object
+  component: oneOfType([
+    funcType,
+    objectType
   ]).isRequired,
   location: locationType
 };
@@ -145,14 +148,14 @@ const RouteWithProps = ({ path, exact, strict, component: Component, location, .
 };
 
 RouteWithProps.propTypes = {
-  component: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object
+  component: oneOfType([
+    funcType,
+    objectType
   ]).isRequired,
-  exact: PropTypes.bool,
+  exact: boolType,
   location: locationType,
-  path: PropTypes.string.isRequired,
-  strict: PropTypes.bool
+  path: stringType.isRequired,
+  strict: boolType
 };
 
 RouteWithProps.defaultProps = {

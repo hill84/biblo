@@ -33,6 +33,7 @@ const min = {
 
 const roles = {
   admin: false,
+  author: false,
   editor: true,
   premium: false
 };
@@ -127,14 +128,12 @@ const SignupForm = () => {
         if (!user) {
           if (is.current) {
             setAuthError('No user is signed in');
-            setLoading(false);
           }
         }
       }).catch(err => {
-        if (is.current) {
-          setAuthError(handleFirestoreError(err));
-          setLoading(false);
-        }
+        if (is.current) setAuthError(handleFirestoreError(err));
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
 
       auth.onAuthStateChanged(user => {

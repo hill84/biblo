@@ -27,15 +27,15 @@ const VerifyEmailPage = () => {
       user.sendEmailVerification(actionCodeSettings).then(() => {
         if (is.current) {
           setEmailSent(true);
-          setLoading(false);
         }
         // FORCE USER RELOAD
         auth.currentUser.reload().then(() => {
           auth.currentUser.getToken(true);
         }).catch(err => console.warn(err));
       }).catch(err => {
-        if (is.current) setLoading(false);
         openSnackbar(handleFirestoreError(err), 'error');
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
     });
   }

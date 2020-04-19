@@ -34,7 +34,6 @@ const Challenge = () => {
                     if (is.current) {
                       setChallenge(snap.data());
                       setUserChallenge(item.data());
-                      setLoading(false);
                     }
                   }
                 }).catch(err => {
@@ -42,8 +41,9 @@ const Challenge = () => {
                   if (is.current) {
                     setChallenge(null);
                     setUserChallenge(null);
-                    setLoading(false);
                   }
+                }).finally(() => {
+                  if (is.current) setLoading(false);
                 });
               }
             } else {
@@ -56,15 +56,15 @@ const Challenge = () => {
         } else if (is.current) {
           setChallenge(null);
           setUserChallenges(null);
-          setLoading(false);
         }
       }).catch(err => {
         console.warn(err);
         if (is.current) {
           setChallenge(null);
           setUserChallenges(null);
-          setLoading(false);
         }
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
     }
   }, [user]);

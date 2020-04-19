@@ -73,17 +73,29 @@ service cloud.firestore {
     match /reviews/{bid} {
     	allow read;
       allow write: if isEditor();
+    }
 
-      match /reviewers/{uid}/commenters/{cid} {
-        allow read;
-        allow update: if isEditor();
-        allow create, delete: if isEditor() && (isAdmin() || isOwner(cid));
-      }
+    match /{path=**}/books/{bid} {
+      allow read;
+      allow create: if isEditor();
+      allow update: if isEditor() && incomingData().bid == existingData().bid;
+      allow delete: if isEditor();
     }
 
     match /{path=**}/reviewers/{uid} {
       allow read;
-      allow write: if isEditor();
+      allow update: if isEditor();
+      allow create, delete: if isEditor() && (isAdmin() || isOwner(uid));
+    }
+
+    match /{path=**}/commenters/{uid} {
+      allow read;
+      allow update: if isEditor();
+      allow create, delete: if isEditor() && (isAdmin() || isOwner(uid));
+    }
+
+    match /{path=**}/followers/{uid} {
+      allow read;
     }
     
     match /authors/{aid} {
@@ -150,6 +162,22 @@ service cloud.firestore {
       allow write: if isEditor() && (isAdmin() || isOwner(uid));
     }
 
+    match /groups/{gid} {
+      allow read;
+      allow create, update: if isEditor() && isValidGroup();
+      allow delete: if isEditor() && (isAdmin() || isOwner(existingData().ownerUid));
+
+      match /followers/{uid} {
+        allow read;
+        allow write: if isEditor() && (isAdmin() || isOwner(uid));
+      }
+
+      match /discussions/{did} {
+        allow read;
+        allow write: if isEditor();
+      }
+    }
+
     /// FUNCTIONS ///
     
     // function isSignedIn() { return request.auth != null; }
@@ -180,6 +208,10 @@ service cloud.firestore {
       return request.auth.uid == uid;
     }
 
+    function isModerator() {
+      return request.auth.uid in existingData().moderators.toSet();
+    }
+
     function existingData() {
       return resource.data;
     }
@@ -196,7 +228,8 @@ service cloud.firestore {
         'email', 
         'roles', 
         'stats'
-      ]);
+      ])
+      && incomingData().email.size() < 254;
     }
 
     function isUpdatableUser() {
@@ -223,6 +256,26 @@ service cloud.firestore {
       && incomingData().reviews_num is int
       && incomingData().ratings_num is int
       && incomingData().rating_num is int;
+    }
+
+    function isValidGroup() {
+      return incomingData().keys().hasAll([
+        'gid', 
+        'title',
+        'description',
+        'followers_num',
+        'type',
+        'created_num',
+        'owner',
+        'ownerUid',  
+        'lastEdit_num',
+        'lastEditByUid',
+        'lastEditBy',
+        'moderators'
+      ]) 
+      && incomingData().created_num is int
+      && incomingData().followers_num is int
+      && incomingData().lastEdit_num is int;
     }
   }  
 }

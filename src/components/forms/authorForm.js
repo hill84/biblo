@@ -19,7 +19,9 @@ const max = { chars: {
   bio: 1000,
   displayName: 50
 }};
-const min = { chars: { bio: 50 }};
+const min = { chars: { 
+  bio: 50 
+}};
 
 const AuthorForm = props => {
   const { user } = useContext(UserContext);
@@ -36,7 +38,6 @@ const AuthorForm = props => {
   const [loading, setLoading] = useState(false);
   const [changes, setChanges] = useState(false);
   const [errors, setErrors] = useState({});
-  const [authError, setAuthError] = useState('');
   const is = useRef(true);
 
   const fetch = useCallback(() => {
@@ -44,13 +45,14 @@ const AuthorForm = props => {
       if (is.current) setLoading(true);
 
       authorRef(id).get().then(snap => {
-        if (!snap.empty) {
-          if (is.current) {
-            setData(snap.data());
-            setLoading(false);
-          }
+        if (!snap.empty && is.current) {
+          setData(snap.data());
         }
-      }).catch(err => console.warn(err));
+      }).catch(err => {
+        console.warn(err);
+      }).finally(() => {
+        if (is.current) setLoading(false);
+      });
     }
   }, [id]);
 
@@ -102,7 +104,7 @@ const AuthorForm = props => {
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     return result;
-  }
+  };
 
 	const validate = async data => {
     const errors = {};
@@ -135,10 +137,7 @@ const AuthorForm = props => {
       if (is.current) setLoading(true);
       const errors = await validate(data);
       
-      if (is.current) {
-        setAuthError('');
-        setErrors(errors);
-      }
+      if (is.current) setErrors(errors);
       
       if (Object.keys(errors).length === 0) {
         if (is.current) setLoading(true);
@@ -236,7 +235,7 @@ const AuthorForm = props => {
                   id="source"
                   name="source"
                   type="text"
-                  placeholder="Es: //it.wikipedia.org/wiki/George_Orwell"
+                  placeholder="Es: https://it.wikipedia.org/wiki/George_Orwell"
                   value={data.source}
                   onChange={onChange}
                   error={Boolean(errors.source)}
@@ -263,7 +262,7 @@ const AuthorForm = props => {
                   id="photoURL"
                   name="photoURL"
                   type="text"
-                  placeholder="Es: //firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
+                  placeholder="Es: https://firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
                   value={data.photoURL}
                   onChange={onChange}
                   error={Boolean(errors.photoURL)}
@@ -273,7 +272,6 @@ const AuthorForm = props => {
             </div>
           </div>
 
-          {authError && <div className="row"><div className="col message error">{authError}</div></div>}
         </div>
         <div className="footer no-gutter">
           <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>

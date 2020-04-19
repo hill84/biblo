@@ -1,21 +1,21 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { reviewersGroupRef, reviewersRef } from '../config/firebase';
+import { groupDiscussionsRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { boolType, numberType, oneOfType, stringType, arrayType } from '../config/types';
+import { arrayType, boolType, numberType, oneOfType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
+import '../css/discussions.css';
+import Discussion from './discussion';
 import PaginationControls from './paginationControls';
-import Review from './review';
-import '../css/reviews.css';
 
 const desc = true;
 
-const Reviews = props => {
+const Discussions = props => {
   const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, container, limit, pagination, skeleton, uid } = props;
+  const { container, gid, isGroupModerator, isGroupOwner, limit, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -23,11 +23,7 @@ const Reviews = props => {
   const [lastVisible, setLastVisible] = useState(null);
   const is = useRef(true);
 
-  const qop = useMemo(() => typeof uid === 'string' ? '==' : 'in', [uid]);
-
-  const ref = useMemo(() => bid ? reviewersRef(bid) : uid ? (
-    reviewersGroupRef.where('createdByUid', qop, uid) 
-  ) : reviewersGroupRef, [bid, qop, uid]);
+  const ref = useMemo(() => groupDiscussionsRef(gid), [gid]);
   
   const setEmptyState = useCallback(err => {
     setItems(null);
@@ -49,15 +45,16 @@ const Reviews = props => {
             snap.forEach(item => items.push(item.data()));
             if (is.current) {
               setItems(items);
-              setLoading(false);
               setLastVisible(snap.docs[snap.docs.length - 1]);
             }
           }
         }).catch(err => {
           if (is.current) setEmptyState(err);
+        }).finally(() => {
+          if (is.current) setLoading(false);
         });
       } else if (is.current) setEmptyState();
-    }, err => console.warn(err));
+    });
   }, [limit, ref, setEmptyState]);
 
   const fetchNext = useCallback(() => {
@@ -68,8 +65,7 @@ const Reviews = props => {
         nextSnap.forEach(item => items.push(item.data()));
         if (is.current) {
           setItems(items);
-          setLoading(false);
-          setPage((page * limit) > count ? page : page + 1);
+          setPage(1); // (page * limit) > count ? page : page + 1
           setLastVisible(nextSnap.docs[nextSnap.docs.length - 1] || lastVisible);
         }
       } else if (is.current) {
@@ -77,8 +73,10 @@ const Reviews = props => {
       }
 		}).catch(err => {
       if (is.current) setEmptyState(err);
+    }).finally(() => {
+      if (is.current) setLoading(false);
     });
-  }, [count, items, lastVisible, limit, page, ref, setEmptyState]);
+  }, [/* count,  */items, lastVisible, limit, ref, setEmptyState]);
 
   useEffect(() => {
     fetch();
@@ -88,7 +86,7 @@ const Reviews = props => {
     is.current = false;
   }, []);
 
-  const skeletons = [...Array(limit)].map((e, i) => <div key={i} className="skltn review" />);
+  const skeletons = [...Array(limit)].map((e, i) => <div key={i} className="skltn discussion" />);
   
   if (loading && !items && !skeleton) {
     return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>;
@@ -96,26 +94,22 @@ const Reviews = props => {
 
   const EmptyState = () => (
     <div className="info-row empty text-center">
-      Nessuna recensione<span className="hide-xs"> trovata</span>{!isAuth && !uid && <span>. <Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne una.</span>}
+      Nessun commento<span className="hide-xs"> trovato</span>{!isAuth && !uid && <span>. <Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne uno.</span>}
     </div>
   );
 
   return (
     <>
-      <div className={`reviews ${container ? 'card dark' : ''}`} ref={is}>
+      <div className={`discussions ${container ? 'card dark' : ''}`} ref={is}>
         {!loading && !items ? <EmptyState /> : (
           <>
-            {!bid && (
-              <div className="head">
-                <h2>Ultime recensioni<span className="counter">({items ? items.length : limit} di {count || limit})</span></h2>
-              </div>
-            )}
             {items?.map(item => (
-              <Review 
-                key={`${item.bid}-${item.createdByUid}`}
-                bid={bid}
-                uid={typeof uid === 'string' ? uid : null}
-                review={item} 
+              <Discussion 
+                key={item.did}
+                discussion={item} 
+                gid={gid}
+                isGroupModerator={isGroupModerator}
+                isGroupOwner={isGroupOwner}
               />
             ))}
             {loading && skeleton && skeletons}
@@ -136,9 +130,11 @@ const Reviews = props => {
   );
 }
 
-Reviews.propTypes = {
-  bid: stringType,
+Discussions.propTypes = {
   container: boolType,
+  gid: stringType,
+  isGroupModerator: boolType,
+  isGroupOwner: boolType,
   limit: numberType,
   pagination: boolType,
   skeleton: boolType,
@@ -148,13 +144,15 @@ Reviews.propTypes = {
   ])
 }
 
-Reviews.defaultProps = {
-  bid: null,
+Discussions.defaultProps = {
   container: true,
+  gid: null,
+  isGroupModerator: false,
+  isGroupOwner: false,
   limit: 5,
   pagination: true,
   skeleton: false,
   uid: null
 }
  
-export default Reviews;
+export default Discussions;

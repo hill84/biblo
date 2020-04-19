@@ -42,13 +42,14 @@ const NoteForm = props => {
       if (is.current) setLoading(true);
       
       noteRef(uid, nid).get().then(snap => {
-        if (!snap.empty) {
-          if (is.current) {
-            setData(snap.data());
-            setLoading(false);
-          }
+        if (!snap.empty && is.current) {
+          setData(snap.data());
         }
-      }).catch(err => console.warn(err));
+      }).catch(err => {
+        console.warn(err);
+      }).finally(() => {
+        if (is.current) setLoading(false);
+      });
     }
   }, [nid, uid]);
 
@@ -119,11 +120,14 @@ const NoteForm = props => {
         }).then(() => {
           onToggle();
           if (is.current) {
-            setLoading(false);
             setData({ ...data, text: '' });
           }
           openSnackbar(nid ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
-        }).catch(err => console.warn(err));
+        }).catch(err => {
+          console.warn(err);
+        }).finally(() => {
+          if (is.current) setLoading(false);
+        });
       } else if (is.current) setLoading(false);
     } else onToggle();
 	};

@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
-import { auth, countRef, noteRef, notesRef, userNotificationsRef, userRef, userShelfRef, usersRef } from '../../../config/firebase';
+import { auth, authorFollowerRef, collectionFollowersRef, commentersGroupRef, countRef, followersGroupRef, genreFollowerRef, noteRef, notesRef, reviewerCommenterRef, reviewerRef, reviewersGroupRef, userNotificationsRef, userRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, timeOptions } from '../../../config/shared';
 import { funcType } from '../../../config/types';
@@ -60,6 +60,16 @@ const UsersDash = props => {
 
   const limit = useMemo(() => limitBy[limitByIndex], [limitByIndex]);
 
+  const onDeleteSuccess = useCallback(msg => {
+    console.log(`%c✔ ${msg} deleted`, 'color: green');
+    openSnackbar(`${msg} deleted`, 'success');
+  }, [openSnackbar]);
+
+  const onDeleteError = useCallback((msg, err) => {
+    console.log(`%c✖ ${msg} not deleted`, 'color: red');
+    openSnackbar(handleFirestoreError(err), 'error');
+  }, [openSnackbar]);
+
   const fetch = useCallback(e => {
     const direction = e?.currentTarget.dataset.direction;
     const prev = direction === 'prev';
@@ -88,7 +98,7 @@ const UsersDash = props => {
           setState(initialState);
           setLoading(false);
         }
-      });
+      }, err => console.warn(err));
     };
     
     if (!direction) {
@@ -101,9 +111,12 @@ const UsersDash = props => {
         } else if (is.current) {
           setCount(0);
           setState(initialState);
-          setLoading(false);
         }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch(err => {
+        openSnackbar(handleFirestoreError(err), 'error');
+      }).finally(() => {
+        if (is.current) setLoading(false);
+      });
     } else fetcher();
   }, [desc, firstVisible, lastVisible, limit, openSnackbar, orderByIndex, state]);
   
@@ -134,17 +147,17 @@ const UsersDash = props => {
   };
 
   const onView = e => {
-    const { id } = e.currentTarget.parentNode.dataset;
-    setRedirectTo(id);
+    const { uid } = e.currentTarget?.parentNode?.dataset;
+    setRedirectTo(uid);
   };
 
   const onNote = e => {
-    const { id } = e.currentTarget.parentNode.dataset;
-    onToggleNoteDialog(id);
+    const { uid } = e.currentTarget?.parentNode?.dataset;
+    onToggleNoteDialog(uid);
   };
 
   const onSendReset = e => {
-    const { email } = e.currentTarget.parentNode.dataset;
+    const { email } = e.currentTarget?.parentNode?.dataset;
     auth.sendPasswordResetEmail(email).then(() => {
       openSnackbar(`Email inviata`, 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
@@ -155,20 +168,20 @@ const UsersDash = props => {
   const onEdit = item => onToggleDialog(item);
 
   const onLock = e => {
-    const { id } = e.currentTarget.parentNode.dataset;
-    const state = e.currentTarget.parentNode.dataset.state === 'true';
+    const { uid } = e.currentTarget?.parentNode?.dataset;
+    const state = e.currentTarget?.parentNode?.dataset.state === 'true';
     // console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
-    userRef(id).update({ 'roles.editor': !state }).then(() => {
+    userRef(uid).update({ 'roles.editor': !state }).then(() => {
       openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
   };
 
   const onDeleteRequest = e => {
-    const { id } = e.currentTarget.parentNode.dataset;
-    const displayName = e.currentTarget.parentNode.dataset.name;
+    const { displayName, email, uid } = e.currentTarget?.parentNode?.dataset;
+    
     if (is.current) {
       setIsOpenDeleteDialog(true);
-      setSelected({ displayName, id });
+      setSelected({ displayName, email, uid });
     }
   };
   const onCloseDeleteDialog = () => {
@@ -177,55 +190,81 @@ const UsersDash = props => {
   };
   const onDelete = useCallback(() => {
     if (is.current) setIsOpenDeleteDialog(false);
+
+    const { uid } = selected;
     
-    userRef(selected.id).delete().then(() => {
-      console.log(`%c✔ user db deleted`, 'color: green');
-      openSnackbar('Elemento cancellato', 'success');
+    userRef(uid).delete().then(() => onDeleteSuccess('User')).catch(err => onDeleteError('User', err));
 
-      userShelfRef(selected.id).delete().then(() => {
-        console.log(`%c✔ user reviews deleted`, 'color: green');
-        openSnackbar('Recensioni cancellate', 'success');
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-
-    userNotificationsRef(selected.id).get().then(snap => {
+    reviewersGroupRef.where('createdByUid', '==', uid).get().then(snap => {
       if (!snap.empty) {
-        notesRef(selected.id).get().then(snap => {
+        snap.forEach(item => {
+          // console.log(`• review deleted`);
+          const { bid, createdByUid } = item.data();
+          reviewerRef(bid, createdByUid).delete().catch(err => onDeleteError(`Review ${item.id}`, err));
+        });
+        onDeleteSuccess(`${snap.docs.length} reviews`);
+      }
+    }).catch(err => onDeleteError('Reviews', err));
+
+    commentersGroupRef.where('createdByUid', '==', uid).get().then(snap => {
+      if (!snap.empty) {
+        snap.forEach(item => {
+          // console.log(`• comment deleted`);
+          const { bid, createdByUid, rid } = item.data();
+          reviewerCommenterRef(bid, rid, createdByUid).delete().catch(err => onDeleteError(`Comment ${item.id}`, err));
+        });
+        onDeleteSuccess(`${snap.docs.length} comments`);
+      }
+    }).catch(err => onDeleteError('Comments', err));
+
+    followersGroupRef.where('uid', '==', uid).get().then(snap => {
+      if (!snap.empty) {
+        snap.forEach(item => {
+          const { aid, cid, gid, uid } = item.data();
+          // console.log(`• ${aid ? 'author' : cid ? 'collection' : gid ? 'genre' : 'unknow'} deleted`);
+          if (aid) authorFollowerRef(aid, uid).delete().catch(err => onDeleteError(`Author follow ${item.id}`, err));
+          if (gid) genreFollowerRef(gid, uid).delete().catch(err => onDeleteError(`Genre follow ${item.id}`, err));
+          if (cid) collectionFollowersRef(cid).doc(uid).delete().catch(err => onDeleteError(`Collection follow ${item.id}`, err));
+        });
+        onDeleteSuccess(`${snap.docs.length} follows`);
+      }
+    }).catch(err => onDeleteError('Follows', err));
+
+    userNotificationsRef(uid).get().then(snap => {
+      if (!snap.empty) {
+        notesRef(uid).get().then(snap => {
           if (!snap.empty) {
-            if (snap.docs.length < 500) {
+            if (snap.docs.length < 1000) {
               const notes = [];
               snap.forEach(item => notes.push(item.id));
               // console.log(notes);
-              const deleteUserNotes = async () => {
-                await asyncForEach(snap, item => {
-                  noteRef(selected.id, item.id).delete().then(() => {
-                    console.log(`• note ${item.id} deleted`);
-                  }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+              (async () => {
+                await asyncForEach((snap, item) => {
+                  noteRef(uid, item.id).delete().then(() => {
+                    // console.log(`• note ${item.id} deleted`);
+                  }).catch(err => onDeleteError(`• note ${item.id}`, err));
                 });
-                console.log(`%c✔ ${snap.docs.length} notes deleted`, 'color: green');
-                openSnackbar(`${snap.docs.length} note cancellate`, 'success');
-                userNotificationsRef(selected.id).delete().then(() => {
-                  console.log(`%c✔ notifications collection deleted`, 'color: green');
-                  // openSnackbar(`Collezione notifiche cancellata`, 'success');
-                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-              }
-              deleteUserNotes();
+
+                onDeleteSuccess(`${snap.docs.length} notes`);
+
+                userNotificationsRef(uid).delete().then(() => {
+                  onDeleteSuccess('Notifications collection');
+                }).catch(err => onDeleteError('Notifications collection', err));
+              })();
             } else console.warn('Operation aborted: too many docs');
           } else console.log('No notes');
-        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+        }).catch(err => onDeleteError('Notes', err));
       } else console.log('No notifications collection');
-    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    
-    // TODO: delete all users, genres, authors and collections followed.
+    }).catch(err => onDeleteError('Notifications', err));
     
     onCloseDeleteDialog();
-  }, [openSnackbar, selected]);
+  }, [onDeleteError, onDeleteSuccess, selected]);
 
   const onChangeRole = e => {
-    const { id } = e.currentTarget.parentNode.dataset;
-    const { role } = e.currentTarget.dataset;
-    const state = e.currentTarget.dataset.state === 'true';
-    userRef(id).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
+    const { uid } = e.currentTarget?.parentNode?.dataset;
+    const { role } = e.currentTarget?.dataset;
+    const state = e.currentTarget?.dataset.state === 'true';
+    userRef(uid).update({ [`roles.${role}`]: !state }).catch(err => console.warn(err));
   };
 
   if (redirectTo) return <Redirect to={`/dashboard/${redirectTo}`} />
@@ -254,7 +293,7 @@ const UsersDash = props => {
   
   const itemsList = loading ? skeletons : !items ? <li className="empty text-center">Nessun elemento</li> : (
     items.map(item => (
-      <li key={item.uid} className={`avatar-row ${item.roles.editor ? '' : 'locked'}`}>
+      <li key={item.uid} className={`avatar-row ${item.roles?.editor ? 'editor' : 'locked'}`}>
         <div className="row">
           <div className="col-auto avatar-container">
             <Avatar className="avatar">
@@ -265,8 +304,8 @@ const UsersDash = props => {
               : getInitials(item.displayName)}
             </Avatar>
           </div>
-          <Link to={`/dashboard/${item.uid}`} className="col" title={item.displayName}>
-            {item.displayName}
+          <Link to={`/dashboard/${item.uid}`} className="col col-lg-2" title={item.displayName}>
+            {item.displayName} {item.roles?.author && icon.checkDecagram}
           </Link>
           <div className="col monotype hide-sm">
             <CopyToClipboard text={item.uid} />
@@ -274,27 +313,31 @@ const UsersDash = props => {
           <div className="col monotype hide-sm">
             <CopyToClipboard text={item.email} />
           </div>
-          <div role="group" className="col col-md-2 col-lg-1 btns xs text-center" data-id={item.uid}>
-            <button type="button" className={`btn rounded icon ${item.roles.editor ? '' : 'flat'}`} data-role="editor" data-state={item.roles.editor} onClick={onChangeRole} title="editor">E</button>
-            <button type="button" className={`btn rounded icon ${item.roles.premium ? '' : 'flat'}`} data-role="premium" data-state={item.roles.premium} onClick={onChangeRole} title="premium">P</button>
-            <button type="button" className={`btn rounded icon ${item.roles.admin ? '' : 'flat'}`} data-role="admin" data-state={item.roles.admin} onClick={onChangeRole} title="admin">A</button>
+          <div role="group" className="col col-md-2 col-lg-1 btns xs rounded text-center" data-uid={item.uid}>
+            <button type="button" className={`btn ${item.roles?.editor ? '' : 'flat'}`} data-role="editor" onClick={onChangeRole} title="editor">E</button>
+            <button type="button" className={`btn ${item.roles?.premium ? '' : 'flat'}`} data-role="premium" onClick={onChangeRole} title="premium">P</button>
+            <button type="button" className={`btn ${item.roles?.admin ? '' : 'flat'}`} data-role="admin" onClick={onChangeRole} title="admin">A</button>
           </div>
-          <div className="col col-sm-3 col-lg-2 hide-xs">
+          <div className="col col-sm-3 hide-xs">
             <div className="row text-center monotype">
-              <div className={`col ${!item.stats.shelf_num && 'lightest-text'}`}>{item.stats.shelf_num}</div>
-              <div className={`col ${!item.stats.wishlist_num && 'lightest-text'}`}>{item.stats.wishlist_num}</div>
-              <div className={`col ${!item.stats.reviews_num && 'lightest-text'}`}>{item.stats.reviews_num}</div>
-              <div className={`col hide-md ${!item.stats.ratings_num && 'lightest-text'}`}>{item.stats.ratings_num}</div>
+              <div className={`col ${!item.stats?.shelf_num && 'lightest-text'}`}>{item.stats?.shelf_num}</div>
+              <div className={`col ${!item.stats?.wishlist_num && 'lightest-text'}`}>{item.stats?.wishlist_num}</div>
+              <div className={`col ${!item.stats?.reviews_num && 'lightest-text'}`}>{item.stats?.reviews_num}</div>
+              <div className={`col hide-md ${!item.stats?.ratings_num && 'lightest-text'}`}>{item.stats?.ratings_num}</div>
               <div className={`col hide-md ${!item.termsAgreement && 'lightest-text'}`} title={item.termsAgreement && new Date(item.termsAgreement).toLocaleString()}>{icon[item.termsAgreement ? 'check' : 'close']}</div>
               <div className={`col hide-md ${!item.privacyAgreement && 'lightest-text'}`} title={item.privacyAgreement && new Date(item.privacyAgreement).toLocaleString()}>{icon[item.privacyAgreement ? 'check' : 'close']}</div>
             </div>
           </div>
-          <div className="col col-sm-2 text-right">
+          <div className="col col-sm-2 col-lg-1 text-right">
             <div className="timestamp">
               <span className="date">{new Date(item.creationTime).toLocaleDateString('it-IT', dateOptions)}</span><span className="time hide-lg"> &middot; {new Date(item.creationTime).toLocaleTimeString('it-IT', timeOptions)}</span>
             </div>
           </div>
-          <div className="absolute-row right btns xs" data-email={item.email} data-id={item.uid} data-name={item.displayName} data-state={item.roles.editor}>
+          <div className="absolute-row right btns xs"
+            data-display-name={item.displayName}
+            data-email={item.email}
+            data-state={item.roles?.editor}
+            data-uid={item.uid}>
             <button
               type="button"
               className="btn icon green"
@@ -334,12 +377,18 @@ const UsersDash = props => {
             </button>
             <button
               type="button"
-              className={`btn icon ${item.roles.editor ? 'secondary' : 'flat' }`}
-              title={item.roles.editor ? 'Blocca' : 'Sblocca'}
+              className={`btn icon ${item.roles?.editor ? 'secondary' : 'flat' }`}
+              title={item.roles?.editor ? 'Blocca' : 'Sblocca'}
               onClick={onLock}>
               {icon.lock}
             </button>
-            <button type="button" className="btn icon red" onClick={onDeleteRequest} title="elimina">{icon.close}</button>
+            <button
+              type="button"
+              className="btn icon red"
+              onClick={onDeleteRequest}
+              title="elimina">
+              {icon.close}
+            </button>
           </div>
         </div>
       </li>
@@ -351,7 +400,7 @@ const UsersDash = props => {
       <div className="head nav" ref={is}>
         <div className="row">
           <div className="col">
-            <span className="counter hide-md">{`${items ? items.length : 0} di ${count || 0}`}</span>
+            <span className="counter hide-md">{`${items?.length || 0} di ${count || 0}`}</span>
             <button type="button" className="btn sm flat counter last" onClick={onOpenLimitMenu}>{limitBy[limitByIndex]} <span className="hide-xs">per pagina</span></button>
             <Menu 
               className="dropdown-menu"
@@ -379,11 +428,11 @@ const UsersDash = props => {
         <li className="avatar-row labels">
           <div className="row">
             <div className="col-auto"><div className="avatar hidden" title="avatar" /></div>
-            <div className="col">Nominativo</div>
+            <div className="col col-lg-2">Nominativo</div>
             <div className="col hide-sm">Uid</div>
             <div className="col hide-sm">Email</div>
             <div className="col col-md-2 col-lg-1 text-center">Ruoli</div>
-            <div className="col col-sm-3 col-lg-2 hide-xs">
+            <div className="col col-sm-3 hide-xs">
               <div className="row text-center">
                 <div className="col" title="Libri">{icon.book}</div>
                 <div className="col" title="Desideri">{icon.heart}</div>
@@ -393,7 +442,7 @@ const UsersDash = props => {
                 <div className="col hide-md" title="Privacy">{icon.shieldAccount}</div>
               </div>
             </div>
-            <div className="col col-sm-2 text-right">Creato</div>
+            <div className="col col-sm-2 col-lg-1 text-right">Creato</div>
           </div>
         </li>
         {itemsList}
@@ -417,7 +466,7 @@ const UsersDash = props => {
           <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
-              Cancellando l&apos;utente <b>{selected.displayName}</b> <small className="monotype">({selected.id})</small> verranno rimosse anche la sua libreria e le sue notifiche.
+              Cancellando l&apos;utente <b>{selected.displayName}</b> <small className="monotype">({selected.uid})</small> verranno rimosse anche la sua libreria e le sue notifiche.
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">

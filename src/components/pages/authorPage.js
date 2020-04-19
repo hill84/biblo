@@ -1,12 +1,12 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, denormURL, getInitials, handleFirestoreError, hasRole, normalizeString, normURL } from '../../config/shared';
+import { app, denormURL, getInitials, handleFirestoreError, normalizeString, normURL } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -22,7 +22,7 @@ const unsub = {
 };
 
 const AuthorPage = props => {
-  const { isAuth, user } = useContext(UserContext);
+  const { isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const [author, setAuthor] = useState({
@@ -55,7 +55,7 @@ const AuthorPage = props => {
           const followers = [];
           snap.forEach(follower => followers.push(follower.data()));
           setFollowers(followers); 
-          setFollow(user && followers.filter(follower => follower.uid === user.uid).length > 0);
+          setFollow(user && followers.some(follower => follower.uid === user.uid));
         } else {
           setFollowers(null);
           setFollow(false);
@@ -69,14 +69,14 @@ const AuthorPage = props => {
       if (snap.exists) {
         if (is.current) {
           setAuthor(snap.data());
-          setLoading(false);
-          fetchFollowers();
         }
-			} else {
-        if (is.current) setLoading(false);
-        fetchFollowers();
-      }
-    }).catch(err => console.warn(err));
+			}
+      fetchFollowers();
+    }).catch(err => {
+      console.warn(err);
+    }).finally(() => {
+      if (is.current) setLoading(false);
+    });
   }, [author.displayName, fetchFollowers]);
 
   useEffect(() => {
@@ -111,6 +111,7 @@ const AuthorPage = props => {
     } else {
       // console.log('follow', aid);
       authorFollowersRef(id).doc(user.uid).set({
+        aid: id,
         uid: user.uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
@@ -121,7 +122,6 @@ const AuthorPage = props => {
 
   const onToggleView = () => setCoverview(!coverview);
 
-  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
   const covers = books?.map(book => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
   if (loading) {

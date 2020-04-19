@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { auth, userRef } from '../config/firebase';
-import { handleFirestoreError } from '../config/shared';
+import { handleFirestoreError, hasRole } from '../config/shared';
 import { uidKey } from '../config/storage';
+import { elementType } from '../config/types';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const UserContext = createContext({ error: null, user: null });
@@ -19,11 +19,15 @@ export const UserProvider = props => {
   const [emailVerified, setEmailVerified] = useState(false);
 
   const needsEmailVerification = useMemo(() => !currentUser?.emailVerified && currentUser?.providerData.length === 0, [currentUser]);
+  const isAdmin = useMemo(() => hasRole(user, 'admin'), [user]);
+  const isAuthor = useMemo(() => hasRole(user, 'author'), [user]);
+  const isEditor = useMemo(() => hasRole(user, 'editor'), [user]);
+  const isPremium = useMemo(() => hasRole(user, 'premium'), [user]);
 
   const userProvided = useMemo(() => ({ 
-    emailVerified, error, isAuth, user 
+    emailVerified, error, isAuth, isAdmin, isAuthor, isEditor, isPremium, user 
   }), [ 
-    emailVerified, error, isAuth, user 
+    emailVerified, error, isAuth, isAdmin, isAuthor, isEditor, isPremium, user 
   ]);
 
   const fetchUser = useCallback(uid => userRef(uid).onSnapshot(snap => {
@@ -70,5 +74,5 @@ export const UserProvider = props => {
 }
 
 UserProvider.propTypes = {
-  children: PropTypes.element.isRequired
+  children: elementType.isRequired
 }

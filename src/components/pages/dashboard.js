@@ -10,11 +10,11 @@ import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
-import { followersRef, followingsRef, notesRef, userChallenges, userRef } from '../../config/firebase';
+import { followersRef, followingsRef, notesRef, userChallengesRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
-import { arrayType, historyType, locationType, matchType, objectType, stringType } from '../../config/types';
+import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { historyType, locationType, matchType, objectType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
@@ -48,8 +48,8 @@ const max = {
 };
 
 const Dashboard = props => {
-  const { isAuth, user } = useContext(UserContext);
-  const { openSnackbar } = useContext(SnackbarContext);
+  const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
+  const { closeSnackbar, openSnackbar } = useContext(SnackbarContext);
   const { history, location, match } = props;
   const tab = match.params?.tab;
   const [duser, setDuser] = useState(null);
@@ -61,7 +61,7 @@ const Dashboard = props => {
   const [follow, setFollow] = useState(false);
   const [lfollowers, setLfollowers] = useState({});
   const [lfollowings, setLfollowings] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [tabSelected, setTabSelected] = useState(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
   const [screenSize, setScreenSize] = useState(_screenSize());
@@ -70,9 +70,6 @@ const Dashboard = props => {
   const { uid } = match.params;
   const luid = useMemo(() => user?.uid, [user]);
   const isOwner = useMemo(() => luid === uid, [luid, uid]);
-
-  const isAdmin = useMemo(() => user?.roles.admin, [user]);
-  const isPremium = useMemo(() => user?.roles.premium, [user]);
 
   useEffect(() => {
     const updateScreenSize = () => {
@@ -112,6 +109,7 @@ const Dashboard = props => {
         if (is.current) {
           setDuser(user);
           setProgress(calcProgress(user));
+          setLoading(false);
         }
       } else {
         if (is.current) setLoading(true);
@@ -124,7 +122,7 @@ const Dashboard = props => {
             setProgress(0);
           }
           setLoading(false);
-        });
+        }, err => console.warn(err));
       }
     }
   }, [calcProgress, luid, uid, user]);
@@ -182,9 +180,9 @@ const Dashboard = props => {
     }
   }, [luid, uid]);
 
-  const fetchUserChallenges = useCallback(() => {
+  const fetchuserChallengesRef = useCallback(() => {
 		if (luid) {
-      unsub.collectionFetch = userChallenges(luid).onSnapshot(snap => {
+      unsub.collectionFetch = userChallengesRef(luid).onSnapshot(snap => {
         if (!snap.empty) {
           const challenges = [];
           snap.forEach(doc => challenges.push(doc.data()));
@@ -199,9 +197,9 @@ const Dashboard = props => {
       fetchUser();
       fetchFollowers();
       fetchFollowings();
-      fetchUserChallenges();
+      fetchuserChallengesRef();
     }
-  }, [fetchUser, fetchFollowers, fetchFollowings, fetchUserChallenges, uid]);
+  }, [fetchUser, fetchFollowers, fetchFollowings, fetchuserChallengesRef, uid]);
 
   useEffect(() => {
     if (uid) {
@@ -215,14 +213,14 @@ const Dashboard = props => {
   }, [history, tabSelected, uid]);
 
   useEffect(() => {
-    if (user && isOwner && !user.photoURL) {
-      const msg = 'Non hai ancora caricato una foto profilo.'
-      const action = <Link to="/profile" type="button" className="btn sm flat">Fallo adesso</Link>;
+    if (isOwner && !user?.photoURL) {
+      const msg = <span>Non hai <span className="hide-sm">ancora caricato</span> una foto profilo.</span>;
+      const action = <Link to="/profile" type="button" className="btn sm flat" onClick={closeSnackbar}>Aggiungila</Link>;
       setTimeout(() => {
         openSnackbar(msg, 'info', 6000, action);
       }, 3000);
     }
-  }, [isOwner, openSnackbar, user]);
+  }, [closeSnackbar, isOwner, openSnackbar, user]);
 
   useEffect(() => {
     if (tabs.indexOf(tab) !== -1) {
@@ -235,8 +233,8 @@ const Dashboard = props => {
   }, [tab, tabSelected]);
 
   useEffect(() => {
-    fetchUserChallenges();
-  }, [fetchUserChallenges]);
+    fetchuserChallengesRef();
+  }, [fetchuserChallengesRef]);
 
   const onFollowUser = useCallback((e, fuid = duser.uid, fuser = duser) => {
     e.preventDefault();
@@ -345,16 +343,13 @@ const Dashboard = props => {
   const isMini = useMemo(() => isTouchDevice() || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
   const contactsSkeleton = useMemo(() => [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />), []);
   const creationYear = useMemo(() => duser && String(new Date(duser.creationTime).getFullYear()), [duser]);
-  const Roles = useMemo(() => duser && Object.keys(duser.roles).map((role, i) => duser.roles[role] && (
-    <div key={`${i}_${role}`} className={`badge ${role}`}>{role}</div>
-  )), [duser]);
 
   const ShelfDetails = useMemo(() => () => (
     <div className="info-row footer centered shelfdetails">
-      <span className="counter">{icon.book} <b>{duser ? duser.stats.shelf_num : 0}</b> <span className="hide-sm">Libri</span></span>
-      <span className="counter">{icon.heart} <b>{duser ? duser.stats.wishlist_num : 0}</b> <span className="hide-sm">Desideri</span></span>
-      <span className="counter">{icon.star} <b>{duser ? duser.stats.ratings_num : 0}</b> <span className="hide-sm">Valutazioni</span></span>
-      <span className="counter">{icon.messageText} <b>{duser ? duser.stats.reviews_num : 0}</b> <span className="hide-sm">Recensioni</span></span>
+      <span className="counter">{icon.book} <b>{duser ? duser.stats?.shelf_num : 0}</b> <span className="hide-sm">Libri</span></span>
+      <span className="counter">{icon.heart} <b>{duser ? duser.stats?.wishlist_num : 0}</b> <span className="hide-sm">Desideri</span></span>
+      <span className="counter">{icon.star} <b>{duser ? duser.stats?.ratings_num : 0}</b> <span className="hide-sm">Valutazioni</span></span>
+      <span className="counter">{icon.messageText} <b>{duser ? duser.stats?.reviews_num : 0}</b> <span className="hide-sm">Recensioni</span></span>
     </div>
   ), [duser]);
 
@@ -365,16 +360,26 @@ const Dashboard = props => {
     return (
       <>
         {Object.keys(users).map(f => (
-          <div key={f} className="avatar-row">
+          <div key={f} className="avatar-row rounded">
             <Link to={`/dashboard/${f}`} className="row ripple">
               <div className="col">
-                <Avatar className="avatar" src={users[f].photoURL} alt={users[f].displayName}>{!users[f].photoURL && getInitials(users[f].displayName)}</Avatar>{users[f].displayName}
+                <Avatar
+                  className="avatar"
+                  src={users[f].photoURL}
+                  alt={users[f].displayName}>
+                  {!users[f].photoURL && users[f].displayName ? getInitials(users[f].displayName) : icon.accountOff}
+                </Avatar> 
+                {users[f].displayName}
               </div>
               {!isMini && (
                 <div className="col-auto">
                   <div className="timestamp hide-on-hover">{timeSince(users[f].timestamp)}</div>
                   {isOwner && f !== luid && (
-                    <button type="button" className="btn flat show-on-hover" onClick={e => onFollowUser(e, f, users[f])}>
+                    <button
+                      type="button"
+                      className="btn flat rounded show-on-hover"
+                      onClick={e => onFollowUser(e, f, users[f])}
+                      disabled={users === followers && Object.keys(followings).includes(f)}>
                       {users === followers ? 'Segui' : 'Non seguire'}
                     </button>
                   )}
@@ -398,7 +403,7 @@ const Dashboard = props => {
   };
 
   UsersList.propTypes = {
-    users: arrayType.isRequired
+    users: objectType.isRequired
   }
 
   const EmptyRow = () => (
@@ -448,67 +453,80 @@ const Dashboard = props => {
         {tabSelected && <link rel="canonical" href={`${app.url}/dashboard/${uid}/shelf`} />}
       </Helmet>
       <div className="row">
-        <div className="col-md col-12">
+        <div className={isOwner ? 'col-lg-10 col-md-9 col' : 'col'}>
           <div className="card dark basic-profile-card">
             <div className="basic-profile">
-                {duser && (
-                  <Tooltip title="Ruolo utente" placement="left">
-                    <div className="role-badges">{Roles} {!duser.roles.editor && <div className="badge red">Utente bloccato</div>}</div>
-                  </Tooltip>
-                )}
-                <div className="row">
-                  <div className="col-auto">
-                    <Avatar className="avatar" /* src={duser.photoURL} */ alt={duser ? duser.displayName : 'Avatar'}>
-                      {!loading ? duser.photoURL ? 
-                        <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
-                          <img alt="avatar" src={duser.photoURL} className="avatar thumb" />
-                        </Zoom>
-                      : getInitials(duser.displayName) : ''}
-                    </Avatar>
-                  </div>
-                  <div className="col">
-                    <h2 className="username">{loading ? <span className="skltn area" /> : duser.displayName}</h2>
-                    {!loading ? (
-                      <>
-                        <div className="info-row hide-xs">
-                          {duser.sex && duser.sex !== 'x' && <span className="counter">{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
-                          {duser.birth_date && <span className="counter">{calcAge(duser.birth_date)} anni</span>}
-                          <span className="counter comma strict">
-                            {duser.city && <span className="counter">{duser.city}</span>}
-                            {duser.country && <span className="counter">{duser.country}</span>}
-                            {duser.continent && <span className="counter">{duser.continent}</span>}
-                          </span>
-                          {duser.languages && <span className="counter">{capitalize(joinToLowerCase(duser.languages))}</span>}
-                          {creationYear && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
-                          {isOwner && progress === 100 && <Link to="/profile"><button type="button" className="btn sm rounded flat counter">{icon.pencil} Modifica</button></Link>}
-                        </div>
-                        <div className="info-row">
-                          {!isOwner && isAuth && (
-                            <button 
-                              type="button"
-                              className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
-                              // disabled={!isAuth}
-                              onClick={onFollowUser}>
-                              {follow ? (
-                                <>
-                                  <span className="hide-on-hover">{icon.check} Segui</span>
-                                  <span className="show-on-hover">Smetti</span>
-                                </> 
-                              ) : ( 
-                                <span>{icon.plus} Segui</span>
-                              )}
-                            </button>
-                          )}
-                          <span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
-                          {screenSize !== 'sm' && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="skltn three rows" style={skltnStyle} />
-                    )}
-                  </div>
+              {duser && (
+                <div className="absolute-top-right">
+                  {!duser.roles?.editor ? (
+                    <div className="badge red">Utente bloccato</div> 
+                  ) : isOwner && progress === 100 && (
+                    <Link to="/profile" className="btn sm flat counter">{icon.pencil} Modifica</Link> 
+                  )}
                 </div>
-
+              )}
+              <div className="row">
+                <div className="col-auto">
+                  <Avatar className="avatar" alt={duser ? duser.displayName : 'Avatar'}>
+                    {!loading ? duser.photoURL ? (
+                      <Zoom overlayBgColorEnd="rgba(var(--canvasClr), .8)" zoomMargin={10}>
+                        <img alt="" src={duser.photoURL} className="avatar thumb" />
+                      </Zoom>
+                    ) : getInitials(duser.displayName) : ''}
+                  </Avatar>
+                </div>
+                <div className="col col-right">
+                  <h2 className="username">
+                    {loading ? <span className="skltn area" /> : (
+                      <span>
+                        {duser.displayName} {duser.roles?.author && (
+                          <Tooltip className="check-decagram primary-text" interactive title={(
+                            <>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></>
+                          )}>{icon.checkDecagram}</Tooltip>
+                        )}
+                      </span>
+                    )} 
+                  </h2>
+                  {loading ? <div className="skltn three rows" style={skltnStyle} /> : (
+                    <>
+                      <div className="info-row hide-xs">
+                        {duser.sex && duser.sex !== 'x' && <span className="counter">{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
+                        {duser.birth_date && <span className="counter">{calcAge(duser.birth_date)} anni</span>}
+                        <span className="counter comma strict">
+                          {duser.city && <span className="counter">{duser.city}</span>}
+                          {duser.country && <span className="counter">{duser.country}</span>}
+                          {duser.continent && <span className="counter">{duser.continent}</span>}
+                        </span>
+                        {duser.languages && !isMini && <span className="counter">{capitalize(joinToLowerCase(duser.languages))}</span>}
+                        {creationYear && !isMini && <span className="counter">Su {app.name} dal <b>{creationYear}</b></span>}
+                      </div>
+                      <div className="info-row ellipsis">
+                        {!isOwner && isAuth && (
+                          <button 
+                            type="button"
+                            className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
+                            // disabled={!isAuth}
+                            onClick={onFollowUser}>
+                            {!follow ? <span>{icon.plus} Segui</span> : (
+                              <>
+                                <span className="hide-on-hover">{icon.check} Segui</span>
+                                <span className="show-on-hover">Smetti</span>
+                              </> 
+                            )}
+                          </button>
+                        )}
+                        <span className="counter"><b>{Object.keys(followers).length}</b> <span className="light-text">follower</span></span>
+                        {!isMini && <span className="counter"><b>{Object.keys(followings).length}</b> <span className="light-text">following</span></span>}
+                        {duser.website && <span className="counter">{!isMini && <b>{icon.web}</b>} <a href={duser.website} target="_blank" rel="noopener noreferrer">web<span className="hide-md">site</span></a></span>}
+                        {duser.youtube && <span className="counter">{!isMini && <b>{icon.youtube}</b>} <a href={`https://www.youtube.com/channel/${duser.youtube}`} target="_blank" rel="noopener noreferrer">youtube</a></span>}
+                        {duser.instagram && <span className="counter">{!isMini && <b>{icon.instagram}</b>} <a href={`https://www.instagram.com/${duser.instagram}`} target="_blank" rel="noopener noreferrer">instagram</a></span>}
+                        {duser.twitch && <span className="counter">{!isMini && <b>{icon.twitch}</b>} <a href={`https://www.twitch.tv/${duser.twitch}`} target="_blank" rel="noopener noreferrer">twitch</a></span>}
+                        {duser.facebook && <span className="counter">{!isMini && <b>{icon.facebook}</b>} <a href={`https://www.facebook.com/${duser.facebook}`} target="_blank" rel="noopener noreferrer">facebook</a></span>}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -519,18 +537,21 @@ const Dashboard = props => {
                 <div className="progress-container">
                   <div className="progress-base" />
                   <CircularProgress variant="static" value={progress < 100 ? progress : !challengeCompleted ? challengeProgress : 0} size={60} max={100} thickness={3} />
-                  <div className="progress-value">{progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader}</div>
+                  <div className="progress-value">
+                    {progress < 100 ? `${progress}%` : challengeBooks && !challengeCompleted ? `${challengeProgress}%` : icon.reader}
+                  </div>
                 </div>
                 <div className="info-row">
                   <div className="counter last font-sm ligth-text">{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Nessuna sfida'}</div>
-                  <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded">{progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}</Link>
+                  <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className="btn sm primary rounded">
+                    {progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         )}
       </div>
-
       <AppBar position="static" className="appbar toppend mobile">
         <Tabs 
           // tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
@@ -568,9 +589,9 @@ const Dashboard = props => {
         <div className="card tab contacts-tab" dir={tabDir}>
           {tabSelected === 4 && (
             <div className="row">
-              <div className="col-md-6 cols-12 contacts-tab-col">
+              <div className="col-md-6 col-12 contacts-tab-col">
                 <h4>Seguito da:</h4>
-                {loading ? contactsSkeleton : Object.keys(followers).length ? <UsersList users={followers} /> : <EmptyRow />}
+                {loading ? contactsSkeleton : Object.keys(followers).length ? <UsersList users={followers} followings={followings} /> : <EmptyRow />}
               </div>
               <div className="col-md-6 col-12 contacts-tab-col">
                 <h4>Segue:</h4>

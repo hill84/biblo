@@ -263,7 +263,7 @@ export default class collectionsDash extends Component {
             aria-describedby="delete-dialog-description">
             <DialogTitle id="delete-dialog-title">Procedere con l&apos;eliminazione?</DialogTitle>
             <DialogContent>
-              <DialogContentText id="remove-dialog-description">
+              <DialogContentText>
                 Ricordati di rimuovere il riferimento alla collezione nei singoli libri.
               </DialogContentText>
             </DialogContent>

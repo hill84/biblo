@@ -55,14 +55,14 @@ const PasswordResetForm = () => {
       auth.sendPasswordResetEmail(email).then(() => {
         if (is.current) {
           setEmailSent(true);
-          setLoading(false);
         }
         openSnackbar(`Ti abbiamo inviato un'email per reimpostare la password.`, 'success');
       }).catch(err => {
         if (is.current) {
           setAuthError(handleFirestoreError(err));
-          setLoading(false);
         }
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
     }
 	};

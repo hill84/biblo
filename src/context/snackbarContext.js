@@ -2,8 +2,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { Close } from '@material-ui/icons';
-import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { elementType } from '../config/types';
 import '../css/snackbar.css';
 
 const initialAutoHideDuration = 5000;
@@ -70,7 +70,7 @@ export const SnackbarProvider = props => {
 }
 
 SnackbarProvider.propTypes = {
-  children: PropTypes.element.isRequired
+  children: elementType.isRequired
 }
 
 const SharedSnackbar = () => {

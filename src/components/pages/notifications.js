@@ -40,7 +40,6 @@ const Notifications = () => {
       const setEmptyState = () => {
         setCount(0);
         setItems(null);
-        setLoading(false);
         setPage(1);
       };
   
@@ -52,7 +51,6 @@ const Notifications = () => {
           if (is.current) {
             setItems(items);
             setLastVisible(snap.docs[snap.docs.length-1]);
-            setLoading(false);
             setPage(1);
           }
           notificationsRef.doc(authid).get().then(snap => {
@@ -75,6 +73,8 @@ const Notifications = () => {
           setEmptyState();
           openSnackbar(handleFirestoreError(err), 'error');
         }
+      }).finally(() => {
+        if (is.current) setLoading(false);
       });
     }
   }, [desc, openSnackbar, orderByIndex, authid]);
@@ -97,19 +97,18 @@ const Notifications = () => {
         nextSnap.forEach(item => items.push(item.data()));
         if (is.current) {
           setItems(items);
-          setLoading(false);
           setPage((page * limit) > count ? page : page + 1);
           setLastVisible(nextSnap.docs[nextSnap.docs.length-1] || lastVisible);
         }
       } else if (is.current) {
         setItems(null);
-        setLoading(false);
         setPage(null);
         setLastVisible(null);
       }
     }).catch(err => {
-      setLoading(false);
       openSnackbar(handleFirestoreError(err), 'error');
+    }).finally(() => {
+      if (is.current) setLoading(false);
     });
   }
 

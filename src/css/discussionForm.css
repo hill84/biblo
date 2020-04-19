@@ -1,0 +1,21 @@
+.card.user-discussion, .card.discussions {
+  --minPad: 14px;
+  
+  padding-top: var(--minPad);
+  padding-bottom: var(--minPad);
+}
+
+.card.user-discussion .footer { 
+  margin-bottom: calc(var(--minPad) * -1); 
+  & .btn-footer {
+    margin-top: 0;
+  }
+}
+
+.card.edit-discussion { 
+  will-change: transform, opacity; 
+  transform-origin: top; 
+  max-height: 500px; 
+  animation: slideDown .4s ease-in-out; 
+  z-index: 10; 
+}

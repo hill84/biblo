@@ -27,12 +27,12 @@ const unsub = {
 };
 
 const Book = props => {
-  const { isAuth, user } = useContext(UserContext);
+  const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { bid, history, location } = props;
   const [book, setBook] = useState(props.book);
   const [isEditing, setIsEditing] = useState(props.isEditing);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(!props.book);
   const [userBook, setUserBook] = useState({
     bid: '',
     authors: [],
@@ -63,8 +63,6 @@ const Book = props => {
   const is = useRef(true);
 
   const authid = useMemo(() => user?.uid, [user]);
-  const isAdmin = useMemo(() => user?.roles.admin, [user]);
-  const isPremium = useMemo(() => user?.roles.premium, [user]);
   const _bid = useMemo(() => book?.bid, [book]);
 
   const fetchUserBook = useCallback(bid => {
@@ -121,9 +119,11 @@ const Book = props => {
         } else console.warn(`No book with bid ${bid}`);
         setLoading(false);
         fetchUserBook(bid || _bid);
+      }, err => {
+        openSnackbar(handleFirestoreError(err), 'error');
       });
     }
-  }, [bid, _bid, fetchUserBook]);
+  }, [authid, bid, _bid, fetchUserBook, openSnackbar]);
 
   useEffect(() => () => {
     is.current = false;
@@ -233,7 +233,7 @@ const Book = props => {
       userBookRef(authid, bid).delete().then(() => {
         if (is.current) {
           setUserBook(userBook => ({ 
-            ...userBook, 
+            ...userBook,
             bookInShelf: false, 
             bookInWishlist: false,
             rating_num: userBookRating_num,
@@ -277,7 +277,7 @@ const Book = props => {
           reviewerRef(bid, authid).delete().then(() => {
             if (is.current) {
               setUserBook(userBook => ({ 
-                ...userBook, 
+                ...userBook,
                 review
               }));
             }
@@ -353,7 +353,7 @@ const Book = props => {
         }).then(() => {
           if (is.current) {
             setUserBook(userBook => ({ 
-              ...userBook, 
+              ...userBook,
               rating_num: rate
             }));
           }

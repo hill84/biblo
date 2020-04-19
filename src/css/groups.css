@@ -1,0 +1,80 @@
+.card.group {
+  & .absolute-top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+  }
+  &:hover .show-on-hover { opacity: 1; }
+  & h2 {
+    margin-bottom: .25em;
+    max-height: 64px;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    /* stylelint-disable */
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    /* stylelint-enable */
+  }
+  & .owner {
+    color: var(--lightTextClr);
+    font-size: 80%;
+    margin-bottom: .5em;
+    & .skltn {
+      width: 200px;
+    } 
+  }
+  & .avatar.image {
+    --avatarSize: 58px;
+
+    width: var(--avatarSize);
+    height: var(--avatarSize);
+  }
+  
+  & .footer.no-gutter {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    z-index: 1;
+  }
+}
+
+.card.rules {
+  padding-top: calc(var(--pad) / 2);
+  padding-bottom: calc(var(--pad) / 2);
+  & .minifiable.minified {
+    max-height: 44px;
+  }
+}
+
+.card.group.box {
+  padding-bottom: calc(var(--pad) / 2);
+  & .minifiable.minified {
+    max-height: 44px;
+  }
+}
+
+.moderators-dialog {
+  & .content {
+    padding: 0 var(--pad) calc(var(--pad) / 2);
+    min-height: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  & .contacts-tab {
+    width: 480px;
+    max-height: 390px;
+    padding: 0;
+    & .avatar-row { 
+      margin-bottom: 0;
+      padding-top: .4rem;
+      padding-bottom: .4rem;
+      border-bottom: 1px solid rgba(var(--blackClr), .1);
+      &:last-child { border-bottom: 0; }
+      & .avatar { margin: 0; }
+    }
+  }
+}

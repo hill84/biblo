@@ -18,13 +18,13 @@ export const app = {
 const lang = typeof window !== "undefined" && (navigator.language || navigator.userLanguage).split('-')[0];
 
 // JUNCTION
-export const join = arr => arr && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr;
+export const join = arr => arr?.length > 1 ? [arr?.slice(0, -1).join(', '), arr?.slice(-1)[0]].join(arr?.length < 2 ? '' : ' e ') : String(arr || '');
 export const joinObj = obj => {
-  const arr = Object.keys(obj);
-  return obj && (arr.length > 1) ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0]
+  const arr = Object.keys({ ...obj });
+  return arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0]
 };
 export const joinToLowerCase = arr => arr[0] && join(arr.map(w => w.toLowerCase()));
-export const joinComma = arr => (arr.length > 1) ? arr.join(', ') : arr;
+export const joinComma = arr => arr?.length > 1 ? arr?.join(', ') : arr;
 
 // OPTIONS
 export const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' };
@@ -33,12 +33,12 @@ export const timeOptions = { hour: '2-digit', minute: '2-digit' };
 // UTILITY
 export const isTouchDevice = () => 'ontouchstart' in document.documentElement;
 export const isScrollable = screenSize => isTouchDevice() || screenSize === 'xs' || screenSize === 'sm';
-export const copyToClipboard = text => typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {
+export const copyToClipboard = str => typeof window !== "undefined" && navigator.clipboard.writeText(str).then(() => {
   // console.log('Async: Copying to clipboard was successful!');
 }, err => console.warn('Async: Could not copy text: ', err));
-const splitWords = text => text.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
-export const getInitials = text => text?.split(' ').map(w => w.charAt(0)).join('');
-export const objToArr = obj => Object.keys(obj);
+const splitWords = str => str?.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
+export const getInitials = str => str?.split(' ').map(w => w.charAt(0)).join('');
+// export const objToArr = obj => Object.keys(obj);
 export const arrToObj = (arr, fn) => {
   const obj = {};
   for (let i = 0; i < arr.length; i++) {
@@ -48,7 +48,7 @@ export const arrToObj = (arr, fn) => {
   return obj;
 };
 // example: const obj = arrToObj(arr, item => { key: item, value: 'author' });
-export const truncateString = (str, limit) => str && str.length > limit ? `${str.substr(0, limit)}…` : str;
+export const truncateString = (str, limit) => str?.length > limit ? `${str?.substr(0, limit)}…` : str;
 export const normURL = str => str && encodeURI(str.replace(/ /g, '_'));
 export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
 
@@ -68,8 +68,8 @@ export const asyncForEach = async (array, callback) => {
   await Promise.all(results);
 };
 
-export const setFormatClass = format => {
-  switch (format) {
+export const setFormatClass = str => {
+  switch (str) {
     case 'Audiolibro': return 'audio';
     case 'Rivista': return 'magazine';
     case 'Ebook': return 'ebook';
@@ -90,11 +90,9 @@ export const validateImg = (file, maxMB = 1) => {
 
   if (file) {
     const maxBytes = maxMB * 1048576;
-    const fileExtension = file.name.split('.').pop();
-    const ext = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'];
-    if (ext.indexOf(fileExtension.toLowerCase()) === -1) {
-      // console.warn(`Image file extension not supperted: ${fileExtension}`);
-      error = `Tipo file non valido: ${fileExtension}`;
+    if (!file.type.match('image.*')) {
+      // console.warn(`File type not valid: ${file.type}`);
+      error = `Tipo file non valido: ${file.type}`;
     } else if (file.size > maxBytes) {
       // console.warn('File size too big');
       error = `File troppo pesante. Max ${maxMB}MB.`;
@@ -105,8 +103,11 @@ export const validateImg = (file, maxMB = 1) => {
   return error;
 };
 
-export const checkBadWords = text => splitWords(text).some(word => badWords.some(badWord => word.toLowerCase() === badWord)); // BOOLEAN
-export const calcVulgarity = text => splitWords(text).filter(word => badWords.some(badWord => word.toLowerCase() === badWord)).length; // NUMBER
+
+export const checkBadWords = str => splitWords(str).some(word => badWords.some(badWord => word.toLowerCase() === badWord)); // BOOLEAN
+export const calcVulgarity = str => splitWords(str).filter(word => badWords.some(badWord => word.toLowerCase() === badWord))?.length; // NUMBER
+export const extractUrls = str => str.match(urlRegex); // ARRAY
+// export const extractSpamUrls = str => extractUrls(str)?.filter(s => !s.includes(new URL(app.url).host)); // ARRAY
 
 // NORMALIZATION
 export const normalizeString = str => String(str).toLowerCase()
@@ -124,7 +125,7 @@ export const normalizeString = str => String(str).toLowerCase()
   .replace(/ñ/g,"n")
   .replace(/^-+/, '')         // Trim - from start of text
   .replace(/-+$/, '');        // Trim - from end of text
-export const normalizeCover = str => str && str.replace('http:', '').replace('&edge=curl', '');
+export const normalizeCover = str => str?.replace('http:', '').replace('&edge=curl', '');
 export const capitalize = str => str && str[0].toUpperCase() + str.slice(1);
 export const capitalizeInitials = str => {
   str = str.split(' ');
@@ -175,6 +176,8 @@ export const msToTime = s => {
 
 const time = hours => hours * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
 export const diffDates = (hours, secondDate, firstDate = Date.now()) => Math.round(Math.abs((firstDate - secondDate) / time(hours)));
+
+export const isToday = num => new Date(num).setHours(0,0,0,0) === new Date().setHours(0,0,0,0);
 
 export const screenSize = () => {
   const w = window.innerWidth;
@@ -258,7 +261,6 @@ export const switchGenres = array => array.map(str => {
     case "Philosophy":                  return "Filosofia";
     case "Politics":                    return "Politica";
     case "Poetry":                      return "Poesia";
-    
     case "Algebra":
     case "Arithmetic":
     case "Astronomy":
