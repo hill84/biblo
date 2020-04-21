@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import { groupDiscussionRef } from '../config/firebase';
 import icon from '../config/icons';
 import { getInitials, handleFirestoreError, isToday, timeSince } from '../config/shared';
-import { boolType, discussionType, stringType } from '../config/types';
+import { discussionType, stringType } from '../config/types';
+import GroupContext from '../context/groupContext';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import FlagDialog from './flagDialog';
@@ -18,7 +19,13 @@ const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 const Discussion = props => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { discussion, gid, isGroupModerator, isGroupOwner } = props;
+  const { discussion, gid } = props;
+  const { 
+    isOwner: isGroupOwner, 
+    isModerator: isGroupModerator, 
+    moderatorsList,
+    ownerUid: groupOwner
+  } = useContext(GroupContext);
   const [flagLoading, setFlagLoading] = useState(false);
   const [actionsAnchorEl, setActionsAnchorEl] = useState(null);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
@@ -75,23 +82,29 @@ const Discussion = props => {
   const isOwner = useMemo(() => discussion.createdByUid === user?.uid, [discussion.createdByUid, user]);
   const flaggedByUser = useMemo(() => (discussion.flag && discussion.flag.flaggedByUid) === user?.uid, [discussion.flag, user]);
   const classNames = useMemo(() => `${isOwner ? 'own discussion' : 'discussion'} ${discussion.flag ? `flagged ${discussion.flag.value}` : ''}`, [isOwner, discussion]);
-  
+
   return (
     <>
       <div className={classNames} id={discussion.did} ref={is}>
         <div className="row">
           <div className="col-auto left">
             <Link to={`/dashboard/${discussion.createdByUid}`}>
-              <Avatar className="avatar" src={discussion.photoURL} alt={discussion.displayName}>{!discussion.photoURL && getInitials(discussion.displayName)}</Avatar>
+              <Avatar className="avatar" src={discussion.photoURL} alt={discussion.displayName}>
+                {!discussion.photoURL && getInitials(discussion.displayName)}
+              </Avatar>
             </Link>
           </div>
           <div className="col right">
             <div className="head row">
               <Link to={`/dashboard/${discussion.createdByUid}`} className="col author">
-                <h3>{discussion.displayName}</h3>
+                <h3>
+                  {discussion.displayName} {moderatorsList?.some(uid => uid === discussion.createdByUid) && (
+                    <span className="text-sm text-regular lighter-text hide-sm">({discussion.createdByUid === groupOwner ? 'creatore' : 'moderatore'})</span>
+                  )}
+                </h3>
               </Link>
 
-              <div className="col-auto text-right counter last date">
+              <div className="col-auto text-right counter last date hide-xs">
                 {isToday(discussion.created_num) ? timeSince(discussion.created_num) : new Date(discussion.created_num).toLocaleDateString()}
               </div>
 
@@ -117,9 +130,8 @@ const Discussion = props => {
                 </div>
               )}
             </div>
-            {discussion.title && <h4 className="title">{discussion.title}</h4>}
             <div className="info-row text">
-              <MinifiableText text={discussion.text} maxChars={500} />
+              <MinifiableText text={discussion.text} maxChars={500} rich />
             </div>
           </div>
         </div>
@@ -141,15 +153,11 @@ const Discussion = props => {
 
 Discussion.propTypes = {
   discussion: discussionType.isRequired,
-  gid: stringType,
-  isGroupModerator: boolType,
-  isGroupOwner: boolType
+  gid: stringType
 }
 
 Discussion.defaultProps = {
-  gid: null,
-  isGroupModerator: false,
-  isGroupOwner: false,
+  gid: null
 }
 
 export default Discussion;

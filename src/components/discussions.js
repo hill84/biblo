@@ -15,7 +15,7 @@ const desc = true;
 const Discussions = props => {
   const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { container, gid, isGroupModerator, isGroupOwner, limit, pagination, skeleton, uid } = props;
+  const { container, gid, limit, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -108,8 +108,6 @@ const Discussions = props => {
                 key={item.did}
                 discussion={item} 
                 gid={gid}
-                isGroupModerator={isGroupModerator}
-                isGroupOwner={isGroupOwner}
               />
             ))}
             {loading && skeleton && skeletons}
@@ -133,8 +131,6 @@ const Discussions = props => {
 Discussions.propTypes = {
   container: boolType,
   gid: stringType,
-  isGroupModerator: boolType,
-  isGroupOwner: boolType,
   limit: numberType,
   pagination: boolType,
   skeleton: boolType,
@@ -147,8 +143,6 @@ Discussions.propTypes = {
 Discussions.defaultProps = {
   container: true,
   gid: null,
-  isGroupModerator: false,
-  isGroupOwner: false,
   limit: 5,
   pagination: true,
   skeleton: false,

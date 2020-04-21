@@ -3,8 +3,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 import 'firebase/performance';
-
-const isProd = process.env.NODE_ENV === 'production';
+import { prod } from './shared';
 
 const devConfig = {
   appId: process.env.REACT_APP_FIREBASE_STAGING_APP_ID,
@@ -26,7 +25,7 @@ const ProdConfig = {
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID
 };
 
-const config = isProd ? ProdConfig : devConfig;
+const config = prod ? ProdConfig : devConfig;
 
 if (!firebase.apps.length) firebase.initializeApp(config);
 

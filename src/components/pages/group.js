@@ -5,14 +5,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
-import React, { forwardRef, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import Tooltip from '@material-ui/core/Tooltip';
+import React, { forwardRef, lazy, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
-import { groupFollowersRef, groupRef, userRef } from '../../config/firebase';
+import { groupFollowersRef, groupRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
+import GroupContext from '../../context/groupContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/groups.css';
@@ -30,20 +32,23 @@ const seo = {
   title: `${app.name} | Groups`
 };
 
-const unsub = {
-  fetchGroups: null,
-  groupModeratorsFetch: null,
-  groupFollowersFetch : null
-};
-
 const Group = props => {
   const { isAdmin, isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [follow, setFollow] = useState(false);
-  const [followers, setFollowers] = useState(null);
-  const [moderators, setModerators] = useState(null);
+  const { 
+    clearStates, 
+    fetchGroup, 
+    follow, 
+    followers, 
+    isOwner, 
+    isModerator, 
+    item, 
+    loading, 
+    moderators: groupModerators, 
+    setFollow, 
+    setModerators 
+  } = useContext(GroupContext);
+  
   const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(null);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
@@ -51,70 +56,15 @@ const Group = props => {
   const { history, location, match } = props;
   const { gid } = match.params;
   const is = useRef(true);
-  
-  const isOwner = useMemo(() => user?.uid === item?.ownerUid, [item, user]);
-  const isModerator = useMemo(() => item?.moderators.some(uid => uid === user?.uid), [item, user]);
-  
-  const fetchFollowers = useCallback(() => {    
-    if (is.current) setLoading(true);
-    unsub.groupFollowersFetch = groupFollowersRef(gid).onSnapshot(snap => {
-      if (!snap.empty) {
-        const followers = [];
-        snap.forEach(follower => followers.push(follower.data()));
-        if (is.current) {
-          setFollowers(followers);
-        }
-      } else if (is.current) {
-        setFollowers(null);
-        setFollow(false);
-      }
-    }, err => openSnackbar(handleFirestoreError(err), 'error'));
-  }, [gid, openSnackbar]);
-
-  const fetchModerators = useCallback(moderators => { 
-    const items = [];
-    unsub.groupModeratorsFetch = moderators.forEach(uid => {
-      userRef(uid).get().then(snap => {
-        if (snap.exists) {
-          items.push(snap.data());
-        }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    });
-    setModerators(items);
-  }, [openSnackbar]);
-
-  const fetchGroup = useCallback(() => {
-    if (is.current) setLoading(true);
-    unsub.fetchGroup = groupRef(gid).onSnapshot(snap => {
-      if (snap.exists) {
-        if (is.current) {
-          setItem(snap.data());
-          setLoading(false);
-        }
-        fetchFollowers();
-        if (snap.data().moderators?.length > 1) {
-          fetchModerators(snap.data().moderators);
-        }
-      }
-    }, err => openSnackbar(handleFirestoreError(err), 'error'));
-  }, [fetchFollowers, fetchModerators, gid, openSnackbar]);
 
   useEffect(() => {
-    fetchGroup();
-  }, [fetchGroup]);
-
-  useEffect(() => {
-    if (followers && is.current) {
-      setFollow(followers.some(follower => follower.uid === user?.uid));
-    }
-  }, [followers, user]);
+    fetchGroup(gid);
+  }, [fetchGroup, gid]);
 
   useEffect(() => () => {
     is.current = false;
-    unsub?.groupFollowersFetch?.();
-    unsub?.fetchGroup?.();
-    unsub?.fetchDiscussions?.();
-  }, []);
+    clearStates();
+  }, [clearStates]);
 
   const onFollow = () => {
     if (follow) {
@@ -159,16 +109,24 @@ const Group = props => {
   const onDeleteModerator = e => {
     const { muid } = e.currentTarget.dataset;
     const restList = item.moderators.filter(m => m !== muid);
-    const rest = moderators.filter(m => m.uid !== muid);
+    const rest = groupModerators.filter(m => m.uid !== muid);
 
     groupRef(gid).update({
       ...item,
       moderators: restList
     }).then(() => {
-      if (is.current) {
-        setModerators(rest);
-      }
-    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+      if (is.current) setModerators(rest);
+    }).catch(err => {
+      openSnackbar(handleFirestoreError(err), 'error');
+    });
+  };
+
+  const onLock = () => {
+    groupRef(gid).update({ edit: !item.edit }).then(() => {
+      openSnackbar(`Gruppo ${item.edit ? '' : 's'}bloccato`, 'success');
+    }).catch(err => {
+      openSnackbar(handleFirestoreError(err), 'error');
+    });
   };
 
   if (redirectToReferrer) return <Redirect to="/groups" />
@@ -181,26 +139,38 @@ const Group = props => {
         <title>{seo.title}</title>
       </Helmet>
       <div className="card light group relative">
-        <Link to="/groups" className="btn clear dark rounded icon prepend absolute-content left">
+        <Link to="/groups" className="btn clear dark rounded icon prepend absolute-content left hide-sm">
           {icon.arrowLeft}
         </Link>
-        {isEditor && (isOwner || isModerator || isAdmin) && (
+        {isEditor && (isOwner || isModerator || isAdmin) ? (
           <div className="absolute-top-right">
             {(isOwner || isAdmin) && (
-              <button
-                type="button"
-                className="btn sm flat counter"
-                onClick={onDeleteRequest}>
-                {icon.delete} <span className="hide-sm">Elimina</span>
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="btn sm flat counter icon-sm"
+                  onClick={onLock}>
+                  {icon[item?.edit ? 'lock' : 'lockOpen']} <span className="hide-sm">{item?.edit ? 'Blocca' : 'Sblocca'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn sm flat counter icon-sm"
+                  onClick={onDeleteRequest}>
+                  {icon.delete} <span className="hide-sm">Elimina</span>
+                </button>
+              </>
             )}
             <button
               type="button"
-              className="btn sm flat counter"
+              className="btn sm flat counter icon-sm"
               onClick={onEditGroup}>
               {icon.pencil} <span className="hide-sm">Modifica</span>
             </button>
           </div>
+        ) : !item?.edit && !loading && (
+          <Tooltip title="Gruppo bloccato">
+            <div className="absolute-top-right lighter-text">{icon.lock}</div>
+          </Tooltip>
         )}
 
         <div className="row info-row header">
@@ -252,7 +222,7 @@ const Group = props => {
               ) : <span>{icon.plus} Segui</span> }
             </button>
             <div className="counter inline">
-              <Bubbles limit={3} items={followers} />
+              <Bubbles limit={3} items={followers} label="iscritti" />
             </div>
             {follow && (
               <button
@@ -275,9 +245,9 @@ const Group = props => {
         </div>
       )}
 
-      {isAuth && isEditor && <DiscussionForm gid={gid} />}
+      {isAuth && isEditor && item?.edit && <DiscussionForm gid={gid} />}
 
-      <Discussions gid={gid} isGroupModerator={isModerator} isGroupOwner={isOwner} />
+      <Discussions gid={gid} />
 
       {isOpenEditDialog && <GroupForm id={gid} onToggle={onToggleEditDialog} />}
 
@@ -295,7 +265,7 @@ const Group = props => {
           </DialogTitle>
           <DialogContent className="content">
             <div className="contacts-tab">
-              {moderators?.length ? moderators.map(user => (
+              {groupModerators?.length ? groupModerators.map(user => (
                 <div key={user.uid} className="avatar-row">
                   <div className="row">
                     <div className="col-auto">

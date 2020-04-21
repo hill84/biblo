@@ -38,6 +38,7 @@ const GroupForm = props => {
   const [data, setData] = useState({
     title: '',
     description: '',
+    edit: true,
     rules: '',
     type: 'public',
     location: '',
@@ -156,6 +157,7 @@ const GroupForm = props => {
         const ref = id ? groupRef(id) : groupsRef.doc();
         ref.set({
           gid: id || ref.id,
+          edit: data.edit,
           title: capitalize(data.title) || '',
           description: data.description || '',
           rules: data.rules || '',

@@ -1,18 +1,26 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import Tooltip from '@material-ui/core/Tooltip';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { groupDiscussionsRef } from '../../config/firebase';
-import { checkBadWords, extractUrls, handleFirestoreError, join } from '../../config/shared';
+import icon from '../../config/icons';
+import { app, checkBadWords, extractUrls, handleFirestoreError, join } from '../../config/shared';
 import { defaultTheme, primaryTheme } from '../../config/themes';
 import { stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/discussionForm.css';
+
+const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const max = {
   chars: {
@@ -48,6 +56,7 @@ const DiscussionForm = props => {
   const [changes, setChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [briefAnchorEl, setActionsAnchorEl] = useState(null);
   const is = useRef(true);
 
   useEffect(() => () => {
@@ -136,9 +145,53 @@ const DiscussionForm = props => {
     } 
   };
 
+  const onOpenBriefMenu = e => setActionsAnchorEl(e.currentTarget);
+
+  const onCloseBriefMenu = () => setActionsAnchorEl(null);
+
   return (
     <form className={`card user-discussion ${discussion?.text ? 'light' : 'primary'}`}>
       {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+      {!discussion?.text && (
+        <div className="absolute-top-right">
+          <Tooltip title="Aiuto per la formattazione">
+            <button
+              type="button"
+              className="btn sm flat rounded icon"
+              onClick={briefAnchorEl ? onCloseBriefMenu : onOpenBriefMenu}>
+              {briefAnchorEl ? icon.close : icon.lifebuoy}
+            </button>
+          </Tooltip>
+          <Dialog
+            className="dropdown-menu"
+            open={Boolean(briefAnchorEl)}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={onCloseBriefMenu}
+            aria-labelledby="brief-dialog-title"
+            aria-describedby="brief-dialog-description">
+            {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
+            <DialogTitle id="brief-dialog-title">
+              Aiuto per la formattazione
+              <div className="absolute-top-right">
+                <button type="button" className="btn flat rounded icon" aria-label="close" onClick={onCloseBriefMenu}>
+                  {icon.close}
+                </button>
+              </div>
+            </DialogTitle>
+            <DialogContent id="brief-dialog-description">
+              <p>Nel tuo commento puoi citare altri utenti o includere link a libri, autori e collezioni già presenti su {app.name}. Qui trovi la sintassi da usare:</p>
+              <ul>
+                <li><b>Utente</b>: <code>@dashboard/ID_UTENTE/Nome_Utente</code></li>
+                <li><b>Libro</b>: <code>@book/ID_LIBRO/Titolo_Libro</code></li>
+                <li><b>Autore</b>: <code>@author/ID_AUTORE/Nome_Autore</code></li>
+                <li><b>Collezione</b>: <code>@collection/ID_COLLEZIONE/Titolo_Collezione</code></li>
+              </ul>
+              <p>Puoi copiare la stringa direttamente dalla barra degli indirizzi del tuo browser (facendo attenzione a non includere la parte iniziale &quot;{app.url}&quot;).</p>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
       <div className="form-group">
         <FormControl className="input-field" margin="dense" fullWidth style={formControlStyle}>
           <ThemeProvider theme={discussion?.text ? defaultTheme : primaryTheme}>
@@ -147,7 +200,7 @@ const DiscussionForm = props => {
               id="text"
               name="text"
               type="text"
-              placeholder={`Scrivi il tuo commento (max ${max.chars.text} caratteri)...`}
+              placeholder="Scrivi il tuo commento"
               value={discussion.text || ''}
               onChange={onChangeMaxChars}
               error={Boolean(errors.text)}
