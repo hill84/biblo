@@ -24,8 +24,7 @@ const FlagDialog = props => {
       TransitionComponent={TransitionComponent}
       keepMounted
       onClose={onClose}
-      aria-labelledby="flag-dialog-title"
-      aria-describedby="flag-dialog-description">
+      aria-labelledby="flag-dialog-title">
       {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
       <DialogTitle id="flag-dialog-title">
         Segnala commento

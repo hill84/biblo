@@ -90,7 +90,7 @@ const Dashboard = props => {
     const keys = Object.keys(user).filter(item => profileKeys.includes(item));
     const tot = profileKeys.length;
     
-    keys.forEach(i => { 
+    keys?.forEach(i => { 
       // console.log(i + ': ' + typeof user[i] + ' - ' + user[i]);
       if (typeof user[i] === 'string') {
         if (user[i] !== '') count++ 
@@ -104,79 +104,73 @@ const Dashboard = props => {
   }, []);
 
   const fetchUser = useCallback(() => {
-    if (uid) {
-      if (luid === uid) {
-        if (is.current) {
-          setDuser(user);
-          setProgress(calcProgress(user));
-          setLoading(false);
-        }
-      } else {
-        if (is.current) setLoading(true);
-        unsub.userFetch = userRef(uid).onSnapshot(snap => {
-          if (snap.exists) {
-            setDuser(snap.data());
-            setProgress(calcProgress(snap.data()));
-          } else {
-            setDuser(null);
-            setProgress(0);
-          }
-          setLoading(false);
-        }, err => console.warn(err));
+    if (luid === uid) {
+      if (is.current) {
+        setDuser(user);
+        setProgress(calcProgress(user));
+        setLoading(false);
       }
+    } else {
+      if (is.current) setLoading(true);
+      unsub.userFetch = userRef(uid).onSnapshot(snap => {
+        if (snap.exists) {
+          setDuser(snap.data());
+          setProgress(calcProgress(snap.data()));
+        } else {
+          setDuser(null);
+          setProgress(0);
+        }
+        setLoading(false);
+      }, err => console.warn(err));
     }
   }, [calcProgress, luid, uid, user]);
 
   const fetchFollowers = useCallback(() => {
-    if (uid) {
-      unsub.uidFollowersFetch && unsub.uidFollowersFetch();
-      unsub.uidFollowersFetch = followersRef(uid).onSnapshot(snap => {
-        if (snap.exists) {
-          setFollowers(snap.data());
-          setFollow(luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false);
-        } else {
-          setFollowers({});
-          setFollow(false);
-        }
-      });
-      if (isAuth) {
-        if (luid && luid !== uid) {
-          // console.log('fetching lfollowers');
-          unsub.luidFollowersFetch && unsub.luidFollowersFetch();
-          unsub.luidFollowersFetch = followersRef(luid).onSnapshot(snap => {
-            if (snap.exists) {
-              setLfollowers(snap.data());
-            } else {
-              setLfollowers({});
-            }
-          });
-        }
+    unsub.uidFollowersFetch && unsub.uidFollowersFetch();
+    unsub.uidFollowersFetch = followersRef(uid).onSnapshot(snap => {
+      if (snap.exists) {
+        setFollowers(snap.data());
+        setFollow(luid ? Object.keys(snap.data()).indexOf(luid) > -1 : false);
+      } else {
+        setFollowers({});
+        setFollow(false);
+      }
+    });
+    if (isAuth) {
+      if (luid && luid !== uid) {
+        // console.log('fetching lfollowers');
+        unsub.luidFollowersFetch && unsub.luidFollowersFetch();
+        unsub.luidFollowersFetch = followersRef(luid).onSnapshot(snap => {
+          if (snap.exists) {
+            setLfollowers(snap.data());
+          } else {
+            setLfollowers({});
+          }
+        });
       }
     }
 	}, [isAuth, luid, uid]);
 
 	const fetchFollowings = useCallback(() => {
-    if (uid) {
-      unsub.uidFollowingsFetch && unsub.uidFollowingsFetch();
-      unsub.uidFollowingsFetch = followingsRef(uid).onSnapshot(snap => {
+    unsub.uidFollowingsFetch && unsub.uidFollowingsFetch();
+    unsub.uidFollowingsFetch = followingsRef(uid).onSnapshot(snap => {
+      if (snap.exists) {
+        setFollowings(snap.data());
+      } else {
+        setFollowings({});
+      }
+    });
+    
+    if (luid && luid !== uid) {
+      // console.log('fetching lfollowings');
+      unsub.luidFollowingsFetch && unsub.luidFollowingsFetch();
+      unsub.luidFollowingsFetch = followingsRef(luid).onSnapshot(snap => {
         if (snap.exists) {
-          setFollowings(snap.data());
+          setLfollowings(snap.data());
         } else {
-          setFollowings({});
+          setLfollowings({});
         }
       });
-      
-      if (luid && luid !== uid) {
-        // console.log('fetching lfollowings');
-        unsub.luidFollowingsFetch && unsub.luidFollowingsFetch();
-        unsub.luidFollowingsFetch = followingsRef(luid).onSnapshot(snap => {
-          if (snap.exists) {
-            setLfollowings(snap.data());
-          } else {
-            setLfollowings({});
-          }
-        });
-      }
     }
   }, [luid, uid]);
 

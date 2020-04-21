@@ -1,4 +1,3 @@
-import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -6,6 +5,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { ThemeProvider } from '@material-ui/styles';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -257,6 +257,11 @@ const Groups = () => {
           <div className="empty pad-v text-center">Nessun gruppo trovato</div>
         ) : items.map(item => (
           <div className="card group box" key={item.gid}>
+            {!item.edit && (
+              <Tooltip title="Gruppo bloccato">
+                <div className="absolute-top-right lighter-text">{icon.lock}</div>
+              </Tooltip>
+            )}
             <div className="row info-row">
               <div className="col-auto">
                 <Avatar className="image avatar">

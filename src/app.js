@@ -22,6 +22,7 @@ import Signup from './components/pages/signup';
 import { app } from './config/shared';
 import { defaultTheme } from './config/themes';
 import { boolType, funcType, locationType, objectType, oneOfType, stringType } from './config/types';
+import { GroupProvider } from './context/groupContext';
 import SnackbarContext, { SnackbarProvider } from './context/snackbarContext';
 import UserContext, { UserProvider } from './context/userContext';
 
@@ -55,50 +56,52 @@ const App = () => (
       </Helmet>
       <SnackbarProvider>
         <UserProvider>
-          <Layout>
-            <ErrorBoundary>
-              <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
-                <Switch>
-                  <Route path="/" exact component={Home} />
-                  <Route path="/about" component={AboutPage} />
-                  <Route path="/author/:aid" component={AuthorPage} />
-                  <Route path="/book/:bid" component={BookContainer} />
-                  <Route path="/challenges" component={NewFeature} />          
-                  <Route path="/collection/:cid" component={Collection} />
-                  <Route path="/collections" component={NewFeature} />
-                  <Route path="/cookie" component={CookiePage} />
-                  <Route path="/dashboard/:uid" exact component={Dashboard} />
-                  <Route path="/dashboard/:uid/:tab" component={Dashboard} />
-                  <Route path="/donations" component={DonationsPage} />
-                  <Route path="/genre/:gid" component={Genre} />
-                  <Route path="/genres" component={GenresPage} />
-                  <Route path="/help" component={HelpPage} />
-                  <Route path="/icons" component={IconsPage} />
-                  <Route path="/login" component={Login} />
-                  <Route path="/password-reset" component={PasswordResetForm} />
-                  <Route path="/privacy" component={PrivacyPage} />
-                  <Route path="/signup" component={Signup} />
-                  <Route path="/terms" component={TermsPage} />
-                  <Route path="/verify-email" component={VerifyEmailPage} />
-                  <Route path="/group/:gid" component={Group} />
-                  <Route path="/groups" component={Groups} />
-                  <RouteWithProps path="/authors" component={AuthorsPage} /> {/* CLASS */}
-                  <PrivateRoute path="/admin" exact component={Admin} />
-                  <PrivateRoute path="/admin/:tab" component={Admin} />
-                  <PrivateRoute path="/books/add" component={AddBook} />
-                  <PrivateRoute path="/challenge" component={Challenge} />
-                  <PrivateRoute path="/new-book" component={NewBook} />
-                  <PrivateRoute path="/notifications" component={Notifications} />
-                  <PrivateRoute path="/profile" component={Profile}/>
-                  <Redirect from="/aiuto" to="/help" />
-                  <Redirect from="/chi-siamo" to="/about" />
-                  <Redirect from="/home" to="/" />
-                  <Redirect from="/webmaster/*" to="/" />
-                  <Route component={NoMatchPage} status={404} />
-                </Switch>
-              </Suspense>
-            </ErrorBoundary>
-          </Layout>
+          <GroupProvider>
+            <Layout>
+              <ErrorBoundary>
+                <Suspense fallback={<div aria-hidden="true" className="loader"><CircularProgress /></div>}>
+                  <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/about" component={AboutPage} />
+                    <Route path="/author/:aid" component={AuthorPage} />
+                    <Route path="/book/:bid" component={BookContainer} />
+                    <Route path="/challenges" component={NewFeature} />          
+                    <Route path="/collection/:cid" component={Collection} />
+                    <Route path="/collections" component={NewFeature} />
+                    <Route path="/cookie" component={CookiePage} />
+                    <Route path="/dashboard/:uid" exact component={Dashboard} />
+                    <Route path="/dashboard/:uid/:tab" component={Dashboard} />
+                    <Route path="/donations" component={DonationsPage} />
+                    <Route path="/genre/:gid" component={Genre} />
+                    <Route path="/genres" component={GenresPage} />
+                    <Route path="/help" component={HelpPage} />
+                    <Route path="/icons" component={IconsPage} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/password-reset" component={PasswordResetForm} />
+                    <Route path="/privacy" component={PrivacyPage} />
+                    <Route path="/signup" component={Signup} />
+                    <Route path="/terms" component={TermsPage} />
+                    <Route path="/verify-email" component={VerifyEmailPage} />
+                    <Route path="/group/:gid" component={Group} />
+                    <Route path="/groups" component={Groups} />
+                    <RouteWithProps path="/authors" component={AuthorsPage} /> {/* CLASS */}
+                    <PrivateRoute path="/admin" exact component={Admin} />
+                    <PrivateRoute path="/admin/:tab" component={Admin} />
+                    <PrivateRoute path="/books/add" component={AddBook} />
+                    <PrivateRoute path="/challenge" component={Challenge} />
+                    <PrivateRoute path="/new-book" component={NewBook} />
+                    <PrivateRoute path="/notifications" component={Notifications} />
+                    <PrivateRoute path="/profile" component={Profile}/>
+                    <Redirect from="/aiuto" to="/help" />
+                    <Redirect from="/chi-siamo" to="/about" />
+                    <Redirect from="/home" to="/" />
+                    <Redirect from="/webmaster/*" to="/" />
+                    <Route component={NoMatchPage} status={404} />
+                  </Switch>
+                </Suspense>
+              </ErrorBoundary>
+            </Layout>
+          </GroupProvider>
         </UserProvider>
       </SnackbarProvider>
     </HelmetProvider>

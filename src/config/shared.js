@@ -3,9 +3,11 @@ import { badWords, firestoreErrorMessages } from './lists';
 import logo from '../images/logo.png';
 
 // APP
+export const prod = process.env.NODE_ENV === 'production';
+
 export const app = {
   name: 'Biblo.space',
-  url: 'https://biblo.space',
+  url: prod ? 'https://biblo.space' : 'http://localhost:3000',
   logo,
   fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space' },
   tw: { name: 'Biblo.space', url: 'https://twitter.com/BibloSpace' },
@@ -51,6 +53,7 @@ export const arrToObj = (arr, fn) => {
 export const truncateString = (str, limit) => str?.length > limit ? `${str?.substr(0, limit)}…` : str;
 export const normURL = str => str && encodeURI(str.replace(/ /g, '_'));
 export const denormURL = str => str && decodeURI(str.replace(/_/g, ' '));
+// export const denormUserRef = str => str.replace(/@+/g, '').replace(/_+/g, ' ');
 
 /* export const arrayToObj = array => { 
   const obj = {}; 
@@ -84,6 +87,34 @@ export const urlRegex = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z
 
 export const emailRegex = /[a-zA-Z0-9\\+\\.\\_\\%\\-]{1,256}\\@[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}(\\.[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25})+/gi;
 
+export const refRegex = /(?<![\w\d+])@([\w\d/+]*)(?![s+])/gi;
+
+// export const extractSpamUrls = str => extractUrls(str)?.filter(s => !s.includes(new URL(app.url).host)); // ARRAY
+
+export const extractUrls = str => str.match(urlRegex); // ARRAY
+
+export const extractRefs = str => str.match(refRegex);
+
+// INTERPOLATION
+export const enrichText = str => {
+  const refs = extractRefs(str);
+  const params = match => match.split('/');
+  const getLastParam = match => params(match)?.[params(match).length - 1];
+
+  refs?.forEach(match => {
+    // console.log(match);
+    const _match = match.replace('@', '');
+    const output = ['book', 'author', 'collection'].some(part => part === params(_match)?.[0]) ? (
+      `<a title="${match}" href="${app.url}/${_match}">${denormURL(getLastParam(match))}</a>`
+    ) : (
+      `<mark title="${match}"><a href="${app.url}/${_match}">${denormURL(getLastParam(match))}</a></mark>`
+    );
+    str = str.replace(match, output);
+  });
+
+  return str;
+};
+
 // VALIDATION
 export const validateImg = (file, maxMB = 1) => {
   let error;
@@ -103,11 +134,8 @@ export const validateImg = (file, maxMB = 1) => {
   return error;
 };
 
-
 export const checkBadWords = str => splitWords(str).some(word => badWords.some(badWord => word.toLowerCase() === badWord)); // BOOLEAN
 export const calcVulgarity = str => splitWords(str).filter(word => badWords.some(badWord => word.toLowerCase() === badWord))?.length; // NUMBER
-export const extractUrls = str => str.match(urlRegex); // ARRAY
-// export const extractSpamUrls = str => extractUrls(str)?.filter(s => !s.includes(new URL(app.url).host)); // ARRAY
 
 // NORMALIZATION
 export const normalizeString = str => String(str).toLowerCase()
