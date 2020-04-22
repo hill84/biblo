@@ -43,6 +43,8 @@
   & .title {
     font-size: 2.2rem;
     &.flex { align-items: center; }
+    & .mention { display: flex; opacity: 0; margin-left: .5rem; }
+    &:hover .mention { opacity: 1; }
   }
   & .subtitle { font-size: 1.35rem; color: var(--lightTextClr); }
   & .rating { height: var(--btnHeight); line-height: var(--btnHeight); }
@@ -55,15 +57,19 @@
       position: absolute; top: 0; left: 0;
       & .btn-share-container { display: block; margin: 0 .4em .4em; }
     }
-    & .book-profile .rating {
-      display: block;
-      /* & .react-rater { font-size: 1.4rem; } */
+    & .book-profile {
+      & .title .mention { display: none; }
+      & .rating {
+        display: block;
+        /* & .react-rater { font-size: 1.4rem; } */
+      }
     }
   }
 }
 
 @media (--to-s) {
   #BookProfile .book-profile {
+    & .title .mention { display: none; }
     & .author {
       white-space: nowrap;
       overflow: hidden;

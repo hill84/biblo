@@ -222,7 +222,15 @@ const BookProfile = props => {
               </div>
 
               <div className="col book-profile">
-                <h2 className="title flex">{loading ? <span className="skltn area" /> : book.title}</h2>
+                <h2 className="title flex">
+                  {loading ? <span className="skltn area" /> : (
+                    <>
+                      {book.title} <span className="mention">
+                        <CopyToClipboard icon={icon.at} text={`@book/${book.bid}/${normURL(book.title)}`}/>
+                      </span>
+                    </>
+                  )}
+                </h2>
                 {book?.subtitle && <h3 className="subtitle">{book.subtitle}</h3>}
                 {loading ? (
                   <div className="skltn rows" style={{ marginTop: '2em', }} />

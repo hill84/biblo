@@ -253,14 +253,13 @@ const Group = props => {
 
       {isOpenModeratorsDialog && (
         <Dialog
-          className="moderators-dialog"
+          className="dropdown-menu"
           open={isOpenModeratorsDialog}
           TransitionComponent={Transition}
           keepMounted
           onClose={onCloseModeratorsDialog}
-          aria-labelledby="moderators-dialog-title"
-          aria-describedby="moderators-dialog-description">
-          <DialogTitle>
+          aria-labelledby="moderators-dialog-title">
+          <DialogTitle id="moderators-dialog-title">
             Moderatori del gruppo
           </DialogTitle>
           <DialogContent className="content">
