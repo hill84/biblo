@@ -1,3 +1,4 @@
+import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,11 +12,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { ThemeProvider } from '@material-ui/styles';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { groupDiscussionsRef } from '../../config/firebase';
+import { groupDiscussionsRef, notesRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, checkBadWords, extractUrls, handleFirestoreError, join } from '../../config/shared';
+import { app, checkBadWords, extractMuids, extractUrls, getInitials, handleFirestoreError, join, normURL, truncateString } from '../../config/shared';
 import { defaultTheme, primaryTheme } from '../../config/themes';
 import { stringType } from '../../config/types';
+import GroupContext from '../../context/groupContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/discussionForm.css';
@@ -25,7 +27,8 @@ const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 const max = {
   chars: {
     text: 2000
-  }
+  },
+  mentions: 10
 };
 
 const min = {
@@ -37,8 +40,9 @@ const min = {
 const formControlStyle = { marginTop: '8px', };
 
 const DiscussionForm = props => {
-  const { user } = useContext(UserContext);
+  const { isEditor, user } = useContext(UserContext);
   const { closeSnackbar, openSnackbar, snackbarIsOpen } = useContext(SnackbarContext);
+  const { followers, item: group } = useContext(GroupContext);
   const { gid } = props;
   const authid = useMemo(() => user?.uid, [user]);
   const initialDiscussionState = useMemo(() => ({
@@ -56,8 +60,12 @@ const DiscussionForm = props => {
   const [changes, setChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [briefAnchorEl, setActionsAnchorEl] = useState(null);
+  const [isOpenBriefDialog, setIsOpenBriefDialog] = useState(false);
+  const [isOpenFollowersDialog, setIsOpenFollowersDialog] = useState(false);
   const is = useRef(true);
+  const textInput = useRef(null);
+
+  const groupFollowers = useMemo(() => followers?.filter(user => user.uid !== authid), [authid, followers]);
 
   useEffect(() => () => {
     is.current = false;
@@ -74,8 +82,9 @@ const DiscussionForm = props => {
   const validate = useCallback(discussion => {
     const { text } = discussion;
     const errors = {};
-    const urlMatches = extractUrls(text);
+    const urls = extractUrls(text);
     const badWords = checkBadWords(text);
+    const muids = extractMuids(text);
 
     if (!text) {
       errors.text = "Aggiungi un commento";
@@ -83,8 +92,10 @@ const DiscussionForm = props => {
       errors.text = `Massimo ${max.chars.text} caratteri`;
     } else if (text.length < min.chars.text) {
       errors.text = `Minimo ${min.chars.text} caratteri`;
-    } else if (urlMatches) {
-      errors.text = `Non inserire link esterni (${join(urlMatches)})`;
+    } else if (urls) {
+      errors.text = `Non inserire link esterni (${join(urls)})`;
+    } else if (muids?.length > max.mentions) {
+      errors.text = `Massimo ${max.mentions} menzioni`;
     } else if (badWords) {
       errors.text = "Niente volgarità";
     }
@@ -116,6 +127,30 @@ const DiscussionForm = props => {
           ref.set({
             ...discussion,
             ...updatedDiscussion
+          }).then(() => {
+            extractMuids(discussion.text)?.forEach(muid => {
+              if (followers?.some(follower => follower.uid === muid)) {   
+                const discussantURL = `/dashboard/${authid}`;
+                const discussantDisplayName = truncateString(user.displayName.split(' ')[0], 12);
+                const groupURL = `/group/${gid}`;
+                const groupTitle = group.title;
+                const noteMsg = `<a href="${discussantURL}">${discussantDisplayName}</a> ti ha menzionato nel gruppo <a href="${groupURL}">${groupTitle}</a>`;
+                const newNoteRef = notesRef(muid).doc();
+                
+                newNoteRef.set({
+                  nid: newNoteRef.id,
+                  text: noteMsg,
+                  created_num: Date.now(),
+                  createdBy: user.displayName,
+                  createdByUid: user.uid,
+                  photoURL: user.photoURL,
+                  tag: ['mention'],
+                  read: false,
+                  uid: muid
+                }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+              }
+            });
+
           }).catch(err => {
             openSnackbar(handleFirestoreError(err), 'error');
           }).finally(() => {
@@ -142,61 +177,46 @@ const DiscussionForm = props => {
       setErrors({ ...errors, [name]: null }); 
       setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
       setChanges(true);
-    } 
+    }
   };
 
-  const onOpenBriefMenu = e => setActionsAnchorEl(e.currentTarget);
+  const onOpenBriefDialog = () => setIsOpenBriefDialog(true);
 
-  const onCloseBriefMenu = () => setActionsAnchorEl(null);
+  const onCloseBriefDialog = () => setIsOpenBriefDialog(false);
+
+  const onOpenFollowersDialog = () => setIsOpenFollowersDialog(true);
+
+  const onCloseFollowersDialog = () => setIsOpenFollowersDialog(false);
+
+  const onMentionFollower = e => {
+    const { displayName, fuid } = e.currentTarget.dataset;
+    const mention = `${discussion.text ? ' ' : ''}@dashboard/${fuid}/${normURL(displayName)} `;
+
+    if (is.current) {
+      if (snackbarIsOpen) closeSnackbar();
+      setDiscussion({ ...discussion, text: discussion.text + mention });
+      setErrors({ ...errors, text: null }); 
+      setLeftChars({ ...leftChars, text: max.chars.text - mention.length });
+      setChanges(true);
+      setIsOpenFollowersDialog(false);
+      setTimeout(() => {
+        const ref = textInput.current;
+        ref.selectionStart = 10000;
+        ref.selectionEnd = ref.selectionStart;
+        ref.focus();
+      }, 0);
+    } 
+  };
 
   return (
     <form className={`card user-discussion ${discussion?.text ? 'light' : 'primary'}`}>
       {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-      {!discussion?.text && (
-        <div className="absolute-top-right">
-          <Tooltip title="Aiuto per la formattazione">
-            <button
-              type="button"
-              className="btn sm flat rounded icon"
-              onClick={briefAnchorEl ? onCloseBriefMenu : onOpenBriefMenu}>
-              {briefAnchorEl ? icon.close : icon.lifebuoy}
-            </button>
-          </Tooltip>
-          <Dialog
-            className="dropdown-menu"
-            open={Boolean(briefAnchorEl)}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={onCloseBriefMenu}
-            aria-labelledby="brief-dialog-title"
-            aria-describedby="brief-dialog-description">
-            {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
-            <DialogTitle id="brief-dialog-title">
-              Aiuto per la formattazione
-              <div className="absolute-top-right">
-                <button type="button" className="btn flat rounded icon" aria-label="close" onClick={onCloseBriefMenu}>
-                  {icon.close}
-                </button>
-              </div>
-            </DialogTitle>
-            <DialogContent id="brief-dialog-description">
-              <p>Nel tuo commento puoi citare altri utenti o includere link a libri, autori e collezioni già presenti su {app.name}. Qui trovi la sintassi da usare:</p>
-              <ul>
-                <li><b>Utente</b>: <code>@dashboard/ID_UTENTE/Nome_Utente</code></li>
-                <li><b>Libro</b>: <code>@book/ID_LIBRO/Titolo_Libro</code></li>
-                <li><b>Autore</b>: <code>@author/ID_AUTORE/Nome_Autore</code></li>
-                <li><b>Collezione</b>: <code>@collection/ID_COLLEZIONE/Titolo_Collezione</code></li>
-              </ul>
-              <p>Puoi copiare la stringa direttamente dalla barra degli indirizzi del tuo browser (facendo attenzione a non includere la parte iniziale &quot;{app.url}&quot;).</p>
-            </DialogContent>
-          </Dialog>
-        </div>
-      )}
       <div className="form-group">
         <FormControl className="input-field" margin="dense" fullWidth style={formControlStyle}>
           <ThemeProvider theme={discussion?.text ? defaultTheme : primaryTheme}>
             <InputLabel error={Boolean(errors.text)} htmlFor="text">Il tuo commento</InputLabel>
             <Input
+              inputRef={textInput}
               id="text"
               name="text"
               type="text"
@@ -206,14 +226,34 @@ const DiscussionForm = props => {
               error={Boolean(errors.text)}
               multiline
               endAdornment={(
-                <button
-                  type="button"
-                  className={`btn sm counter ${discussion?.text ? 'primary' : 'hidden'}`}
-                  style={{ marginTop: '-8px', }}
-                  onClick={onSubmit}
-                  disabled={!discussion?.text || !changes || loading}>
-                  Pubblica
-                </button>
+                <div className="flex" style={{ marginTop: '-8px', }}>
+                  {groupFollowers?.length > 0 && (
+                    <Tooltip title="Menziona utente">
+                      <button
+                        type="button"
+                        className="btn sm counter flat icon"
+                        onClick={onOpenFollowersDialog}>
+                        {icon.account}
+                      </button>
+                    </Tooltip>
+                  )}
+                  <Tooltip title="Aiuto per la formattazione">
+                    <button
+                      type="button"
+                      className="btn sm counter flat icon"
+                      onClick={onOpenBriefDialog}>
+                      {icon.lifebuoy}
+                    </button>
+                  </Tooltip>
+                  {discussion?.text && (
+                    <button
+                      type="button"
+                      className="btn sm counter primary"
+                      onClick={onSubmit}>
+                      Pubblica
+                    </button>
+                  )}
+                </div>
               )}
             />
           </ThemeProvider>
@@ -221,6 +261,88 @@ const DiscussionForm = props => {
           {leftChars.text < 0 && <FormHelperText className="message warning">Caratteri in eccesso: {-leftChars.text}</FormHelperText>}
         </FormControl>
       </div>
+
+      {isOpenBriefDialog && (
+        <Dialog
+          className="dropdown-menu"
+          open={isOpenBriefDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={onCloseBriefDialog}
+          aria-labelledby="brief-dialog-title"
+          aria-describedby="brief-dialog-description">
+          <div className="absolute-top-right">
+            <button type="button" className="btn flat rounded icon" aria-label="close" onClick={onCloseBriefDialog}>
+              {icon.close}
+            </button>
+          </div>
+          <DialogTitle id="brief-dialog-title">
+            Aiuto per la formattazione
+          </DialogTitle>
+          <DialogContent id="brief-dialog-description">
+            <p>Nel commento puoi <b>menzionare</b> altri utenti o includere <b>link</b> a contenuti presenti su {app.name}. Puoi usare il pulsante {icon.account} o scrivere @ seguito da tipologia, identificativo e nome. Ecco una piccola guida:</p>
+            <ul>
+              <li>Utente: <code>@dashboard/ID_UTENTE/Nome_Utente</code></li>
+              <li>Libro: <code>@book/ID_LIBRO/Titolo_Libro</code></li>
+              <li>Autore: <code>@author/ID_AUTORE/Nome_Autore</code></li>
+              <li>Collezione: <code>@collection/ID_COLLEZIONE/Titolo_Collezione</code></li>
+            </ul>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {isOpenFollowersDialog && (
+        <Dialog
+          className="dropdown-menu"
+          open={isOpenFollowersDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={onCloseFollowersDialog}
+          aria-labelledby="followers-dialog-title">
+          <div className="absolute-top-right">
+            <button type="button" className="btn flat rounded icon" aria-label="close" onClick={onCloseFollowersDialog}>
+              {icon.close}
+            </button>
+          </div>
+          <DialogTitle id="followers-dialog-title">
+            Iscritti del gruppo
+          </DialogTitle>
+          <DialogContent className="content" id="followers-dialog-description">
+            <div className="contacts-tab">
+              {groupFollowers?.map(user => (
+                <div key={user.uid} className="avatar-row">
+                  <div className="row">
+                    <div className="col-auto">
+                      <Link to={`/dashboard/${user.uid}`}>
+                        <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>
+                          {!user.photoURL && getInitials(user.displayName)}
+                        </Avatar>
+                      </Link>
+                    </div>
+                    <div className="col">
+                      <div className="row">
+                        <Link to={`/dashboard/${user.uid}`} className="col name">{user.displayName}</Link>
+                        {isEditor && (
+                          <div className="col-auto">
+                            <button
+                              type="button"
+                              className="btn sm rounded flat"
+                              data-display-name={user.displayName}
+                              data-fuid={user.uid}
+                              onClick={onMentionFollower}>
+                              Menziona
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </form>
   );
 }

@@ -1,7 +1,7 @@
 export const roles = ['admin', 'editor', 'premium', 'public'];
 export const dashboardTabs = ['shelf', 'wishlist', 'activity', 'statistics', 'contacts'];
 export const profileKeys = ['displayName', 'birth_date', 'continent', 'city', 'languages', 'photoURL', 'sex'];
-export const noteTypes = ['comment', 'follow', 'like', 'recommendation', 'welcome', 'test'];
+export const noteTypes = ['comment', 'follow', 'like', 'mention', 'recommendation', 'welcome', 'test'];
 export const userBookTypes = ['Tutti', 'Non iniziati', 'In lettura', 'Finiti', 'Abbandonati', 'Da consultazione'];
 export const readingStates = ['Non iniziato', 'In lettura', 'Finito', 'Abbandonato', 'Da consultazione'];
 export const awards = [

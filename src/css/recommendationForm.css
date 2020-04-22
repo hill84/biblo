@@ -15,12 +15,5 @@
   }
   & .contacts-tab {
     width: 100%;
-    & .avatar-row { 
-      margin-bottom: 0;
-      padding-top: .4rem;
-      padding-bottom: .4rem;
-      border-bottom: 1px solid rgba(var(--blackClr), .1);
-      &:last-child { border-bottom: 0; }
-    }
   }
 }

@@ -93,7 +93,11 @@ export const refRegex = /(?<![\w\d+])@([\w\d/+]*)(?![s+])/gi;
 
 export const extractUrls = str => str.match(urlRegex); // ARRAY
 
-export const extractRefs = str => str.match(refRegex);
+export const extractRefs = str => str.match(refRegex); // ARRAY
+
+export const extractMentions = str => extractRefs(str)?.filter(ref => ref.split('/')[0] === '@dashboard'); // ARRAY
+
+export const extractMuids = str => [...new Set(extractMentions(str)?.map(item => item.split('/')[1]))]; // ARRAY
 
 // INTERPOLATION
 export const enrichText = str => {
@@ -102,13 +106,8 @@ export const enrichText = str => {
   const getLastParam = match => params(match)?.[params(match).length - 1];
 
   refs?.forEach(match => {
-    // console.log(match);
     const _match = match.replace('@', '');
-    const output = ['book', 'author', 'collection'].some(part => part === params(_match)?.[0]) ? (
-      `<a title="${match}" href="${app.url}/${_match}">${denormURL(getLastParam(match))}</a>`
-    ) : (
-      `<mark title="${match}"><a href="${app.url}/${_match}">${denormURL(getLastParam(match))}</a></mark>`
-    );
+    const output = `<a title="${match}" href="${app.url}/${_match}">${denormURL(getLastParam(match))}</a>`;
     str = str.replace(match, output);
   });
 
