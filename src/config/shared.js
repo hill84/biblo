@@ -11,6 +11,9 @@ export const app = {
   logo,
   fb: { name: 'Biblo.space', url: 'https://www.facebook.com/biblo.space' },
   tw: { name: 'Biblo.space', url: 'https://twitter.com/BibloSpace' },
+  help: {
+    group: { url: 'group/dA0AFJR8uU4nBYiCIf5U' }
+  },
   email: 'info@biblo.space',
   privacyEmail: 'privacy@biblo.space',
   desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
