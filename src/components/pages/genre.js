@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, isTouchDevice, normURL, screenSize } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize } from '../../config/shared';
 import { matchType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
@@ -18,6 +18,9 @@ import { skltn_shelfRow, skltn_shelfStack } from '../skeletons';
 import Bubbles from './bubbles';
 import SnackbarContext from '../../context/snackbarContext';
 
+const unsub = {
+  genreFollowersFetch: null
+};
 const limit = 28;
 const orderBy = [ 
   { type: 'rating_num', label: 'Valutazione'}, 
@@ -42,14 +45,14 @@ const Genre = props => {
   const [orderByIndex, setOrderByIndex] = useState(0);
   const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState(null);
   const [page, setPage] = useState(1);
-  const [_screenSize, setScreenSize] = useState(screenSize());
+  const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
 
   const { gid } = match.params;
 
   useEffect(() => {
     const updateScreenSize = () => {
-      if (is.current) setScreenSize(screenSize());
+      if (is.current) setScreenSize(_screenSize());
     };
 
     window.addEventListener('resize', updateScreenSize);
@@ -61,10 +64,9 @@ const Genre = props => {
   }, []);
 
   const fetchFollowers = useCallback(() => {
-    let unsubGenreFollowersFetch;
     if (user) {
       const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
-      unsubGenreFollowersFetch = genreFollowersRef(id).onSnapshot(snap => {
+      unsub.genreFollowersFetch = genreFollowersRef(id).onSnapshot(snap => {
         if (!snap.empty) {
           const followers = [];
           snap.forEach(follower => followers.push(follower.data()));
@@ -78,7 +80,7 @@ const Genre = props => {
     }
 
     return () => {
-      unsubGenreFollowersFetch && unsubGenreFollowersFetch();
+      unsub.genreFollowersFetch && unsub.genreFollowersFetch();
     }
   }, [gid, user]);
 
@@ -178,13 +180,13 @@ const Genre = props => {
         if (is.current) setLoading(false);
       });
     } else console.warn(`No gid`);
-  }
+  };
 
   const onChangeOrderBy = (e, i) => {
     setOrderByIndex(i);
     setOrderMenuAnchorEl(null);
     setPage(1);
-  }
+  };
 
   const onToggleDesc = () => setDesc(!desc);
 
@@ -211,10 +213,10 @@ const Genre = props => {
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
+
+  const isMini = useMemo(() => isScrollable(screenSize), [screenSize]);
   
-  const isScrollable = useMemo(() => isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm', [_screenSize]);
-  
-  const isTextMinified = useMemo(() => _screenSize === 'xs' || _screenSize === 'sm' || _screenSize === 'md', [_screenSize]);
+  const isTextMinified = useMemo(() => ['xs', 'sm', 'md'].some(m => m === screenSize), [screenSize]);
   
   const covers = useMemo(() => items?.map((item, i) => (
     <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}>
@@ -232,7 +234,7 @@ const Genre = props => {
     </MenuItem>
   )), [orderByIndex]);
   
-  const title = useMemo(() => denormURL(match.params.gid), [match.params.gid]);
+  const title = useMemo(() => denormURL(gid), [gid]);
   const genreItem = useMemo(() => genres.filter(genre => genre.name === title)[0], [title]);
 
   const seo = useMemo(() => ({
@@ -240,12 +242,10 @@ const Genre = props => {
     description: `Scopri su ${app.name} i migliori libri di genere ${title.toLowerCase()}: nuove uscite e best seller`,
     image: null,
     title: `Libri di genere ${title.toLowerCase()}`,
-    url: `${app.url}/genre/${normURL(match.params.gid)}`
-  }), [genreItem, match, title]);
+    url: `${app.url}/genre/${normURL(gid)}`
+  }), [genreItem, gid, title]);
   
   const cardStyle = useMemo(() => ({ borderTop: `4px solid ${genreItem ? genreItem.color : 'rgba(0, 0, 0, .1)'}`, }), [genreItem]);
-  
-  const linkStyle = useMemo(() => ({ color: !isScrollable ? 'white' : '', }), [isScrollable]);
   
   return (
     <div className="container" id="genreComponent" ref={is}>
@@ -268,10 +268,10 @@ const Genre = props => {
             </h2>
           </div>
           <div className="col-auto text-right">
-            <Link to="/genres" className="btn sm flat" style={linkStyle}>Vedi tutti</Link>
+            <Link to="/genres" className="btn sm flat">Vedi tutti</Link>
           </div>
         </div>
-        <Genres scrollable={isScrollable} />
+        <Genres scrollable={isMini} />
         {loadingGenre ? (
           <div className="skltn three rows" style={skltnStyle} /> 
         ) : genre?.description && (

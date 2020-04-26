@@ -13,15 +13,15 @@ import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, notesRef, userChallengesRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
-import { app, calcAge, capitalize, getInitials, isTouchDevice, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { app, calcAge, capitalize, getInitials, isScrollable, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType, objectType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
 import ReadingStats from '../readingStats';
 import Reviews from '../reviews';
-// import PaginationControls from '../paginationControls'; // TODO
 import Shelf from '../shelf';
+// import PaginationControls from '../paginationControls'; // TODO
 
 const NoMatch = lazy(() => import('../noMatch'));
 
@@ -334,7 +334,7 @@ const Dashboard = props => {
   const challengeReadBooks_num = useMemo(() => challengeBooks && Object.keys(challengeBooks).filter(book => challengeBooks[book] === true).length, [challengeBooks]);
   const challengeProgress = useMemo(() => challengeBooks_num && challengeReadBooks_num ? Math.round(100 / challengeBooks_num * challengeReadBooks_num) : 0, [challengeBooks_num, challengeReadBooks_num]);
   const challengeCompleted = useMemo(() => challengeProgress === 100, [challengeProgress]);
-  const isMini = useMemo(() => isTouchDevice() || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
+  const isMini = useMemo(() => isScrollable(screenSize), [screenSize]);
   const contactsSkeleton = useMemo(() => [...Array(3)].map((e, i) => <div key={i} className="avatar-row skltn" />), []);
   const creationYear = useMemo(() => duser && String(new Date(duser.creationTime).getFullYear()), [duser]);
 

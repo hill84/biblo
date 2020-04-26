@@ -20,7 +20,7 @@ const seo = {
   description: app.desc
 };
 const heroStyle = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpg})`, };
-const rootMargin = '200px';
+const rootMargin = '250px';
 
 const Home = () => {
   const { emailVerified, user } = useContext(UserContext);
@@ -47,22 +47,24 @@ const Home = () => {
     }
   }, [emailVerified, user]);
 
-  const isScrollable = useMemo(() => isTouchDevice() || screenSize === 'md' || screenSize === 'sm' || screenSize === 'xs', [screenSize]);
+  const isMini = useMemo(() => isTouchDevice() || ['md', 'sm', 'xs'].some(s => s === screenSize), [screenSize]);
 
   const Hero = useMemo(() => (
     <div className="container text-center">
       <h1 className="title">Scopriamo nuovi libri, insieme</h1>
       <p className="subtitle">Crea la tua libreria, ascolta gli incipit, scopri cosa leggono i tuoi amici</p>
       <div className="btns">
-        <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">{user ? 'La mia libreria' : 'Registrati'}</Link>
+        <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className="btn primary lg rounded">
+          {user ? 'La mia libreria' : 'Registrati'}
+        </Link>
         <div>
-          {user ?
+          {user ? (
             <>
               <Link className="counter" to="/about">Chi siamo</Link>
               <Link className="counter" to="/help">Aiuto</Link>
               <Link className="counter last" to="/donations">Donazioni</Link>
             </>
-            : <p className="counter last">Sei già registrato? <Link to="/login">Accedi</Link></p>}
+          ) : <p className="counter last">Sei già registrato? <Link to="/login">Accedi</Link></p>}
         </div>
       </div>
     </div>
@@ -84,11 +86,11 @@ const Home = () => {
 
       <div className="container">
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
+          {({ inView, ref }) => (
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="New" pagination={false} limit={7} inView={inView} rating={false} scrollable />
             </div>
-          }
+          )}
         </InView>
 
         <div className="row text-center value-props">
@@ -111,19 +113,19 @@ const Home = () => {
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
+          {({ inView, ref }) => (
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <Authors pagination={false} limit={9} inView={inView} scrollable />
             </div>
-          }
+          )}
         </InView>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
+          {({ inView, ref }) => (
             <div ref={ref}>
               {inView && <Reviews limit={5} pagination skeleton />}
             </div>
-          }
+          )}
         </InView>
         
         <div className="row flex">
@@ -144,17 +146,17 @@ const Home = () => {
                 </div>
               </div>
 
-              <Genres className="table" scrollable={isScrollable} />
+              <Genres className="table" scrollable={isMini} />
             </div>
           </div>
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
+          {({ inView, ref }) => (
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Libri proibiti" pagination={false} limit={7} inView={inView} scrollable />
             </div>
-          }
+          )}
         </InView>
 
         <div className="card flat col-11 col-md-6 text-center">
@@ -163,35 +165,39 @@ const Home = () => {
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
+          {({ inView, ref }) => (
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Premio Strega" pagination={false} limit={7} inView={inView} desc scrollable />
             </div>
-          }
+          )}
         </InView>
 
         {/* <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => 
+          {({ inView, ref }) => ( 
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Harry Potter" pagination={false} limit={7} inView={inView} scrollable />
             </div>
-          }
+          )}
         </InView> */}
 
         <div className="card flat col-11 col-md-6 text-center">
           <p className="text-xl">Siamo anche su Facebook e Twitter</p>
           <div>
-            <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer"><span className="hide-sm">Seguici su</span> Facebook</a>
-            <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer"><span className="hide-sm">Seguici su</span> Twitter</a>
+            <a className="btn facebook rounded" href={app.fb.url} target="_blank" rel="noopener noreferrer">
+              <span className="hide-sm">Seguici su</span> Facebook
+            </a>
+            <a className="btn twitter rounded" href={app.tw.url} target="_blank" rel="noopener noreferrer">
+              <span className="hide-sm">Seguici su</span> Twitter
+            </a>
           </div>
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) =>
+          {({ inView, ref }) => (
             <div className="card dark card-fullwidth-sm" ref={ref}>
               <BookCollection cid="Top" pagination={false} limit={7} inView={inView} scrollable />
             </div>
-          }
+          )}
         </InView>
 
       </div>
