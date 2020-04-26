@@ -117,6 +117,17 @@ export const enrichText = str => {
   return str;
 };
 
+export const noCookie = str => {
+  const { protocol, pathname } = new URL(str);
+  let { hostname } = new URL(str);
+
+  if (['youtu.be', 'youtube.com'].some(yb => yb === hostname)) {
+    hostname = 'www.youtube-nocookie.com/embed';
+  }
+
+  return `${protocol}//${hostname}${pathname}`;
+};
+
 // VALIDATION
 export const validateImg = (file, maxMB = 1) => {
   let error;
