@@ -23,7 +23,7 @@ import isURL from 'validator/lib/isURL';
 import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { awards, formats, genres, languages } from '../../config/lists';
-import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
+import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, noCookie, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
 import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -502,7 +502,7 @@ const BookForm = props => {
             subtitle: book.subtitle, 
             title: book.title, 
             title_sort: book.title_sort,
-            trailerURL: book.trailerURL
+            trailerURL: noCookie(book.trailerURL)
           }).then(() => {
             if (is.current) {
               setRedirectToBook(`${newBid}/${book.title}`)

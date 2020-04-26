@@ -2,13 +2,13 @@
 import { Tooltip } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { lazy, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, isTouchDevice, normalizeString, normURL, screenSize, truncateString } from '../../config/shared';
+import { app, denormURL, handleFirestoreError, isScrollable, normalizeString, normURL, screenSize as _screenSize, truncateString } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -31,7 +31,7 @@ const Collection = props => {
   const [follow, setFollow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingCollections, setLoadingCollections] = useState(true);
-  const [_screenSize, setScreenSize] = useState(screenSize());
+  const [screenSize, setScreenSize] = useState(_screenSize());
   const is = useRef(true);
 
   const { cid } = match.params;
@@ -96,7 +96,7 @@ const Collection = props => {
 
   useEffect(() => {
     const updateScreenSize = () => {
-      if (is.current) setScreenSize(screenSize());
+      if (is.current) setScreenSize(_screenSize());
     };
 
     window.addEventListener('resize', updateScreenSize);
@@ -150,7 +150,7 @@ const Collection = props => {
     }
   };
 
-  const isScrollable = isTouchDevice() || _screenSize === 'xs' || _screenSize === 'sm';
+  const isMini = useMemo(() => isScrollable(screenSize), [screenSize]);
 
   const filterByOptions = genres.map(option => (
     <MenuItem
@@ -241,7 +241,7 @@ const Collection = props => {
                   </Tooltip>
                 </div>
               </div>
-              <div className={`badges table ${isScrollable ? 'scrollable' : 'fullview'} ${filterByName ? 'stacked' : ''}`}>
+              <div className={`badges table ${isMini ? 'scrollable' : 'fullview'} ${filterByName ? 'stacked' : ''}`}>
                 <div className="content">
                   {loadingCollections ? <div className="skltn rows" /> : collections ? collections.map(collection => 
                     <Link 
