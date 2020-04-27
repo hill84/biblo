@@ -1,16 +1,16 @@
-import 'react-app-polyfill/ie11';
-import 'react-app-polyfill/stable';
 import { createBrowserHistory } from 'history';
 import React from 'react';
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
 import { Router } from 'react-router-dom';
 import App from './app';
+import BrowserNotSupported from './components/browserNotSupported';
 import { readCookie } from './config/shared';
 import './css/grid.min.css';
 import './css/main.css';
 import * as serviceWorker from './serviceWorker';
-import BrowserNotSupported from './components/browserNotSupported';
 
 const isProd = process.env.NODE_ENV === 'production';
 
