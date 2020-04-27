@@ -118,6 +118,7 @@ export const enrichText = str => {
 };
 
 export const noCookie = str => {
+  if (!str) return str;
   const { protocol, pathname } = new URL(str);
   let { hostname } = new URL(str);
 
