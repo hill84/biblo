@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.13.4",
+  "version": "0.13.5",
   "private": true,
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
