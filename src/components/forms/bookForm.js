@@ -11,7 +11,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
 import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
@@ -28,6 +28,8 @@ import { bookType, funcType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Cover from '../cover';
+
+moment.locale('it');
 
 const max = {
   chars: {
@@ -48,7 +50,8 @@ const max = {
     collections: 5,
     genres: 3,
     languages: 4
-  }
+  },
+  publication: new Date(new Date().setMonth(new Date().getMonth() + 1))
 };
 
 const min = {
@@ -58,7 +61,8 @@ const min = {
   },
   items: {
     pages_num: 20
-  }
+  },
+  publication: new Date(1970, 0, 1)
 }
 
 const BookForm = props => {
@@ -242,7 +246,6 @@ const BookForm = props => {
   const validate = useCallback(async book => {
     const errors = {};
     const isDuplicate = await checkISBNnum(book.ISBN_13);
-    const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
     
     if (!book.title) {
       errors.title = "Inserisci il titolo";
@@ -298,7 +301,7 @@ const BookForm = props => {
       }
     } 
 
-    if (new Date(book.publication).getTime() > maxPublication) {
+    if (new Date(book.publication).getTime() > max.publication) {
       errors.publication = "Data di pubblicazione non valida";
     }
 
@@ -578,8 +581,6 @@ const BookForm = props => {
   
   if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
   
-  const maxPublication = new Date(new Date().setMonth(new Date().getMonth() + 1));
-  
   return (
     <>
       <div className="container top" ref={is}>
@@ -714,26 +715,29 @@ const BookForm = props => {
               </div>
               <div className="row">
                 <div className="form-group col-8">
-                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                  <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale="it">
                     <DatePicker
                       className="date-picker"
                       name="publication"
                       cancelLabel="Annulla"
                       leftArrowIcon={icon.chevronLeft}
                       rightArrowIcon={icon.chevronRight}
-                      format="D MMMM YYYY"
+                      format="D/MMMM/YYYY"
                       // disableFuture
-                      maxDate={maxPublication}
-                      maxDateMessage={<span>Data non valida</span>}
+                      minDate={min.publication}
+                      minDateMessage={`Data non valida prima del ${new Date(min.publication).toLocaleDateString()}`}
+                      maxDate={max.publication}
+                      maxDateMessage={`Data non valida oltre il ${new Date(max.publication).toLocaleDateString()}`}
+                      invalidDateMessage="Data non valida"
                       error={Boolean(errors.publication)}
                       label="Data di pubblicazione"
                       value={book.publication ? new Date(book.publication) : null}
                       onChange={onChangeDate("publication")}
                       margin="normal"
-                      animateYearScrolling
                       fullWidth
+                      autoOk
                     />
-                  </MuiPickersUtilsProvider>
+                  </LocalizationProvider>
                 </div>
                 <div className="form-group col-4">
                   <FormControl className="input-field" margin="normal" fullWidth>
