@@ -7,7 +7,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -19,6 +19,8 @@ import { userType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/profileForm.css';
+
+moment.locale('it');
 
 const ProfileForm = props => {
   const { isAdmin, user: contextUser } = useContext(UserContext);
@@ -255,26 +257,27 @@ const ProfileForm = props => {
             </div>
 
             <div className="col form-group">
-              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+              <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale="it">
                 <DatePicker 
                   className="date-picker"
                   name="birth_date"
                   cancelLabel="Annulla"
                   leftArrowIcon={icon.chevronLeft}
                   rightArrowIcon={icon.chevronRight}
-                  format="D MMMM YYYY"
+                  format="D/MMMM/YYYY"
+                  invalidDateMessage="Data non valida"
                   minDate={new Date().setFullYear(new Date().getFullYear() - 120)}
-                  minDateMessage="E chi sei.. Matusalemme?"
+                  minDateMessage="Chi sei? ...Matusalemme?"
                   maxDate={new Date().setFullYear(new Date().getFullYear() - 14)}
                   maxDateMessage="Età minima 14 anni"
                   label="Data di nascita"
                   value={user.birth_date ? new Date(user.birth_date) : null}
                   onChange={onChangeDate("birth_date")}
                   margin="normal"
-                  animateYearScrolling
                   fullWidth
+                  autoOk
                 />
-              </MuiPickersUtilsProvider>
+              </LocalizationProvider>
             </div>
           </div>
 

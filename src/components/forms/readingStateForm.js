@@ -5,7 +5,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -19,7 +19,13 @@ import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
 
+moment.locale('it');
+
 const steps = 20;
+
+const min = {
+  publication: new Date(1970, 0, 1)
+};
 
 const ReadingStateForm = props => {
   const { user } = useContext(UserContext);
@@ -143,55 +149,58 @@ const ReadingStateForm = props => {
             <>
               <div className="row">
                 <div className={`form-group ${state_num === 3 ? `col-6` : `col-12`}`}>
-                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                  <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale="it">
                     <DatePicker 
                       className="date-picker"
                       name="start_num"
                       cancelLabel="Annulla"
                       leftArrowIcon={icon.chevronLeft}
                       rightArrowIcon={icon.chevronRight}
-                      format="D MMMM YYYY"
-                      minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
-                      minDateMessage="Praticamente nel Jurassico.."
-                      maxDate={state_num === 3 ? end_num ? new Date(end_num) : new Date() : new Date()}
-                      maxDateMessage="Data non valida"
+                      format="D/MMMM/YYYY"
+                      invalidDateMessage="Data non valida"
+                      minDate={min.publication}
+                      minDateMessage={`Data minima ${new Date(min.publication).toLocaleDateString()}`}
+                      maxDate={new Date(end_num || null)}
+                      maxDateMessage={`Data massima ${new Date(end_num).toLocaleDateString()}`}
                       label="Data di inizio"
                       value={start_num ? new Date(start_num) : null}
                       onChange={onChangeDate('start_num')}
                       margin="normal"
-                      animateYearScrolling
                       todayLabel="Oggi"
                       showTodayButton
                       fullWidth
+                      autoOk
+                      disableFuture
                     />
-                  </MuiPickersUtilsProvider>
+                  </LocalizationProvider>
                   {errors.start_num && <FormHelperText className="message error">{errors.start_num}</FormHelperText>}
                 </div>
                 {state_num === 3 && (
                   <div className="form-group col-6">
-                    <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="it">
+                    <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale="it">
                       <DatePicker 
                         className="date-picker"
                         name="end_num"
                         cancelLabel="Annulla"
                         leftArrowIcon={icon.chevronLeft}
                         rightArrowIcon={icon.chevronRight}
-                        format="D MMMM YYYY"
-                        minDate={new Date(start_num)}
-                        minDateMessage="Data non valida"
-                        maxDate={new Date()}
+                        format="D/MMMM/YYYY"
+                        invalidDateMessage="Data non valida"
+                        minDate={new Date(start_num || min.publication)}
+                        minDateMessage={`Data minima ${new Date(start_num || min.publication).toLocaleDateString()}`}
                         maxDateMessage="Data futura non valida"
                         label="Data di fine"
                         value={end_num ? new Date(end_num) : null}
                         onChange={onChangeDate('end_num')}
                         margin="normal"
-                        animateYearScrolling
                         todayLabel="Oggi"
                         showTodayButton
                         fullWidth
+                        autoOk
+                        disableFuture
                         disabled={state_num !== 3}
                       />
-                    </MuiPickersUtilsProvider>
+                    </LocalizationProvider>
                     {errors.end_num && <FormHelperText className="message error">{errors.end_num}</FormHelperText>}
                   </div>
                 )}
