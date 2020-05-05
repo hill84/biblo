@@ -160,7 +160,7 @@ const ReadingStateForm = props => {
                       invalidDateMessage="Data non valida"
                       minDate={min.publication}
                       minDateMessage={`Data minima ${new Date(min.publication).toLocaleDateString()}`}
-                      maxDate={new Date(end_num || null)}
+                      maxDate={state_num === 3 ? end_num ? new Date(end_num) : new Date : new Date}
                       maxDateMessage={`Data massima ${new Date(end_num).toLocaleDateString()}`}
                       label="Data di inizio"
                       value={start_num ? new Date(start_num) : null}
