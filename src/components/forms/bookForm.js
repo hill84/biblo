@@ -11,6 +11,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
 import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
 import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
@@ -230,6 +231,18 @@ const BookForm = props => {
       setLeftChars(leftChars => ({ ...leftChars, [name]: max.chars[name] - value.length }));
     }
   }, [setBookChange]);
+
+  const onSetDatePickerError = (name, reason) => {
+    const errorMessages = {
+      disableFuture: "Data futura non valida",
+      disablePast: "Data passata non valida",
+      invalidDate: "Data non valida",
+      minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
+      maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
+    };
+    
+    setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
+  };
 
   const onPreventDefault = e => { 
     if (e.key === 'Enter') e.preventDefault(); 
@@ -722,20 +735,20 @@ const BookForm = props => {
                       cancelLabel="Annulla"
                       leftArrowIcon={icon.chevronLeft}
                       rightArrowIcon={icon.chevronRight}
-                      format="D/MMMM/YYYY"
+                      inputFormat="DD/MM/YYYY"
                       // disableFuture
                       minDate={min.publication}
-                      minDateMessage={`Data non valida prima del ${new Date(min.publication).toLocaleDateString()}`}
                       maxDate={max.publication}
-                      maxDateMessage={`Data non valida oltre il ${new Date(max.publication).toLocaleDateString()}`}
-                      invalidDateMessage="Data non valida"
                       error={Boolean(errors.publication)}
                       label="Data di pubblicazione"
                       value={book.publication ? new Date(book.publication) : null}
                       onChange={onChangeDate("publication")}
-                      margin="normal"
-                      fullWidth
+                      onError={reason => onSetDatePickerError('publication', reason)}
                       autoOk
+                      clearable
+                      renderInput={props => (
+                        <TextField {...props} margin="normal" fullWidth helperText={errors.publication} />
+                      )}
                     />
                   </LocalizationProvider>
                 </div>

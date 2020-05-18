@@ -7,6 +7,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
 import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
@@ -21,6 +22,14 @@ import UserContext from '../../context/userContext';
 import '../../css/profileForm.css';
 
 moment.locale('it');
+
+const min = {
+  birth_date: new Date().setFullYear(new Date().getFullYear() - 120)
+};
+
+const max = {
+  birth_date: new Date().setFullYear(new Date().getFullYear() - 14)
+};
 
 const ProfileForm = props => {
   const { isAdmin, user: contextUser } = useContext(UserContext);
@@ -56,15 +65,27 @@ const ProfileForm = props => {
     setChange(name, value);
   };
 
+  const onChangeSelect = name => e => {
+    e.persist();
+    const { value } = e.target;
+    setChange(name, value);
+  };
+
   const onChangeDate = name => date => {
     const value = String(date);
     setChange(name, value);
   };
 
-  const onChangeSelect = name => e => {
-    e.persist();
-    const { value } = e.target;
-    setChange(name, value);
+  const onSetDatePickerError = (name, reason) => {
+    const errorMessages = {
+      disableFuture: "Data futura non valida",
+      disablePast: "Data passata non valida",
+      invalidDate: "Data non valida",
+      minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
+      maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
+    };
+    
+    setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
   };
 
   const validate = user => {
@@ -264,18 +285,20 @@ const ProfileForm = props => {
                   cancelLabel="Annulla"
                   leftArrowIcon={icon.chevronLeft}
                   rightArrowIcon={icon.chevronRight}
-                  format="D/MMMM/YYYY"
+                  inputFormat="DD/MM/YYYY"
                   invalidDateMessage="Data non valida"
-                  minDate={new Date().setFullYear(new Date().getFullYear() - 120)}
-                  minDateMessage="Chi sei? ...Matusalemme?"
-                  maxDate={new Date().setFullYear(new Date().getFullYear() - 14)}
-                  maxDateMessage="Età minima 14 anni"
+                  minDate={min.birth_date}
+                  maxDate={max.birth_date}
+                  // minDateMessage="Chi sei? ...Matusalemme?"
+                  // maxDateMessage="Età minima 14 anni"
                   label="Data di nascita"
-                  value={user.birth_date ? new Date(user.birth_date) : null}
-                  onChange={onChangeDate("birth_date")}
-                  margin="normal"
-                  fullWidth
                   autoOk
+                  value={user.birth_date ? new Date(user.birth_date) : null}
+                  onChange={onChangeDate('birth_date')}
+                  onError={reason => onSetDatePickerError('birth_date', reason)}
+                  renderInput={props => (
+                    <TextField {...props} margin="normal" fullWidth helperText={errors.birth_date} />
+                  )}
                 />
               </LocalizationProvider>
             </div>
