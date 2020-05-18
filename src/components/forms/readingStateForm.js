@@ -5,10 +5,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
 import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
 import moment from 'moment';
 import 'moment/locale/it';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { readingStates } from '../../config/lists';
@@ -27,6 +28,8 @@ const min = {
   publication: new Date(1970, 0, 1)
 };
 
+const max = {};
+
 const ReadingStateForm = props => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
@@ -39,6 +42,8 @@ const ReadingStateForm = props => {
   const [errors, setErrors] = useState({});
   const [changes, setChanges] = useState(false);
   const is = useRef(true);
+
+  max.publication = useMemo(() => state_num === 3 ? end_num ? new Date(end_num) : new Date : new Date, [end_num, state_num]);
 
   useEffect(() => {
     if (is.current) {
@@ -87,6 +92,18 @@ const ReadingStateForm = props => {
       setErrors({ ...errors, [name]: null });
       setChanges(true);
     }
+  };
+
+  const onSetDatePickerError = (name, reason) => {
+    const errorMessages = {
+      disableFuture: "Data futura non valida",
+      disablePast: "Data passata non valida",
+      invalidDate: "Data non valida",
+      minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
+      maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
+    };
+    
+    setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
   };
 
   const validate = (start, end) => {
@@ -156,21 +173,21 @@ const ReadingStateForm = props => {
                       cancelLabel="Annulla"
                       leftArrowIcon={icon.chevronLeft}
                       rightArrowIcon={icon.chevronRight}
-                      format="D/MMMM/YYYY"
+                      inputFormat="DD/MM/YYYY"
                       invalidDateMessage="Data non valida"
                       minDate={min.publication}
-                      minDateMessage={`Data minima ${new Date(min.publication).toLocaleDateString()}`}
-                      maxDate={new Date(end_num || null)}
-                      maxDateMessage={`Data massima ${new Date(end_num).toLocaleDateString()}`}
+                      maxDate={max.publication}
                       label="Data di inizio"
-                      value={start_num ? new Date(start_num) : null}
-                      onChange={onChangeDate('start_num')}
-                      margin="normal"
                       todayLabel="Oggi"
                       showTodayButton
-                      fullWidth
                       autoOk
                       disableFuture
+                      value={start_num ? new Date(start_num) : null}
+                      onChange={onChangeDate('start_num')}
+                      onError={reason => onSetDatePickerError('start_num', reason)}
+                      renderInput={props => (
+                        <TextField {...props} margin="normal" fullWidth helperText={errors.start_num} />
+                      )}
                     />
                   </LocalizationProvider>
                   {errors.start_num && <FormHelperText className="message error">{errors.start_num}</FormHelperText>}
@@ -184,21 +201,23 @@ const ReadingStateForm = props => {
                         cancelLabel="Annulla"
                         leftArrowIcon={icon.chevronLeft}
                         rightArrowIcon={icon.chevronRight}
-                        format="D/MMMM/YYYY"
+                        inputFormat="DD/MM/YYYY"
                         invalidDateMessage="Data non valida"
                         minDate={new Date(start_num || min.publication)}
-                        minDateMessage={`Data minima ${new Date(start_num || min.publication).toLocaleDateString()}`}
-                        maxDateMessage="Data futura non valida"
+                        // minDateMessage={`Data minima ${new Date(start_num || min.publication).toLocaleDateString()}`}
+                        // maxDateMessage="Data futura non valida"
                         label="Data di fine"
-                        value={end_num ? new Date(end_num) : null}
-                        onChange={onChangeDate('end_num')}
-                        margin="normal"
                         todayLabel="Oggi"
                         showTodayButton
-                        fullWidth
                         autoOk
                         disableFuture
                         disabled={state_num !== 3}
+                        value={end_num ? new Date(end_num) : null}
+                        onChange={onChangeDate('end_num')}
+                        onError={reason => onSetDatePickerError('end_num', reason)}
+                        renderInput={props => (
+                          <TextField {...props} margin="normal" fullWidth helperText={errors.end_num} />
+                        )}
                       />
                     </LocalizationProvider>
                     {errors.end_num && <FormHelperText className="message error">{errors.end_num}</FormHelperText>}
