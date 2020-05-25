@@ -1,7 +1,6 @@
 import MomentUtils from '@date-io/moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -25,7 +24,7 @@ moment.locale('it');
 const steps = 20;
 
 const min = {
-  publication: new Date(1970, 0, 1)
+  start_num: new Date(1970, 0, 1)
 };
 
 const max = {};
@@ -43,13 +42,15 @@ const ReadingStateForm = props => {
   const [changes, setChanges] = useState(false);
   const is = useRef(true);
 
-  max.publication = useMemo(() => state_num === 3 ? end_num ? new Date(end_num) : new Date : new Date, [end_num, state_num]);
+  min.end_num = useMemo(() => new Date(start_num || min.start_num), [start_num]);
+
+  max.start_num = useMemo(() => state_num === 3 ? end_num ? new Date(end_num) : new Date : new Date, [end_num, state_num]);
 
   useEffect(() => {
     if (is.current) {
       if (progress_num === 0) setState_num(1);
       if (progress_num === 100) setState_num(3);
-      setChanges(true);
+      // setChanges(true);
     }
   }, [progress_num]);
 
@@ -67,7 +68,7 @@ const ReadingStateForm = props => {
         }
       }
       if (state_num === 3) setProgress_num(100);
-      setChanges(true);
+      // setChanges(true);
     }
     // eslint-disable-next-line
   }, [state_num]);
@@ -80,46 +81,42 @@ const ReadingStateForm = props => {
     const { value } = e.target;
     if (is.current) {
       if (name === 'state_num') setState_num(value);
-      setErrors({ ...errors, [name]: null });
+      setErrors({});
       setChanges(true);
     }
-	};
+  };
+  
+  const errorMessages = name => ({
+    disableFuture: "Data futura non valida",
+    disablePast: "Data passata non valida",
+    invalidDate: "Data non valida",
+    minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
+    maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
+  });
 
   const onChangeDate = name => date => {
+    const time = new Date(date).getTime();
     if (is.current) {
-      if (name === 'start_num') setStart_num(new Date(date).getTime());
-      if (name === 'end_num') setEnd_num(new Date(date).getTime());
-      setErrors({ ...errors, [name]: null });
-      setChanges(true);
+      if (name === 'start_num') setStart_num(time);
+      if (name === 'end_num') setEnd_num(time);
+      if (Number.isNaN(Number(time))) {
+        setErrors({ ...errors, [name]: errorMessages(name).invalidDate });
+      } else {
+        setErrors({});
+        setChanges(true);
+      }
     }
   };
 
   const onSetDatePickerError = (name, reason) => {
-    const errorMessages = {
-      disableFuture: "Data futura non valida",
-      disablePast: "Data passata non valida",
-      invalidDate: "Data non valida",
-      minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
-      maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
-    };
-    
-    setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
+    if (reason) {
+      setErrors(errors => ({ ...errors, [name]: errorMessages(name)[reason] }));
+    }
   };
-
-  const validate = (start, end) => {
-    const errors = {};
-    const today = Date.now();
-    if (start > today) { errors.start_num = "Data futura non valida"; }
-    if (end > today) { errors.end_num = "Data futura non valida"; }
-    if (end && start > end) { errors.end_num = "Data non valida"; }
-    return errors;
-  }
 
   const onSubmit = e => {
     e.preventDefault();
     if (changes) {
-      const errors = validate(start_num, end_num);
-      if (is.current) setErrors(errors);
       if (Object.keys(errors).length === 0) {
         if (is.current) setLoading(true);
         userBookRef(user.uid, bid).update({
@@ -162,7 +159,7 @@ const ReadingStateForm = props => {
               </FormControl>
             </div>
           </div>
-          {(state_num === 2 || state_num === 3) &&
+          {(state_num === 2 || state_num === 3) && (
             <>
               <div className="row">
                 <div className={`form-group ${state_num === 3 ? `col-6` : `col-12`}`}>
@@ -175,8 +172,8 @@ const ReadingStateForm = props => {
                       rightArrowIcon={icon.chevronRight}
                       inputFormat="DD/MM/YYYY"
                       invalidDateMessage="Data non valida"
-                      minDate={min.publication}
-                      maxDate={max.publication}
+                      minDate={min.start_num}
+                      maxDate={max.start_num}
                       label="Data di inizio"
                       todayLabel="Oggi"
                       showTodayButton
@@ -190,7 +187,6 @@ const ReadingStateForm = props => {
                       )}
                     />
                   </LocalizationProvider>
-                  {errors.start_num && <FormHelperText className="message error">{errors.start_num}</FormHelperText>}
                 </div>
                 {state_num === 3 && (
                   <div className="form-group col-6">
@@ -203,8 +199,8 @@ const ReadingStateForm = props => {
                         rightArrowIcon={icon.chevronRight}
                         inputFormat="DD/MM/YYYY"
                         invalidDateMessage="Data non valida"
-                        minDate={new Date(start_num || min.publication)}
-                        // minDateMessage={`Data minima ${new Date(start_num || min.publication).toLocaleDateString()}`}
+                        minDate={new Date(start_num || min.start_num)}
+                        // minDateMessage={`Data minima ${new Date(start_num || min.start_num).toLocaleDateString()}`}
                         // maxDateMessage="Data futura non valida"
                         label="Data di fine"
                         todayLabel="Oggi"
@@ -220,7 +216,6 @@ const ReadingStateForm = props => {
                         )}
                       />
                     </LocalizationProvider>
-                    {errors.end_num && <FormHelperText className="message error">{errors.end_num}</FormHelperText>}
                   </div>
                 )}
               </div>
@@ -235,15 +230,21 @@ const ReadingStateForm = props => {
                 />
               )}
             </>
-          }
+          )}
         </div>
         <div className="footer no-gutter">
-          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
+          <button
+            type="button"
+            className="btn btn-footer primary"
+            onClick={onSubmit}
+            disabled={!changes || Object.keys(errors).length > 0}>
+            Salva le modifiche
+          </button>
         </div>
       </div>
     </>
-  );
-}
+  )
+};
 
 ReadingStateForm.propTypes = {
   bid: stringType.isRequired,
