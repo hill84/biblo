@@ -159,13 +159,13 @@ const ReadingStats = props => {
           {data && (
             <div className="relative chart-container">
               <span className="absolute-content pull-right text-sm" style={switchContainerStyle}>
-                <FormControlLabel control={
+                <FormControlLabel control={(
                   <>
                     <span className={rangeYear ? 'light-text' : 'primary-text'}>12 mesi</span>
                     <Switch checked={rangeYear} color="default" onChange={onToggleRange()} size="small" />
                     <span className={rangeYear ? 'primary-text' : 'light-text'}>{yearsRead?.length} Anni</span>
                   </>
-                } />
+                )} />
               </span>
               <Bar data={data} height={170} options={options} />
             </div>
