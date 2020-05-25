@@ -237,7 +237,7 @@ const ReadingStateForm = props => {
             type="button"
             className="btn btn-footer primary"
             onClick={onSubmit}
-            disabled={!changes || Object.keys(errors).length > 0}>
+            disabled={Object.keys(errors).length > 0}>
             Salva le modifiche
           </button>
         </div>
