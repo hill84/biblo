@@ -39,11 +39,10 @@ const min = {
 
 const formControlStyle = { marginTop: '8px', };
 
-const DiscussionForm = props => {
+const DiscussionForm = ({ gid }) => {
   const { isEditor, user } = useContext(UserContext);
   const { closeSnackbar, openSnackbar, snackbarIsOpen } = useContext(SnackbarContext);
   const { followers, item: group } = useContext(GroupContext);
-  const { gid } = props;
   const authid = useMemo(() => user?.uid, [user]);
   const initialDiscussionState = useMemo(() => ({
     gid,

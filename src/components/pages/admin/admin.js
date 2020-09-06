@@ -35,10 +35,9 @@ const tabs = [
   { name: 'notifications', label: 'Notifiche', icon: icon.bell },
 ];
 
-const Admin = props => {
+const Admin = ({ history, match }) => {
   const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { history, match } = props;
   const [selectedEl, setSelectedEl] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);

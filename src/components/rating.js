@@ -5,8 +5,7 @@ import { abbrNum } from '../config/shared';
 import { boolType, ratingsType } from '../config/types';
 import '../css/rating.css';
 
-const Rating = props => {
-  const { labels, ratings } = props;
+const Rating = ({ labels, ratings }) => {
   const ratings_num = ratings.ratings_num || 0;
   const rating_num = ratings.rating_num || 0;
   const averageRating_num = useMemo(() => Math.round(ratings.rating_num / ratings.ratings_num * 10) / 10 || 0, [ratings.rating_num, ratings.ratings_num]);

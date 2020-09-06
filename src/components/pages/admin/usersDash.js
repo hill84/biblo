@@ -43,9 +43,8 @@ const initialState = {
   page: 1
 };
 
-const UsersDash = props => {
+const UsersDash = ({ onToggleDialog, onToggleNoteDialog }) => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { onToggleDialog, onToggleNoteDialog } = props;
   const [state, setState] = useState(initialState);
   const [count, setCount] = useState(0);
   const [desc, setDesc] = useState(true);

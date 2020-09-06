@@ -6,7 +6,7 @@ import { locationType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import LoginForm from '../forms/loginForm';
 
-const Login = props => {
+const Login = ({ location }) => {
 	const { openSnackbar } = useContext(SnackbarContext);
 	
 	return (
@@ -17,7 +17,7 @@ const Login = props => {
 			</Helmet>
 			<h2>Login</h2>
 			<div className="card light">
-				<LoginForm location={props.location} openSnackbar={openSnackbar} />
+				<LoginForm location={location} openSnackbar={openSnackbar} />
 			</div>
 			<Link to="/password-reset" className="sub-footer">Non ricordi la password?</Link>
 		</div>

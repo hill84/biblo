@@ -32,37 +32,37 @@ const NoMatch = lazy(() => import('../noMatch'));
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-const BookProfile = props => {
+const BookProfile = ({
+  addBookToShelf,
+  addBookToShelfRef,
+  addBookToWishlist,
+  addBookToWishlistRef,
+  addReview,
+  book,
+  history,
+  onEditing,
+  loading,
+  location,
+  rateBook,
+  removeBookFromShelf,
+  removeBookFromWishlist,
+  removeReview,
+  userBook: _userBook
+}) => {
   const { isAdmin, isAuth, isEditor } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const {
-    addBookToShelf,
-    addBookToShelfRef,
-    addBookToWishlist,
-    addBookToWishlistRef,
-    addReview,
-    book,
-    history,
-    onEditing,
-    loading,
-    location,
-    rateBook,
-    removeBookFromShelf,
-    removeBookFromWishlist,
-    removeReview
-  } = props;
   // const [errors, setErrors] = useState({});
   const [ISBN, setISBN] = useState('ISBN_13');
   const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);
   const [isOpenReadingState, setIsOpenReadingState] = useState(false);
   const [isOpenRecommendation, setIsOpenRecommendation] = useState(false);
   const [isOpenIncipit, setIsOpenIncipit] = useState(location?.pathname?.indexOf('/incipit') !== -1);
-  const [userBook, setUserBook] = useState(props.userBook);
+  const [userBook, setUserBook] = useState(_userBook);
   const is = useRef(true);
 
   useEffect(() => {
-    setUserBook(props.userBook);
-  }, [props.userBook]);
+    setUserBook(_userBook);
+  }, [_userBook]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

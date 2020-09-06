@@ -15,10 +15,9 @@ import FlagDialog from './flagDialog';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-const Comment = props => {
+const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, comment, onEdit, reviewerDisplayName, rid } = props;
   const likes_num = comment.likes ? comment.likes.length : 0;
   // const dislikes_num = comment.dislikes ? comment.dislikes.length : 0;
   const [flagLoading, setFlagLoading] = useState(false);

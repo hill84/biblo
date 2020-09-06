@@ -8,12 +8,17 @@ import { getInitials, normURL } from '../config/shared';
 import { boolType, numberType } from '../config/types';
 import { skltn_bubbleRow } from './skeletons';
 
-const Authors = props => {
+const Authors = ({
+  inView,
+  limit: _limit,
+  pagination,
+  size
+}) => {
   const [state, setState] = useState({
-    items: null,
     count: 0,
     desc: true,
-    limit: props.limit,
+    items: null,
+    limit: _limit,
     loading: true,
     page: 1,
     scrollable: true
@@ -21,7 +26,6 @@ const Authors = props => {
 
   const is = useRef(true);
 
-  const { inView, pagination, size } = props;
   const { count, desc, items, limit, loading, page, scrollable } = state;
 
   const onToggleDesc = () => setState(prevState => ({ ...prevState, desc: !prevState.desc }));

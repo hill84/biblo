@@ -11,8 +11,13 @@ admin.initializeApp();
 // HELPERS
 const ff = functions.region('europe-west1').firestore;
 
-const count = props => {
-  const { doc, change, collection = 'counters', field = 'count', nestedField } = props;
+const count = ({
+  doc,
+  change,
+  collection = 'counters',
+  field = 'count',
+  nestedField
+}) => {
   let increment;
 
   if (change === 1 || change === -1) {

@@ -12,8 +12,7 @@ const SnackbarContext = createContext(null);
 
 export default SnackbarContext;
 
-export const SnackbarProvider = props => {
-  const { children } = props;
+export const SnackbarProvider = ({ children }) => {
   const [action, setAction] = useState(null);
   const [autoHideDuration, setAutoHideDuration] = useState(initialAutoHideDuration);
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false);

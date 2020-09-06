@@ -24,13 +24,10 @@ const min = {
   chars: { text: 10 }
 };
 
-const NoteForm = props => {
+const NoteForm = ({ nid, onToggle, uid }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { nid, onToggle, uid } = props;
-  const [data, setData] = useState({
-    text: ''
-  });
+  const [data, setData] = useState({ text: '' });
   const [changes, setChanges] = useState(false);
   const [leftChars, setLeftChars] = useState({ text: null });
   const [loading, setLoading] = useState(false);

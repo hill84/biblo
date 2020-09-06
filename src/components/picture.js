@@ -1,12 +1,12 @@
 import React from 'react';
 import { stringType } from '../config/types';
 
-const Picture = props => (
+const Picture = ({ alt, jpeg, jpg, png, webp }) => (
   <picture>
-    {props.webp && <source srcSet={props.webp} type="image/webp" />}
-    {props.jpeg && <source srcSet={props.jpeg} type="image/jpeg" />}
-    {props.png && <source srcSet={props.png} type="image/png" />}
-    <img src={props.jpg || props.png} alt={props.alt} />
+    {webp && <source srcSet={webp} type="image/webp" />}
+    {jpeg && <source srcSet={jpeg} type="image/jpeg" />}
+    {png && <source srcSet={png} type="image/png" />}
+    <img src={jpg || png} alt={alt} />
   </picture>
 );
 

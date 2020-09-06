@@ -4,8 +4,7 @@ import { enrichText } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import '../css/minifiableText.css';
 
-const MinifiableText = props => {
-  const { defaultMinified, forced, maxChars, rich, source, text, toggle } = props;
+const MinifiableText = ({ defaultMinified, forced, maxChars, rich, source, text, toggle }) => {
   const [minified, setMinified] = useState(defaultMinified === false ? defaultMinified : (text?.length > (maxChars || 700)));
 
   const minifyText = useCallback(() => {

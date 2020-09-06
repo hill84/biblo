@@ -25,8 +25,7 @@ const min = {
   chars: { password: 8 }
 };
 
-const LoginForm = props => {
-  const { location } = props;
+const LoginForm = ({ location }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

@@ -5,15 +5,19 @@ import { normURL } from '../config/shared';
 import { boolType, numberType, stringType } from '../config/types';
 import MinifiableText from './minifiableText';
 
-const RandomQuote = props => {
+const RandomQuote = ({
+  author,
+  className,
+  limit,
+  skeleton: _skeleton
+}) => {
   const [state, setState] = useState({
     loading: true,
     // auto: false,
-    skeleton: props.skeleton === null ? true : props.skeleton
+    skeleton: _skeleton === null ? true : _skeleton
   });
   
   const is = useRef(true);
-  const { author, className, limit } = props;
   const { item, loading, skeleton } = state;
 
   useEffect(() => {

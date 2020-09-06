@@ -53,10 +53,9 @@ const min = {
 
 const formControlStyle = { zIndex: 1, };
 
-const ReviewForm = props => {
+const ReviewForm = ({ bid, userBook }) => {
   const { user } = useContext(UserContext);
   const { closeSnackbar, openSnackbar, snackbarIsOpen } = useContext(SnackbarContext);
-  const { bid, userBook } = props;
   const authid = useMemo(() => user?.uid, [user]);
   const initialReviewState = useMemo(() => ({
     bid,

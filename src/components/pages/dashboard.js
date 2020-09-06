@@ -47,10 +47,9 @@ const max = {
   }
 };
 
-const Dashboard = props => {
+const Dashboard = ({ history, location, match }) => {
   const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const { closeSnackbar, openSnackbar } = useContext(SnackbarContext);
-  const { history, location, match } = props;
   const tab = match.params?.tab;
   const [duser, setDuser] = useState(null);
   const [challenges, setChallenges] = useState([]);
@@ -349,8 +348,7 @@ const Dashboard = props => {
 
   if (!duser && !loading) return <NoMatch title="Dashboard utente non trovata" history={history} location={location} />
   
-  const UsersList = props => {
-    const { users } = props; 
+  const UsersList = ({ users }) => {
     return (
       <>
         {Object.keys(users).map(f => (

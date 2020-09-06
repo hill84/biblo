@@ -66,10 +66,9 @@ const min = {
   publication: new Date(1970, 0, 1)
 }
 
-const BookForm = props => {
+const BookForm = ({ book: _book, onEditing }) => {
   const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { book: _book, onEditing } = props;
   const [book, setBook] = useState({
     ISBN_10: _book.ISBN_10 || (_book.ISBN_13 ? isbn.parse(_book.ISBN_13) ? isbn.parse(_book.ISBN_13).asIsbn10() : 0 : 0), 
     ISBN_13: _book.ISBN_13 || 0, 

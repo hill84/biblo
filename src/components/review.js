@@ -25,11 +25,10 @@ const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
 const limit = 20;
 
-const Review = props => {
+const Review = ({ bid, review, uid }) => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const authid = useMemo(() => user?.uid, [user]);
-  const { bid, review, uid } = props;
   const likes_num = review.likes ? review.likes.length : 0;
   // const dislikes_num = review.dislikes ? review.dislikes.length : 0;
   const [flagLoading, setFlagLoading] = useState(false);

@@ -30,9 +30,8 @@ const unsub = {
   authorsFetch: null
 };
 
-const AuthorsDash = props => {
+const AuthorsDash = ({ inView, onToggleDialog }) => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { inView, onToggleDialog } = props;
   const [count, setCount] = useState(0);
   const [desc, setDesc] = useState(true);
   const [firstVisible, setFirstVisible] = useState(null);

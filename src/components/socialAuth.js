@@ -22,9 +22,8 @@ const stats = {
   wishlist_num: 0
 };
 
-const SocialAuth = props => {
+const SocialAuth = ({ disabled }) => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { disabled } = props;
   const [loading, setLoading] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
   const is = useRef(true);

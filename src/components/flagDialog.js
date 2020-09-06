@@ -10,13 +10,18 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import React, { useState } from 'react';
 import { boolType, funcType, objectType, stringType } from '../config/types';
 
-const FlagDialog = props => {
-  const [value, setValue] = useState(props.value);
+const FlagDialog = ({
+  loading,
+  onClose,
+  onFlag: _onFlag,
+  open,
+  TransitionComponent,
+  value: _value
+}) => {
+  const [value, setValue] = useState(_value);
   
   const onChange = e => setValue(e.target.value);
-  const onFlag = () => props.onFlag(value);
-
-  const { loading, onClose, open, TransitionComponent } = props;
+  const onFlag = () => _onFlag(value);
 
   return (
     <Dialog

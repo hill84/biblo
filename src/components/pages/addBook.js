@@ -14,10 +14,9 @@ const seo = {
   description: app.desc
 };
 
-const AddBook = props => {
+const AddBook = ({ history, location }) => {
   const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { history, location } = props;
   const [book, setBook] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const is = useRef(null);

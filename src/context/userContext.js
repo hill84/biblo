@@ -9,8 +9,7 @@ const UserContext = createContext({ error: null, user: null });
 
 export default UserContext;
 
-export const UserProvider = props => {
-  const { children } = props;
+export const UserProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [luid, setLuid] = useLocalStorage(uidKey, null);

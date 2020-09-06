@@ -19,13 +19,12 @@ const shelf = 'bookInShelf';
 const votes = [1, 2, 3, 4, 5];
 const switchContainerStyle = { top: -22, left: 'inherit', right: -14, };
 
-const ReadingStats = props => {
+const ReadingStats = ({ loading: _loading, uid }) => {
   const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { loading: isLoading, uid } = props;
   const [userBooks, setUserBooks] = useLocalStorage(`${uid}_${userBooksKey.books}`, null);
   const [timestamp, setTimestamp] = useLocalStorage(`${uid}_${userBooksKey.timestamp}`, null);
-  const [loading, setLoading] = useState(isLoading);
+  const [loading, setLoading] = useState(_loading);
   const [rangeYear, setRangeYear] = useState(false);
   const [showTable, setShowTable] = useState(false);
   const is = useRef(true);
@@ -50,9 +49,9 @@ const ReadingStats = props => {
       }).finally(() => {
         if (is.current) setLoading(false);
       });
-    } else setLoading(isLoading || false);
+    } else setLoading(_loading || false);
     // eslint-disable-next-line
-  }, [isLoading, isNewDay, openSnackbar, timestamp, uid, userBooks]);
+  }, [_loading, isNewDay, openSnackbar, timestamp, uid, userBooks]);
 
   useEffect(() => {
     if (!isAuth) {

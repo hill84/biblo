@@ -12,10 +12,9 @@ import PaginationControls from './paginationControls';
 
 const desc = true;
 
-const Discussions = props => {
+const Discussions = ({ container, gid, limit, pagination, skeleton, uid }) => {
   const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { container, gid, limit, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);

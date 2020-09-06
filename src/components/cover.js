@@ -8,8 +8,7 @@ import { boolType, coverType, numberType } from '../config/types';
 import Rating from './rating';
 import '../css/cover.css';
 
-const Cover = props => {
-  const { animationDelay, bcid, book, full, index, info, loading, page, rating, showMedal, showReaders } = props;
+const Cover = ({ animationDelay, bcid, book, full, index, info, loading, page, rating, showMedal, showReaders }) => {
   const cover = useMemo(() => book?.covers?.[0] || '', [book]);
   const delay = useMemo(() => page && page > 1 ? 0 : index / 20, [index, page]);
   const hasBookmark = useMemo(() => book?.readingState?.state_num === 2, [book]);
