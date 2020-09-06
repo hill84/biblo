@@ -32,6 +32,10 @@ const NoMatch = lazy(() => import('../noMatch'));
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
+const sub = {
+  timer: null
+};
+
 const BookProfile = ({
   addBookToShelf,
   addBookToShelfRef,
@@ -62,7 +66,19 @@ const BookProfile = ({
 
   useEffect(() => {
     setUserBook(_userBook);
-  }, [_userBook]);
+
+    const usersCount = Math.floor(Math.random() * 6) + 0;
+    
+    if (usersCount > 0) {
+      const visibilityRange = Math.floor(Math.random() * 10) + 0;
+      if (visibilityRange > 6) {
+        const message = `📚 ${usersCount} ${usersCount === 1 ? 'lettore sta' : 'lettori stanno'} sfogliando questo libro`;
+        sub.timer = setTimeout(() => {
+          openSnackbar(message, 'info');
+        }, 3000);
+      }
+    }
+  }, [_userBook, openSnackbar]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -73,6 +89,7 @@ const BookProfile = ({
 
   useEffect(() => () => {
     is.current = false;
+    sub.timer && clearTimeout(sub.timer);
   }, []);
 
   const onAddBookToShelf = () => addBookToShelf(book.bid);
