@@ -21,10 +21,9 @@ const unsub = {
   authorFollowersFetch : null
 };
 
-const AuthorPage = props => {
+const AuthorPage = ({ history, location, match }) => {
   const { isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { history, location, match } = props;
   const [author, setAuthor] = useState({
     bio: '',
     displayName: denormURL(match.params.aid) || '',

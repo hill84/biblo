@@ -38,7 +38,7 @@ export const childrenType = oneOfType([
 
 export const matchType = shape({
   isExact: bool,
-  params: object.isRequired,
+  params: shape({}).isRequired,
   path: string.isRequired,
   url: string.isRequired,
 });
@@ -245,7 +245,7 @@ export const challengesType = arrayOf(shape({
   books: arrayOf(bool).isRequired
 }));
 
-export const challengeType = shape({
+/* export const challengeType = shape({
   cid: string.isRequired,
   title: string.isRequired,
   description: string,
@@ -255,8 +255,8 @@ export const challengeType = shape({
     cover: string.isRequired,
     title: string.isRequired
   })),
-  followers: array
-});
+  followers: arrayOf() // ?
+}); */
 
 export const noteType = shape({
   nid: string.isRequired,
@@ -270,7 +270,7 @@ export const noteType = shape({
   uid: string
 });
 
-export const collectionType = shape({
+/* export const collectionType = shape({
   books_num: number.isRequired,
   description: string.isRequired,
   edit: bool.isRequired,
@@ -279,7 +279,7 @@ export const collectionType = shape({
   lastEditBy: string,
   lastEditByUid: string,
   title: string.isRequired
-});
+}); */
 
 export const groupType = shape({
   gid: string.isRequired,

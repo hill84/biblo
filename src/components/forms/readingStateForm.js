@@ -29,10 +29,9 @@ const min = {
 
 const max = {};
 
-const ReadingStateForm = props => {
+const ReadingStateForm = ({ bid, onToggle, pages, readingState }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, onToggle, pages, readingState } = props;
   const [progress_num, setProgress_num] = useState(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
   const [state_num, setState_num] = useState(readingState.state_num);
   const [start_num, setStart_num] = useState(readingState.start_num || null);

@@ -5,10 +5,9 @@ import UserContext from '../../context/userContext';
 import '../../css/bookContainer.css';
 import Book from '../book';
 
-const BookContainer = props => {
+const BookContainer = ({ history, location, match }) => {
   const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { history, location, match } = props;
 
   return (
     <div id="BookContainerComponent">

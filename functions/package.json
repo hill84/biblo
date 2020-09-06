@@ -10,8 +10,8 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "firebase-admin": "^8.12.1",
-    "firebase-functions": "^3.6.2"
+    "firebase-admin": "^9.1.1",
+    "firebase-functions": "^3.11.0"
   },
   "engines": {
     "node": "8"

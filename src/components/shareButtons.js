@@ -5,8 +5,7 @@ import { arrayType, stringType } from '../config/types';
 
 const IconProps = { size: 32, round: true };
 
-const ShareButtons = props => {
-  const { className, cover, hashtags, text, url, via, ...attrs } = props;
+const ShareButtons = ({ className, cover, hashtags, text, url, via, ...attrs }) => {
   const fbProps = { className, quote: text, url, ...attrs };
   const twProps = { className, title: text, url, via, ...attrs };
 

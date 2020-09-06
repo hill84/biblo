@@ -3,15 +3,21 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import icon from '../config/icons';
 import { funcType, numberType, stringType } from '../config/types';
 
-const Stepper = props => {
+const Stepper = ({
+  className,
+  max,
+  onNext: _onNext,
+  onPrev: _onPrev,
+  steps: _steps,
+  value,
+}) => {
   const [state, setState] = useState({
-    activeStep: (props.value && props.steps / 100 * props.value) || 0,
-    value: props.value,
-    steps: props.steps
+    activeStep: (value && _steps / 100 * value) || 0,
+    value,
+    steps: _steps
   });
 
   const is = useRef(true);
-  const { className, max, value } = props;
   const { activeStep, steps } = state;
 
   useEffect(() => {
@@ -30,9 +36,9 @@ const Stepper = props => {
     is.current = false;
   }, []);
 
-  const onNext = () => props.onNext?.() || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep + 1 })));
+  const onNext = () => _onNext?.() || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep + 1 })));
 
-  const onPrev = () => props.onPrev?.() || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
+  const onPrev = () => _onPrev?.() || (is.current && setState(prevState => ({ ...prevState, activeStep: prevState.activeStep - 1 })));
 
   const percentage = useMemo(() => Math.round(100 / (steps / activeStep)), [activeStep, steps]);
 

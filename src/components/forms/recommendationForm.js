@@ -14,7 +14,7 @@ import { skltn_avatarRow } from '../skeletons';
 const skltnLimit = 3;
 const quoteLimit = 5;
 
-const RecommendationForm = props => {
+const RecommendationForm = ({ book, onToggle }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { uid, displayName, photoURL } = user;
@@ -26,7 +26,6 @@ const RecommendationForm = props => {
     timestamp: Date.now(),
     recommends: []
   };
-  const { book, onToggle } = props;
   const [quote, setQuote] = useState(quoteInitialState);
   const [loading, setLoading] = useState(false);
   const [followings, setFollowings] = useState(null);

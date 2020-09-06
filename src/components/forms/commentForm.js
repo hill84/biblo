@@ -30,10 +30,9 @@ const min = {
   }
 };
 
-const CommentForm = props => {
+const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, bookTitle, onCancel, rid } = props;
   const authid = useMemo(() => user?.uid, [user]);
   const initialCommentState = useMemo(() => ({
     bid,

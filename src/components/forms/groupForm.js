@@ -31,10 +31,9 @@ const min = {
   }
 };
 
-const GroupForm = props => {
+const GroupForm = ({ id, onToggle }) => {
   const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { id, onToggle } = props;
   const [data, setData] = useState({
     title: '',
     description: '',

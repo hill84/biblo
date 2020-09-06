@@ -12,8 +12,7 @@ const SnackbarContext = createContext(null);
 
 export default SnackbarContext;
 
-export const SnackbarProvider = props => {
-  const { children } = props;
+export const SnackbarProvider = ({ children }) => {
   const [action, setAction] = useState(null);
   const [autoHideDuration, setAutoHideDuration] = useState(initialAutoHideDuration);
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false);
@@ -83,18 +82,24 @@ const SharedSnackbar = () => {
     variant
   } = useContext(SnackbarContext);
 
+  const [paused, setPaused] = useState(false);
+  const playstate = useMemo(() => paused ? 'paused' : 'running', [paused]);
+
   return (
     <Snackbar
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'left',
       }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
       open={snackbarIsOpen}
       autoHideDuration={autoHideDuration || initialAutoHideDuration}
       onClose={closeSnackbar}>
       <SnackbarContent
         message={message}
         className={`snackbar-content ${variant}`}
+        style={{ animationDuration: `${autoHideDuration || initialAutoHideDuration}ms`, animationPlayState: playstate, }}
         action={action || [
           <IconButton key="close" color="inherit" onClick={closeSnackbar}>
             <Close />

@@ -23,10 +23,9 @@ const min = { chars: {
   bio: 50 
 }};
 
-const AuthorForm = props => {
+const AuthorForm = ({ id, onToggle }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { id, onToggle } = props;
   const [data, setData] = useState({
     displayName: '',
     source: '',

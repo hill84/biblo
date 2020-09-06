@@ -12,10 +12,9 @@ import '../css/reviews.css';
 
 const desc = true;
 
-const Reviews = props => {
+const Reviews = ({ bid, container, limit, pagination, skeleton, uid }) => {
   const { isAuth } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, container, limit, pagination, skeleton, uid } = props;
   const [items, setItems] = useState(null);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);

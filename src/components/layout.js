@@ -32,10 +32,9 @@ const unsub = {
   timer: null
 };
 
-const Layout = props => {
+const Layout = ({ children }) => {
   const { error, isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { children } = props;
   const [notes, setNotes] = useState(null);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [moreAnchorEl, setMoreAnchorEl] = useState(null);

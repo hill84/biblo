@@ -3,9 +3,8 @@ import React, { useContext } from 'react';
 import { elementType, numberType, oneOfType, stringType } from '../config/types';
 import SnackbarContext from '../context/snackbarContext';
 
-const CopyToClipboard = props => {
+const CopyToClipboard = ({ icon, text }) => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { icon, text } = props;
 
   const onCopy = () => {
     typeof window !== "undefined" && navigator.clipboard.writeText(text).then(() => {

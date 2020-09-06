@@ -18,10 +18,9 @@ import Bubbles from './bubbles';
 
 const NoMatch = lazy(() => import('../noMatch'));
 
-const Collection = props => {
+const Collection = ({ history, location, match }) => {
   const { isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { history, location, match } = props;
   const [collection, setCollection] = useState(null);
   const [collections, setCollections] = useState(null);
   const [desc, setDesc] = useState(false);

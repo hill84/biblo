@@ -31,8 +31,11 @@ const unsub = {
 
 const pagination = true;
 
-const Shelf = props => {
-  const { luid, uid } = props;
+const Shelf = ({
+  luid,
+  shelf: _shelf,
+  uid
+}) => {
   const isOwner = useMemo(() => luid === uid, [luid, uid]);
   const { openSnackbar } = useContext(SnackbarContext);
   const [coverview, setCoverview] = useState(true);
@@ -46,7 +49,7 @@ const Shelf = props => {
   const [items, setItems] = useState([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
-  const shelf = props.shelf || 'bookInShelf';
+  const shelf = _shelf || 'bookInShelf';
   const is = useRef(true);
 
   const updateLimit = useCallback(() => {

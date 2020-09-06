@@ -5,10 +5,9 @@ import UserContext from '../../context/userContext';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
-const NewBook = props => {
+const NewBook = ({ history, location }) => {
   const { isAuth, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-	const { history, location } = props;
   const [book, setBook] = useState(null);
   
   const onBookSelect = book => setBook(book);

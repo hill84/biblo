@@ -33,9 +33,8 @@ const unsub = {
 
 const limit = 30;
 
-const SearchBookForm = props => {
+const SearchBookForm = ({ newBook, onBookSelect }) => {
   const { user } = useContext(UserContext);
-  const { newBook, onBookSelect } = props;
   const [searchByAnchorEl, setSearchByAnchorEl] = useState(null);
   const [searchBy, setSearchBy] = useState(searchByOptions[0]);
   const [value, setValue] = useState('');

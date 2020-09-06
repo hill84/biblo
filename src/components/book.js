@@ -26,13 +26,18 @@ const unsub = {
   userBookFetch: null
 };
 
-const Book = props => {
+const Book = ({
+  bid,
+  book: _book,
+  history,
+  isEditing: _isEditing,
+  location
+}) => {
   const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bid, history, location } = props;
-  const [book, setBook] = useState(props.book);
-  const [isEditing, setIsEditing] = useState(props.isEditing);
-  const [loading, setLoading] = useState(!props.book);
+  const [book, setBook] = useState(_book);
+  const [isEditing, setIsEditing] = useState(_isEditing);
+  const [loading, setLoading] = useState(!_book);
   const [userBook, setUserBook] = useState({
     bid: '',
     authors: [],
@@ -48,15 +53,15 @@ const Book = props => {
     bookInShelf: false,
     bookInWishlist: false 
   });
-  const [seo, setSeo] = useState(props.book && {
-    author: Object.keys(props.book.authors),
-    description: `Scopri su ${app.name} la trama e le recensioni di ${props.book.title}, scritto da ${Object.keys(props.book.authors)[0]}, pubblicato da ${props.book.publisher}`,
-    image: props.book.covers?.[0],
-    isbn: props.book.ISBN_13,
-    rating: { scale: '5', value: props.book.rating_num },
-    release_date: props.book.publication ? new Date(props.book.publication).toLocaleDateString() : '',
-    title: `${props.book.title} di ${Object.keys(props.book.authors)[0]} - ${props.book.publisher} - ${app.name}`,
-    url: `${app.url}/book/${props.book.bid}/${normURL(props.book.title)}`,
+  const [seo, setSeo] = useState(_book && {
+    author: Object.keys(_book.authors),
+    description: `Scopri su ${app.name} la trama e le recensioni di ${_book.title}, scritto da ${Object.keys(_book.authors)[0]}, pubblicato da ${_book.publisher}`,
+    image: _book.covers?.[0],
+    isbn: _book.ISBN_13,
+    rating: { scale: '5', value: _book.rating_num },
+    release_date: _book.publication ? new Date(_book.publication).toLocaleDateString() : '',
+    title: `${_book.title} di ${Object.keys(_book.authors)[0]} - ${_book.publisher} - ${app.name}`,
+    url: `${app.url}/book/${_book.bid}/${normURL(_book.title)}`,
   });
   const addBookToShelfRef = useRef(null);
   const addBookToWishlistRef = useRef(null);

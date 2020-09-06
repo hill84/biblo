@@ -32,37 +32,53 @@ const NoMatch = lazy(() => import('../noMatch'));
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-const BookProfile = props => {
+const sub = {
+  timer: null
+};
+
+const BookProfile = ({
+  addBookToShelf,
+  addBookToShelfRef,
+  addBookToWishlist,
+  addBookToWishlistRef,
+  addReview,
+  book,
+  history,
+  onEditing,
+  loading,
+  location,
+  rateBook,
+  removeBookFromShelf,
+  removeBookFromWishlist,
+  removeReview,
+  userBook: _userBook
+}) => {
   const { isAdmin, isAuth, isEditor } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const {
-    addBookToShelf,
-    addBookToShelfRef,
-    addBookToWishlist,
-    addBookToWishlistRef,
-    addReview,
-    book,
-    history,
-    onEditing,
-    loading,
-    location,
-    rateBook,
-    removeBookFromShelf,
-    removeBookFromWishlist,
-    removeReview
-  } = props;
   // const [errors, setErrors] = useState({});
   const [ISBN, setISBN] = useState('ISBN_13');
   const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);
   const [isOpenReadingState, setIsOpenReadingState] = useState(false);
   const [isOpenRecommendation, setIsOpenRecommendation] = useState(false);
   const [isOpenIncipit, setIsOpenIncipit] = useState(location?.pathname?.indexOf('/incipit') !== -1);
-  const [userBook, setUserBook] = useState(props.userBook);
+  const [userBook, setUserBook] = useState(_userBook);
   const is = useRef(true);
 
   useEffect(() => {
-    setUserBook(props.userBook);
-  }, [props.userBook]);
+    setUserBook(_userBook);
+
+    const usersCount = Math.floor(Math.random() * 6) + 0;
+    
+    if (usersCount > 0) {
+      const visibilityRange = Math.floor(Math.random() * 10) + 0;
+      if (visibilityRange > 6) {
+        const message = `📚 ${usersCount} ${usersCount === 1 ? 'lettore sta' : 'lettori stanno'} sfogliando questo libro`;
+        sub.timer = setTimeout(() => {
+          openSnackbar(message, 'info');
+        }, 3000);
+      }
+    }
+  }, [_userBook, openSnackbar]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -73,6 +89,7 @@ const BookProfile = props => {
 
   useEffect(() => () => {
     is.current = false;
+    sub.timer && clearTimeout(sub.timer);
   }, []);
 
   const onAddBookToShelf = () => addBookToShelf(book.bid);

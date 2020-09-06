@@ -15,10 +15,9 @@ const GroupContext = createContext(null);
 
 export default GroupContext;
 
-export const GroupProvider = props => {
+export const GroupProvider = ({ children }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { children } = props;
   const [follow, setFollow] = useState(false);
   const [followers, setFollowers] = useState(null);
   const [item, setItem] = useState(null);

@@ -8,8 +8,7 @@ import '../css/incipit.css';
 import useLocalStorage from '../hooks/useLocalStorage';
 import Overlay from './overlay';
 
-const Incipit = props => {
-  const { copyrightHolder, incipit, onToggle, publication, title } = props;
+const Incipit = ({ copyrightHolder, incipit, onToggle, publication, title }) => {
   const [big, setBig] = useLocalStorage(incipitKey.fontBig, false);
   const [dark, setDark] = useLocalStorage(incipitKey.themeDark, false);
 

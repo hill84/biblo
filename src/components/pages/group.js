@@ -32,7 +32,7 @@ const seo = {
   title: `${app.name} | Groups`
 };
 
-const Group = props => {
+const Group = ({ history, location, match }) => {
   const { isAdmin, isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const { 
@@ -53,7 +53,6 @@ const Group = props => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(null);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenModeratorsDialog, setIsOpenModeratorsDialog] = useState(false);
-  const { history, location, match } = props;
   const { gid } = match.params;
   const is = useRef(true);
 

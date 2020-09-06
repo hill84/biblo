@@ -4,9 +4,7 @@ import { app } from '../config/shared';
 import { historyType, locationType, stringType } from '../config/types';
 import RandomQuote from './randomQuote';
 
-const NoMatch = props => {
-  const { history, imgUrl, location, title } = props;
-
+const NoMatch = ({ history, imgUrl, location, title }) => {
   const goBack = () => history.goBack();
 
   return (

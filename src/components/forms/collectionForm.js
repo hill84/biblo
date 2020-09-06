@@ -26,10 +26,9 @@ const min = {
   items: { books_num: 4 }
 };
 
-const CollectionForm = props => {
+const CollectionForm = ({ id, onToggle }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { id, onToggle } = props;
   const [data, setData] = useState({
     books_num: 0,
     description: '',

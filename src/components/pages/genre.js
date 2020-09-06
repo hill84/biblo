@@ -28,10 +28,9 @@ const orderBy = [
 ];
 const skltnStyle = { display: 'inline-block', marginTop: '1.15em', };
 
-const Genre = props => {
+const Genre = ({ match }) => {
   const { isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { match } = props;
   const [count, setCount] = useState(0);
   const [coverview, setCoverview] = useState(true);
   const [desc, setDesc] = useState(true);

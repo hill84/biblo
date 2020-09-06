@@ -10,18 +10,28 @@ import SnackbarContext from '../context/snackbarContext';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
-const BookCollection = props => {
+const BookCollection = ({
+  bcid,
+  booksPerRow,
+  cid,
+  desc: _desc,
+  inView,
+  limit: _limit,
+  pagination,
+  rating,
+  scrollable,
+  stacked
+}) => {
   const { openSnackbar } = useContext(SnackbarContext);
-  const { bcid, booksPerRow, cid, inView, pagination, rating, scrollable, stacked } = props;
   const [collection, setCollection] = useState([]);
   const [count, setCount] = useState(0);
-  const [desc, setDesc] = useState(props.desc);
+  const [desc, setDesc] = useState(_desc);
   // const [lastVisible, setLastVisible] = useState(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(null);
   const is = useRef(true);
 
-  const limit = useMemo(() => props.limit || (pagination ? _booksPerRow() : 98), [pagination, props.limit]);
+  const limit = useMemo(() => _limit || (pagination ? _booksPerRow() : 98), [pagination, _limit]);
   
   const fetch = useCallback(e => {
     const direction = e?.currentTarget.dataset.direction;

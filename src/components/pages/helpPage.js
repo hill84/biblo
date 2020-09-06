@@ -1,6 +1,6 @@
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React, { useState } from 'react';
@@ -125,15 +125,15 @@ const HelpPage = () => {
           <h2>Domande frequenti</h2>
           <div className="accordion-container">
             {faqs.map(faq => (
-              <ExpansionPanel expanded={expanded === faq.id} onChange={onChange(faq.id)} key={faq.id}>
-                <ExpansionPanelSummary
+              <Accordion expanded={expanded === faq.id} onChange={onChange(faq.id)} key={faq.id}>
+                <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls={`${faq.id}bh-content`}
                   id={`${faq.id}bh-header`}>
                   <Typography><span className="light-text">{faq.id}.</span> {faq.q}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>{faq.a}</ExpansionPanelDetails>
-              </ExpansionPanel>
+                </AccordionSummary>
+                <AccordionDetails>{faq.a}</AccordionDetails>
+              </Accordion>
             ))}
           </div>
 

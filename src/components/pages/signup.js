@@ -6,7 +6,7 @@ import { objectType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import SignupForm from '../forms/signupForm';
 
-const Signup = props => {
+const Signup = ({ location }) => {
   const { openSnackbar } = useContext(SnackbarContext);
 
   return (
@@ -17,7 +17,7 @@ const Signup = props => {
       </Helmet>
       <h2>Registrati</h2>
       <div className="card light">
-        <SignupForm location={props.location} openSnackbar={openSnackbar} />
+        <SignupForm location={location} openSnackbar={openSnackbar} />
       </div>
       <div className="sub-footer">Hai già un account? <Link to="/login">Accedi</Link></div>
     </div>

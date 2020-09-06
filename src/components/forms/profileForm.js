@@ -31,10 +31,10 @@ const max = {
   birth_date: new Date().setFullYear(new Date().getFullYear() - 14)
 };
 
-const ProfileForm = props => {
+const ProfileForm = ({ user: _user }) => {
   const { isAdmin, user: contextUser } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const [user, setUser] = useState(props.user);
+  const [user, setUser] = useState(_user);
   const [imgLoading, setImgLoading] = useState(false);
   const [imgPreview, setImgPreview] = useState(user.photoURL);
   const [imgProgress, setImgProgress] = useState(0);

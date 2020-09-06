@@ -16,10 +16,9 @@ import MinifiableText from './minifiableText';
 
 const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
 
-const Discussion = props => {
+const Discussion = ({ discussion, gid }) => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { discussion, gid } = props;
   const { 
     isOwner: isGroupOwner, 
     isModerator: isGroupModerator, 

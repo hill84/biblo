@@ -20,10 +20,9 @@ const max = { chars: {
 
 const min = { chars: { quote: 50 }};
 
-const QuoteForm = props => {
+const QuoteForm = ({ id, onToggle }) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { id, onToggle } = props;
   const [data, setData] = useState({
     author: '',
     bid: '',
