@@ -1,4 +1,14 @@
-const emojiMartLocale = {
+interface EmojiMartLocaleModel {
+  search: string;
+  clear: string;
+  notfound: string;
+  skintext: string;
+  categories: Record<string, string>;
+  categorieslabel: string;
+  skintones: Record<number, string>;
+}
+
+const emojiMartLocale: EmojiMartLocaleModel = {
   search: 'Cerca',
   clear: 'Clear', // Accessible label on "clear" button
   notfound: 'Nessuna emoji trovata',

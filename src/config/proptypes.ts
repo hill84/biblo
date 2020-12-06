@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { noteTypes } from './lists'
+import { noteTypes } from './lists';
 
 const { array, arrayOf, bool, element, func, node, number, object, objectOf, oneOf: _oneOf, oneOfType: _oneOfType, shape, string } = PropTypes; 
 
@@ -12,9 +12,12 @@ export const nodeType = node;
 export const numberType = number;
 export const objectType = object;
 export const objectOfType = objectOf;
-export const oneOf = props => _oneOf(props);
-export const oneOfType = props => _oneOfType(props);
-export const shapeType = props => shape(props);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const oneOf = (props: any) => _oneOf(props);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const oneOfType = (props: any) => _oneOfType(props);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const shapeType = (props: any) => shape(props);
 export const stringType = string;
 
 export const locationType = shape({
@@ -127,7 +130,7 @@ export const coverType = shape({
   bid: string.isRequired,
   title: string.isRequired,
   subtitle: string,
-  authors: shape().isRequired,
+  authors: object.isRequired,
   format: string,
   covers: arrayOf(string),
   publisher: string, // required on create
@@ -135,9 +138,9 @@ export const coverType = shape({
 });
 
 export const flagType = shape({
-  value: stringType.isRequired,
-  flaggedByUid: stringType.isRequired,
-  flagged_num: numberType.isRequired
+  value: string.isRequired,
+  flaggedByUid: string.isRequired,
+  flagged_num: number.isRequired
 });
 
 export const reviewType = shape({

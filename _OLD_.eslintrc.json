@@ -2,8 +2,17 @@
 // npm install --save-dev eslint prettier eslint-config-airbnb eslint-config-prettier eslint-plugin-prettier eslint-plugin-react eslint-plugin-import eslint-plugin-jsx-a11y
 
 {
-	"extends": ["airbnb", "prettier", "prettier/react"],
-	"plugins": ["prettier", "react-hooks"],
+	"env": {
+		"browser": true,
+		"commonjs": true,
+		"node": true,
+		"es6": true
+	},
+	"extends": [
+		"airbnb", 
+		"prettier",
+		"prettier/react"
+	],
 	"parser": "babel-eslint",
 	"parserOptions": {
 		"ecmaVersion": 2020,
@@ -12,12 +21,7 @@
 			"jsx": true
 		}
 	},
-	"env": {
-		"browser": true,
-		"commonjs": true,
-		"node": true,
-		"es6": true
-	},
+	"plugins": [/* "prettier", "react-hooks", */ "@typescript-eslint"],
 	"rules": {
 		"camelcase": "off",
 		"declaration-block-trailing-semicolon": "off",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Tooltip } from '@material-ui/core';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
 import { genres } from '../config/lists';
 import { booksPerRow as _booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
-import { boolType, numberType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -39,7 +40,7 @@ const BookCollection = ({
     // const startAfter = (direction === 'prev') ? firstVisible : lastVisible;
     const startAfter = prev ? page > 1 ? (page - 1) * limit - limit : 0 : ((page * limit) > count) ? (page - 1) * limit : page * limit;
     const isGenre = genres.some(item => item.name === cid);
-    let baseRef
+    let baseRef;
 
     switch (cid) {
       case 'Top': baseRef = booksRef.orderBy('readers_num', 'desc'); break;
@@ -80,7 +81,7 @@ const BookCollection = ({
         }).finally(() => {
           if (is.current) setLoading(false);
         });
-      }
+      };
 
       if (cid === 'Top' || cid === 'New') {
         setCount(limit);
@@ -130,7 +131,7 @@ const BookCollection = ({
         {!loading && count > 0 && (
           <div className="pull-right">
             {hasMore || scrollable ? (
-              cid === 'Top' ? "I più amati" : cid === 'New' ? "Le nostre novità" : ( 
+              cid === 'Top' ? 'I più amati' : cid === 'New' ? 'Le nostre novità' : ( 
                 <button type="button" className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
               )
             ) : (
@@ -175,7 +176,7 @@ const BookCollection = ({
       </div>
     </>
   );
-}
+};
 
 BookCollection.propTypes = {
   cid: stringType.isRequired,
@@ -188,7 +189,7 @@ BookCollection.propTypes = {
   rating: boolType,
   scrollable: boolType,
   stacked: boolType
-}
+};
 
 BookCollection.defaultProps = {
   bcid: 'bcid',
@@ -200,6 +201,6 @@ BookCollection.defaultProps = {
   rating: true,
   scrollable: false,
   stacked: false
-}
+};
  
 export default BookCollection;

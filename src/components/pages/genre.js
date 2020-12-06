@@ -7,7 +7,7 @@ import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { app, denormURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize } from '../../config/shared';
-import { matchType } from '../../config/types';
+import { matchType } from '../../config/proptypes';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
 import Cover from '../cover';

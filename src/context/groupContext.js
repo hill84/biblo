@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { groupFollowersRef, groupRef, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { elementType } from '../config/types';
+import { elementType } from '../config/proptypes';
 import SnackbarContext from './snackbarContext';
 import UserContext from './userContext';
 
@@ -59,8 +59,8 @@ export const GroupProvider = ({ children }) => {
     setLoading(true);
     unsub.fetchGroup = groupRef(gid).onSnapshot(snap => {
       if (snap.exists) {
-          setItem(snap.data());
-          setLoading(false);
+        setItem(snap.data());
+        setLoading(false);
         fetchFollowers(gid);
         if (snap.data().moderators?.length > 1) {
           fetchModerators(snap.data().moderators);
@@ -125,8 +125,8 @@ export const GroupProvider = ({ children }) => {
       {children}
     </GroupContext.Provider>
   );
-}
+};
 
 GroupProvider.propTypes = {
   children: elementType.isRequired
-}
+};

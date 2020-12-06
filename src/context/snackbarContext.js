@@ -3,7 +3,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { Close } from '@material-ui/icons';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { elementType } from '../config/types';
+import { elementType } from '../config/proptypes';
 import '../css/snackbar.css';
 
 const initialAutoHideDuration = 5000;
@@ -49,7 +49,7 @@ export const SnackbarProvider = ({ children }) => {
     openSnackbar,
     snackbarIsOpen,
     variant
-   }), [
+  }), [
     action,
     autoHideDuration,
     closeSnackbar,
@@ -66,11 +66,11 @@ export const SnackbarProvider = ({ children }) => {
       {children}
     </SnackbarContext.Provider>
   );
-}
+};
 
 SnackbarProvider.propTypes = {
   children: elementType.isRequired
-}
+};
 
 const SharedSnackbar = () => {
   const {

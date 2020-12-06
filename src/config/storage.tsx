@@ -1,4 +1,4 @@
-export const ifLocalStorage = callback => {
+export const ifLocalStorage = (callback: Function): Function | null => {
   if (typeof localStorage !== 'undefined') {
     // console.log('localStorage is defined');
     if (callback && typeof callback === 'function') {
@@ -19,7 +19,7 @@ export const ifLocalStorage = callback => {
   }
 };
 
-export const incipitKey = {
+export const incipitKey: Record<string, string> = {
   fontBig: 'incipit_fontBig',
   themeDark: 'incipit_themeDark'
 };
@@ -30,7 +30,7 @@ export const themeKey = 'theme'; // 'dark' | 'light' | 'mixed'
 
 export const recommendationQuoteKey = 'recommendation_quote';
 
-export const userBooksKey = {
+export const userBooksKey: Record<string, string> = {
   books: 'userBooks_books',
   timestamp: 'userBooks_timestamp'
 };

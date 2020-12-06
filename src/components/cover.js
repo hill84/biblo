@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { InView } from 'react-intersection-observer';
 import icon from '../config/icons';
 import { abbrNum, joinObj } from '../config/shared';
-import { boolType, coverType, numberType } from '../config/types';
+import { boolType, coverType, numberType } from '../config/proptypes';
 import Rating from './rating';
 import '../css/cover.css';
 

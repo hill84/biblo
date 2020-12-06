@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { abbrNum, checkBadWords, extractUrls, getInitials, handleFirestoreError, join, timeSince } from '../../config/shared';
-import { stringType, userBookType } from '../../config/types';
+import { stringType, userBookType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/emojiMart.css';

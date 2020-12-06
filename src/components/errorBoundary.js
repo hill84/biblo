@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import icon from '../config/icons';
-import { childrenType } from '../config/types';
+import { childrenType } from '../config/proptypes';
 
 const detailsStyle = { whiteSpace: 'pre-wrap', };
 

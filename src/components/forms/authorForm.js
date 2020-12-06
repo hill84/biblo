@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
 import { handleFirestoreError, normalizeString } from '../../config/shared';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
@@ -105,31 +105,31 @@ const AuthorForm = ({ id, onToggle }) => {
     return result;
   };
 
-	const validate = async data => {
+  const validate = async data => {
     const errors = {};
     const isDuplicate = id ? false : await checkDisplayName(data.displayName);
 
     if (!data.displayName) { 
-      errors.displayName = "Inserisci il nominativo"; 
+      errors.displayName = 'Inserisci il nominativo'; 
     } else if (isDuplicate) {
-      errors.displayName = "Autore già presente";
+      errors.displayName = 'Autore già presente';
     } else if (data.displayName?.length > max.chars.displayName) {
       errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
     }
     if (!data.sex) {
-      errors.sex = "Sesso mancante";
+      errors.sex = 'Sesso mancante';
     }
     if (!data.bio) { 
-      errors.bio = "Inserisci una biografia"; 
+      errors.bio = 'Inserisci una biografia'; 
     } else if (data.bio?.length > max.chars.bio) {
       errors.bio = `Massimo ${max.chars.bio} caratteri`;
     } else if (data.bio?.length < min.chars.bio) {
       errors.bio = `Minimo ${min.chars.bio} caratteri`;
     }
-		return errors;
+    return errors;
   };
   
-	const onSubmit = async e => {
+  const onSubmit = async e => {
     e.preventDefault();
 
     if (changes) {
@@ -159,7 +159,7 @@ const AuthorForm = ({ id, onToggle }) => {
         }).catch(err => console.warn(err));
       } else if (is.current) setLoading(false);
     } else onToggle();
-	};
+  };
 
   return (
     <>
@@ -190,7 +190,7 @@ const AuthorForm = ({ id, onToggle }) => {
                 <Select
                   id="sex"
                   value={data.sex}
-                  onChange={onChangeSelect("sex")}
+                  onChange={onChangeSelect('sex')}
                   error={Boolean(errors.sex)}>
                   <MenuItem key="m" value="m">Uomo</MenuItem>
                   <MenuItem key="f" value="f">Donna</MenuItem>
@@ -278,15 +278,15 @@ const AuthorForm = ({ id, onToggle }) => {
       </div>
     </>
   );
-}
+};
 
 AuthorForm.propTypes = {
   onToggle: funcType.isRequired,
   id: stringType
-}
+};
 
 AuthorForm.defaultProps = {
   id: null
-}
+};
  
 export default AuthorForm;

@@ -14,7 +14,7 @@ import { followersRef, followingsRef, notesRef, userChallengesRef, userRef } fro
 import icon from '../../config/icons';
 import { dashboardTabs as tabs, profileKeys } from '../../config/lists';
 import { app, calcAge, capitalize, getInitials, isScrollable, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
-import { historyType, locationType, matchType, objectType, stringType } from '../../config/types';
+import { historyType, locationType, matchType, objectType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';

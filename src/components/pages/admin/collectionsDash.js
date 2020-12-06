@@ -11,7 +11,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { app, handleFirestoreError, normURL } from '../../../config/shared';
-import { boolType, funcType } from '../../../config/types';
+import { boolType, funcType } from '../../../config/proptypes';
 import PaginationControls from '../../paginationControls';
 
 const limitBy = [ 15, 25, 50, 100, 250, 500];

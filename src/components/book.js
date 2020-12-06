@@ -2,7 +2,7 @@ import React, { lazy, useCallback, useContext, useEffect, useMemo, useRef, useSt
 import { Helmet } from 'react-helmet-async';
 import { bookRef, collectionBookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
-import { bookType, boolType, objectType, stringType } from '../config/types';
+import { bookType, boolType, objectType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import BookForm from './forms/bookForm';

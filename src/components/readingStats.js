@@ -9,7 +9,7 @@ import icon from '../config/icons';
 import { months, ratingLabels, readingStates } from '../config/lists';
 import { diffDates, handleFirestoreError, round } from '../config/shared';
 import { userBooksKey } from '../config/storage';
-import { boolType, stringType } from '../config/types';
+import { boolType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/readingStats.css';

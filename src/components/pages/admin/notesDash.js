@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
-import { boolType, funcType } from '../../../config/types';
+import { boolType, funcType } from '../../../config/proptypes';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 

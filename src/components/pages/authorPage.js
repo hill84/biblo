@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, denormURL, getInitials, handleFirestoreError, normalizeString, normURL } from '../../config/shared';
-import { historyType, locationType, matchType } from '../../config/types';
+import { historyType, locationType, matchType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/authorPage.css';

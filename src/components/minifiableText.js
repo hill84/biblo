@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 // import { Link } from 'react-router-dom';
 import { enrichText } from '../config/shared';
-import { boolType, numberType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/proptypes';
 import '../css/minifiableText.css';
 
 const MinifiableText = ({ defaultMinified, forced, maxChars, rich, source, text, toggle }) => {

@@ -13,7 +13,7 @@ import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { readingStates } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
-import { funcType, numberType, shapeType, stringType } from '../../config/types';
+import { funcType, numberType, shapeType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';

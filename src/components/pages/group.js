@@ -13,7 +13,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { groupFollowersRef, groupRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError } from '../../config/shared';
-import { historyType, locationType, matchType } from '../../config/types';
+import { historyType, locationType, matchType } from '../../config/proptypes';
 import GroupContext from '../../context/groupContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';

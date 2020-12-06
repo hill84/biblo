@@ -7,7 +7,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import Zoom from 'react-medium-image-zoom';
 
 import { quoteRef, quotesRef } from '../../config/firebase';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';

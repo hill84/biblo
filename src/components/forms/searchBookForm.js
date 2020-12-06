@@ -14,7 +14,7 @@ import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
 import { arrToObj, capitalizeInitials, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { darkTheme, defaultTheme } from '../../config/themes';
-import { boolType, funcType } from '../../config/types';
+import { boolType, funcType } from '../../config/proptypes';
 import UserContext from '../../context/userContext';
 import '../../css/searchBook.css';
 

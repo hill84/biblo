@@ -16,7 +16,7 @@ import { storageRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { app, calcAge, getInitials, urlRegex, validateImg } from '../../config/shared';
-import { userType } from '../../config/types';
+import { userType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/profileForm.css';

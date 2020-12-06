@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError, normURL } from '../../config/shared';
-import { funcType } from '../../config/types';
+import { funcType } from '../../config/proptypes';
 import PaginationControls from '../paginationControls';
 
 const orderBy = [ 

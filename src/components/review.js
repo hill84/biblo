@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommentersRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncateString } from '../config/shared';
-import { reviewType, stringType } from '../config/types';
+import { reviewType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import Comment from './comment';

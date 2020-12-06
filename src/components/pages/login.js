@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
-import { locationType } from '../../config/types';
+import { locationType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import LoginForm from '../forms/loginForm';
 

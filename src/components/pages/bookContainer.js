@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { historyType, locationType, matchType } from '../../config/types';
+import { historyType, locationType, matchType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/bookContainer.css';

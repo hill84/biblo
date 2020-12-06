@@ -1,9 +1,9 @@
 import amber from '@material-ui/core/colors/amber';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import cyan from '@material-ui/core/colors/cyan';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, Theme } from '@material-ui/core/styles';
 
-export const defaultTheme = createMuiTheme({
+export const defaultTheme: Theme = createMuiTheme({
   palette: {
     type: 'light',
     primary: {
@@ -18,32 +18,18 @@ export const defaultTheme = createMuiTheme({
       dark: amber[400],
       contrastText: '#FFF',
     },
-    text: {
-      // primary: cyan[700],
-      // secondary: 'rgba(0, 0, 0, 0.3)',
-      // disabled: 'rgba(0, 0, 0, 0.38)',
-      // hint: 'rgba(0, 0, 0, 0.38)'
-    },
-    typography: {
-      suppressDeprecationWarnings: true,
-      useNextVariants: true
-    },
     background: {
       paper: '#FFF',
       default: blueGrey[900]
     },
     action: {
-      // active: 'rgba(0, 0, 0, 0.54)',
       hover: 'rgba(0, 151, 167, 0.07)',
-      // hoverOpacity: 0.08,
       selected: 'rgba(0, 151, 167, 0.1)',
-      // disabled: 'rgba(0, 0, 0, 0.26)',
-      // disabledBackground: 'rgba(0, 0, 0, 0.12)'
     }
   }
 });
 
-export const darkTheme = createMuiTheme({
+export const darkTheme: Theme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
@@ -61,15 +47,11 @@ export const darkTheme = createMuiTheme({
     background: {
       paper: blueGrey[900],
       default: blueGrey[900]
-    },
-    typography: {
-      suppressDeprecationWarnings: true,
-      useNextVariants: true
     }
   }
 });
 
-export const primaryTheme = createMuiTheme({
+export const primaryTheme: Theme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
@@ -87,10 +69,6 @@ export const primaryTheme = createMuiTheme({
     background: {
       paper: blueGrey[900],
       default: blueGrey[900]
-    },
-    typography: {
-      suppressDeprecationWarnings: true,
-      useNextVariants: true
     }
   }
 });

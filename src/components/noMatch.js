@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { app } from '../config/shared';
-import { historyType, locationType, stringType } from '../config/types';
+import { historyType, locationType, stringType } from '../config/proptypes';
 import RandomQuote from './randomQuote';
 
 const NoMatch = ({ history, imgUrl, location, title }) => {

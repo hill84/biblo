@@ -1,6 +1,6 @@
 import React from 'react';
 import NoMatch from '../noMatch';
-import { historyType, locationType } from '../../config/types';
+import { historyType, locationType } from '../../config/proptypes';
 
 const NoMatchPage = ({ history, location }) => (
   <NoMatch history={history} location={location} />

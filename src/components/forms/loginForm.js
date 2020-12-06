@@ -11,7 +11,7 @@ import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
-import { locationType } from '../../config/types';
+import { locationType } from '../../config/proptypes';
 import SocialAuth from '../socialAuth';
 
 const max = {

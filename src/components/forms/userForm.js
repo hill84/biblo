@@ -1,5 +1,5 @@
 import React from 'react';
-import { funcType, userType } from '../../config/types';
+import { funcType, userType } from '../../config/proptypes';
 import Overlay from '../overlay';
 import ProfileForm from './profileForm';
 

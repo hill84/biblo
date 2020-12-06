@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { historyType, locationType } from '../../config/types';
+import { historyType, locationType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Book from '../book';

@@ -19,7 +19,7 @@ import icon from '../config/icons';
 import { roles } from '../config/lists';
 import { app, getInitials, hasRole } from '../config/shared';
 import { darkTheme } from '../config/themes';
-import { childrenType } from '../config/types';
+import { childrenType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/layout.css';

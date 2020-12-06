@@ -8,7 +8,7 @@ import Select from '@material-ui/core/Select';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { noteRef, notesRef } from '../../config/firebase';
 import { noteTypes } from '../../config/lists';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType } from '../../config/proptypes';
 import UserContext from '../../context/userContext';
 import SnackbarContext from '../../context/snackbarContext';
 import Overlay from '../overlay';

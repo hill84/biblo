@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../config/firebase';
 import icon from '../config/icons';
 import { getInitials, normURL } from '../config/shared';
-import { boolType, numberType } from '../config/types';
+import { boolType, numberType } from '../config/proptypes';
 import { skltn_bubbleRow } from './skeletons';
 
 const Authors = ({

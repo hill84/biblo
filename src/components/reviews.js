@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { Link } from 'react-router-dom';
 import { reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { boolType, numberType, oneOfType, stringType, arrayType } from '../config/types';
+import { boolType, numberType, oneOfType, stringType, arrayType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import PaginationControls from './paginationControls';

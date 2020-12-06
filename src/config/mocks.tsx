@@ -1,4 +1,6 @@
-export const user = {
+import { UserModel } from '../types';
+
+export const user: UserModel = {
   creationTime: 123456789,
   uid: 'abc',
   displayName: 'Mario Rossi',

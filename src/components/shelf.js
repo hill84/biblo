@@ -9,7 +9,7 @@ import { userBooksRef, userChallengeRef, userChallengesRef } from '../config/fir
 import icon from '../config/icons';
 import { userBookTypes } from '../config/lists';
 import { booksPerRow, handleFirestoreError, normURL } from '../config/shared';
-import { stringType } from '../config/types';
+import { stringType } from '../config/proptypes';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';

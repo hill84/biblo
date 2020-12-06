@@ -22,12 +22,12 @@ function getInternetExplorerVersion() {
   /* eslint-enable no-var */
   if (navigator.appName === 'Microsoft Internet Explorer') {
     ua = navigator.userAgent;
-    re = new RegExp("MSIE ([0-9]{1,}[\\.0-9]{0,})");
-    if (re.exec(ua) != null) rv = parseFloat( RegExp.$1 );
+    re = new RegExp('MSIE ([0-9]{1,}[\\.0-9]{0,})');
+    if (re.exec(ua) !== null) rv = parseFloat( RegExp.$1 );
   } else if (navigator.appName === 'Netscape') {
     ua = navigator.userAgent;
-    re  = new RegExp("Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})");
-    if (re.exec(ua) != null) rv = parseFloat( RegExp.$1 );
+    re  = new RegExp('Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})');
+    if (re.exec(ua) !== null) rv = parseFloat( RegExp.$1 );
   }
   return rv;
 }
@@ -36,6 +36,7 @@ if (isProd) {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(window.__REACT_DEVTOOLS_GLOBAL_HOOK__)) {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       window.__REACT_DEVTOOLS_GLOBAL_HOOK__[key] = typeof value === 'function' ? () => {} : null;
     }
   }
@@ -55,9 +56,9 @@ if (isProd && process.env.REACT_APP_GA_TRACKING_ID && readCookie('user-has-accep
 }
 
 ReactDOM.render(
-	<Router history={history}>
+  <Router history={history}>
     {getInternetExplorerVersion() === -1 ? <App/> : <BrowserNotSupported />}
-	</Router>,
-	document.getElementById('root')
+  </Router>,
+  document.getElementById('root')
 );
 serviceWorker.register();

@@ -12,7 +12,7 @@ import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef,
 import { notesRef, reviewerCommenterRef, reviewerRef, userBookRef } from '../../config/firebase';
 import { checkBadWords, extractUrls, getInitials, handleFirestoreError, join, normURL, truncateString } from '../../config/shared';
 import { darkTheme } from '../../config/themes';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 

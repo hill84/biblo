@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncateString } from '../config/shared';
-import { commentType, funcType, stringType } from '../config/types';
+import { commentType, funcType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import FlagDialog from './flagDialog';

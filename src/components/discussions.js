@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { Link } from 'react-router-dom';
 import { groupDiscussionsRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { arrayType, boolType, numberType, oneOfType, stringType } from '../config/types';
+import { arrayType, boolType, numberType, oneOfType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/discussions.css';

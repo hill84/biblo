@@ -12,7 +12,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
-import { DatePicker, LocalizationProvider } from "@material-ui/pickers";
+import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import isbn from 'isbn-utils';
 import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
@@ -25,7 +25,7 @@ import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from 
 import icon from '../../config/icons';
 import { awards, formats, genres, languages } from '../../config/lists';
 import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, noCookie, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
-import { bookType, funcType } from '../../config/types';
+import { bookType, funcType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Cover from '../cover';
@@ -64,7 +64,7 @@ const min = {
     pages_num: 20
   },
   publication: new Date(1970, 0, 1)
-}
+};
 
 const BookForm = ({ book: _book, onEditing }) => {
   const { isAdmin, user } = useContext(UserContext);
@@ -123,7 +123,7 @@ const BookForm = ({ book: _book, onEditing }) => {
 
     return () => {
       is.current = false;
-    }
+    };
     // eslint-disable-next-line
   }, []);
 
@@ -213,7 +213,7 @@ const BookForm = ({ book: _book, onEditing }) => {
   
   const onAddChipToObj = useCallback((name, chip) => {
     const value = { ...book[name], [chip.split('.').join('')]: true };
-    setBookChange(name, value)
+    setBookChange(name, value);
   }, [book, setBookChange]);
 
   const onDeleteChipFromObj = useCallback((name, chip) => {
@@ -233,9 +233,9 @@ const BookForm = ({ book: _book, onEditing }) => {
 
   const onSetDatePickerError = (name, reason) => {
     const errorMessages = {
-      disableFuture: "Data futura non valida",
-      disablePast: "Data passata non valida",
-      invalidDate: "Data non valida",
+      disableFuture: 'Data futura non valida',
+      disablePast: 'Data passata non valida',
+      invalidDate: 'Data non valida',
       minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
       maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
     };
@@ -260,7 +260,7 @@ const BookForm = ({ book: _book, onEditing }) => {
     const isDuplicate = await checkISBNnum(book.ISBN_13);
     
     if (!book.title) {
-      errors.title = "Inserisci il titolo";
+      errors.title = 'Inserisci il titolo';
     } else if (book.title.length > max.chars.title) {
       errors.title = `Lunghezza massima ${max.chars.title} caratteri`;
     }
@@ -270,7 +270,7 @@ const BookForm = ({ book: _book, onEditing }) => {
     }
 
     if (!Object.keys(book.authors).length) {
-      errors.authors = "Inserisci l'autore";
+      errors.authors = 'Inserisci l\'autore';
     } else if (Object.keys(book.authors).length > max.items.authors) {
       errors.authors = `Massimo ${max.items.authors} autori`;
     } else if (Object.keys(book.authors).some(author => author.length > max.chars.author)) {
@@ -278,13 +278,13 @@ const BookForm = ({ book: _book, onEditing }) => {
     }
 
     if (!book.publisher) {
-      errors.publisher = "Inserisci l'editore";
+      errors.publisher = 'Inserisci l\'editore';
     } else if (book.publisher.length > max.chars.publisher) {
       errors.publisher = `Lunghezza massima ${max.chars.publisher} caratteri`;
     }
 
     if (!book.pages_num) {
-      errors.pages_num = "Inserisci le pagine";
+      errors.pages_num = 'Inserisci le pagine';
     } else if (String(book.pages_num).length > max.chars.pages_num) {
       errors.pages_num = `Lunghezza massima ${max.chars.pages_num} cifre`;
     } else if (book.pages_num < min.items.pages_num) {
@@ -292,34 +292,34 @@ const BookForm = ({ book: _book, onEditing }) => {
     }
 
     if (!book.ISBN_13) {
-      errors.ISBN_13 = "Inserisci il codice ISBN";
+      errors.ISBN_13 = 'Inserisci il codice ISBN';
     } else if (String(book.ISBN_13).length !== 13) {
-      errors.ISBN_13 = "Il codice deve contenere 13 cifre";
-    } else if (String(book.ISBN_13).substring(0,3) !== "978") {
-      if (String(book.ISBN_13).substring(0,3) !== "979") {
-        errors.ISBN_13 = "Il codice deve iniziare per 978 o 979";
+      errors.ISBN_13 = 'Il codice deve contenere 13 cifre';
+    } else if (String(book.ISBN_13).substring(0,3) !== '978') {
+      if (String(book.ISBN_13).substring(0,3) !== '979') {
+        errors.ISBN_13 = 'Il codice deve iniziare per 978 o 979';
       }
     } else if (!isISBN(String(book.ISBN_13), 13)) {
-      errors.ISBN_13 = "Codice non valido";
+      errors.ISBN_13 = 'Codice non valido';
     } else if (!_book.bid && isDuplicate) {
-      errors.ISBN_13 = "Libro già presente";
+      errors.ISBN_13 = 'Libro già presente';
     }
 
     if (book.ISBN_10) {
       if (String(book.ISBN_10).length !== 10) {
-        errors.ISBN_10 = "Il codice deve essere composto da 10 cifre";
+        errors.ISBN_10 = 'Il codice deve essere composto da 10 cifre';
       } else if (!isISBN(String(book.ISBN_10), 10)) {
-        errors.ISBN_10 = "Codice non valido";
+        errors.ISBN_10 = 'Codice non valido';
       }
     } 
 
     if (new Date(book.publication).getTime() > max.publication) {
-      errors.publication = "Data di pubblicazione non valida";
+      errors.publication = 'Data di pubblicazione non valida';
     }
 
     if (book.edition_num) {
       if (book.edition_num < 1) {
-        errors.edition_num = "Numero non valido";
+        errors.edition_num = 'Numero non valido';
       } else if (String(book.edition_num).length > max.chars.edition_num) {
         errors.edition_num = `Max ${max.chars.edition_num} cifre`;
       }
@@ -368,7 +368,7 @@ const BookForm = ({ book: _book, onEditing }) => {
 
     if (book.trailerURL) {
       if (!isURL(book.trailerURL)) {
-        errors.trailerURL = `Formato URL non valido`;
+        errors.trailerURL = 'Formato URL non valido';
       } 
       if (book.trailerURL.length > max.chars.URL) {
         errors.trailerURL = `Lunghezza massima ${max.chars.URL} caratteri`;
@@ -381,16 +381,16 @@ const BookForm = ({ book: _book, onEditing }) => {
       if (urlMatches) {
         errors[text] = `Non inserire link (${join(urlMatches)})`;
       } else if (badWords) {
-        errors[text] = "Niente volgarità";
+        errors[text] = 'Niente volgarità';
       }
     });
     
     return errors;
   }, [checkISBNnum, _book]);
 
-	const onImageChange = useCallback(e => {
+  const onImageChange = useCallback(e => {
     e.preventDefault();
-		const file = e.target.files[0];
+    const file = e.target.files[0];
 
     if (file) {
       const uploadError = validateImg(file, 1);
@@ -411,7 +411,7 @@ const BookForm = ({ book: _book, onEditing }) => {
             setErrors(errors => ({ ...errors, upload: err.message }));
             setImgLoading(false);
             setImgProgress(0);
-            openSnackbar(err.message, 'error')
+            openSnackbar(err.message, 'error');
           }
         }, () => {
           // console.log('upload completed');
@@ -520,7 +520,7 @@ const BookForm = ({ book: _book, onEditing }) => {
             trailerURL: noCookie(book.trailerURL)
           }).then(() => {
             if (is.current) {
-              setRedirectToBook(`${newBid}/${book.title}`)
+              setRedirectToBook(`${newBid}/${book.title}`);
               // setLoading(false);
               // setChanges([]);
               // onEditing();
@@ -566,8 +566,8 @@ const BookForm = ({ book: _book, onEditing }) => {
         }
       } else if (is.current) {
         setLoading(false);
-        if (errors.description) setIsEditingDescription(true)
-        if (errors.incipit) setIsEditingIncipit(true)
+        if (errors.description) setIsEditingDescription(true);
+        if (errors.incipit) setIsEditingIncipit(true);
         openSnackbar('Ricontrolla i dati inseriti', 'error');
       }
     } else onEditing();
@@ -591,7 +591,7 @@ const BookForm = ({ book: _book, onEditing }) => {
     </MenuItem>
   );
   
-  if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />
+  if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />;
   
   return (
     <>
@@ -607,7 +607,7 @@ const BookForm = ({ book: _book, onEditing }) => {
                   {
                     // imgProgress > 0 && <progress type="progress" value={imgProgress} max="100" />
                   }
-                  <span>{imgProgress === 100 ? 'Immagine caricata' : `Carica un'immagine`}</span>
+                  <span>{imgProgress === 100 ? 'Immagine caricata' : 'Carica un\'immagine'}</span>
                 </button>
               )}
             </div>
@@ -652,8 +652,8 @@ const BookForm = ({ book: _book, onEditing }) => {
                     blurBehavior="add"
                     error={Boolean(errors.authors)}
                     value={Object.keys(book.authors)}
-                    onAdd={chip => onAddChipToObj("authors", chip)}
-                    onDelete={chip => onDeleteChipFromObj("authors", chip)}
+                    onAdd={chip => onAddChipToObj('authors', chip)}
+                    onDelete={chip => onDeleteChipFromObj('authors', chip)}
                     onKeyPress={e => onPreventDefault(e)}
                   />
                   <FormHelperText className={`message ${errors.authors ? 'error' : ''}`}>
@@ -741,7 +741,7 @@ const BookForm = ({ book: _book, onEditing }) => {
                       error={Boolean(errors.publication)}
                       label="Data di pubblicazione"
                       value={book.publication ? new Date(book.publication) : null}
-                      onChange={onChangeDate("publication")}
+                      onChange={onChangeDate('publication')}
                       onError={reason => onSetDatePickerError('publication', reason)}
                       autoOk
                       clearable
@@ -776,7 +776,7 @@ const BookForm = ({ book: _book, onEditing }) => {
                       id="languages"
                       error={Boolean(errors.languages)}
                       value={book.languages}
-                      onChange={onChangeSelect("languages")}
+                      onChange={onChangeSelect('languages')}
                       multiple>
                       {menuItemsMap(languages, book.languages)}
                     </Select>
@@ -790,7 +790,7 @@ const BookForm = ({ book: _book, onEditing }) => {
                       id="format"
                       error={Boolean(errors.format)}
                       value={book.format}
-                      onChange={onChangeSelect("format")}>
+                      onChange={onChangeSelect('format')}>
                       {menuItemsMap(formats, book.format)}
                     </Select>
                     {errors.format && <FormHelperText className="message error">{errors.format}</FormHelperText>}
@@ -805,7 +805,7 @@ const BookForm = ({ book: _book, onEditing }) => {
                     placeholder="es: Giallo, Thriller"
                     error={Boolean(errors.genres)}
                     value={book.genres}
-                    onChange={onChangeSelect("genres")}
+                    onChange={onChangeSelect('genres')}
                     multiple>
                     {menuItemsMap(genres, book.genres)}
                   </Select>
@@ -823,8 +823,8 @@ const BookForm = ({ book: _book, onEditing }) => {
                         blurBehavior="add"
                         error={Boolean(errors.collections)}
                         value={book.collections}
-                        onAdd={chip => onAddChip("collections", chip)}
-                        onDelete={chip => onDeleteChip("collections", chip)}
+                        onAdd={chip => onAddChip('collections', chip)}
+                        onDelete={chip => onDeleteChip('collections', chip)}
                         disabled={!isAdmin}
                         onKeyPress={e => onPreventDefault(e)}
                       />
@@ -855,7 +855,7 @@ const BookForm = ({ book: _book, onEditing }) => {
                         id="awards"
                         error={Boolean(errors.awards)}
                         value={book.awards}
-                        onChange={onChangeSelect("awards")}
+                        onChange={onChangeSelect('awards')}
                         multiple>
                         {menuItemsMap(awards, book.awards)}
                       </Select>
@@ -920,7 +920,7 @@ const BookForm = ({ book: _book, onEditing }) => {
               ) : (
                 <div className="info-row">
                   <button type="button" className="btn flat rounded centered" onClick={onToggleIncipit}>
-                    {book.incipit ? "Modifica l'incipit" : "Aggiungi un incipit"}
+                    {book.incipit ? 'Modifica l\'incipit' : 'Aggiungi un incipit'}
                   </button>
                 </div>
               )}
@@ -959,11 +959,11 @@ const BookForm = ({ book: _book, onEditing }) => {
       )}
     </>
   );
-}
+};
 
 BookForm.propTypes = {
   book: bookType.isRequired,
   onEditing: funcType.isRequired
-}
+};
  
 export default BookForm;

@@ -4,7 +4,7 @@ import React, { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import icon from '../config/icons';
 import { getInitials, timeSince } from '../config/shared';
-import { boolType, noteType, numberType } from '../config/types';
+import { boolType, noteType, numberType } from '../config/proptypes';
 
 const NoteMenuItem = forwardRef((props, ref) => {
   const { index, item, animation } = props;

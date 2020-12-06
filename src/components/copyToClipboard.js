@@ -1,6 +1,6 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { useContext } from 'react';
-import { elementType, numberType, oneOfType, stringType } from '../config/types';
+import { elementType, numberType, oneOfType, stringType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 
 const CopyToClipboard = ({ icon, text }) => {

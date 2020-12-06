@@ -16,7 +16,7 @@ import { groupDiscussionsRef, notesRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, checkBadWords, extractMuids, extractUrls, getInitials, handleFirestoreError, join, normURL, truncateString } from '../../config/shared';
 import { defaultTheme, primaryTheme } from '../../config/themes';
-import { stringType } from '../../config/types';
+import { stringType } from '../../config/proptypes';
 import GroupContext from '../../context/groupContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { groupDiscussionRef } from '../config/firebase';
 import icon from '../config/icons';
 import { getInitials, handleFirestoreError, isToday, timeSince } from '../config/shared';
-import { discussionType, stringType } from '../config/types';
+import { discussionType, stringType } from '../config/proptypes';
 import GroupContext from '../context/groupContext';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';

@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { abbrNum, app, calcReadingTime, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
-import { bookType, boolType, funcType, locationType, objectType, refType, userBookType } from '../../config/types';
+import { bookType, boolType, funcType, locationType, objectType, refType, userBookType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/bookProfile.css';

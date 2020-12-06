@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, diffDates, getInitials, handleFirestoreError, normURL, truncateString } from '../../config/shared';
-import { bookType, funcType } from '../../config/types';
+import { bookType, funcType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/recommendationForm.css';

@@ -11,7 +11,7 @@ import Zoom from 'react-medium-image-zoom';
 import { Redirect } from 'react-router-dom';
 import { groupRef, groupsRef } from '../../config/firebase';
 import { capitalize,    handleFirestoreError } from '../../config/shared';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';

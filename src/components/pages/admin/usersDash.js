@@ -12,7 +12,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { auth, authorFollowerRef, collectionFollowersRef, commentersGroupRef, countRef, followersGroupRef, genreFollowerRef, noteRef, notesRef, reviewerCommenterRef, reviewerRef, reviewersGroupRef, userNotificationsRef, userRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, timeOptions } from '../../../config/shared';
-import { funcType } from '../../../config/types';
+import { funcType } from '../../../config/proptypes';
 import SnackbarContext from '../../../context/snackbarContext';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';

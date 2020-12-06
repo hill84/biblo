@@ -9,7 +9,7 @@ import { collectionFollowersRef, collectionRef, collectionsRef } from '../../con
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { app, denormURL, handleFirestoreError, isScrollable, normalizeString, normURL, screenSize as _screenSize, truncateString } from '../../config/shared';
-import { historyType, locationType, matchType } from '../../config/types';
+import { historyType, locationType, matchType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import BookCollection from '../bookCollection';

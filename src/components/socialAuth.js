@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { boolType } from '../config/types';
+import { boolType } from '../config/proptypes';
 import SnackbarContext from '../context/snackbarContext';
 import '../css/socialAuth.css';
 
@@ -29,41 +29,41 @@ const SocialAuth = ({ disabled }) => {
   const is = useRef(true);
 
   const socialAuth = useCallback(provider => {
-		auth.signInWithPopup(provider).then(res => {
+    auth.signInWithPopup(provider).then(res => {
       if (is.current) setLoading(true);
       
-			if (res) {
+      if (res) {
         const { user } = res;
-				if (res.additionalUserInfo.isNewUser) {
+        if (res.additionalUserInfo.isNewUser) {
           const timestamp = Number((new Date(user.metadata.creationTime)).getTime());
-					userRef(user.uid).set({
-						creationTime: timestamp,
+          userRef(user.uid).set({
+            creationTime: timestamp,
             displayName: user.displayName,
             email: user.email,
-						photoURL: user.photoURL,
-						roles,
+            photoURL: user.photoURL,
+            roles,
             stats,
             privacyAgreement: timestamp,
             uid: user.uid,
-					});
-				}
-			}
-		}).then(() => {
+          });
+        }
+      }
+    }).then(() => {
       if (is.current) setRedirectToReferrer(true);
-		}).catch(err => {
+    }).catch(err => {
       if (is.current) openSnackbar(handleFirestoreError(err), 'error');
     }).finally(() => {
       if (is.current) setLoading(false);
     });
   }, [openSnackbar]);
   
-	const googleAuth = () => socialAuth(GoogleAuthProvider);
-	const facebookAuth = () => socialAuth(FacebookAuthProvider);
-	const twitterAuth = () => socialAuth(TwitterAuthProvider);
+  const googleAuth = () => socialAuth(GoogleAuthProvider);
+  const facebookAuth = () => socialAuth(FacebookAuthProvider);
+  const twitterAuth = () => socialAuth(TwitterAuthProvider);
 
   const { from } = {from: { pathname: '/' }};
 
-  if (redirectToReferrer) return <Redirect to={from} />
+  if (redirectToReferrer) return <Redirect to={from} />;
 
   return (
     <div className="social-auth row" ref={is}>
@@ -79,14 +79,14 @@ const SocialAuth = ({ disabled }) => {
       {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
     </div>
   );
-}
+};
 
 SocialAuth.propTypes = {
   disabled: boolType
-}
+};
 
 SocialAuth.defaultProps = {
   disabled: false
-}
+};
  
 export default SocialAuth;

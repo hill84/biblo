@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
 import { normURL } from '../config/shared';
-import { boolType, numberType, stringType } from '../config/types';
+import { boolType, numberType, stringType } from '../config/proptypes';
 import MinifiableText from './minifiableText';
 
 const RandomQuote = ({

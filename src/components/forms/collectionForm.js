@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
-import { funcType, stringType } from '../../config/types';
+import { funcType, stringType } from '../../config/proptypes';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
@@ -58,7 +58,7 @@ const CollectionForm = ({ id, onToggle }) => {
     }
   }, [id]);
 
-	const onChange = e => {
+  const onChange = e => {
     e.persist();
     const { name, value } = e.target;
 
@@ -98,40 +98,40 @@ const CollectionForm = ({ id, onToggle }) => {
       return false;
     }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     return result;
-  }
+  };
 
-	const validate = async data => {
+  const validate = async data => {
     const errors = {};
     const isDuplicate = typeof id === 'string' ? false : await checkTitle(data.title);
 
     if (!data.title) { 
-      errors.title = "Inserisci il titolo"; 
+      errors.title = 'Inserisci il titolo'; 
     } else if (isDuplicate) {
-      errors.title = "Collezione già presente";
+      errors.title = 'Collezione già presente';
     } else if (data.title?.length > max.chars.title) {
       errors.title = `Massimo ${max.chars.title} caratteri`;
     }
     if (!data.description) { 
-      errors.description = "Inserisci una descrizione"; 
+      errors.description = 'Inserisci una descrizione'; 
     } else if (data.description?.length > max.chars.desc) {
       errors.description = `Massimo ${max.chars.desc} caratteri`;
     } else if (data.description?.length < min.chars.desc) {
       errors.description = `Minimo ${min.chars.desc} caratteri`;
     }
     if (!data.genres) {
-      errors.genres = "Scegli almeno un genere";
+      errors.genres = 'Scegli almeno un genere';
     } else if (data.genres.length > max.items.genres) {
       errors.genres = `Massimo ${max.items.genres} generi`;
     }
     if (!data.books_num) {
-      errors.books_num = "Inserisci libri";
+      errors.books_num = 'Inserisci libri';
     } else if (data.books_num < min.items.books_num) {
       errors.books_num = `Minimo ${min.items.books_num} libri`;
     }
-		return errors;
+    return errors;
   };
   
-	const onSubmit = async e => {
+  const onSubmit = async e => {
     e.preventDefault();
 
     if (changes) {
@@ -256,7 +256,7 @@ const CollectionForm = ({ id, onToggle }) => {
                 <Select
                   id="genres"
                   value={data.genres}
-                  onChange={onChangeSelect("genres")}
+                  onChange={onChangeSelect('genres')}
                   multiple
                   error={Boolean(errors.genres)}>
                   {menuItemsMap(genres, data.genres)}
@@ -308,15 +308,15 @@ const CollectionForm = ({ id, onToggle }) => {
       </div>
     </>
   );
-}
+};
 
 CollectionForm.propTypes = {
   onToggle: funcType.isRequired,
   id: stringType
-}
+};
 
 CollectionForm.defaultProps = {
   id: null
-}
+};
 
 export default CollectionForm;

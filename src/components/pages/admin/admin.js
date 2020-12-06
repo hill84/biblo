@@ -9,7 +9,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import icon from '../../../config/icons';
 import { app, screenSize } from '../../../config/shared';
-import { historyType, matchType } from '../../../config/types';
+import { historyType, matchType } from '../../../config/proptypes';
 import SnackbarContext from '../../../context/snackbarContext';
 import UserContext from '../../../context/userContext';
 import AuthorForm from '../../forms/authorForm';

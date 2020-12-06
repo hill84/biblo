@@ -3,7 +3,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { abbrNum, getInitials } from '../../config/shared';
-import { arrayType, numberType, stringType } from '../../config/types';
+import { arrayType, numberType, stringType } from '../../config/proptypes';
 
 const Bubbles = ({ items, label, limit }) => {
   const count = items?.length;
@@ -27,20 +27,20 @@ const Bubbles = ({ items, label, limit }) => {
       </>
     ) : text : ''
   );
-}
+};
 
 Bubbles.propTypes = {
   // isScrollable: boolType,
   items: arrayType,
   label: stringType,
   limit: numberType
-}
+};
 
 Bubbles.defaultProps = {
   // isScrollable: false,
   items: null,
   label: 'follower',
   limit: 3
-}
+};
  
 export default Bubbles;

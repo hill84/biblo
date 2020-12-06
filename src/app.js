@@ -21,7 +21,7 @@ import Profile from './components/pages/profile';
 import Signup from './components/pages/signup';
 import { app } from './config/shared';
 import { defaultTheme } from './config/themes';
-import { boolType, funcType, locationType, objectType, oneOfType, stringType } from './config/types';
+import { boolType, funcType, locationType, objectType, oneOfType, stringType } from './config/proptypes';
 import { GroupProvider } from './context/groupContext';
 import SnackbarContext, { SnackbarProvider } from './context/snackbarContext';
 import UserContext, { UserProvider } from './context/userContext';
