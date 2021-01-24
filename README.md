@@ -29,3 +29,17 @@ First clone this repo `git clone https://github.com/hill84/biblo.git`
 ### Install dependencies and run
 
 Just run `npm install`, when finished type `npm start` to run your app in development mode.
+
+## Build and deploy
+
+Run `npm build` and one of the following commands to deploy:
+* `npm run deploy`
+* `npm run deploy:hosting`
+* `npm run deploy:functions`
+* `npm run deploy:staging`
+* `npm run deploy:staging:hosting`
+* `npm run deploy:staging:functions`
+
+## Maintenance
+
+Update regularly your local version of [firebase-tools](https://www.npmjs.com/package/firebase-tools) with `npm i -g firebase-tools`.

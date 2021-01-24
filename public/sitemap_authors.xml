@@ -6,6 +6,24 @@
   xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" 
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
   xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url> <loc>https://biblo.space/author/David_Attenborough</loc> </url>
+  <url> <loc>https://biblo.space/author/Licia_Troisi</loc> </url>
+  <url> <loc>https://biblo.space/author/Luca_Perri</loc> </url>
+  <url> <loc>https://biblo.space/author/Stefano_Liberti</loc> </url>
+  <url> <loc>https://biblo.space/author/Beatrice_Mautino</loc> </url>
+  <url> <loc>https://biblo.space/author/Yuval_Noah_Harari</loc> </url>
+  <url> <loc>https://biblo.space/author/Salman_Rushdie</loc> </url>
+  <url> <loc>https://biblo.space/author/Jennifer_Egan</loc> </url>
+  <url> <loc>https://biblo.space/author/Jojo_Moyes</loc> </url>
+  <url> <loc>https://biblo.space/author/Luis_Sep%C3%BAlveda</loc> </url>
+  <url> <loc>https://biblo.space/author/Dario_Bressanini</loc> </url>
+  <url> <loc>https://biblo.space/author/Barbascura_X</loc> </url>
+  <url> <loc>https://biblo.space/author/David_Quammen</loc> </url>
+  <url> <loc>https://biblo.space/author/Tiziano_Terzani</loc> </url>
+  <url> <loc>https://biblo.space/author/James_SA_Corey</loc> </url>
+  <url> <loc>https://biblo.space/author/Woody_Allen</loc> </url>
+  <url> <loc>https://biblo.space/author/Gabriella_Greison</loc> </url>
+  <url> <loc>https://biblo.space/author/Roberto_Burioni</loc> </url>
   <url> <loc>https://biblo.space/author/Cinzia_Giorgio</loc> </url>
   <url> <loc>https://biblo.space/author/Howard_Phillips_Lovecraft</loc> </url>
   <url> <loc>https://biblo.space/author/Giuseppe_Culicchia</loc> </url>
