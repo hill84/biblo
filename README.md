@@ -28,11 +28,11 @@ First clone this repo `git clone https://github.com/hill84/biblo.git`
 
 ### Install dependencies and run
 
-Just run `npm install`, when finished type `npm start` to run your app in development mode.
+Just run `npm install`, when finished type `npm run start` to run your app in development mode.
 
 ## Build and deploy
 
-Run `npm build` and one of the following commands to deploy:
+Update package.json version, run `npm run build` (also in `functions` folder if necessary) and one of the following commands to deploy:
 * `npm run deploy`
 * `npm run deploy:hosting`
 * `npm run deploy:functions`
