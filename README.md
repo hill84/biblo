@@ -32,13 +32,16 @@ Just run `npm install`, when finished type `npm run start` to run your app in de
 
 ## Build and deploy
 
-Update package.json version, run `npm run build` (also in `functions` folder if necessary) and one of the following commands to deploy:
-* `npm run deploy`
-* `npm run deploy:hosting`
-* `npm run deploy:functions`
-* `npm run deploy:staging`
-* `npm run deploy:staging:hosting`
-* `npm run deploy:staging:functions`
+1. Update package.json version
+2. Run `npm run build` (also in `functions` folder if necessary)
+3. Run `firebase login`
+4. Run one of the following commands to deploy:
+  * `npm run deploy`
+  * `npm run deploy:hosting`
+  * `npm run deploy:functions`
+  * `npm run deploy:staging`
+  * `npm run deploy:staging:hosting`
+  * `npm run deploy:staging:functions`
 
 ## Maintenance
 
