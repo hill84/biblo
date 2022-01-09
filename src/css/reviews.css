@@ -1,19 +1,22 @@
 .card.reviews {
   --minPad: 14px;
-  
+
   padding-top: var(--minPad);
   padding-bottom: var(--minPad);
 }
 .reviews {
-  & .review { will-change: opacity, transform; animation: fadeIn .2s ease-in-out; }
+  & .review {
+    will-change: opacity, transform;
+    animation: fadeIn .2s ease-in-out;
+  }
   & .head {
     & h2 { margin-bottom: 1rem; }
-    & .counter { 
-      line-height: inherit; 
-      font-size: .82rem; 
-      color: var(--lighterTextClr); 
-      margin-left: 10px; 
-      font-weight: 200; 
+    & .counter {
+      line-height: inherit;
+      font-size: .82rem;
+      color: var(--lighterTextClr);
+      margin-left: 10px;
+      font-weight: 200;
     }
   }
 }
@@ -26,7 +29,7 @@
 
 .review, .comment {
   --minPad: 14px;
-  --avatarSize: 32px; 
+  --avatarSize: 32px;
   --bookWidth: 40px;
   --coverWidth: 40px;
   --coverHeight: 62px;
@@ -42,31 +45,43 @@
     padding-right: var(--pad);
     padding-bottom: var(--minPad);
   }
-  & .cover { --pad: 7px; font-size: 7px; }
+  & .cover {
+    --pad: 7px;
+
+    font-size: 7px;
+  }
   & + .review, & .comment {
     margin-top: var(--minPad);
     padding-top: var(--minPad);
     border-top: 2px solid rgba(var(--blackClr), .05);
   }
-  & .left { position: relative; padding-right: 0; }
+  & .left {
+    position: relative;
+    padding-right: 0;
+  }
   & .left .avatar.absolute {
-    --avatarSize: 28px; 
+    --avatarSize: 28px;
+
     position: absolute;
     top: 3px;
     right: -9px;
     border: 3px solid rgb(var(--cardClr));
-    background-color: #bdbdbd;
-    font-size: .7rem; 
+    background-color: #BDBDBD;
+    font-size: .7rem;
     will-change: opacity, transform;
     transition: all .2s ease-in-out;
   }
-  & .left .avatar { 
-    width: var(--avatarSize); 
-    height: var(--avatarSize); 
-    line-height: var(--avatarSize); 
-    font-size: .8rem; 
+  & .left .avatar {
+    width: var(--avatarSize);
+    height: var(--avatarSize);
+    line-height: var(--avatarSize);
+    font-size: .8rem;
   }
-  & .hoverable-items:hover .avatar.absolute { opacity: 0; transform: scale(0); user-select: none; }
+  & .hoverable-items:hover .avatar.absolute {
+    opacity: 0;
+    transform: scale(0);
+    user-select: none;
+  }
   & .right { padding-left: var(--minPad); }
   & .head {
     line-height: var(--avatarSize);
@@ -78,7 +93,7 @@
       overflow: hidden;
       white-space: nowrap;
       transition: all .2s ease-in-out;
-      & .date { 
+      & .date {
         font-size: .82rem;
         color: var(--lighterTextClr);
         margin-left: 10px;
@@ -86,24 +101,48 @@
       }
     }
   }
-  & .title { color: rgb(var(--contrastedTextClr)); margin-top: .2rem; }
+  & .title {
+    color: rgb(var(--contrastedTextClr));
+    margin-top: .2rem;
+  }
   & .rating {
     line-height: inherit;
     animation: none;
     & .rating-num { margin-left: 7px; }
     & .ratings-num { display: none; }
   }
-  & .text { font-weight: 300; margin-top: .2rem; white-space: pre-line; word-wrap: break-word; }
+  & .text {
+    font-weight: 300;
+    margin-top: .2rem;
+    white-space: pre-line;
+    word-wrap: break-word;
+  }
   & .foot {
     color: var(--lighterTextClr);
     font-size: .82rem;
     & .counter { display: inline-block; }
     & .counter + .counter { margin-left: 3px; }
-    & .counter:after { content: none; }
-    & .btn { --btnFontSize: .75rem; --btnHeight: 26px; --btnPad: .5rem; margin-top: 0; margin-bottom: 0; }
-    & .btn:disabled { color: var(--lighterTextClr); cursor: unset; opacity: 1; }
+    & .counter::after { content: none; }
+    & .btn {
+      --btnFontSize: .75rem;
+      --btnHeight: 26px;
+      --btnPad: .5rem;
+
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    & .btn:disabled {
+      color: var(--lighterTextClr);
+      cursor: unset; opacity: 1;
+    }
     & .thumb { margin-left: calc(-1 * var(--btnPad)); }
-    & .thumb svg { margin-right: 3px; width: 16px !important; height: 16px !important; transition: all .2s ease-in-out; will-change: transform; }
+    & .thumb svg {
+      margin-right: 3px;
+      width: 16px !important;
+      height: 16px !important;
+      transition: all .2s ease-in-out;
+      will-change: transform;
+    }
   }
 }
 .comment {

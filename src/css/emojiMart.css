@@ -19,11 +19,11 @@
   background-color: rgb(var(--canvasLightClr));
   & .emoji-mart-category-label span {
     background-color: rgb(var(--canvasLightClr));
-    color: #fff;
+    color: #FFF;
   }
   & .emoji-mart-search input {
     background-color: rgb(var(--canvasClr));
     border-color: rgba(var(--blackClr), .1);
-    color: #fff;
+    color: #FFF;
   }
 }

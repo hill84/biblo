@@ -1,6 +1,73 @@
 @import 'media-queries.css';
 
-#BookProfile {
+.select-isbn {
+  -webkit-appearance: none;
+  border-color: transparent;
+  border-radius: var(--radius);
+  background-color: transparent;
+  padding: 2px 5px;
+  margin-left: -6px;
+  cursor: pointer;
+  color: var(--mainTextClr);
+  &:hover { border-color: rgba(var(--blackClr), .1); }
+}
+
+.book-profile {
+  & .title, & .subtitle {
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 130%;
+  }
+  & .title {
+    font-size: 2.2rem;
+    &.flex { align-items: center; }
+    & .mention {
+      display: flex;
+      opacity: 0;
+      margin-left: .5rem;
+    }
+    &:hover .mention { opacity: 1; }
+  }
+  & .subtitle {
+    font-size: 1.35rem;
+    color: var(--lightTextClr);
+  }
+  & .rating {
+    height: var(--btnHeight);
+    line-height: var(--btnHeight);
+  }
+  & .description {
+    margin-top: .65em;
+    margin-bottom: .65em;
+    white-space: pre-line;
+    word-wrap: break-word;
+  }
+  &.dark {
+    & .title, & .subtitle { font-weight: 300; }
+  }
+}
+
+@media (--to-l) {
+  #bookProfile {
+    & .share-buttons {
+      position: absolute; top: 0; left: 0;
+      & .btn-share-container {
+        display: block;
+        margin: 0 .4em .4em;
+      }
+    }
+    & .book-profile {
+      & .title .mention { display: none; }
+      & .rating {
+        display: block;
+        /* & .react-rater { font-size: 1.4rem; } */
+      }
+    }
+  }
+}
+
+#bookProfile {
   position: relative;
   z-index: 1;
   & .card {
@@ -18,57 +85,8 @@
   }
 }
 
-.select-isbn {
-  -webkit-appearance: none;
-  border-color: transparent;
-  border-radius: var(--radius);
-  background-color: transparent;
-  padding: 2px 5px;
-  margin-left: -6px;
-  cursor: pointer;
-  color: var(--mainTextClr);
-  &:hover { border-color: rgba(var(--blackClr), .1); }
-}
-
-.book-profile {
-  &.dark {
-    & .title, & .subtitle { font-weight: 300; }
-  }
-  & .title, & .subtitle {
-    margin-top: 0;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 130%;
-  }
-  & .title {
-    font-size: 2.2rem;
-    &.flex { align-items: center; }
-    & .mention { display: flex; opacity: 0; margin-left: .5rem; }
-    &:hover .mention { opacity: 1; }
-  }
-  & .subtitle { font-size: 1.35rem; color: var(--lightTextClr); }
-  & .rating { height: var(--btnHeight); line-height: var(--btnHeight); }
-  & .description { margin-top: .65em; margin-bottom: .65em; white-space: pre-line; word-wrap: break-word; }
-}
-
-@media (--to-l) {
-  #BookProfile {
-    & .share-buttons {
-      position: absolute; top: 0; left: 0;
-      & .btn-share-container { display: block; margin: 0 .4em .4em; }
-    }
-    & .book-profile {
-      & .title .mention { display: none; }
-      & .rating {
-        display: block;
-        /* & .react-rater { font-size: 1.4rem; } */
-      }
-    }
-  }
-}
-
 @media (--to-s) {
-  #BookProfile .book-profile {
+  #bookProfile .book-profile {
     & .title .mention { display: none; }
     & .author {
       white-space: nowrap;
@@ -79,14 +97,17 @@
       vertical-align: middle;
     }
     & .user.rating {
-      & .react-rater { font-size: 2.3rem; line-height: inherit; }
+      & .react-rater {
+        font-size: 2.3rem;
+        line-height: inherit;
+      }
       & .label { display: none; }
     }
   }
 }
 
 @media (pointer: coarse) {
-  #BookProfile .book-profile .user.rating {
+  #bookProfile .book-profile .user.rating {
     & .react-rater { font-size: 2.3rem; }
     & .label { display: none; }
   }

@@ -18,7 +18,7 @@
       background-size: 150px 100%;
       background-repeat: no-repeat;
       background-position: -150px 0;
-      animation: skltn_shelfRow 2.5s infinite linear;
+      animation: skltnShelfRow 2.5s infinite linear;
       z-index: 1;
     }
   }
@@ -36,7 +36,7 @@
     width: 100%;
     height: var(--shelf-rowHeight);
     background:
-      linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnCoverX) top, 
+      linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnCoverX) top,
       linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnTitleY),
       linear-gradient(var(--skltnClr), var(--skltnClr)) var(--skltnTitleX) var(--skltnAuthorY);
     background-size: var(--coverWidth) var(--coverHeight), var(--bookWidth) 12px, calc(var(--coverWidth) * .8) 11px;
@@ -51,7 +51,7 @@
     --skltnAuthorY: 30px;
     --skltnCoverX: 0;
     --skltnTitleX: 100px;
-    
+
     height: calc(3 * (var(--shelf-rowHeight) + 15px));
   }
   &.bubble {
@@ -64,7 +64,7 @@
     height: var(--shelf-rowHeight);
     border-radius: 0;
     background-image:
-      radial-gradient(circle var(--avatarSize), var(--skltnClr) 50%, transparent 0), 
+      radial-gradient(circle var(--avatarSize), var(--skltnClr) 50%, transparent 0),
       linear-gradient(var(--skltnClr), var(--skltnClr));
     background-size: var(--avatarSize) var(--avatarSize), var(--coverWidth) 12px;
     background-position: var(--skltnCoverX) top, var(--skltnTitleX) var(--skltnTitleY);
@@ -102,7 +102,7 @@
 
     height: var(--height);
     background-image:
-      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
+      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0),
       linear-gradient(var(--skltnClr) 50%, transparent 50%),
       repeating-linear-gradient(var(--skltnClr), var(--skltnClr) 11px, transparent 11px, transparent 22px),
       linear-gradient(var(--skltnClr) 50%, transparent 50%);
@@ -138,13 +138,13 @@
 
     height: var(--rowH);
     background-image:
-      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
+      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0),
       linear-gradient(var(--skltnClr) 50%, transparent 50%),
       linear-gradient(var(--skltnClr) 50%, transparent 50%),
       linear-gradient(var(--skltnLightClr) 50%, transparent 50%);
     background-position:
-      var(--padH) var(--padV), 
-      var(--padTextH) var(--padTextV), 
+      var(--padH) var(--padV),
+      var(--padTextH) var(--padTextV),
       100% var(--padTextV),
       0 var(--height);
     background-size:
@@ -163,19 +163,19 @@
 
     height: var(--height);
     background-image:
-      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0), 
+      radial-gradient(circle calc(var(--avatarSize) / 2), var(--skltnClr) 99%, transparent 0),
       linear-gradient(var(--skltnClr) 50%, transparent 50%),
       linear-gradient(var(--skltnClr) 50%, transparent 50%);
     background-position:
-      0 var(--padV), 
-      calc(var(--avatarSize) + (var(--padH) * 2)) var(--padTextV), 
+      0 var(--padV),
+      calc(var(--avatarSize) + (var(--padH) * 2)) var(--padTextV),
       100% var(--padTextV);
     background-size: var(--avatarSize) var(--avatarSize), 170px var(--textH), var(--height) var(--textH);
   }
   &.dash {
     height: 35px;
     background-image:
-      radial-gradient(circle 10px, var(--skltnClr) 99%, transparent 0), 
+      radial-gradient(circle 10px, var(--skltnClr) 99%, transparent 0),
       linear-gradient(var(--skltnClr) 50%, transparent 50%),
       linear-gradient(var(--skltnClr) 50%, transparent 50%);
     background-position: 0 7px, 34px 11px, 100% 11px;

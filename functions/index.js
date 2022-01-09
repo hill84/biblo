@@ -24,7 +24,7 @@ const count = ({
     increment = change;
   } else {
     if (change.after.exists && !change.before.exists) { increment = 1 } else 
-    if (!change.after.exists && change.before.exists) { increment = -1 } else { return null };
+    if (!change.after.exists && change.before.exists) { increment = -1 } else { return null }
   }
 
   const countRef = admin.firestore().doc(`${collection}/${doc}`);
@@ -177,11 +177,11 @@ exports.clearBook = ff.document('books/{bid}').onDelete((snap, context) => {
             snap.forEach(commenter => {
               reviewerCommentersRef.doc(commenter.id).delete(); // delete comments
             });
-          } else { ReviewerRef.delete(); } // delete reviewers
+          } else { ReviewerRef.delete() } // delete reviewers
         });
 
       });
-    } else { ReviewRef.delete(); } // delete reviews
+    } else { ReviewRef.delete() } // delete reviews
   });
   return admin.storage().bucket().deleteFiles({ prefix: `books/${bid}` }); // delete folder in storage
 });

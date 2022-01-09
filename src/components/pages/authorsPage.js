@@ -3,13 +3,14 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { Component } from 'react';
+import classnames from 'classnames';
+import React, { Component, Fragment } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, getInitials, handleFirestoreError, normURL } from '../../config/shared';
 import { funcType } from '../../config/proptypes';
+import { app, getInitials, handleFirestoreError, normURL } from '../../config/shared';
 import PaginationControls from '../paginationControls';
 
 const orderBy = [ 
@@ -22,7 +23,7 @@ const orderBy = [
 const limit = 27;
 
 export default class AuthorsPage extends Component {
-	state = {
+  state = {
     items: null,
     count: 0,
     desc: false,
@@ -83,7 +84,7 @@ export default class AuthorsPage extends Component {
           this.setState({ firstVisible: null, items: null, lastVisible: null, loading: false, page: 1 });
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    }
+    };
 
     if (!direction) {
       countRef('authors').get().then(fullSnap => {
@@ -104,7 +105,7 @@ export default class AuthorsPage extends Component {
   onChangeOrderBy = (e, i) => this.setState({ orderByIndex: i, orderMenuAnchorEl: null, page: 1 });
   onCloseOrderMenu = () => this.setState({ orderMenuAnchorEl: null });
 	
-	render() {
+  render() {
     const { count, desc, items, loading, orderByIndex, orderMenuAnchorEl, page } = this.state;
 
     // if (loading) return <div aria-hidden="true" className="loader"><CircularProgress /></div> 
@@ -119,7 +120,7 @@ export default class AuthorsPage extends Component {
       </MenuItem>
     ));
 
-		return (
+    return (
       <div className="container" id="authorsComponent">
         <Helmet>
           <title>{app.name} | Autori</title>
@@ -129,7 +130,7 @@ export default class AuthorsPage extends Component {
           {!loading && !items ? (
             <div className="empty text-center">Nessun elemento</div>
           ) : (
-            <>
+            <Fragment>
               {loading && (
                 <div aria-hidden="true" className="loader"><CircularProgress /></div>
               )}
@@ -145,7 +146,7 @@ export default class AuthorsPage extends Component {
                       <span>
                         <button
                           type="button"
-                          className={`btn sm flat counter ${desc ? 'desc' : 'asc'}`}
+                          className={classnames('btn', 'sm', 'flat', 'counter', desc ? 'desc' : 'asc')}
                           onClick={this.onToggleDesc}
                           disabled={count < 2}>
                           {icon.arrowDown}
@@ -181,10 +182,10 @@ export default class AuthorsPage extends Component {
                 page={page}
               />
               
-            </>
+            </Fragment>
           )}
         </div>
       </div>
-		);
-	}
+    );
+  }
 }

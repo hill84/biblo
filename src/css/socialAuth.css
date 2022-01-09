@@ -5,12 +5,13 @@
     &:first-child { padding-left: 7px; }
     &:last-child { padding-right: 7px; }
   }
-  & button { 
-    float: left; 
-    width: 100%; 
-    margin: 3px 0; 
-    text-transform: initial; 
-    font-size: .85rem; 
+
+  & button {
+    float: left;
+    width: 100%;
+    margin: 3px 0;
+    text-transform: initial;
+    font-size: .85rem;
     letter-spacing: .03rem;
     &:disabled {
       cursor: not-allowed;

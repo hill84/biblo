@@ -1,13 +1,13 @@
-.bottom-bar { 
+.bottom-bar {
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   background-color: transparent;
   box-shadow: none;
-  border-radius: 0; 
-  margin-bottom: 0; 
-  margin-top: 48px; 
+  border-radius: 0;
+  margin-bottom: 0;
+  margin-top: 48px;
   line-height: 200%;
   font-size: .82rem;
   & .container { margin-top: 0; }

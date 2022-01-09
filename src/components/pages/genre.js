@@ -1,13 +1,15 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import classnames from 'classnames';
+import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { app, denormURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize } from '../../config/shared';
 import { matchType } from '../../config/proptypes';
+import { app, denormURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize } from '../../config/shared';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
 import Cover from '../cover';
@@ -16,7 +18,6 @@ import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from '../skeletons';
 import Bubbles from './bubbles';
-import SnackbarContext from '../../context/snackbarContext';
 
 const unsub = {
   genreFollowersFetch: null
@@ -59,7 +60,7 @@ const Genre = ({ match }) => {
     return () => {
       is.current = false;
       window.removeEventListener('resize', updateScreenSize);
-    }
+    };
   }, []);
 
   const fetchFollowers = useCallback(() => {
@@ -80,7 +81,7 @@ const Genre = ({ match }) => {
 
     return () => {
       unsub.genreFollowersFetch && unsub.genreFollowersFetch();
-    }
+    };
   }, [gid, user]);
 
   const fetchGenre = useCallback(() => {
@@ -139,7 +140,7 @@ const Genre = ({ match }) => {
           // setLoading(false);
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    } else console.warn(`No gid`);
+    } else console.warn('No gid');
   }, [desc, gid, openSnackbar, orderByIndex]);
 
   useEffect(() => {
@@ -178,7 +179,7 @@ const Genre = ({ match }) => {
       }).finally(() => {
         if (is.current) setLoading(false);
       });
-    } else console.warn(`No gid`);
+    } else console.warn('No gid');
   };
 
   const onChangeOrderBy = (e, i) => {
@@ -225,10 +226,10 @@ const Genre = ({ match }) => {
   
   const orderByOptions = useMemo(() => orderBy.map((option, i) => (
     <MenuItem
-    key={option.type}
-    disabled={i === -1}
-    selected={i === orderByIndex}
-    onClick={e => onChangeOrderBy(e, i)}>
+      key={option.type}
+      disabled={i === -1}
+      selected={i === orderByIndex}
+      onClick={e => onChangeOrderBy(e, i)}>
       {option.label}
     </MenuItem>
   )), [orderByIndex]);
@@ -286,14 +287,14 @@ const Genre = ({ match }) => {
           <div className="info-row">
             <button
               type="button"
-              className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`}
+              className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')}
               disabled={!isEditor}
               onClick={onFollow}>
               {follow ? (
-                <>
+                <Fragment>
                   <span className="hide-on-hover">{icon.check} Segui</span>
                   <span className="show-on-hover">Smetti</span>
-                </> 
+                </Fragment> 
               ) : <span>{icon.plus} Segui</span> }
             </button>
             <div className="counter last inline">
@@ -332,7 +333,7 @@ const Genre = ({ match }) => {
                     </button>
                     <button
                       type="button"
-                      className={`btn sm flat counter icon ${desc ? 'desc' : 'asc'}`}
+                      className={classnames('btn', 'sm', 'flat', 'counter', 'icon', desc ? 'desc' : 'asc')}
                       disabled={!items}
                       title={desc ? 'Ascendente' : 'Discendente'}
                       onClick={onToggleDesc}>
@@ -349,7 +350,7 @@ const Genre = ({ match }) => {
                 </div>
               </div>
               {loading && !items ? !coverview ? skltn_shelfStack : skltn_shelfRow : (
-                <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`}>
+                <div className={classnames('shelf-row books-per-row-4', coverview ? 'coverview' : 'stacked')}>
                   {covers}
                 </div>
               )}
@@ -375,14 +376,14 @@ const Genre = ({ match }) => {
       )}
     </div>
   );
-}
+};
 
 Genre.propTypes = {
   match: matchType
-}
+};
 
 Genre.defaultProps = {
   match: null
-}
- 
+};
+
 export default Genre;

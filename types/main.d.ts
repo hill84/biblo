@@ -18,3 +18,7 @@ declare module '*.webp' {
   const value: any;
   export default value;
 }
+
+declare module 'react-say' {
+  export const SayButton: any;
+}

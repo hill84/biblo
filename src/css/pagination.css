@@ -1,8 +1,11 @@
 .pagination {
   --size: 20px;
-  
+
   padding-bottom: 14px;
-  & .page { padding: 0 10px; font-weight: 200; }
+  & .page {
+    padding: 0 10px;
+    font-weight: 200;
+  }
   & .btn {
     vertical-align: middle;
     margin-top: 0;

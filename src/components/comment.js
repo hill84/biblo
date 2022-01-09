@@ -3,17 +3,20 @@ import Avatar from '@material-ui/core/Avatar';
 import Grow from '@material-ui/core/Grow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import classnames from 'classnames';
 import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
 import icon from '../config/icons';
-import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncateString } from '../config/shared';
 import { commentType, funcType, stringType } from '../config/proptypes';
+import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncateString } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import FlagDialog from './flagDialog';
 
-const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
+const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} />);
+
+Transition.displayName = 'Transition';
 
 const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
@@ -101,6 +104,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
 
   const onRemoveFlag = useCallback(() => {
     if (bid && comment && rid && isAdmin) {
+      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
       const { flag, ...rest } = comment;
       if (is.current) setFlagLoading(true);
       reviewerCommenterRef(bid, rid, comment.createdByUid).set(rest).then(() => {
@@ -118,7 +122,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
         // console.log(`Comment deleted`);
         openSnackbar('Risposta cancellata', 'success');
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    } else console.warn(`No bid`);
+    } else console.warn('No bid');
   };
 
   const onOpenActionsMenu = e => setActionsAnchorEl(e.currentTarget);
@@ -128,15 +132,16 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const isOwner = useMemo(() => comment.createdByUid === (user?.uid), [comment, user]);
   const isReviewer = useMemo(() => comment.createdByUid === rid, [comment, rid]);
   const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
-  const classNames = useMemo(() => `${isOwner ? 'own comment' : 'comment'} ${comment.flag ? `flagged ${comment.flag.value}` : ''}`, [comment, isOwner]);
-
+  
   return (
     <>
-      <div className={classNames} id={`${rid}-${comment.createdByUid}`} ref={is}>
+      <div className={classnames(isOwner ? 'own comment' : 'comment', { [`flagged ${comment.flag?.value}`]: comment.flag })} id={`${rid}-${comment.createdByUid}`} ref={is}>
         <div className="row">
           <div className="col-auto left">
             <Link to={`/dashboard/${comment.createdByUid}`}>
-              <Avatar className="avatar" src={comment.photoURL} alt={comment.displayName}>{!comment.photoURL && getInitials(comment.displayName)}</Avatar>
+              <Avatar className="avatar" src={comment.photoURL} alt={comment.displayName}>
+                {!comment.photoURL && getInitials(comment.displayName)}
+              </Avatar>
             </Link>
           </div>
           <div className="col right">
@@ -174,7 +179,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
                       <span>
                         <button 
                           type="button"
-                          className={`btn flat thumb up ${like}`} 
+                          className={classnames('btn', 'flat', 'thumb', 'up', like)} 
                           disabled={!isEditor || isOwner} 
                           onClick={onThumbChange}>
                           {icon.thumbUp} {abbrNum(likes_num)}
@@ -188,7 +193,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
                         <span>
                           <button 
                             type="button"
-                            className={`btn flat thumb down ${dislike}`} 
+                            className={classnames('btn', 'flat', 'thumb', 'down', dislike)} 
                             disabled={!isEditor || isOwner} 
                             onClick={onThumbChange}>
                             {icon.thumbDown} {abbrNum(dislikes_num)}
@@ -228,7 +233,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
       )}
     </>
   );
-}
+};
 
 Comment.propTypes = {
   bid: stringType.isRequired,
@@ -236,6 +241,6 @@ Comment.propTypes = {
   onEdit: funcType.isRequired,
   reviewerDisplayName: stringType.isRequired,
   rid: stringType.isRequired
-}
+};
 
 export default Comment;

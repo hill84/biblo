@@ -1,16 +1,16 @@
 .card.user-review, .card.reviews {
   --minPad: 14px;
-  
+
   padding-top: var(--minPad);
   padding-bottom: var(--minPad);
 }
 
 .card.user-review .footer { margin-bottom: calc(var(--minPad) * -1); }
 
-.card.edit-review { 
-  will-change: transform, opacity; 
-  transform-origin: top; 
-  max-height: 500px; 
-  animation: slideDown .4s ease-in-out; 
-  z-index: 10; 
+.card.edit-review {
+  will-change: transform, opacity;
+  transform-origin: top;
+  max-height: 500px;
+  animation: slideDown .4s ease-in-out;
+  z-index: 10;
 }

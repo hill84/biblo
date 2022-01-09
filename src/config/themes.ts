@@ -1,9 +1,9 @@
 import amber from '@material-ui/core/colors/amber';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import cyan from '@material-ui/core/colors/cyan';
-import { createMuiTheme, Theme } from '@material-ui/core/styles';
+import { createTheme, Theme } from '@material-ui/core/styles';
 
-export const defaultTheme: Theme = createMuiTheme({
+export const defaultTheme: Theme = createTheme({
   palette: {
     type: 'light',
     primary: {
@@ -29,7 +29,7 @@ export const defaultTheme: Theme = createMuiTheme({
   }
 });
 
-export const darkTheme: Theme = createMuiTheme({
+export const darkTheme: Theme = createTheme({
   palette: {
     type: 'dark',
     primary: {
@@ -51,7 +51,7 @@ export const darkTheme: Theme = createMuiTheme({
   }
 });
 
-export const primaryTheme: Theme = createMuiTheme({
+export const primaryTheme: Theme = createTheme({
   palette: {
     type: 'dark',
     primary: {

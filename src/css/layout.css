@@ -1,15 +1,18 @@
-#layoutComponent { padding-top: var(--headerHeight); flex-grow: 1; }
+#layoutComponent {
+  padding-top: var(--headerHeight);
+  flex-grow: 1;
+}
 
 /* HEADER */
-.top-bar { 
-  position: fixed !important; 
+.top-bar {
+  position: fixed !important;
   top: 0;
   display: flex;
   flex-shrink: 0;
   flex-direction: column;
   background-color: rgba(var(--cardClr), .94);
   backdrop-filter: saturate(180%) blur(10px);
-  color: rgb(var(--contrastedTextClr)); 
+  color: rgb(var(--contrastedTextClr));
   box-shadow: 0 1px 10px -2px rgba(var(--blackClr), .25);
   width: 100%;
   box-sizing: border-box;
@@ -37,26 +40,37 @@
   }
   & svg.svg-icon { --iconSize: 24px; }
   & button .dot { box-shadow: 0 0 0 3px rgb(var(--cardClr)); }
+  & .more-btn {
+    margin-right: -12px;
+    padding: 7px;
+  }
+  & .drawer-btn { margin-left: -12px; }
+  & a {
+    display: flex;
+    &.active {
+      background-color: rgba(var(--blackClr), .05);
+    }
+  }
   & a, & button, & .more-btn, & .drawer-btn {
     color: currentColor;
     &:not(.primary):not(.secondary) {
       &:hover, &.active:hover { color: rgb(var(--primaryClr)); }
     }
   }
-  & .more-btn { margin-right: -12px; padding: 7px; }
-  & .drawer-btn { margin-left: -12px; }
-  & a {
-    display: flex;
-    &.active { background-color: rgba(var(--blackClr), .05); }
-  }
   & .reveal { animation-duration: .3s; }
-  & .avatar { --avatarSize: 34px; width: var(--avatarSize); height: var(--avatarSize); font-size: 1rem; }
-  & .search-book { 
+  & .avatar {
+    --avatarSize: 34px;
+
+    width: var(--avatarSize);
+    height: var(--avatarSize);
+    font-size: 1rem;
+  }
+  & .search-book {
     position: absolute;
     top: 4px;
     left: 0;
     right: 0;
-    max-width: 420px; 
+    max-width: 420px;
     margin-left: auto;
     margin-right: auto;
     float: none;
@@ -66,12 +80,12 @@
 }
 
 /* DRAWER */
-.auth-header { 
+.auth-header {
   position: relative;
-  display: block; 
-  padding: 16px; 
+  display: block;
+  padding: 16px;
   background-color: rgb(var(--primaryClr));
-  color: #fff !important;
+  color: #FFF !important;
   overflow: hidden;
   & .background {
     position: absolute;
@@ -87,15 +101,26 @@
   }
   & .avatar {
     margin-top: 10px;
-    & img { position: relative; vertical-align: middle; }
+    & img {
+      position: relative;
+      vertical-align: middle;
+    }
   }
   & .user-info {
     position: relative;
     margin-top: 10px;
-    & div { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+    & div {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
   & .user-name { font-size: 1.15rem; }
-  & .user-email { font-size: .75rem; font-weight: 200; color: rgba(255,255,255,.7); }
+  & .user-email {
+    font-size: .75rem;
+    font-weight: 200;
+    color: rgba(255, 255, 255, .7);
+  }
 }
 
 /* COOKIE BANNER */
@@ -132,7 +157,7 @@
     border-radius: 3px;
     box-shadow: none;
     font-size: .87rem;
-    color: #fff;
+    color: #FFF;
     text-transform: uppercase;
     font-weight: 500;
     cursor: pointer;
@@ -145,14 +170,25 @@
 /* DRAWER */
 .drawer .list {
   width: 256px;
-  & li div { margin: 0; padding: 0; min-width: 36px; }
+  & li div {
+    margin: 0;
+    padding: 0;
+    min-width: 36px;
+  }
   & li div, & .svg-icon, & li div span { color: inherit; }
-  & li .version { font-size: .75rem; font-weight: 200; color: var(--lighterTextClr); }
+  & li .version {
+    font-size: .75rem;
+    font-weight: 200;
+    color: var(--lighterTextClr);
+  }
   & .bottom-item {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    &:hover { background-color: initial; cursor: initial; }
+    &:hover {
+      background-color: initial;
+      cursor: initial;
+    }
   }
 }

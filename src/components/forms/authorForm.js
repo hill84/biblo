@@ -6,11 +6,12 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { classnames } from 'classnames';
+import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
-import { handleFirestoreError, normalizeString } from '../../config/shared';
 import { funcType, stringType } from '../../config/proptypes';
+import { handleFirestoreError, normalizeString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
@@ -40,7 +41,7 @@ const AuthorForm = ({ id, onToggle }) => {
   const is = useRef(true);
 
   const fetch = useCallback(() => {
-    if (typeof id === 'string') {
+    if (id) {
       if (is.current) setLoading(true);
 
       authorRef(id).get().then(snap => {
@@ -162,7 +163,7 @@ const AuthorForm = ({ id, onToggle }) => {
   };
 
   return (
-    <>
+    <Fragment>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="new author" className="dialog light" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
@@ -218,7 +219,7 @@ const AuthorForm = ({ id, onToggle }) => {
                 />
                 {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
                 {(leftChars.bio !== null) && 
-                  <FormHelperText className={`message ${(leftChars.bio < 0) ? 'warning' : 'neutral'}`}>
+                  <FormHelperText className={classnames('message', leftChars.bio < 0 ? 'warning' : 'neutral')}>
                     Caratteri rimanenti: {leftChars.bio}
                   </FormHelperText>
                 }
@@ -276,7 +277,7 @@ const AuthorForm = ({ id, onToggle }) => {
           <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
         </div>
       </div>
-    </>
+    </Fragment>
   );
 };
 

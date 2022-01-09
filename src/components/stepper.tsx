@@ -1,4 +1,5 @@
 import Tooltip from '@material-ui/core/Tooltip';
+import classnames from 'classnames';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import icon from '../config/icons';
 
@@ -48,7 +49,7 @@ const Stepper: FC<StepperProps> = ({
   const percentage = useMemo((): number => Math.round(100 / (steps / activeStep)), [activeStep, steps]);
 
   return (
-    <div className={`stepper-container ${className}`}>
+    <div className={classnames('stepper-container', className)}>
       <div className='row'>
         <div className='col-auto'>
           <button type='button' className='btn flat rounded icon' onClick={onPrev} disabled={activeStep === 0}>

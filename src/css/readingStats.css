@@ -5,6 +5,9 @@
 .stats-list {
   & li {
     line-height: 1.9;
-    & b { display: inline-block; min-width: 18px; }
+    & b {
+      display: inline-block;
+      min-width: 18px;
+    }
   }
 }

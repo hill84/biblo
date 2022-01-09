@@ -1,9 +1,9 @@
-.rating { 
-  line-height: 1.6; 
-  color: var(--lightTextClr); 
+.rating {
+  line-height: 1.6;
+  color: var(--lightTextClr);
   text-transform: uppercase;
-  will-change: opacity; 
-  animation: fadeIn .4s ease-in-out; 
+  will-change: opacity;
+  animation: fadeIn .4s ease-in-out;
   user-select: none;
 }
 .book .rating { text-align: center; }
@@ -22,7 +22,7 @@
 .react-rater-star {
   cursor: pointer;
   color: rgba(var(--blackClr), .1);
-  position: relative; 
+  position: relative;
   transition: color .2s ease-in-out;
   &.will-be-active {
     color: rgb(var(--accentLightClr));
@@ -30,13 +30,13 @@
   &.is-active {
     color: rgb(var(--accentClr));
   }
-  &.is-active-half:before {
+  &.is-active-half::before {
     color: rgb(var(--accentClr));
     content: '\2605';
     position: absolute;
     left: 0;
     width: 50%;
-    overflow: hidden; 
+    overflow: hidden;
   }
   &.is-disabled { cursor: default; }
 }
@@ -47,5 +47,5 @@
 
 .user.rating .react-rater-star {
   &.will-be-active { color: rgb(var(--primaryLightClr)); }
-  &.is-active, &.is-active-half:before { color: rgb(var(--primaryClr)); }
+  &.is-active, &.is-active-half::before { color: rgb(var(--primaryClr)); }
 }

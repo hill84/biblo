@@ -1,12 +1,11 @@
-import React, { createContext, FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { DocumentData, DocumentSnapshot, FirestoreError } from '@firebase/firestore-types';
+import { User } from 'firebase';
+import React, { createContext, FC, useEffect, useMemo, useState } from 'react';
 import { auth, userRef } from '../config/firebase';
 import { handleFirestoreError, hasRole } from '../config/shared';
 import { uidKey } from '../config/storage';
-import { elementType } from '../config/proptypes';
 import useLocalStorage from '../hooks/useLocalStorage';
-import { UserContextModel, UserModel } from 'src/types';
-import { DocumentData, DocumentSnapshot, FirestoreError } from '@firebase/firestore-types';
-import { User } from 'firebase';
+import { UserContextModel, UserModel } from '../types';
 
 const UserContext = createContext<UserContextModel>({
   emailVerified: false,
@@ -28,26 +27,28 @@ export const UserProvider: FC = ({ children }) => {
   const [emailVerified, setEmailVerified] = useState<boolean>(false);
 
   const needsEmailVerification = useMemo((): boolean => !currentUser?.emailVerified && currentUser?.providerData.length === 0, [currentUser]);
-  const isAdmin = useMemo((): boolean => hasRole(user, 'admin'), [user]);
-  const isAuthor = useMemo((): boolean => hasRole(user, 'author'), [user]);
-  const isEditor = useMemo((): boolean => hasRole(user, 'editor'), [user]);
-  const isPremium = useMemo((): boolean => hasRole(user, 'premium'), [user]);
+  const isAdmin = useMemo((): boolean => Boolean(user && hasRole(user, 'admin')), [user]);
+  const isAuthor = useMemo((): boolean => Boolean(user && hasRole(user, 'author')), [user]);
+  const isEditor = useMemo((): boolean => Boolean(user && hasRole(user, 'editor')), [user]);
+  const isPremium = useMemo((): boolean => Boolean(user && hasRole(user, 'premium')), [user]);
 
-  const userProvided = useMemo((): UserContextModel => ({
+  const provided = useMemo((): UserContextModel => ({
     emailVerified, error, isAuth, isAdmin, isAuthor, isEditor, isPremium, user 
   }), [ 
     emailVerified, error, isAuth, isAdmin, isAuthor, isEditor, isPremium, user 
   ]);
 
-  const fetchUser = useCallback((uid: string) => userRef(uid).onSnapshot((snap: DocumentSnapshot<DocumentData>): void => {
-    if (snap.exists) {
-      setUser(snap.data() as UserModel);
-      setError('');
-    } else console.warn('User not found in database');
-  }, (err: Error): void => {
-    setError(handleFirestoreError(err as FirestoreError));
-    setUser(undefined);
-  }), []);
+  const fetchUser = (uid: string): void => {
+    userRef(uid).onSnapshot((snap: DocumentSnapshot<DocumentData>): void => {
+      if (snap.exists) {
+        setUser(snap.data() as UserModel);
+        setError('');
+      } else console.warn('User not found in database');
+    }, (err: Error): void => {
+      setError(handleFirestoreError(err as FirestoreError));
+      setUser(undefined);
+    });
+  };
 
   useEffect(() => {
     auth.onIdTokenChanged((user: User | null): void => {
@@ -72,16 +73,11 @@ export const UserProvider: FC = ({ children }) => {
       }
     });
     // eslint-disable-next-line
-  }, [fetchUser, needsEmailVerification]);
+  }, [needsEmailVerification]);
 
   return (
-    <UserContext.Provider
-      value={userProvided}>
+    <UserContext.Provider value={provided}>
       {children}
     </UserContext.Provider>
   );
-};
-
-UserProvider.propTypes = {
-  children: elementType.isRequired
 };

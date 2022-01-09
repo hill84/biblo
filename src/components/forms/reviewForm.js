@@ -12,14 +12,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import classnames from 'classnames';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
-import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, checkBadWords, extractUrls, getInitials, handleFirestoreError, join, timeSince } from '../../config/shared';
 import { stringType, userBookType } from '../../config/proptypes';
+import { abbrNum, checkBadWords, extractUrls, getInitials, handleFirestoreError, join, timeSince } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/emojiMart.css';
@@ -28,7 +29,9 @@ import emojiMartLocale from '../../locales/emojiMart';
 import Overlay from '../overlay';
 import Rating from '../rating';
 
-const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} /> );
+const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} />);
+
+Transition.displayName = 'Transition';
 
 const EmojiPickerStyle = {
   position: 'absolute',
@@ -47,7 +50,7 @@ const max = {
 
 const min = {
   chars: {
-    text: 100
+    text: 25
   }
 };
 
@@ -126,7 +129,7 @@ const ReviewForm = ({ bid, userBook }) => {
     const badWords = checkBadWords(text);
 
     if (!text) {
-      errors.text = "Aggiungi una recensione";
+      errors.text = 'Aggiungi una recensione';
     } else if (text.length > max.chars.text) {
       errors.text = `Massimo ${max.chars.text} caratteri`;
     } else if (text.length < min.chars.text) {
@@ -134,7 +137,7 @@ const ReviewForm = ({ bid, userBook }) => {
     } else if (urlMatches) {
       errors.text = `Non inserire link (${join(urlMatches)})`;
     } else if (badWords) {
-      errors.text = "Niente volgarità";
+      errors.text = 'Niente volgarità';
     }
 
     if (title?.length > max.chars.title) {
@@ -155,6 +158,7 @@ const ReviewForm = ({ bid, userBook }) => {
         if (is.current) setLoading(true);
 
         if (bid && user) {
+          // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
           const { comments_num, flag, likes, ...userBookReview } = review;
           const updatedReview = {
             bookTitle: userBook.title,
@@ -171,7 +175,7 @@ const ReviewForm = ({ bid, userBook }) => {
             ...review,
             ...updatedReview
           }).then(() => {
-            openSnackbar('Recensione salvata', 'success')
+            openSnackbar('Recensione salvata', 'success');
           }).catch(err => {
             openSnackbar(handleFirestoreError(err), 'error');
           });
@@ -193,7 +197,7 @@ const ReviewForm = ({ bid, userBook }) => {
               setLeftChars({ text: null, title: null });
             }
           });
-        } else console.warn(`No bid or user`);
+        } else console.warn('No bid or user');
       }
     }
   }, [authid, bid, changes, openSnackbar, review, user, userBook, validate]);
@@ -207,14 +211,14 @@ const ReviewForm = ({ bid, userBook }) => {
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {        
       reviewerRef(bid, authid).delete().then(() => {
-        // console.log(`Book review deleted`);
+        // console.log('Book review deleted');
         userBookRef(authid, bid).update({ review: {} }).then(() => {
-          // console.log(`User review deleted`);
+          // console.log('User review deleted');
           openSnackbar('Recensione cancellata', 'success');
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
-    } else console.warn(`No bid`);
+    } else console.warn('No bid');
   }, [authid, bid, openSnackbar]);
 
   const onExitEditing = useCallback(() => {
@@ -261,9 +265,9 @@ const ReviewForm = ({ bid, userBook }) => {
   if (!user || !userBook) return null;
 
   return (
-    <>
+    <Fragment>
       {isEditing && <Overlay onClick={onExitEditing} />}
-      <div className={`card light user-review ${isEditing ? 'edit-review' : 'primary'}`}>
+      <div className={classnames('card', 'light', 'user-review', isEditing ? 'edit-review' : 'primary')}>
         {!loading && (
           isEditing ? (
             <form>
@@ -323,7 +327,7 @@ const ReviewForm = ({ bid, userBook }) => {
                     error={Boolean(errors.title)}
                   />
                   {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
-                  {leftChars.title && <FormHelperText className={`message ${(leftChars.title) < 0 ? 'warning' : 'neutral'}`}>Caratteri rimanenti: {leftChars.title}</FormHelperText>}
+                  {leftChars.title && <FormHelperText className={classnames('message', leftChars.title < 0 ? 'warning' : 'neutral')}>Caratteri rimanenti: {leftChars.title}</FormHelperText>}
                 </FormControl>
               </div>
 
@@ -406,17 +410,17 @@ const ReviewForm = ({ bid, userBook }) => {
           </DialogActions>
         </Dialog>
       )}
-    </>
+    </Fragment>
   );
-}
+};
 
 ReviewForm.propTypes = {
   bid: stringType.isRequired,
   userBook: userBookType
-}
+};
 
 ReviewForm.defaultProps = {
   userBook: null
-}
+};
  
 export default ReviewForm;

@@ -1,26 +1,30 @@
 .minifiable {
   display: inline-block;
-  position: relative; 
-  overflow: hidden; 
-  max-height: 450px; 
-  text-align: justify; 
-  white-space: pre-line; 
+  position: relative;
+  overflow: hidden;
+  max-height: 450px;
+  text-align: justify;
+  white-space: pre-line;
   word-wrap: break-word;
   transition: all .4s ease-in-out;
-  &.minified { position: relative; max-height: 70px; overflow: hidden; }
-  &:after {
+  &.minified {
+    position: relative;
+    max-height: 70px;
+    overflow: hidden;
+  }
+  &::after {
     content: '';
     position: absolute;
     bottom: -1px;
     left: 0;
     width: 100%;
     height: 50px;
-    background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardClr)) 90%);
+    background: linear-gradient(to bottom, transparent 0%, rgb(var(--cardClr)) 90%);
     opacity: 0;
     will-change: opacity;
     transition: all .4s ease-in-out;
     pointer-events: none;
     z-index: 1;
   }
-  &.minified:after { opacity: 1; }
+  &.minified::after { opacity: 1; }
 }

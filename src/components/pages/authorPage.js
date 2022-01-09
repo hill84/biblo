@@ -1,13 +1,14 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import classnames from 'classnames';
+import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, denormURL, getInitials, handleFirestoreError, normalizeString, normURL } from '../../config/shared';
 import { historyType, locationType, matchType } from '../../config/proptypes';
+import { app, denormURL, getInitials, handleFirestoreError, normalizeString, normURL } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/authorPage.css';
@@ -64,12 +65,12 @@ const AuthorPage = ({ history, location, match }) => {
   }, [match.params, user]);
 
   useEffect(() => {
-		authorRef(normalizeString(author.displayName)).get().then(snap => {
+    authorRef(normalizeString(author.displayName)).get().then(snap => {
       if (snap.exists) {
         if (is.current) {
           setAuthor(snap.data());
         }
-			}
+      }
       fetchFollowers();
     }).catch(err => {
       console.warn(err);
@@ -123,12 +124,13 @@ const AuthorPage = ({ history, location, match }) => {
 
   const covers = books?.map(book => <Link key={book.bid} to={`/book/${book.bid}/${normURL(book.title)}`}><Cover book={book} /></Link>);
 
-  if (loading) {
-    return <div aria-hidden="true" className="loader"><CircularProgress /></div>
-  } 
-  if (!author.lastEditByUid && !books) {
-    return <NoMatch title="Autore non trovato" history={history} location={location} />
-  }
+  if (loading) return (
+    <div aria-hidden="true" className="loader"><CircularProgress /></div>
+  );
+
+  if (!author.lastEditByUid && !books) return (
+    <NoMatch title="Autore non trovato" history={history} location={location} />
+  );
 
   const seo = author?.displayName && {
     description: `Scopri su ${app.name} i libri di ${author.displayName}`,
@@ -177,14 +179,14 @@ const AuthorPage = ({ history, location, match }) => {
               <div className="info-row">
                 <button 
                   type="button" 
-                  className={`btn sm ${follow ? 'success error-on-hover' : 'primary'}`} 
+                  className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')} 
                   onClick={onFollow} 
                   disabled={!user || !isEditor}>
                   {follow ? (
-                    <>
+                    <Fragment>
                       <span className="hide-on-hover">{icon.check} Segui</span>
                       <span className="show-on-hover">Smetti</span>
-                    </> 
+                    </Fragment> 
                   ) : <span>{icon.plus} Segui</span> }
                 </button>
                 <div className="counter last inline">
@@ -199,7 +201,7 @@ const AuthorPage = ({ history, location, match }) => {
       {loadingBooks ? (
         <div aria-hidden="true" className="loader relative"><CircularProgress /></div>
       ) : (
-        <>
+        <Fragment>
           {books ? (
             <div className="card light">
               <div className="shelf">
@@ -218,7 +220,7 @@ const AuthorPage = ({ history, location, match }) => {
                       </div>
                     </div>
                   </div>
-                  <div className={`shelf-row books-per-row-4 ${coverview ? 'coverview' : 'stacked'}`}>
+                  <div className={classnames('shelf-row', 'books-per-row-4', coverview ? 'coverview' : 'stacked')}>
                     {covers}
                   </div>
                 </div>
@@ -230,23 +232,23 @@ const AuthorPage = ({ history, location, match }) => {
               <Link to="/new-book" className="btn primary rounded">Aggiungi libro</Link>
             </div>
           )}
-        </>
+        </Fragment>
       )}
       <RandomQuote author={author.displayName} skeleton={false} className="card flat fadeIn slideUp reveal" />
     </div>
   );
-}
+};
 
 AuthorPage.propTypes = {
   history: historyType,
   location: locationType,
   match: matchType
-}
+};
 
 AuthorPage.defaultProps = {
   history: null,
   location: null,
   match: null
-}
+};
 
 export default AuthorPage;

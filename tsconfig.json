@@ -30,11 +30,8 @@
     "noEmit": true
   },
   "include": [
-    "src/*",
-    "types/*",
     "**/*.ts",
     "**/*.tsx",
-    "types/main.d.ts"
   ],
   "exclude": [
     "node_modules",

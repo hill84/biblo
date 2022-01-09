@@ -18,17 +18,17 @@
     right: 10px;
     z-index: 1;
   }
-  & .avatar:not(img) { 
-    margin-left: auto; 
-    margin-right: auto; 
+  & .avatar:not(img) {
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 10px;
     width: var(--avatarSize);
     height: var(--avatarSize);
     transition: all .2s ease-in-out;
-    & .thumb { 
+    & .thumb {
       width: 100%;
       min-height: 100%;
-      border-radius: 99px; 
+      border-radius: 99px;
     }
   }
   & .col-right {
@@ -40,6 +40,7 @@
   overflow: auto;
   &::before, &::after {
     --faderHeight: 14px;
+
     content: '';
     display: block;
     position: sticky;
@@ -52,20 +53,20 @@
   }
   &::before {
     top: 0;
-    background: linear-gradient(to top, transparent 0%,rgb(var(--cardClr)) 90%);
+    background: linear-gradient(to top, transparent 0%, rgb(var(--cardClr)) 90%);
     margin-bottom: calc(-1 * var(--faderHeight));
   }
   &::after {
     top: calc(100% - var(--faderHeight));
     bottom: -1px;
-    background: linear-gradient(to bottom, transparent 0%,rgb(var(--cardClr)) 90%);
+    background: linear-gradient(to bottom, transparent 0%, rgb(var(--cardClr)) 90%);
     margin-top: calc(-1 * var(--faderHeight));
   }
 }
-.contacts-tab .avatar-row { 
-  margin-bottom: 0; 
-  padding-top: .4rem; 
-  padding-bottom: .4rem; 
+.contacts-tab .avatar-row {
+  margin-bottom: 0;
+  padding-top: .4rem;
+  padding-bottom: .4rem;
   border-bottom-width: 1px;
   &:last-child { border-bottom: 0; }
   & .avatar {
@@ -79,9 +80,9 @@
     margin-left: 2px;
     margin-right: 2px;
   }
-  & .timestamp { 
-    position: absolute; 
-    right: 14px; 
+  & .timestamp {
+    position: absolute;
+    right: 14px;
     color: var(--lightTextClr);
     font-size: 85%;
   }
