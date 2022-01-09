@@ -6,6 +6,10 @@
   xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" 
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
   xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url> <loc>https://biblo.space/author/Primo_Levi</loc> </url>
+  <url> <loc>https://biblo.space/author/Amedeo_Balbi</loc> </url>
+  <url> <loc>https://biblo.space/author/Daniel_Kahneman</loc> </url>
+  <url> <loc>https://biblo.space/author/Frank_Herbert</loc> </url>
   <url> <loc>https://biblo.space/author/David_Attenborough</loc> </url>
   <url> <loc>https://biblo.space/author/Licia_Troisi</loc> </url>
   <url> <loc>https://biblo.space/author/Luca_Perri</loc> </url>
