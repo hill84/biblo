@@ -6,11 +6,12 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { classnames } from 'classnames';
+import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
+import { funcType, stringType } from '../../config/proptypes';
 import { handleFirestoreError, normalizeString } from '../../config/shared';
-import { funcType, stringType } from '../../config/types';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import Overlay from '../overlay';
@@ -40,7 +41,7 @@ const AuthorForm = ({ id, onToggle }) => {
   const is = useRef(true);
 
   const fetch = useCallback(() => {
-    if (typeof id === 'string') {
+    if (id) {
       if (is.current) setLoading(true);
 
       authorRef(id).get().then(snap => {
@@ -105,31 +106,31 @@ const AuthorForm = ({ id, onToggle }) => {
     return result;
   };
 
-	const validate = async data => {
+  const validate = async data => {
     const errors = {};
     const isDuplicate = id ? false : await checkDisplayName(data.displayName);
 
     if (!data.displayName) { 
-      errors.displayName = "Inserisci il nominativo"; 
+      errors.displayName = 'Inserisci il nominativo'; 
     } else if (isDuplicate) {
-      errors.displayName = "Autore già presente";
+      errors.displayName = 'Autore già presente';
     } else if (data.displayName?.length > max.chars.displayName) {
       errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
     }
     if (!data.sex) {
-      errors.sex = "Sesso mancante";
+      errors.sex = 'Sesso mancante';
     }
     if (!data.bio) { 
-      errors.bio = "Inserisci una biografia"; 
+      errors.bio = 'Inserisci una biografia'; 
     } else if (data.bio?.length > max.chars.bio) {
       errors.bio = `Massimo ${max.chars.bio} caratteri`;
     } else if (data.bio?.length < min.chars.bio) {
       errors.bio = `Minimo ${min.chars.bio} caratteri`;
     }
-		return errors;
+    return errors;
   };
   
-	const onSubmit = async e => {
+  const onSubmit = async e => {
     e.preventDefault();
 
     if (changes) {
@@ -159,10 +160,10 @@ const AuthorForm = ({ id, onToggle }) => {
         }).catch(err => console.warn(err));
       } else if (is.current) setLoading(false);
     } else onToggle();
-	};
+  };
 
   return (
-    <>
+    <Fragment>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="new author" className="dialog light" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
@@ -190,7 +191,7 @@ const AuthorForm = ({ id, onToggle }) => {
                 <Select
                   id="sex"
                   value={data.sex}
-                  onChange={onChangeSelect("sex")}
+                  onChange={onChangeSelect('sex')}
                   error={Boolean(errors.sex)}>
                   <MenuItem key="m" value="m">Uomo</MenuItem>
                   <MenuItem key="f" value="f">Donna</MenuItem>
@@ -218,7 +219,7 @@ const AuthorForm = ({ id, onToggle }) => {
                 />
                 {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
                 {(leftChars.bio !== null) && 
-                  <FormHelperText className={`message ${(leftChars.bio < 0) ? 'warning' : 'neutral'}`}>
+                  <FormHelperText className={classnames('message', leftChars.bio < 0 ? 'warning' : 'neutral')}>
                     Caratteri rimanenti: {leftChars.bio}
                   </FormHelperText>
                 }
@@ -276,17 +277,17 @@ const AuthorForm = ({ id, onToggle }) => {
           <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
         </div>
       </div>
-    </>
+    </Fragment>
   );
-}
+};
 
 AuthorForm.propTypes = {
   onToggle: funcType.isRequired,
   id: stringType
-}
+};
 
 AuthorForm.defaultProps = {
   id: null
-}
+};
  
 export default AuthorForm;

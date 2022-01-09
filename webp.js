@@ -1,6 +1,6 @@
 // https://css-tricks.com/using-webp-images/
-const imagemin = require('imagemin');
-const webp = require('imagemin-webp');
+import imagemin from 'imagemin';
+import webp from 'imagemin-webp';
 
 const PNGImages = './src/images/*.png';
 const JPEGImages = './src/images/*.jpg';

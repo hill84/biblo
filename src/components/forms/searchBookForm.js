@@ -7,14 +7,15 @@ import TextField from '@material-ui/core/TextField';
 import { ThemeProvider } from '@material-ui/styles';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
+import classnames from 'classnames';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { Redirect } from 'react-router-dom';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
+import { boolType, funcType } from '../../config/proptypes';
 import { arrToObj, capitalizeInitials, normalizeCover, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
 import { darkTheme, defaultTheme } from '../../config/themes';
-import { boolType, funcType } from '../../config/types';
 import UserContext from '../../context/userContext';
 import '../../css/searchBook.css';
 
@@ -190,7 +191,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
 
               let referrer;
               snap.forEach(doc => {
-                referrer = `/book/${doc.data().bid}/${normURL(doc.data().title)}`
+                referrer = `/book/${doc.data().bid}/${normURL(doc.data().title)}`;
               });
 
               setRedirectToReferrer(referrer);
@@ -239,7 +240,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
                 label: b.title || '', // Autosuggest OPTION LABEL
                 title: b.title || '',
                 title_sort: normalizeString(b.title) || ''
-              })
+              });
             });
           } else options.push(emptyBook);
           if (is.current) {
@@ -262,7 +263,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
             query = booksRef.where(searchBy.where, '>=', capitalizeInitials(searchTextType.toLowerCase())); break;
           default:
             query = booksRef.where(searchBy.where, '>=', searchTextType.toLowerCase()); break;
-        };
+        }
 
         unsub.query = query.limit(maxSearchResults).onSnapshot(snap => {
           const options = [];
@@ -299,18 +300,18 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
 
   const renderSuggestion = (b, { query, isHighlighted }) => { 
     if (b.value) return b.value;
-    const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label
+    const label = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label;
     // console.log(b.label);
     const matches = match(label, query);
     const parts = parse(label, matches);
-    const searchTextHighlighted = parts.map((part, index) => part.highlight ? 
+    const searchTextHighlighted = parts.map((part, index) => part.highlight ? (
       <strong key={String(index)}>{part.text}</strong>
-    :
+    ) : (
       <span key={String(index)}>{part.text}</span>
-    );
+    ));
   
     return (
-      <MenuItem key={b.bid} className={`menuitem-book ${match(b.label, query)}`} selected={isHighlighted} component="div">
+      <MenuItem key={b.bid} className={classnames('menuitem-book', match(b.label, query))} selected={isHighlighted} component="div">
         <div className="primaryText">
           {b.covers[0] && <img className="thumbnail" src={b.covers[0]} alt={b.title} />}
           <span className="title">
@@ -322,14 +323,14 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
         </div>
       </MenuItem>
     );
-  }
+  };
 
   const getSuggestionValue = b => b.label;
 
   const onSuggestionsClearRequested = () => {
     unsub.timer && clearTimeout(unsub.timer);
     setSuggestions([]);
-  }
+  };
 
   // const strAsNum = str => Number(str.replace(/-|\s/g,"").trim());
   // const numAsISBN_13 = num => String(num).length === 10 ? String(`978${num}`) : String(num);
@@ -358,7 +359,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
     </MenuItem>
   ));
 
-  if (redirectToReferrer) return <Redirect to={redirectToReferrer} />
+  if (redirectToReferrer) return <Redirect to={redirectToReferrer} />;
 
   return (
     <div className="container sm search-book-container">
@@ -389,7 +390,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
         {/* searchBy.key === 'ISBN_13' && Number.isNaN(Number(value)) && <FormHelperText className="message error">Solo numeri</FormHelperText> */}
         {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) && (
           <ThemeProvider theme={darkTheme}>
-            <FormHelperText className={`message ${value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper'}`}>
+            <FormHelperText className={classnames('message', value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper')}>
               {value.length} di 13 cifre
             </FormHelperText>
           </ThemeProvider>
@@ -407,16 +408,16 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
       </div>
     </div>
   );
-}
+};
 
 SearchBookForm.propTypes = {
   newBook: boolType,
   onBookSelect: funcType
-}
+};
 
 SearchBookForm.defaultProps = {
   newBook: false,
   onBookSelect: null
-}
+};
  
 export default SearchBookForm;

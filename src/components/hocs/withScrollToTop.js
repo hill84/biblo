@@ -8,6 +8,6 @@ const withScrollToTop = WrappedComponent => props => {
   return (
     <WrappedComponent {...props} />
   );
-}
+};
 
 export default withScrollToTop;

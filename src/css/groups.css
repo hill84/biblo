@@ -22,7 +22,7 @@
     margin-bottom: .5em;
     & .skltn {
       width: 200px;
-    } 
+    }
   }
   & .avatar.image {
     --avatarSize: 58px;
@@ -30,7 +30,7 @@
     width: var(--avatarSize);
     height: var(--avatarSize);
   }
-  
+
   & .footer.no-gutter {
     position: absolute;
     bottom: 0;

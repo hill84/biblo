@@ -1,8 +1,8 @@
 .card.author {
-  & .avatar { 
-    width: var(--avatarSize); 
-    height: var(--avatarSize); 
-    line-height: var(--avatarSize); 
+  & .avatar {
+    width: var(--avatarSize);
+    height: var(--avatarSize);
+    line-height: var(--avatarSize);
     box-shadow: inset 1px 1px 1px rgba(var(--blackClr), .05);
   }
   & .title { line-height: var(--avatarSize); }
@@ -12,10 +12,10 @@
 
 #authorComponent {
   & .randomquote { --pad: 10px; }
-  & .blockquote { 
+  & .blockquote {
     /* margin-top: 10px; */
-    overflow: hidden; 
-    max-height: 0; 
+    overflow: hidden;
+    max-height: 0;
     animation-name: maxheightIn;
     animation-duration: 1.2s;
     animation-timing-function: ease-in;

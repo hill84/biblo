@@ -1,6 +1,6 @@
 .card.user-discussion {
   --minPad: 14px;
-  
+
   padding-top: var(--minPad);
   padding-bottom: var(--minPad);
   & .absolute-top-right {
@@ -9,8 +9,8 @@
     right: var(--pad);
     z-index: 1;
   }
-  & .footer { 
-    margin-bottom: calc(var(--minPad) * -1); 
+  & .footer {
+    margin-bottom: calc(var(--minPad) * -1);
     & .btn-footer {
       margin-top: 0;
     }

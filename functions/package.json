@@ -10,11 +10,14 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "firebase-admin": "^9.1.1",
-    "firebase-functions": "^3.11.0"
+    "firebase-admin": "^9.4.2",
+    "firebase-functions": "^3.13.1"
   },
   "engines": {
-    "node": "8"
+    "node": "10"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "eslint": "^8.6.0"
+  }
 }
