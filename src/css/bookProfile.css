@@ -60,7 +60,7 @@
     & .book-profile {
       & .title .mention { display: none; }
       & .rating {
-        display: block;
+        display: block !important;
         /* & .react-rater { font-size: 1.4rem; } */
       }
     }

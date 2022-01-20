@@ -286,16 +286,18 @@ const ReviewForm = ({ bid, userBook }) => {
                     error={Boolean(errors.text)}
                     multiline
                     endAdornment={(
-                      <InputAdornment position="end">
-                        <Tooltip title={isOpenEmojiPicker ? 'Chiudi' : 'Aggiungi emoji'} placement="top">
-                          <IconButton
-                            aria-label="toggle emoji-picker visibility"
-                            onClick={toggleEmojiPicker}
-                            onMouseDown={onMouseDown}>
-                            {isOpenEmojiPicker ? icon.close : icon.stickerEmoji}
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
+                      <div className="hide-sm">
+                        <InputAdornment position="end">
+                          <Tooltip title={isOpenEmojiPicker ? 'Chiudi' : 'Aggiungi emoji'} placement="top">
+                            <IconButton
+                              aria-label="toggle emoji-picker visibility"
+                              onClick={toggleEmojiPicker}
+                              onMouseDown={onMouseDown}>
+                              {isOpenEmojiPicker ? icon.close : icon.stickerEmoji}
+                            </IconButton>
+                          </Tooltip>
+                        </InputAdornment>
+                      </div>
                     )}
                   />
                   {isOpenEmojiPicker && (

@@ -6,7 +6,6 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { classnames } from 'classnames';
 import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
@@ -182,7 +181,9 @@ const AuthorForm = ({ id, onToggle }) => {
                   onChange={onChange}
                   error={Boolean(errors.displayName)}
                 />
-                {errors.displayName && <FormHelperText className="message error">{errors.displayName}</FormHelperText>}
+                {errors.displayName && (
+                  <FormHelperText className="message error">{errors.displayName}</FormHelperText>
+                )}
               </FormControl>
             </div>
             <div className="form-group col col-sm-3">
@@ -197,7 +198,9 @@ const AuthorForm = ({ id, onToggle }) => {
                   <MenuItem key="f" value="f">Donna</MenuItem>
                   <MenuItem key="x" value="x">Altro</MenuItem>
                 </Select>
-                {errors.sex && <FormHelperText className="message error">{errors.sex}</FormHelperText>}
+                {errors.sex && (
+                  <FormHelperText className="message error">{errors.sex}</FormHelperText>
+                )}
               </FormControl>
             </div>
           </div>
@@ -217,12 +220,14 @@ const AuthorForm = ({ id, onToggle }) => {
                   multiline
                   error={Boolean(errors.bio)}
                 />
-                {errors.bio && <FormHelperText className="message error">{errors.bio}</FormHelperText>}
-                {(leftChars.bio !== null) && 
-                  <FormHelperText className={classnames('message', leftChars.bio < 0 ? 'warning' : 'neutral')}>
+                {errors.bio && (
+                  <FormHelperText className="message error">{errors.bio}</FormHelperText>
+                )}
+                {(leftChars.bio !== null) && (
+                  <FormHelperText className={`message ${leftChars.bio < 0 ? 'warning' : 'neutral'}`}>
                     Caratteri rimanenti: {leftChars.bio}
                   </FormHelperText>
-                }
+                )}
               </FormControl>
             </div>
           </div>
@@ -240,7 +245,9 @@ const AuthorForm = ({ id, onToggle }) => {
                   onChange={onChange}
                   error={Boolean(errors.source)}
                 />
-                {errors.source && <FormHelperText className="message error">{errors.source}</FormHelperText>}
+                {errors.source && (
+                  <FormHelperText className="message error">{errors.source}</FormHelperText>
+                )}
               </FormControl>
             </div>
           </div>
@@ -267,7 +274,9 @@ const AuthorForm = ({ id, onToggle }) => {
                   onChange={onChange}
                   error={Boolean(errors.photoURL)}
                 />
-                {errors.photoURL && <FormHelperText className="message error">{errors.photoURL}</FormHelperText>}
+                {errors.photoURL && (
+                  <FormHelperText className="message error">{errors.photoURL}</FormHelperText>
+                )}
               </FormControl>
             </div>
           </div>

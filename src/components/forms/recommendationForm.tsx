@@ -207,7 +207,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
   return (
     <Fragment>
       <Overlay onClick={onToggle} />
-      <div role='dialog' aria-describedby='Recommend a book' className='dialog light book-recommendation'>
+      <div role='dialog' aria-describedby='Recommend a book' className='dialog book-recommendation'>
         <div className='sticky-content'>
           <div role='navigation' className='head nav'>
             <div className='row'>

@@ -328,7 +328,8 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
           TransitionComponent={Transition}
           keepMounted
           onClose={onCloseFollowersDialog}
-          aria-labelledby='followers-dialog-title'>
+          aria-labelledby='followers-dialog-title'
+        >
           <div className='absolute-top-right'>
             <button type='button' className='btn flat rounded icon' aria-label='close' onClick={onCloseFollowersDialog}>
               {icon.close}
@@ -337,7 +338,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
           <DialogTitle id='followers-dialog-title'>
             Iscritti del gruppo
           </DialogTitle>
-          <DialogContent className='content' id='followers-dialog-description'>
+          <DialogContent className='dialog' id='followers-dialog-description'>
             <div className='contacts-tab'>
               {groupFollowers?.map(user => (
                 <div key={user.uid} className='avatar-row'>

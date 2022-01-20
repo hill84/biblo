@@ -184,7 +184,7 @@ export const capitalize = (str: string): string => str && str[0].toUpperCase() +
 export const capitalizeInitials = (str: string): string => {
   const arr: string[] = str.split(' ');
   for (let i = 0, x: number = arr.length; i < x; i++) {
-    arr[i] = arr[i][0].toUpperCase() + arr[i].substr(1);
+    arr[i] = arr[i]?.[0]?.toUpperCase() + arr[i]?.substr(1);
   }
   return arr.join(' ');
 };

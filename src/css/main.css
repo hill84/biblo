@@ -690,6 +690,7 @@ hr.line {
   & .sticky-content {
     position: sticky;
     top: 0;
+    backdrop-filter: blur(3px);
     z-index: 1;
   }
   & .head.nav {
@@ -729,7 +730,7 @@ hr.line {
     right: var(--pad);
   }
   & .contacts-tab {
-    width: 480px;
+    width: 100%;
     max-height: 390px;
     padding: 0;
     & .avatar-row {
