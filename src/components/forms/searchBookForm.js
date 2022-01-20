@@ -32,7 +32,7 @@ const unsub = {
   query: null
 };
 
-const limit = 30;
+const limit = 33;
 
 const SearchBookForm = ({ newBook, onBookSelect }) => {
   const { user } = useContext(UserContext);
@@ -63,7 +63,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
   const onClickSearchBy = option => {
     if (is.current) {
       setSearchBy(option); 
-      setMaxSearchResults(option.key === 'ISBN_13' ? 1 : maxSearchResults); 
+      setMaxSearchResults(option.key === 'ISBN_13' ? 1 : limit); 
       setSearchByAnchorEl(null);
     }
   };
@@ -101,9 +101,11 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
       <div className="primaryText">
         <span className="title">Libro non trovato...</span>
       </div>
-      <div className="secondaryText">
-        <button type="button" className="btn sm flat rounded">Crea nuovo</button>
-      </div>
+      {newBook && (
+        <div className="secondaryText">
+          <button type="button" className="btn sm flat rounded">Crea nuovo</button>
+        </div>
+      )}
     </MenuItem>
   );
 
@@ -252,7 +254,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
         // console.log(searchBy.key);
         let query;
         let optionLabel = searchBy.key;
-        
+
         switch (searchBy.key) {
           case 'ISBN_13':
             query = booksRef.where(searchBy.where, '==', searchTextType); break;
@@ -261,8 +263,8 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
             optionLabel = String(searchBy.where); break;
           case 'publisher':
             query = booksRef.where(searchBy.where, '>=', capitalizeInitials(searchTextType.toLowerCase())); break;
-          default:
-            query = booksRef.where(searchBy.where, '>=', searchTextType.toLowerCase()); break;
+          default: // 'title'
+            query = booksRef.where(searchBy.where, '>=', normalizeString(searchTextType)); break;
         }
 
         unsub.query = query.limit(maxSearchResults).onSnapshot(snap => {
@@ -376,11 +378,11 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
           renderSuggestionsContainer={renderSuggestionsContainer}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
-          onSuggestionSelected={onSuggestionSelected}
+          onSuggestionSelected={newBook ? onSuggestionSelected : undefined}
           inputProps={{
             className: 'input-field',
             type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
-            label: `${newBook ? 'Aggiungi libro' : 'Cerca libro'} per ${searchBy.label.toLowerCase()}`,
+            label: `${newBook ? 'Aggiungi' : 'Cerca'} libro per ${searchBy.label.toLowerCase()}`,
             placeholder: `Es: ${searchBy.hint}`,
             value,
             onChange,
