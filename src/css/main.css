@@ -647,6 +647,7 @@ hr.line {
   box-shadow: none;
 }
 .tabs-container {
+  user-select: none;
   padding: 0;
   & .card.tab { margin-top: 0; }
   &.card .card.tab {

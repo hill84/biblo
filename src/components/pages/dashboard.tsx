@@ -30,8 +30,6 @@ const NoMatch = lazy(() => import('../noMatch'));
 
 const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
-const tabDir = undefined;
-
 const skltnStyle: CSSProperties = { margin: '.4em 0', };
 
 interface MaxModel {
@@ -473,13 +471,14 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
         </Tabs>
       </AppBar>
       <BindKeyboardSwipeableViews 
-        enableMouseEvents
-        resistance
-        className='card light tabs-container bottompend mobile'
+        // animateHeight
         axis='x'
+        className='card tabs-container bottompend mobile'
+        enableMouseEvents
         index={tabSelected}
+        resistance
         onChangeIndex={onTabSelectIndex}>
-        <div className='card tab' dir={tabDir}>
+        <div className='card tab'>
           {(tabSelected === 0 || shelfItems.length) && (
             <Shelf
               count={shelfCount}
@@ -493,7 +492,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
             />
           )}
         </div>
-        <div className='card tab' dir={tabDir}>
+        <div className='card tab'>
           {(tabSelected === 1 || wishlistItems.length) && (
             <Shelf
               count={wishlistCount}
@@ -507,13 +506,13 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
             />
           )}
         </div>
-        <div className='card tab' dir={tabDir}>
+        <div className='card tab'>
           {tabSelected === 2 && <Reviews uid={uid} limit={3} container={false} pagination skeleton />}
         </div>
-        <div className='card tab' dir={tabDir}>
+        <div className='card tab'>
           {tabSelected === 3 && (loading || isOwner ? <ReadingStats loading={loading} uid={uid} /> : <UnauthReadingStats />)}
         </div>
-        <div className='card tab contacts-tab' dir={tabDir}>
+        <div className='card tab contacts-tab'>
           {tabSelected === 4 && (
             <div className='row'>
               <div className='col-md-6 col-12 contacts-tab-col'>

@@ -208,6 +208,7 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
         </Tabs>
       </AppBar>
       <BindKeyboardSwipeableViews
+        animateHeight
         enableMouseEvents
         resistance
         className='tabs-container'

@@ -126,8 +126,8 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    background-color: rgba(var(--whiteClr), .98);
-    color: var(--textClr);
+    background-color: rgba(var(--bookClr), .98);
+    color: rgba(var(--textClr));
     border-radius: 9px;
     padding: .16rem .54rem;
     text-transform: uppercase;
