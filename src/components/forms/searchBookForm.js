@@ -378,7 +378,7 @@ const SearchBookForm = ({ newBook, onBookSelect }) => {
           renderSuggestionsContainer={renderSuggestionsContainer}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
-          onSuggestionSelected={newBook ? onSuggestionSelected : undefined}
+          onSuggestionSelected={onSuggestionSelected}
           inputProps={{
             className: 'input-field',
             type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
