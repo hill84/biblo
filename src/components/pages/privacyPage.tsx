@@ -76,6 +76,9 @@ const PrivacyPage: FC = () => (
         <p>Il vostro consenso alla presente Informativa sulla privacy seguito dall&apos;invio di tali informazioni rappresenta il vostro consenso al trasferimento.</p>
         <p>{app.name} adotterà tutte le misure ragionevolmente necessarie per garantire che i vostri dati siano trattati in modo sicuro e in conformità con la presente Informativa sulla privacy e nessun trasferimento dei vostri Dati Personali sarà effettuato a un&apos;organizzazione o a un paese a meno che non vi siano controlli adeguati dei vostri dati e altre informazioni personali.</p>
 
+        <h2>Eliminazione dei dati</h2>
+        <p>Per cancellare l&apos;account utente e tutti i dati a esso correlati srivete a <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.</p>
+
         <h2>Divulgazione di dati</h2>
 
         <h3>Prescrizioni di legge</h3>
