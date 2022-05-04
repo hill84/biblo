@@ -6,11 +6,12 @@
 
 <div align="center">
 
-**Biblo** is a social network for book lovers, developed with [React](http://facebook.github.io/react/) and [Firebase](https://github.com/firebase).
+**Biblo** is a social network for book lovers, developed with [React](http://facebook.github.io/react/), [Typescript](https://github.com/microsoft/TypeScript) and [Firebase](https://github.com/firebase).
 
-[![Dependencies](https://img.shields.io/david/hill84/biblo.svg)](https://david-dm.org/hill84/biblo)
-[![DevDependencies](https://img.shields.io/david/dev/hill84/biblo.svg)](https://david-dm.org/hill84/biblo?type=dev)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hill84/biblo.svg)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/main/LICENSE) 
+![latest release](https://badgen.net/github/release/hill84/biblo)
+![latest tag](https://badgen.net/github/tag/hill84/biblo)
+![code size in bytes](https://img.shields.io/github/languages/code-size/hill84/biblo.svg)
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
