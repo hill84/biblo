@@ -160,12 +160,12 @@ const SignupForm: FC = () => {
 
   const onSubmit = (e: FormEvent<HTMLFormElement | HTMLButtonElement>): void => {
     e.preventDefault();
-    const errors = validate();
+    const errors: ErrorsModel = validate();
     
     setAuthError(initialState.authError);
     setErrors(errors);
     
-    if (Object.keys(errors).length === 0) {
+    if (!Object.values(errors).some(Boolean)) {
       setLoading(true);
       auth.createUserWithEmailAndPassword(data.email, data.password).then((userCredential: UserCredential) => {
         if (!userCredential) {
@@ -173,47 +173,41 @@ const SignupForm: FC = () => {
         }
       }).catch((err: FirestoreError): void => {
         setAuthError(handleFirestoreError(err));
-      }).finally(() => {
+      }).finally((): void => {
         setLoading(false);
       });
 
       auth.onAuthStateChanged((user: User | null): void => {
-        if (user) {
-          const {
-            displayName,
-            email,
-            metadata,
-            photoURL = '',
-            uid,
-          } = user;
-          const timestamp = metadata.creationTime ? Number((new Date(metadata.creationTime)).getTime()) : -1;
-          userRef(uid).set({
-            creationTime: timestamp,
-            displayName,
-            email,
-            photoURL,
-            roles,
-            stats,
-            termsAgreement: timestamp, 
-            privacyAgreement: timestamp,
-            uid,
-          }).then().catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
-        }
+        if (!user) return;
+        const {
+          displayName,
+          email,
+          metadata,
+          photoURL = '',
+          uid,
+        } = user;
+        const timestamp: number = metadata.creationTime ? Number((new Date(metadata.creationTime)).getTime()) : -1;
+        userRef(uid).set({
+          creationTime: timestamp,
+          displayName: displayName || data.displayName,
+          email,
+          photoURL,
+          roles,
+          stats,
+          termsAgreement: timestamp, 
+          privacyAgreement: timestamp,
+          uid,
+        }).then().catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
       });
 
       auth.onIdTokenChanged((user: User | null): void => {
-        if (user) {
-          if (user.emailVerified === false) {
-            if (auth.currentUser) {
-              const actionCodeSettings: ActionCodeSettings = {
-                url: `${app.url}/login/?email=${auth.currentUser.email}`
-              };
-              user.sendEmailVerification(actionCodeSettings).then(() => {
-                setRedirectTo('/verify-email');
-              }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
-            }
-          }
-        }
+        if (!user || user.emailVerified === true || !auth.currentUser) return;
+        const actionCodeSettings: ActionCodeSettings = {
+          url: `${app.url}/login/?email=${auth.currentUser.email}`
+        };
+        user.sendEmailVerification(actionCodeSettings).then(() => {
+          setRedirectTo('/verify-email');
+        }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
       });
     }
   };
