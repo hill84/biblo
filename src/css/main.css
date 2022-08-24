@@ -474,7 +474,7 @@ a, .link {
   &.active { color: rgb(var(--accentClr)); }
 }
 
-svg { vertical-align: middle; color: currentColor; }
+svg { vertical-align: middle; color: currentcolor; }
 .counter svg, .btn svg { vertical-align: text-bottom; }
 .material-icons svg.svg-icon { --iconSize: 24px; vertical-align: text-top; }
 svg.svg-icon, .btn svg { --iconSize: 18px; height: var(--iconSize); width: var(--iconSize); transition: all .2s ease-in-out; }
@@ -1353,7 +1353,7 @@ mark {
   content: ',';
   display: inline-block;
   margin: 0 3px 0 0;
-  color: currentColor;
+  color: currentcolor;
   white-space: nowrap;
 }
 .counter.comma:not(.strict) .counter:nth-last-child(2)::after {
@@ -2151,6 +2151,7 @@ code {
     padding: 2px 4px;
     margin-left: -4px;
     margin-right: -4px;
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
     cursor: copy;
     transition: all .2s ease-in-out;
     user-select: none;
