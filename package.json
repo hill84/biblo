@@ -80,7 +80,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "https": "export HTTPS=true && npm start",
+    "https": "set HTTPS=true&&set SSL_CRT_FILE=localhost.pem&&set SSL_KEY_FILE=localhost-key.pem&&react-app-rewired start",
     "lint": "run-p lint:css lint:ts",
     "lint:css": "stylelint src/**/*.css",
     "lint:ts": "eslint src/ --ext .tsx,.ts",
