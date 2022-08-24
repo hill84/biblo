@@ -118,7 +118,7 @@ const NoteForm: FC<NoteFormProps> = ({
       
       setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         setLoading(true);
         
         // console.log(`Sending notification to ${uid}`);

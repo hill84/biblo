@@ -478,7 +478,8 @@ const BookForm: FC<BookFormProps> = ({
 
       setErrors(errors);
 
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
+        console.log('NO ERRORS');
         let newBid = '';
         const userUid: string = user?.uid || '';
         const userDisplayName: string = user?.displayName || '';
@@ -694,7 +695,7 @@ const BookForm: FC<BookFormProps> = ({
                       type='number'
                       placeholder='es: 9788854152601'
                       error={Boolean(errors.ISBN_13)}
-                      value={Number(book.ISBN_13)}
+                      value={Number(book.ISBN_13) || ''}
                       onChange={onChangeNumber}
                     />
                     {errors.ISBN_13 && <FormHelperText className='message error'>{errors.ISBN_13}</FormHelperText>}
@@ -709,7 +710,7 @@ const BookForm: FC<BookFormProps> = ({
                       type='text'
                       placeholder='es: 8854152609'
                       error={Boolean(errors.ISBN_10)}
-                      value={book.ISBN_10}
+                      value={book.ISBN_10 || ''}
                       onChange={onChange}
                     />
                     {errors.ISBN_10 && <FormHelperText className='message error'>{errors.ISBN_10}</FormHelperText>}
@@ -741,7 +742,7 @@ const BookForm: FC<BookFormProps> = ({
                       type='number'
                       placeholder='es: 128'
                       error={Boolean(errors.pages_num)}
-                      value={Number(book.pages_num)}
+                      value={Number(book.pages_num) || ''}
                       onChange={onChangeNumber}
                     />
                     {errors.pages_num && <FormHelperText className='message error'>{errors.pages_num}</FormHelperText>}
@@ -784,7 +785,7 @@ const BookForm: FC<BookFormProps> = ({
                       type='number'
                       placeholder='es: 1'
                       error={Boolean(errors.edition_num)}
-                      value={Number(book.edition_num)}
+                      value={Number(book.edition_num) || ''}
                       onChange={onChangeNumber}
                     />
                     {errors.edition_num && <FormHelperText className='message error'>{errors.edition_num}</FormHelperText>}

@@ -138,7 +138,7 @@ const AuthorForm = ({ id, onToggle }) => {
       
       if (is.current) setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         if (is.current) setLoading(true);
         const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
         ref.set({

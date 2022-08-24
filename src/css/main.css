@@ -1594,7 +1594,7 @@ mark {
   z-index: 2;
 }
 
-.form-group ul, .react-autosuggest__suggestions-list { /* WARNING */
+#addBookComponent ul, .react-autosuggest__suggestions-list { /* WARNING */
   list-style: none;
   padding: 10px 0;
   margin-top: 0;

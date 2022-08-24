@@ -151,7 +151,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
       
       if (is.current) setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         if (is.current) setLoading(true);
         const ref = id ? groupRef(id) : groupsRef.doc();
         ref.set({

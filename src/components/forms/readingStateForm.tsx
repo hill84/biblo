@@ -159,7 +159,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
   const onSubmit = (e: FormEvent): void => {
     e.preventDefault();
     if (changes) {
-      if (Object.keys(errors).length === 0 && user) {
+      if (!Object.values(errors).some(Boolean) && user) {
         setLoading(true);
         userBookRef(user.uid, bid).update({
           'readingState.state_num': state_num,
@@ -182,7 +182,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
 
   const onPrev = (): void => setProgress_num(progress_num - (100/steps));
 
-  const isSaveDisabled = useMemo((): boolean => loading || Boolean(Object.keys(errors).length), [errors, loading]);
+  const isSaveDisabled = useMemo((): boolean => loading || Object.values(errors).some(Boolean), [errors, loading]);
 
   return (
     <Fragment>

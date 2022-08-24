@@ -152,7 +152,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
       setAuthError('');
       setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         setLoading(true);
 
         const ref: DocumentReference<DocumentData> = data.qid ? quoteRef(data.qid) : quotesRef.doc();
