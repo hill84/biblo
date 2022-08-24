@@ -50,13 +50,11 @@ interface ErrorMessagesModel {
 interface StateModel {
   loading: boolean;
   errors: ErrorsModel;
-  changes: boolean;
 }
 
 const initialState: StateModel = {
   loading: false,
   errors: {},
-  changes: false,
 };
 
 const ReadingStateForm: FC<ReadingStateFormProps> = ({
@@ -73,7 +71,6 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
   const [end_num, setEnd_num] = useState<number | null>(readingState.end_num || null);
   const [loading, setLoading] = useState<boolean>(initialState.loading);
   const [errors, setErrors] = useState<ErrorsModel>(initialState.errors);
-  const [changes, setChanges] = useState<boolean>(initialState.changes);
 
   const is = useRef<IsCurrent>(false);
 
@@ -81,6 +78,10 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
     is.current = true;
     return () => { is.current = false };
   }, []);
+
+  const hasChanges = useMemo((): boolean => {
+    return end_num !== readingState.end_num || start_num !== readingState.start_num || state_num !== readingState.state_num || progress_num !== readingState.progress_num;
+  }, [end_num, progress_num, readingState.end_num, readingState.progress_num, readingState.start_num, readingState.state_num, start_num, state_num]);
 
   const min = useMemo((): Record<keyof ErrorsModel, number> => ({
     start_num: 0,
@@ -93,15 +94,8 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
   }), [end_num, state_num]);
 
   useEffect(() => {
-    if (readingState.progress_num !== progress_num) {
-      setChanges(true);
-    }
-  }, [progress_num, readingState.progress_num]);
-
-  useEffect(() => {
     if (progress_num === 0) setState_num(1);
     if (progress_num === 100) setState_num(3);
-    // setChanges(true);
   }, [progress_num]);
 
   useEffect(() => {
@@ -117,7 +111,6 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
       }
     }
     if (state_num === 3) setProgress_num(100);
-    // setChanges(true);
     // eslint-disable-next-line
   }, [state_num]);
 
@@ -125,7 +118,6 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
     const { name, value } = e.target;
     if (name === 'state_num') setState_num(Number(value) || initialUserBook.readingState.state_num);
     setErrors(initialState.errors);
-    setChanges(true);
   };
   
   const errorMessages = (name: keyof ErrorsModel): ErrorMessagesModel => ({
@@ -137,28 +129,24 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
   });
 
   const onChangeDate = (name: keyof ErrorsModel) => (date: Date | null): void => {
-    if (date) {
-      const time: number = new Date(date).getTime();
-      if (name === 'start_num') setStart_num(time);
-      if (name === 'end_num') setEnd_num(time);
-      if (Number.isNaN(Number(time))) {
-        setErrors({ ...errors, [name]: errorMessages(name).invalidDate });
-      } else {
-        setErrors(initialState.errors);
-        setChanges(true);
-      }
-    } else console.log('No date');
+    const time: number | null = date ? new Date(date).getTime() : null;
+    if (name === 'start_num') setStart_num(time);
+    if (name === 'end_num') setEnd_num(time);
+    if (Number.isNaN(Number(time))) {
+      setErrors({ ...errors, [name]: errorMessages(name).invalidDate });
+    } else {
+      setErrors(initialState.errors);
+    }
   };
 
   const onSetDatePickerError = (name: keyof ErrorsModel, reason: keyof ErrorMessagesModel): void => {
-    if (reason) {
-      setErrors(errors => ({ ...errors, [name]: errorMessages(name)[reason] }));
-    }
+    if (!reason) return;
+    setErrors(errors => ({ ...errors, [name]: errorMessages(name)[reason] }));
   };
 
   const onSubmit = (e: FormEvent): void => {
     e.preventDefault();
-    if (changes) {
+    if (hasChanges) {
       if (!Object.values(errors).some(Boolean) && user) {
         setLoading(true);
         userBookRef(user.uid, bid).update({
