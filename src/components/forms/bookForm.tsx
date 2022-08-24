@@ -907,7 +907,7 @@ const BookForm: FC<BookFormProps> = ({
                       error={Boolean(errors.description)}
                       value={book.description}
                       onChange={onChangeMaxChars}
-                      rowsMax={30}
+                      maxRows={30}
                       multiline
                     />
                     {errors.description && <FormHelperText className='message error'>{errors.description}</FormHelperText>}
@@ -937,7 +937,7 @@ const BookForm: FC<BookFormProps> = ({
                       error={Boolean(errors.incipit)}
                       value={book.incipit || ''}
                       onChange={onChangeMaxChars}
-                      rowsMax={30}
+                      maxRows={30}
                       multiline
                     />
                     {errors.incipit && <FormHelperText className='message error'>{errors.incipit}</FormHelperText>}

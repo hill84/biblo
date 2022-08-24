@@ -216,7 +216,7 @@ const AuthorForm = ({ id, onToggle }) => {
                   placeholder={`Inserisci la biografia (max ${max.chars.bio} caratteri)...`}
                   value={data.bio}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.bio)}
                 />

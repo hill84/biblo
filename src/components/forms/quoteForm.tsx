@@ -197,7 +197,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
                   placeholder={`Inserisci la citazione (max ${max.chars.quote} caratteri)...`}
                   value={data.quote}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.quote)}
                 />

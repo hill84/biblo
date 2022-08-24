@@ -265,7 +265,7 @@ const CollectionForm: FC<CollectionFormProps> = ({
                   placeholder={`Inserisci la descrizione (max ${max.chars.desc} caratteri)...`}
                   value={data.description}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.description)}
                 />

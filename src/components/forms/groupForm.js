@@ -242,7 +242,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                   placeholder={`Inserisci la descrizione (max ${max.chars.description} caratteri)...`}
                   value={data.description}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.description)}
                 />
@@ -267,7 +267,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                   placeholder={`Inserisci la descrizione (max ${max.chars.rules} caratteri)...`}
                   value={data.rules}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.rules)}
                 />

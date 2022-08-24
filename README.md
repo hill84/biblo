@@ -29,20 +29,20 @@ First clone this repo `git clone https://github.com/hill84/biblo.git`
 
 ### Install dependencies and run
 
-Just run `npm install`, when finished type `npm run start` to run your app in development mode.
+Just run `yarn`, when finished type `yarn start` to run your app in development mode.
 
 ## Build and deploy
 
 1. Update package.json version
-2. Run `npm run build` (also in `functions` folder if necessary)
+2. Run `yarn build`
 3. Run `firebase login`
 4. Run one of the following commands to deploy:
-  * `npm run deploy`
-  * `npm run deploy:hosting`
-  * `npm run deploy:functions`
-  * `npm run deploy:staging`
-  * `npm run deploy:staging:hosting`
-  * `npm run deploy:staging:functions`
+  * `yarn deploy`
+  * `yarn deploy:hosting`
+  * `yarn deploy:functions`
+  * `yarn deploy:staging`
+  * `yarn deploy:staging:hosting`
+  * `yarn deploy:staging:functions`
 
 ## Maintenance
 
