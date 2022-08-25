@@ -127,7 +127,7 @@
     align-items: center;
     overflow: hidden;
     background-color: rgba(var(--bookClr), .98);
-    color: rgba(var(--textClr));
+    color: var(--mainTextClr);
     border-radius: 9px;
     padding: .16rem .54rem;
     text-transform: uppercase;

@@ -269,7 +269,7 @@ const Layout: FC = ({ children }) => {
             <NavLink to='/groups' exact>
               <MenuItem>
                 <ListItemIcon>{icon.accountGroup}</ListItemIcon>
-                <Typography variant='inherit'>Gruppi <span className='badge sm rounded accent'>New</span></Typography>
+                <Typography variant='inherit'>Gruppi</Typography>
               </MenuItem>
             </NavLink>
             <NavLink to='/genres' exact>
