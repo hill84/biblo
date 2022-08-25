@@ -1,5 +1,6 @@
 import MomentUtils from '@date-io/moment';
 import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import Chip from '@material-ui/core/Chip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,10 +14,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import isbn from 'isbn-utils';
-import ChipInput from 'material-ui-chip-input';
 import moment from 'moment';
 import 'moment/locale/it';
 import React, { ChangeEvent, FC, FormEvent, Fragment, MouseEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -232,25 +233,18 @@ const BookForm: FC<BookFormProps> = ({
     setBookChange(name, value);
   }, [setBookChange]);
 
-  const onAddChip = useCallback((name: 'authors' | 'collections', chip): void => {
-    const value: unknown[] = [...book[name] as unknown[], chip];
-    setBookChange(name, value);
-  }, [book, setBookChange]);
+  const onChangeCollections = (chips: string[]): void => {
+    const name = 'collections';
+    if (!Array.isArray(chips)) return;
+    setBookChange(name, chips);
+  };
 
-  const onDeleteChip = useCallback((name: 'authors' | 'collections', chip): void => {
-    const value: unknown[] = (book[name] as unknown[])?.filter((c: unknown) => c !== chip);
+  const onChangeAuthors = (chips: string[]): void => {
+    const name = 'authors';
+    if (!Array.isArray(chips)) return;
+    const value: Record<string, unknown> = arrToObj(chips.map((c: string): string => c.split('.').join('')), (item: string): { key: string; value: boolean } => ({ key: item, value: true }));
     setBookChange(name, value);
-  }, [book, setBookChange]);
-  
-  const onAddChipToObj = useCallback((name: 'authors' | 'collections', chip): void => {
-    const value: Record<string, unknown> = { ...book[name], [chip.split('.').join('')]: true };
-    setBookChange(name, value);
-  }, [book, setBookChange]);
-
-  const onDeleteChipFromObj = useCallback((name: 'authors' | 'collections', chip): void => {
-    const value: Record<string, unknown> = arrToObj(Object.keys(book[name] as unknown[]).filter((c: unknown): boolean => c !== chip.split('.').join('')), (item: string): { key: string; value: boolean } => ({ key: item, value: true }));
-    setBookChange(name, value);
-  }, [book, setBookChange]);
+  };
   
   const onChangeMaxChars = useCallback((e: ChangeEvent<HTMLInputElement>): void => {
     e.persist();
@@ -270,10 +264,6 @@ const BookForm: FC<BookFormProps> = ({
     };
     
     setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
-  };
-
-  const onPreventDefault = (e: { key: string; preventDefault: () => void }): void => { 
-    if (e.key === 'Enter') e.preventDefault();
   };
 
   const checkISBNnum = useCallback(async (num: number): Promise<boolean> => {
@@ -668,17 +658,34 @@ const BookForm: FC<BookFormProps> = ({
               </div>
               <div className='form-group'>
                 <FormControl className='chip-input' margin='normal' fullWidth>
-                  <ChipInput
+                  <Autocomplete
+                    autoSelect
+                    clearOnBlur
+                    multiple
                     id='authors'
-                    // name='authors'
-                    label='Autore'
-                    placeholder='es: Arthur Conan Doyle'
-                    blurBehavior='add'
-                    error={Boolean(errors.authors)}
+                    onChange={(_e, value): void => onChangeAuthors(value as string[])}
+                    options={[]}
                     value={Object.keys(book.authors)}
-                    onAdd={chip => onAddChipToObj('authors', chip)}
-                    onDelete={chip => onDeleteChipFromObj('authors', chip)}
-                    onKeyPress={onPreventDefault}
+                    freeSolo
+                    renderTags={(value, getTagProps) => 
+                      value.map((option, index) => (
+                        <Chip
+                          key={option[index]}
+                          variant='default'
+                          label={option}
+                          {...getTagProps({ index })}
+                        />
+                      ))
+                    }
+                    renderInput={(params: object) => (
+                      <TextField
+                        {...params}
+                        error={Boolean(errors.authors)}
+                        variant='standard'
+                        label='Autore'
+                        placeholder='es: Arthur Conan Doyle'
+                      />
+                    )}
                   />
                   <FormHelperText className={classnames('message', { error: errors.authors })}>
                     {errors.authors || 'Premi invio per confermare'}
@@ -846,17 +853,35 @@ const BookForm: FC<BookFormProps> = ({
                 <Fragment>
                   <div className='form-group'>
                     <FormControl className='chip-input' margin='normal' fullWidth>
-                      <ChipInput
-                        // name='collections'
-                        label='Collezione (max 5)'
-                        placeholder='es: Sherlock Holmes'
-                        blurBehavior='add'
-                        error={Boolean(errors.collections)}
+                      <Autocomplete
+                        autoSelect
+                        clearOnBlur
+                        multiple
+                        id='collections'
+                        onChange={(_e, value): void => onChangeCollections(value as string[])}
+                        options={[]}
                         value={book.collections}
-                        onAdd={chip => onAddChip('collections', chip)}
-                        onDelete={chip => onDeleteChip('collections', chip)}
-                        disabled={!isAdmin}
-                        onKeyPress={onPreventDefault}
+                        freeSolo
+                        renderTags={(value, getTagProps) => 
+                          value.map((option, index) => (
+                            <Chip
+                              key={option[index]}
+                              variant='default'
+                              label={option}
+                              {...getTagProps({ index })}
+                            />
+                          ))
+                        }
+                        renderInput={(params: object) => (
+                          <TextField
+                            {...params}
+                            disabled={!isAdmin}
+                            error={Boolean(errors.collections)}
+                            variant='standard'
+                            label='Collezione (max 5)'
+                            placeholder='es: Sherlock Holmes'
+                          />
+                        )}
                       />
                       {errors.collections && <FormHelperText className='message error'>{errors.collections}</FormHelperText>}
                     </FormControl>
