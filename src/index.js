@@ -3,11 +3,9 @@ import React from 'react';
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
-import ReactGA from 'react-ga';
 import { Router } from 'react-router-dom';
 import App from './app';
 import BrowserNotSupported from './components/browserNotSupported';
-import { readCookie } from './config/shared';
 import './css/grid.min.css';
 import './css/main.css';
 import * as serviceWorker from './serviceWorker';
@@ -43,17 +41,6 @@ if (isProd) {
 }
 
 const history = createBrowserHistory();
-
-if (isProd && process.env.REACT_APP_GA_TRACKING_ID && readCookie('user-has-accepted-cookies') === 'true') {
-  console.log('Initialize Google Analytics...');
-  ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, { debug: !isProd });
-  history.listen(location => {
-    setTimeout(() => { // REACT-HELMET PAGE TITLE SYNC HACK
-      ReactGA.set({ page: location.pathname });
-      ReactGA.pageview(location.pathname);
-    }, 1);
-  });
-}
 
 ReactDOM.render(
   <Router history={history}>

@@ -13,7 +13,7 @@ const CookiePage: FC = () => (
     </Helmet>
     <div className='container pad-v'>
       <h1>Cookie policy</h1>
-      <p className='lighter-text'>Data di entrata in vigore: 10 Marzo 2019</p>
+      <p className='lighter-text'>Data di entrata in vigore: 25 Agosto 2022</p>
     
       <BooksRowDivider />
 
@@ -27,8 +27,6 @@ const CookiePage: FC = () => (
 
         <h3>Cookie di terze parti</h3>
         <p>Durante la navigazione sul sito potresti memorizzare cookie di terze parti, come altri servizi, siti e piattaforme di social network. Questi cookie sono da intendersi per fini statistici e di marketing, oltre che per monitorare la tua interazione con i social network. Di seguito troverai una lista di tali servizi forniti da terze parti. Se continui la navigazione sul sito e usi i nostri servizi senza cambiare le impostazioni del browser, darai tacito consenso per la memorizzazione di tali cookie.</p>
-
-        <p><b>Google Analytics</b> &egrave; un servizio di analisi web fornito da Google che permette di tracciare in maniera anonima l&apos;attività online dei nostri utenti e il loro comportamento durante la navigazione sul sito. Luogo di elaborazione: US – <a href='https://www.google.com/intl/en/policies/privacy/' target='_blank' rel='noopener noreferrer'>Privacy Policy</a></p>
 
         <h2>Come gestire l&apos;installazione dei Cookie</h2>
         <p>Per gestire le tue preferenze sui cookie, puoi agire sulle impostazioni del tuo browser, ad esempio, chiedendogli di evitare l&apos;installazione dei cookie di terze parti. Attraverso le impostazione del browser &egrave; anche possibile cancellare i cookie installati in precedenza. &egrave; importante ricordare che disabilitando tutti i cookie, il funzionamento del sito potrebbe risultarne compromesso. Puoi trovare maggiori informazioni sulla gestione dei cookie nel browser ai seguenti link:</p>
