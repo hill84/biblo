@@ -58,6 +58,7 @@
     "autosuggest-highlight": "^3.3.4",
     "chart.js": "^2.9.4",
     "classnames": "^2.3.1",
+    "date-fns": "^2.29.2",
     "dompurify": "^2.3.8",
     "emoji-mart": "^3.0.1",
     "firebase": "^7.19.1",

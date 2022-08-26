@@ -13,7 +13,7 @@ import Rater from 'react-rater';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, app, calcReadingTime, msToTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
+import { abbrNum, app, calcDurationTime, calcReadingTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/bookProfile.css';
@@ -269,7 +269,7 @@ const BookProfile: FC<BookProfileProps> = ({
                       {book.authors && <span className='counter comma author'>di {bookAuthors.map((author: string) => 
                         <Link to={`/author/${normURL(author)}`} className='counter' key={author}>{author}</Link> 
                       )}</span>}
-                      {book.publisher && <span className='counter hide-sm'>editore: {book.publisher}</span>}
+                      {book.publisher && <span className='counter hide-sm'>Editore <b>{book.publisher}</b></span>}
                       {isAuth && hasBid && isEditor && (
                         <Fragment>
                           {isAdmin && (
@@ -297,14 +297,14 @@ const BookProfile: FC<BookProfileProps> = ({
                             <option value='ISBN_13'>ISBN-13</option>
                             <option value='ISBN_10'>ISBN-10</option>
                           </select>
-                        </Tooltip> <CopyToClipboard text={book[ISBN]}/>
+                        </Tooltip> <b><CopyToClipboard text={book[ISBN]}/></b>
                       </span>
                       {/* book.ISBN_10 !== 0 && <span className='counter'>ISBN-10 <CopyToClipboard text={book.ISBN_10}/></span> */}
-                      {book.publication && <span className='counter'>Pubblicazione {new Date(book.publication).toLocaleDateString()}</span>}
-                      {/* book.edition_num !== 0 && <span className='counter'>Edizione {book.edition_num}</span> */}
-                      {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className='counter'>Pagine {book.pages_num}</span>}
-                      {book.format === 'Audiolibro' && book.duration && <span className='counter'>Durata {msToTime(book.duration)}</span>}
-                      {book.format !== 'Libro' && <span className='counter'>Formato {book.format}</span>}
+                      {book.publication && <span className='counter'>Pubblicazione <b>{new Date(book.publication).toLocaleDateString()}</b></span>}
+                      {/* book.edition_num !== 0 && <span className='counter'>Edizione <b>{book.edition_num}</b></span> */}
+                      {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className='counter'>Pagine <b>{book.pages_num}</b></span>}
+                      {book.format === 'Audiolibro' && book.duration && <span className='counter'>Durata <b>{calcDurationTime(book.duration)}</b></span>}
+                      {book.format === 'Audiolibro' && <span className='counter'>Formato <b>{book.format.toLowerCase()}</b></span>}
                       {book.genres && book.genres[0] && <span className='counter comma'>Gener{book.genres[1] ? 'i' : 'e'} {book.genres.map(genre => <Link to={`/genre/${normURL(genre)}`} className='counter' key={genre}>{genre}</Link> )}</span>}
                       {book.collections && book.collections[0] && <span className='counter comma'>Collezion{book.collections[1] ? 'i' : 'e'} {book.collections.map(collection => <Link to={`/collection/${normURL(collection)}`} className='counter' key={collection}>{collection}</Link> )}</span>}
                     </div>

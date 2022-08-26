@@ -1,4 +1,6 @@
 import { FirestoreError } from '@firebase/firestore-types';
+import { Duration, formatDistanceStrict, formatDuration, intervalToDuration } from 'date-fns';
+import locale_it_IT from 'date-fns/locale/it';
 import 'regenerator-runtime/runtime';
 import logo from '../images/logo.png';
 import { AppModel, BookModel, BooksPerRowType, FormatType, RolesType, ScreenSizeType, UserModel } from '../types';
@@ -21,19 +23,21 @@ export const app: AppModel = {
   desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
 };
 
-const fallbackLanguage = 'it';
+const fallback = {
+  locale: locale_it_IT,
+  language: 'it',
+};
 
 // NAVIGATOR
-const lang: string = typeof window !== 'undefined' ? (navigator.language).split('-')[0] : fallbackLanguage;
+const lang: string = typeof window !== 'undefined' ? (navigator.language).split('-')[0] : fallback.language;
 
 // JUNCTION
 export const join = (arr: string[]): string => arr?.length > 1 ? [arr?.slice(0, -1).join(', '), arr?.slice(-1)[0]].join(arr?.length < 2 ? '' : ' e ') : String(arr || '');
 export const joinObj = (obj: Record<string, unknown>): string => {
   const arr: string[] = Object.keys({ ...obj });
-  return arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0];
+  return arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0] || '';
 };
-export const joinToLowerCase = (arr: string[]): string => arr[0] && join(arr.map(w => w.toLowerCase()));
-export const joinComma = (arr: string[]): string | string [] => arr?.length > 1 ? arr?.join(', ') : arr;
+export const joinToLowerCase = (arr: string[]): string => join(arr).toLowerCase();
 
 // OPTIONS
 export const dateOptions: Record<string, string> = { day: '2-digit', month: '2-digit', year: '2-digit' };
@@ -51,30 +55,24 @@ export const copyToClipboard = (str: string): void => {
     });
   }
 };
-const splitWords = (str: string): string[] => str?.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
-export const getInitials = (str: string): string => str?.split(' ').map(w => w.charAt(0)).join('');
+export const splitWords = (str: string): string[] => str?.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
+export const getInitials = (str: string): string => str?.split(' ').map((w: string): string => w.charAt(0)).join('');
 // export const objToArr = obj => Object.keys(obj);
 export const arrToObj = <G>(arr: Array<unknown>, fn: Function): Record<string, G> => {
   const obj: Record<string, G> = {};
   for (let i = 0; i < arr.length; i++) {
-    const item = fn(arr[i], i, arr);
-    obj[item.key] = item.value;
+    if (['string', 'number'].includes(typeof arr[i])) {
+      const item = fn(arr[i], i, arr);
+      obj[item.key] = item.value;
+    }
   }
   return obj;
 };
-// example: const obj = arrToObj(arr, item => { key: item, value: 'author' });
-export const truncateString = (str = '', limit = Infinity): string => str?.length > limit ? `${str?.substr(0, limit)}…` : str;
-export const normURL = (str: string): string => str && encodeURI(str.replace(/ /g, '_'));
-export const denormURL = (str: string): string => str && decodeURI(str.replace(/_/g, ' '));
-// export const denormUserRef = (str: string): string => str.replace(/@+/g, '').replace(/_+/g, ' ');
 
-export const arrayToObj = (array: string[]): Record<string, 'author'> => { 
-  const obj: Record<string, 'author'> = {}; 
-  array.forEach((item: string): void => {
-    obj[item] = 'author';
-  }); 
-  return obj;
-};
+export const truncateString = (str = '', limit?: number): string => typeof limit === 'number' && str?.length > limit ? `${str?.substring(0, limit)}…` : str;
+export const normURL = (str = ''): string => str ? encodeURI(str.replace(/ /g, '_')) : '';
+export const denormURL = (str = ''): string => str ? decodeURI(str.replace(/_/g, ' ')) : '';
+// export const denormUserRef = (str: string): string => str.replace(/@+/g, '').replace(/_+/g, ' ');
 
 export const hasRole = (user: UserModel, role: RolesType): boolean => user.roles?.[role] === true;
 
@@ -86,7 +84,7 @@ export const asyncForEach = async <G, >(array: Array<G>, callback: Function): Pr
   await Promise.all(results);
 };
 
-export const setFormatClass = (str: string): FormatType => {
+export const setFormatClass = (str = ''): FormatType => {
   switch (str) {
     case 'Audiolibro': return 'audio';
     case 'Rivista': return 'magazine';
@@ -104,23 +102,23 @@ export const emailRegex = /[a-zA-Z0-9\\+\\.\\_\\%\\-]{1,256}\\@[a-zA-Z0-9][a-zA-
 
 export const refRegex = /(?<![\w\d+])@([\w\d/+]*)(?![s+])/gi;
 
-// export const extractSpamUrls = (str: string): string[] | undefined => extractUrls(str)?.filter(s => !s.includes(new URL(app.url).host)); // ARRAY
+// export const extractSpamUrls = (str: string): string[] | undefined => extractUrls(str)?.filter(s => !s.includes(new URL(app.url).host));
 
-export const extractUrls = (str: string): RegExpMatchArray | null => str.match(urlRegex); // ARRAY
+export const extractUrls = (str = ''): RegExpMatchArray | null => str.match(urlRegex);
 
-export const extractRefs = (str: string): RegExpMatchArray | null => str.match(refRegex); // ARRAY
+export const extractRefs = (str = ''): RegExpMatchArray | null => str.match(refRegex);
 
-export const extractMentions = (str: string): string[] | undefined => extractRefs(str)?.filter((ref: string): boolean => ref.split('/')[0] === '@dashboard'); // ARRAY
+export const extractMentions = (str = ''): string[] | undefined => extractRefs(str)?.filter((ref: string): boolean => ref.split('/')[0] === '@dashboard');
 
-export const extractMuids = (str: string): string[] => [...new Set(extractMentions(str)?.map((item: string): string => item.split('/')[1]))];
+export const extractMuids = (str = ''): string[] => [...new Set(extractMentions(str)?.map((item: string): string => item.split('/')[1]))];
 
 // INTERPOLATION
-export const enrichText = (str: string): string => {
+export const enrichText = (str = ''): string => {
   const refs: RegExpMatchArray | null = extractRefs(str);
   const params = (match: string): string[] => match.split('/');
   const getLastParam = (match: string): string => params(match)?.[params(match).length - 1];
 
-  refs?.forEach((match: string): void => {
+  refs?.forEach((match = ''): void => {
     const _match: string = match.replace('@', '');
     const output = `<a title="${match}" href="${app.url}/${_match}">${denormURL(getLastParam(match))}</a>`;
     str = str.replace(match, output);
@@ -129,7 +127,7 @@ export const enrichText = (str: string): string => {
   return str;
 };
 
-export const noCookie = (str?: string): string | undefined => {
+export const noCookie = (str = ''): string | undefined => {
   if (!str) return str;
   const { protocol, pathname } = new URL(str);
   let { hostname } = new URL(str);
@@ -142,7 +140,7 @@ export const noCookie = (str?: string): string | undefined => {
 };
 
 // VALIDATION
-export const validateImg = (file: File, maxMB = 1): string | undefined => {
+export const validateImg = (file?: File, maxMB = 1): string => {
   let error = '';
 
   if (file) {
@@ -160,11 +158,11 @@ export const validateImg = (file: File, maxMB = 1): string | undefined => {
   return error;
 };
 
-export const checkBadWords = (str: string): boolean => splitWords(str).some((word: string): boolean => badWords.some((badWord: string): boolean => word.toLowerCase() === badWord));
-export const calcVulgarity = (str: string): number => splitWords(str).filter((word: string): boolean => badWords.some((badWord: string): boolean => word.toLowerCase() === badWord))?.length;
+export const checkBadWords = (str = ''): boolean => splitWords(str).some((word: string): boolean => badWords.some((badWord: string): boolean => word.toLowerCase() === badWord));
+export const calcVulgarity = (str = ''): number => splitWords(str).filter((word: string): boolean => badWords.some((badWord: string): boolean => word.toLowerCase() === badWord))?.length;
 
 // NORMALIZATION
-export const normalizeString = (str: string): string => String(str).toLowerCase()
+export const normalizeString = (str = ''): string => String(str).toLowerCase()
   .replace(/\s+/g,'-')        // Replace spaces with -
   .replace(/--+/g,'-')        // Replace multiple - with single -
   .replace(/[àáâãäå]/g,'a')
@@ -186,72 +184,60 @@ export const normalizeAuthor = (author = ''): string => {
   return capitalizeInitials(splittedAuthor);
 };
 
-export const normalizeAuthors = (authors?: string[]): BookModel['authors'] => {
-  if (!authors?.length) return {};
-  const normalizedAuthors: string[] = authors.map((author: string): string => normalizeAuthor(author));
+export const normalizeAuthors = (authors: string[] = []): BookModel['authors'] => {
+  if (!authors.length) return {};
+  const normalizedAuthors: string[] = authors.filter(Boolean).map((author: string): string => normalizeAuthor(author));
   return arrToObj(normalizedAuthors, (item: boolean): BookModel['authors'] => ({ key: item, value: true }));
 };
 
-export const normalizeFormat = (printType = '', isEbook?: boolean): 'Ebook' | 'Libro' | 'Rivista' => {
+export const normalizeFormat = (printType = '', isEbook = false): 'Ebook' | 'Libro' | 'Rivista' => {
   switch (printType) {
     case 'MAGAZINE': return 'Rivista';
     default: return isEbook ? 'Ebook' : 'Libro';
   }
 };
 
-export const normalizeCover = (str: string): string => str?.replace('http:', '').replace('&edge=curl', '');
-export const capitalize = (str: string): string => str && str[0].toUpperCase() + str.slice(1);
-export const capitalizeInitials = (str: string): string => {
+export const normalizeCover = (str = ''): string => str.replace('http:', '').replace('&edge=curl', '');
+export const capitalize = (str = ''): string => str ? str[0].toUpperCase() + str.slice(1) : '';
+export const capitalizeInitials = (str = ''): string => {
   const arr: string[] = str.split(' ');
   for (let i = 0, x: number = arr.length; i < x; i++) {
-    arr[i] = arr[i]?.[0]?.toUpperCase() + arr[i]?.substr(1);
+    if (!arr[i]) return '';
+    arr[i] = arr[i][0]?.toUpperCase() + arr[i].substring(1);
   }
   return arr.join(' ');
 };
 
 // CALCULATION
-const calcMinutesToTime = (minutes: number): string => `${(Math.floor(minutes/60)>0) ? `${Math.floor(minutes/60)} ore` : ''} ${(Math.floor(minutes%60)>0) ? `${Math.floor(minutes%60)} minuti` : ''}`;
+export const msToDuration = (ms: number): Duration => {
+  const start = new Date();
+  const end = new Date(start.getTime() + ms);
+  return intervalToDuration({ start, end });
+};
 
-export const calcReadingTime = (pages: number): string => calcMinutesToTime(pages * 1.25);
+export const calcReadingTime = (pages: number, locale = locale_it_IT): string => {
+  const ms: number = pages * 1.25 * 60 * 1000;
+  const duration: Duration = msToDuration(ms);
+  const options = { format: ['hours', 'minutes'], locale };
+  return formatDuration(duration, options);
+};
 
-export const calcAge = (birthDate: number): number => Math.abs(new Date(Date.now() - new Date(birthDate).getTime()).getUTCFullYear() - 1970);
+export const calcDurationTime = (ms: number, locale = locale_it_IT): string => {
+  const duration: Duration = msToDuration(ms);
+  const options = { format: ['hours', 'minutes'], locale };
+  return formatDuration(duration, options);
+};
+
+export const calcAge = (birthDate: number, now = Date.now()): number => Math.abs(new Date(now - birthDate).getUTCFullYear() - 1970);
+
+export const timeSince = (num: number | Date, now = Date.now()): string => {
+  return formatDistanceStrict(num, now, { addSuffix: true, locale: fallback.locale });
+};
 
 export const round = (num: number): number => Math.round((num + Number.EPSILON) * 10) / 10;
 
-export const timeSince = (date: number): string => {
-  const seconds = Math.floor((new Date().getTime() - date) / 1000);
-  let interval = Math.floor(seconds / 31536000);
-  if (interval > 1) return `${interval} anni fa`;
-  interval = Math.floor(seconds / 2592000);
-  if (interval > 1) return `${interval} mesi fa`;
-  interval = Math.floor(seconds / 86400);
-  if (interval > 1) return `${interval} giorni fa`;
-  interval = Math.floor(seconds / 3600);
-  if (interval > 1) return `${interval} ore fa`;
-  interval = Math.floor(seconds / 60);
-  if (interval > 1) return `${interval} minuti fa`;
-  return 'poco fa'; // `${Math.floor(seconds)} secondi fa`;
-};
-
-export const msToTime = (s: number): string => {
-  if (s && s > 59999) {
-    const ms = s % 1000;
-    s = (s - ms) / 1000;
-    const secs = s % 60;
-    s = (s - secs) / 60;
-    const mins = s % 60;
-    const hrs = (s - mins) / 60;
-    const hours = hrs ? `${hrs} or${hrs === 1 ? 'a' : 'e'}` : '';
-    const minutes = mins ? `${mins} minut${mins === 1 ? 'o' : 'i'}` : '';
-    return `${hours}${hours && minutes ? ' e ' : ''}${minutes}`;
-  }
-  return 'non disponibile';
-};
-
 const time = (hours: number): number => hours * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
-export const diffDates = (hours: number, secondDate: number, firstDate: number = Date.now()): number => Math.round(Math.abs((firstDate - secondDate) / time(hours)));
-
-export const isToday = (num: number): boolean => new Date(num).setHours(0,0,0,0) === new Date().setHours(0,0,0,0);
+export const diffDates = (hours: number, secondDate: number, firstDate = Date.now()): number => Math.round(Math.abs((firstDate - secondDate) / time(hours)));
 
 export const screenSize = (): ScreenSizeType => {
   const w: number = window.innerWidth;
@@ -264,13 +250,13 @@ export const booksPerRow = (): BooksPerRowType => {
 };
 
 export const abbrNum = (num: number, decPlaces = 0): string => {
-  decPlaces = 10 ** decPlaces;
+  decPlaces = 10 ** decPlaces; // CHECK: is this working?
   const abbrev: string[] = ['k', 'm', 'b', 't'];
   let res = String(num);
   for (let i = 3; i >= 0; i--) {
     const size = 10 ** ((i + 1) * 3);
     if (size <= num) {
-      num = Math.round(num as number * decPlaces / size) / decPlaces;
+      num = Math.round(num * decPlaces / size) / decPlaces;
       if ((num === 1000) && (i < abbrev.length - 1)) { 
         num = 1; i++; 
       }
@@ -281,7 +267,7 @@ export const abbrNum = (num: number, decPlaces = 0): string => {
   return res;
 };
 
-// MAP
+// MAPS
 export const switchGenres = (array: string[]): string[] => array.map((str: string): string => {
   switch (str) {
     case 'Architecture, Byzantine':
@@ -379,18 +365,7 @@ export const handleFirestoreError = (err: FirestoreError): string => {
   return firestoreErrorMessages[err.code] && (lang === 'it' || lang === 'en') ? firestoreErrorMessages[err.code][lang] : err.message;
 };
 
-/* export const slowImport = (value: unknown, ms = 1000) => {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(value), ms);
-  });
-};
-
-export const fakeImportComponent = (value: string, ms = 1000, bool: boolean) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => bool ? resolve({ default: value }) : reject(Error), ms);
-  });
-}; */
-
+// COOKIES
 export const createCookie = (name: string, value: string, days: number): void => {
   let expires = '';
   if (days) {
