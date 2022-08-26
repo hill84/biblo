@@ -46,4 +46,4 @@ Just run `yarn`, when finished type `yarn start` to run your app in development 
 
 ## Maintenance
 
-Update regularly your local version of [firebase-tools](https://www.npmjs.com/package/firebase-tools) with `npm i -g firebase-tools`.
+Update regularly your local version of [firebase-tools](https://www.npmjs.com/package/firebase-tools) with `yarn global add firebase-tools`.
