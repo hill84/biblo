@@ -5,30 +5,12 @@ import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
 import App from './app';
-import BrowserNotSupported from './components/browserNotSupported';
 import './css/grid.min.css';
 import './css/main.css';
-import * as serviceWorker from './serviceWorker';
+import reportWebVitals from './reportWebVitals';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const isProd = process.env.NODE_ENV === 'production';
-
-function getInternetExplorerVersion() {
-  /* eslint-disable no-var */
-  var rv = -1;
-  var ua;
-  var re;
-  /* eslint-enable no-var */
-  if (navigator.appName === 'Microsoft Internet Explorer') {
-    ua = navigator.userAgent;
-    re = new RegExp('MSIE ([0-9]{1,}[\\.0-9]{0,})');
-    if (re.exec(ua) !== null) rv = parseFloat( RegExp.$1 );
-  } else if (navigator.appName === 'Netscape') {
-    ua = navigator.userAgent;
-    re  = new RegExp('Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})');
-    if (re.exec(ua) !== null) rv = parseFloat( RegExp.$1 );
-  }
-  return rv;
-}
 
 if (isProd) {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
@@ -44,8 +26,17 @@ const history = createBrowserHistory();
 
 ReactDOM.render(
   <Router history={history}>
-    {getInternetExplorerVersion() === -1 ? <App/> : <BrowserNotSupported />}
+    <App/>
   </Router>,
   document.getElementById('root')
 );
-serviceWorker.register();
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://cra.link/PWA
+serviceWorkerRegistration.register();
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
