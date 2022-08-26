@@ -154,7 +154,7 @@ const ReviewForm = ({ bid, userBook }) => {
       const errors = validate(review);
       if (is.current) setErrors(errors);
 
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         if (is.current) setLoading(true);
 
         if (bid && user) {

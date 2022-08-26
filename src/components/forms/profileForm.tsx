@@ -187,7 +187,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
     
     setErrors(errors);
     
-    if (Object.keys(errors).length === 0) {
+    if (!Object.values(errors).some(Boolean)) {
       setLoading(true);
       setIsEditingSocial(false);
 

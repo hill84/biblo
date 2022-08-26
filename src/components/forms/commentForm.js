@@ -107,7 +107,7 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
       const errors = validate(comment);
       if (is.current) setErrors(errors);
 
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         if (is.current) setLoading(true);
 
         if (bid && rid && user) {

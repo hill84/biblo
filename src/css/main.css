@@ -88,7 +88,7 @@
   --ultraLightestTextClr: #ECECEC;
 
   /* Measures */
-  --radius: 6px;
+  --radius: 8px;
   --radius-sm: 3px;
   --headerHeight: 60px;
   --btnHeight: 36px;
@@ -474,8 +474,9 @@ a, .link {
   &.active { color: rgb(var(--accentClr)); }
 }
 
-svg { vertical-align: middle; color: currentColor; }
+svg { vertical-align: middle; color: currentcolor; }
 .counter svg, .btn svg { vertical-align: text-bottom; }
+.MuiMenuItem-root .MuiListItemIcon-root { min-width: 32px; }
 .material-icons svg.svg-icon { --iconSize: 24px; vertical-align: text-top; }
 svg.svg-icon, .btn svg { --iconSize: 18px; height: var(--iconSize); width: var(--iconSize); transition: all .2s ease-in-out; }
 
@@ -1353,7 +1354,7 @@ mark {
   content: ',';
   display: inline-block;
   margin: 0 3px 0 0;
-  color: currentColor;
+  color: currentcolor;
   white-space: nowrap;
 }
 .counter.comma:not(.strict) .counter:nth-last-child(2)::after {
@@ -1540,17 +1541,9 @@ mark {
   & .cover {
     /* width: var(--coverHeight); */
     height: var(--coverWidth);
-    border-radius: 999px;
     text-align: center;
     & .overlay {
-      background: rgb(var(--cardClr));
-      width: 25%;
-      height: 25%;
-      border-radius: 99px;
-      opacity: 1;
-      margin: auto;
-      box-shadow: inset 0 1px 3px rgba(var(--blackClr), .2), 0 0 0 15px rgba(var(--blackClr), .2);
-      transition: all .2s ease-in-out;
+      display: none;
     }
   }
 }
@@ -1594,7 +1587,7 @@ mark {
   z-index: 2;
 }
 
-.form-group ul, .react-autosuggest__suggestions-list { /* WARNING */
+#addBookComponent ul, .react-autosuggest__suggestions-list { /* WARNING */
   list-style: none;
   padding: 10px 0;
   margin-top: 0;
@@ -2151,6 +2144,7 @@ code {
     padding: 2px 4px;
     margin-left: -4px;
     margin-right: -4px;
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
     cursor: copy;
     transition: all .2s ease-in-out;
     user-select: none;

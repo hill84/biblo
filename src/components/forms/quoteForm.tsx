@@ -152,7 +152,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
       setAuthError('');
       setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         setLoading(true);
 
         const ref: DocumentReference<DocumentData> = data.qid ? quoteRef(data.qid) : quotesRef.doc();
@@ -197,7 +197,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
                   placeholder={`Inserisci la citazione (max ${max.chars.quote} caratteri)...`}
                   value={data.quote}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.quote)}
                 />

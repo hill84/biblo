@@ -116,7 +116,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
     setAuthError('');
     setErrors(errors);
     
-    if (Object.keys(errors).length === 0) {
+    if (!Object.values(errors).some(Boolean)) {
       setLoading(true);
       auth.signInWithEmailAndPassword(email, password).then((): void => {
         setRedirectToReferrer(true);

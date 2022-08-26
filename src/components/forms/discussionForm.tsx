@@ -140,7 +140,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
       const errors: ErrorsModel = validate(discussion);
       setErrors(errors);
 
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         setLoading(true);
 
         if (gid && user && authid) {

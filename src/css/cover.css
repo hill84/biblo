@@ -47,7 +47,7 @@
 
 .cover {
   --pad: 14px;
-  --radius: 3px;
+  --radius: 4px;
 
   position: relative;
   width: var(--coverWidth);
@@ -67,7 +67,10 @@
   transition: all .2s ease-in-out;
   will-change: opacity;
   animation: fadeIn .4s ease-in-out backwards;
-  & .loader svg { margin: auto; }
+  & .loader {
+    backdrop-filter: blur(6px);
+    & svg { margin: auto; }
+  }
   & .overlay {
     position: absolute;
     top: 0;
@@ -80,17 +83,22 @@
     opacity: .8;
     border-radius: inherit;
     background: linear-gradient(to right, transparent 0%, rgba(var(--whiteClr), .02) 1%, rgba(var(--blackClr), .06) 4%, rgba(var(--whiteClr), .09) 7%, rgba(var(--whiteClr), .2) 18%, rgba(var(--whiteClr), .2) 28%, transparent 100%);
-    filter: progid:dximagetransform.microsoft.gradient(startClrstr='#00ffffff', endClrstr='#00ffffff', GradientType=1);
   }
   & .title, & .subtitle, & .author, & .publisher {
-    float: left;
-    width: 100%;
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    display: -webkit-box !important;
+    -webkit-line-clamp: var(--max-lines);
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    float: left;
+    width: 100%;
   }
   & .title, & .subtitle {
-    white-space: normal;
+    --max-lines: 4;
+
     max-height: 65px;
     margin: 0;
     margin-bottom: .1rem;
@@ -103,10 +111,14 @@
     margin-bottom: .4rem;
   }
   & .author {
+    --max-lines: 2;
+
     font-size: 110%;
     font-weight: 500;
   }
   & .publisher {
+    --max-lines: 1;
+
     position: absolute;
     width: auto;
     left: var(--pad);
@@ -126,8 +138,9 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    background-color: rgba(var(--bookClr), .98);
-    color: rgba(var(--textClr));
+    background-color: rgba(var(--bookClr), .8);
+    backdrop-filter: blur(4px);
+    color: var(--mainTextClr);
     border-radius: 9px;
     padding: .16rem .54rem;
     text-transform: uppercase;

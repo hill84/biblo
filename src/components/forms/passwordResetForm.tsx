@@ -61,7 +61,7 @@ const PasswordResetForm: FC = () => {
 
     setErrors(errors);
 
-    if (Object.keys(errors).length === 0) {
+    if (!Object.values(errors).some(Boolean)) {
       setLoading(true);
       
       auth.sendPasswordResetEmail(email).then((): void => {

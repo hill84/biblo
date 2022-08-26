@@ -19,5 +19,6 @@
   "private": true,
   "devDependencies": {
     "eslint": "^8.6.0"
-  }
+  },
+  "packageManager": "npm@8.5.5"
 }

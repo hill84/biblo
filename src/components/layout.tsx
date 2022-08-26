@@ -197,9 +197,15 @@ const Layout: FC = ({ children }) => {
                 onClick={onCloseMore}
                 open={Boolean(moreAnchorEl)}
                 onClose={onCloseMore}>
-                <MenuItem component={Link} to='/profile'>Profilo</MenuItem>
-                <MenuItem component={Link} to={`/dashboard/${user.uid}/shelf`}>La mia libreria</MenuItem>
-                <MenuItem onClick={signOut}>Esci</MenuItem>
+                <MenuItem component={Link} to='/profile'>
+                  <ListItemIcon>{icon.account}</ListItemIcon> Profilo
+                </MenuItem>
+                <MenuItem component={Link} to={`/dashboard/${user.uid}/shelf`}>
+                  <ListItemIcon>{icon.bookshelf}</ListItemIcon> La mia libreria
+                </MenuItem>
+                <MenuItem onClick={signOut}>
+                  <ListItemIcon>{icon.logoutVariant}</ListItemIcon> Esci
+                </MenuItem>
               </Menu>
             </>
           ) : (
@@ -269,7 +275,7 @@ const Layout: FC = ({ children }) => {
             <NavLink to='/groups' exact>
               <MenuItem>
                 <ListItemIcon>{icon.accountGroup}</ListItemIcon>
-                <Typography variant='inherit'>Gruppi <span className='badge sm rounded accent'>New</span></Typography>
+                <Typography variant='inherit'>Gruppi</Typography>
               </MenuItem>
             </NavLink>
             <NavLink to='/genres' exact>

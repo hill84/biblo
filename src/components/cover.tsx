@@ -89,7 +89,11 @@ const Cover: FC<CoverProps> = ({
       {info !== false && (
         <div className='info'>
           <strong className='title'>{book.title}</strong>
-          <span className='author'><span className='hide-sm'>di</span> {joinedAuthors}</span>
+          {joinedAuthors && (
+            <span className='author'>
+              <span className='hide-sm'>di</span> {joinedAuthors}
+            </span>
+          )}
           {full && book.publisher && <span className='publisher'>{book.publisher}</span>}
           {(book as CoverModel).readingState?.state_num === 2 && ((book as CoverModel).readingState?.progress_num || 0) > 0 ? (
             <Tooltip title={`${(book as CoverModel).readingState?.progress_num}%`} placement='top'>

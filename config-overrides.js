@@ -1,13 +1,10 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-const { addPostcssPlugins, useBabelRc, override, useEslintRc } = require('customize-cra');
+const { addPostcssPlugins, override } = require('customize-cra');
 const autoprefixer = require('autoprefixer');
 const postcssCustomMedia = require('postcss-custom-media');
 const postcssPresetEnv = require('postcss-preset-env');
 const postcssImport = require('postcss-import');
 
 module.exports = override(
-  useBabelRc(),
-  useEslintRc(),
   addPostcssPlugins([
     autoprefixer({}),
     postcssCustomMedia({}),

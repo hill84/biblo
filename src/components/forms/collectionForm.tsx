@@ -171,7 +171,7 @@ const CollectionForm: FC<CollectionFormProps> = ({
       
       setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         const ref: DocumentReference<DocumentData> = data.title ? collectionRef(data.title) : collectionsRef.doc();
         ref.set({
           books_num: data.books_num || 0,
@@ -265,7 +265,7 @@ const CollectionForm: FC<CollectionFormProps> = ({
                   placeholder={`Inserisci la descrizione (max ${max.chars.desc} caratteri)...`}
                   value={data.description}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.description)}
                 />

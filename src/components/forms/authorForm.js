@@ -138,7 +138,7 @@ const AuthorForm = ({ id, onToggle }) => {
       
       if (is.current) setErrors(errors);
       
-      if (Object.keys(errors).length === 0) {
+      if (!Object.values(errors).some(Boolean)) {
         if (is.current) setLoading(true);
         const ref = data.displayName ? authorRef(normalizeString(data.displayName)) : authorsRef.doc();
         ref.set({
@@ -216,7 +216,7 @@ const AuthorForm = ({ id, onToggle }) => {
                   placeholder={`Inserisci la biografia (max ${max.chars.bio} caratteri)...`}
                   value={data.bio}
                   onChange={onChangeMaxChars}
-                  rowsMax={20}
+                  maxRows={20}
                   multiline
                   error={Boolean(errors.bio)}
                 />
