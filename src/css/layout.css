@@ -53,7 +53,7 @@
   }
   & a, & button, & .more-btn, & .drawer-btn {
     color: currentcolor;
-    &:not(.primary):not(.secondary) {
+    &:not(.primary, .secondary) {
       &:hover, &.active:hover { color: rgb(var(--primaryClr)); }
     }
   }

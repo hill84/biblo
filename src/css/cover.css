@@ -47,7 +47,7 @@
 
 .cover {
   --pad: 14px;
-  --radius: 3px;
+  --radius: 4px;
 
   position: relative;
   width: var(--coverWidth);
@@ -67,7 +67,10 @@
   transition: all .2s ease-in-out;
   will-change: opacity;
   animation: fadeIn .4s ease-in-out backwards;
-  & .loader svg { margin: auto; }
+  & .loader {
+    backdrop-filter: blur(6px);
+    & svg { margin: auto; }
+  }
   & .overlay {
     position: absolute;
     top: 0;
@@ -80,7 +83,6 @@
     opacity: .8;
     border-radius: inherit;
     background: linear-gradient(to right, transparent 0%, rgba(var(--whiteClr), .02) 1%, rgba(var(--blackClr), .06) 4%, rgba(var(--whiteClr), .09) 7%, rgba(var(--whiteClr), .2) 18%, rgba(var(--whiteClr), .2) 28%, transparent 100%);
-    filter: progid:dximagetransform.microsoft.gradient(startClrstr='#00ffffff', endClrstr='#00ffffff', GradientType=1);
   }
   & .title, & .subtitle, & .author, & .publisher {
     /* stylelint-disable-next-line value-no-vendor-prefix */
