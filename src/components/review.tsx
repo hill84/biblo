@@ -303,10 +303,13 @@ const Review: FC<ReviewProps> = ({
                     </div>
                   )}
                 </div>
+                
                 <div className='col counter text-right date'>
-                  <span className='hide-xs' title={`modificata ${timeSince(review.lastEdit_num)}`}>
-                    {review.lastEdit_num && (review.created_num !== review.lastEdit_num) && '(modificata)'}
-                  </span> {timeSince(review.created_num)}
+                  {review.lastEdit_num && (
+                    <span className='hide-xs' title={`modificata ${timeSince(review.lastEdit_num)}`}>
+                      {review.lastEdit_num && (review.created_num !== review.lastEdit_num) && '(modificata)'}
+                    </span>
+                  )} {timeSince(review.created_num)}
                 </div>
               </div>
             )}
