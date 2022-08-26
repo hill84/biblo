@@ -1,6 +1,6 @@
 {
   "name": "biblo",
-  "version": "0.17.5",
+  "version": "0.17.6",
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.18.13",
