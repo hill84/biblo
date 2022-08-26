@@ -83,14 +83,20 @@
     filter: progid:dximagetransform.microsoft.gradient(startClrstr='#00ffffff', endClrstr='#00ffffff', GradientType=1);
   }
   & .title, & .subtitle, & .author, & .publisher {
-    float: left;
-    width: 100%;
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    display: -webkit-box !important;
+    -webkit-line-clamp: var(--max-lines);
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    float: left;
+    width: 100%;
   }
   & .title, & .subtitle {
-    white-space: normal;
+    --max-lines: 4;
+
     max-height: 65px;
     margin: 0;
     margin-bottom: .1rem;
@@ -103,10 +109,14 @@
     margin-bottom: .4rem;
   }
   & .author {
+    --max-lines: 2;
+
     font-size: 110%;
     font-weight: 500;
   }
   & .publisher {
+    --max-lines: 1;
+
     position: absolute;
     width: auto;
     left: var(--pad);

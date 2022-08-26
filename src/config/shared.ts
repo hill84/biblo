@@ -1,7 +1,7 @@
 import { FirestoreError } from '@firebase/firestore-types';
 import 'regenerator-runtime/runtime';
 import logo from '../images/logo.png';
-import { AppModel, BooksPerRowType, FormatType, RolesType, ScreenSizeType, UserModel } from '../types';
+import { AppModel, BookModel, BooksPerRowType, FormatType, RolesType, ScreenSizeType, UserModel } from '../types';
 import { badWords, firestoreErrorMessages } from './lists';
 
 // APP
@@ -54,8 +54,8 @@ export const copyToClipboard = (str: string): void => {
 const splitWords = (str: string): string[] => str?.split(/[ ,.;:@!?"<>'«»()/|+-/–=_]+/);
 export const getInitials = (str: string): string => str?.split(' ').map(w => w.charAt(0)).join('');
 // export const objToArr = obj => Object.keys(obj);
-export const arrToObj = (arr: Array<unknown>, fn: Function): Record<string, unknown> => {
-  const obj: Record<string, unknown> = {};
+export const arrToObj = <G>(arr: Array<unknown>, fn: Function): Record<string, G> => {
+  const obj: Record<string, G> = {};
   for (let i = 0; i < arr.length; i++) {
     const item = fn(arr[i], i, arr);
     obj[item.key] = item.value;
@@ -179,6 +179,26 @@ export const normalizeString = (str: string): string => String(str).toLowerCase(
   .replace(/ñ/g,'n')
   .replace(/^-+/, '')         // Trim - from start of text
   .replace(/-+$/, '');        // Trim - from end of text
+
+export const normalizeAuthor = (author = ''): string => {
+  const splittedAuthor = author.trim().split('.').join('').toLowerCase();
+  if (['aavv', 'aa vv'].includes(splittedAuthor)) return 'AAVV';
+  return capitalizeInitials(splittedAuthor);
+};
+
+export const normalizeAuthors = (authors?: string[]): BookModel['authors'] => {
+  if (!authors?.length) return {};
+  const normalizedAuthors: string[] = authors.map((author: string): string => normalizeAuthor(author));
+  return arrToObj(normalizedAuthors, (item: boolean): BookModel['authors'] => ({ key: item, value: true }));
+};
+
+export const normalizeFormat = (printType = '', isEbook?: boolean): 'Ebook' | 'Libro' | 'Rivista' => {
+  switch (printType) {
+    case 'MAGAZINE': return 'Rivista';
+    default: return isEbook ? 'Ebook' : 'Libro';
+  }
+};
+
 export const normalizeCover = (str: string): string => str?.replace('http:', '').replace('&edge=curl', '');
 export const capitalize = (str: string): string => str && str[0].toUpperCase() + str.slice(1);
 export const capitalizeInitials = (str: string): string => {

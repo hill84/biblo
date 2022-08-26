@@ -353,6 +353,14 @@ export interface OrderByModel {
   icon?: ReactNode;
 }
 
+export interface SearchByModel {
+  key: string;
+  type: string;
+  label: string;
+  hint: string;
+  where: string;
+}
+
 export interface CurrentTarget {
   dataset?: Record<string, string>;
   parentNode?: ParentNodeWithDataset;
