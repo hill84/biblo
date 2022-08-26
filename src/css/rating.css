@@ -1,7 +1,6 @@
 .rating {
   line-height: 1.6;
   color: var(--lightTextClr);
-  text-transform: uppercase;
   will-change: opacity;
   animation: fadeIn .4s ease-in-out;
   user-select: none;

@@ -138,7 +138,8 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    background-color: rgba(var(--bookClr), .98);
+    background-color: rgba(var(--bookClr), .8);
+    backdrop-filter: blur(4px);
     color: var(--mainTextClr);
     border-radius: 9px;
     padding: .16rem .54rem;

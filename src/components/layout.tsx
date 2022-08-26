@@ -197,9 +197,15 @@ const Layout: FC = ({ children }) => {
                 onClick={onCloseMore}
                 open={Boolean(moreAnchorEl)}
                 onClose={onCloseMore}>
-                <MenuItem component={Link} to='/profile'>Profilo</MenuItem>
-                <MenuItem component={Link} to={`/dashboard/${user.uid}/shelf`}>La mia libreria</MenuItem>
-                <MenuItem onClick={signOut}>Esci</MenuItem>
+                <MenuItem component={Link} to='/profile'>
+                  <ListItemIcon>{icon.account}</ListItemIcon> Profilo
+                </MenuItem>
+                <MenuItem component={Link} to={`/dashboard/${user.uid}/shelf`}>
+                  <ListItemIcon>{icon.bookshelf}</ListItemIcon> La mia libreria
+                </MenuItem>
+                <MenuItem onClick={signOut}>
+                  <ListItemIcon>{icon.logoutVariant}</ListItemIcon> Esci
+                </MenuItem>
               </Menu>
             </>
           ) : (
