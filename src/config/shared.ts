@@ -230,7 +230,8 @@ export const calcDurationTime = (ms: number, locale = locale_it_IT): string => {
 
 export const calcAge = (birthDate: number, now = Date.now()): number => Math.abs(new Date(now - birthDate).getUTCFullYear() - 1970);
 
-export const timeSince = (num: number | Date, now = Date.now()): string => {
+export const timeSince = (num?: number, now = Date.now()): string => {
+  if (typeof num !== 'number' || Number.isNaN(num)) return '';
   return formatDistanceStrict(num, now, { addSuffix: true, locale: fallback.locale });
 };
 

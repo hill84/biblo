@@ -580,6 +580,15 @@ hr.line {
       transform-origin: right;
     }
   }
+  & .details-code {
+    background-color: rgb(var(--mainClr));
+    text-align: left;
+    font-family: monospace;
+    word-break: break-all;
+    width: auto;
+    margin: 0;
+    box-shadow: none;
+  }
   & .empty { color: var(--lightTextClr); }
 }
 

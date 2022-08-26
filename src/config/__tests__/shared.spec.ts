@@ -331,6 +331,10 @@ describe('Given a date number', () => {
   it('should return an expected distance string', () => {
     const now: number = new Date(2022, 7, 26, 20).getTime();
 
+    expect(timeSince(NaN)).toStrictEqual('');
+    expect(timeSince(undefined)).toStrictEqual('');
+    expect(timeSince(null as unknown as number)).toStrictEqual('');
+    expect(timeSince('_UNEXPECTED_' as unknown as number)).toStrictEqual('');
     expect(timeSince(new Date(2017, 3, 15, 14).getTime(), now)).toStrictEqual('5 anni fa');
     expect(timeSince(new Date(2022, 6, 15, 14).getTime(), now)).toStrictEqual('un mese fa');
     expect(timeSince(new Date(2022, 7, 23, 14).getTime(), now)).toStrictEqual('3 giorni fa');
