@@ -85,8 +85,7 @@
     "react-swipeable-views-utils": "^0.14.0",
     "regenerator-runtime": "^0.13.9",
     "stylelint-no-unsupported-browser-features": "^5.0.3",
-    "validator": "^13.7.0",
-    "web-vitals": "^2.1.4"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "react-app-rewired start",

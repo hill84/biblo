@@ -1,5 +1,7 @@
 import './css/snackbar.css';
 
+export const PUBLIC_URL = 'https://biblo.space';
+
 export function displayUpdateNotification() {
   const link = document.createElement('a');
   
