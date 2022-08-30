@@ -80,7 +80,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
   const luid: string | undefined = contextUser?.uid;
   const uid: string = user?.uid;
 
-  const setChange = useCallback((name: string, value: string): void => {
+  const setChange = useCallback((name: string, value: unknown): void => {
     setUser({ ...user, [name]: value });
     if (errors[name]) setErrors({ ...errors, [name]: null });
     setSaved(false);
@@ -97,11 +97,11 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
     e.persist();
     const { name, value } = e.target;
     if (!name) return;
-    setChange(name, value as string);
+    setChange(name, value);
   };
 
   const onChangeDate = useCallback((name: string) => (date: Date | null): void => {
-    const value = String(date);
+    const value: string = date ? String(date) : '';
     setChange(name, value);
   }, [setChange]);
 
@@ -377,7 +377,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           </div>
 
           <div className='form-group'>
-            {user.country && user.country === 'Italia‎' ? (
+            {user.country && user.country === 'Italia' ? (
               <FormControl className='select-field' margin='normal' fullWidth>
                 <InputLabel htmlFor='city'>Provincia</InputLabel>
                 <Select

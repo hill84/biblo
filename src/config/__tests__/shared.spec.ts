@@ -113,7 +113,7 @@ describe('Given a user and a role', () => {
       uid: 'UID',
       displayName: 'DISPLAY_NAME',
       email: 'EMAIL',
-      birth_date: 0,
+      birth_date: '',
       continent: 'CONTINENT',
       country: 'COUNTRY',
       city: 'CITY',
@@ -344,12 +344,13 @@ describe('Given a date number', () => {
   });
 });
 
-describe('Given a date number', () => {
+describe('Given a date string', () => {
   it('should return an expected age number', () => {
     const now: number = new Date(2022, 7, 26, 20).getTime();
 
-    expect(calcAge(new Date(2017, 1).getTime(), now)).toStrictEqual(5);
-    expect(calcAge(new Date(1984, 1).getTime(), now)).toStrictEqual(38);
+    expect(calcAge('_UNEXPECTED_', now)).toStrictEqual(0);
+    expect(calcAge(String(new Date(2017, 1)), now)).toStrictEqual(5);
+    expect(calcAge(String(new Date(1984, 1)), now)).toStrictEqual(38);
   });
 });
 

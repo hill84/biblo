@@ -228,7 +228,11 @@ export const calcDurationTime = (ms: number, locale = locale_it_IT): string => {
   return formatDuration(duration, options);
 };
 
-export const calcAge = (birthDate: number, now = Date.now()): number => Math.abs(new Date(now - birthDate).getUTCFullYear() - 1970);
+export const calcAge = (birth_date: string, now = Date.now()): number => {
+  const num: number = new Date(birth_date).getTime();
+  if (Number.isNaN(num)) return 0;
+  return Math.abs(new Date(now - num).getUTCFullYear() - 1970);
+};
 
 export const timeSince = (num?: number, now = Date.now()): string => {
   if (typeof num !== 'number' || Number.isNaN(num)) return '';

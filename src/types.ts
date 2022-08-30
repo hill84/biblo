@@ -8,7 +8,7 @@ export interface UserModel {
   uid: string;
   displayName: string;
   email: string;
-  birth_date: number;
+  birth_date: string;
   continent: string;
   country: string;
   city: string;

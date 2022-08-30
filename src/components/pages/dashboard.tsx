@@ -394,7 +394,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                     <Fragment>
                       <div className='info-row hide-xs'>
                         {duser?.sex && duser.sex !== 'x' && <span className='counter'>{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
-                        {duser?.birth_date && <span className='counter'>{calcAge(duser.birth_date)} anni</span>}
+                        {duser?.birth_date && <span className='counter'>{calcAge(duser.birth_date) || '-'} anni</span>}
                         <span className='counter comma strict'>
                           {duser?.city && <span className='counter'>{duser.city}</span>}
                           {duser?.country && <span className='counter'>{duser.country}</span>}
