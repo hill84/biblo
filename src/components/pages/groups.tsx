@@ -25,6 +25,7 @@ import GroupForm from '../forms/groupForm';
 import MinifiableText from '../minifiableText';
 import PaginationControls from '../paginationControls';
 import DOMPurify from 'dompurify';
+import { useTranslation } from 'react-i18next';
 
 const limit = 3;
 const searchLimit = 2;
@@ -45,18 +46,8 @@ export const mark = (text: string, searchText?: string, searchLimit?: number): R
   return text;
 };
 
-const seo = {
-  title: `${app.name} | Groups`
-};
-
 let fetchItemsCanceler: null | (() => void) = null;
 let timeout: null | number = null;
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'created_num', label: 'Data creazione', icon: icon.calendar }, 
-  { type: 'followers_num', label: 'Iscritti', icon: icon.formatTitle }, 
-  { type: 'title', label: 'Titolo', icon: icon.star }
-];
 
 interface StateModel {
   count: number;
@@ -103,7 +94,20 @@ const Groups: FC = () => {
   const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState<StateModel['orderMenuAnchorEl']>(initialState.orderMenuAnchorEl);
   const [firstVisible, setFirstVisible] = useState<StateModel['firstVisible']>(initialState.firstVisible);
   const [lastVisible, setLastVisible] = useState<StateModel['lastVisible']>(initialState.lastVisible);
+
+  const { t } = useTranslation(['common', 'form']);
+
   const is = useRef<IsCurrent>(true);
+
+  const seo = {
+    title: `${app.name} | ${t('PAGE_GROUPS')}`
+  };
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'created_num', label: t('CREATED_DATE'), icon: icon.calendar }, 
+    { type: 'followers_num', label: t('SUBSCRIBERS'), icon: icon.formatTitle }, 
+    { type: 'title', label: t('TITLE'), icon: icon.star },
+  ], [t]);
 
   const order: OrderByModel = orderBy[orderByIndex];
   const searching = useMemo((): boolean => searchText.length > searchLimit, [searchText.length]);
@@ -176,7 +180,7 @@ const Groups: FC = () => {
   };
 
   const fetchCount = useCallback((): void => {
-    console.log('fetchCount');
+    // console.log('fetchCount');
     countRef('groups').get().then((fullSnap: DocumentData): void => {
       if (fullSnap.exists) {
         setCount(fullSnap.data()?.count);
@@ -248,7 +252,7 @@ const Groups: FC = () => {
       <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
       <Typography variant='inherit'>{orderBy[i].label}</Typography>
     </MenuItem>
-  )), [onChangeOrderBy, orderByIndex]);
+  )), [onChangeOrderBy, orderBy, orderByIndex]);
 
   const onResetSearchText = (): void => {
     setSearchText(initialState.searchText);
@@ -263,7 +267,7 @@ const Groups: FC = () => {
 
       <div className={classnames('info-row', 'row', 'lighter-text', loading && !items.length ? 'hidden' : 'show')}>
         <div className='col'>
-          {items.length} di {count} gruppi
+          {items.length} {t('OF')} {count} {t('GROUPS').toLowerCase()}
         </div>
         <div className='col text-right'>
           <button 
@@ -271,7 +275,7 @@ const Groups: FC = () => {
             className='btn sm rounded flat counter' 
             onClick={onOpenOrderMenu} 
             disabled={searching || count < 2}>
-            <span className='hide-sm'>Ordina per {orderBy[orderByIndex].label}</span>
+            <span className='hide-sm'>{t('SORT_BY')} {orderBy[orderByIndex].label}</span>
             <span className='show-sm'>{orderBy[orderByIndex].icon}</span>
           </button>
           <Menu 
@@ -281,7 +285,7 @@ const Groups: FC = () => {
             onClose={onCloseOrderMenu}>
             {orderByOptions}
           </Menu>
-          <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+          <Tooltip title={t(desc ? 'ASCENDING' : 'DESCENDING')}>
             <span>
               <button
                 type='button'
@@ -303,11 +307,11 @@ const Groups: FC = () => {
                 className='input-field' 
                 fullWidth
                 id='search'
-                label='Cerca gruppo'
+                label={t('ACTION_SEARCH_GROUP')}
                 margin='dense'
                 name='search'
                 onChange={onChange}
-                placeholder={`Scrivi almeno ${searchLimit + 1} caratteri...`}
+                placeholder={t('form:AT_LEAST_COUNT_CHARACTERS', { count: searchLimit + 1 })}
                 style={{ margin: 0 }}
                 type='text'
                 value={searchText || ''}
@@ -328,7 +332,7 @@ const Groups: FC = () => {
                 style={{ '--btnHeight': '40px', } as CSSProperties}
                 onClick={onCreateGroup}
                 disabled={!isEditor}>
-                Crea <span className='hide-xs'>gruppo</span>
+                {t('ACTION_CREATE_GROUP')}
               </button>
             </div>
           )}
@@ -340,11 +344,11 @@ const Groups: FC = () => {
         {loading && !items.length ? (
           <div aria-hidden='true' className='relative loader'><CircularProgress /></div>
         ) : !items.length ? (
-          <div className='empty pad-v text-center'>Nessun gruppo trovato</div>
+          <div className='empty pad-v text-center'>{t('NO_GROUP_FOUND')}</div>
         ) : items.map(({ created_num, description, edit, followers_num, gid, owner, ownerUid, photoURL, title }: GroupModel) => (
           <div key={gid} className={classnames('card', 'group', 'box', { 'primary': searching && title === searchText })} style={{ opacity: searching && !title.toLowerCase().includes(searchText.toLowerCase()) ? 0.3 : undefined }}>
             {!edit && (
-              <Tooltip title='Gruppo bloccato'>
+              <Tooltip title={t('LOCKED_GROUP')}>
                 <div className='absolute-top-right lighter-text'>{icon.lock}</div>
               </Tooltip>
             )}
@@ -362,7 +366,7 @@ const Groups: FC = () => {
                 <h2><Link to={`/group/${gid}`}>{mark(title, searchText, searchLimit)}</Link></h2>
                 <div className='info-row owner'>
                   <span className='counter'>
-                    Creato da <Link to={`/dashboard/${ownerUid}`}>{owner}</Link>&nbsp;
+                    {t('CREATED_BY')} <Link to={`/dashboard/${ownerUid}`}>{owner}</Link>&nbsp;
                     {isAdmin && (
                       <span className='hide-xs' title={new Date(created_num).toLocaleString()}>
                         {timeSince(created_num)}
@@ -370,7 +374,7 @@ const Groups: FC = () => {
                     )}
                   </span>
                   <span className='counter'>
-                    <b>{followers_num}</b> iscritti
+                    <b>{followers_num}</b> {t('SUBSCRIBERS').toLowerCase()}
                   </span>
                 </div>
                 <div className='info-row text'>

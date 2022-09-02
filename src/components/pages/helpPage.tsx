@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React, { FC, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
 import withScrollToTop from '../hocs/withScrollToTop';
@@ -112,6 +113,8 @@ const faqs: FaqModel[] = [{
 const HelpPage: FC = () => {
   const [expanded, setExpanded] = useState<boolean | number>(false);
 
+  const { t } = useTranslation(['common']);
+
   const onChange = (panel: number, isExpanded: boolean): void => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -119,16 +122,16 @@ const HelpPage: FC = () => {
   return (
     <div id='HelpPageComponent' className='reveal fadeIn slideUp'>
       <Helmet>
-        <title>{app.name} | Aiuto</title>
+        <title>{app.name} | {t('PAGE_HELP')}</title>
         <meta name='description' content={app.desc} />
         <link rel='canonical' href={app.url} />
       </Helmet>
       <div className='container pad-v'>
-        <h1>Hai bisogno di aiuto?</h1>
+        <h1>{t('HELP_TITLE')}</h1>
         <div className='text-justify text-left-sm'>
           <p>Consulta le nostre &quot;domande frequenti&quot;. Se non trovi quello che cercavi scrivici nel <Link to={app.help.group.url}>gruppo di assistenza</Link> o all&apos;indirizzo <a href={`mailto:${app.email}?subject=Biblo: aiuto`}>{app.email}</a>.</p><br />
 
-          <h2>Domande frequenti</h2>
+          <h2>{t('FREQUENTLY_ASKED_QUESTIONS')}</h2>
           <div className='accordion-container'>
             {faqs.map(({ a, id, q }: FaqModel) => (
               <Accordion expanded={expanded === id} onChange={(_e, isExpanded: boolean): void => onChange(id, isExpanded)} key={id}>

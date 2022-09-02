@@ -10,6 +10,7 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import React, { ChangeEvent, CSSProperties, FC, FormEvent, Fragment, MouseEvent, useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
@@ -100,6 +101,8 @@ const SignupForm: FC = () => {
   const [redirectTo, setRedirectTo] = useState<string>(initialState.redirectTo);
   const [showPassword, setShowPassword] = useState<boolean>(initialState.showPassword);
 
+  const { t } = useTranslation(['form']);
+
   const onToggleTerms = (e: ChangeEvent<HTMLInputElement>): void => {
     e.persist();
     const { checked } = e.target;
@@ -125,34 +128,34 @@ const SignupForm: FC = () => {
     };
     
     if (!terms) {
-      errors.terms = 'Spunta la casella obbligatoria'; 
+      errors.terms = t('ERROR_REQUIRED_CHECKBOX'); 
     }
 
     const name: string = data.displayName.toLowerCase();
 
     if (!data.displayName) { 
-      errors.displayName = 'Inserisci un nome utente'; 
+      errors.displayName = t('ERROR_REQUIRED_FIELD'); 
     } else if (name === 'admin' || name === 'amministratore' || name.startsWith('biblo')) {
-      errors.displayName = 'Nome utente non permesso'; 
+      errors.displayName = t('ERROR_FORBIDDEN_DISPLAY_NAME'); 
       // TODO: check further forbidden names
     } else if (data.displayName.length > max.chars.displayName) {
-      errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
+      errors.displayName = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.displayName });
     }
 
     if (!data.email) {
-      errors.email = 'Inserisci un indirizzo email';
+      errors.email = t('ERROR_REQUIRED_FIELD');
     } else if (!isEmail(data.email)) {
-      errors.email = 'Email non valida';
+      errors.email = t('ERROR_INVALID_FORMAT');
     } else if (data.email.length > max.chars.email) {
-      errors.password = `Massimo ${max.chars.email} caratteri`;
+      errors.password = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.email });
     }
 
     if (!data.password) {
-      errors.password = 'Inserisci una password'; 
+      errors.password = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.password.length < min.chars.password) {
-      errors.password = `Minimo ${min.chars.password} caratteri`;
+      errors.password = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.password });
     } else if (data.password.length > max.chars.password) {
-      errors.password = `Massimo ${max.chars.password} caratteri`;
+      errors.password = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.password });
     } // TODO: check password strength
 
     return errors;
@@ -225,7 +228,7 @@ const SignupForm: FC = () => {
         // required
         label={(
           <span className='text-sm'>
-            Accetto i <Link to='/terms'>termini</Link> e confermo la visione della <Link to='/privacy'>privacy</Link> di {app.name}
+            Accetto i <Link to='/terms'>{t('common:TERMS').toLowerCase()}</Link> e confermo la visione della <Link to='/privacy'>privacy</Link> di {app.name}
           </span>
         )}
         control={(
@@ -242,13 +245,15 @@ const SignupForm: FC = () => {
         <SocialAuth disabled={!terms} />
         <div className='form-group'>
           <FormControl className='input-field' margin='normal' fullWidth>
-            <InputLabel error={Boolean(errors.displayName)} htmlFor='displayName'>Nome e cognome</InputLabel>
+            <InputLabel error={Boolean(errors.displayName)} htmlFor='displayName'>
+              {t('LABEL_DISPLAY_NAME')}
+            </InputLabel>
             <Input
               id='displayName'
               name='displayName'
               type='text'
               autoFocus
-              placeholder='Mario Rossi'
+              placeholder={t('PLACEHOLDER_DISPLAY_NAME')}
               value={data.displayName}
               onChange={onChange}
               error={Boolean(errors.displayName)}
@@ -259,12 +264,14 @@ const SignupForm: FC = () => {
 
         <div className='form-group'>
           <FormControl className='input-field' margin='normal' fullWidth>
-            <InputLabel error={Boolean(errors.email)} htmlFor='email'>Email</InputLabel>
+            <InputLabel error={Boolean(errors.email)} htmlFor='email'>
+              Email
+            </InputLabel>
             <Input
               id='email'
               name='email'
               type='email'
-              placeholder='esempio@esempio.com'
+              placeholder={t('PLACEHOLDER_EG_STRING', { string: 'email@provider.com' })}
               value={data.email}
               onChange={onChange}
               error={Boolean(errors.email)}
@@ -275,12 +282,14 @@ const SignupForm: FC = () => {
 
         <div className='form-group'>
           <FormControl className='input-field' margin='normal' fullWidth>
-            <InputLabel error={Boolean(errors.password)} htmlFor='password'>Password</InputLabel>
+            <InputLabel error={Boolean(errors.password)} htmlFor='password'>
+              Password
+            </InputLabel>
             <Input
               id='password'
               name='password'
               type={showPassword ? 'text' : 'password'}
-              placeholder='Almeno 8 caratteri'
+              placeholder={t('AT_LEAST_COUNT_CHARACTERS', { count: 8 })}
               value={data.password}
               onChange={onChange}
               error={Boolean(errors.password)}
@@ -302,7 +311,9 @@ const SignupForm: FC = () => {
         {authError && <div className='row'><div className='col message error'>{authError}</div></div>}
 
         <div className='footer no-gutter'>
-          <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Registrati</button>
+          <button type='button' className='btn btn-footer primary' onClick={onSubmit}>
+            {t('common:ACTION_SIGNUP')}
+          </button>
         </div>
       </form>
     </Fragment>

@@ -1,16 +1,12 @@
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { app } from '../../config/shared';
 import '../../css/searchBook.css';
 import { BookModel } from '../../types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
-
-const seo = {
-  title: `${app.name} | Aggiungi libro`,
-  description: app.desc
-};
 
 type AddBookProps = RouteComponentProps;
 
@@ -19,6 +15,13 @@ let timeout: number;
 const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
   const [book, setBook] = useState<BookModel | null>(null);
   const [showNew, setShowNew] = useState<boolean>(false);
+
+  const { t } = useTranslation(['common']);
+
+  const seo = {
+    title: `${app.name} | ${t('PAGE_ADD_BOOK')}`,
+    description: app.desc
+  };
 
   useEffect(() => () => {
     clearInterval(timeout);
@@ -54,14 +57,18 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
       ) : (
         <Fragment>
           <p className='text-center'>
-            <Link to='/genres' className='counter'>Generi</Link>
-            <Link to='/collections' className='counter'>Collezioni</Link>
-            <Link to='/authors' className='counter'>Autori</Link>
+            <Link to='/genres' className='counter'>{t('PAGE_GENRES')}</Link>
+            <Link to='/collections' className='counter'>{t('PAGE_COLLECTIONS')}</Link>
+            <Link to='/authors' className='counter'>{t('PAGE_AUTHORS')}</Link>
           </p>
           {showNew && (
             <div className='text-center pad-v fadeIn reveal'>
-              <p>Non hai trovato il libro che cercavi?</p>
-              <p><Link to='/new-book' className='btn primary rounded'>Aggiungilo</Link></p>
+              <p>{t('BOOK_NOT_FOUND_QUESTION')}</p>
+              <p>
+                <Link to='/new-book' className='btn primary rounded'>
+                  {t('ACTION_ADD_IT')}
+                </Link>
+              </p>
             </div>
           )}
         </Fragment>

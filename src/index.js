@@ -1,17 +1,14 @@
-import { createBrowserHistory } from 'history';
 import React from 'react';
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
-import { Router } from 'react-router-dom';
 import App from './app';
 import './css/grid.min.css';
 import './css/main.css';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import './i18n';
 
-const isProd = process.env.NODE_ENV === 'production';
-
-if (isProd) {
+if (process.env.NODE_ENV === 'production') {
   if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(window.__REACT_DEVTOOLS_GLOBAL_HOOK__)) {
@@ -21,12 +18,8 @@ if (isProd) {
   }
 }
 
-const history = createBrowserHistory();
-
 ReactDOM.render(
-  <Router history={history}>
-    <App/>
-  </Router>,
+  <App/>,
   document.getElementById('root')
 );
 

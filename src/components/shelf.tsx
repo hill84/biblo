@@ -6,10 +6,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import classnames from 'classnames';
 import React, { Dispatch, FC, Fragment, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userChallengeRef, userChallengesRef } from '../config/firebase';
 import icon from '../config/icons';
-import { userBookTypes } from '../config/lists';
+import { ListModel, userBookTypes } from '../config/lists';
 import { handleFirestoreError, normURL } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
 import { BookModel, BookshelfType, CurrentTarget, IsCurrent, OrderByModel, UserBookModel, UserChallengeModel } from '../types';
@@ -17,14 +18,7 @@ import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
-const filterBy = userBookTypes;
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'added_num', label: 'Data aggiunta', icon: icon.calendar }, 
-  { type: 'title', label: 'Titolo', icon: icon.formatTitle }, 
-  { type: 'rating_num', label: 'Valutazione', icon: icon.star }, 
-  { type: 'authors', label: 'Autore', icon: icon.accountEdit }
-];
+const filterBy: ListModel[] = userBookTypes;
 
 let userBooksFetchCanceler: (() => void) | null = null;
 let userBooksFullFetchCanceler: (() => void) | null = null;
@@ -85,7 +79,16 @@ const Shelf: FC<ShelfProps> = ({
   const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState<StateModel['orderMenuAnchorEl']>(initialState.orderMenuAnchorEl);
   const [page, setPage] = useState<StateModel['page']>(initialState.page);
 
+  const { t } = useTranslation(['common', 'lists']);
+
   const is = useRef<IsCurrent>(true);
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'added_num', label: t('ADDED_DATE'), icon: icon.calendar }, 
+    { type: 'title', label: t('TITLE'), icon: icon.formatTitle }, 
+    { type: 'rating_num', label: t('RATING'), icon: icon.star }, 
+    { type: 'authors', label: t('AUTHOR'), icon: icon.accountEdit }
+  ], [t]);
 
   const fetchChallenges = useCallback((fullBooks: UserBookModel[]): void => {
     if (!isOwner) return;
@@ -129,7 +132,7 @@ const Shelf: FC<ShelfProps> = ({
     const fieldPath: 'bookInShelf' | 'bookInWishlist' = shelf === 'shelf' ? 'bookInShelf' : 'bookInWishlist';
     const baseRef: Query<DocumentData> = userBooksRef(uid).where(fieldPath, '==', true).orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc');
     return filterByIndex !== 0 ? baseRef.where('readingState.state_num', '==', filterByIndex) : baseRef;
-  }, [desc, filterByIndex, orderByIndex, shelf, uid]);
+  }, [desc, filterByIndex, orderBy, orderByIndex, shelf, uid]);
 
   const fetch = useCallback((): void => {
     if (!limit) return;
@@ -241,15 +244,15 @@ const Shelf: FC<ShelfProps> = ({
     </Link>
   )), [items, shelf]);
 
-  const filterByOptions = useMemo(() => filterBy.map((option: string, i: number) => (
+  const filterByOptions = useMemo(() => filterBy.map(({ label, name }: ListModel, i: number) => (
     <MenuItem
       key={i}
       disabled={i === -1}
       selected={i === filterByIndex}
       onClick={() => onChangeFilterBy(i)}>
-      {option}
+      {t(`lists:${label || name}`)}
     </MenuItem>
-  )), [filterByIndex, onChangeFilterBy]);
+  )), [filterByIndex, onChangeFilterBy, t]);
 
   const orderByOptions = useMemo(() => orderBy.map((option, i: number) => (
     <MenuItem
@@ -261,13 +264,13 @@ const Shelf: FC<ShelfProps> = ({
       <ListItemIcon>{orderBy[i].icon}</ListItemIcon>
       <Typography variant='inherit'>{orderBy[i].label}</Typography>
     </MenuItem>
-  )), [onChangeOrderBy, orderByIndex, shelf]);
+  )), [onChangeOrderBy, orderBy, orderByIndex, shelf]);
 
   const EmptyState = useCallback(() => (
     <div className='info-row empty text-center'>
-      Nessuna libro <span className='hide-xs'>trovato</span>
+      {t('EMPTY_LIST')}
     </div>
-  ), []);
+  ), [t]);
 
   if (!limit) return null;
 
@@ -292,7 +295,7 @@ const Shelf: FC<ShelfProps> = ({
                     className='btn sm flat counter' 
                     // disabled={!count}
                     onClick={onOpenFilterMenu}>
-                    {filterBy[filterByIndex]}
+                    {t(`lists:${filterBy[filterByIndex].label || 'FILTER_BOOK_TYPE_ALL'}`)}
                   </button>
                   <Menu 
                     className='dropdown-menu'
@@ -303,7 +306,9 @@ const Shelf: FC<ShelfProps> = ({
                   </Menu>
                 </Fragment>
               )}
-              <span className='counter last hide-sm'>{count !== items.length ? `${items.length} di ` : ''}{count} libr{count !== 1 ? 'i' : 'o'}</span>
+              <span className='counter last hide-sm'>
+                {count !== items.length ? `${items.length} ${t('OF')} ` : ''}{t('BOOKS_COUNT', { count })}
+              </span>
             </div>
             <div className='col-auto'>
               <button 
@@ -311,7 +316,7 @@ const Shelf: FC<ShelfProps> = ({
                 className='btn sm flat counter' 
                 onClick={onOpenOrderMenu} 
                 disabled={count < 2}>
-                <span className='hide-sm'>Ordina per {orderBy[orderByIndex].label}</span>
+                <span className='hide-sm'>{t('SORT_BY')} {orderBy[orderByIndex].label}</span>
                 <span className='show-sm'>{orderBy[orderByIndex].icon}</span>
               </button>
               <Menu 
@@ -321,7 +326,7 @@ const Shelf: FC<ShelfProps> = ({
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
-              <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+              <Tooltip title={t(desc ? 'ASCENDING' : 'DESCENDING')}>
                 <span>
                   <button
                     type='button'
@@ -344,7 +349,7 @@ const Shelf: FC<ShelfProps> = ({
               <Link to='/books/add'>
                 <div className='book empty'>
                   <div className='cover'><div className='add'>+</div></div>
-                  <div className='info'><b className='title'>Aggiungi libro</b></div>
+                  <div className='info'><b className='title'>{t('ACTION_ADD_BOOK')}</b></div>
                 </div>
               </Link>
             )}

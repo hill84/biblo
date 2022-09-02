@@ -3,6 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import classnames from 'classnames';
 import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
@@ -43,28 +44,31 @@ const AuthorPage = ({ history, location, match }) => {
   const [followers, setFollowers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingBooks, setLoadingBooks] = useState(true);
+
+  const { t } = useTranslation(['common']);
+
   const is = useRef(true);
   
   const fetchFollowers = useCallback(() => {
     const { aid } = match.params;
     
-    if (user) {
-      const id = decodeURI(aid.replace(/_/g, '-')).toLowerCase();
-      unsub.authorFollowersFetch = authorFollowersRef(id).onSnapshot(snap => {
-        if (!snap.empty) {
-          const followers = [];
-          snap.forEach(follower => followers.push(follower.data()));
-          setFollowers(followers); 
-          setFollow(user && followers.some(follower => follower.uid === user.uid));
-        } else {
-          setFollowers(null);
-          setFollow(false);
-        }
-      });
-    }
+    if (!user) return;
+    const id = decodeURI(aid.replace(/_/g, '-')).toLowerCase();
+    unsub.authorFollowersFetch = authorFollowersRef(id).onSnapshot(snap => {
+      if (!snap.empty) {
+        const followers = [];
+        snap.forEach(follower => followers.push(follower.data()));
+        setFollowers(followers); 
+        setFollow(user && followers.some(follower => follower.uid === user.uid));
+      } else {
+        setFollowers(null);
+        setFollow(false);
+      }
+    });
   }, [match.params, user]);
 
   useEffect(() => {
+    console.log({ name: author.displayName, normalized: normalizeString(author.displayName) });
     authorRef(normalizeString(author.displayName)).get().then(snap => {
       if (snap.exists) {
         if (is.current) {
@@ -142,7 +146,7 @@ const AuthorPage = ({ history, location, match }) => {
   return (
     <div className="container" id="authorComponent" ref={is}>
       <Helmet>
-        <title>{seo.title || `${app.name} | Autore`}</title>
+        <title>{seo.title || `${app.name} | ${t('PAGE_AUTHOR')}`}</title>
         <link rel="canonical" href={`${app.url}/authors`} />
         <meta name="description" content={seo.description} />
         <meta property="og:type" content="books.author" />
@@ -168,7 +172,7 @@ const AuthorPage = ({ history, location, match }) => {
                 <h2 className="title">{author.displayName}</h2>
               </div>
               <div className="col-auto text-right hide-md">
-                <Link to="/authors" className="btn sm primary">Autori</Link>
+                <Link to="/authors" className="btn sm primary">{t('PAGE_AUTHORS')}</Link>
               </div>
             </div>
             <div className="info-row bio text-left">
@@ -184,10 +188,10 @@ const AuthorPage = ({ history, location, match }) => {
                   disabled={!user || !isEditor}>
                   {follow ? (
                     <Fragment>
-                      <span className="hide-on-hover">{icon.check} Segui</span>
-                      <span className="show-on-hover">Smetti</span>
+                      <span className="hide-on-hover">{icon.check} {t('ACTION_FOLLOW')}</span>
+                      <span className="show-on-hover">{t('ACTION_STOP_FOLLOWING')}</span>
                     </Fragment> 
-                  ) : <span>{icon.plus} Segui</span> }
+                  ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
                 </button>
                 <div className="counter last inline">
                   <Bubbles limit={3} items={followers} />
@@ -216,7 +220,9 @@ const AuthorPage = ({ history, location, match }) => {
                           onClick={onToggleView}>
                           {coverview ? icon.viewSequential : icon.viewGrid}
                         </button>
-                        <span className="counter">{books.length || 0} libr{books.length === 1 ? 'o' : 'i'}</span>
+                        <span className="counter">
+                          {t('BOOKS_COUNT', { count: books.length })}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -229,7 +235,9 @@ const AuthorPage = ({ history, location, match }) => {
           ) : (
             <div className="info-row empty text-center pad-sm">
               <p>Non ci sono ancora libri di {author.displayName}</p>
-              <Link to="/new-book" className="btn primary rounded">Aggiungi libro</Link>
+              <Link to="/new-book" className="btn primary rounded">
+                {t('ACTION_ADD_BOOK')}
+              </Link>
             </div>
           )}
         </Fragment>

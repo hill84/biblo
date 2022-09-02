@@ -3,12 +3,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { matchType } from '../../config/proptypes';
-import { app, denormURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize } from '../../config/shared';
+import { app, translateURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize, denormURL } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
@@ -23,10 +24,7 @@ const unsub = {
   genreFollowersFetch: null
 };
 const limit = 28;
-const orderBy = [ 
-  { type: 'rating_num', label: 'Valutazione'}, 
-  { type: 'title', label: 'Titolo'}
-];
+
 const skltnStyle = { display: 'inline-block', marginTop: '1.15em', };
 
 const Genre = ({ match }) => {
@@ -46,9 +44,14 @@ const Genre = ({ match }) => {
   const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState(null);
   const [page, setPage] = useState(1);
   const [screenSize, setScreenSize] = useState(_screenSize());
+
+  const { t } = useTranslation(['common']);
+
   const is = useRef(true);
 
   const { gid } = match.params;
+
+  const item = useMemo(() => genres.find(({ name }) => gid === normURL(name)), [gid]);
 
   useEffect(() => {
     const updateScreenSize = () => {
@@ -85,13 +88,16 @@ const Genre = ({ match }) => {
   }, [gid, user]);
 
   const fetchGenre = useCallback(() => {
-    const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
+    if (!gid) return;
 
     if (is.current) {
       setLoadingGenre(true);
       setLoading(true);
       setItems(null);
     }
+
+    // const id = normURL(item.name);
+    const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
 
     genreRef(id).get().then(snap => {
       if (snap.exists) {
@@ -106,42 +112,47 @@ const Genre = ({ match }) => {
     });
   }, [gid, openSnackbar]);
 
-  const fetch = useCallback(() => {
-    if (gid) {
-      const ref = booksRef.where('genres', 'array-contains', denormURL(gid));
+  const orderBy = useMemo(() => ([ 
+    { type: 'rating_num', label: t('RATING') }, 
+    { type: 'title', label: t('TITLE') }
+  ]), [t]);
 
-      ref.get().then(fullSnap => {
-        if (!fullSnap.empty) {
-          if (is.current) setCount(fullSnap.docs.length);
-          ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
-            if (!snap.empty) {
-              const items = [];
-              snap.forEach(item => items.push(item.data()));
-              // console.log(items);
-              if (is.current) {
-                setItems(items);
-                setLastVisible(snap.docs[snap.docs.length-1]);
-                setPage(1);
-              }
-            } else if (is.current) {
-              setCount(0);
-              setItems(null);
+  const fetch = useCallback(() => {
+    if (!item) return;
+
+    const ref = booksRef.where('genres', 'array-contains', denormURL(item.name));
+
+    ref.get().then(fullSnap => {
+      if (!fullSnap.empty) {
+        if (is.current) setCount(fullSnap.docs.length);
+        ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').limit(limit).get().then(snap => {
+          if (!snap.empty) {
+            const items = [];
+            snap.forEach(item => items.push(item.data()));
+            // console.log(items);
+            if (is.current) {
+              setItems(items);
+              setLastVisible(snap.docs[snap.docs.length-1]);
               setPage(1);
             }
-          }).catch(err => {
-            openSnackbar(handleFirestoreError(err), 'error');
-          }).finally(() => {
-            if (is.current) setLoading(false);
-          });
-        } else if (is.current) {
-          setFollow(false);
-          setFollowers(null);
-          setGenre(null);
-          // setLoading(false);
-        }
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-    } else console.warn('No gid');
-  }, [desc, gid, openSnackbar, orderByIndex]);
+          } else if (is.current) {
+            setCount(0);
+            setItems(null);
+            setPage(1);
+          }
+        }).catch(err => {
+          openSnackbar(handleFirestoreError(err), 'error');
+        }).finally(() => {
+          if (is.current) setLoading(false);
+        });
+      } else if (is.current) {
+        setFollow(false);
+        setFollowers(null);
+        // setGenre(null);
+        setLoading(false);
+      }
+    }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+  }, [desc, item, openSnackbar, orderBy, orderByIndex]);
 
   useEffect(() => {
     fetchGenre();
@@ -156,30 +167,29 @@ const Genre = ({ match }) => {
   }, [fetch]);
 
   const fetchNext = () => {
-    if (gid) {
-      if (is.current) setLoading(true);
+    if (!item) return;
+    if (is.current) setLoading(true);
 
-      const ref = booksRef.where('genres', 'array-contains', denormURL(gid));
+    const ref = booksRef.where('genres', 'array-contains', item.name);
 
-      ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
-        if (!nextSnap.empty) {
-          nextSnap.forEach(item => items.push(item.data()));
-          if (is.current) {
-            setItems(items);
-            setPage((page * limit) > count ? page : page + 1);
-            setLastVisible(nextSnap.docs[nextSnap.docs.length - 1] || lastVisible);
-          }
-        } else if (is.current) {
-          setItems(null);
-          setPage(null);
-          setLastVisible(null);
+    ref.orderBy(orderBy[orderByIndex].type, desc ? 'desc' : 'asc').startAfter(lastVisible).limit(limit).get().then(nextSnap => {
+      if (!nextSnap.empty) {
+        nextSnap.forEach(item => items.push(item.data()));
+        if (is.current) {
+          setItems(items);
+          setPage((page * limit) > count ? page : page + 1);
+          setLastVisible(nextSnap.docs[nextSnap.docs.length - 1] || lastVisible);
         }
-      }).catch(err => {
-        if (is.current) openSnackbar(handleFirestoreError(err), 'error');
-      }).finally(() => {
-        if (is.current) setLoading(false);
-      });
-    } else console.warn('No gid');
+      } else if (is.current) {
+        setItems(null);
+        setPage(null);
+        setLastVisible(null);
+      }
+    }).catch(err => {
+      if (is.current) openSnackbar(handleFirestoreError(err), 'error');
+    }).finally(() => {
+      if (is.current) setLoading(false);
+    });
   };
 
   const onChangeOrderBy = (e, i) => {
@@ -188,9 +198,9 @@ const Genre = ({ match }) => {
     setPage(1);
   };
 
-  const onToggleDesc = () => setDesc(!desc);
+  const onToggleDesc = () => setDesc(prev => !prev);
 
-  const onToggleView = () => setCoverview(!coverview);
+  const onToggleView = () => setCoverview(prev => !prev);
 
   const onOpenOrderMenu = e => setOrderMenuAnchorEl(e.currentTarget);
 
@@ -232,25 +242,24 @@ const Genre = ({ match }) => {
       onClick={e => onChangeOrderBy(e, i)}>
       {option.label}
     </MenuItem>
-  )), [orderByIndex]);
+  )), [orderBy, orderByIndex]);
   
-  const title = useMemo(() => denormURL(gid), [gid]);
-  const genreItem = useMemo(() => genres.filter(genre => genre.name === title)[0], [title]);
+  const title = useMemo(() => t(`lists:GENRE_${translateURL(item?.canonical)}`), [item?.canonical, t]);
 
   const seo = useMemo(() => ({
-    canonical_name: genreItem?.canonical,
+    canonical_name: item?.canonical,
     description: `Scopri su ${app.name} i migliori libri di genere ${title.toLowerCase()}: nuove uscite e best seller`,
     image: null,
-    title: `Libri di genere ${title.toLowerCase()}`,
-    url: `${app.url}/genre/${normURL(gid)}`
-  }), [genreItem, gid, title]);
+    title: `Libri di genere ${title}`,
+    url: `${app.url}/genre/${gid}`
+  }), [item, gid, title]);
   
-  const cardStyle = useMemo(() => ({ borderTop: `4px solid ${genreItem ? genreItem.color : 'rgba(0, 0, 0, .1)'}`, }), [genreItem]);
+  const cardStyle = useMemo(() => ({ borderTop: `4px solid ${item ? item.color : 'rgba(0, 0, 0, .1)'}`, }), [item]);
   
   return (
     <div className="container" id="genreComponent" ref={is}>
       <Helmet>
-        <title>{app.name} | {title || 'Genere'}</title>
+        <title>{app.name} | {title || t('PAGE_GENRE')}</title>
         <link rel="canonical" href={`${app.url}/genres`} />
         <meta name="description" content={seo.description} />
         <meta property="og:description" content={seo.description} />
@@ -264,20 +273,22 @@ const Genre = ({ match }) => {
         <div className="row">
           <div className="col">
             <h2 className="title">
-              <span className="primary-text hide-sm">Genere:</span> {title}
+              <span className="primary-text hide-sm">{t('PAGE_GENRE')}:</span> {title}
             </h2>
           </div>
           <div className="col-auto text-right">
-            <Link to="/genres" className="btn sm flat">Vedi tutti</Link>
+            <Link to="/genres" className="btn sm flat">
+              {t('ACTION_SHOW_ALL')}
+            </Link>
           </div>
         </div>
         <Genres scrollable={isMini} />
         {loadingGenre ? (
           <div className="skltn three rows" style={skltnStyle} /> 
-        ) : genre?.description && (
+        ) : (
           <div className="info-row text">
             <MinifiableText
-              text={genre.description}
+              text={genre?.description}
               maxChars={isTextMinified ? 300 : 500}
               defaultMinified={isTextMinified}
             />
@@ -292,10 +303,10 @@ const Genre = ({ match }) => {
               onClick={onFollow}>
               {follow ? (
                 <Fragment>
-                  <span className="hide-on-hover">{icon.check} Segui</span>
-                  <span className="show-on-hover">Smetti</span>
+                  <span className="hide-on-hover">{icon.check} {t('ACTION_FOLLOW')}</span>
+                  <span className="show-on-hover">{t('ACTION_STOP_FOLLOWING')}</span>
                 </Fragment> 
-              ) : <span>{icon.plus} Segui</span> }
+              ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
             </button>
             <div className="counter last inline">
               <Bubbles limit={3} items={followers} />
@@ -320,7 +331,7 @@ const Genre = ({ match }) => {
                       {coverview ? icon.viewSequential : icon.viewGrid}
                     </button>
                     <span className="counter">
-                      {items ? items.length : 0} libr{items?.length === 1 ? 'o' : 'i'} {items && count > items.length ? `di ${count}` : ''}
+                      {t('BOOKS_COUNT', { count: items?.length || 0 })} {items && count > items.length ? `di ${count}` : ''}
                     </span>
                   </div>
                   <div className="col-auto">
@@ -329,13 +340,13 @@ const Genre = ({ match }) => {
                       className="btn sm flat counter"
                       disabled={!items}
                       onClick={onOpenOrderMenu}>
-                      <span className="hide-xs">Ordina per</span> {orderBy[orderByIndex].label}
+                      <span className="hide-xs">{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
                     </button>
                     <button
                       type="button"
                       className={classnames('btn', 'sm', 'flat', 'counter', 'icon', desc ? 'desc' : 'asc')}
                       disabled={!items}
-                      title={desc ? 'Ascendente' : 'Discendente'}
+                      title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                       onClick={onToggleDesc}>
                       {icon.arrowDown}
                     </button>
@@ -359,8 +370,10 @@ const Genre = ({ match }) => {
         </div>
       ) : !items && (
         <div className="info-row empty text-center pad-v">
-          <p>Non ci sono ancora libri di questo genere</p>
-          <Link to="/new-book?search=genre" className="btn primary rounded">Aggiungi libro</Link>
+          <p>{t('EMPTY_LIST')}</p>
+          <Link to="/new-book?search=genre" className="btn primary rounded">
+            {t('ACTION_ADD_BOOK')}
+          </Link>
         </div>
       )}
 

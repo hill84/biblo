@@ -12,6 +12,7 @@ import { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
 import React, { FC, forwardRef, Fragment, lazy, MouseEvent, ReactElement, Ref, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { groupFollowersRef, groupRef } from '../../config/firebase';
@@ -37,10 +38,6 @@ const Transition = forwardRef(function Transition(
 ) {
   return <Grow ref={ref} {...props} />;
 });
-
-const seo = {
-  title: `${app.name} | Groups`
-};
 
 export type GroupProps = RouteComponentProps<MatchParams>;
 
@@ -72,7 +69,13 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
   const [isOpenModeratorsDialog, setIsOpenModeratorsDialog] = useState<boolean>(false);
   const { gid } = match.params;
 
+  const { t } = useTranslation(['common', 'form']);
+
   const is = useRef<IsCurrent>(false);
+
+  const seo = {
+    title: `${app.name} | ${t('PAGE_GROUP')}`
+  };
 
   useEffect(() => {
     is.current = true;
@@ -124,7 +127,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
     groupRef(gid).delete().then((): void => {
       // TODO: delete group discussions
       setLoading(true);
-      openSnackbar('Gruppo cancellato', 'success');
+      openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
       setTimeout((): void => {
         setLoading(false);
         setRedirectToReferrer(true);
@@ -156,7 +159,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
   const onLock = (): void => {
     if (item) {
       groupRef(gid).update({ edit: !item.edit }).then((): void => {
-        openSnackbar(`Gruppo ${item.edit ? '' : 's'}bloccato`, 'success');
+        openSnackbar(t(`form:${item.edit ? 'SUCCESS_LOCKED_ITEM' : 'SUCCESS_UNLOCKED_ITEM'}`), 'success');
       }).catch((err: FirestoreError): void => {
         openSnackbar(handleFirestoreError(err), 'error');
       });
@@ -165,7 +168,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
 
   if (redirectToReferrer) return <Redirect to='/groups' />;
 
-  if (!loading && !item) return <NoMatch title='Gruppo non trovato' history={history} location={location} />;
+  if (!loading && !item) return <NoMatch title={t('GROUP_NOT_FOUND')} history={history} location={location} />;
 
   return (
     <div className='container' ref={is}>
@@ -185,13 +188,13 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
                   type='button'
                   className='btn sm flat counter icon-sm'
                   onClick={onLock}>
-                  {icon[item?.edit ? 'lock' : 'lockOpen']} <span className='hide-sm'>{item?.edit ? 'Blocca' : 'Sblocca'}</span>
+                  {icon[item?.edit ? 'lock' : 'lockOpen']} <span className='hide-sm'>{t(item?.edit ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}</span>
                 </button>
                 <button
                   type='button'
                   className='btn sm flat counter icon-sm'
                   onClick={onDeleteRequest}>
-                  {icon.delete} <span className='hide-sm'>Elimina</span>
+                  {icon.delete} <span className='hide-sm'>{t('ACTION_DELETE')}</span>
                 </button>
               </Fragment>
             )}
@@ -199,11 +202,11 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
               type='button'
               className='btn sm flat counter icon-sm'
               onClick={onEditGroup}>
-              {icon.pencil} <span className='hide-sm'>Modifica</span>
+              {icon.pencil} <span className='hide-sm'>{t('ACTION_EDIT')}</span>
             </button>
           </div>
         ) : !item?.edit && !loading && (
-          <Tooltip title='Gruppo bloccato'>
+          <Tooltip title={t('LOCKED_GROUP')}>
             <div className='absolute-top-right lighter-text'>{icon.lock}</div>
           </Tooltip>
         )}
@@ -223,13 +226,13 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
             <div className='info-row owner flex'>
               {item ? (
                 <Fragment>
-                  <span className='counter'>Creato da <Link to={`/dashboard/${item.ownerUid}`}>{item.owner}</Link></span>
+                  <span className='counter'>{t('CREATED_BY')} <Link to={`/dashboard/${item.ownerUid}`}>{item.owner}</Link></span>
                   {item.moderators?.length > 1 && (
                     <button
                       type='button'
                       className='counter link'
                       onClick={onOpenModeratorsDialog}>
-                      {item.moderators.length} moderatori
+                      {t('MODERATORS_COUNT', { count: item.moderators.length })}
                     </button>
                   )}
                 </Fragment>
@@ -251,22 +254,26 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
               disabled={!isEditor}>
               {follow ? (
                 <Fragment>
-                  <span className='hide-on-hover'>{icon.check} Segui</span>
-                  <span className='show-on-hover'>Smetti</span>
+                  <span className='hide-on-hover'>
+                    {icon.check} {t('ACTION_FOLLOW')}
+                  </span>
+                  <span className='show-on-hover'>
+                    {t('ACTION_STOP_FOLLOWING')}
+                  </span>
                 </Fragment> 
-              ) : <span>{icon.plus} Segui</span> }
+              ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
             </button>
             <div className='counter inline'>
-              <Bubbles limit={3} items={followers} label='iscritti' />
+              <Bubbles limit={3} items={followers} label={t('SUBSCRIBERS')} />
             </div>
             {follow && (
               <button
                 type='button'
                 className='link counter last inline'
                 onClick={onInvite}
-                title='Questa funzionalità non è ancora pronta'
+                title={t('FEATURE_NOT_READY')}
                 disabled>
-                Invita
+                {t('ACTION_INVITE')}
               </button>
             )}
           </div>
@@ -275,7 +282,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
 
       {item?.rules && (
         <div className='card rules'>
-          <h3>Regole del gruppo</h3>
+          <h3>{t('GROUP_RULES')}</h3>
           <MinifiableText text={item.rules} maxChars={500} toggle />
         </div>
       )}
@@ -295,7 +302,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
           onClose={onCloseModeratorsDialog}
           aria-labelledby='moderators-dialog-title'>
           <DialogTitle id='moderators-dialog-title'>
-            Moderatori del gruppo
+            {t('GROUP_MODERATORS')}
           </DialogTitle>
           <DialogContent className='content'>
             <div className='contacts-tab'>
@@ -315,14 +322,16 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
                         {isEditor && (
                           <div className='col-auto'>
                             {user.uid === item?.ownerUid ? (
-                              <button type='button' className='btn sm rounded flat' disabled>Creatore</button>
+                              <button type='button' className='btn sm rounded flat' disabled>
+                                {t('CREATOR')}
+                              </button>
                             ) : (isOwner || isAdmin) && (
                               <button
                                 type='button'
                                 className='btn sm rounded flat'
                                 data-muid={user.uid}
                                 onClick={onDeleteModerator}>
-                                Elimina
+                                {t('ACTION_DELETE')}
                               </button>
                             )}
                           </div>
@@ -331,7 +340,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
                     </div>
                   </div>
                 </div>
-              )) : <div>Nessun moderatore</div>}
+              )) : <div>{t('NO_MODERATORS')}</div>}
             </div>
           </DialogContent>
         </Dialog>
@@ -354,8 +363,8 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Elimina</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_DELETE')}</button>
           </DialogActions>
         </Dialog>
       )}

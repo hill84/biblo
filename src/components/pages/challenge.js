@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
 import { app, booksPerRow as _booksPerRow } from '../../config/shared';
@@ -16,6 +17,9 @@ const Challenge = () => {
   const [loading, setLoading] = useState(false);
   const [userChallenge, setUserChallenge] = useState(null);
   const [userChallenges, setUserChallenges] = useState(null);
+
+  const { t } = useTranslation(['common']);
+
   const is = useRef(true);
 
   const fetch = useCallback(() => {
@@ -101,7 +105,9 @@ const Challenge = () => {
         <div className="head nav">
           <div className="row">
             <div className="col">
-              <span className="primary-text hide-sm">Sfida:</span> <span className="counter last title">{userChallenge ? userChallenge.title : 'non trovata'}</span> <span className="count hide-xs">({userChallenge ? count(userChallenge.books) : 0} libri)</span>
+              <span className="primary-text hide-sm">
+                {t('CHALLENGE')}:</span> <span className="counter last title">{userChallenge ? userChallenge.title : 'non trovata'}</span> <span className="count hide-xs">({t('BOOKS_COUNT', { count: count(userChallenge.books) })})
+              </span>
             </div>
             {userChallenge && (
               <div className="col-4 col-sm-4 col-md-3 col-lg-2">
@@ -140,7 +146,9 @@ const Challenge = () => {
             <div className="card dark card-fullwidth-sm" key={item.cid || i}>
               <div className="row">
                 <div className="col">
-                  <span className="primary-text hide-sm">Sfida:</span> <span className="counter last title">{item.title}</span> <span className="count hide-xs">({count(item.books)} libri)</span>
+                  <span className="primary-text hide-sm">
+                    {t('CHALLENGE')}:</span> <span className="counter last title">{item.title}</span> <span className="count hide-xs">({t('BOOKS_COUNT', { count: count(item.books) })})
+                  </span>
                 </div>
                 {item.completed_num !== 0 && (
                   <div className="col text-right">

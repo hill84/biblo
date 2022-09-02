@@ -1,6 +1,7 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { FC, Fragment, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import { config } from '../config/firebase';
 import icon from '../config/icons';
@@ -38,8 +39,9 @@ const Cover: FC<CoverProps> = ({
   showMedal = true,
   showReaders = false,
 }: CoverProps) => {
+  const { t } = useTranslation(['common']);
 
-  const joinedAuthors = useMemo((): string => book ? joinObj(book.authors) : '', [book]);
+  const joinedAuthors = useMemo((): string => book ? joinObj(book.authors, t('AND')) : '', [book, t]);
   const stringified_readers_num = useMemo((): string => abbrNum((book as BookModel)?.readers_num || 0), [book]);
   
   const backgroundImage = useMemo((): string => {
@@ -72,7 +74,7 @@ const Cover: FC<CoverProps> = ({
             {hasAward && showMedal && <div className='medal accent'>{icon.medal}</div>}
             {hasBcid && <div className='bookmark accent'><div>{bcid}</div></div>}
             {hasBookmark && <div className='bookmark' />}
-            {(book as CoverModel).review?.text && <div className='cover-review'>Recensione</div>}
+            {(book as CoverModel).review?.text && <div className='cover-review'>{t('REVIEW')}</div>}
             {showReaders && (book as BookModel).readers_num ? <div className='readers-num'>{stringified_readers_num} {icon.account}</div> : ''}
             {loading ? <div aria-hidden='true' className='loader'><CircularProgress /></div> : <div className='overlay' />}
             {!backgroundImage && (
@@ -91,7 +93,7 @@ const Cover: FC<CoverProps> = ({
           <strong className='title'>{book.title}</strong>
           {joinedAuthors && (
             <span className='author'>
-              <span className='hide-sm'>di</span> {joinedAuthors}
+              <span className='hide-sm'>{t('BY').toLowerCase()}</span> {joinedAuthors}
             </span>
           )}
           {full && book.publisher && <span className='publisher'>{book.publisher}</span>}

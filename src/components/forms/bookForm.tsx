@@ -19,21 +19,20 @@ import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import isbn from 'isbn-utils';
 import moment from 'moment';
-import 'moment/locale/it';
 import React, { ChangeEvent, FC, FormEvent, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
 import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { authors, awards, collections, formats, GenreModel, genres, languages, publishers } from '../../config/lists';
+import { authors, awards, collections, formats, GenreModel, genres, languages, ListModel, publishers } from '../../config/lists';
 import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, noCookie, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
+import i18n from '../../i18n';
 import { BookEDITModel, BookModel, IsCurrent } from '../../types';
 import Cover from '../cover';
-
-moment.locale('it');
 
 interface ErrorMessagesModel {
   disableFuture?: string;
@@ -190,6 +189,8 @@ const BookForm: FC<BookFormProps> = ({
   const [prevBook, setPrevBook] = useState<BookModel>(_book);
   const [redirectToBook, setRedirectToBook] = useState<string>('');
 
+  const { t } = useTranslation(['form']);
+
   const is = useRef<IsCurrent>(false);
 
   useEffect(() => {
@@ -254,8 +255,8 @@ const BookForm: FC<BookFormProps> = ({
 
     setBookChange((name as keyof BookModel), value_num);
 
-    setErrors(errors => ({ ...errors, [name]: match ? null : 'Numero non valido' }));
-  }, [setBookChange]);
+    setErrors(errors => ({ ...errors, [name]: match ? null : t('ERROR_INVALID_NUMBER') }));
+  }, [setBookChange, t]);
 
   const onChangeSelect = useCallback((e: ChangeEvent<{ name?: string; value: unknown }>): void => {
     e.persist();
@@ -297,11 +298,11 @@ const BookForm: FC<BookFormProps> = ({
 
   const onSetDatePickerError = (name: string, reason: keyof ErrorMessagesModel): void => {
     const errorMessages: ErrorMessagesModel = {
-      disableFuture: 'Data futura non valida',
-      disablePast: 'Data passata non valida',
-      invalidDate: 'Data non valida',
-      minDate: `Data non valida prima del ${min.publication.toLocaleDateString()}`,
-      maxDate: `Data non valida oltre il ${max.publication.toLocaleDateString()}`,
+      disableFuture: t('ERROR_INVALID_FUTURE_DATE'),
+      disablePast: t('ERROR_INVALID_PAST_DATE'),
+      invalidDate: t('ERROR_INVALID_DATE'),
+      minDate: t('ERROR_MIN_DATE', { number: min.publication }),
+      maxDate: t('ERROR_MAX_DATE', { number: max.publication }),
     };
     
     setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
@@ -320,118 +321,118 @@ const BookForm: FC<BookFormProps> = ({
     const isDuplicate: boolean = await checkISBNnum(book.ISBN_13);
     
     if (!book.title) {
-      errors.title = 'Inserisci il titolo';
+      errors.title = t('ERROR_REQUIRED_FIELD');
     } else if (book.title.length > max.chars.title) {
-      errors.title = `Lunghezza massima ${max.chars.title} caratteri`;
+      errors.title = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.title });
     }
 
     if (book.subtitle?.length > max.chars.subtitle) {
-      errors.subtitle = `Lunghezza massima ${max.chars.subtitle} caratteri`;
+      errors.subtitle = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.subtitle });
     }
 
     if (!Object.keys(book.authors).length) {
-      errors.authors = 'Inserisci l\'autore';
+      errors.authors = t('ERROR_REQUIRED_FIELD');
     } else if (Object.keys(book.authors).length > max.items.authors) {
-      errors.authors = `Massimo ${max.items.authors} autori`;
+      errors.authors = t('ERROR_MAX_COUNT_ITEMS', { count: max.items.authors });
     } else if (Object.keys(book.authors).some(author => author.length > max.chars.author)) {
-      errors.authors = `Lunghezza massima ${max.chars.author} caratteri`;
+      errors.authors = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.author });
     }
 
     if (!book.publisher) {
-      errors.publisher = 'Inserisci l\'editore';
+      errors.publisher = t('ERROR_REQUIRED_FIELD');
     } else if (book.publisher.length > max.chars.publisher) {
-      errors.publisher = `Lunghezza massima ${max.chars.publisher} caratteri`;
+      errors.publisher = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.publisher });
     }
 
     if (!book.pages_num) {
-      errors.pages_num = 'Inserisci le pagine';
+      errors.pages_num = t('ERROR_REQUIRED_FIELD');
     } else if (String(book.pages_num).length > max.chars.pages_num) {
-      errors.pages_num = `Lunghezza massima ${max.chars.pages_num} cifre`;
+      errors.pages_num = t('ERROR_MAX_COUNT_DIGITS', { count: max.chars.pages_num });
     } else if (book.pages_num < min.items.pages_num) {
-      errors.pages_num = `Minimo ${min.items.pages_num} pagine`;
+      errors.pages_num = t('ERROR_MIN_COUNT_NUMBER', { count: min.items.pages_num });
     }
 
     if (!book.ISBN_13) {
-      errors.ISBN_13 = 'Inserisci il codice ISBN';
+      errors.ISBN_13 = t('ERROR_REQUIRED_FIELD');
     } else if (String(book.ISBN_13).length !== 13) {
-      errors.ISBN_13 = 'Il codice deve contenere 13 cifre';
+      errors.ISBN_13 = t('ERROR_INVALID_DIGITS_COUNT', { count: 13 });
     } else if (String(book.ISBN_13).substring(0,3) !== '978') {
       if (String(book.ISBN_13).substring(0,3) !== '979') {
-        errors.ISBN_13 = 'Il codice deve iniziare per 978 o 979';
+        errors.ISBN_13 = t('ERROR_ISBN13_START');
       }
     } else if (!isISBN(String(book.ISBN_13), 13)) {
-      errors.ISBN_13 = 'Codice non valido';
+      errors.ISBN_13 = t('ERROR_INVALID_FORMAT');
     } else if (!_book.bid && isDuplicate) {
-      errors.ISBN_13 = 'Libro già presente';
+      errors.ISBN_13 = t('ERROR_DUPLICATED_ITEM');
     }
 
     if (book.ISBN_10) {
       if (String(book.ISBN_10).length !== 10) {
-        errors.ISBN_10 = 'Il codice deve essere composto da 10 cifre';
+        errors.ISBN_10 = t('ERROR_INVALID_DIGITS_COUNT', { count: 10 });
       } else if (!isISBN(String(book.ISBN_10), 10)) {
-        errors.ISBN_10 = 'Codice non valido';
+        errors.ISBN_10 = t('ERROR_INVALID_FORMAT');
       }
     } 
 
     if (new Date(book.publication).getTime() > max.publication.getTime()) {
-      errors.publication = 'Data di pubblicazione non valida';
+      errors.publication = t('ERROR_INVALID_DATE');
     }
 
     if (book.edition_num) {
       if (book.edition_num < 1) {
-        errors.edition_num = 'Numero non valido';
+        errors.edition_num = t('ERROR_INVALID_NUMBER');
       } else if (String(book.edition_num).length > max.chars.edition_num) {
-        errors.edition_num = `Max ${max.chars.edition_num} cifre`;
+        errors.edition_num = t('ERROR_MAX_COUNT_DIGITS', { count: max.chars.edition_num });
       }
     }
 
     if (book.languages?.length > max.items.languages) {
-      errors.languages = `Massimo ${max.items.languages} lingue`;
+      errors.languages = t('ERROR_MAX_COUNT_ITEMS', { count: max.items.languages });
     }
 
     if ((book.awards?.length || 0) > max.items.awards) {
-      errors.awards = `Massimo ${max.items.awards} premi`;
+      errors.awards = t('ERROR_MAX_COUNT_ITEMS', { count: max.items.awards });
     }
 
     if (book.genres?.length > max.items.genres) {
-      errors.genres = `Massimo ${max.items.genres} generi`;
+      errors.genres = t('ERROR_MAX_COUNT_ITEMS', { count: max.items.genres });
     }
 
     if (book.collections) {
       if (book.collections.length > max.items.collections) {
-        errors.collections = `Massimo ${max.items.collections} collezioni`;
+        errors.collections = t('ERROR_MAX_COUNT_ITEMS', { count: max.items.collections });
       }
       if (book.collections.some((collection: string): boolean => collection.length > max.chars.collection)) {
-        errors.collections = `Lunghezza massima ${max.chars.collection} caratteri`;
+        errors.collections = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.collection });
       }
     }
 
     if (book.description) {
       if (book.description.length < min.chars.description) {
-        errors.description = `Lunghezza minima ${min.chars.description} caratteri`;
+        errors.description = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.description });
         setIsEditingDescription(true);
       } else if (book.description.length > max.chars.description) {
-        errors.description = `Lunghezza massima ${max.chars.description} caratteri`;
+        errors.description = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.description });
         setIsEditingDescription(true);
       }
     }
 
     if (book.incipit) {
       if (book.incipit.length < min.chars.incipit) {
-        errors.incipit = `Lunghezza minima ${min.chars.incipit} caratteri`;
+        errors.incipit = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.incipit });
         setIsEditingIncipit(true);
       } else if (book.incipit.length > max.chars.incipit) {
-        errors.incipit = `Lunghezza massima ${max.chars.incipit} caratteri`;
+        errors.incipit = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.incipit });
         setIsEditingIncipit(true);
       }
     }
 
     if (book.trailerURL) {
       if (!isURL(book.trailerURL)) {
-        errors.trailerURL = 'Formato URL non valido';
+        errors.trailerURL = t('ERROR_INVALID_FORMAT');
       } 
       if (book.trailerURL.length > max.chars.URL) {
-        errors.trailerURL = `Lunghezza massima ${max.chars.URL} caratteri`;
+        errors.trailerURL = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.URL });
       }
     }
 
@@ -443,14 +444,14 @@ const BookForm: FC<BookFormProps> = ({
       const urlMatches: RegExpMatchArray | null = extractUrls(stringValue);
       const badWords: boolean = checkBadWords(stringValue);
       if (urlMatches) {
-        errors[text as keyof ErrorsModel] = `Non inserire link (${join(urlMatches)})`;
+        errors[text as keyof ErrorsModel] = t('ERROR_NO_LINK_STRING', { string: join(urlMatches, t('common:AND')) });
       } else if (badWords) {
-        errors[text as keyof ErrorsModel] = 'Niente volgarità';
+        errors[text as keyof ErrorsModel] = t('ERROR_NO_VULGARITY');
       }
     });
     
     return errors;
-  }, [checkISBNnum, _book]);
+  }, [checkISBNnum, _book, t]);
 
   const saveImage = useCallback((bid: string, file?: File): void => {
     if (!file) return;
@@ -479,7 +480,7 @@ const BookForm: FC<BookFormProps> = ({
               setImgLoading(false);
               setImgPreview(url);
               setBookChange(name, value);
-              openSnackbar('Immagine caricata', 'success');
+              openSnackbar(t('SUCCESS_IMAGE_UPLOADED'), 'success');
               setTimeout((): void => {
                 setImgProgress(0);
               }, 2000);
@@ -492,7 +493,7 @@ const BookForm: FC<BookFormProps> = ({
       setErrors(errors => ({ ...errors, upload: uploadError }));
       openSnackbar(uploadError, 'error');
     }
-  }, [openSnackbar, setBookChange]);
+  }, [openSnackbar, setBookChange, t]);
 
   const onImageChange = useCallback((e: ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -512,7 +513,6 @@ const BookForm: FC<BookFormProps> = ({
       setErrors(errors);
 
       if (!Object.values(errors).some(Boolean)) {
-        console.log('NO ERRORS');
         let newBid = '';
         const userUid: string = user?.uid || '';
         const userDisplayName: string = user?.displayName || '';
@@ -534,7 +534,7 @@ const BookForm: FC<BookFormProps> = ({
             if (is.current) {
               setChanges([]);
               onEditing();
-              openSnackbar('Modifiche salvate', 'success');
+              openSnackbar(t('SUCCESS_CHANGES_SAVED'), 'success');
             }
           }).catch((err: FirestoreError): void => {
             openSnackbar(handleFirestoreError(err), 'error');
@@ -584,7 +584,7 @@ const BookForm: FC<BookFormProps> = ({
               // setLoading(false);
               // setChanges([]);
               // onEditing();
-              openSnackbar('Nuovo libro creato', 'success');
+              openSnackbar(t('SUCCESS_BOOK_CREATED'), 'success');
               // console.log(`New book created with bid ${newBid}`);
             }
           }).catch((err: FirestoreError): void => {
@@ -627,10 +627,10 @@ const BookForm: FC<BookFormProps> = ({
         setLoading(false);
         if (errors.description) setIsEditingDescription(true);
         if (errors.incipit) setIsEditingIncipit(true);
-        openSnackbar('Ricontrolla i dati inseriti', 'error');
+        openSnackbar(t('ERROR_SUBMIT'), 'error');
       }
     } else onEditing();
-  }, [changes.length, book, onEditing, validate, user?.uid, user?.displayName, _book.bid, imgPreview, openSnackbar]);
+  }, [_book.bid, book, changes.length, imgPreview, onEditing, openSnackbar, t, user?.displayName, user?.uid, validate]);
 
   const onExitEditing = useCallback(() => {
     if (changes.length) {
@@ -640,13 +640,13 @@ const BookForm: FC<BookFormProps> = ({
 
   const onCloseChangesDialog = (): void => setIsOpenChangesDialog(false);
   
-  const menuItemsMap = <G extends { name: string; id: string }>(arr: G[], values?: string[]) => arr.map((item: G) => (
+  const menuItemsMap = <G extends ListModel>(arr: G[], values?: string[]) => arr.map(({ id, name }: G) => (
     <MenuItem 
-      value={item.name} 
-      key={item.id} 
+      value={name} 
+      key={id} 
       // insetChildren={Boolean(values)} 
-      selected={values ? values.includes(item.name) : false}>
-      {item.name}
+      selected={values?.includes(name)}>
+      {name}
     </MenuItem>
   ));
   
@@ -664,19 +664,21 @@ const BookForm: FC<BookFormProps> = ({
                 <button type='button' className={classnames('btn', 'sm', 'centered', 'rounded', imgProgress === 100 ? 'success' : 'flat')}>
                   <input type='file' accept='image/*' className='upload' onChange={onImageChange} />
                   {/* imgProgress > 0 && <progress type='progress' value={imgProgress} max='100' /> */}
-                  <span>{imgProgress === 100 ? 'Immagine caricata' : 'Carica un\'immagine'}</span>
+                  <span>{t(`common:${imgProgress === 100 ? 'ACTION_UPLOADED_IMAGE' : 'ACTION_UPLOAD_IMAGE'}`)}</span>
                 </button>
               )}
             </div>
             <div className='edit-book-info'>
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.title)} htmlFor='title'>Titolo</InputLabel>
+                  <InputLabel error={Boolean(errors.title)} htmlFor='title'>
+                    {t('LABEL_TITLE')}
+                  </InputLabel>
                   <Input
                     id='title'
                     name='title'
                     type='text'
-                    placeholder='es: Sherlock Holmes'
+                    placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Sherlock Holmes' })}
                     error={Boolean(errors.title)}
                     value={book.title || ''}
                     onChange={onChange}
@@ -686,12 +688,14 @@ const BookForm: FC<BookFormProps> = ({
               </div>
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.subtitle)} htmlFor='subtitle'>Sottotitolo</InputLabel>
+                  <InputLabel error={Boolean(errors.subtitle)} htmlFor='subtitle'>
+                    {t('LABEL_SUBTITLE')}
+                  </InputLabel>
                   <Input
                     id='subtitle'
                     name='subtitle'
                     type='text'
-                    placeholder='es: Uno studio in rosso'
+                    placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Uno studio in rosso' })}
                     error={Boolean(errors.subtitle)}
                     value={book.subtitle || ''}
                     onChange={onChange}
@@ -725,8 +729,8 @@ const BookForm: FC<BookFormProps> = ({
                         {...params}
                         error={Boolean(errors.authors)}
                         variant='standard'
-                        label='Autore'
-                        placeholder='es: Arthur Conan Doyle'
+                        label={`${t('LABEL_AUTHORS')} (max ${max.items.authors})`}
+                        placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Arthur Conan Doyle' })}
                       />
                     )}
                   />
@@ -738,12 +742,14 @@ const BookForm: FC<BookFormProps> = ({
               <div className='row'>
                 <div className='form-group col-sm-6'>
                   <FormControl className='input-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.ISBN_13)} htmlFor='ISBN_13'>ISBN-13</InputLabel>
+                    <InputLabel error={Boolean(errors.ISBN_13)} htmlFor='ISBN_13'>
+                      ISBN-13
+                    </InputLabel>
                     <Input
                       id='ISBN_13'
                       name='ISBN_13'
                       type='number'
-                      placeholder='es: 9788854152601'
+                      placeholder={t('PLACEHOLDER_EG_STRING', { string: '9788854152601' })}
                       error={Boolean(errors.ISBN_13)}
                       value={Number(book.ISBN_13) || ''}
                       onChange={onChangeNumber}
@@ -753,12 +759,14 @@ const BookForm: FC<BookFormProps> = ({
                 </div>
                 <div className='form-group col-sm-6'>
                   <FormControl className='input-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.ISBN_10)} htmlFor='ISBN_10'>ISBN-10</InputLabel>
+                    <InputLabel error={Boolean(errors.ISBN_10)} htmlFor='ISBN_10'>
+                      ISBN-10
+                    </InputLabel>
                     <Input
                       id='ISBN_10'
                       name='ISBN_10'
                       type='text'
-                      placeholder='es: 8854152609'
+                      placeholder={t('PLACEHOLDER_EG_STRING', { string: '8854152609' })}
                       error={Boolean(errors.ISBN_10)}
                       value={book.ISBN_10 || ''}
                       onChange={onChange}
@@ -794,8 +802,8 @@ const BookForm: FC<BookFormProps> = ({
                           disabled={!isAdmin}
                           error={Boolean(errors.publisher)}
                           variant='standard'
-                          label='Editore'
-                          placeholder='es: Newton Compton'
+                          label={t('LABEL_PUBLISHER')}
+                          placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Newton Compton' })}
                         />
                       )}
                     />
@@ -804,12 +812,14 @@ const BookForm: FC<BookFormProps> = ({
                 </div>
                 <div className='form-group col-4'>
                   <FormControl className='input-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.pages_num)} htmlFor='pages_num'>Pagine</InputLabel>
+                    <InputLabel error={Boolean(errors.pages_num)} htmlFor='pages_num'>
+                      {t('LABEL_PAGES')}
+                    </InputLabel>
                     <Input
                       id='pages_num'
                       name='pages_num'
                       type='number'
-                      placeholder='es: 128'
+                      placeholder={t('PLACEHOLDER_EG_STRING', { string: '128' })}
                       error={Boolean(errors.pages_num)}
                       value={Number(book.pages_num) || ''}
                       onChange={onChangeNumber}
@@ -820,19 +830,19 @@ const BookForm: FC<BookFormProps> = ({
               </div>
               <div className='row'>
                 <div className='form-group col-8'>
-                  <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale='it'>
+                  <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale={i18n.language}>
                     <DatePicker
                       className='date-picker'
                       // name='publication'
-                      cancelText='Annulla'
+                      cancelText={t('common:ACTION_CANCEL')}
                       leftArrowIcon={icon.chevronLeft}
                       rightArrowIcon={icon.chevronRight}
-                      inputFormat='DD/MM/YYYY'
+                      // inputFormat='DD/MM/YYYY'
                       // disableFuture
                       minDate={min.publication}
                       maxDate={max.publication}
                       // error={Boolean(errors.publication)}
-                      label='Data di pubblicazione'
+                      label={t('LABEL_PUBLICATION_DATE')}
                       value={book.publication ? new Date(book.publication) : null}
                       onChange={onChangeDate('publication')}
                       onError={reason => reason && onSetDatePickerError('publication', reason)}
@@ -846,13 +856,15 @@ const BookForm: FC<BookFormProps> = ({
                 </div>
                 <div className='form-group col-4'>
                   <FormControl className='input-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.edition_num)} htmlFor='edition_num'>Edizione</InputLabel>
+                    <InputLabel error={Boolean(errors.edition_num)} htmlFor='edition_num'>
+                      {t('LABEL_EDITION')}
+                    </InputLabel>
                     <Input
                       id='edition_num'
                       className='spin-buttons'
                       name='edition_num'
                       type='number'
-                      placeholder='es: 1'
+                      placeholder={t('PLACEHOLDER_EG_STRING', { string: '1' })}
                       error={Boolean(errors.edition_num)}
                       value={Number(book.edition_num) || ''}
                       onChange={onChangeNumber}
@@ -864,7 +876,9 @@ const BookForm: FC<BookFormProps> = ({
               <div className='row'>
                 <div className='form-group col-sm-8'>
                   <FormControl className='select-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.languages)} htmlFor='languages'>Lingua</InputLabel>
+                    <InputLabel error={Boolean(errors.languages)} htmlFor='languages'>
+                      {t('LABEL_LANGUAGES')} (max {max.items.languages})
+                    </InputLabel>
                     <Select
                       error={Boolean(errors.languages)}
                       id='languages'
@@ -880,7 +894,9 @@ const BookForm: FC<BookFormProps> = ({
                 </div>
                 <div className='form-group col-sm-4'>
                   <FormControl className='select-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.format)} htmlFor='format'>Formato</InputLabel>
+                    <InputLabel error={Boolean(errors.format)} htmlFor='format'>
+                      {t('LABEL_FORMAT')}
+                    </InputLabel>
                     <Select
                       error={Boolean(errors.format)}
                       id='format'
@@ -896,14 +912,16 @@ const BookForm: FC<BookFormProps> = ({
               </div>
               <div className='form-group'>
                 <FormControl className='select-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.genres)} htmlFor='genres'>Genere (max 3)</InputLabel>
+                  <InputLabel error={Boolean(errors.genres)} htmlFor='genres'>
+                    {t('LABEL_GENRES')} (max {max.items.genres})
+                  </InputLabel>
                   <Select
                     error={Boolean(errors.genres)}
                     id='genres'
                     multiple
                     name='genres'
                     onChange={onChangeSelect}
-                    placeholder='es: Giallo, Thriller'
+                    placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Thriller' })}
                     value={book.genres}
                   >
                     {menuItemsMap(sortedGenres, book.genres)}
@@ -940,8 +958,8 @@ const BookForm: FC<BookFormProps> = ({
                             disabled={!isAdmin}
                             error={Boolean(errors.collections)}
                             variant='standard'
-                            label='Collezione (max 5)'
-                            placeholder='es: Sherlock Holmes'
+                            label={`${t('LABEL_COLLECTIONS')} (max ${max.items.collections})`}
+                            placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Sherlock Holmes' })}
                           />
                         )}
                       />
@@ -950,12 +968,14 @@ const BookForm: FC<BookFormProps> = ({
                   </div>
                   <div className='form-group'>
                     <FormControl className='input-field' margin='normal' fullWidth>
-                      <InputLabel error={Boolean(errors.trailerURL)} htmlFor='trailerURL'>Video trailer</InputLabel>
+                      <InputLabel error={Boolean(errors.trailerURL)} htmlFor='trailerURL'>
+                        {t('LABEL_VIDEO_TRAILER')}
+                      </InputLabel>
                       <Input
                         id='trailerURL'
                         name='trailerURL'
                         type='url'
-                        placeholder='es: https://www.youtube.com/...'
+                        placeholder={t('PLACEHOLDER_EG_STRING', { string: 'https://www.youtube.com/...' })}
                         error={Boolean(errors.trailerURL)}
                         value={book.trailerURL}
                         disabled={!isAdmin}
@@ -967,7 +987,9 @@ const BookForm: FC<BookFormProps> = ({
 
                   <div className='form-group'>
                     <FormControl className='select-field' margin='normal' fullWidth>
-                      <InputLabel error={Boolean(errors.awards)} htmlFor='awards'>Premi vinti</InputLabel>
+                      <InputLabel error={Boolean(errors.awards)} htmlFor='awards'>
+                        {t('LABEL_AWARDS_WON')} (max {max.items.awards})
+                      </InputLabel>
                       <Select
                         error={Boolean(errors.awards)}
                         id='awards'
@@ -986,12 +1008,14 @@ const BookForm: FC<BookFormProps> = ({
               {isEditingDescription ? (
                 <div className='form-group'>
                   <FormControl className='input-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.description)} htmlFor='description'>Descrizione</InputLabel>
+                    <InputLabel error={Boolean(errors.description)} htmlFor='description'>
+                      {t('LABEL_DESCRIPTION')}
+                    </InputLabel>
                     <Input
                       id='description'
                       name='description'
                       type='text'
-                      placeholder={`Inserisci una descrizione (max ${max.chars.description} caratteri)...`}
+                      placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.description })}
                       error={Boolean(errors.description)}
                       value={book.description}
                       onChange={onChangeMaxChars}
@@ -1001,7 +1025,7 @@ const BookForm: FC<BookFormProps> = ({
                     {errors.description && <FormHelperText className='message error'>{errors.description}</FormHelperText>}
                     {leftChars.description !== null && (
                       <FormHelperText className={classnames('message', leftChars.description < 0 ? 'warning' : 'neutral')}>
-                        Caratteri rimanenti: {leftChars.description}
+                        {t('REMAINING_CHARACTERS')}: {leftChars.description}
                       </FormHelperText>
                     )}
                   </FormControl>
@@ -1009,19 +1033,21 @@ const BookForm: FC<BookFormProps> = ({
               ) : (
                 <div className='info-row'>
                   <button type='button' className='btn flat rounded centered' onClick={onToggleDescription}>
-                    {book.description ? 'Modifica la descrizione' : 'Aggiungi una descrizione'}
+                    {t(`common:${book.description ? 'ACTION_EDIT_DESCRIPTION' : 'ACTION_ADD_DESCRIPTION'}`)}
                   </button>
                 </div>
               )}
               {isEditingIncipit ? (
                 <div className='form-group'>
                   <FormControl className='input-field' margin='normal' fullWidth>
-                    <InputLabel error={Boolean(errors.incipit)} htmlFor='incipit'>Incipit</InputLabel>
+                    <InputLabel error={Boolean(errors.incipit)} htmlFor='incipit'>
+                      {t('LABEL_INCIPIT')}
+                    </InputLabel>
                     <Input
                       id='incipit'
                       name='incipit'
                       type='text'
-                      placeholder={`Inserisci i primi paragrafi (max ${max.chars.incipit} caratteri)...`}
+                      placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.incipit })}
                       error={Boolean(errors.incipit)}
                       value={book.incipit || ''}
                       onChange={onChangeMaxChars}
@@ -1031,7 +1057,7 @@ const BookForm: FC<BookFormProps> = ({
                     {errors.incipit && <FormHelperText className='message error'>{errors.incipit}</FormHelperText>}
                     {leftChars.incipit !== null && (
                       <FormHelperText className={classnames('message', leftChars.incipit < 0 ? 'warning' : 'neutral')}>
-                        Caratteri rimanenti: {leftChars.incipit}
+                        {t('REMAINING_CHARACTERS')}: {leftChars.incipit}
                       </FormHelperText>
                     )}
                   </FormControl>
@@ -1039,7 +1065,7 @@ const BookForm: FC<BookFormProps> = ({
               ) : (
                 <div className='info-row'>
                   <button type='button' className='btn flat rounded centered' onClick={onToggleIncipit}>
-                    {book.incipit ? 'Modifica l\'incipit' : 'Aggiungi un incipit'}
+                    {t(`common:${book.incipit ? 'ACTION_EDIT_INCIPIT' : 'ACTION_ADD_INCIPIT'}`)}
                   </button>
                 </div>
               )}
@@ -1047,12 +1073,16 @@ const BookForm: FC<BookFormProps> = ({
             </div>
           </div>
           <div className='footer no-gutter'>
-            <button type='button' onClick={onSubmit} className='btn btn-footer primary'>{book.bid ? 'Salva le modifiche' : 'Crea scheda libro'}</button>
+            <button type='button' onClick={onSubmit} className='btn btn-footer primary'>
+              {t(`common:${book.bid ? 'ACTION_SAVE' : 'ACTION_CREATE_BOOK'}`)}
+            </button>
           </div>
         </form>
         {book.bid && (
           <div className='form-group'>
-            <button type='button' onClick={onExitEditing} className='btn flat rounded centered'>Annulla</button>
+            <button type='button' onClick={onExitEditing} className='btn flat rounded centered'>
+              {t('common:ACTION_CANCEL')}
+            </button>
           </div>
         )}
       </div>
@@ -1064,15 +1094,17 @@ const BookForm: FC<BookFormProps> = ({
           onClose={onCloseChangesDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Ci sono modifiche non salvate</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_UNSAVED_CHANGES_TITLE')}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText id='delete-dialog-description'>
-              Vuoi salvarle prima di uscire?
+              {t('DIALOG_UNSAVED_CHANGES_TEXT')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onEditing}>Esci</button>
-            <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Salva</button>
+            <button type='button' className='btn btn-footer flat' onClick={onEditing}>{t('common:ACTION_LEAVE')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onSubmit}>{t('common:ACTION_SAVE')}</button>
           </DialogActions>
         </Dialog>
       )}

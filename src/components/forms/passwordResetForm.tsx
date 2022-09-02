@@ -4,6 +4,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import React, { ChangeEvent, FC, FormEvent, useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import SnackbarContext from '../../context/snackbarContext';
@@ -36,6 +37,8 @@ const PasswordResetForm: FC = () => {
   const [authError, setAuthError] = useState(initialState.authError);
   const [errors, setErrors] = useState(initialState.errors);
 
+  const { t } = useTranslation(['form']);
+
   const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
     e.persist();
     const { name, value } = e.target;
@@ -48,9 +51,9 @@ const PasswordResetForm: FC = () => {
     const errors: ErrorsModel = {};
     
     if (email) {
-      if (!isEmail(email)) errors.email = 'Formato email non valido';
+      if (!isEmail(email)) errors.email = t('ERROR_INVALID_FORMAT');
     } else {
-      errors.email = 'Inserisci un indirizzo email';
+      errors.email = t('ERROR_REQUIRED_FIELD');
     }
     return errors;
   };
@@ -77,9 +80,8 @@ const PasswordResetForm: FC = () => {
 
   return (
     <div className='card-container pad-v' id='passwordResetFormComponent'>
-      <h2>Recupero password</h2>
+      <h2>{t('common:PAGE_RECOVERY_PASSWORD')}</h2>
       <div className='card light'>
-        <p>Per favore, inserisci la tua email per recuperare la password.</p>
         <form noValidate>
           <div className='form-group'>
             <FormControl className='input-field' margin='normal' fullWidth>
@@ -88,7 +90,7 @@ const PasswordResetForm: FC = () => {
                 id='email'
                 name='email'
                 type='email'
-                placeholder='esempio@esempio.com'
+                placeholder={t('PLACEHOLDER_EG_STRING', { string: 'email@provider.com' })}
                 value={email}
                 onChange={onChange}
                 error={Boolean(errors.email)}
@@ -101,9 +103,13 @@ const PasswordResetForm: FC = () => {
 
           <div className='footer no-gutter'>
             {emailSent ? (
-              <span className='btn btn-footer success'>Email inviata</span>
+              <span className='btn btn-footer success'>
+                {t('common:EMAIL_SENT')}
+              </span>
             ) : (
-              <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Recupera password</button>
+              <button type='button' className='btn btn-footer primary' onClick={onSubmit}>
+                {t('common:ACTION_RECOVER_PASSWORD')}
+              </button>
             )}
           </div>
         </form>

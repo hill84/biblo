@@ -9,11 +9,14 @@ import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import classnames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 const VerifyEmailPage: FC = () => {
   const { openSnackbar } = useContext(SnackbarContext);
   const [emailSent, setEmailSent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const { t } = useTranslation(['common']);
 
   const sendEmailVerification = (): void => {
     if (auth.currentUser) {
@@ -45,7 +48,7 @@ const VerifyEmailPage: FC = () => {
   return (
     <div className='card-container pad-v reveal fadeIn' id='verifyEmailPageComponent'>
       <Helmet>
-        <title>{app.name} | Conferma registrazione</title>
+        <title>{app.name} | {t('PAGE_CONFIRM_SIGNUP')}</title>
         <link rel='canonical' href={app.url} />
       </Helmet>
       <h2>Conferma la tua registrazione</h2>

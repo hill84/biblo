@@ -6,9 +6,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
 import { isToday } from 'date-fns';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { Data } from 'react-csv/components/CommonPropTypes';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
@@ -21,18 +22,6 @@ import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'EDIT.lastEdit_num', label: 'Data ultima modifica'}, 
-  { type: 'EDIT.lastEditByUid', label: 'Modificato da'},
-  { type: 'EDIT.created_num', label: 'Data creazione'}, 
-  { type: 'EDIT.createdByUid', label: 'Creato da'},  
-  { type: 'title', label: 'Titolo'},
-  { type: 'rating_num', label: 'Voto'},
-  { type: 'ratings_num', label: 'Voti'},
-  { type: 'readers_num', label: 'Lettori'},
-  { type: 'reviews_num', label: 'Recensioni'}
-];
 
 let itemsFetch: (() => void) | undefined;
 
@@ -87,6 +76,20 @@ const BooksDash: FC = () => {
   const [loading, setLoading] = useState<StateModel['loading']>(initialState.loading);
 
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const { t } = useTranslation(['common', 'form']);
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'EDIT.lastEdit_num', label: t('LAST_EDIT_DATE') }, 
+    { type: 'EDIT.lastEditByUid', label: t('LAST_EDIT_BY') },
+    { type: 'EDIT.created_num', label: t('CREATED_DATE') }, 
+    { type: 'EDIT.createdByUid', label: t('CREATED_BY') },  
+    { type: 'title', label: t('TITLE') },
+    { type: 'rating_num', label: t('RATING') },
+    { type: 'ratings_num', label: t('RATINGS') },
+    { type: 'readers_num', label: t('READERS') },
+    { type: 'reviews_num', label: t('REVIEWS') }
+  ], [t]);
 
   const limit: number = limitBy[limitByIndex];
   const order: OrderByModel = orderBy[orderByIndex];
@@ -186,12 +189,12 @@ const BooksDash: FC = () => {
     if (state) {
       // console.log(`Locking ${bid}`);
       bookRef(bid).update({ 'EDIT.edit': false }).then((): void => {
-        openSnackbar('Elemento bloccato', 'success');
+        openSnackbar(t('form:SUCCESS_LOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       // console.log(`Unlocking ${bid}`);
       bookRef(bid).update({ 'EDIT.edit': true }).then((): void => {
-        openSnackbar('Elemento sbloccato', 'success');
+        openSnackbar(t('form:SUCCESS_UNLOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
@@ -210,7 +213,7 @@ const BooksDash: FC = () => {
       /* reviewRef(selectedId).delete().then((): void => {
         console.log(`✔ Reviews deleted`);
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error')); */
-      openSnackbar('Elemento cancellato', 'success');
+      openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
   
@@ -241,7 +244,9 @@ const BooksDash: FC = () => {
   const skeletons = [...Array(limit)].map((_, i: number) => <li key={i} className='avatar-row skltn dash' />);
 
   const itemsList = loading ? skeletons : !items ? (
-    <li className='empty text-center'>Nessun elemento</li>
+    <li className='empty text-center'>
+      {t('EMPTY_LIST')}
+    </li>
   ) : (
     items.map(({ authors, bid, covers, EDIT, /* ISBN_10, */ ISBN_13, rating_num, ratings_num, readers_num, reviews_num, title }: BookModel) => (
       <li key={bid} className={classnames('avatar-row', { locked: !EDIT.edit })}>
@@ -297,27 +302,28 @@ const BooksDash: FC = () => {
               type='button'
               className='btn icon green'
               onClick={() => onView({ bid, title })}
-              title='Anteprima'>
+              title={t('ACTION_PREVIEW')}>
               {icon.eye}
             </button>
             <button
               type='button'
               className='btn icon primary'
               onClick={() => onEdit({ bid, title })}
-              title='Modifica'>
+              title={t('ACTION_EDIT')}>
               {icon.pencil}
             </button>
             <button
               type='button'
               className={classnames('btn', 'icon', EDIT.edit ? 'secondary' : 'flat')}
               onClick={() => onLock({ bid, state: EDIT.edit })}
-              title={EDIT.edit ? 'Blocca' : 'Sblocca'}>
+              title={t(EDIT.edit ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}>
               {icon.lock}
             </button>
             <button
               type='button'
               className='btn icon red'
-              onClick={() => onDeleteRequest({ bid })}>
+              onClick={() => onDeleteRequest({ bid })}
+              title={t('ACTION_DELETE')}>
               {icon.close}
             </button>
           </div>
@@ -335,14 +341,14 @@ const BooksDash: FC = () => {
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
-            <span className='counter hide-md'>{`${items.length || 0} di ${count || 0}`}</span>
+            <span className='counter hide-md'>{`${items.length || 0} ${t('OF')} ${count || 0}`}</span>
             <button
               type='button'
               className='btn sm flat counter last'
               disabled={!items.length}
               onClick={onOpenLimitMenu}
             >
-              {limit} <span className='hide-xs'>per pagina</span>
+              {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
               anchorEl={limitMenuAnchorEl}
@@ -365,7 +371,7 @@ const BooksDash: FC = () => {
                 </CSVLink>
               )}
               <button type='button' className='btn sm flat counter' onClick={onOpenOrderMenu}>
-                <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <Menu 
                 className='dropdown-menu'
@@ -377,7 +383,7 @@ const BooksDash: FC = () => {
               <button
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
-                title={desc ? 'Ascendente' : 'Discendente'}
+                title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                 onClick={onToggleDesc}>
                 {icon.arrowDown}
               </button>
@@ -390,23 +396,23 @@ const BooksDash: FC = () => {
         <li className='labels'>
           <div className='row'>
             <div className='col-auto'><div className='mock-cover xs hidden' /></div>
-            <div className='col'>Titolo</div>
-            <div className='col'>Autore</div>
+            <div className='col'>{t('form:LABEL_TITLE')}</div>
+            <div className='col'>{t('form:LABEL_AUTHOR')}</div>
             <div className='col-lg col-md-2 hide-md'>
               <div className='row text-center'>
-                <div className='col' title='Voto'>{icon.star}</div>
-                <div className='col' title='Voti'>{icon.starOutline}</div>
-                <div className='col' title='Lettori'>{icon.reader}</div>
-                <div className='col' title='Recensioni'>{icon.review}</div>
+                <div className='col' title={t('RATING')}>{icon.star}</div>
+                <div className='col' title={t('RATINGS')}>{icon.starOutline}</div>
+                <div className='col' title={t('READERS')}>{icon.reader}</div>
+                <div className='col' title={t('REVIEWS')}>{icon.review}</div>
               </div>
             </div>
             <div className='col hide-md'>Bid</div>
             <div className='col hide-md'>ISBN-13</div>
             {/* <div className='col-1 hide-md'>ISBN-10</div> */}
-            <div className='col col-lg-1 hide-sm'>Creato da</div>
-            <div className='col col-lg-1 hide-sm'>Creato</div>
-            <div className='col col-lg-1'>Modificato da</div>
-            <div className='col col-lg-1 text-right'>Modificato</div>
+            <div className='col col-lg-1 hide-sm'>{t('CREATED_BY')}</div>
+            <div className='col col-lg-1 hide-sm'>{t('CREATED')}</div>
+            <div className='col col-lg-1'>{t('EDITED_BY')}</div>
+            <div className='col col-lg-1 text-right'>{t('EDITED')}</div>
           </div>
         </li>
         {itemsList}
@@ -429,8 +435,8 @@ const BooksDash: FC = () => {
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

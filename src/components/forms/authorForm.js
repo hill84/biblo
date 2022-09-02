@@ -7,6 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
 import { funcType, stringType } from '../../config/proptypes';
@@ -37,6 +38,9 @@ const AuthorForm = ({ id, onToggle }) => {
   const [loading, setLoading] = useState(false);
   const [changes, setChanges] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { t } = useTranslation(['form']);
+
   const is = useRef(true);
 
   const fetch = useCallback(() => {
@@ -110,21 +114,21 @@ const AuthorForm = ({ id, onToggle }) => {
     const isDuplicate = id ? false : await checkDisplayName(data.displayName);
 
     if (!data.displayName) { 
-      errors.displayName = 'Inserisci il nominativo'; 
+      errors.displayName = t('ERROR_REQUIRED_FIELD'); 
     } else if (isDuplicate) {
-      errors.displayName = 'Autore già presente';
+      errors.displayName = t('ERROR_DUPLICATED_ITEM');
     } else if (data.displayName?.length > max.chars.displayName) {
-      errors.displayName = `Massimo ${max.chars.displayName} caratteri`;
+      errors.displayName = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.displayName });
     }
     if (!data.sex) {
-      errors.sex = 'Sesso mancante';
+      errors.sex = t('ERROR_REQUIRED_FIELD');
     }
     if (!data.bio) { 
-      errors.bio = 'Inserisci una biografia'; 
+      errors.bio = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.bio?.length > max.chars.bio) {
-      errors.bio = `Massimo ${max.chars.bio} caratteri`;
+      errors.bio = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.bio });
     } else if (data.bio?.length < min.chars.bio) {
-      errors.bio = `Minimo ${min.chars.bio} caratteri`;
+      errors.bio = t('ERROR_MIN_COUNT_CHARACTERS', { count: max.chars.bio });
     }
     return errors;
   };
@@ -155,7 +159,7 @@ const AuthorForm = ({ id, onToggle }) => {
         }).then(() => {
           onToggle();
           if (is.current) setLoading(false);
-          openSnackbar(data.displayName ? 'Modifiche salvate' : 'Nuovo elemento creato', 'success');
+          openSnackbar(t(data.displayName ? 'CHANGES_SAVED' : 'SUCCESS_ITEM_CREATED'), 'success');
         }).catch(err => console.warn(err));
       } else if (is.current) setLoading(false);
     } else onToggle();
@@ -170,13 +174,15 @@ const AuthorForm = ({ id, onToggle }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">Nominativo</InputLabel>
+                <InputLabel error={Boolean(errors.displayName)} htmlFor="displayName">
+                  {t('LABEL_DISPLAY_NAME')}
+                </InputLabel>
                 <Input
                   id="displayName"
                   name="displayName"
                   type="text"
                   autoFocus
-                  placeholder="Es: George Orwell"
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'George Orwell' })}
                   value={data.displayName}
                   onChange={onChange}
                   error={Boolean(errors.displayName)}
@@ -188,15 +194,17 @@ const AuthorForm = ({ id, onToggle }) => {
             </div>
             <div className="form-group col col-sm-3">
               <FormControl className="select-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.sex)} htmlFor="sex">Sesso</InputLabel>
+                <InputLabel error={Boolean(errors.sex)} htmlFor="sex">
+                  {t('LABEL_SEX')}
+                </InputLabel>
                 <Select
                   id="sex"
                   value={data.sex}
                   onChange={onChangeSelect('sex')}
                   error={Boolean(errors.sex)}>
-                  <MenuItem key="m" value="m">Uomo</MenuItem>
-                  <MenuItem key="f" value="f">Donna</MenuItem>
-                  <MenuItem key="x" value="x">Altro</MenuItem>
+                  <MenuItem key="m" value="m">{t('common:SEX_M')}</MenuItem>
+                  <MenuItem key="f" value="f">{t('common:SEX_F')}</MenuItem>
+                  <MenuItem key="x" value="x">{t('common:SEX_X')}</MenuItem>
                 </Select>
                 {errors.sex && (
                   <FormHelperText className="message error">{errors.sex}</FormHelperText>
@@ -208,12 +216,14 @@ const AuthorForm = ({ id, onToggle }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.bio)} htmlFor="bio">Biografia</InputLabel>
+                <InputLabel error={Boolean(errors.bio)} htmlFor="bio">
+                  {t('LABEL_BIOGRAPHY')}
+                </InputLabel>
                 <Input
                   id="bio"
                   name="bio"
                   type="text"
-                  placeholder={`Inserisci la biografia (max ${max.chars.bio} caratteri)...`}
+                  placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.bio })}
                   value={data.bio}
                   onChange={onChangeMaxChars}
                   maxRows={20}
@@ -225,7 +235,7 @@ const AuthorForm = ({ id, onToggle }) => {
                 )}
                 {(leftChars.bio !== null) && (
                   <FormHelperText className={`message ${leftChars.bio < 0 ? 'warning' : 'neutral'}`}>
-                    Caratteri rimanenti: {leftChars.bio}
+                    {t('REMAINING_CHARACTERS')}: {leftChars.bio}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -235,12 +245,14 @@ const AuthorForm = ({ id, onToggle }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.source)} htmlFor="source">URL fonte</InputLabel>
+                <InputLabel error={Boolean(errors.source)} htmlFor="source">
+                  {t('LABEL_SOURCE_URL')}
+                </InputLabel>
                 <Input
                   id="source"
                   name="source"
                   type="text"
-                  placeholder="Es: https://it.wikipedia.org/wiki/George_Orwell"
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'George Orwell' })}
                   value={data.source}
                   onChange={onChange}
                   error={Boolean(errors.source)}
@@ -264,12 +276,14 @@ const AuthorForm = ({ id, onToggle }) => {
             )}
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>
+                <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">
+                  {t('LABEL_IMAGE_URL')}
+                </InputLabel>
                 <Input
                   id="photoURL"
                   name="photoURL"
                   type="text"
-                  placeholder="Es: https://firebasestorage.googleapis.com/.../authors%2Fauthor.jpg"
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'https://firebasestorage.googleapis.com/.../authors%2Fauthor.jpg' })}
                   value={data.photoURL}
                   onChange={onChange}
                   error={Boolean(errors.photoURL)}
@@ -283,7 +297,9 @@ const AuthorForm = ({ id, onToggle }) => {
 
         </div>
         <div className="footer no-gutter">
-          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>
+            {t('common:ACTION_SAVE')}
+          </button>
         </div>
       </div>
     </Fragment>

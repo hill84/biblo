@@ -8,6 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import classnames from 'classnames';
 import React, { ChangeEvent, CSSProperties, FC, Fragment, lazy, MouseEvent, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
@@ -63,6 +64,8 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   const [tabSelected, setTabSelected] = useState<number>(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
   const [screenSize, setScreenSize] = useState<ScreenSizeType>(_screenSize());
   const [shelfLimit, setShelfLimit] = useState<number>((booksPerRow() * 2) - (isOwner ? 1 : 0));
+
+  const { t } = useTranslation(['common']);
   
   const is = useRef<IsCurrent>(false);
 
@@ -172,7 +175,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
         };
         snackbarMsg = `Segui ${fuser.displayName}`;
         const followerName: string = user.displayName.split(' ')[0];
-        followerDisplayName = truncateString(followerName, 12);
+        followerDisplayName = truncateString(followerName, 25);
         noteMsg = `<a href='/dashboard/${luid}'>${followerDisplayName}</a> ha iniziato a seguirti`;
       }
 
@@ -202,12 +205,12 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
           }).catch((err: FirestoreError): void => console.warn(`Followings error: ${err}`)); 
         }).catch((err: FirestoreError): void => console.warn(`Followers error: ${err}`));
       } else {
-        openSnackbar(`Limite massimo superato. ${(!isPremium || !isAdmin) && `Passa al piano premium per seguire più di ${maxFollowings} lettori`}`, 'error');
+        openSnackbar(t('ERROR_MAX_FOLLOWINGS_COUNT', { count: maxFollowings }), 'error');
       }
     } else {
       openSnackbar('Utente non autenticato', 'error');
     }
-  }, [duser, followers, followings, isAdmin, isAuth, isPremium, lfollowers, lfollowings, luid, openSnackbar, uid, user]);
+  }, [duser, followers, followings, isAdmin, isAuth, isPremium, lfollowers, lfollowings, luid, openSnackbar, t, uid, user]);
 
   const historyPushTabIndex = (index: number): void => {
     const newPath = `/dashboard/${uid}/${tabs[index]}`;
@@ -242,17 +245,24 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   const isMini = useMemo((): boolean => isScrollable(screenSize), [screenSize]);
   const creationYear = useMemo((): string => duser ? String(new Date(duser.creationTime).getFullYear()) : '', [duser]);
   
-  
   const contactsSkeleton = () => [...Array(3)].map((_e, i: number) => <div key={i} className='avatar-row skltn' />);
   
-  const ShelfDetails: FC = () => (
-    <div className='info-row footer centered shelfdetails'>
-      <span className='counter'>{icon.book} <b>{duser ? duser.stats?.shelf_num : 0}</b> <span className='hide-sm'>Libri</span></span>
-      <span className='counter'>{icon.heart} <b>{duser ? duser.stats?.wishlist_num : 0}</b> <span className='hide-sm'>Desideri</span></span>
-      <span className='counter'>{icon.star} <b>{duser ? duser.stats?.ratings_num : 0}</b> <span className='hide-sm'>Valutazioni</span></span>
-      <span className='counter'>{icon.messageText} <b>{duser ? duser.stats?.reviews_num : 0}</b> <span className='hide-sm'>Recensioni</span></span>
-    </div>
-  );
+  const ShelfDetails: FC = () => {
+    const { stats } = duser || {};
+    const books = stats?.shelf_num || 0;
+    const wishes = stats?.wishlist_num || 0;
+    const ratings = stats?.ratings_num || 0;
+    const reviews = stats?.reviews_num || 0;
+
+    return (
+      <div className='info-row footer centered shelfdetails'>
+        <span className='counter'>{icon.book} <b>{books}</b> <span className='hide-sm'>{t(books === 1 ? 'BOOK' : 'BOOKS').toLowerCase()}</span></span>
+        <span className='counter'>{icon.heart} <b>{wishes}</b> <span className='hide-sm'>{t(wishes === 1 ? 'WISH' : 'WISHES').toLowerCase()}</span></span>
+        <span className='counter'>{icon.star} <b>{ratings}</b> <span className='hide-sm'>{t(ratings === 1 ? 'RATING' : 'RATINGS').toLowerCase()}</span></span>
+        <span className='counter'>{icon.messageText} <b>{reviews}</b> <span className='hide-sm'>{t(reviews === 1 ? 'REVIEW' : 'REVIEWS').toLowerCase()}</span></span>
+      </div>
+    );
+  };
 
   if (!duser && !loading) return (
     <NoMatch title='Dashboard utente non trovata' history={history} location={location} />
@@ -312,7 +322,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   const EmptyRow = () => (
     <div className='avatar-row empty'>
       <div className='row'>
-        <div className='col'><Avatar className='avatar'>{icon.accountOff}</Avatar> Nessuno</div>
+        <div className='col'><Avatar className='avatar'>{icon.accountOff}</Avatar> {t('NOBODY')}</div>
       </div>
     </div>
   );
@@ -329,28 +339,19 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
     </Fragment>
   );
 
-  const tabSeoTitle = (): string => {
-    switch (tabSelected) {
-      case 0: return 'La libreria';
-      case 1: return 'La lista dei desideri';
-      case 2: return 'Le attività';
-      case 3: return 'Le statistiche';
-      case 4: return 'I contatti';
-      default: return 'La dashboard';
-    }
-  };
-
   const UnauthReadingStats = () => (
     <div className='text-center'>
-      <h2>Utente non autorizzato</h2>
+      <h2>{t('UNAUTHORIZED_USER')}</h2>
       {duser && <p>Solo {duser.displayName} può visualizzare le sue statistiche di lettura</p>}
     </div>
   );
 
+  const switchSex = (sex: string): string => t(`SEX_${sex.toUpperCase()}`);
+
   return (
     <div className='container' id='dashboardComponent' ref={is}>
       <Helmet>
-        <title>{app.name} | {duser ? `${tabSeoTitle()} di ${duser.displayName}` : 'Dashboard utente'}</title>
+        <title>{app.name} | {t('DASHBOARD')}</title>
         <link rel='canonical' href={app.url} />
         <meta name='description' content={app.desc} />
         {tabSelected && <link rel='canonical' href={`${app.url}/dashboard/${uid}/shelf`} />}
@@ -362,9 +363,9 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
               {duser && (
                 <div className='absolute-top-right'>
                   {!duser?.roles?.editor ? (
-                    <div className='badge red'>Utente bloccato</div> 
+                    <div className='badge red'>{t('BLOCKED_USER')}</div> 
                   ) : isOwner && progress === 100 && (
-                    <Link to='/profile' className='btn sm flat counter'>{icon.pencil} Modifica</Link> 
+                    <Link to='/profile' className='btn sm flat counter'>{icon.pencil} {t('ACTION_EDIT')}</Link> 
                   )}
                 </div>
               )}
@@ -393,15 +394,15 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                   {loading ? <div className='skltn three rows' style={skltnStyle} /> : (
                     <Fragment>
                       <div className='info-row hide-xs'>
-                        {duser?.sex && duser.sex !== 'x' && <span className='counter'>{duser.sex === 'm' ? 'Uomo' : duser.sex === 'f' ? 'Donna' : ''}</span>}
-                        {duser?.birth_date && <span className='counter'>{calcAge(duser.birth_date) || '-'} anni</span>}
+                        {duser?.sex && duser.sex !== 'x' && <span className='counter'>{switchSex(duser.sex)}</span>}
+                        {duser?.birth_date && <span className='counter'>{t('AGE', { years: calcAge(duser.birth_date) || '-' })}</span>}
                         <span className='counter comma strict'>
                           {duser?.city && <span className='counter'>{duser.city}</span>}
                           {duser?.country && <span className='counter'>{duser.country}</span>}
                           {duser?.continent && <span className='counter'>{duser.continent}</span>}
                         </span>
-                        {duser?.languages && !isMini && <span className='counter'>{capitalize(joinToLowerCase(duser.languages))}</span>}
-                        {creationYear && !isMini && <span className='counter'>Su {app.name} dal <b>{creationYear}</b></span>}
+                        {duser?.languages && !isMini && <span className='counter'>{capitalize(joinToLowerCase(duser.languages, t('AND')))}</span>}
+                        {creationYear && !isMini && <span className='counter'>{t('ON_BIBLO_SINCE', { appName: app.name, creationYear })}</span>}
                       </div>
                       <div className='info-row ellipsis'>
                         {!isOwner && isAuth && (
@@ -410,10 +411,10 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                             className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')} 
                             // disabled={!isAuth}
                             onClick={onFollowUser}>
-                            {!follow ? <span>{icon.plus} Segui</span> : (
+                            {!follow ? <span>{icon.plus} {t('ACTION_FOLLOW')}</span> : (
                               <Fragment>
-                                <span className='hide-on-hover'>{icon.check} Segui</span>
-                                <span className='show-on-hover'>Smetti</span>
+                                <span className='hide-on-hover'>{icon.check} {t('ACTION_FOLLOW')}</span>
+                                <span className='show-on-hover'>{t('ACTION_STOP_FOLLOWING')}</span>
                               </Fragment> 
                             )}
                           </button>
@@ -445,9 +446,9 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                   </div>
                 </div>
                 <div className='info-row'>
-                  <div className='counter last font-sm ligth-text'>{progress < 100 ? 'Progresso profilo' : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} di ${challengeBooks_num} libri` : 'Nessuna sfida'}</div>
+                  <div className='counter last font-sm ligth-text'>{progress < 100 ? t('PROFILE_PROGRESS') : challengeBooks && !challengeCompleted ? `${challengeReadBooks_num} ${t('OF')} ${challengeBooks_num} ${t('BOOKS').toLowerCase()}` : t('NO_CHALLENGE')}</div>
                   <Link to={progress < 100 ? '/profile' : challengeBooks && !challengeCompleted ? '/challenge' : '/challenges'} className='btn sm primary rounded'>
-                    {progress < 100 ? 'Completa' : challengeBooks && !challengeCompleted ? 'Vedi sfida' : 'Scegli sfida'}
+                    {t(progress < 100 ? 'ACTION_COMPLETE' : challengeBooks && !challengeCompleted ? 'ACTION_SEE_CHALLENGE' : 'ACTION_CHOOSE_CHALLENGE')}
                   </Link>
                 </div>
               </div>
@@ -463,11 +464,11 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
           variant='fullWidth'
           // variant='scrollable'
           scrollButtons='auto'>
-          <Tab label={<TabLabel icon={icon.book} label='Libreria' />} />
-          <Tab label={<TabLabel icon={icon.heart} label='Desideri' />} />
-          <Tab label={<TabLabel icon={icon.messageText} label='Attività' />} />
-          <Tab label={<TabLabel icon={icon.poll} label='Statistiche' />} disabled={!isOwner} />
-          <Tab label={<TabLabel icon={icon.account} label='Contatti' />} />
+          <Tab label={<TabLabel icon={icon.book} label={t('DASHBOARD')} />} />
+          <Tab label={<TabLabel icon={icon.heart} label={t('WISHLIST')} />} />
+          <Tab label={<TabLabel icon={icon.messageText} label={t('ACTIVITIES')} />} />
+          <Tab label={<TabLabel icon={icon.poll} label={t('STATISTICS')} />} disabled={!isOwner} />
+          <Tab label={<TabLabel icon={icon.account} label={t('CONTACTS')} />} />
         </Tabs>
       </AppBar>
       <BindKeyboardSwipeableViews 
@@ -516,7 +517,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
           {tabSelected === 4 && (
             <div className='row'>
               <div className='col-md-6 col-12 contacts-tab-col'>
-                <h4>Seguito da:</h4>
+                <h4>{t('FOLLOWED_BY')}:</h4>
                 {loading ? contactsSkeleton : Object.keys(followers).length ? (
                   <UsersList users={followers} followings={followings} />
                 ) : (
@@ -524,7 +525,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                 )}
               </div>
               <div className='col-md-6 col-12 contacts-tab-col'>
-                <h4>Segue:</h4>
+                <h4>{t('FOLLOWS')}:</h4>
                 {loading ? contactsSkeleton : Object.keys(followings).length ? (
                   <UsersList users={followings} /> 
                 ) : (

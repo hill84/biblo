@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
 import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { auth, authorFollowerRef, collectionFollowersRef, commentersGroupRef, countRef, followersGroupRef, genreFollowerRef, noteRef, notesRef, reviewerCommenterRef, reviewerRef, reviewersGroupRef, userNotificationsRef, userRef, usersRef } from '../../../config/firebase';
@@ -20,17 +21,6 @@ import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'creationTime', label: 'Data'}, 
-  { type: 'displayName', label: 'Nome'}, 
-  { type: 'uid', label: 'Uid'}, 
-  { type: 'email', label: 'Email'},
-  { type: 'stats.shelf_num', label: 'Libri'},
-  { type: 'stats.wishlist_num', label: 'Desideri'},
-  { type: 'stats.reviews_num', label: 'Recensioni'},
-  { type: 'stats.ratings_num', label: 'Voti'}
-];
 
 let itemsFetch: (() => void) | undefined;
 
@@ -96,6 +86,19 @@ const UsersDash: FC<UsersDashProps> = ({
   const [page, setPage] = useState<StateModel['page']>(initialState.page);
   const [redirectTo, setRedirectTo] = useState<StateModel['redirectTo']>(initialState.redirectTo);
   const [selected, setSelected] = useState<StateModel['selected']>(initialState.selected);
+
+  const { t } = useTranslation(['common', 'form']);
+  
+  const orderBy: OrderByModel[] = [ 
+    { type: 'creationTime', label: 'Data' }, 
+    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') }, 
+    { type: 'uid', label: 'Uid' }, 
+    { type: 'email', label: t('form:LABEL_EMAIL') },
+    { type: 'stats.shelf_num', label: t('form:LABEL_BOOKS') },
+    { type: 'stats.wishlist_num', label: t('WISHES') },
+    { type: 'stats.reviews_num', label: t('REVIEWS') },
+    { type: 'stats.ratings_num', label: t('RATINGS') },
+  ];
 
   const limit: number = limitBy[limitByIndex];
   const order: OrderByModel = orderBy[orderByIndex];
@@ -219,7 +222,7 @@ const UsersDash: FC<UsersDashProps> = ({
     const state =  (e.currentTarget as CurrentTarget).parentNode?.dataset?.state === 'true';
     // console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
     userRef(uid).update({ 'roles.editor': !state }).then((): void => {
-      openSnackbar(`Elemento ${state ? '' : 's'}bloccato`, 'success');
+      openSnackbar(t(`form:${state ? 'SUCCESS_LOCKED_ITEM' : 'SUCCESS_UNLOCKED_ITEM'}`), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
 
@@ -341,7 +344,9 @@ const UsersDash: FC<UsersDashProps> = ({
   const skeletons = [...Array(limit)].map((_e, i: number) => <li key={i} className='avatar-row skltn dash' />);
   
   const itemsList = loading ? skeletons : !items ? (
-    <li className='empty text-center'>Nessun elemento</li>
+    <li className='empty text-center'>
+      {t('EMPTY_LIST')}
+    </li>
   ) : (
     items.map((item: UserModel) => (
       <li key={item.uid} className={classnames('avatar-row', item.roles?.editor ? 'editor' : 'locked')}>
@@ -392,21 +397,21 @@ const UsersDash: FC<UsersDashProps> = ({
             <button
               type='button'
               className='btn icon green'
-              title='anteprima'
+              title={t('ACTION_PREVIEW')}
               onClick={onView}>
               {icon.eye}
             </button>
             <button
               type='button'
               className='btn icon primary'
-              title='modifica'
+              title={t('ACTION_EDIT')}
               onClick={() => onEdit(item)}>
               {icon.pencil}
             </button>
             <button
               type='button'
               className='btn icon primary'
-              title='Invia notifica'
+              title={t('ACTION_SEND_NOTIFICATION')}
               onClick={onNote}>
               {icon.bell}
             </button>
@@ -422,14 +427,14 @@ const UsersDash: FC<UsersDashProps> = ({
             <button
               type='button'
               className='btn icon primary'
-              title='Invia email di reset password'
+              title={t('ACTION_SEND_RESET_PASSWORD_EMAIL')}
               onClick={onSendReset}>
               {icon.textboxPassword}
             </button>
             <button
               type='button'
               className={classnames('btn', 'icon', item.roles?.editor ? 'secondary' : 'flat')}
-              title={item.roles?.editor ? 'Blocca' : 'Sblocca'}
+              title={t(item.roles?.editor ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}
               onClick={onLock}>
               {icon.lock}
             </button>
@@ -437,7 +442,7 @@ const UsersDash: FC<UsersDashProps> = ({
               type='button'
               className='btn icon red'
               onClick={onDeleteRequest}
-              title='elimina'>
+              title={t('ACTION_DELETE')}>
               {icon.close}
             </button>
           </div>
@@ -451,14 +456,14 @@ const UsersDash: FC<UsersDashProps> = ({
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
-            <span className='counter hide-md'>{`${items.length || 0} di ${count || 0}`}</span>
+            <span className='counter hide-md'>{`${items.length || 0} ${t('OF')} ${count || 0}`}</span>
             <button
               type='button'
               className='btn sm flat counter last'
               disabled={!items.length}
               onClick={onOpenLimitMenu}
             >
-              {limitBy[limitByIndex]} <span className='hide-xs'>per pagina</span>
+              {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
               className='dropdown-menu'
@@ -475,12 +480,12 @@ const UsersDash: FC<UsersDashProps> = ({
                 className='btn sm flat counter'
                 onClick={onOpenOrderMenu}
               >
-                <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <button
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
-                title={desc ? 'Ascendente' : 'Discendente'}
+                title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                 onClick={onToggleDesc}
               >
                 {icon.arrowDown}
@@ -501,21 +506,21 @@ const UsersDash: FC<UsersDashProps> = ({
         <li className='avatar-row labels'>
           <div className='row'>
             <div className='col-auto'><div className='avatar hidden' title='avatar' /></div>
-            <div className='col col-lg-2'>Nominativo</div>
+            <div className='col col-lg-2'>{t('form:LABEL_DISPLAY_NAME')}</div>
             <div className='col hide-sm'>Uid</div>
-            <div className='col hide-sm'>Email</div>
-            <div className='col col-md-2 col-lg-1 text-center'>Ruoli</div>
+            <div className='col hide-sm'>{t('form:LABEL_EMAIL')}</div>
+            <div className='col col-md-2 col-lg-1 text-center'>{t('ROLES')}</div>
             <div className='col col-sm-3 hide-xs'>
               <div className='row text-center'>
-                <div className='col' title='Libri'>{icon.book}</div>
-                <div className='col' title='Desideri'>{icon.heart}</div>
-                <div className='col' title='Recensioni'>{icon.review}</div>
-                <div className='col hide-md' title='Voti'>{icon.star}</div>
-                <div className='col hide-md' title='Termini'>{icon.clipboardCheck}</div>
+                <div className='col' title={t('BOOKS')}>{icon.book}</div>
+                <div className='col' title={t('WISHES')}>{icon.heart}</div>
+                <div className='col' title={t('REVIEWS')}>{icon.review}</div>
+                <div className='col hide-md' title={t('RATINGS')}>{icon.star}</div>
+                <div className='col hide-md' title={t('TERMS')}>{icon.clipboardCheck}</div>
                 <div className='col hide-md' title='Privacy'>{icon.shieldAccount}</div>
               </div>
             </div>
-            <div className='col col-sm-2 col-lg-1 text-right'>Creato</div>
+            <div className='col col-sm-2 col-lg-1 text-right'>{t('CREATED')}</div>
           </div>
         </li>
         {itemsList}
@@ -543,8 +548,8 @@ const UsersDash: FC<UsersDashProps> = ({
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

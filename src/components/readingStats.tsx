@@ -2,12 +2,15 @@ import { DocumentData, FirestoreError } from '@firebase/firestore-types';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
+import { formatDuration } from 'date-fns';
 import React, { FC, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { useTranslation } from 'react-i18next';
 import Rater from 'react-rater';
+import { getLocale } from 'src/i18n';
 import { userBooksRef } from '../config/firebase';
 import icon from '../config/icons';
-import { MonthModel, months, ratingLabels, readingStates } from '../config/lists';
+import { ListModel, MonthModel, months, ratingLabels, readingStates } from '../config/lists';
 import { diffDates, handleFirestoreError, round } from '../config/shared';
 import { userBooksKey } from '../config/storage';
 import SnackbarContext, { SnackbarContextModel } from '../context/snackbarContext';
@@ -36,6 +39,8 @@ const ReadingStats: FC<ReadingStatsProps> = ({
   const [loading, setLoading] = useState<boolean>(_loading);
   const [rangeYear, setRangeYear] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
+
+  const { t } = useTranslation(['common']);
 
   const isNewDay = useMemo((): boolean => timestamp ? diffDates(24, new Date(timestamp || -1).getTime()) > 0 : false, [timestamp]);
 
@@ -134,7 +139,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
     datasets: [{
       backgroundColor: 'rgba(0, 151, 167, .5)',
       hoverBackgroundColor: 'rgba(0, 151, 167, .8)',
-      data: rangeYear ? readByYear.map(b => b.books_num) : readByMonth
+      data: rangeYear ? readByYear.map(({ books_num }: ReadByYear): number => books_num) : readByMonth
     }]
   }, [monthsArr, rangeYear, readByMonth, readByYear, yearsRead]);
   
@@ -156,16 +161,22 @@ const ReadingStats: FC<ReadingStatsProps> = ({
   const tableSkltn = useMemo(() => [...Array(data ? 3 : 5)].map((_e, i: number) => <li key={i} className='avatar-row skltn dash' />), [data]);
   
   if (!loading && !userBooks) return (
-    <div className='text-center'>Statistiche non disponibili</div>
+    <div className='text-center'>
+      {t('NO_STATISTICS')}
+    </div>
   );
   
   return (
     <div>
       <div className='head row'>
         <h2 className='col'>
-          Statistiche <span className='hide-sm'>di lettura</span> <Tooltip title='Aggiornate ogni 24 ore. Conteggiano solo i libri segnati come "letti" con una "data di fine" nello "stato di lettura".'><button type='button' className='link'>{icon.informationOutline}</button></Tooltip>
+          {t('READING_STATISTICS')} <Tooltip title='Aggiornate ogni 24 ore. Conteggiano solo i libri segnati come "letti" con una "data di fine" nello "stato di lettura".'><button type='button' className='link'>{icon.informationOutline}</button></Tooltip>
         </h2>
-        {timestamp && <span className='col-auto text-sm light-text'><span className='hide-sm'>Aggiornate al</span> {new Date(timestamp).toLocaleString()}</span>}
+        {timestamp && (
+          <span className='col-auto text-sm light-text'>
+            <span className='hide-sm'>Aggiornate al</span> {new Date(timestamp).toLocaleString()}
+          </span>
+        )}
       </div>
 
       <div className='row'>
@@ -175,9 +186,13 @@ const ReadingStats: FC<ReadingStatsProps> = ({
               <span className='absolute-content pull-right text-sm' style={switchContainerStyle}>
                 <FormControlLabel label={undefined} control={(
                   <Fragment>
-                    <span className={rangeYear ? 'light-text' : 'primary-text'}>12 mesi</span>
+                    <span className={rangeYear ? 'light-text' : 'primary-text'}>
+                      {formatDuration({ months: 12 }, { locale: getLocale() })}
+                    </span>
                     <Switch checked={rangeYear} color='default' onChange={onToggleRange()} size='small' />
-                    <span className={rangeYear ? 'primary-text' : 'light-text'}>{yearsRead?.length} Anni</span>
+                    <span className={rangeYear ? 'primary-text' : 'light-text'}>
+                      {formatDuration({ years: yearsRead?.length }, { locale: getLocale() })}
+                    </span>
                   </Fragment>
                 )} />
               </span>
@@ -193,22 +208,22 @@ const ReadingStats: FC<ReadingStatsProps> = ({
 
             <div className='row'>
               <div className='col-lg-11 col'>
-                <h3>Statistiche avanzate</h3>
+                <h3>{t('ADVANCED_STATISTICS')}</h3>
                 <ul className='table dense nolist font-sm'>
                   <li className='labels'>
                     <div className='row'>
-                      <div className='col'>Anno</div>
-                      <div className='col'>Libri</div>
-                      <div className='col'>Pagine</div>
-                      <div className='col hide-sm'>Pag/mese</div>
-                      <div className='col'>Voti</div>
-                      <div className='col hide-xs'>Voto medio</div>
-                      <div className='col'>Recensioni</div>
+                      <div className='col'>{t('YEAR')}</div>
+                      <div className='col'>{t('BOOKS')}</div>
+                      <div className='col'>{t('PAGES')}</div>
+                      <div className='col hide-sm'>{t('PAGES_PER_MONTH')}</div>
+                      <div className='col'>{t('RATINGS')}</div>
+                      <div className='col hide-xs'>{t('AVERAGE_RATING')}</div>
+                      <div className='col'>{t('REVIEWS')}</div>
                     </div>
                   </li>
                   {loading ? tableSkltn : yearsRead?.length ? (
                     <Fragment>
-                      {yearsRead.map(year => (
+                      {yearsRead.map((year: number) => (
                         <li className='avatar-row' key={year}>
                           <div className='row'>
                             <div className='col'><b>{year}</b></div>
@@ -223,7 +238,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
                       ))}
                       <li className='avatar-row'>
                         <div className='row'>
-                          <div className='col'><b>Totale</b></div>
+                          <div className='col'><b>{t('TOTAL')}</b></div>
                           <div className='col'>{totalBooksRead}</div>
                           <div className='col'>{totalPagesRead}</div>
                           <Tooltip title={`${totalPagesRead} pagine / ${yearsRead.length * 12} mesi`}><div className='col hide-sm'>{avgPagesRead}</div></Tooltip>
@@ -233,23 +248,25 @@ const ReadingStats: FC<ReadingStatsProps> = ({
                         </div>
                       </li>
                     </Fragment>
-                  ) : <li className='empty avatar-row text-center'>Nessun libro letto</li>}
+                  ) : <li className='empty avatar-row text-center'>{t('NO_BOOK_READ')}</li>}
                 </ul>
               </div>
             </div>
           </div>
 
           <div className='col'>
-            <h3>Stato lettura</h3>
+            <h3>{t('READING_STATE')}</h3>
             <ul className='nolist stats-list'>
-              {readingStates.map((state, i) => (
-                <li key={i} className={booksByState[i] ? undefined : 'light-text'}><b>{booksByState[i]}</b> {state}</li>
+              {readingStates.map(({ label }: ListModel, i: number) => (
+                <li key={i} className={booksByState[i] ? undefined : 'light-text'}>
+                  <b>{booksByState[i]}</b> {t(`lists:${label || ''}`)}
+                </li>
               ))}
             </ul>
           </div>
 
           <div className='col col-lg-auto'>
-            <h3>Voti</h3>
+            <h3>{t('RATINGS')}</h3>
             {ratedBooks && (
               <ul className='nolist stats-list'>
                 {ratedBooks.map((item, i) => (
@@ -266,7 +283,9 @@ const ReadingStats: FC<ReadingStatsProps> = ({
           </div>
         </div>
       ) : (
-        <button type='button' className='btn sm rounded flat centered' onClick={onToggleTable}>Mostra statistiche avanzate</button>
+        <button type='button' className='btn sm rounded flat centered' onClick={onToggleTable}>
+          {t('ACTION_SHOW_ADVANCED_STATISTICS')}
+        </button>
       )}
     </div>
   );

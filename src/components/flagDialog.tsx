@@ -9,6 +9,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { TransitionProps } from '@material-ui/core/transitions';
 import React, { ChangeEvent, ComponentType, FC, ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FlagDialogProps {
   loading?: boolean;
@@ -29,6 +30,8 @@ const FlagDialog: FC<FlagDialogProps> = ({
   value: _value
 }: FlagDialogProps) => {
   const [value, setValue] = useState(_value);
+
+  const { t } = useTranslation(['common']);
   
   const onChange = (e: ChangeEvent<HTMLInputElement>): void => setValue(e.target.value);
   const onFlag = (): void => _onFlag(value as string);
@@ -42,7 +45,7 @@ const FlagDialog: FC<FlagDialogProps> = ({
       aria-labelledby='flag-dialog-title'>
       {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
       <DialogTitle id='flag-dialog-title'>
-        Segnala commento
+        {t('FLAG_COMMENT')}
       </DialogTitle>
       <DialogContent>
         <FormControl component='fieldset'>
@@ -51,10 +54,10 @@ const FlagDialog: FC<FlagDialogProps> = ({
             name='flag'
             value={value}
             onChange={onChange}>
-            <FormControlLabel value='spam' control={<Radio />} label='Contenuti commerciali indesiderati o spam' />
-            <FormControlLabel value='porn' control={<Radio />} label='Pornografia o materiale sessualmente esplicito' />
-            <FormControlLabel value='hate' control={<Radio />} label="Incitamento all'odio o violenza esplicita" />
-            <FormControlLabel value='bully' control={<Radio />} label='Molestie o bullismo' />
+            <FormControlLabel value='spam' control={<Radio />} label={t('FLAG_SPAM')} />
+            <FormControlLabel value='porn' control={<Radio />} label={t('FLAG_PORN')} />
+            <FormControlLabel value='hate' control={<Radio />} label={t('FLAG_HATE')} />
+            <FormControlLabel value='bully' control={<Radio />} label={t('FLAG_BULLY')} />
           </RadioGroup>
         </FormControl>
       </DialogContent>
@@ -63,14 +66,14 @@ const FlagDialog: FC<FlagDialogProps> = ({
           type='button'
           className='btn btn-footer flat'
           onClick={onClose}>
-          Annulla
+          {t('ACTION_CANCEL')}
         </button>
         {value && (
           <button 
             type='button' 
             className='btn btn-footer primary' 
             onClick={onFlag}>
-            Segnala
+            {t('ACTION_FLAG')}
           </button>
         )}
       </DialogActions>

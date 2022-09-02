@@ -6,6 +6,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import classnames from 'classnames';
 import React, { ChangeEvent, FC, FormEvent, Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { quoteRef, quotesRef } from '../../config/firebase';
 import SnackbarContext from '../../context/snackbarContext';
@@ -68,6 +69,8 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
   const [errors, setErrors] = useState<ErrorsModel>({});
   const [authError, setAuthError] = useState<string>('');
 
+  const { t } = useTranslation(['form']);
+
   const fetch = useCallback((): void => {
     if (id) {
       setLoading(true);
@@ -111,33 +114,33 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
     const errors: ErrorsModel = {};
     
     if (!data.quote) { 
-      errors.quote = 'Inserisci la citazione'; 
+      errors.quote = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.quote.length > max.chars.quote) {
-      errors.quote = `Massimo ${max.chars.quote} caratteri`;
+      errors.quote = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.quote });
     } else if (data.quote.length < min.chars.quote) {
-      errors.quote = `Minimo ${min.chars.quote} caratteri`;
+      errors.quote = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.quote });
     }
 
     if (data.bid || data.coverURL) {
       if (!data.bookTitle) {
-        errors.bookTitle = 'Inserisci il titolo del libro';
+        errors.bookTitle = t('ERROR_REQUIRED_FIELD');
       }
     }
 
     if (data.coverURL || data.bookTitle) {
       if (!data.bid) {
-        errors.bid = 'Inserisci il bid';
+        errors.bid = t('ERROR_REQUIRED_FIELD');
       }
     }
 
     if (data.bookTitle?.length > max.chars.bookTitle) {
-      errors.bookTitle = `Massimo ${max.chars.bookTitle} caratteri`;
+      errors.bookTitle = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.bookTitle });
     }
 
     if (!data.author) { 
-      errors.author = 'Inserisci l\'autore'; 
+      errors.author = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.author.length > max.chars.author) {
-      errors.author = `Massimo ${max.chars.author} caratteri`;
+      errors.author = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.author });
     }
     return errors;
   };
@@ -188,13 +191,15 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.quote)} htmlFor='quote'>Citazione</InputLabel>
+                <InputLabel error={Boolean(errors.quote)} htmlFor='quote'>
+                  {t('LABEL_QUOTE')}
+                </InputLabel>
                 <Input
                   id='quote'
                   name='quote'
                   type='text'
                   autoFocus
-                  placeholder={`Inserisci la citazione (max ${max.chars.quote} caratteri)...`}
+                  placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.quote })}
                   value={data.quote}
                   onChange={onChangeMaxChars}
                   maxRows={20}
@@ -204,7 +209,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
                 {errors.quote && <FormHelperText className='message error'>{errors.quote}</FormHelperText>}
                 {leftChars.quote !== null && (
                   <FormHelperText className={classnames('message', (leftChars?.quote || 0) < 0 ? 'warning' : 'neutral')}>
-                    Caratteri rimanenti: {leftChars.quote}
+                    {t('REMAINING_CHARACTERS')}: {leftChars.quote}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -213,12 +218,14 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.author)} htmlFor='author'>Autore</InputLabel>
+                <InputLabel error={Boolean(errors.author)} htmlFor='author'>
+                  {t('LABEL_AUTHOR')}
+                </InputLabel>
                 <Input
                   id='author'
                   name='author'
                   type='text'
-                  placeholder='Es: George Orwell'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'George Orwell' })}
                   value={data.author}
                   onChange={onChange}
                   error={Boolean(errors.author)}
@@ -228,12 +235,12 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
             </div>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.bid)} htmlFor='bid'>Bid libro</InputLabel>
+                <InputLabel error={Boolean(errors.bid)} htmlFor='bid'>Bid</InputLabel>
                 <Input
                   id='bid'
                   name='bid'
                   type='text'
-                  placeholder='Es: JlGUWw6oeAj3maP5MQtn'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'JlGUWw6oeAj3maP5MQtn' })}
                   value={data.bid}
                   onChange={onChange}
                   error={Boolean(errors.bid)}
@@ -245,12 +252,14 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.bookTitle)} htmlFor='bookTitle'>Titolo libro</InputLabel>
+                <InputLabel error={Boolean(errors.bookTitle)} htmlFor='bookTitle'>
+                  {t('LABEL_TITLE')}
+                </InputLabel>
                 <Input
                   id='bookTitle'
                   name='bookTitle'
                   type='text'
-                  placeholder='Es: 1984'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: '1984' })}
                   value={data.bookTitle}
                   onChange={onChange}
                   error={Boolean(errors.bookTitle)}
@@ -269,12 +278,14 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
             )}
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.coverURL)} htmlFor='coverURL'>URL Copertina</InputLabel>
+                <InputLabel error={Boolean(errors.coverURL)} htmlFor='coverURL'>
+                  {t('LABEL_IMAGE_URL')}
+                </InputLabel>
                 <Input
                   id='coverURL'
                   name='coverURL'
                   type='text'
-                  placeholder='Es: https://firebasestorage.googleapis.com/.../books%2Fcover.jpg'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'https://firebasestorage.googleapis.com/.../books%2Fcover.jpg' })}
                   value={data.coverURL}
                   onChange={onChange}
                   error={Boolean(errors.coverURL)}

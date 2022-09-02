@@ -6,7 +6,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
 import DOMPurify from 'dompurify';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
@@ -24,9 +25,6 @@ interface NoteDashModel {
 }
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
-const orderBy: OrderByModel[] = [ 
-  { type: 'count', label: 'Conteggio'}
-];
 
 let itemsFetch: (() => void) | undefined;
 let subItemsFetch: (() => void) | undefined;
@@ -89,6 +87,12 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   const [loading, setLoading] = useState<StateModel['loading']>(initialState.loading);
 
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const { t } = useTranslation(['common']);
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'count', label: t('COUNT') },
+  ], [t]);
 
   const limit: number = limitBy[limitByIndex];
   // const orderByIndex: StateModel['orderByIndex'] = initialState.orderByIndex;
@@ -195,7 +199,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   const onDelete = (): void => {
     setIsOpenDeleteDialog(false);
     noteRef(selectedId, selectedEl).delete().then((): void => {
-      openSnackbar('Elemento cancellato', 'success');
+      openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
 
@@ -255,7 +259,9 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   const skeletons = [...Array(limit)].map((_, i: number) => <li key={i} className='avatar-row skltn dash' />);
 
   const itemsList = loading ? skeletons : !items ? (
-    <li className='empty text-center'>Nessun elemento</li>
+    <li className='empty text-center'>
+      {t('EMPTY_LIST')}
+    </li>
   ) : (
     items.map(({ id, count, notes }: NoteDashModel) => (
       <li 
@@ -313,7 +319,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
               disabled={!items.length}
               onClick={onOpenLimitMenu}
             >
-              {limit} <span className='hide-xs'>per pagina</span>
+              {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
               anchorEl={limitMenuAnchorEl}
@@ -331,7 +337,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
                 disabled={orderBy.length === 1}
                 onClick={onOpenOrderMenu}
               >
-                <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <Menu 
                 className='dropdown-menu'
@@ -343,7 +349,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
               <button
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
-                title={desc ? 'Ascendente' : 'Discendente'}
+                title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                 onClick={onToggleDesc}
               >
                 {icon.arrowDown}
@@ -358,7 +364,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
           <div className='row'>
             <div className='col-auto'>#</div>
             <div className='col'>Uid</div>
-            <div className='col col-sm-2 col-lg-1 text-right'>Creato</div>
+            <div className='col col-sm-2 col-lg-1 text-right'>{t('CREATED')}</div>
           </div>
         </li>
         {itemsList}
@@ -381,8 +387,8 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

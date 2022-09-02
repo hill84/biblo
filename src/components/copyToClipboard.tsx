@@ -1,5 +1,6 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import React, { FC, ReactNode, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import SnackbarContext from '../context/snackbarContext';
 
 interface CopyToClipboardProps {
@@ -13,19 +14,21 @@ const CopyToClipboard: FC<CopyToClipboardProps> = ({
 }: CopyToClipboardProps) => {
   const { openSnackbar } = useContext(SnackbarContext);
 
+  const { t } = useTranslation(['common']);
+
   const onCopy = (): void => {
     if (typeof window !== 'undefined' && text) {
       navigator.clipboard.writeText(String(text)).then((): void => {
-        openSnackbar('Copiato negli appunti', 'success');
+        openSnackbar(t('SUCCESS_COPIED'), 'success');
       }, (err: Error): void => {
-        openSnackbar('Errore interno', 'error');
+        openSnackbar(err, 'error');
         console.warn('Async: Could not copy text: ', err);
       });
     }
   };
 
   return (
-    <Tooltip title='Copia'>
+    <Tooltip title={t('ACTION_COPY')}>
       <span
         role='button'
         tabIndex={0}

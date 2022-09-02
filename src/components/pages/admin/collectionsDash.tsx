@@ -7,8 +7,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
+import { useTranslation } from 'react-i18next';
 import { Link, Redirect } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
@@ -19,13 +20,6 @@ import { BookModel, CollectionModel, CurrentTarget, OrderByModel } from '../../.
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'lastEdit_num', label: 'Data ultima modifica' },
-  { type: 'lastEditByUid', label: 'Modificato da' },
-  { type: 'title', label: 'Titolo' },
-  { type: 'books_num', label: 'Libri' },
-];
 
 let itemsFetch: (() => void) | undefined;
 
@@ -84,6 +78,15 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
   const [loading, setLoading] = useState<StateModel['loading']>(initialState.loading);
 
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const { t } = useTranslation(['common', 'form']);
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') },
+    { type: 'lastEditByUid', label: t('EDITED_BY') },
+    { type: 'title', label: t('form:LABEL_TITLE') },
+    { type: 'books_num', label: t('BOOKS') },
+  ], [t]);
 
   const limit: number = limitBy[limitByIndex];
   const order: OrderByModel = orderBy[orderByIndex];
@@ -185,12 +188,12 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
     if (state) {
       // console.log(`Locking ${id}`);
       collectionRef(id).update({ edit: false }).then(() => {
-        openSnackbar('Elemento bloccato', 'success');
+        openSnackbar(t('form:SUCCESS_LOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       // console.log(`Unlocking ${id}`);
       collectionRef(id).update({ edit: true }).then(() => {
-        openSnackbar('Elemento sbloccato', 'success');
+        openSnackbar(t('form:SUCCESS_UNLOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
@@ -208,7 +211,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
   const onDelete = (): void => {
     setIsOpenDeleteDialog(false);
     collectionRef(selectedId).delete().then((): void => {
-      openSnackbar('Elemento cancellato', 'success');
+      openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
 
@@ -239,7 +242,9 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
   const skeletons = [...Array(limit)].map((_, i: number) => <li key={i} className='avatar-row skltn dash' />);
 
   const itemsList = loading ? skeletons : !items ? (
-    <li className='empty text-center'>Nessun elemento</li>
+    <li className='empty text-center'>
+      {t('EMPTY_LIST')}
+    </li>
   ) : (
     items.map(({ books_num, description, edit, lastEditBy, lastEditByUid, lastEdit_num, title }: CollectionModel) => (
       <li key={title} className={classnames({ locked: !edit })}>
@@ -254,10 +259,34 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
             <div className='timestamp'>{timeSince(lastEdit_num)}</div>
           </div>
           <div className='absolute-row right btns xs'>
-            <button type='button' className='btn icon green' onClick={() => onView({ id: title })} title='Anteprima'>{icon.eye}</button>
-            <button type='button' className='btn icon primary' onClick={() => onEdit({ id: title })} title='Modifica'>{icon.pencil}</button>
-            <button type='button' className={classnames('btn', 'icon', edit ? 'secondary' : 'flat')} onClick={() => onLock({ id: title, state: edit })} title={edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
-            <button type='button' className='btn icon red' onClick={() => onDeleteRequest({ id: title })}>{icon.close}</button>
+            <button
+              type='button'
+              className='btn icon green'
+              onClick={() => onView({ id: title })}
+              title={t('ACTION_PREVIEW')}>
+              {icon.eye}
+            </button>
+            <button
+              type='button'
+              className='btn icon primary'
+              onClick={() => onEdit({ id: title })}
+              title={t('ACTION_EDIT')}>
+              {icon.pencil}
+            </button>
+            <button
+              type='button'
+              className={classnames('btn', 'icon', edit ? 'secondary' : 'flat')}
+              onClick={() => onLock({ id: title, state: edit })}
+              title={t(edit ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}>
+              {icon.lock}
+            </button>
+            <button
+              type='button'
+              className='btn icon red'
+              onClick={() => onDeleteRequest({ id: title })}
+              title={t('ACTION_DELETE')}>
+              {icon.close}
+            </button>
           </div>
         </div>
       </li>
@@ -280,7 +309,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
               disabled={!items.length}
               onClick={onOpenLimitMenu}
             >
-              {limitBy[limitByIndex]} <span className='hide-xs'>per pagina</span>
+              {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
               className='dropdown-menu'
@@ -298,7 +327,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
                 className='btn sm flat counter'
                 onClick={onOpenOrderMenu}
               >
-                <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <Menu 
                 className='dropdown-menu'
@@ -310,7 +339,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
               <button
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
-                title={desc ? 'Ascendente' : 'Discendente'}
+                title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                 onClick={onToggleDesc}
               >
                 {icon.arrowDown}
@@ -323,11 +352,11 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
       <ul className='table dense nolist font-sm'>
         <li className='labels'>
           <div className='row'>
-            <div className='col'>Titolo</div>
-            <div className='col-1'>Libri</div>
-            <div className='col-5 col-lg-8'>Descrizione</div>
-            <div className='col col-sm-2 col-lg-1'>Modificato da</div>
-            <div className='col col-sm-2 col-lg-1 text-right'>Modificato</div>
+            <div className='col'>{t('form:LABEL_TITLE')}</div>
+            <div className='col-1'>{t('form:LABEL_BOOKS')}</div>
+            <div className='col-5 col-lg-8'>{t('form:LABEL_DESCRIPTION')}</div>
+            <div className='col col-sm-2 col-lg-1'>{t('EDITED_BY')}</div>
+            <div className='col col-sm-2 col-lg-1 text-right'>{t('EDITED')}</div>
           </div>
         </li>
         {itemsList}
@@ -355,8 +384,8 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}
