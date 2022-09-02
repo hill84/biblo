@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
 import React, { ChangeEvent, FC, FormEvent, Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
@@ -71,6 +72,8 @@ const CollectionForm: FC<CollectionFormProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [changes, setChanges] = useState<boolean>(false);
   const [errors, setErrors] = useState<ErrorsModel>({});
+
+  const { t } = useTranslation(['form']);
 
   const is = useRef<IsCurrent>(false);
 
@@ -136,28 +139,28 @@ const CollectionForm: FC<CollectionFormProps> = ({
     const isDuplicate: boolean = typeof id === 'string' ? false : await checkTitle(data.title);
 
     if (!data.title) { 
-      errors.title = 'Inserisci il titolo'; 
+      errors.title = t('ERROR_REQUIRED_FIELD'); 
     } else if (isDuplicate) {
-      errors.title = 'Collezione già presente';
+      errors.title = t('ERROR_DUPLICATED_ITEM');
     } else if (data.title?.length > max.chars.title) {
-      errors.title = `Massimo ${max.chars.title} caratteri`;
+      errors.title = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.title });
     }
     if (!data.description) { 
-      errors.description = 'Inserisci una descrizione'; 
+      errors.description = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.description?.length > max.chars.desc) {
-      errors.description = `Massimo ${max.chars.desc} caratteri`;
+      errors.description = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.desc });
     } else if (data.description?.length < min.chars.desc) {
-      errors.description = `Minimo ${min.chars.desc} caratteri`;
+      errors.description = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.desc });
     }
     if (!data.genres) {
       errors.genres = 'Scegli almeno un genere';
     } else if (data.genres.length > max.items.genres) {
-      errors.genres = `Massimo ${max.items.genres} generi`;
+      errors.genres = t('ERROR_MAX_COUNT_ITEMS', { count: max.items.genres });
     }
     if (!data.books_num) {
-      errors.books_num = 'Inserisci libri';
+      errors.books_num = t('ERROR_REQUIRED_FIELD');
     } else if (data.books_num < min.items.books_num) {
-      errors.books_num = `Minimo ${min.items.books_num} libri`;
+      errors.books_num = t('ERROR_MIN_COUNT_ITEMS', { count: min.items.books_num });
     }
     return errors;
   };
@@ -223,13 +226,15 @@ const CollectionForm: FC<CollectionFormProps> = ({
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.title)} htmlFor='title'>Titolo</InputLabel>
+                <InputLabel error={Boolean(errors.title)} htmlFor='title'>
+                  {t('LABEL_TITLE')}
+                </InputLabel>
                 <Input
                   id='title'
                   name='title'
                   type='text'
                   autoFocus
-                  placeholder='Es: Cronache del ghiaccio e del fuoco'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Harry Potter' })}
                   value={data.title}
                   onChange={onChange}
                   error={Boolean(errors.title)}
@@ -239,12 +244,14 @@ const CollectionForm: FC<CollectionFormProps> = ({
             </div>
             <div className='form-group col col-sm-3'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.books_num)} htmlFor='books_num'>Libri</InputLabel>
+                <InputLabel error={Boolean(errors.books_num)} htmlFor='books_num'>
+                  {t('LABEL_BOOKS')}
+                </InputLabel>
                 <Input
                   id='books_num'
                   name='books_num'
                   type='number'
-                  placeholder='Es: 5'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: '7' })}
                   value={data.books_num}
                   onChange={onChange}
                   error={Boolean(errors.books_num)}
@@ -257,12 +264,14 @@ const CollectionForm: FC<CollectionFormProps> = ({
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.description)} htmlFor='desccription'>Descrizione</InputLabel>
+                <InputLabel error={Boolean(errors.description)} htmlFor='desccription'>
+                  {t('LABEL_DESCRIPTION')}
+                </InputLabel>
                 <Input
                   id='description'
                   name='description'
                   type='text'
-                  placeholder={`Inserisci la descrizione (max ${max.chars.desc} caratteri)...`}
+                  placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.desc })}
                   value={data.description}
                   onChange={onChangeMaxChars}
                   maxRows={20}
@@ -272,7 +281,7 @@ const CollectionForm: FC<CollectionFormProps> = ({
                 {errors.description && <FormHelperText className='message error'>{errors.description}</FormHelperText>}
                 {(leftChars.desc !== null) && (
                   <FormHelperText className={classnames('message', leftChars.desc < 0 ? 'warning' : 'neutral')}>
-                    Caratteri rimanenti: {leftChars.desc}
+                    {t('REMAINING_CHARACTERS')}: {leftChars.desc}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -282,7 +291,9 @@ const CollectionForm: FC<CollectionFormProps> = ({
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='select-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.genres)} htmlFor='genres'>Genere (max {max.items.genres})</InputLabel>
+                <InputLabel error={Boolean(errors.genres)} htmlFor='genres'>
+                  {t('LABEL_GENRES')} (max {max.items.genres})
+                </InputLabel>
                 <Select
                   id='genres'
                   value={data.genres}
@@ -300,7 +311,9 @@ const CollectionForm: FC<CollectionFormProps> = ({
           {/* <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.source)} htmlFor='source'>URL fonte</InputLabel>
+                <InputLabel error={Boolean(errors.source)} htmlFor='source'>
+                  {t('LABEL_SOURCE_URL)}
+                </InputLabel>
                 <Input
                   id='source'
                   name='source'
@@ -318,7 +331,9 @@ const CollectionForm: FC<CollectionFormProps> = ({
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.photoURL)} htmlFor='photoURL'>URL foto</InputLabel>
+                <InputLabel error={Boolean(errors.photoURL)} htmlFor='photoURL'>
+                  {t('LABEL_IMAGE_URL)}
+                </InputLabel>
                 <Input
                   id='photoURL'
                   name='photoURL'

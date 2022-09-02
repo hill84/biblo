@@ -9,6 +9,7 @@ import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import { ThemeProvider } from '@material-ui/styles';
 import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { notesRef, reviewerCommenterRef, reviewerRef, userBookRef } from '../../config/firebase';
 import { funcType, stringType } from '../../config/proptypes';
 import { checkBadWords, extractUrls, getInitials, handleFirestoreError, join, normURL, truncateString } from '../../config/shared';
@@ -55,6 +56,9 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
   const [changes, setChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { t } = useTranslation(['form']);
+
   const is = useRef(true);
 
   const fetchComment = useCallback(() => {
@@ -86,19 +90,19 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
     const badWords = checkBadWords(text);
 
     if (!text) {
-      errors.text = 'Aggiungi una risposta';
+      errors.text = t('ERROR_REQUIRED_FIELD');
     } else if (text.length > max.chars.text) {
-      errors.text = `Massimo ${max.chars.text} caratteri`;
+      errors.text = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text });
     } else if (text.length < min.chars.text) {
-      errors.text = `Minimo ${min.chars.text} caratteri`;
+      errors.text = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.text });
     } else if (urlMatches) {
-      errors.text = `Non inserire link (${join(urlMatches)})`;
+      errors.text = t('ERROR_NO_LINK_STRING', { string: join(urlMatches, t('common:AND')) });
     } else if (badWords) {
-      errors.text = 'Niente volgarità';
+      errors.text = t('ERROR_NO_VULGARITY');
     }
 
     return errors;
-  }, []);
+  }, [t]);
 
   const onSubmit = useCallback(e => {
     e.preventDefault();
@@ -123,7 +127,7 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
 
             if (rid !== authid) {
               const likerURL = `/dashboard/${user.uid}`;
-              const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
+              const likerDisplayName = truncateString(user.displayName.split(' ')[0], 25);
               const bookTitle = truncateString(comment.bookTitle, 35);
               const bookURL = `/book/${comment.bid}/${normURL(comment.bookTitle)}`;
               const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha ${comment.created_num ? 'modificato la risposta' : 'risposto'} alla tua recensione del libro <a href="${bookURL}">${bookTitle}</a>`;
@@ -167,12 +171,12 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
         // console.log(`Comment deleted`);
         userBookRef(authid, bid).update({ comment: {} }).then(() => {
           // console.log(`Comment deleted`);
-          openSnackbar('Risposta cancellata', 'success');
+          openSnackbar(t('common:SUCCESS_DELETED_ITEM'), 'success');
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
     } else console.warn('No bid');
-  }, [authid, bid, openSnackbar]);
+  }, [authid, bid, openSnackbar, t]);
 
   const onExitEditing = useCallback(() => {
     if (is.current) {
@@ -204,7 +208,9 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
       <div className="comment">
         <div className="row">
           <div className="col-auto left">
-            <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+            <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>
+              {!user.photoURL && getInitials(user.displayName)}
+            </Avatar>
           </div>
           <div className="col right">
             <div className="row">
@@ -216,7 +222,6 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
                       name="text"
                       type="text"
                       autoFocus
-                      placeholder="Aggiungi una risposta pubblica..."
                       value={comment.text || ''}
                       onChange={onChangeMaxChars}
                       error={Boolean(errors.text)}
@@ -225,13 +230,13 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
                       multiline
                     />
                     {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
-                    {leftChars.text < 0 && <FormHelperText className="message warning">Caratteri in eccesso: {-leftChars.text}</FormHelperText>}
+                    {leftChars.text < 0 && <FormHelperText className="message warning">{t('CHARACTERS_IN_EXCESS')}: {-leftChars.text}</FormHelperText>}
                   </ThemeProvider>
                 </div>
 
                 <div className="pull-right btns">
-                  <button type="button" className="btn sm flat" onClick={onExitEditing}>Annulla</button>
-                  <button type="button" className="btn sm primary" onClick={onSubmit} disabled={!changes || loading}>Rispondi</button>
+                  <button type="button" className="btn sm flat" onClick={onExitEditing}>{t('common:ACTION_CANCEL')}</button>
+                  <button type="button" className="btn sm primary" onClick={onSubmit} disabled={!changes || loading}>{t('common:ACTION_REPLY')}</button>
                 </div>
               </form>
             </div>
@@ -256,8 +261,8 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
+            <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>{t('common:ACTION_CANCEL')}</button>
+            <button type="button" className="btn btn-footer primary" onClick={onDelete}>{t('common:ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

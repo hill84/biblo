@@ -9,20 +9,19 @@ import TextField from '@material-ui/core/TextField';
 import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import moment from 'moment';
-import 'moment/locale/it';
 import React, { ChangeEvent, FC, FormEvent, Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { readingStates } from '../../config/lists';
+import { ListModel, readingStates } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
+import i18n from '../../i18n';
 import { IsCurrent, ReadingStateModel } from '../../types';
 import { initialUserBook } from '../book';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
-
-moment.locale('it');
 
 const steps = 20;
 
@@ -65,12 +64,15 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
 }: ReadingStateFormProps) => {
   const { user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
+
   const [progress_num, setProgress_num] = useState<number>(readingState.progress_num || (readingState.state_num === 3 ? 100 : 0));
   const [state_num, setState_num] = useState<number>(readingState.state_num);
   const [start_num, setStart_num] = useState<number | null>(readingState.start_num || null);
   const [end_num, setEnd_num] = useState<number | null>(readingState.end_num || null);
   const [loading, setLoading] = useState<boolean>(initialState.loading);
   const [errors, setErrors] = useState<ErrorsModel>(initialState.errors);
+
+  const { t } = useTranslation(['form']);
 
   const is = useRef<IsCurrent>(false);
 
@@ -93,10 +95,10 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
     end_num: 4e12,
   }), [end_num, state_num]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (progress_num === 0) setState_num(1);
     if (progress_num === 100) setState_num(3);
-  }, [progress_num]);
+  }, [progress_num]); */
 
   useEffect(() => {
     if (state_num === 1) {
@@ -121,11 +123,11 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
   };
   
   const errorMessages = (name: keyof ErrorsModel): ErrorMessagesModel => ({
-    disableFuture: 'Data futura non valida',
-    disablePast: 'Data passata non valida',
-    invalidDate: 'Data non valida',
-    minDate: `Data non valida prima del ${new Date(min[name] as number).toLocaleDateString()}`,
-    maxDate: `Data non valida oltre il ${new Date(max[name] as number).toLocaleDateString()}`,
+    disableFuture: t('ERROR_INVALID_FUTURE_DATE'),
+    disablePast: t('ERROR_INVALID_PAST_DATE'),
+    invalidDate: t('ERROR_INVALID_DATE'),
+    minDate: t('ERROR_MIN_DATE', { number: min[name] }),
+    maxDate: t('ERROR_MAX_DATE', { number: max[name] }),
   });
 
   const onChangeDate = (name: keyof ErrorsModel) => (date: Date | null): void => {
@@ -166,9 +168,29 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
     } else onToggle();
   };
 
-  const onNext = (): void => setProgress_num(progress_num + (100/steps));
+  const updateState = (progress_num: number): void => {
+    switch (progress_num) {
+      case 0: setState_num(1); break;
+      case 100: setState_num(3); break;
+      default: break;
+    }
+  };
 
-  const onPrev = (): void => setProgress_num(progress_num - (100/steps));
+  const onNext = (): void => {
+    setProgress_num(prev => {
+      const progressNum: number = prev + (100/steps);
+      updateState(progressNum);
+      return progressNum;
+    });
+  };
+
+  const onPrev = (): void => {
+    setProgress_num(prev => {
+      const progressNum: number = prev - (100/steps);
+      updateState(progressNum);
+      return progressNum;
+    });
+  };
 
   const isSaveDisabled = useMemo((): boolean => loading || Object.values(errors).some(Boolean), [errors, loading]);
 
@@ -181,13 +203,19 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
           <div className='row'>
             <div className='form-group col'>
               <FormControl className='select-field' margin='normal' fullWidth>
-                <InputLabel htmlFor='state_num'>Stato lettura</InputLabel>
+                <InputLabel htmlFor='state_num'>
+                  {t('LABEL_READING_STATE')}
+                </InputLabel>
                 <Select
                   id='state_num'
                   name='state_num'
                   value={state_num}
                   onChange={onChangeSelect}>
-                  {readingStates.map((item, i) => <MenuItem key={i + 1} value={i + 1}>{item}</MenuItem>)}
+                  {readingStates.map(({ label }: ListModel, i: number) => (
+                    <MenuItem key={label} value={i + 1}>
+                      {t(`lists:${label}`)}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </div>
@@ -196,23 +224,23 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
             <Fragment>
               <div className='row'>
                 <div className={classnames('form-group', `col-${state_num === 3 ? '6' : '12'}`)}>
-                  <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale='it'>
+                  <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale={i18n.language}>
                     <DatePicker 
                       // autoOk
-                      cancelText='Annulla'
+                      cancelText={t('common:ACTION_CANCEL')}
                       className='date-picker'
                       disableFuture
                       leftArrowIcon={icon.chevronLeft}
-                      inputFormat='DD/MM/YYYY'
-                      // invalidDateMessage='Data non valida'
-                      label='Data di inizio'
+                      // inputFormat='DD/MM/YYYY'
+                      // invalidDateMessage={t('ERROR_INVALID_DATE')}
+                      label={t('LABEL_START_DATE')}
                       maxDate={max.start_num}
                       minDate={min.start_num}
                       onChange={onChangeDate('start_num')}
                       onError={reason => reason && onSetDatePickerError('start_num', reason)}
                       rightArrowIcon={icon.chevronRight}
                       showTodayButton
-                      todayText='Oggi'
+                      todayText={t('common:TODAY')}
                       value={start_num ? new Date(start_num) : null}
                       renderInput={props => (
                         <TextField {...props} margin='normal' fullWidth helperText={errors.start_num} />
@@ -222,18 +250,18 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
                 </div>
                 {state_num === 3 && (
                   <div className='form-group col-6'>
-                    <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale='it'>
+                    <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale={i18n.language}>
                       <DatePicker 
                         // autoOk
                         className='date-picker'
-                        cancelText='Annulla'
+                        cancelText={t('common:ACTION_CANCEL')}
                         disabled={state_num !== 3}
                         disableFuture
-                        inputFormat='DD/MM/YYYY'
-                        // invalidDateMessage='Data non valida'
-                        label='Data di fine'
+                        // inputFormat='DD/MM/YYYY'
+                        // invalidDateMessage={t('ERROR_INVALID_DATE')}
+                        label={t('LABEL_END_DATE')}
                         leftArrowIcon={icon.chevronLeft}
-                        // maxDateMessage='Data futura non valida'
+                        // maxDateMessage={t('ERROR_INVALID_FUTURE_DATE')}
                         minDate={new Date(start_num || min.start_num as number)}
                         // minDateMessage={`Data minima ${new Date(start_num || min.start_num).toLocaleDateString()}`}
                         // name='end_num'
@@ -241,7 +269,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
                         onError={reason => reason && onSetDatePickerError('end_num', reason)}
                         rightArrowIcon={icon.chevronRight}
                         showTodayButton
-                        todayText='Oggi'
+                        todayText={t('common:TODAY')}
                         value={end_num ? new Date(end_num) : null}
                         renderInput={props => (
                           <TextField {...props} margin='normal' fullWidth helperText={errors.end_num} />
@@ -270,7 +298,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
             className='btn btn-footer primary'
             onClick={onSubmit}
             disabled={isSaveDisabled}>
-            Salva le modifiche
+            {t('common:ACTION_SAVE')}
           </button>
         </div>
       </div>

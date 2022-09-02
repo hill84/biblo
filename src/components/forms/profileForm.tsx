@@ -12,15 +12,16 @@ import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import { storage } from 'firebase';
 import moment from 'moment';
-import 'moment/locale/it';
 import React, { ChangeEvent, FC, FormEvent, Fragment, ReactText, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { storageRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
+import { continents, europeanCountries, italianProvinces, languages, ListModel, northAmericanCountries } from '../../config/lists';
 import { app, calcAge, getInitials, urlRegex, validateImg } from '../../config/shared';
 import SnackbarContext, { SnackbarContextModel } from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/profileForm.css';
+import i18n from '../../i18n';
 import { IsCurrent, UserContextModel, UserModel } from '../../types';
 
 const min: Record<string, number> = {
@@ -70,6 +71,8 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
   const [errors, setErrors] = useState<Record<string, ReactText | null>>(initialState.errors);
   const [isEditingSocial, setIsEditingSocial] = useState<boolean>(initialState.isEditingSocial);
 
+  const { t } = useTranslation(['form', 'lists']);
+
   const is = useRef<IsCurrent>(false);
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
   const luid: string | undefined = contextUser?.uid;
   const uid: string = user?.uid;
 
-  const setChange = useCallback((name: string, value: string): void => {
+  const setChange = useCallback((name: string, value: unknown): void => {
     setUser({ ...user, [name]: value });
     if (errors[name]) setErrors({ ...errors, [name]: null });
     setSaved(false);
@@ -97,21 +100,21 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
     e.persist();
     const { name, value } = e.target;
     if (!name) return;
-    setChange(name, value as string);
+    setChange(name, value);
   };
 
   const onChangeDate = useCallback((name: string) => (date: Date | null): void => {
-    const value = String(date);
+    const value: string = date ? String(date) : '';
     setChange(name, value);
   }, [setChange]);
 
   const onSetDatePickerError = (name: string, reason: string): void => {
     const errorMessages: Record<string, string> = {
-      disableFuture: 'Data futura non valida',
-      disablePast: 'Data passata non valida',
-      invalidDate: 'Data non valida',
-      minDate: `Data non valida prima del ${new Date(min[name]).toLocaleDateString()}`,
-      maxDate: `Data non valida oltre il ${new Date(max[name]).toLocaleDateString()}`
+      disableFuture: t('ERROR_INVALID_FUTURE_DATE'),
+      disablePast: t('ERROR_INVALID_PAST_DATE'),
+      invalidDate: t('ERROR_INVALID_DATE'),
+      minDate: t('ERROR_MIN_DATE', { number: min[name] }),
+      maxDate: t('ERROR_MAX_DATE', { number: max[name] }),
     };
     
     setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
@@ -120,20 +123,20 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
   const validate = (user: UserModel) => {
     const errors: Record<string, string> = {};
 
-    if (!user.displayName) errors.displayName = 'Inserisci un nome utente';
+    if (!user.displayName) errors.displayName = t('ERROR_REQUIRED_FIELD');
     if (new Date(user.birth_date).getTime() > new Date().getTime()) { 
-      errors.birth_date = 'Data di nascita non valida'; 
-    } else if (calcAge(user.birth_date) < 13) { 
-      errors.birth_date = 'Età minima 14 anni'; 
-    } else if (calcAge(user.birth_date) > 119) {
-      errors.birth_date = 'E chi sei.. Matusalemme?'; 
+      errors.birth_date = t('ERROR_INVALID_DATE'); 
+    } else if (calcAge(user.birth_date) < 14) { 
+      errors.birth_date = t('ERROR_MIN_COUNT_AGE', { count: 14 }); 
+    } else if (calcAge(user.birth_date) >= 130) {
+      errors.birth_date = t('ERROR_MAX_COUNT_AGE', { count: 130 }); 
     }
-    if (user.city?.length > 150) errors.city = 'Lunghezza massima 150 caratteri';
-    if (user.website && !user.website.match(urlRegex)) errors.website = 'URL non valido';
-    if (user.youtube?.includes('youtube.com')) errors.youtube = 'Rimuovi "https://www.youtube.com/channel/"';
-    if (user.instagram?.includes('instagram.com')) errors.instagram = 'Rimuovi "https://www.instagram.com/"';
-    if (user.twitch?.includes('twitch.tv')) errors.twitch = 'Rimuovi "https://www.twitch.tv/"';
-    if (user.facebook?.includes('facebook.com')) errors.facebook = 'Rimuovi "https://www.facebook.com/"';
+    if (user.city?.length > 150) errors.city = t('ERROR_MAX_COUNT_CHARACTERS', { count: 150 });
+    if (user.website && !user.website.match(urlRegex)) errors.website = t('ERROR_INVALID_URL');
+    if (user.youtube?.includes('youtube.com')) errors.youtube = t('ERROR_REMOVE_STRING', { string: 'https://www.youtube.com/channel/' });
+    if (user.instagram?.includes('instagram.com')) errors.instagram = t('ERROR_REMOVE_STRING', { string: 'https://www.instagram.com/' });
+    if (user.twitch?.includes('twitch.tv')) errors.twitch = t('ERROR_REMOVE_STRING', { string: 'https://www.twitch.tv/' });
+    if (user.facebook?.includes('facebook.com')) errors.facebook = t('ERROR_REMOVE_STRING', { string: 'https://www.facebook.com/' });
     return errors;
   };
 
@@ -165,7 +168,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
                 setImgPreview(url);
                 setChanges(true);
                 setSaved(false);
-                openSnackbar('Immagine caricata', 'success');
+                openSnackbar(t('SUCCESS_IMAGE_UPLOADED'), 'success');
               }
             });
           });
@@ -203,7 +206,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           setImgProgress(0);
           setChanges(false);
           setSaved(true);
-          openSnackbar('Modifiche salvate', 'success');
+          openSnackbar(t('SUCCESS_CHANGES_SAVED'), 'success');
           // setRedirectToReferrer(true);
         }
       }).catch((err: Error): void => {
@@ -211,17 +214,17 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
       }).finally((): void => {
         setLoading(false);
       });
-    } else openSnackbar('Ricontrolla i dati inseriti', 'error');
+    } else openSnackbar(t('ERROR_SUBMIT'), 'error');
   };
 
   const onToggleSocial = (): void => setIsEditingSocial(isEditingSocial => !isEditingSocial);
   
-  const menuItemsMap = (arr: Record<string, string>[]) => arr.map(({ name, nativeName, id }: Record<string, string>) => (
+  const menuItemsMap = (arr: ListModel[], root?: string) => arr.map(({ name, native, label, id }: ListModel) => (
     <MenuItem
       value={name}
-      title={nativeName}
+      title={label}
       key={id}>
-      {name}
+      {label && root ? t(`lists:${root}_${label}`) : native || name}
     </MenuItem>
   ));
   
@@ -257,7 +260,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
         <form onSubmit={onSubmit} noValidate>
           <div className='form-group'>
             <FormControl className='input-field' margin='normal' fullWidth>
-              <InputLabel error={Boolean(errors.displayName)} htmlFor='displayName'>Nome e cognome</InputLabel>
+              <InputLabel error={Boolean(errors.displayName)} htmlFor='displayName'>
+                {t('LABEL_DISPLAY_NAME')}
+              </InputLabel>
               <Input
                 id='displayName'
                 name='displayName'
@@ -271,7 +276,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
               {!isAdmin && (
                 user.displayName && (
                   <FormHelperText className='message'>
-                    Per modificare il <span className='hide-sm'>nominativo</span><span className='show-sm'>nome</span> scrivi a <a href={`mailto:${app.email}?subject=Biblo: modifica nominativo utente`}>{app.email}</a>.
+                    {t('HELPER_EDIT_DISPLAY_NAME')} <a href={`mailto:${app.email}?subject=Biblo: modifica nominativo utente`}>{app.email}</a>.
                   </FormHelperText>
                 )
               )}
@@ -286,36 +291,36 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           <div className='row'>
             <div className='col form-group'>
               <FormControl className='select-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.sex)} htmlFor='sex'>Sesso</InputLabel>
+                <InputLabel error={Boolean(errors.sex)} htmlFor='sex'>{t('LABEL_SEX')}</InputLabel>
                 <Select
                   id='sex'
-                  placeholder='es: Femmina'
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: t('common:SEX_F') })}
                   name='sex'
                   value={user.sex || ''}
                   onChange={onChangeSelect}
                   error={Boolean(errors.sex)}>
-                  <MenuItem key='m' value='m'>Uomo</MenuItem>
-                  <MenuItem key='f' value='f'>Donna</MenuItem>
-                  <MenuItem key='x' value='x'>Altro</MenuItem>
+                  <MenuItem key='m' value='m'>{t('common:SEX_M')}</MenuItem>
+                  <MenuItem key='f' value='f'>{t('common:SEX_F')}</MenuItem>
+                  <MenuItem key='x' value='x'>{t('common:SEX_X')}</MenuItem>
                 </Select>
                 {errors.sex && <FormHelperText className='message error'>{errors.sex}</FormHelperText>}
               </FormControl>
             </div>
 
             <div className='col form-group'>
-              <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale='it'>
+              <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale={i18n.language}>
                 <DatePicker 
                   className='date-picker'
-                  cancelText='Annulla'
+                  cancelText={t('common:ACTION_CANCEL')}
                   leftArrowIcon={icon.chevronLeft}
                   rightArrowIcon={icon.chevronRight}
-                  inputFormat='DD/MM/YYYY'
-                  // invalidDateMessage='Data non valida'
+                  // inputFormat='DD/MM/YYYY'
+                  // invalidDateMessage={t('ERROR_INVALID_DATE')}
                   minDate={min.birth_date}
                   maxDate={max.birth_date}
                   // minDateMessage='Chi sei? ...Matusalemme?'
                   // maxDateMessage='Età minima 14 anni'
-                  label='Data di nascita'
+                  label={t('LABEL_BIRTH_DATE')}
                   // autoOk
                   value={user.birth_date ? new Date(user.birth_date) : null}
                   onChange={onChangeDate('birth_date')}
@@ -330,7 +335,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
 
           <div className='form-group'>
             <FormControl className='select-field' margin='normal' fullWidth>
-              <InputLabel htmlFor='languages'>{`Lingue conosciute ${user.languages?.length > 1 ? ` (${user.languages.length})` : ''}`}</InputLabel>
+              <InputLabel htmlFor='languages'>
+                {t('LABEL_KNOWN_LANGUAGES')} {user.languages?.length > 1 ? ` (${user.languages.length})` : ''}
+              </InputLabel>
               <Select
                 id='languages'
                 placeholder='es: Italiano, Spagnolo'
@@ -346,14 +353,16 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           <div className='row'>
             <div className='col form-group'>
               <FormControl className='select-field' margin='normal' fullWidth>
-                <InputLabel htmlFor='continent'>Continente</InputLabel>
+                <InputLabel htmlFor='continent'>
+                  {t('LABEL_CONTINENT')}
+                </InputLabel>
                 <Select
                   id='continent'
                   placeholder='es: Europa'
                   name='continent'
                   value={user.continent || ''}
                   onChange={onChangeSelect}>
-                  {menuItemsMap(continents)}
+                  {menuItemsMap(continents, 'CONTINENT')}
                 </Select>
               </FormControl>
             </div>
@@ -361,15 +370,17 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
             {(user.continent === 'Europa' || user.continent === 'Nordamerica') && (
               <div className='col form-group'>
                 <FormControl className='select-field' margin='normal' fullWidth>
-                  <InputLabel htmlFor='nation'>Nazione</InputLabel>
+                  <InputLabel htmlFor='country'>
+                    {t('LABEL_COUNTRY')}
+                  </InputLabel>
                   <Select
-                    id='nation'
+                    id='country'
                     placeholder='es: Italia'
                     name='country'
                     value={user.country || ''}
                     onChange={onChangeSelect}>
-                    {user.continent === 'Europa' && menuItemsMap(europeanCountries)}
-                    {user.continent === 'Nordamerica' && menuItemsMap(northAmericanCountries)}
+                    {user.continent === 'Europa' && menuItemsMap(europeanCountries, 'COUNTRY')}
+                    {user.continent === 'Nordamerica' && menuItemsMap(northAmericanCountries, 'COUNTRY')}
                   </Select>
                 </FormControl>
               </div>
@@ -377,9 +388,11 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           </div>
 
           <div className='form-group'>
-            {user.country && user.country === 'Italia‎' ? (
+            {user.country && user.country === 'Italia' ? (
               <FormControl className='select-field' margin='normal' fullWidth>
-                <InputLabel htmlFor='city'>Provincia</InputLabel>
+                <InputLabel htmlFor='city'>
+                  {t('LABEL_PROVINCE')}
+                </InputLabel>
                 <Select
                   id='city'
                   placeholder='es: Torino'
@@ -391,7 +404,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
               </FormControl>
             ) : (
               <FormControl className='input-field' margin='normal' fullWidth>
-                <InputLabel error={Boolean(errors.city)} htmlFor='city'>Città</InputLabel>
+                <InputLabel error={Boolean(errors.city)} htmlFor='city'>
+                  {t('LABEL_CITY')}
+                </InputLabel>
                 <Input
                   id='city'
                   name='city'
@@ -407,7 +422,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           </div>
 
           {isEditingSocial ? (
-            <>
+            <Fragment>
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
                   <InputLabel error={Boolean(errors.website)} htmlFor='website'>Sito internet o blog</InputLabel>
@@ -426,7 +441,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
 
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.youtube)} htmlFor='youtube'>Canale Youtube</InputLabel>
+                  <InputLabel error={Boolean(errors.youtube)} htmlFor='youtube'>
+                    {t('LABEL_YOUTUBE_CHANNEL')}
+                  </InputLabel>
                   <Input
                     id='youtube'
                     name='youtube'
@@ -443,7 +460,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
 
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.instagram)} htmlFor='instagram'>Profilo Instagram</InputLabel>
+                  <InputLabel error={Boolean(errors.instagram)} htmlFor='instagram'>
+                    {t('LABEL_INSTAGRAM_PROFILE')}
+                  </InputLabel>
                   <Input
                     id='instagram'
                     name='instagram'
@@ -460,7 +479,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
 
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.twitch)} htmlFor='twitch'>Canale Twitch</InputLabel>
+                  <InputLabel error={Boolean(errors.twitch)} htmlFor='twitch'>
+                    {t('LABEL_TWITCH_CHANNEL')}
+                  </InputLabel>
                   <Input
                     id='twitch'
                     name='twitch'
@@ -477,7 +498,9 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
 
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
-                  <InputLabel error={Boolean(errors.facebook)} htmlFor='facebook'>Pagina Facebook</InputLabel>
+                  <InputLabel error={Boolean(errors.facebook)} htmlFor='facebook'>
+                    {t('LABEL_FACEBOOK_PAGE')}
+                  </InputLabel>
                   <Input
                     id='facebook'
                     name='facebook'
@@ -491,11 +514,11 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
                   {errors.facebook && <FormHelperText className='message error'>{errors.facebook}</FormHelperText>}
                 </FormControl>
               </div>
-            </>
+            </Fragment>
           ) : (
             <div className='info-row'>
               <button type='button' className='btn flat rounded centered' onClick={onToggleSocial}>
-                {(user.website || user.youtube || user.instagram || user.twitch || user.facebook) ? 'Modifica' : 'Aggiungi'} profili social
+                {t(`common:${(user.website || user.youtube || user.instagram || user.twitch || user.facebook) ? 'ACTION_EDIT' : 'ACTION_ADD'}`)} {t('common:SOCIAL_PROFILES').toLowerCase()}
               </button>
             </div>
           )}
@@ -504,7 +527,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
 
           {luid === uid && (
             <FormHelperText className='message'>
-              Per cancellare l&apos;account scrivi a <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.
+              {t('common:TO_DELETE_YOUR_ACCOUNT_WRITE_TO')} <a href={`mailto:${app.email}?subject=Biblo: cancellazione account utente`}>{app.email}</a>.
             </FormHelperText>
           )}
 
@@ -517,7 +540,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           disabled={!changes}
           onClick={onSubmit as (e: FormEvent) => void}
         >
-          {saved ? 'Modifiche salvate' : 'Salva le modifiche'}
+          {t(`common:${saved ? 'ACTION_SAVED' : 'ACTION_SAVE'}`)}
         </button>
       </div>
     </Fragment>

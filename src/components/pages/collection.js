@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
 import React, { Fragment, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -32,6 +33,9 @@ const Collection = ({ history, location, match }) => {
   const [loading, setLoading] = useState(true);
   const [loadingCollections, setLoadingCollections] = useState(true);
   const [screenSize, setScreenSize] = useState(_screenSize());
+
+  const { t } = useTranslation(['common']);
+
   const is = useRef(true);
 
   const { cid } = match.params;
@@ -190,11 +194,11 @@ const Collection = ({ history, location, match }) => {
                       disabled={!user || !isEditor}>
                       {follow ? (
                         <Fragment>
-                          <span className='hide-on-hover'>{icon.check} Segui</span>
-                          <span className='show-on-hover'>Smetti</span>
+                          <span className='hide-on-hover'>{icon.check} {t('ACTION_FOLLOW')}</span>
+                          <span className='show-on-hover'>{t('ACTION_STOP_FOLLOWING')}</span>
                         </Fragment> 
                       ) : (
-                        <span>{icon.plus} Segui</span>
+                        <span>{icon.plus} {t('ACTION_FOLLOW')}</span>
                       )}
                     </button>
                     <div className='counter last inline'>
@@ -250,11 +254,11 @@ const Collection = ({ history, location, match }) => {
                     to={`/collection/${normURL(collection.title)}`} 
                     key={normalizeString(collection.title)} 
                     className='badge'>
-                    {collection.title}{filterByName && <span className='pull-right'>{collection.books_num} libri</span>}
+                    {collection.title}{filterByName && <span className='pull-right'>{t('BOOKS_COUNT', { count: collection.books_num })}</span>}
                   </Link>
                 ) : (
                   <div className='empty text-center'>
-                    <div className='counter last'>Nessuna collezione</div>
+                    <div className='counter last'>{t('NO_COLLECTIONS')}</div>
                     <button type='button' className='btn rounded flat' onClick={onResetFilters}>Resetta i filtri</button>
                   </div>
                 )}
@@ -263,9 +267,9 @@ const Collection = ({ history, location, match }) => {
           </div>
 
           <ul className='nolist inline-items info-row hide-md'>
-            <li className='counter'><Link to='/collections'>Collezioni</Link></li>
-            <li className='counter'><Link to='/genres'>Generi</Link></li>
-            <li className='counter'><Link to='/authors'>Autori</Link></li>
+            <li className='counter'><Link to='/collections'>{t('PAGE_COLLECTIONS')}</Link></li>
+            <li className='counter'><Link to='/genres'>{t('PAGE_GENRES')}</Link></li>
+            <li className='counter'><Link to='/authors'>{t('PAGE_AUTHORS')}</Link></li>
           </ul>
         </div>
         <div className='col-md-6'>

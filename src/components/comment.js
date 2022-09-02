@@ -4,7 +4,8 @@ import Grow from '@material-ui/core/Grow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -27,6 +28,9 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const [actionsAnchorEl, setActionsAnchorEl] = useState(null);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState(false);
   const [like, setLike] = useState(likes_num && comment.likes.indexOf(user?.uid) > -1 ? true : false || false);
+
+  const { t } = useTranslation(['common']);
+
   const is = useRef(true);
 
   useEffect(() => () => {
@@ -47,9 +51,9 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
         // console.log(`User ${user.uid} add like on comment ${bid}/${comment.createdByUid}`);
 
         const likerURL = `/dashboard/${user.uid}`;
-        const likerDisplayName = truncateString(user.displayName.split(' ')[0], 12);
+        const likerDisplayName = truncateString(user.displayName.split(' ')[0], 25);
         const reviewerURL = `/dashboard/${rid}`;
-        const reviewer = truncateString(reviewerDisplayName.split(' ')[0], 12);
+        const reviewer = truncateString(reviewerDisplayName.split(' ')[0], 25);
         const bookTitle = truncateString(comment.bookTitle, 35);
         const bookURL = `/book/${bid}/${normURL(comment.bookTitle)}`;
         const isLikerReviewer = user.uid === rid;
@@ -120,7 +124,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
     if (bid) {
       reviewerCommenterRef(bid, rid, comment.createdByUid).delete().then(() => {
         // console.log(`Comment deleted`);
-        openSnackbar('Risposta cancellata', 'success');
+        openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid');
   };
@@ -134,7 +138,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
   
   return (
-    <>
+    <Fragment>
       <div className={classnames(isOwner ? 'own comment' : 'comment', { [`flagged ${comment.flag?.value}`]: comment.flag })} id={`${rid}-${comment.createdByUid}`} ref={is}>
         <div className="row">
           <div className="col-auto left">
@@ -147,7 +151,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
           <div className="col right">
             <div className="head row">
               <Link to={`/dashboard/${comment.createdByUid}`} className="col author">
-                <h3>{comment.displayName} {isReviewer && <span className="text-sm text-regular light-text">(recensore)</span>}</h3>
+                <h3>{comment.displayName} {isReviewer && <span className="text-sm text-regular light-text">({t('REVIEWER')})</span>}</h3>
               </Link>
               {isEditor && (
                 <div className="col-auto">
@@ -164,8 +168,8 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
                     onClick={onCloseActionsMenu}
                     open={Boolean(actionsAnchorEl)}
                     onClose={onCloseActionsMenu}>
-                    {isOwner ? <MenuItem onClick={onEdit}>Modifica</MenuItem> : !flaggedByUser && <MenuItem onClick={onFlagRequest}>Segnala</MenuItem>}
-                    {(isOwner || isAdmin) && <MenuItem onClick={onDelete}>Elimina</MenuItem>}
+                    {isOwner ? <MenuItem onClick={onEdit}>{t('ACTION_EDIT')}</MenuItem> : !flaggedByUser && <MenuItem onClick={onFlagRequest}>{t('ACTION_FLAG')}</MenuItem>}
+                    {(isOwner || isAdmin) && <MenuItem onClick={onDelete}>{t('ACTION_DELETE')}</MenuItem>}
                   </Menu>
                 </div>
               )}
@@ -175,7 +179,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
               <div className="foot row">
                 <div className="col-auto likes">
                   <div className="counter">
-                    <Tooltip title={like ? 'Annulla mi piace' : 'Mi piace'}>
+                    <Tooltip title={t(like ? 'ACTION_DISLIKE' : 'ACTION_LIKE')}>
                       <span>
                         <button 
                           type="button"
@@ -204,15 +208,15 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
                   */}
                   {isEditor && !isOwner && isAdmin && flaggedByUser && (
                     <div className="counter">
-                      <Tooltip title="Rimuovi segnalazione">
+                      <Tooltip title={t('ACTION_REMOVE_FLAG')}>
                         <button type="button" className="btn sm flat" onClick={onRemoveFlag}>{icon.flag}</button>
                       </Tooltip>
                     </div>
                   )}
                 </div>
                 <div className="col counter text-right date">
-                  <span className="hide-xs" title={`modificata ${timeSince(comment.lastEdit_num)}`}>
-                    {comment.lastEdit_num && (comment.created_num !== comment.lastEdit_num) && '(modificata)'}
+                  <span className="hide-xs" title={`${t('EDITED')} ${timeSince(comment.lastEdit_num)}`}>
+                    {comment.lastEdit_num && (comment.created_num !== comment.lastEdit_num) && `(${t('EDITED').toLowerCase()})`}
                   </span> {timeSince(comment.created_num)}
                 </div>
               </div>
@@ -231,7 +235,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
           value={flaggedByUser ? comment.flag?.value : ''}
         />
       )}
-    </>
+    </Fragment>
   );
 };
 

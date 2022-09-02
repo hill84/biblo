@@ -14,6 +14,7 @@ import { TransitionProps } from '@material-ui/core/transitions';
 import { ThemeProvider } from '@material-ui/styles';
 import classnames from 'classnames';
 import React, { ChangeEvent, CSSProperties, FC, FormEvent, forwardRef, MouseEvent, ReactElement, Ref, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionsRef, notesRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -97,6 +98,9 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
   const [errors, setErrors] = useState<ErrorsModel>({});
   const [isOpenBriefDialog, setIsOpenBriefDialog] = useState<boolean>(false);
   const [isOpenFollowersDialog, setIsOpenFollowersDialog] = useState<boolean>(false);
+
+  const { t } = useTranslation(['form']);
+
   const textInput = useRef<HTMLInputElement>(null);
 
   const groupFollowers = useMemo(() => followers?.filter(user => user.uid !== authid), [authid, followers]);
@@ -119,19 +123,19 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
     if (!text) {
       errors.text = 'Aggiungi un commento';
     } else if (text.length > max.chars.text) {
-      errors.text = `Massimo ${max.chars.text} caratteri`;
+      errors.text = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text });
     } else if (text.length < min.chars.text) {
-      errors.text = `Minimo ${min.chars.text} caratteri`;
+      errors.text = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.text });
     } else if (urls) {
-      errors.text = `Non inserire link esterni (${join(urls)})`;
+      errors.text = t('ERROR_NO_LINK_STRING', { string: join(urls, t('common:AND')) });
     } else if (muids?.length > max.mentions) {
-      errors.text = `Massimo ${max.mentions} menzioni`;
+      errors.text = t('ERROR_MAX_COUNT_ITEMS', { count: max.mentions });
     } else if (badWords) {
-      errors.text = 'Niente volgarità';
+      errors.text = t('ERROR_NO_VULGARITY');
     }
 
     return errors;
-  }, []);
+  }, [t]);
 
   const onSubmit = (e: FormEvent): void => {
     e.preventDefault();
@@ -161,7 +165,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
             extractMuids(discussion.text)?.forEach((muid: string): void => {
               if (followers?.some(follower => follower.uid === muid)) {   
                 const discussantURL = `/dashboard/${authid}`;
-                const discussantDisplayName: string = truncateString(user.displayName.split(' ')[0], 12);
+                const discussantDisplayName: string = truncateString(user.displayName.split(' ')[0], 25);
                 const groupURL = `/group/${gid}`;
                 const groupTitle: string = group?.title || '';
                 const noteMsg = `<a href='${discussantURL}'>${discussantDisplayName}</a> ti ha menzionato nel gruppo <a href='${groupURL}'>${groupTitle}</a>`;
@@ -240,13 +244,15 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
       <div className='form-group'>
         <FormControl className='input-field' margin='dense' fullWidth style={formControlStyle}>
           <ThemeProvider theme={discussion?.text ? defaultTheme : primaryTheme}>
-            <InputLabel error={Boolean(errors.text)} htmlFor='text'>Il tuo commento</InputLabel>
+            <InputLabel error={Boolean(errors.text)} htmlFor='text'>
+              {t('LABEL_COMMENT')}
+            </InputLabel>
             <Input
               inputRef={textInput}
               id='text'
               name='text'
               type='text'
-              placeholder='Scrivi il tuo commento'
+              placeholder={t('PLACEHOLDER_COMMENT')}
               value={discussion.text || ''}
               onChange={onChangeMaxChars}
               error={Boolean(errors.text)}
@@ -254,7 +260,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
               endAdornment={(
                 <div className='flex' style={{ marginTop: '-8px', }}>
                   {groupFollowers?.length > 0 && (
-                    <Tooltip title='Menziona utente'>
+                    <Tooltip title={t('common:ACTION_MENTION_USER')}>
                       <button
                         type='button'
                         className='btn sm counter flat icon'
@@ -263,7 +269,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
                       </button>
                     </Tooltip>
                   )}
-                  <Tooltip title='Aiuto per la formattazione'>
+                  <Tooltip title={t('common:ACTION_FORMATTING_HELP')}>
                     <button
                       type='button'
                       className='btn sm counter flat icon'
@@ -276,7 +282,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
                       type='button'
                       className='btn sm counter primary'
                       onClick={onSubmit}>
-                      Pubblica
+                      {t('common:ACTION_SUBMIT')}
                     </button>
                   )}
                 </div>
@@ -284,10 +290,14 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
             />
           </ThemeProvider>
           {errors.text && (
-            <FormHelperText className='message error'>{errors.text}</FormHelperText>
+            <FormHelperText className='message error'>
+              {errors.text}
+            </FormHelperText>
           )}
-          {leftChars.text && leftChars.text < 0 && (
-            <FormHelperText className='message warning'>Caratteri in eccesso: {-leftChars.text}</FormHelperText>
+          {Number(leftChars.text) < 0 && (
+            <FormHelperText className='message warning'>
+              {t('CHARACTERS_IN_EXCESS')}: {-Number(leftChars.text)}
+            </FormHelperText>
           )}
         </FormControl>
       </div>
@@ -361,7 +371,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
                               data-display-name={user.displayName}
                               data-fuid={user.uid}
                               onClick={onMentionFollower}>
-                              Menziona
+                              {t('common:ACTION_MENTION')}
                             </button>
                           </div>
                         )}

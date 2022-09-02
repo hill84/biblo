@@ -9,8 +9,9 @@ import { ThemeProvider } from '@material-ui/styles';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import classnames from 'classnames';
-import React, { FC, FormEvent, MouseEvent, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, FormEvent, MouseEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Autosuggest, { ChangeEvent, InputProps, RenderInputComponentProps, RenderSuggestionParams, RenderSuggestionsContainerParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams } from 'react-autosuggest';
+import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import { IndustryIdentifier, SearchParamsModel, VolumeInfo, VolumeModel } from '../../booksAPITypes';
 import { booksAPIRef } from '../../config/API';
@@ -25,13 +26,6 @@ interface SuggestionModel extends BookModel {
   label: string | number;
   value?: JSX.Element;
 }
-
-const searchByOptions: SearchByModel[] = [
-  { key: 'title', type: 'intitle', label: 'Titolo', hint: 'Sherlock Holmes', where: 'title_sort' },
-  { key: 'ISBN_13', type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13' },
-  { key: 'author', type: 'inauthor', label: 'Autore', hint: 'Arthur Conan Doyle', where: 'authors' },
-  { key: 'publisher', type: 'inpublisher', label: 'Editore', hint: 'Newton Compton', where: 'publisher' }
-];
 
 let timer: null | number = null;
 let booksFetch: (() => void) | null = null;
@@ -48,6 +42,15 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
   newBook,
   onBookSelect,
 }: SearchBookFormProps) => {
+  const { t } = useTranslation(['form']);
+
+  const searchByOptions = useMemo((): SearchByModel[] => [
+    { key: 'title', type: 'intitle', label: t('common:TITLE'), hint: 'Sherlock Holmes', where: 'title_sort' },
+    { key: 'ISBN_13', type: 'isbn', label: 'ISBN', hint: '9788854152601', where: 'ISBN_13' },
+    { key: 'author', type: 'inauthor', label: t('common:AUTHOR'), hint: 'Arthur Conan Doyle', where: 'authors' },
+    { key: 'publisher', type: 'inpublisher', label: t('common:PUBLISHER'), hint: 'Newton Compton', where: 'publisher' }
+  ], [t]);
+
   const { user } = useContext<UserContextModel>(UserContext);
   const [searchByAnchorEl, setSearchByAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
   const [searchBy, setSearchBy] = useState<SearchByModel>(searchByOptions[0]);
@@ -56,6 +59,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
   const [maxSearchResults, setMaxSearchResults] = useState<number>(limit);
   const [suggestions, setSuggestions] = useState<SuggestionModel[]>([]);
   const [redirectToReferrer, setRedirectToReferrer] = useState<string>('');
+
   const is = useRef(true);
 
   useEffect(() => {
@@ -119,11 +123,13 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
   const emptyBookCTA = (
     <MenuItem className='menuitem-book empty' component='div'>
       <div className='primaryText'>
-        <span className='title'>Libro non trovato...</span>
+        <span className='title'>{t('common:BOOK_NOT_FOUND')}</span>
       </div>
       {newBook && (
         <div className='secondaryText'>
-          <button type='button' className='btn sm flat rounded'>Crea nuovo</button>
+          <button type='button' className='btn sm flat rounded'>
+            {t('common:ACTION_CREATE_NEW')}
+          </button>
         </div>
       )}
     </MenuItem>
@@ -340,7 +346,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
           </span>
         </div>
         <div className='secondaryText'>
-          {searchBy.key === 'title' || searchBy.key === 'author' ? Object.keys(b.authors).length ? `di ${Object.keys(b.authors)[0]}` : null : searchTextHighlighted}
+          {searchBy.key === 'title' || searchBy.key === 'author' ? Object.keys(b.authors).length ? `${t('common:BY').toLowerCase()} ${Object.keys(b.authors)[0]}` : null : searchTextHighlighted}
         </div>
       </MenuItem>
     );
@@ -384,11 +390,15 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
   const inputProps: ExtendedInputProps = {
     className: 'input-field',
     type: searchBy.key === 'ISBN_13' ? 'number' : 'text',
-    label: `${newBook ? 'Aggiungi' : 'Cerca'} libro per ${searchBy.label.toLowerCase()}`,
-    placeholder: `Es: ${searchBy.hint}`,
+    label: `${t(`common:${newBook ? 'ACTION_ADD' : 'ACTION_SEARCH'}`)} ${t('common:BOOK').toLowerCase()}`,
+    placeholder: t('PLACEHOLDER_EG_STRING', { string: searchBy.hint }),
     value,
     onChange,
-    endAdornment: <button type='button' className='btn sm flat search-by' onClick={onOpenSearchByMenu}>{searchBy.label}</button>
+    endAdornment: (
+      <button type='button' className='btn sm flat search-by' onClick={onOpenSearchByMenu}>
+        {searchBy.label}
+      </button>
+    )
   }; // CHECK
 
   if (redirectToReferrer) return <Redirect to={redirectToReferrer} />;
@@ -415,7 +425,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
         {searchBy.key === 'ISBN_13' && !Number.isNaN(Number(value)) && (
           <ThemeProvider theme={darkTheme}>
             <FormHelperText className={classnames('message', value.length === 13 ? 'success' : value.length > 13 ? 'error' : 'helper')}>
-              {value.length} di 13 cifre
+              {t('common:COUNT_OF_NUMBER_DIGITS', { count: value.length, number: 13 })}
             </FormHelperText>
           </ThemeProvider>
         )}

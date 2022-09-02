@@ -1,5 +1,6 @@
 import React, { CSSProperties, FC, Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import { Link, Redirect } from 'react-router-dom';
 import { app, isTouchDevice, screenSize as _screenSize } from '../../config/shared';
@@ -25,6 +26,7 @@ const seo: SeoModel = {
   title: `${app.name} | Home`,
   description: app.desc
 };
+
 const heroStyle: CSSProperties = { backgroundImage: `url(${bgHero_webp}), url(${bgHero_jpg})`, };
 const rootMargin = '250px';
 
@@ -32,6 +34,8 @@ const Home: FC = () => {
   const { emailVerified, user } = useContext(UserContext);
   const [redirectTo, setRedirectTo] = useState<string>('');
   const [screenSize, setScreenSize] = useState<ScreenSizeType>(_screenSize());
+
+  const { t } = useTranslation(['common']);
 
   useEffect(() => {
     const updateScreenSize = (): void => setScreenSize(_screenSize());
@@ -53,20 +57,20 @@ const Home: FC = () => {
 
   const Hero: FC = () => (
     <div className='container text-center'>
-      <h1 className='title'>Scopriamo nuovi libri, insieme</h1>
-      <p className='subtitle'>Crea la tua libreria, ascolta gli incipit, scopri cosa leggono i tuoi amici</p>
+      <h1 className='title'>{t('HOME_HERO_TITLE')}</h1>
+      <p className='subtitle'>{t('HOME_HERO_SUBTITLE')}</p>
       <div className='btns'>
         <Link to={user ? `/dashboard/${user.uid}` : '/signup'} className='btn primary lg rounded'>
-          {user ? 'La mia libreria' : 'Registrati'}
+          {t(user ? 'PAGE_DASHBOARD' : 'PAGE_SIGNUP')}
         </Link>
         <div>
           {user ? (
             <Fragment>
-              <Link className='counter' to='/about'>Chi siamo</Link>
-              <Link className='counter' to='/help'>Aiuto</Link>
-              <Link className='counter last' to='/donations'>Donazioni</Link>
+              <Link className='counter' to='/about'>{t('PAGE_ABOUT')}</Link>
+              <Link className='counter' to='/help'>{t('PAGE_HELP')}</Link>
+              <Link className='counter last' to='/donations'>{t('PAGE_DONATIONS')}</Link>
             </Fragment>
-          ) : <p className='counter last'>Sei già registrato? <Link to='/login'>Accedi</Link></p>}
+          ) : <p className='counter last'>{t('ARE_YOU_ALREADY_REGISTERED?')} <Link to='/login'>{t('PAGE_LOGIN')}</Link></p>}
         </div>
       </div>
     </div>
@@ -99,20 +103,20 @@ const Home: FC = () => {
 
         <div className='row text-center value-props'>
           <div className='col-md col-sm-6 pad'>
-            <h3>Crea la tua libreria</h3>
-            <p>Riempi la tua dashboard con i libri che hai letto o che vorresti leggere</p>
+            <h3>{t('HOME_VALUE_1_TITLE')}</h3>
+            <p>{t('HOME_VALUE_1_PARAGRAPH')}</p>
           </div>
           <div className='col-md col-sm-6 pad'>
-            <h3>Scrivi le tue recensioni</h3>
-            <p>Condividi con gli altri lettori le tue opinioni sui libri che hai letto</p>
+            <h3>{t('HOME_VALUE_2_TITLE')}</h3>
+            <p>{t('HOME_VALUE_2_PARAGRAPH')}</p>
           </div>
           <div className='col-md col-sm-6 pad'>
-            <h3>Entra nella community</h3>
-            <p>Conosci lettori con i tuoi stessi gusti e scopri cosa stanno leggendo</p>
+            <h3>{t('HOME_VALUE_3_TITLE')}</h3>
+            <p>{t('HOME_VALUE_3_PARAGRAPH')}</p>
           </div>
           <div className='col-md col-sm-6 pad'>
-            <h3>Scopri nuovi libri</h3>
-            <p>Sfoglia il catalogo per scoprire il tuo prossimo libro preferito</p>
+            <h3>{t('HOME_VALUE_4_TITLE')}</h3>
+            <p>{t('HOME_VALUE_4_PARAGRAPH')}</p>
           </div>
         </div>
 
@@ -135,17 +139,17 @@ const Home: FC = () => {
         <div className='row flex'>
           <div className='col-12 col-lg-5 flex'>
             <div className='card dark card-fullwidth-sm'>
-              <h2>Citazione</h2>
+              <h2>{t('QUOTE')}</h2>
               <RandomQuote className='quote-container' />
             </div>
           </div>
           <div className='col-12 col-lg-7 flex'>
             <div className='card dark card-fullwidth-sm'>
               <div className='head nav'>
-                <span className='counter last title'>Generi</span>
+                <span className='counter last title'>{t('PAGE_GENRES')}</span>
                 <div className='pull-right'>
                   <button type='button' className='btn sm flat counter'>
-                    <Link to='/genres'>Vedi tutti</Link>
+                    <Link to='/genres'>{t('ACTION_SHOW_ALL')}</Link>
                   </button>
                 </div>
               </div>
@@ -158,20 +162,22 @@ const Home: FC = () => {
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) => (
             <div className='card dark card-fullwidth-sm' ref={ref}>
-              <BookCollection cid='Libri proibiti' pagination={false} limit={7} inView={inView} scrollable />
+              <BookCollection cid='Libri proibiti' label={t('COLLECTION_FORBIDDEN_BOOKS')} pagination={false} limit={7} inView={inView} scrollable />
             </div>
           )}
         </InView>
 
         <div className='card flat col-11 col-md-6 text-center'>
-          <p className='text-xl'>Biblo.space è un progetto gratuito e indipendente.<br className='hide-sm' /> Se vuoi, puoi supportarci con una donazione</p>
+          <p className='text-xl'>
+            {t('HOME_DONATIONS_PARAGRAPH_1')}<br className='hide-sm' /> {t('HOME_DONATIONS_PARAGRAPH_2')}
+          </p>
           <DonationButtons />
         </div>
 
         <InView triggerOnce rootMargin={rootMargin}>
           {({ inView, ref }) => (
             <div className='card dark card-fullwidth-sm' ref={ref}>
-              <BookCollection cid='Premio Strega' pagination={false} limit={7} inView={inView} desc scrollable />
+              <BookCollection cid='Premio Strega' label={t('COLLECTION_STREGA_AWARD')} pagination={false} limit={7} inView={inView} desc scrollable />
             </div>
           )}
         </InView>
@@ -185,13 +191,13 @@ const Home: FC = () => {
         </InView> */}
 
         <div className='card flat col-11 col-md-6 text-center'>
-          <p className='text-xl'>Siamo anche su Facebook e Twitter</p>
+          <p className='text-xl'>{t('HOME_SOCIAL_PARAGRAPH_1')}</p>
           <div>
             <a className='btn facebook rounded' href={app.fb.url} target='_blank' rel='noopener noreferrer'>
-              <span className='hide-sm'>Seguici su</span> Facebook
+              Facebook
             </a>
             <a className='btn twitter rounded' href={app.tw.url} target='_blank' rel='noopener noreferrer'>
-              <span className='hide-sm'>Seguici su</span> Twitter
+              Twitter
             </a>
           </div>
         </div>

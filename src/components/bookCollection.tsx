@@ -2,6 +2,7 @@ import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import { Tooltip } from '@material-ui/core';
 import classnames from 'classnames';
 import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -18,6 +19,7 @@ interface BookCollectionProps {
   booksPerRow?: number;
   desc?: boolean;
   inView?: boolean;
+  label?: string;
   limit?: number;
   pagination?: boolean;
   rating?: boolean;
@@ -47,6 +49,7 @@ const BookCollection: FC<BookCollectionProps> = ({
   cid,
   desc: _desc = false,
   inView = true,
+  label,
   limit: _limit = 0,
   pagination = false,
   rating = true,
@@ -60,6 +63,8 @@ const BookCollection: FC<BookCollectionProps> = ({
   // const [lastVisible, setLastVisible] = useState(null);
   const [loading, setLoading] = useState<boolean>(initialState.loading);
   const [page, setPage] = useState<number>(initialState.page);
+
+  const { t } = useTranslation(['common']);
 
   const limit = useMemo((): number => _limit || (pagination ? _booksPerRow() : 98), [pagination, _limit]);
   
@@ -137,7 +142,7 @@ const BookCollection: FC<BookCollectionProps> = ({
       )}
     </div>
   ) : ( 
-    <div className="info-row empty">Non ci sono libri in questa collezione.</div>
+    <div className="info-row empty">{t('EMPTY_LIST')}</div>
   ));
 
   const hasMore: boolean = pagination && count > limit;
@@ -146,15 +151,19 @@ const BookCollection: FC<BookCollectionProps> = ({
   return (
     <Fragment>
       <div className="head nav" role="navigation">
-        <span className="counter last title"><span className="primary-text hide-sm">{isGenre ? 'Genere' : 'Collezione'}:</span> {cid}</span> {count !== 0 && <span className="count hide-xs">({count} libri)</span>} 
+        <span className="counter last title"><span className="primary-text hide-sm">{t(isGenre ? 'GENRE' : 'COLLECTION')}:</span> {label || cid}</span> {count !== 0 && <span className="count hide-xs">({t('BOOKS_COUNT', { count })})</span>} 
         {!loading && count > 0 && (
           <div className="pull-right">
             {hasMore || scrollable ? (
-              cid === 'Top' ? 'I più amati' : cid === 'New' ? 'Le nostre novità' : ( 
-                <button type="button" className="btn sm flat counter"><Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>Vedi tutti</Link></button>
+              cid === 'Top' ? t('COLLECTION_TOP') : cid === 'New' ? t('COLLECTION_NEW') : ( 
+                <button type="button" className="btn sm flat counter">
+                  <Link to={`/${isGenre ? 'genre' : 'collection'}/${normURL(cid)}`}>
+                    {t('ACTION_SHOW_ALL')}
+                  </Link>
+                </button>
               )
             ) : (
-              <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+              <Tooltip title={t(desc ? 'ASCENDING' : 'DESCENDING')}>
                 <span>
                   <button
                     type="button"

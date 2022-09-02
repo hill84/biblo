@@ -5,7 +5,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
@@ -18,14 +19,6 @@ import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'lastEdit_num', label: 'Data ultima modifica'},
-  { type: 'EDIT.lastEditByUid', label: 'Modificata da'},
-  { type: 'author', label: 'Autore'}, 
-  { type: 'bookTitle', label: 'Libro'}, 
-  { type: 'coverURL', label: 'Cover'}
-];
 
 let itemsFetch: (() => void) | null = null;
 
@@ -84,6 +77,16 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
   const [loading, setLoading] = useState<StateModel['loading']>(initialState.loading);
 
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const { t } = useTranslation(['common', 'form']);
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') },
+    { type: 'EDIT.lastEditByUid', label: t('LAST_EDIT_BY') },
+    { type: 'author', label: t('AUTHOR') }, 
+    { type: 'bookTitle', label: t('BOOK') }, 
+    { type: 'coverURL', label: t('COVER') }
+  ], [t]);
 
   const limit: number = limitBy[limitByIndex];
   const order: OrderByModel = orderBy[orderByIndex];
@@ -177,12 +180,12 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
     if (state) {
       // console.log(`Locking ${id}`);
       quoteRef(id).update({ edit: false }).then(() => {
-        openSnackbar('Elemento bloccato', 'success');
+        openSnackbar(t('form:SUCCESS_LOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       // console.log(`Unlocking ${id}`);
       quoteRef(id).update({ edit: true }).then(() => {
-        openSnackbar('Elemento sbloccato', 'success');
+        openSnackbar(t('form:SUCCESS_UNLOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
@@ -200,7 +203,7 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
   const onDelete = (): void => {
     setIsOpenDeleteDialog(false);
     quoteRef(selectedId).delete().then((): void => {
-      openSnackbar('Elemento cancellato', 'success');
+      openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
 
@@ -231,7 +234,9 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
   const skeletons = [...Array(limit)].map((_, i: number) => <li key={i} className='avatar-row skltn dash' />);
 
   const itemsList = loading ? skeletons : !items ? (
-    <li className='empty text-center'>Nessun elemento</li>
+    <li className='empty text-center'>
+      {t('EMPTY_LIST')}
+    </li>
   ) : (
     items.map(({ author, bid, bookTitle, coverURL, edit, lastEdit_num, lastEditBy, lastEditByUid, qid, quote }: QuoteModel) => (
       <li key={qid} className={classnames({ locked: !edit })}>
@@ -252,10 +257,34 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
             <div className='timestamp'>{timeSince(lastEdit_num)}</div>
           </div>
           <div className='absolute-row right btns xs'>
-            <button type='button' className='btn icon green' onClick={() => onView({ id: normURL(author) })}>{icon.eye}</button>
-            <button type='button' className='btn icon primary' onClick={() => onEdit({ id: qid })}>{icon.pencil}</button>
-            <button type='button' className={classnames('btn', 'icon', edit ? 'secondary' : 'flat')} onClick={() => onLock({ id: qid, state: edit })} title={edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
-            <button type='button' className='btn icon red' onClick={() => onDeleteRequest({ id: qid })}>{icon.close}</button>
+            <button
+              type='button'
+              className='btn icon green'
+              onClick={() => onView({ id: normURL(author) })}
+              title={t('ACTION_PREVIEW')}>
+              {icon.eye}
+            </button>
+            <button
+              type='button'
+              className='btn icon primary'
+              onClick={() => onEdit({ id: qid })}
+              title={t('ACTION_EDIT')}>
+              {icon.pencil}
+            </button>
+            <button
+              type='button'
+              className={classnames('btn', 'icon', edit ? 'secondary' : 'flat')}
+              onClick={() => onLock({ id: qid, state: edit })}
+              title={t(edit ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}>
+              {icon.lock}
+            </button>
+            <button
+              type='button'
+              className='btn icon red'
+              onClick={() => onDeleteRequest({ id: qid })}
+              title={t('ACTION_DELETE')}>
+              {icon.close}
+            </button>
           </div>
         </div>
       </li>
@@ -274,7 +303,7 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
               disabled={!items.length}
               onClick={onOpenLimitMenu}
             >
-              {limit} <span className='hide-xs'>per pagina</span>
+              {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
               className='dropdown-menu'
@@ -291,12 +320,12 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
                 className='btn sm flat counter'
                 onClick={onOpenOrderMenu}
               >
-                <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <button
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
-                title={desc ? 'Ascendente' : 'Discendente'}
+                title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                 onClick={onToggleDesc}
               >
                 {icon.arrowDown}
@@ -317,12 +346,12 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
         <li className='labels'>
           <div className='row'>
             <div className='col-auto'><div className='mock-cover xs hidden' title='cover' /></div>
-            <div className='col'>Libro</div>
-            <div className='col'>Autore</div>
-            <div className='col-5 hide-sm'>Testo</div>
+            <div className='col'>{t('form:LABEL_BOOK')}</div>
+            <div className='col'>{t('form:LABEL_AUTHOR')}</div>
+            <div className='col-5 hide-sm'>{t('form:LABEL_TEXT')}</div>
             <div className='col hide-sm'>Qid</div>
-            <div className='col hide-sm'>Modificato da</div>
-            <div className='col col-sm-2 col-lg-1 text-right'>Modificato</div>
+            <div className='col hide-sm'>{t('EDITED_BY')}</div>
+            <div className='col col-sm-2 col-lg-1 text-right'>{t('EDITED')}</div>
           </div>
         </li>
         {itemsList}
@@ -345,8 +374,8 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

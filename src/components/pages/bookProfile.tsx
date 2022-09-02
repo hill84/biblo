@@ -8,12 +8,14 @@ import Grow from '@material-ui/core/Grow';
 import { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
 import React, { ChangeEvent, FC, forwardRef, Fragment, lazy, ReactElement, Ref, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { abbrNum, app, calcDurationTime, calcReadingTime, normURL, setFormatClass, timeSince, truncateString } from '../../config/shared';
+import { GenreModel, genres } from '../../config/lists';
+import { abbrNum, app, calcDurationTime, calcReadingTime, normURL, setFormatClass, timeSince, translateURL, truncateString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/bookProfile.css';
@@ -92,6 +94,8 @@ const BookProfile: FC<BookProfileProps> = ({
   const [isOpenIncipit, setIsOpenIncipit] = useState<boolean>(location?.pathname?.indexOf('/incipit') !== -1);
   const [userBook, setUserBook] = useState<UserBookModel>(_userBook);
 
+  const { t } = useTranslation(['common', 'form', 'lists']);
+
   useEffect(() => {
     setUserBook(_userBook);
   }, [_userBook]);
@@ -142,12 +146,12 @@ const BookProfile: FC<BookProfileProps> = ({
       if (state) {
         // console.log(`Locking ${id}`);
         bookRef(book.bid).update({ 'EDIT.edit': false }).then((): void => {
-          openSnackbar('Elemento bloccato', 'success');
+          openSnackbar(t('form:SUCCESS_LOCKED_ITEM'), 'success');
         }).catch((err: Error): void => console.warn(err));
       } else {
         // console.log(`Unlocking ${id}`);
         bookRef(book.bid).update({ 'EDIT.edit': true }).then((): void => {
-          openSnackbar('Elemento sbloccato', 'success');
+          openSnackbar(t('form:SUCCESS_UNLOCKED_ITEM'), 'success');
         }).catch((err: Error): void => console.warn(err));
       }
     }
@@ -157,8 +161,8 @@ const BookProfile: FC<BookProfileProps> = ({
 
   const _lastEditBy: string = book?.EDIT.lastEditBy || '';
   const _createdBy: string = book?.EDIT.createdBy || '';
-  const lastEditBy = useMemo((): string => truncateString(_lastEditBy, 12), [_lastEditBy]);
-  const createdBy = useMemo((): string => truncateString(_createdBy, 12), [_createdBy]);
+  const lastEditBy = useMemo((): string => truncateString(_lastEditBy, 25), [_lastEditBy]);
+  const createdBy = useMemo((): string => truncateString(_createdBy, 25), [_createdBy]);
   const hasBid = Boolean(book?.bid);
   const isLocked: boolean = !book?.EDIT.edit && !isAdmin;
   const bookAuthors = useMemo((): string[] => {
@@ -166,7 +170,24 @@ const BookProfile: FC<BookProfileProps> = ({
   }, [book?.authors]);
 
   if (!book && !loading) return (
-    <NoMatch title='Libro non trovato' history={history} location={location} />
+    <NoMatch title={t('common:BOOK_NOT_FOUND')} history={history} location={location} />
+  );
+
+  const GenresList: FC = () => (
+    <Fragment>
+      {book?.genres.map((genre: string) => {
+        const getLabel = (genre: string): string => {
+          const canonical: string = genres.find(({ name }: GenreModel): boolean => name === genre)?.canonical || '';
+          return t(`lists:GENRE_${translateURL(canonical)}`);
+        };
+
+        return (
+          <Link to={`/genre/${normURL(genre)}`} className='counter' key={genre}>
+            {getLabel(genre)}
+          </Link>
+        );
+      })}
+    </Fragment>
   );
 
   // const authors = book && <Link to={`/author/${normURL(Object.keys(book.authors)[0])}`}>{Object.keys(book.authors)[0]}</Link>;
@@ -212,9 +233,9 @@ const BookProfile: FC<BookProfileProps> = ({
                   ))}
                   {book?.EDIT && isAdmin && (
                     <Tooltip interactive title={book.EDIT.lastEdit_num ? (
-                      <span>Modificato da <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(book.EDIT.lastEdit_num)}</span> 
+                      <span>{t('EDITED_BY')} <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(book.EDIT.lastEdit_num)}</span> 
                     ) : (
-                      <span>Creato da <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{createdBy}</Link> {timeSince(book.EDIT.created_num)}</span>
+                      <span>{t('CREATED_BY')} <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{createdBy}</Link> {timeSince(book.EDIT.created_num)}</span>
                     )}>
                       <span className='counter'>{icon.informationOutline}</span>
                     </Tooltip>
@@ -229,7 +250,11 @@ const BookProfile: FC<BookProfileProps> = ({
                   onClick={book?.incipit ? onToggleIncipit : undefined}
                   onKeyDown={book?.incipit ? onToggleIncipit : undefined}>
                   <Cover book={book} rating={false} showMedal={false} info={false} />
-                  {book?.incipit && <button type='button' className='btn xs rounded flat centered btn-incipit'>Leggi incipit</button>}
+                  {book?.incipit && (
+                    <button type='button' className='btn xs rounded flat centered btn-incipit'>
+                      {t('ACTION_READ_INCIPIT')}
+                    </button>
+                  )}
                 </div>
                 
                 {book && (
@@ -266,25 +291,25 @@ const BookProfile: FC<BookProfileProps> = ({
                 ) : book && (
                   <Fragment>
                     <div className='info-row'>
-                      {book.authors && <span className='counter comma author'>di {bookAuthors.map((author: string) => 
+                      {book.authors && <span className='counter comma author'>{t('BY').toLowerCase()} {bookAuthors.map((author: string) => 
                         <Link to={`/author/${normURL(author)}`} className='counter' key={author}>{author}</Link> 
                       )}</span>}
-                      {book.publisher && <span className='counter hide-sm'>Editore <b>{book.publisher}</b></span>}
+                      {book.publisher && <span className='counter hide-sm'>{t('PUBLISHER')} <b>{book.publisher}</b></span>}
                       {isAuth && hasBid && isEditor && (
                         <Fragment>
                           {isAdmin && (
                             <button type='button' onClick={onLock} className={classnames('link', 'counter', book.EDIT.edit ? 'flat' : 'active')}>
                               <span className='show-sm'>{book.EDIT.edit ? icon.lock : icon.lockOpen}</span>
-                              <span className='hide-sm'>{book.EDIT.edit ? 'Blocca' : 'Sblocca'}</span>
+                              <span className='hide-sm'>{t(book.EDIT.edit ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}</span>
                             </button>
                           )}
-                          <button type='button' onClick={onEditing} className='link counter' disabled={isLocked} title='Modifica disabilitata'>
+                          <button type='button' onClick={onEditing} className='link counter' disabled={isLocked} title={t('EDIT_DISABLED')}>
                             <span className='show-sm'>{book.EDIT.edit ? icon.pencil : icon.pencilOff}</span>
-                            <span className='hide-sm'>Modifica</span>
+                            <span className='hide-sm'>{t('ACTION_EDIT')}</span>
                           </button>
                           <button type='button' className='link counter' onClick={onToggleSuggest}>
                             <span className='show-sm'>{icon.accountHeart}</span>
-                            <span className='hide-sm'>Consiglia</span>
+                            <span className='hide-sm'>{t('ACTION_RECOMMEND')}</span>
                           </button>
                         </Fragment>
                       )}
@@ -300,13 +325,13 @@ const BookProfile: FC<BookProfileProps> = ({
                         </Tooltip> <b><CopyToClipboard text={book[ISBN]}/></b>
                       </span>
                       {/* book.ISBN_10 !== 0 && <span className='counter'>ISBN-10 <CopyToClipboard text={book.ISBN_10}/></span> */}
-                      {book.publication && <span className='counter'>Pubblicazione <b>{new Date(book.publication).toLocaleDateString()}</b></span>}
+                      {book.publication && <span className='counter'>{t('PUBLICATION')} <b>{new Date(book.publication).toLocaleDateString()}</b></span>}
                       {/* book.edition_num !== 0 && <span className='counter'>Edizione <b>{book.edition_num}</b></span> */}
-                      {book.format !== 'Audiolibro' && book.pages_num !== 0 && <span className='counter'>Pagine <b>{book.pages_num}</b></span>}
-                      {book.format === 'Audiolibro' && book.duration && <span className='counter'>Durata <b>{calcDurationTime(book.duration)}</b></span>}
-                      {book.format === 'Audiolibro' && <span className='counter'>Formato <b>{book.format.toLowerCase()}</b></span>}
-                      {book.genres && book.genres[0] && <span className='counter comma'>Gener{book.genres[1] ? 'i' : 'e'} {book.genres.map(genre => <Link to={`/genre/${normURL(genre)}`} className='counter' key={genre}>{genre}</Link> )}</span>}
-                      {book.collections && book.collections[0] && <span className='counter comma'>Collezion{book.collections[1] ? 'i' : 'e'} {book.collections.map(collection => <Link to={`/collection/${normURL(collection)}`} className='counter' key={collection}>{collection}</Link> )}</span>}
+                      {book.format !== 'Audio' && book.pages_num !== 0 && <span className='counter'>{t('PAGES')} <b>{book.pages_num}</b></span>}
+                      {book.format === 'Audio' && book.duration && <span className='counter'>{t('DURATION')} <b>{calcDurationTime(book.duration)}</b></span>}
+                      {book.format === 'Audio' && <span className='counter'>{t('FORMAT')} <b>{book.format.toLowerCase()}</b></span>}
+                      {Boolean(book.genres?.length) && <span className='counter comma'>{t(book.genres[1] ? 'GENRES' : 'GENRE')} <GenresList /></span>}
+                      {book.collections && book.collections[0] && <span className='counter comma'>{t(book.collections[1] ? 'COLLECTIONS' : 'COLLECTION')} {book.collections.map(collection => <Link to={`/collection/${normURL(collection)}`} className='counter' key={collection}>{collection}</Link> )}</span>}
                     </div>
 
                     <div className='info-row'>
@@ -322,14 +347,14 @@ const BookProfile: FC<BookProfileProps> = ({
                                 type='button'
                                 className='btn success rounded error-on-hover'
                                 onClick={onRemoveBookFromShelfRequest}>
-                                <span className='hide-on-hover'>{icon.check} libreria</span>
-                                <span className='show-on-hover'>{icon.close} libreria</span>
+                                <span className='hide-on-hover'>{icon.check} {t('SHELF')}</span>
+                                <span className='show-on-hover'>{icon.close} {t('SHELF')}</span>
                               </button>
                               <button
                                 type='button'
                                 className='btn rounded'
                                 onClick={onToggleReadingState}>
-                                <span className='hide-xs'>Stato</span> lettura
+                                {t('READING_STATE')}
                               </button>
                             </Fragment>
                           ) : (
@@ -339,13 +364,13 @@ const BookProfile: FC<BookProfileProps> = ({
                               ref={addBookToShelfRef}
                               disabled={!hasBid || !isEditor}
                               onClick={onAddBookToShelf}>
-                              {icon.plus} libreria
+                              {icon.plus} {t('SHELF')}
                             </button>
                           )}
                           {userBook.bookInWishlist && (
                             <button type='button' className='btn success rounded error-on-hover' onClick={onRemoveBookFromWishlist}>
-                              <span className='hide-on-hover'>{icon.check} desideri</span>
-                              <span className='show-on-hover'>{icon.close} desideri</span>
+                              <span className='hide-on-hover'>{icon.check} {t('WISHLIST')}</span>
+                              <span className='show-on-hover'>{icon.close} {t('WISHLIST')}</span>
                             </button>
                           )}
                           {(!userBook.bookInWishlist && !userBook.bookInShelf) && (
@@ -355,7 +380,7 @@ const BookProfile: FC<BookProfileProps> = ({
                               ref={addBookToWishlistRef}
                               disabled={!hasBid || !isEditor}
                               onClick={onAddBookToWishlist}>
-                              {icon.plus} desideri
+                              {icon.plus} {t('WISHLIST')}
                             </button>
                           )}
                         </div>
@@ -364,7 +389,7 @@ const BookProfile: FC<BookProfileProps> = ({
                             <div className='user rating'>
                               <Rater total={5} onRate={rate => onRateBook(rate)} rating={userBook.rating_num || 0} />
                               {/* <span className='rating-num'>{userBook.rating_num || 0}</span> */}
-                              <span className='label'>Il tuo voto</span>
+                              <span className='label'>{t('YOUR_VOTE')}</span>
                             </div>
                           </div>
                         )}
@@ -378,9 +403,9 @@ const BookProfile: FC<BookProfileProps> = ({
                     )}
 
                     <div className='info-row bookdetails'>
-                      <span className='counter'>{icon.reader} <b>{abbrNum(book.readers_num || 0)}</b> <span className='hide-sm'>Lettor{book.readers_num === 1 ? 'e' : 'i'}</span></span>
-                      <span className='counter'>{icon.messageTextOutline} <b>{abbrNum(book.reviews_num || 0)}</b> <span className='hide-sm'>Recension{book.reviews_num === 1 ? 'e' : 'i'}</span></span>
-                      {book.pages_num && <span className='counter'>{icon.timer} <span className='hide-sm'>Lettura</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
+                      <span className='counter'>{icon.reader} <b>{abbrNum(book.readers_num || 0)}</b> <span className='hide-sm'>{t(book.readers_num === 1 ? 'READER' : 'READERS')}</span></span>
+                      <span className='counter'>{icon.messageTextOutline} <b>{abbrNum(book.reviews_num || 0)}</b> <span className='hide-sm'>{t(book.reviews_num === 1 ? 'REVIEW' : 'REVIEWS')}</span></span>
+                      {book.pages_num && <span className='counter'>{icon.timer} <span className='hide-sm'>{t('READING_TIME')}</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                     </div>
                   </Fragment>
                 )}
@@ -426,16 +451,16 @@ const BookProfile: FC<BookProfileProps> = ({
           aria-labelledby='remove-dialog-title'
           aria-describedby='remove-dialog-description'>
           <DialogTitle>
-            Procedere con la rimozione?
+            {t('DIALOG_REMOVE_USER_BOOK_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Rimuovendo il libro perderai il voto, la recensione e lo stato di lettura.
+              {t('DIALOG_REMOVE_USER_BOOK_PARAGRAPH')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseRemoveDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onRemoveBookFromShelf}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseRemoveDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onRemoveBookFromShelf}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

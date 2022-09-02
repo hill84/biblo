@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
 import React, { ChangeEvent, FC, FormEvent, Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { noteRef, notesRef } from '../../config/firebase';
 import { noteTypes } from '../../config/lists';
 import SnackbarContext from '../../context/snackbarContext';
@@ -59,6 +60,8 @@ const NoteForm: FC<NoteFormProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<ErrorsModel>({});
 
+  const { t } = useTranslation(['form']);
+
   const fetch = useCallback(() => {
     if (nid && uid) {
       setLoading(true);
@@ -97,11 +100,11 @@ const NoteForm: FC<NoteFormProps> = ({
     const errors: ErrorsModel = {};
     
     if (!data.text) { 
-      errors.text = 'Inserisci il testo'; 
+      errors.text = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.text?.length > max.chars.text) {
-      errors.text = `Lunghezza massima ${max.chars.text} caratteri`;
+      errors.text = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text });
     } else if (data.text?.length < min.chars.text) {
-      errors.text = `Lunghezza minima ${min.chars.text} caratteri`;
+      errors.text = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.text });
     }
     if (!data.tag) { 
       errors.tag = 'Scegli un tag'; 
@@ -177,7 +180,7 @@ const NoteForm: FC<NoteFormProps> = ({
                   name='text'
                   type='text'
                   autoFocus
-                  placeholder={`Inserisci il testo (max ${max.chars.text} caratteri)...`}
+                  placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text })}
                   value={data.text}
                   onChange={onChangeMaxChars}
                   maxRows={8}
@@ -187,7 +190,7 @@ const NoteForm: FC<NoteFormProps> = ({
                 {errors.text && <FormHelperText className='message error'>{errors.text}</FormHelperText>}
                 {(leftChars.text !== null) && (
                   <FormHelperText className={classnames('message', leftChars.text < 0 ? 'warning' : 'neutral')}>
-                    Caratteri rimanenti: {leftChars.text}
+                    {t('REMAINING_CHARACTERS')}: {leftChars.text}
                   </FormHelperText>
                 )}
               </FormControl>

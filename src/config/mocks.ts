@@ -5,7 +5,7 @@ export const user: UserModel = {
   uid: 'abc',
   displayName: 'Mario Rossi',
   email: 'giu.gerbino@gmail.com',
-  birth_date: 123456789,
+  birth_date: '',
   continent: 'Europa',
   country: 'Italia',
   city: 'Torino',

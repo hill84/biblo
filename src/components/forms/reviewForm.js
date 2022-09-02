@@ -16,6 +16,7 @@ import classnames from 'classnames';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -84,6 +85,9 @@ const ReviewForm = ({ bid, userBook }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+
+  const { t } = useTranslation(['common', 'form']);
+
   const is = useRef(true);
 
   const fetchReview = useCallback(() => {
@@ -114,8 +118,8 @@ const ReviewForm = ({ bid, userBook }) => {
 
   useEffect(() => {
     if (isEditing && !user?.photoURL) {
-      const msg = <span>Non hai <span className="hide-sm">ancora caricato</span> una foto profilo.</span>;
-      const action = <Link to="/profile" type="button" className="btn sm flat" onClick={closeSnackbar}>Aggiungila</Link>;
+      const msg = <span>Non hai <span className='hide-sm'>ancora caricato</span> una foto profilo.</span>;
+      const action = <Link to='/profile' type='button' className='btn sm flat' onClick={closeSnackbar}>Aggiungila</Link>;
       openSnackbar(msg, 'info', 4000, action);
     }
   }, [closeSnackbar, isEditing, openSnackbar, user]);
@@ -129,23 +133,23 @@ const ReviewForm = ({ bid, userBook }) => {
     const badWords = checkBadWords(text);
 
     if (!text) {
-      errors.text = 'Aggiungi una recensione';
+      errors.text = t('ERROR_REQUIRED_FIELD');
     } else if (text.length > max.chars.text) {
-      errors.text = `Massimo ${max.chars.text} caratteri`;
+      errors.text = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text });
     } else if (text.length < min.chars.text) {
-      errors.text = `Minimo ${min.chars.text} caratteri`;
+      errors.text = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.text });
     } else if (urlMatches) {
-      errors.text = `Non inserire link (${join(urlMatches)})`;
+      errors.text = t('ERROR_NO_LINK_STRING', { string: join(urlMatches, t('common:AND')) });
     } else if (badWords) {
-      errors.text = 'Niente volgarità';
+      errors.text = t('ERROR_NO_VULGARITY');
     }
 
     if (title?.length > max.chars.title) {
-      errors.title = `Massimo ${max.chars.title} caratteri`;
+      errors.title = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.title });
     }
 
     return errors;
-  }, []);
+  }, [t]);
 
   const onSubmit = useCallback(e => {
     e.preventDefault();
@@ -214,12 +218,12 @@ const ReviewForm = ({ bid, userBook }) => {
         // console.log('Book review deleted');
         userBookRef(authid, bid).update({ review: {} }).then(() => {
           // console.log('User review deleted');
-          openSnackbar('Recensione cancellata', 'success');
+          openSnackbar(t('common:SUCCESS_DELETED_ITEM'), 'success');
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
 
     } else console.warn('No bid');
-  }, [authid, bid, openSnackbar]);
+  }, [authid, bid, openSnackbar, t]);
 
   const onExitEditing = useCallback(() => {
     if (is.current) {
@@ -271,26 +275,26 @@ const ReviewForm = ({ bid, userBook }) => {
         {!loading && (
           isEditing ? (
             <form>
-              <div className="form-group">
-                <FormControl className="input-field" margin="normal" fullWidth style={formControlStyle}>
-                  <InputLabel error={Boolean(errors.text)} htmlFor="text">Recensione</InputLabel>
+              <div className='form-group'>
+                <FormControl className='input-field' margin='normal' fullWidth style={formControlStyle}>
+                  <InputLabel error={Boolean(errors.text)} htmlFor='text'>{t('form:LABEL_REVIEW')}</InputLabel>
                   <Input
-                    id="text"
-                    name="text"
-                    type="text"
+                    id='text'
+                    name='text'
+                    type='text'
                     autoFocus={isEditing}
-                    placeholder={`Scrivi una recensione (max ${max.chars.text} caratteri)...`}
+                    placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text })}
                     value={review.text || ''}
                     onChange={onChangeMaxChars}
                     onClick={onClick}
                     error={Boolean(errors.text)}
                     multiline
                     endAdornment={(
-                      <div className="hide-sm">
-                        <InputAdornment position="end">
-                          <Tooltip title={isOpenEmojiPicker ? 'Chiudi' : 'Aggiungi emoji'} placement="top">
+                      <div className='hide-sm'>
+                        <InputAdornment position='end'>
+                          <Tooltip title={t(isOpenEmojiPicker ? 'ACTION_CLOSE' : 'ACTION_ADD_EMOJI')} placement='top'>
                             <IconButton
-                              aria-label="toggle emoji-picker visibility"
+                              aria-label='toggle emoji-picker visibility'
                               onClick={toggleEmojiPicker}
                               onMouseDown={onMouseDown}>
                               {isOpenEmojiPicker ? icon.close : icon.stickerEmoji}
@@ -302,81 +306,105 @@ const ReviewForm = ({ bid, userBook }) => {
                   />
                   {isOpenEmojiPicker && (
                     <Picker
-                      color="rgb(var(--primaryClr))"
+                      color='rgb(var(--primaryClr))'
                       style={EmojiPickerStyle}
                       onSelect={addEmoji}
                       i18n={emojiMartLocale}
                       showPreview={false}
                       showSkinTones={false}
-                      theme="light"
+                      theme='light'
                     />
                   )}
-                  {errors.text && <FormHelperText className="message error">{errors.text}</FormHelperText>}
-                  {leftChars.text < 0 && <FormHelperText className="message warning">Caratteri in eccesso: {-leftChars.text}</FormHelperText>}
+                  {errors.text && <FormHelperText className='message error'>{errors.text}</FormHelperText>}
+                  {leftChars.text < 0 && <FormHelperText className='message warning'>{t('CHARACTERS_IN_EXCESS')}: {-leftChars.text}</FormHelperText>}
                 </FormControl>
               </div>
-              <div className="form-group">
-                <FormControl className="input-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.title)} htmlFor="title">Titolo (opzionale)</InputLabel>
+              <div className='form-group'>
+                <FormControl className='input-field' margin='normal' fullWidth>
+                  <InputLabel error={Boolean(errors.title)} htmlFor='title'>
+                    {t('form:LABEL_TITLE')} ({t('OPTIONAL').toLowerCase()})
+                  </InputLabel>
                   <Input
-                    id="title"
-                    name="title"
-                    type="text"
-                    placeholder={`Aggiungi un titolo (max ${max.chars.title} caratteri)...`}
+                    id='title'
+                    name='title'
+                    type='text'
+                    placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.title })}
                     value={review.title || ''}
                     onChange={onChangeMaxChars}
                     onClick={onClick}
                     error={Boolean(errors.title)}
                   />
-                  {errors.title && <FormHelperText className="message error">{errors.title}</FormHelperText>}
-                  {leftChars.title && <FormHelperText className={classnames('message', leftChars.title < 0 ? 'warning' : 'neutral')}>Caratteri rimanenti: {leftChars.title}</FormHelperText>}
+                  {errors.title && (
+                    <FormHelperText className='message error'>
+                      {errors.title}
+                    </FormHelperText>
+                  )}
+                  {leftChars.title && (
+                    <FormHelperText className={classnames('message', leftChars.title < 0 ? 'warning' : 'neutral')}>
+                      Caratteri rimanenti: {leftChars.title}
+                    </FormHelperText>
+                  )}
                 </FormControl>
               </div>
 
-              <div className="footer no-gutter">
-                <button type="button" className="btn btn-footer primary" onClick={onSubmit} disabled={!changes}>Pubblica</button>
+              <div className='footer no-gutter'>
+                <button type='button' className='btn btn-footer primary' onClick={onSubmit} disabled={!changes}>
+                  {t('ACTION_SUBMIT')}
+                </button>
               </div>
             </form>
           ) : (
             !review.text ? (
-              <button type="button" className="btn flat centered rounded" onClick={onEditing}>Aggiungi una recensione</button>
+              <button type='button' className='btn flat centered rounded' onClick={onEditing}>
+                {t('ACTION_ADD_REVIEW')}
+              </button>
             ) : (
-              <div className="review">
-                <div className="row">
-                  <div className="col-auto left">
-                    <Avatar className="avatar" src={user.photoURL} alt={user.displayName}>{!user.photoURL && getInitials(user.displayName)}</Avatar>
+              <div className='review'>
+                <div className='row'>
+                  <div className='col-auto left'>
+                    <Avatar className='avatar' src={user.photoURL} alt={user.displayName}>
+                      {!user.photoURL && getInitials(user.displayName)}
+                    </Avatar>
                   </div>
-                  <div className="col right">
-                    <div className="head row">
-                      <div className="col-auto author">
+                  <div className='col right'>
+                    <div className='head row'>
+                      <div className='col-auto author'>
                         <h3>{user.displayName}</h3>
                       </div>
-                      <div className="col text-right rating">
+                      <div className='col text-right rating'>
                         <Rating ratings={{ rating_num: userBook.rating_num }} labels />
                       </div>
                     </div>
-                    <h4 className="title">{review.title}</h4>
-                    <p className="text">{review.text}</p>
-                    <div className="foot row">
-                      <div className="col-auto likes">
+                    <h4 className='title'>{review.title}</h4>
+                    <p className='text'>{review.text}</p>
+                    <div className='foot row'>
+                      <div className='col-auto likes'>
                         <Tooltip title={`${review.likes.length} mi piace`}>
-                          <div className="counter">
-                            <button type="button" className="btn sm flat thumb up" disabled title={`Piace a ${abbrNum(review.likes.length)}`}>{icon.thumbUp} {abbrNum(review.likes.length)}</button>
+                          <div className='counter'>
+                            <button type='button' className='btn sm flat thumb up' disabled title={`Piace a ${abbrNum(review.likes.length)}`}>
+                              {icon.thumbUp} {abbrNum(review.likes.length)}
+                            </button>
                           </div>
                         </Tooltip>
                         <Tooltip title={`${review.comments_num} rispost${review.comments_num === 1 ? 'a' : 'e'}`}>
-                          <div className="counter">
-                            <button type="button" className="btn sm flat" disabled>{icon.comment} {review.comments_num}</button>
+                          <div className='counter'>
+                            <button type='button' className='btn sm flat' disabled>
+                              {icon.comment} {review.comments_num}
+                            </button>
                           </div>
                         </Tooltip>
-                        <div className="counter">
-                          <button type="button" className="btn sm flat" onClick={onEditing}>{icon.pencil} <span className="hide-sm">Modifica</span></button>
+                        <div className='counter'>
+                          <button type='button' className='btn sm flat' onClick={onEditing}>
+                            {icon.pencil} <span className='hide-sm'>{t('ACTION_EDIT')}</span>
+                          </button>
                         </div>
-                        <div className="counter">
-                          <button type="button" className="btn sm flat" onClick={onDeleteRequest}>{icon.delete} <span className="hide-sm">Elimina</span></button>
+                        <div className='counter'>
+                          <button type='button' className='btn sm flat' onClick={onDeleteRequest}>
+                            {icon.delete} <span className='hide-sm'>{t('ACTION_DELETE')}</span>
+                          </button>
                         </div>
                       </div>
-                      <div className="col text-right date">{timeSince(review.created_num)}</div>
+                      <div className='col text-right date'>{timeSince(review.created_num)}</div>
                     </div>
                   </div>
                 </div>
@@ -387,7 +415,7 @@ const ReviewForm = ({ bid, userBook }) => {
       </div>
 
       {
-        // isEditing && <div className="form-group"><button onClick={onExitEditing} className="btn flat centered">Annulla</button></div>
+        // isEditing && <div className='form-group'><button onClick={onExitEditing} className='btn flat centered'>Annulla</button></div>
       }
 
       {isOpenDeleteDialog && (
@@ -396,19 +424,19 @@ const ReviewForm = ({ bid, userBook }) => {
           TransitionComponent={Transition}
           keepMounted
           onClose={onCloseDeleteDialog}
-          aria-labelledby="delete-dialog-title"
-          aria-describedby="delete-dialog-description">
-          <DialogTitle id="delete-dialog-title">
+          aria-labelledby='delete-dialog-title'
+          aria-describedby='delete-dialog-description'>
+          <DialogTitle id='delete-dialog-title'>
             Procedere con l&apos;eliminazione?
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="delete-dialog-description">
+            <DialogContentText id='delete-dialog-description'>
               Cancellando la recensione perderai tutti i like e i commenti ricevuti.
             </DialogContentText>
           </DialogContent>
-          <DialogActions className="dialog-footer flex no-gutter">
-            <button type="button" className="btn btn-footer flat" onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type="button" className="btn btn-footer primary" onClick={onDelete}>Elimina</button>
+          <DialogActions className='dialog-footer flex no-gutter'>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_DELETE')}</button>
           </DialogActions>
         </Dialog>
       )}

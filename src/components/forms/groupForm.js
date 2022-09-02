@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
 import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Redirect } from 'react-router-dom';
 import { groupRef, groupsRef } from '../../config/firebase';
@@ -49,6 +50,9 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
   const [changes, setChanges] = useState(Boolean(title));
   const [errors, setErrors] = useState({});
   const [redirectToReferrer, setRedirectToReferrer] = useState(null);
+
+  const { t } = useTranslation(['form']);
+
   const is = useRef(true);
 
   const fetch = useCallback(() => {
@@ -121,23 +125,23 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
     const isDuplicate = id ? false : await checkTitle(data.title);
 
     if (!data.title) { 
-      errors.title = 'Inserisci il titolo'; 
+      errors.title = t('ERROR_REQUIRED_FIELD'); 
     } else if (isDuplicate) {
-      errors.title = 'Gruppo già presente';
+      errors.title = t('ERROR_DUPLICATED_ITEM');
     } else if (data.title?.length > max.chars.title) {
-      errors.title = `Massimo ${max.chars.title} caratteri`;
+      errors.title = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.title });
     } else if (data.title?.length < min.chars.title) {
-      errors.title = `Minimo ${min.chars.title} caratteri`;
+      errors.title = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.title });
     }
     if (!data.description) { 
-      errors.description = 'Inserisci una descrizione'; 
+      errors.description = t('ERROR_REQUIRED_FIELD'); 
     } else if (data.description?.length > max.chars.description) {
-      errors.description = `Massimo ${max.chars.description} caratteri`;
+      errors.description = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.description });
     } else if (data.description?.length < min.chars.description) {
-      errors.description = `Minimo ${min.chars.description} caratteri`;
+      errors.description = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.description });
     }
     if (data.rules?.length > max.chars.rules) {
-      errors.rules = `Massimo ${max.chars.rules} caratteri`;
+      errors.rules = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.rules });
     }
     return errors;
   };
@@ -199,13 +203,15 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.title)} htmlFor="title">Nome del gruppo*</InputLabel>
+                <InputLabel error={Boolean(errors.title)} htmlFor="title">
+                  {t('LABEL_NAME')}*
+                </InputLabel>
                 <Input
                   id="title"
                   name="title"
                   type="text"
                   autoFocus
-                  placeholder="Es: Il mio gruppo"
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Book club' })}
                   value={data.title}
                   onChange={onChange}
                   error={Boolean(errors.title)}
@@ -216,14 +222,16 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
             {isAdmin && (
               <div className="form-group col col-sm-3">
                 <FormControl className="select-field" margin="normal" fullWidth>
-                  <InputLabel error={Boolean(errors.type)} htmlFor="type">Tipo</InputLabel>
+                  <InputLabel error={Boolean(errors.type)} htmlFor="type">
+                    {t('LABEL_TYPE')}
+                  </InputLabel>
                   <Select
                     id="type"
                     value={data.type}
                     onChange={onChangeSelect('type')}
                     error={Boolean(errors.type)}>
-                    <MenuItem value="public">Pubblico</MenuItem>
-                    <MenuItem value="private">Privato</MenuItem>
+                    <MenuItem value="public">{t('common:PUBLIC')}</MenuItem>
+                    <MenuItem value="private">{t('common:PRIVATE')}</MenuItem>
                   </Select>
                   {errors.type && <FormHelperText className="message error">{errors.type}</FormHelperText>}
                 </FormControl>
@@ -234,12 +242,14 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.description)} htmlFor="description">Descrizione*</InputLabel>
+                <InputLabel error={Boolean(errors.description)} htmlFor="description">
+                  {t('LABEL_DESCRIPTION')}*
+                </InputLabel>
                 <Input
                   id="description"
                   name="description"
                   type="text"
-                  placeholder={`Inserisci la descrizione (max ${max.chars.description} caratteri)...`}
+                  placeholder={`Max ${max.chars.description} caratteri`}
                   value={data.description}
                   onChange={onChangeMaxChars}
                   maxRows={20}
@@ -249,7 +259,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                 {errors.description && <FormHelperText className="message error">{errors.description}</FormHelperText>}
                 {(leftChars.description !== null) && (
                   <FormHelperText className={classnames('message', leftChars.description < 0 ? 'warning' : 'neutral')}>
-                    Caratteri rimanenti: {leftChars.description}
+                    {t('REMAINING_CHARACTERS')}: {leftChars.description}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -259,12 +269,14 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.rules)} htmlFor="rules">Regole</InputLabel>
+                <InputLabel error={Boolean(errors.rules)} htmlFor="rules">
+                  {t('LABEL_RULES')}
+                </InputLabel>
                 <Input
                   id="rules"
                   name="rules"
                   type="text"
-                  placeholder={`Inserisci la descrizione (max ${max.chars.rules} caratteri)...`}
+                  placeholder={`Max ${max.chars.rules} caratteri`}
                   value={data.rules}
                   onChange={onChangeMaxChars}
                   maxRows={20}
@@ -274,7 +286,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                 {errors.rules && <FormHelperText className="message error">{errors.rules}</FormHelperText>}
                 {(leftChars.rules !== null) && 
                   <FormHelperText className={classnames('message', leftChars.rules < 0 ? 'warning' : 'neutral')}>
-                    Caratteri rimanenti: {leftChars.rules}
+                    {t('REMAINING_CHARACTERS')}: {leftChars.rules}
                   </FormHelperText>
                 }
               </FormControl>
@@ -284,12 +296,14 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.location)} htmlFor="location">Località</InputLabel>
+                <InputLabel error={Boolean(errors.location)} htmlFor="location">
+                  {t('LABEL_LOCATION')}
+                </InputLabel>
                 <Input
                   id="location"
                   name="location"
                   type="text"
-                  placeholder="Es: Torino"
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'Torino' })}
                   value={data.location}
                   onChange={onChange}
                   error={Boolean(errors.location)}
@@ -311,12 +325,14 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
             )}
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
-                <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">URL foto</InputLabel>
+                <InputLabel error={Boolean(errors.photoURL)} htmlFor="photoURL">
+                  {t('LABEL_IMAGE_URL')}
+                </InputLabel>
                 <Input
                   id="photoURL"
                   name="photoURL"
                   type="text"
-                  placeholder="Es: https://firebasestorage.googleapis.com/.../groups%2Fgroup.jpg"
+                  placeholder={t('PLACEHOLDER_EG_STRING', { string: 'https://firebasestorage.googleapis.com/.../groups%2Fgroup.jpg' })}
                   value={data.photoURL}
                   onChange={onChange}
                   error={Boolean(errors.photoURL)}
@@ -328,7 +344,9 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
 
         </div>
         <div className="footer no-gutter">
-          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>Salva le modifiche</button>
+          <button type="button" className="btn btn-footer primary" onClick={onSubmit}>
+            {t('common:ACTION_SAVE')}
+          </button>
         </div>
       </div>
     </Fragment>

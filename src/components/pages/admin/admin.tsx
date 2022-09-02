@@ -5,6 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import classnames from 'classnames';
 import React, { ChangeEvent, CSSProperties, FC, Fragment, ReactNode, useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
@@ -29,17 +30,16 @@ const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
 
 interface TabModel {
   name: string;
-  label: string;
   icon: ReactNode;
 }
 
 const tabs: TabModel[] = [
-  { name: 'users', label: 'Utenti', icon: icon.account },
-  { name: 'books', label: 'Libri', icon: icon.book },
-  { name: 'authors', label: 'Autori', icon: icon.accountEdit },
-  { name: 'collections', label: 'Collezioni', icon: icon.viewCarousel },
-  { name: 'quotes', label: 'Citazioni', icon: icon.quote },
-  { name: 'notifications', label: 'Notifiche', icon: icon.bell },
+  { name: 'USERS', icon: icon.account },
+  { name: 'BOOKS', icon: icon.book },
+  { name: 'AUTHORS', icon: icon.accountEdit },
+  { name: 'COLLECTIONS', icon: icon.viewCarousel },
+  { name: 'QUOTES', icon: icon.quote },
+  { name: 'NOTIFICATIONS', icon: icon.bell },
 ];
 
 interface RouterProps { 
@@ -86,6 +86,8 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
   const [isOpenNoteDialog, setIsOpenNoteDialog] = useState<boolean>(initialState.isOpenNoteDialog);
   const [isOpenQuoteDialog, setIsOpenQuoteDialog] = useState<boolean>(initialState.isOpenQuoteDialog);
   const [_screenSize, setScreenSize] = useState<ScreenSizeType>(initialState.screenSize);
+
+  const { t } = useTranslation(['common']);
 
   useEffect(() => {
     if (tabSelected === 0) history.replace(`/admin/${tabs[0].name}`, null);
@@ -174,23 +176,23 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
   return (
     <div className='container' style={containerStyle}>
       <Helmet>
-        <title>{app.name} | Amministrazione</title>
+        <title>{app.name} | {t('PAGE_ADMIN')}</title>
         <meta name='robots' content='noindex, nofollow' />
       </Helmet>
       <div className='actions btns text-center pad-v-sm'>
-        <button type='button' title='Crea libro' className='btn rounded primary'>
+        <button type='button' title={t('ACTION_CREATE_BOOK')} className='btn rounded primary'>
           <Link to='/new-book'>
-            <span className='hide-sm'>{icon.plus} libro</span><span className='show-sm'>{icon.book}</span>
+            <span className='hide-sm'>{icon.plus} {t('BOOK')}</span><span className='show-sm'>{icon.book}</span>
           </Link>
         </button>
         <button type='button' onClick={() => onToggleAuthorDialog()} title='Crea autore' className={classnames('btn', 'rounded', isOpenAuthorDialog ? 'flat' : 'primary')}>
-          <span className='hide-sm'>{icon.plus} autore</span><span className='show-sm'>{icon.accountEdit}</span>
+          <span className='hide-sm'>{icon.plus} {t('AUTHOR')}</span><span className='show-sm'>{icon.accountEdit}</span>
         </button>
         <button type='button' onClick={() => onToggleCollectionDialog()} title='Crea collezione' className={classnames('btn', 'rounded', isOpenCollectionDialog ? 'flat' : 'primary')}>
-          <span className='hide-sm'>{icon.plus} collezione</span><span className='show-sm'>{icon.viewCarousel}</span>
+          <span className='hide-sm'>{icon.plus} {t('COLLECTION')}</span><span className='show-sm'>{icon.viewCarousel}</span>
         </button>
         <button type='button' onClick={() => onToggleQuoteDialog()} title='Crea citazione' className={classnames('btn', 'rounded', isOpenQuoteDialog ? 'flat' : 'primary')}>
-          <span className='hide-sm'>{icon.plus} citazione</span><span className='show-sm'>{icon.quote}</span>
+          <span className='hide-sm'>{icon.plus} {t('QUOTE')}</span><span className='show-sm'>{icon.quote}</span>
         </button>
         {/* <button type='button' onClick={() => onToggleNoteDialog()} title='Crea notifica' className='btn rounded primary'><span className='hide-sm'>{icon.plus} notifica</span><span className='show-sm'>{icon.bell}</span></button> */}
       </div>
@@ -203,7 +205,12 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
           // textColor='primary'
           scrollButtons='auto'>
           {tabs.map(tab => (
-            <Tab key={tab.name} label={<><span className='show-md'>{tab.icon}</span><span className='hide-md'>{tab.label}</span></>} />
+            <Tab key={tab.name} label={(
+              <Fragment>
+                <span className='show-md'>{tab.icon}</span>
+                <span className='hide-md'>{t(tab.name)}</span>
+              </Fragment>
+            )} />
           ))}
         </Tabs>
       </AppBar>

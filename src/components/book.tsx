@@ -1,6 +1,7 @@
 import { DocumentData, FirestoreError } from '@firebase/firestore-types';
-import React, { CSSProperties, FC, Fragment, lazy, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, FC, Fragment, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { bookRef, collectionBookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
@@ -70,20 +71,29 @@ const Book: FC<BookProps> = ({
 }: BookProps) => {
   const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const initialSeo = useMemo(() => {
+    if (!_book) return null;
+    return {
+      author: Object.keys(_book.authors)?.[0],
+      description: `Scopri su ${app.name} la trama e le recensioni di ${_book.title}, scritto da ${Object.keys(_book.authors)[0]}, pubblicato da ${_book.publisher}`,
+      image: _book.covers?.[0],
+      isbn: String(_book.ISBN_13),
+      rating: { scale: '5', value: String(_book.rating_num || 0) },
+      release_date: _book.publication ? new Date(_book.publication).toLocaleDateString() : '',
+      title: `${_book.title} di ${Object.keys(_book.authors)[0]} - ${_book.publisher} - ${app.name}`,
+      url: `${app.url}/book/${_book.bid}/${normURL(_book.title)}`,
+    };
+  }, [_book]);
+
+  const [seo, setSeo] = useState<SeoModel | null>(initialSeo);
   const [book, setBook] = useState<BookModel | null>(_book);
   const [isEditing, setIsEditing] = useState<boolean>(_isEditing);
   const [loading, setLoading] = useState<boolean>(!_book);
   const [userBook, setUserBook] = useState<UserBookModel>(initialUserBook);
-  const [seo, setSeo] = useState<SeoModel | null>(_book && {
-    author: Object.keys(_book.authors)?.[0],
-    description: `Scopri su ${app.name} la trama e le recensioni di ${_book.title}, scritto da ${Object.keys(_book.authors)[0]}, pubblicato da ${_book.publisher}`,
-    image: _book.covers?.[0],
-    isbn: String(_book.ISBN_13),
-    rating: { scale: '5', value: String(_book.rating_num || 0) },
-    release_date: _book.publication ? new Date(_book.publication).toLocaleDateString() : '',
-    title: `${_book.title} di ${Object.keys(_book.authors)[0]} - ${_book.publisher} - ${app.name}`,
-    url: `${app.url}/book/${_book.bid}/${normURL(_book.title)}`,
-  });
+
+  const { t } = useTranslation(['common']);
+
   const addBookToShelfRef = useRef<HTMLButtonElement>(null);
   const addBookToWishlistRef = useRef<HTMLButtonElement>(null);
 
@@ -164,7 +174,7 @@ const Book: FC<BookProps> = ({
       const maxShelfBooks: number = isPremium || isAdmin ? max.shelfBooks.premium : max.shelfBooks.standard;
 
       if (userShelf_num > maxShelfBooks) {
-        openSnackbar(`Limite massimo superato${(isAdmin || isPremium) ? '' : `. Passa al livello premium per aggiungere più di ${maxShelfBooks} libri`}`, 'error');
+        openSnackbar(t('ERROR_MAX_SHELF_BOOKS_COUNT', { count: maxShelfBooks }), 'error');
       } else {
         userBookRef(authid, bid).set({
           ...userBook,
@@ -172,7 +182,7 @@ const Book: FC<BookProps> = ({
           bookInShelf: true,
           bookInWishlist: false
         }).then((): void => {
-          openSnackbar('Libro aggiunto in libreria', 'success');
+          openSnackbar(t('SUCCESS_BOOK_ADDED_TO_SHELF'), 'success');
   
           bookRef(bid).update({
             readers_num: bookReaders_num
@@ -190,7 +200,7 @@ const Book: FC<BookProps> = ({
         }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
       }      
     } else console.warn('Cannot addBookToShelf. User not authenticated');
-  }, [authid, book, isAdmin, isAuth, isPremium, openSnackbar, user, userBook]);
+  }, [authid, book, isAdmin, isAuth, isPremium, openSnackbar, t, user, userBook]);
   
   const addBookToWishlist = useCallback((bid: string): void => {
     if (isAuth && user) {
@@ -199,7 +209,7 @@ const Book: FC<BookProps> = ({
       const maxWishlistBooks: number = isPremium || isAdmin ? max.wishlistBooks.premium : max.wishlistBooks.standard;
 
       if (userWishlist_num > maxWishlistBooks) {
-        openSnackbar(`Limite massimo superato${(isAdmin || isPremium) ? '' : `. Passa al livello premium per aggiungere più di ${maxWishlistBooks} libri`}`, 'error');
+        openSnackbar(t('ERROR_MAX_SHELF_BOOKS_COUNT', { count: maxWishlistBooks }), 'error');
       } else {
         userBookRef(authid, bid).set({
           ...userBook,
@@ -209,14 +219,14 @@ const Book: FC<BookProps> = ({
         }).then((): void => {
           // console.log('Book added to user wishlist');
           addBookToWishlistRef.current && addBookToWishlistRef.current.removeAttribute('disabled');
-          openSnackbar('Libro aggiunto in lista desideri', 'success');
+          openSnackbar(t('SUCCESS_BOOK_ADDED_TO_WISHLIST'), 'success');
           userRef(authid).update({
             'stats.wishlist_num': userWishlist_num,
           }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
         }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
       }
     } else console.warn('Cannot addBookToWishlist. User not authenticated');
-  }, [authid, isAdmin, isAuth, isPremium, openSnackbar, user, userBook]);
+  }, [authid, isAdmin, isAuth, isPremium, openSnackbar, t, user, userBook]);
   
   const removeBookFromUserBooks = useCallback((bid: string, bookshelf: BookshelfType): void => {
     if (isAuth && user && book) {
@@ -391,7 +401,7 @@ const Book: FC<BookProps> = ({
   }, [book, user]);
 
   if (!loading && !book) return (
-    <NoMatch title='Libro non trovato' history={history} location={location} />
+    <NoMatch title={t('BOOK_NOT_FOUND')} history={history} location={location} />
   );
 
   const bgStyle: CSSProperties | undefined = book ? { backgroundImage: `url(${book.covers[0]})`, } : undefined;
@@ -400,7 +410,7 @@ const Book: FC<BookProps> = ({
     <Fragment>
       {seo && (
         <Helmet>
-          <title>{app.name} | {book?.title || 'Libro'}</title>
+          <title>{app.name} | {book?.title || t('PAGE_BOOK')}</title>
           <link rel='canonical' href={`${app.url}/genres`} />
           <meta name='description' content={seo.description} />
           <meta property='og:description' content={seo.description} />

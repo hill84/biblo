@@ -7,6 +7,7 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import React, { ChangeEvent, FC, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
@@ -63,6 +64,8 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState<boolean>(initialState.redirectToReferrer);
   const [showPassword, setShowPassword] = useState<boolean>(initialState.showPassword);
 
+  const { t } = useTranslation(['form']);
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const email: string | null = params.get('email');
@@ -91,20 +94,20 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
     const errors: ErrorsModel = {};
 
     if (!data.email) {
-      errors.email = 'Inserisci un indirizzo email';
+      errors.email = t('ERROR_REQUIRED_FIELD');
     } else if (data.email.length > max.chars.email) {
-      errors.email = `Massimo ${max.chars.email} caratteri`;
+      errors.email = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.email });
     } else if (!isEmail(data.email)) {
-      errors.email = 'Email non valida';
+      errors.email = t('ERROR_INVALID_FORMAT');
     }
 
     if (data.password) {
       if (data.password.length < min.chars.password) {
-        errors.password = `Minimo ${min.chars.password} caratteri`;
+        errors.password = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.password });
       } else if (data.password.length > max.chars.password) {
-        errors.password = `Massimo ${max.chars.password} caratteri`;
+        errors.password = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.password });
       }
-    } else errors.password = 'Inserisci una password';
+    } else errors.password = t('ERROR_REQUIRED_FIELD');
     
     return errors;
   };
@@ -150,13 +153,15 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
       <form onSubmit={onSubmit} noValidate>
         <div className='form-group'>
           <FormControl className='input-field' margin='normal' fullWidth>
-            <InputLabel error={Boolean(errors.email)} htmlFor='email'>Email</InputLabel>
+            <InputLabel error={Boolean(errors.email)} htmlFor='email'>
+              Email
+            </InputLabel>
             <Input
               id='email'
               name='email'
               type='email'
               autoFocus
-              placeholder='esempio@esempio.com'
+              placeholder={t('PLACEHOLDER_EG_STRING', { string: 'email@provider.com' })}
               value={email}
               onChange={onChange}
               error={Boolean(errors.email)}
@@ -167,12 +172,14 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
 
         <div className='form-group'>
           <FormControl className='input-field' margin='normal' fullWidth>
-            <InputLabel error={Boolean(errors.password)} htmlFor='password'>Password</InputLabel>
+            <InputLabel error={Boolean(errors.password)} htmlFor='password'>
+              Password
+            </InputLabel>
             <Input
               id='password'
               name='password'
               type={showPassword ? 'text' : 'password'}
-              placeholder='Almeno 8 caratteri'
+              placeholder={t('AT_LEAST_COUNT_CHARACTERS', { count: 8 })}
               value={password}
               onChange={onChange}
               error={Boolean(errors.password)}
@@ -198,7 +205,9 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
         )}
 
         <div className='footer no-gutter'>
-          <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Accedi</button>
+          <button type='button' className='btn btn-footer primary' onClick={onSubmit}>
+            {t('common:ACTION_LOGIN')}
+          </button>
         </div>
       </form>
     </div>

@@ -2,6 +2,7 @@ import { DocumentData, DocumentReference, FirestoreError } from '@firebase/fires
 import Avatar from '@material-ui/core/Avatar';
 import classnames from 'classnames';
 import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -44,6 +45,8 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
   const [quote, setQuote] = useState<RecommendationModel>(quoteInitialState);
   const [loading, setLoading] = useState<boolean>(false);
   const [followings, setFollowings] = useState<FollowingsModel | null>(null);
+
+  const { t } = useTranslation(['common']);
   
   const count: number = quote?.recommends ? quote?.recommends.length : 0;
 
@@ -130,7 +133,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
 
     const newNoteRef: DocumentReference<DocumentData> = notesRef(fuid).doc();
     const userName: string = displayName?.split(' ')[0] || '';
-    const userDisplayName: string = truncateString(userName, 12);
+    const userDisplayName: string = truncateString(userName, 25);
     const noteMsg = `<a href='${app.url}/dashboard/${uid}'>${userDisplayName}</a> ti consiglia il libro <a href='${app.url}/book/${bid}/${normURL(title)}'>${title}</a>`;
 
     if (uid) {
@@ -157,7 +160,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
           read: false,
           uid: fuid
         }).then((): void => {
-          openSnackbar('Libro consigliato', 'success');
+          openSnackbar(t('SUCCESS_BOOK_RECOMMENDED'), 'success');
         }).catch((err: FirestoreError): void => {
           openSnackbar(handleFirestoreError(err), 'error');
         });
@@ -190,7 +193,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
                   data-fuid={f}
                   onClick={onRecommendBook}
                   disabled={quote.amount < 1 || recommended(f)}>
-                  {recommended(f) ? <span>{icon.check} Consigliato</span> : 'Consiglia'}
+                  {recommended(f) ? <span>{icon.check} {t('ACTION_RECOMMENDED')}</span> : t('ACTION_RECOMMEND')}
                 </button>
               </div>
             </div>
@@ -211,15 +214,15 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
         <div className='sticky-content'>
           <div role='navigation' className='head nav'>
             <div className='row'>
-              <div className='col'><strong>Consiglia <span className='hide-xs'>a un amico</span></strong></div>
-              <div className='col-auto'><span className='light-text'>Quota giornaliera {quote.amount ? quote.amount : 'terminata'}</span></div>
+              <div className='col'><strong>{t('ACTION_RECOMMEND')} <span className='hide-xs'>{t('TO_A_FRIEND')}</span></strong></div>
+              <div className='col-auto'><span className='light-text'>{t('DAILY_RATE')} {quote.amount ? quote.amount : t('TERMINATED_female')}</span></div>
             </div>
           </div>
         </div>
         <div className='content'>
           <div className='contacts-tab'>
             {loading ? skltn : hasFollowings && followings ? usersList(followings) : (
-              <div className='empty text-center'>Non segui ancora nessun lettore</div>
+              <div className='empty text-center'>{t('NO_USER_FOLLOWINGS')}</div>
             )}
           </div>
         </div>

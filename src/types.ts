@@ -1,6 +1,12 @@
 import { ReactNode } from 'react';
 import { RouteComponentProps, RouteProps } from 'react-router';
 
+export interface Language {
+  id: string;
+  label: string;
+  locale: Locale;
+}
+
 export interface UserModel {
   creationTime: number;
   privacyAgreement?: number;
@@ -8,7 +14,7 @@ export interface UserModel {
   uid: string;
   displayName: string;
   email: string;
-  birth_date: number;
+  birth_date: string;
   continent: string;
   country: string;
   city: string;
@@ -388,7 +394,7 @@ export type StatsType = 'ratings_num' | 'reviews_num' | 'shelf_num' | 'wishlist_
 
 export type FormatType = 'audio' | 'magazine' | 'ebook' | 'book';
 
-export type ItalianFormatType = 'Libro' | 'Rivista' | 'Ebook' | 'Audiolibro';
+export type ItalianFormatType = 'Libro' | 'Rivista' | 'Ebook' | 'Audio';
 
 export type RefType = Function | object;
 

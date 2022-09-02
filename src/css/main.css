@@ -2,6 +2,8 @@
 @import 'react-medium-image-zoom/dist/styles.css';
 
 :root {
+  color-scheme: dark light;
+
   /* Colors */
   /* http://www.material-ui.com/#/customization/colors */
   --primaryLighterClr: 0, 188, 212;       /* cyan500 */
@@ -89,7 +91,7 @@
 
   /* Measures */
   --radius: 8px;
-  --radius-sm: 3px;
+  --radius-sm: 4px;
   --headerHeight: 60px;
   --btnHeight: 36px;
   --btnPad: .8rem;
@@ -626,7 +628,13 @@ hr.line {
   text-align: center;
   & .card { max-width: 340px; }
   & .form-group { text-align: left; }
-  & .sub-footer { font-size: .8rem; color: var(--mainTextClr); }
+  & .sub-footer {
+    font-size: .8rem;
+
+    &:not(a) {
+      color: var(--mainTextClr);
+    }
+  }
 }
 
 /* TABS */
@@ -1366,10 +1374,10 @@ mark {
   color: currentcolor;
   white-space: nowrap;
 }
-.counter.comma:not(.strict) .counter:nth-last-child(2)::after {
+/* .counter.comma:not(.strict) .counter:nth-last-child(2)::after {
   content: 'e';
   margin-left: .15rem;
-}
+} */
 .counter.comma a.counter::after { color: var(--mainTextClr); }
 .counter:last-child::after, .counter.comma .counter:last-child::after, .counter.last::after, .counter.btn::after { content: none; }
 .counter.last + .counter { margin-left: 6px; }

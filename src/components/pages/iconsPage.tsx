@@ -3,25 +3,28 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { ThemeProvider } from '@material-ui/styles';
 import React, { ChangeEvent, FC, Fragment, useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import icon from '../../config/icons';
 import { app } from '../../config/shared';
 import { darkTheme } from '../../config/themes';
 import SnackbarContext, { OpenSnackbarType } from '../../context/snackbarContext';
 
-const copy = (text: string, openSnackbar: OpenSnackbarType): void => {
-  if (typeof window !== 'undefined') {
-    navigator.clipboard.writeText(text).then((): void => {
-      openSnackbar('Copiato negli appunti', 'success');
-    }, (err: Error): void => {
-      openSnackbar('Errore interno', 'error');
-      console.warn('Async: Could not copy text: ', err);
-    });
-  }
-};
-
 const IconsPage: FC = () => {
   const { openSnackbar } = useContext(SnackbarContext);
   const [searchText, setSearchText] = useState<string>('');
+
+  const { t } = useTranslation(['common', 'form']);
+  
+  const copy = (text: string, openSnackbar: OpenSnackbarType): void => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(text).then((): void => {
+        openSnackbar(t('SUCCESS_COPIED'), 'success');
+      }, (err: Error): void => {
+        openSnackbar(err, 'error');
+        console.warn('Async: Could not copy text: ', err);
+      });
+    }
+  };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.target;
@@ -40,9 +43,9 @@ const IconsPage: FC = () => {
   return (
     <div className='container' id='iconsPageComponent'>
       <Helmet>
-        <title>{app.name} | Icone</title>
+        <title>{app.name} | {t('PAGE_ICONS')}</title>
       </Helmet>
-      <h2>Icone di sistema</h2>
+      <h2>{t('PAGE_ICONS')}</h2>
 
       <div className='card'>
         <ThemeProvider theme={darkTheme}>
@@ -51,8 +54,8 @@ const IconsPage: FC = () => {
             id='search'
             name='search'
             type='text'
-            label='Cerca'
-            placeholder='es: account'
+            label={t('ACTION_SEARCH')}
+            placeholder={t('form:PLACEHOLDER_EG_STRING', { string: 'account' })}
             value={searchText || ''}
             onChange={onChange}
             variant='outlined'

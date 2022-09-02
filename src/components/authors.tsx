@@ -3,6 +3,7 @@ import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import classnames from 'classnames';
 import React, { CSSProperties, FC, Fragment, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -53,6 +54,8 @@ const Authors: FC<AuthorsProps> = ({
 
   const { count, desc, items, limit, loading, page, scrollable }: StateModel = state;
 
+  const { t } = useTranslation(['common']);
+
   const onToggleDesc = (): void => setState(prevState => ({ ...prevState, desc: !prevState.desc }));
   
   const fetch = useCallback((/* e */): void => {
@@ -98,13 +101,15 @@ const Authors: FC<AuthorsProps> = ({
   return (
     <Fragment>
       <div className='head nav' role='navigation'>
-        <span className='counter last title primary-text'>Autori</span> {items && <span className='count hide-xs'>({items ? items.length : limit}{count ? ` di ${count}` : ''})</span>} 
+        <span className='counter last title primary-text'>{t('PAGE_AUTHORS')}</span> {items && <span className='count hide-xs'>({items ? items.length : limit}{count ? ` ${t('OF')} ${count}` : ''})</span>} 
         {!loading && count > 0 && (
           <div className='pull-right'>
             {(pagination && count > limit) || scrollable ? (
-              <Link to='/authors' className='btn sm flat counter'>Vedi tutti</Link>
+              <Link to='/authors' className='btn sm flat counter'>
+                {t('ACTION_SHOW_ALL')}
+              </Link>
             ) : (
-              <Tooltip title={desc ? 'Ascendente' : 'Discendente'}>
+              <Tooltip title={t(desc ? 'ASCENDING' : 'DESCENDING')}>
                 <span>
                   <button
                     type='button'
@@ -159,7 +164,7 @@ const Authors: FC<AuthorsProps> = ({
             ))}
           </div>
         ) : (
-          <div className='empty centered'>Nessun autore</div>
+          <div className='empty centered'>{t('EMPTY_LIST')}</div>
         )}
       </div>
     </Fragment>

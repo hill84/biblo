@@ -2,8 +2,9 @@ import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { notesRef, notificationsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
@@ -15,12 +16,6 @@ import PaginationControls from '../paginationControls';
 import { skltn_notification } from '../skeletons';
 
 const limit = 10;
-
-const orderBy: OrderByModel[] = [ 
-  { type: 'created_num', label: 'Data'}, 
-  { type: 'read', label: 'Lettura'},
-  { type: 'createdByUid', label: 'Mittente'}
-];
 
 interface StateModel {
   count: number;
@@ -55,6 +50,14 @@ const Notifications: FC = () => {
   const [orderByIndex, setOrderByIndex] = useState<number>(initialState.orderByIndex);
   const [orderMenuAnchorEl, setOrderMenuAnchorEl] = useState<Element | null>(initialState.orderMenuAnchorEl);
   const [page, setPage] = useState<number>(initialState.page);
+
+  const { t } = useTranslation(['common']);
+
+  const orderBy = useMemo((): OrderByModel[] => [ 
+    { type: 'created_num', label: t('CREATED_DATE') }, 
+    { type: 'read', label: t('READING_STATE') },
+    { type: 'createdByUid', label: t('SENDER') },
+  ], [t]);
 
   const authid: string = user?.uid || '';
 
@@ -93,7 +96,7 @@ const Notifications: FC = () => {
         setLoading(false);
       });
     }
-  }, [desc, openSnackbar, orderByIndex, authid]);
+  }, [authid, orderBy, orderByIndex, desc, openSnackbar]);
 
   useEffect(() => {
     fetch();
@@ -151,7 +154,7 @@ const Notifications: FC = () => {
     return (
       <div className='reviews'>
         <div className='info-row empty text-center pad-v'>
-          <p>Non ci sono notifiche</p>
+          <p>{t('EMPTY_LIST')}</p>
         </div>
       </div>
     );
@@ -160,7 +163,7 @@ const Notifications: FC = () => {
   return (
     <div className='container' id='notificationsComponent'>
       <Helmet>
-        <title>{app.name} | Notifiche</title>
+        <title>{app.name} | {t('PAGE_NOTIFICATIONS')}</title>
         <link rel='canonical' href={app.url} />
       </Helmet>
         
@@ -170,7 +173,7 @@ const Notifications: FC = () => {
             <div className='row'>
               <div className='col'>
                 <span className='counter'>
-                  {items ? items.length : 0} notific{items?.length === 1 ? 'a' : 'he'} {items && count > items.length ? `di ${count}` : ''}
+                  {t('NOTIFICATIONS_COUNT', { count: items?.length || 0 })} {items && count > items.length ? `${t('OF')} ${count}` : ''}
                 </span>
               </div>
               <div className='col-auto'>
@@ -179,12 +182,12 @@ const Notifications: FC = () => {
                   className='btn sm flat counter'
                   onClick={onOpenOrderMenu}
                   disabled={!items || items.length < 2}>
-                  <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                  <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
                 </button>
                 <button
                   type='button'
                   className={classnames('btn', 'sm', 'flat', 'counter', 'icon', desc ? 'desc' : 'asc')}
-                  title={desc ? 'Ascendente' : 'Discendente'}
+                  title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                   onClick={onToggleDesc}
                   disabled={!items || items.length < 2}>
                   {icon.arrowDown}

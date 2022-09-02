@@ -1,7 +1,8 @@
 import { DocumentData, FirestoreError, Query, WhereFilterOp } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classnames from 'classnames';
-import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
@@ -54,6 +55,8 @@ const Reviews: FC<ReviewsProps> = ({
   const [loading, setLoading] = useState<boolean>(initialState.loading);
   const [page, setPage] = useState<number>(initialState.page);
   const [lastVisible, setLastVisible] = useState<DocumentData | null>(initialState.lastVisible);
+
+  const { t } = useTranslation(['common']);
 
   const ref = useMemo((): Query<DocumentData> => {
     const qop: WhereFilterOp = typeof uid === 'string' ? '==' : 'in';
@@ -121,18 +124,18 @@ const Reviews: FC<ReviewsProps> = ({
 
   const EmptyState = () => (
     <div className='info-row empty text-center'>
-      Nessuna recensione<span className='hide-xs'> trovata</span>{!isAuth && !uid && <span>. <Link to='/login'>Accedi</Link> o <Link to='/signup'>registrati</Link> per aggiungerne una.</span>}
+      {t('NO_REVIEWS')}{!isAuth && !uid && <span>. <Link to='/login'>{t('ACTION_LOGIN')}</Link> {t('OR')} <Link to='/signup'>{t('ACTION_SIGNUP').toLowerCase()}</Link> per aggiungerne una.</span>}
     </div>
   );
 
   return (
-    <>
+    <Fragment>
       <div className={classnames('reviews', { ['card dark'] : container })}>
         {!loading && !items.length ? <EmptyState /> : (
-          <>
+          <Fragment>
             {!bid && (
               <div className='head'>
-                <h2>Ultime recensioni<span className='counter'>({items.length || limit} di {count || limit})</span></h2>
+                <h2>{t('LAST_REVIEWS')}<span className='counter'>({items.length || limit} {t('OF')} {count || limit})</span></h2>
               </div>
             )}
             {items?.map((item: ReviewModel) => (
@@ -144,7 +147,7 @@ const Reviews: FC<ReviewsProps> = ({
               />
             ))}
             {loading && skeleton && skeletons}
-          </>
+          </Fragment>
         )}
       </div>
       {pagination && count > 0 && items?.length < count && (
@@ -157,7 +160,7 @@ const Reviews: FC<ReviewsProps> = ({
           page={page}
         />
       )}
-    </>
+    </Fragment>
   );
 };
  

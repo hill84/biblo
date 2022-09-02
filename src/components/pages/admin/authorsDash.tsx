@@ -7,8 +7,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
+import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
@@ -21,14 +22,6 @@ import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
-
-const orderBy: OrderByModel[] = [  
-  { type: 'lastEdit_num', label: 'Data ultima modifica' }, 
-  { type: 'lastEditByUid', label: 'Modificato da' },
-  { type: 'displayName', label: 'Nominativo' }, 
-  { type: 'sex', label: 'Sesso' },
-  { type: 'photoURL', label: 'Foto' }
-];
 
 let itemsFetch: (() => void) | undefined;
 
@@ -87,6 +80,16 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   const [loading, setLoading] = useState<StateModel['loading']>(initialState.loading);
 
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const { t } = useTranslation(['common', 'form']);
+
+  const orderBy = useMemo((): OrderByModel[] => [  
+    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') }, 
+    { type: 'lastEditByUid', label: t('EDITED_BY') },
+    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') }, 
+    { type: 'sex', label: t('form:LABEL_SEX') },
+    { type: 'photoURL', label: t('IMAGE') }
+  ], [t]);
 
   const limit: number = limitBy[limitByIndex];
   const order: OrderByModel = orderBy[orderByIndex];
@@ -180,12 +183,12 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
     if (state) {
       // console.log(`Locking ${id}`);
       authorRef(id).update({ edit: false }).then(() => {
-        openSnackbar('Elemento bloccato', 'success');
+        openSnackbar(t('form:SUCCESS_LOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else {
       // console.log(`Unlocking ${id}`);
       authorRef(id).update({ edit: true }).then(() => {
-        openSnackbar('Elemento sbloccato', 'success');
+        openSnackbar(t('form:SUCCESS_UNLOCKED_ITEM'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     }
   };
@@ -203,7 +206,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   const onDelete = (): void => {
     setIsOpenDeleteDialog(false);
     authorRef(selectedId).delete().then((): void => {
-      openSnackbar('Elemento cancellato', 'success');
+      openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
 
@@ -234,7 +237,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   const skeletons = [...Array(limit)].map((_, i: number) => <li key={i} className='skltn dash' />);
 
   const itemsList = loading ? skeletons : !items ? (
-    <li className='empty text-center'>Nessun elemento</li>
+    <li className='empty text-center'>{t('EMPTY_LIST')}</li>
   ) : (
     items.map(({ bio, displayName, edit, lastEdit_num, lastEditBy, lastEditByUid, photoURL, sex }: AuthorModel) => (
       <li key={displayName} className={classnames('avatar-row', { locked: !edit })}>
@@ -249,17 +252,41 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
             </Avatar>
           </div>
           <div className='col-6 col-sm-4 col-lg-2' title={displayName}><CopyToClipboard text={displayName}/></div>
-          <div className='col-1'><button type='button' className='btn xs flat' title={sex === 'm' ? 'uomo' : 'donna'}>{sex}</button></div>
+          <div className='col-1'><button type='button' className='btn xs flat' title={t(sex === 'm' ? 'SEX_M' : 'SEF_F')}>{sex}</button></div>
           <div className='col hide-lg' title={bio}>{bio}</div>
           <Link to={`/dashboard/${lastEditByUid}`} title={lastEditByUid} className='col col-sm-2 col-lg-1'>{lastEditBy}</Link>
           <div className='col col-sm-2 col-lg-1 text-right'>
             <div className='timestamp'>{timeSince(lastEdit_num)}</div>
           </div>
           <div className='absolute-row right btns xs'>
-            <button type='button' className='btn icon green' onClick={() => onView({ id: normURL(displayName) })}>{icon.eye}</button>
-            <button type='button' className='btn icon primary' onClick={() => onEdit({ id: normalizeString(displayName) })}>{icon.pencil}</button>
-            <button type='button' className={classnames('btn', 'icon', edit ? 'secondary' : 'flat')} onClick={() => onLock({ id: normalizeString(displayName), state: edit })} title={edit ? 'Blocca' : 'Sblocca'}>{icon.lock}</button>
-            <button type='button' className='btn icon red' onClick={() => onDeleteRequest({ id: normalizeString(displayName) })}>{icon.close}</button>
+            <button
+              type='button'
+              className='btn icon green'
+              onClick={() => onView({ id: normURL(displayName) })}
+              title={t('ACTION_PREVIEW')}>
+              {icon.eye}
+            </button>
+            <button
+              type='button'
+              className='btn icon primary'
+              onClick={() => onEdit({ id: normalizeString(displayName) })}
+              title={t('ACTION_EDIT')}>
+              {icon.pencil}
+            </button>
+            <button
+              type='button'
+              className={classnames('btn', 'icon', edit ? 'secondary' : 'flat')}
+              onClick={() => onLock({ id: normalizeString(displayName), state: edit })}
+              title={t(edit ? 'ACTION_LOCK' : 'ACTION_UNLOCK')}>
+              {icon.lock}
+            </button>
+            <button
+              type='button'
+              className='btn icon red'
+              onClick={() => onDeleteRequest({ id: normalizeString(displayName) })}
+              title={t('ACTION_DELETE')}>
+              {icon.close}
+            </button>
           </div>
         </div>
       </li>
@@ -275,14 +302,14 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
-            <span className='counter hide-md'>{`${items.length || 0} di ${count || 0}`}</span>
+            <span className='counter hide-md'>{`${items.length || 0} ${t('OF')} ${count || 0}`}</span>
             <button
               type='button'
               className='btn sm flat counter last'
               disabled={!items.length}
               onClick={onOpenLimitMenu}
             >
-              {limitBy[limitByIndex]} <span className='hide-xs'>per pagina</span>
+              {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
               className='dropdown-menu'
@@ -300,12 +327,12 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
                 className='btn sm flat counter'
                 onClick={onOpenOrderMenu}
               >
-                <span className='hide-xs'>Ordina per</span> {orderBy[orderByIndex].label}
+                <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <button
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
-                title={desc ? 'Ascendente' : 'Discendente'}
+                title={t(desc ? 'ASCENDING' : 'DESCENDING')}
                 onClick={onToggleDesc}
               >
                 {icon.arrowDown}
@@ -326,11 +353,11 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
         <li className='avatar-row labels'>
           <div className='row'>
             <div className='col-auto hide-xs'><div className='avatar hidden' title='avatar' /></div>
-            <div className='col-6 col-sm-4 col-lg-2'>Nominativo</div>
-            <div className='col-1'>Sesso</div>
-            <div className='col hide-lg'>Bio</div>
-            <div className='col col-sm-2 col-lg-1'>Modificato da</div>
-            <div className='col col-sm-2 col-lg-1 text-right'>Modificato</div>
+            <div className='col-6 col-sm-4 col-lg-2'>{t('form:LABEL_DISPLAY_NAME')}</div>
+            <div className='col-1'>{t('form:LABEL_SEX')}</div>
+            <div className='col hide-lg'>{t('form:LABEL_BIOGRAPHY')}</div>
+            <div className='col col-sm-2 col-lg-1'>{t('EDITED_BY')}</div>
+            <div className='col col-sm-2 col-lg-1 text-right'>{t('EDITED')}</div>
           </div>
         </li>
         {itemsList}
@@ -358,8 +385,8 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Procedi</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>
           </DialogActions>
         </Dialog>
       )}

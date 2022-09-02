@@ -1,8 +1,9 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/styles';
+import { createBrowserHistory } from 'history';
 import React, { FC, lazy, Suspense, useContext } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Redirect, Route, RouteProps, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteProps, Router, Switch } from 'react-router-dom';
 import ErrorBoundary from './components/errorBoundary';
 import Layout from './components/layout';
 import AddBook from './components/pages/addBook';
@@ -49,71 +50,77 @@ const DashboardRender: FC<DashboardProps> = (props: DashboardProps) => (
   </DashboardProvider>
 );
 
+const suspenseFallback = (
+  <div aria-hidden='true' className='loader'>
+    <CircularProgress />
+  </div>
+);
+
+const history = createBrowserHistory();
+
 const App: FC = () => (
-  <ThemeProvider theme={defaultTheme}>
-    <HelmetProvider>
-      <Helmet>
-        <title>{app.name}</title>
-        <meta property='og:title' content={app.name} />
-        <meta property='og:url' content={app.url} />
-        <meta property='og:image' content={`${app.url}/img/og-image.jpg`} />
-        <meta property='og:description' content={app.desc} />
-        <meta name='description' content={app.desc} />
-      </Helmet>
-      <SnackbarProvider>
-        <UserProvider>
-          <Layout>
-            <ErrorBoundary>
-              <Suspense fallback={(
-                <div aria-hidden='true' className='loader'>
-                  <CircularProgress />
-                </div>
-              )}>
-                <Switch>
-                  <Route path='/' exact component={Home} />
-                  <Route path='/about' component={AboutPage} />
-                  <Route path='/author/:aid' component={AuthorPage} />
-                  <Route path='/book/:bid' component={BookContainer} />
-                  <Route path='/challenges' component={NewFeature} />          
-                  <Route path='/collection/:cid' component={Collection} />
-                  <Route path='/collections' component={NewFeature} />
-                  <Route path='/cookie' component={CookiePage} />
-                  <Route path='/dashboard/:uid' exact render={DashboardRender} />
-                  <Route path='/dashboard/:uid/:tab' render={DashboardRender} />
-                  <Route path='/donations' component={DonationsPage} />
-                  <Route path='/genre/:gid' component={Genre} />
-                  <Route path='/genres' component={GenresPage} />
-                  <Route path='/group/:gid' render={props => <GroupProvider><Group {...props} /></GroupProvider>} />
-                  <Route path='/groups' component={() => <GroupProvider><Groups /></GroupProvider>} />
-                  <Route path='/help' component={HelpPage} />
-                  <Route path='/icons' component={IconsPage} />
-                  <Route path='/login' component={Login} />
-                  <Route path='/password-reset' component={PasswordResetForm} />
-                  <Route path='/privacy' component={PrivacyPage} />
-                  <Route path='/signup' component={Signup} />
-                  <Route path='/terms' component={TermsPage} />
-                  <Route path='/verify-email' component={VerifyEmailPage} />
-                  <RouteWithProps path='/authors' component={AuthorsPage} /> {/* CLASS */}
-                  <PrivateRoute path='/admin' exact component={Admin} />
-                  <PrivateRoute path='/admin/:tab' component={Admin} />
-                  <PrivateRoute path='/books/add' component={AddBook} />
-                  <PrivateRoute path='/challenge' component={Challenge} />
-                  <PrivateRoute path='/new-book' component={NewBook} />
-                  <PrivateRoute path='/notifications' component={Notifications} />
-                  <PrivateRoute path='/profile' component={Profile}/>
-                  <Redirect from='/aiuto' to='/help' />
-                  <Redirect from='/chi-siamo' to='/about' />
-                  <Redirect from='/home' to='/' />
-                  <Redirect from='/webmaster/*' to='/' />
-                  <Route component={NoMatchPage} />
-                </Switch>
-              </Suspense>
-            </ErrorBoundary>
-          </Layout>
-        </UserProvider>
-      </SnackbarProvider>
-    </HelmetProvider>
-  </ThemeProvider>
+  <Suspense fallback={suspenseFallback}>
+    <Router history={history}>
+      <ThemeProvider theme={defaultTheme}>
+        <HelmetProvider>
+          <Helmet>
+            <title>{app.name}</title>
+            <meta property='og:title' content={app.name} />
+            <meta property='og:url' content={app.url} />
+            <meta property='og:image' content={`${app.url}/img/og-image.jpg`} />
+            <meta property='og:description' content={app.desc} />
+            <meta name='description' content={app.desc} />
+          </Helmet>
+          <SnackbarProvider>
+            <UserProvider>
+              <Layout>
+                <ErrorBoundary>
+                  <Switch>
+                    <Route path='/' exact component={Home} />
+                    <Route path='/about' component={AboutPage} />
+                    <Route path='/author/:aid' component={AuthorPage} />
+                    <Route path='/book/:bid' component={BookContainer} />
+                    <Route path='/challenges' component={NewFeature} />          
+                    <Route path='/collection/:cid' component={Collection} />
+                    <Route path='/collections' component={NewFeature} />
+                    <Route path='/cookie' component={CookiePage} />
+                    <Route path='/dashboard/:uid' exact render={DashboardRender} />
+                    <Route path='/dashboard/:uid/:tab' render={DashboardRender} />
+                    <Route path='/donations' component={DonationsPage} />
+                    <Route path='/genre/:gid' component={Genre} />
+                    <Route path='/genres' component={GenresPage} />
+                    <Route path='/group/:gid' render={props => <GroupProvider><Group {...props} /></GroupProvider>} />
+                    <Route path='/groups' component={() => <GroupProvider><Groups /></GroupProvider>} />
+                    <Route path='/help' component={HelpPage} />
+                    <Route path='/icons' component={IconsPage} />
+                    <Route path='/login' component={Login} />
+                    <Route path='/password-reset' component={PasswordResetForm} />
+                    <Route path='/privacy' component={PrivacyPage} />
+                    <Route path='/signup' component={Signup} />
+                    <Route path='/terms' component={TermsPage} />
+                    <Route path='/verify-email' component={VerifyEmailPage} />
+                    <RouteWithProps path='/authors' component={AuthorsPage} /> {/* CLASS */}
+                    <PrivateRoute path='/admin' exact component={Admin} />
+                    <PrivateRoute path='/admin/:tab' component={Admin} />
+                    <PrivateRoute path='/books/add' component={AddBook} />
+                    <PrivateRoute path='/challenge' component={Challenge} />
+                    <PrivateRoute path='/new-book' component={NewBook} />
+                    <PrivateRoute path='/notifications' component={Notifications} />
+                    <PrivateRoute path='/profile' component={Profile}/>
+                    <Redirect from='/aiuto' to='/help' />
+                    <Redirect from='/chi-siamo' to='/about' />
+                    <Redirect from='/home' to='/' />
+                    <Redirect from='/webmaster/*' to='/' />
+                    <Route component={NoMatchPage} />
+                  </Switch>
+                </ErrorBoundary>
+              </Layout>
+            </UserProvider>
+          </SnackbarProvider>
+        </HelmetProvider>
+      </ThemeProvider>
+    </Router>
+  </Suspense>
 );
  
 export default App;

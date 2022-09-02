@@ -5,31 +5,33 @@ import { abbrNum, app, arrToObj, calcAge, calcVulgarity, capitalize, capitalizeI
 
 describe('Given an array of strings', () => {
   it('should return an expected joined string', () => {
-    expect(join([])).toStrictEqual('');
-    expect(join(['uno'])).toStrictEqual('uno');
-    expect(join(['uno', 'due'])).toStrictEqual('uno e due');
-    expect(join(['uno', 'due', 'tre'])).toStrictEqual('uno, due e tre');
-    expect(join(['uno', 'due', 'tre', 'QUATTRO'])).toStrictEqual('uno, due, tre e QUATTRO');
+    expect(join([], 'e')).toStrictEqual('');
+    expect(join(['uno'], 'e')).toStrictEqual('uno');
+    expect(join(['uno', 'due'], 'e')).toStrictEqual('uno e due');
+    expect(join(['uno', 'due', 'tre'], 'e')).toStrictEqual('uno, due e tre');
+    expect(join(['uno', 'due', 'tre', 'QUATTRO'], 'e')).toStrictEqual('uno, due, tre e QUATTRO');
   });
 });
 
 describe('Given an array of objects', () => {
   it('should return an expected joined string', () => {
-    expect(joinObj({})).toStrictEqual('');
-    expect(joinObj({ uno: true })).toStrictEqual('uno');
-    expect(joinObj({ uno: true, due: null })).toStrictEqual('uno e due');
-    expect(joinObj({ uno: true, due: null, tre: 'tre' })).toStrictEqual('uno, due e tre');
-    expect(joinObj({ uno: true, due: null, tre: 'tre', QUATTRO: 4 })).toStrictEqual('uno, due, tre e QUATTRO');
+    expect(joinObj({}, 'e')).toStrictEqual('');
+    expect(joinObj({ uno: true }, 'e')).toStrictEqual('uno');
+    expect(joinObj({ uno: true, due: null }, 'e')).toStrictEqual('uno e due');
+    expect(joinObj({ one: true, two: null }, 'and')).toStrictEqual('one and two');
+    expect(joinObj({ uno: true, due: null, tre: 'tre' }, 'e')).toStrictEqual('uno, due e tre');
+    expect(joinObj({ uno: true, due: null, tre: 'tre', QUATTRO: 4 }, 'e')).toStrictEqual('uno, due, tre e QUATTRO');
   });
 });
 
 describe('Given an array of strings', () => {
   it('should return an expected joined lowercase string', () => {
-    expect(joinToLowerCase([])).toStrictEqual('');
-    expect(joinToLowerCase(['UNO'])).toStrictEqual('uno');
-    expect(joinToLowerCase(['UNO', 'DUE'])).toStrictEqual('uno e due');
-    expect(joinToLowerCase(['UNO', 'DUE', 'TRE'])).toStrictEqual('uno, due e tre');
-    expect(joinToLowerCase(['UNO', 'DUE', 'TRE', 'QUATTRO'])).toStrictEqual('uno, due, tre e quattro');
+    expect(joinToLowerCase([], 'e')).toStrictEqual('');
+    expect(joinToLowerCase(['UNO'], 'e')).toStrictEqual('uno');
+    expect(joinToLowerCase(['UNO', 'DUE'], 'e')).toStrictEqual('uno e due');
+    expect(joinToLowerCase(['ONE', 'TWO'], 'and')).toStrictEqual('one and two');
+    expect(joinToLowerCase(['UNO', 'DUE', 'TRE'], 'e')).toStrictEqual('uno, due e tre');
+    expect(joinToLowerCase(['UNO', 'DUE', 'TRE', 'QUATTRO'], 'e')).toStrictEqual('uno, due, tre e quattro');
   });
 });
 
@@ -113,7 +115,7 @@ describe('Given a user and a role', () => {
       uid: 'UID',
       displayName: 'DISPLAY_NAME',
       email: 'EMAIL',
-      birth_date: 0,
+      birth_date: '',
       continent: 'CONTINENT',
       country: 'COUNTRY',
       city: 'CITY',
@@ -236,10 +238,10 @@ describe('Given a string', () => {
 
 describe('Given a File', () => {
   it('should return an error string if is not a valid image', () => {
-    expect(validateImg(undefined)).toStrictEqual('File non trovato');
-    expect(validateImg({ type: '_UNEXPECTED_' } as File)).toStrictEqual('Tipo file non valido: _UNEXPECTED_');
+    expect(validateImg(undefined)).toStrictEqual('No file');
+    expect(validateImg({ type: '_UNEXPECTED_' } as File)).toStrictEqual('Tipo non valido: _UNEXPECTED_');
     expect(validateImg({ type: 'image.*' } as File)).toStrictEqual('');
-    expect(validateImg({ type: 'image.*', size: 1048577 } as File)).toStrictEqual('File troppo pesante. Max 1MB.');
+    expect(validateImg({ type: 'image.*', size: 1048577 } as File)).toStrictEqual('Max 1MB');
     expect(validateImg({ type: 'image.*', size: 1048577 } as File, 1048578)).toStrictEqual('');
   });
 });
@@ -344,12 +346,13 @@ describe('Given a date number', () => {
   });
 });
 
-describe('Given a date number', () => {
+describe('Given a date string', () => {
   it('should return an expected age number', () => {
     const now: number = new Date(2022, 7, 26, 20).getTime();
 
-    expect(calcAge(new Date(2017, 1).getTime(), now)).toStrictEqual(5);
-    expect(calcAge(new Date(1984, 1).getTime(), now)).toStrictEqual(38);
+    expect(calcAge('_UNEXPECTED_', now)).toStrictEqual(0);
+    expect(calcAge(String(new Date(2017, 1)), now)).toStrictEqual(5);
+    expect(calcAge(String(new Date(1984, 1)), now)).toStrictEqual(38);
   });
 });
 

@@ -1,7 +1,7 @@
 import { FirestoreError } from '@firebase/firestore-types';
 import { Duration, formatDistanceStrict, formatDuration, intervalToDuration } from 'date-fns';
-import locale_it_IT from 'date-fns/locale/it';
 import 'regenerator-runtime/runtime';
+import i18n, { getLocale } from '../i18n';
 import logo from '../images/logo.png';
 import { AppModel, BookModel, BooksPerRowType, FormatType, RolesType, ScreenSizeType, UserModel } from '../types';
 import { badWords, firestoreErrorMessages } from './lists';
@@ -23,21 +23,16 @@ export const app: AppModel = {
   desc: 'Biblo è il social network dedicato a chi ama i libri e la lettura. Registrati, crea la tua libreria, scopri nuovi libri, conosci altri lettori come te.'
 };
 
-const fallback = {
-  locale: locale_it_IT,
-  language: 'it',
-};
-
 // NAVIGATOR
-const lang: string = typeof window !== 'undefined' ? (navigator.language).split('-')[0] : fallback.language;
+const lang: string = typeof window !== 'undefined' ? (navigator.language).split('-')[0] : i18n.language;
 
 // JUNCTION
-export const join = (arr: string[]): string => arr?.length > 1 ? [arr?.slice(0, -1).join(', '), arr?.slice(-1)[0]].join(arr?.length < 2 ? '' : ' e ') : String(arr || '');
-export const joinObj = (obj: Record<string, unknown>): string => {
+export const join = (arr: string[], separator: string): string => arr?.length > 1 ? [arr?.slice(0, -1).join(', '), arr?.slice(-1)[0]].join(arr?.length < 2 ? '' : ` ${separator} `) : String(arr || '');
+export const joinObj = (obj: Record<string, unknown>, separator: string): string => {
   const arr: string[] = Object.keys({ ...obj });
-  return arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ' e ') : arr[0] || '';
+  return arr.length > 1 ? [arr.slice(0, -1).join(', '), arr.slice(-1)[0]].join(arr.length < 2 ? '' : ` ${separator} `) : arr[0] || '';
 };
-export const joinToLowerCase = (arr: string[]): string => join(arr).toLowerCase();
+export const joinToLowerCase = (arr: string[], separator: string): string => join(arr, separator).toLowerCase();
 
 // OPTIONS
 export const dateOptions: Record<string, string> = { day: '2-digit', month: '2-digit', year: '2-digit' };
@@ -70,6 +65,7 @@ export const arrToObj = <G>(arr: Array<unknown>, fn: Function): Record<string, G
 };
 
 export const truncateString = (str = '', limit?: number): string => typeof limit === 'number' && str?.length > limit ? `${str?.substring(0, limit)}…` : str;
+export const translateURL = (str = ''): string => str ? encodeURI(str.replace(/-/g, '_').toUpperCase()) : '';
 export const normURL = (str = ''): string => str ? encodeURI(str.replace(/ /g, '_')) : '';
 export const denormURL = (str = ''): string => str ? decodeURI(str.replace(/_/g, ' ')) : '';
 // export const denormUserRef = (str: string): string => str.replace(/@+/g, '').replace(/_+/g, ' ');
@@ -86,7 +82,7 @@ export const asyncForEach = async <G, >(array: Array<G>, callback: Function): Pr
 
 export const setFormatClass = (str = ''): FormatType => {
   switch (str) {
-    case 'Audiolibro': return 'audio';
+    case 'Audio': return 'audio';
     case 'Rivista': return 'magazine';
     case 'Ebook': return 'ebook';
     default: return 'book';
@@ -132,7 +128,7 @@ export const noCookie = (str = ''): string | undefined => {
   const { protocol, pathname } = new URL(str);
   let { hostname } = new URL(str);
 
-  if (['youtu.be', 'youtube.com'].some(yb => yb === hostname)) {
+  if (['youtu.be', 'youtube.com'].some((yb: string): boolean => yb === hostname)) {
     hostname = 'www.youtube-nocookie.com/embed';
   }
 
@@ -147,13 +143,13 @@ export const validateImg = (file?: File, maxMB = 1): string => {
     const maxBytes: number = maxMB * 1048576;
     if (!file.type.match('image.*')) {
       // console.warn(`File type not valid: ${file.type}`);
-      error = `Tipo file non valido: ${file.type}`;
+      error = `Tipo non valido: ${file.type}`;
     } else if (file.size > maxBytes) {
       // console.warn('File size too big');
-      error = `File troppo pesante. Max ${maxMB}MB.`;
+      error = `Max ${maxMB}MB`;
     }
   } else {
-    error = 'File non trovato';
+    error = 'No file';
   }
   return error;
 };
@@ -215,24 +211,32 @@ export const msToDuration = (ms: number): Duration => {
   return intervalToDuration({ start, end });
 };
 
-export const calcReadingTime = (pages: number, locale = locale_it_IT): string => {
+export const calcReadingTime = (pages: number): string => {
+  // TODO: get locale
   const ms: number = pages * 1.25 * 60 * 1000;
   const duration: Duration = msToDuration(ms);
+  const locale: Locale | undefined = getLocale();
   const options = { format: ['hours', 'minutes'], locale };
   return formatDuration(duration, options);
 };
 
-export const calcDurationTime = (ms: number, locale = locale_it_IT): string => {
+export const calcDurationTime = (ms: number): string => {
   const duration: Duration = msToDuration(ms);
+  const locale: Locale | undefined = getLocale();
   const options = { format: ['hours', 'minutes'], locale };
   return formatDuration(duration, options);
 };
 
-export const calcAge = (birthDate: number, now = Date.now()): number => Math.abs(new Date(now - birthDate).getUTCFullYear() - 1970);
+export const calcAge = (birth_date: string, now = Date.now()): number => {
+  const num: number = new Date(birth_date).getTime();
+  if (Number.isNaN(num)) return 0;
+  return Math.abs(new Date(now - num).getUTCFullYear() - 1970);
+};
 
 export const timeSince = (num?: number, now = Date.now()): string => {
   if (typeof num !== 'number' || Number.isNaN(num)) return '';
-  return formatDistanceStrict(num, now, { addSuffix: true, locale: fallback.locale });
+  const locale: Locale | undefined = getLocale();
+  return formatDistanceStrict(num, now, { addSuffix: true, locale });
 };
 
 export const round = (num: number): number => Math.round((num + Number.EPSILON) * 10) / 10;

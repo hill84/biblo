@@ -10,6 +10,7 @@ import Grow from '@material-ui/core/Grow';
 import { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
 import React, { FC, forwardRef, Fragment, ReactElement, Ref, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommentersRef, reviewerRef, userBookRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -61,6 +62,8 @@ const Review: FC<ReviewProps> = ({
   const [isEditingComment, setIsEditingComment] = useState<boolean>(false);
   const [like, setLike] = useState<boolean>(likes_num && user?.uid && review.likes.indexOf(user?.uid) > -1 ? true : false || false);
 
+  const { t } = useTranslation(['common']);
+
   useEffect(() => {
     if (bid && selectedRid) {
       setLoading(true);
@@ -98,7 +101,7 @@ const Review: FC<ReviewProps> = ({
         // console.log(`User ${user.uid} add like on review ${bid}/${review.createdByUid}`);
 
         const likerURL = `/dashboard/${user.uid}`;
-        const likerDisplayName: string = truncateString(user.displayName.split(' ')[0], 12);
+        const likerDisplayName: string = truncateString(user.displayName.split(' ')[0], 25);
         const bookTitle: string = truncateString(review.bookTitle, 35);
         const bookURL = `/book/${review.bid}/${normURL(review.bookTitle)}`;
         const noteMsg = `<a href='${likerURL}'>${likerDisplayName}</a> ha messo mi piace alla tua recensione del libro <a href='${bookURL}'>${bookTitle}</a>`;
@@ -175,7 +178,7 @@ const Review: FC<ReviewProps> = ({
         // console.log(`Book review deleted`);
         userBookRef(review.createdByUid, bid).update({ review: {} }).then(() => {
           // console.log(`User review deleted`);
-          openSnackbar('Recensione cancellata', 'success');
+          openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
         }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('No bid');
@@ -208,11 +211,17 @@ const Review: FC<ReviewProps> = ({
                   covers: review.covers,
                   publisher: 'publisher'
                 }} />
-                {!uid && <Avatar className='avatar absolute' src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>}
+                {!uid && (
+                  <Avatar className='avatar absolute' src={review.photoURL} alt={review.displayName}>
+                    {!review.photoURL && getInitials(review.displayName)}
+                  </Avatar>
+                )}
               </Link>
             ) : (
               <Link to={`/dashboard/${review.createdByUid}`}>
-                <Avatar className='avatar' src={review.photoURL} alt={review.displayName}>{!review.photoURL && getInitials(review.displayName)}</Avatar>
+                <Avatar className='avatar' src={review.photoURL} alt={review.displayName}>
+                  {!review.photoURL && getInitials(review.displayName)}
+                </Avatar>
               </Link>
             )}
           </div>
@@ -240,7 +249,7 @@ const Review: FC<ReviewProps> = ({
               <div className='foot row'>
                 <div className='col-auto likes'>
                   <div className='counter'>
-                    <Tooltip title={like ? 'Annulla mi piace' : 'Mi piace'}>
+                    <Tooltip title={t(like ? 'ACTION_DISLIKE' : 'ACTION_LIKE')}>
                       <span>
                         <button 
                           type='button'
@@ -270,14 +279,14 @@ const Review: FC<ReviewProps> = ({
                   {isEditor && (!isOwner || review.comments_num > 0) && (
                     <div className='counter'>
                       <button type='button' className='btn sm flat' onClick={onEditComment} disabled={isEditingComment}>
-                        <span className='show-sm'>{icon.pencil}</span> <span className='hide-sm'>Rispondi</span>
+                        <span className='show-sm'>{icon.pencil}</span> <span className='hide-sm'>{t('ACTION_REPLY')}</span>
                       </button>
                     </div>
                   )}
                   {review.comments_num > 0 && (
                     <div className='counter'>
                       <button type='button' className='btn sm flat' onClick={onToggleCommentsPanel} disabled={isEditingComment}>
-                        {selected ? icon.menuUp : icon.menuDown} {`${review.comments_num} rispost${review.comments_num > 1 ? 'e' : 'a'}`}
+                        {selected ? icon.menuUp : icon.menuDown} {t('REPLIES_COUNT', { count: review.comments_num })}
                       </button>
                     </div>
                   )}
@@ -291,14 +300,14 @@ const Review: FC<ReviewProps> = ({
                   {isEditor && !isOwner && !flaggedByUser && (
                     <div className='counter show-on-hover'>
                       <button type='button' className='btn sm flat' onClick={onFlagRequest} disabled={flaggedByUser}>
-                        <span className='show-sm'>{icon.flag}</span> <span className='hide-sm'>Segnala</span>
+                        <span className='show-sm'>{icon.flag}</span> <span className='hide-sm'>{t('ACTION_FLAG')}</span>
                       </button>
                     </div>
                   )}
                   {isEditor && (isOwner || isAdmin) && (
                     <div className='counter show-on-hover'>
                       <button type='button' className='btn sm flat' onClick={onDeleteRequest}>
-                        <span className='show-sm'>{icon.delete}</span> <span className='hide-sm'>Elimina</span>
+                        <span className='show-sm'>{icon.delete}</span> <span className='hide-sm'>{t('ACTION_DELETE')}</span>
                       </button>
                     </div>
                   )}
@@ -306,8 +315,8 @@ const Review: FC<ReviewProps> = ({
                 
                 <div className='col counter text-right date'>
                   {review.lastEdit_num && (
-                    <span className='hide-xs' title={`modificata ${timeSince(review.lastEdit_num)}`}>
-                      {review.lastEdit_num && (review.created_num !== review.lastEdit_num) && '(modificata)'}
+                    <span className='hide-xs' title={`${t('EDITED_female')} ${timeSince(review.lastEdit_num)}`}>
+                      {review.lastEdit_num && (review.created_num !== review.lastEdit_num) && `(${t('EDITED_female').toLowerCase()})`}
                     </span>
                   )} {timeSince(review.created_num)}
                 </div>
@@ -362,8 +371,8 @@ const Review: FC<ReviewProps> = ({
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>Annulla</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>Elimina</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_DELETE')}</button>
           </DialogActions>
         </Dialog>
       )}

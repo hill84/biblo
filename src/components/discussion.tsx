@@ -7,6 +7,7 @@ import { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
 import { isToday } from 'date-fns';
 import React, { FC, forwardRef, Fragment, MouseEvent, ReactElement, Ref, useCallback, useContext, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionRef } from '../config/firebase';
 import icon from '../config/icons';
@@ -46,6 +47,8 @@ const Discussion: FC<DiscussionProps> = ({
   const [flagLoading, setFlagLoading] = useState<boolean>(false);
   const [actionsAnchorEl, setActionsAnchorEl] = useState<Element | null>(null);
   const [isOpenFlagDialog, setIsOpenFlagDialog] = useState<boolean>(false);
+
+  const { t } = useTranslation(['common']);
 
   const onFlagRequest = (): void => setIsOpenFlagDialog(true);
 
@@ -109,13 +112,13 @@ const Discussion: FC<DiscussionProps> = ({
               <Link to={`/dashboard/${discussion.createdByUid}`} className='col author'>
                 <h3>
                   {discussion.displayName} {moderatorsList?.some(uid => uid === discussion.createdByUid) && (
-                    <span className='text-sm text-regular lighter-text hide-sm'>({discussion.createdByUid === groupOwner ? 'creatore' : 'moderatore'})</span>
+                    <span className='text-sm text-regular lighter-text hide-sm'>({t(discussion.createdByUid === groupOwner ? 'CREATOR' : 'MODERATOR').toLowerCase()})</span>
                   )}
                 </h3>
               </Link>
 
               <div className='col-auto text-right counter last date hide-xs'>
-                {isToday(discussion.created_num) ? timeSince(discussion.created_num) : new Date(discussion.created_num).toLocaleDateString()}
+                {isToday(discussion.created_num) ? timeSince(discussion.created_num) : t('DATE', { number: discussion.created_num })}
               </div>
 
               {isEditor && (
@@ -133,9 +136,9 @@ const Discussion: FC<DiscussionProps> = ({
                     onClick={onCloseActionsMenu}
                     open={Boolean(actionsAnchorEl)}
                     onClose={onCloseActionsMenu}>
-                    {!isOwner && <MenuItem onClick={onFlagRequest} disabled={flaggedByUser}>Segnala</MenuItem>}
-                    {!isOwner && isAdmin && flaggedByUser && <MenuItem onClick={onRemoveFlag}>Rimuovi segnalazione</MenuItem>}
-                    {(isOwner || isAdmin || isGroupModerator || isGroupOwner) && <MenuItem onClick={onDelete}>Elimina</MenuItem>}
+                    {!isOwner && <MenuItem onClick={onFlagRequest} disabled={flaggedByUser}>{t('ACTION_FLAG')}</MenuItem>}
+                    {!isOwner && isAdmin && flaggedByUser && <MenuItem onClick={onRemoveFlag}>{t('ACTION_REMOVE_FLAG')}</MenuItem>}
+                    {(isOwner || isAdmin || isGroupModerator || isGroupOwner) && <MenuItem onClick={onDelete}>{t('ACTION_DELETE')}</MenuItem>}
                   </Menu>
                 </div>
               )}

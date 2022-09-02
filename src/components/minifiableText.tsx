@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import DOMPurify from 'dompurify';
 import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 // import { Link } from 'react-router-dom';
 import { enrichText } from '../config/shared';
 import '../css/minifiableText.css';
@@ -21,10 +22,12 @@ const MinifiableText: FC<MinifiableTextProps> = ({
   maxChars = 700,
   rich = false,
   source,
-  text,
+  text = '',
   toggle = false,
 }: MinifiableTextProps) => {
-  const [minified, setMinified] = useState<boolean>(defaultMinified === false ? defaultMinified : (text?.length > (maxChars || 700)));
+  const [minified, setMinified] = useState<boolean>(defaultMinified === false ? defaultMinified : (text.length > (maxChars || 700)));
+
+  const { t } = useTranslation(['common']);
 
   const minifyText = useCallback((): void => setMinified(text.length > maxChars), [maxChars, text]);
 
@@ -33,7 +36,7 @@ const MinifiableText: FC<MinifiableTextProps> = ({
   }, [minifyText]);
 
   useEffect(() => {
-    setMinified(defaultMinified === false ? defaultMinified : (text?.length > (maxChars || 700)));
+    setMinified(defaultMinified === false ? defaultMinified : (text.length > (maxChars || 700)));
   }, [maxChars, text, defaultMinified]);
 
   const sanitizedHtml = useMemo((): string => DOMPurify.sanitize(rich ? enrichText(text) : text), [rich, text]);
@@ -57,7 +60,14 @@ const MinifiableText: FC<MinifiableTextProps> = ({
           <a href={source} target='_blank' rel='noopener noreferrer'>{source.includes('wikipedia') ? 'Wikipedia' : 'Fonte'}</a>
         </span>
       )}
-      {((minified && !forced) || toggle) && <><br/><button type='button' className='link' onClick={onMinify}>{toggle && !minified ? 'Nascondi' : 'Mostra tutto'}</button></>}
+      {((minified && !forced) || toggle) && (
+        <Fragment>
+          <br/>
+          <button type='button' className='link' onClick={onMinify}>
+            {t(toggle && !minified ? 'ACTION_HIDE' : 'ACTION_SHOW_ALL')}
+          </button>
+        </Fragment>
+      )}
     </Fragment>
   );
 };
