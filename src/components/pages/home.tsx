@@ -70,7 +70,7 @@ const Home: FC = () => {
               <Link className='counter' to='/help'>{t('PAGE_HELP')}</Link>
               <Link className='counter last' to='/donations'>{t('PAGE_DONATIONS')}</Link>
             </Fragment>
-          ) : <p className='counter last'>{t('ARE_YOU_ALREADY_REGISTERED?')} <Link to='/login'>{t('PAGE_LOGIN')}</Link></p>}
+          ) : <p className='counter last'>{t('ARE_YOU_ALREADY_REGISTERED')} <Link to='/login'>{t('PAGE_LOGIN')}</Link></p>}
         </div>
       </div>
     </div>

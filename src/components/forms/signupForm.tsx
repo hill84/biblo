@@ -11,7 +11,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import React, { ChangeEvent, CSSProperties, FC, FormEvent, Fragment, MouseEvent, useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -228,7 +228,7 @@ const SignupForm: FC = () => {
         // required
         label={(
           <span className='text-sm'>
-            Accetto i <Link to='/terms'>{t('common:TERMS').toLowerCase()}</Link> e confermo la visione della <Link to='/privacy'>privacy</Link> di {app.name}
+            {t('common:SIGNUP_PARAGRAPH')}
           </span>
         )}
         control={(

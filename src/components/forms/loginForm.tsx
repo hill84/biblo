@@ -64,7 +64,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState<boolean>(initialState.redirectToReferrer);
   const [showPassword, setShowPassword] = useState<boolean>(initialState.showPassword);
 
-  const { t } = useTranslation(['form']);
+  const { t } = useTranslation(['form', 'common']);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -147,7 +147,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
       <SocialAuth />
 
       <div className='light-text pad-v-xs'>
-        <small>Effettuando il login confermi la presa visione della <Link to='/privacy'>privacy</Link> di {app.name}</small>
+        <small>{t('common:LOGIN_PARAGRAPH')} <Link to='/privacy'>privacy</Link> {t('common:OF')} {app.name}</small>
       </div>
 
       <form onSubmit={onSubmit} noValidate>

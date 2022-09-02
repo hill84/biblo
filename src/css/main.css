@@ -136,6 +136,7 @@
 
 /* THEMES */
 .light, .light-theme, .light-theme .dark:not(.force-theme) {
+  color-scheme: light;
   --canvasClr: var(--lightGrey90);
   --canvasLightClr: var(--lightGrey80);
   --canvasLighterClr: var(--lightGrey70);
@@ -156,6 +157,7 @@
 }
 
 .dark, .mixed-theme, .dark-theme, .dark-theme .light:not(.force-theme) {
+  color-scheme: dark;
   --canvasClr: var(--blueGrey90);
   --canvasLightClr: var(--blueGrey80);
   --canvasLighterClr: var(--blueGrey70);
