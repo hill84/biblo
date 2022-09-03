@@ -309,6 +309,13 @@ ul.nolist {
   }
 }
 
+.avatar-badge {
+  & span {
+    top: 10px;
+    right: 10px;
+  }
+}
+
 .card .avatar {
   background-color: rgba(var(--blackClr), .1);
   color: rgba(var(--blackClr), .3);
@@ -435,6 +442,12 @@ ul.nolist {
   opacity: 1;
   transform: translateX(0);
   pointer-events: all;
+}
+
+.dash-table {
+  max-height: 566px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .table li.read { color: var(--lighterTextClr); }
@@ -2386,6 +2399,7 @@ code {
   .no-sticky-sm { position: initial; }
   .text-center-sm { text-align: center; }
   .hide-sm { display: none; }
+  ul li.hide-sm { display: none; } /* footer list workaround */
 }
 @media (--to-s) {
   :root { --bubblesPerRow-lg: 3; }

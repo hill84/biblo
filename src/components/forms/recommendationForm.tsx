@@ -134,6 +134,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
     const newNoteRef: DocumentReference<DocumentData> = notesRef(fuid).doc();
     const userName: string = displayName?.split(' ')[0] || '';
     const userDisplayName: string = truncateString(userName, 25);
+    {/* TODO: translate */}
     const noteMsg = `<a href='${app.url}/dashboard/${uid}'>${userDisplayName}</a> ti consiglia il libro <a href='${app.url}/book/${bid}/${normURL(title)}'>${title}</a>`;
 
     if (uid) {

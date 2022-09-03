@@ -2,6 +2,7 @@ import { CollectionReference, DocumentData, FirestoreError } from '@firebase/fir
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classnames from 'classnames';
 import React, { FC, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionsRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
@@ -54,6 +55,8 @@ const Discussions: FC<DiscussionsProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [lastVisible, setLastVisible] = useState<DocumentData | null>(null);
+
+  const { t } = useTranslation(['common']);
 
   const ref: CollectionReference<DocumentData> | undefined = useMemo(() => gid ? groupDiscussionsRef(gid) : undefined, [gid]);
   
@@ -113,15 +116,16 @@ const Discussions: FC<DiscussionsProps> = ({
     fetch();
   }, [fetch]);
 
-  const skeletons = [...Array(limit)].map((_e: number, i: number) => <div key={i} className="skltn discussion" />);
+  const skeletons = [...Array(limit)].map((_e: number, i: number) => <div key={i} className='skltn discussion' />);
   
   if (loading && !items && !skeleton) {
-    return <div aria-hidden="true" className="loader relative"><CircularProgress /></div>;
+    return <div aria-hidden='true' className='loader relative'><CircularProgress /></div>;
   }
 
   const EmptyState = () => (
-    <div className="info-row empty text-center">
-      Nessun commento<span className="hide-xs"> trovato</span>{!isAuth && !uid && <span>. <Link to="/login">Accedi</Link> o <Link to="/signup">registrati</Link> per aggiungerne uno.</span>}
+    <div className='info-row empty text-center'>
+      {/* TODO: translate */}
+      Nessun commento<span className='hide-xs'> trovato</span>{!isAuth && !uid && <span>. <Link to='/login'>{t('PAGE_LOGIN')}</Link> {t('OR')} <Link to='/signup'>{t('PAGE_SIGNUP')}</Link> per aggiungerne uno.</span>}
     </div>
   );
 

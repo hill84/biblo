@@ -6,13 +6,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import DOMPurify from 'dompurify';
 import React, { ChangeEvent, FC, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
-import { app, handleFirestoreError } from '../../config/shared';
+import { handleFirestoreError } from '../../config/shared';
 import SocialAuth from '../socialAuth';
 
 const max = {
@@ -147,7 +148,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
       <SocialAuth />
 
       <div className='light-text pad-v-xs'>
-        <small>{t('common:LOGIN_PARAGRAPH')} <Link to='/privacy'>privacy</Link> {t('common:OF')} {app.name}</small>
+        <small dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('common:LOGIN_PARAGRAPH'))}} />
       </div>
 
       <form onSubmit={onSubmit} noValidate>

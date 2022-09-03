@@ -224,6 +224,7 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
                       autoFocus
                       value={comment.text || ''}
                       onChange={onChangeMaxChars}
+                      placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.text })}
                       error={Boolean(errors.text)}
                       margin="dense"
                       fullWidth
@@ -253,11 +254,11 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
           aria-labelledby="delete-dialog-title"
           aria-describedby="delete-dialog-description">
           <DialogTitle id="delete-dialog-title">
-            Procedere con l&apos;eliminazione?
+            {t('DIALOG_REMOVE_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
-              Cancellando la risposta perderai tutti i like ricevuti.
+              {t('DIALOG_REMOVE_COMMENT_PARAGRAPH')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialog-footer flex no-gutter">

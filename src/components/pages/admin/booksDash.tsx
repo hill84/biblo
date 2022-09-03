@@ -433,7 +433,9 @@ const BooksDash: FC = () => {
           onClose={onCloseDeleteDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_REMOVE_TITLE')}
+          </DialogTitle>
           <DialogActions className='dialog-footer flex no-gutter'>
             <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
             <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>

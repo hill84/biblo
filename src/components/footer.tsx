@@ -37,7 +37,7 @@ const Footer: FC = () => {
           <div className='col hide-md'><p>© {app.name} {new Date().getFullYear()}</p></div>
           <div className='col-md-auto col-12 text-center-md text-right'>
             <ul className='nolist inline-items info-row'>
-              <li className='counter'><Link to='/about'>{t('PAGE_ABOUT')}</Link></li>
+              <li className='counter hide-sm'><Link to='/about'>{t('PAGE_ABOUT')}</Link></li>
               <li className='counter'><Link to='/terms'>{t('PAGE_TERMS')}</Link></li>
               <li className='counter'><Link to='/privacy'>{t('PAGE_PRIVACY')}</Link></li>
               <li className='counter'><Link to='/cookie'>{t('PAGE_COOKIES')}</Link></li>

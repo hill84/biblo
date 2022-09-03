@@ -289,13 +289,25 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
                     <div className='col-sm-3 col-lg-2 monotype hide-sm text-center'>
                       <CopyToClipboard text={nid} />
                     </div>
-                    <div className='col-auto' title={read ? 'Letta' : 'Non letta'}>{read ? icon.check : icon.close}</div>
+                    <div className='col-auto' title={t(read ? 'READ' : 'UNREAD')}>{read ? icon.check : icon.close}</div>
                     <div className='col-auto col-sm-2 col-lg-1 text-right'>
                       <div className='timestamp'>{timeSince(created_num)}</div>
                     </div>
                     <div className='absolute-row right btns xs'>
-                      <button type='button' className='btn icon primary' onClick={() => onEdit({ id, el: nid })}>{icon.pencil}</button>
-                      <button type='button' className='btn icon red' onClick={() => onDeleteRequest({ id, el: nid })}>{icon.close}</button>
+                      <button
+                        type='button'
+                        className='btn icon primary'
+                        onClick={() => onEdit({ id, el: nid })}
+                        title={t('ACTION_EDIT')}>
+                        {icon.pencil}
+                      </button>
+                      <button
+                        type='button'
+                        className='btn icon red'
+                        onClick={() => onDeleteRequest({ id, el: nid })}
+                        title={t('ACTION_DELETE')}>
+                        {icon.close}
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -312,13 +324,12 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
-            <span className='counter hide-md'>{`${items.length || 0} di ${count || 0}`}</span>
+            <span className='counter hide-md'>{`${items.length || 0} ${t('OF')} ${count || 0}`}</span>
             <button
               type='button'
               className='btn sm flat counter last'
               disabled={!items.length}
-              onClick={onOpenLimitMenu}
-            >
+              onClick={onOpenLimitMenu}>
               {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
             <Menu 
@@ -335,8 +346,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
                 type='button'
                 className='btn sm flat counter'
                 disabled={orderBy.length === 1}
-                onClick={onOpenOrderMenu}
-              >
+                onClick={onOpenOrderMenu}>
                 <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
               <Menu 
@@ -350,8 +360,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
                 type='button'
                 className={classnames('btn', 'sm', 'flat', 'counter', 'icon', 'rounded', desc ? 'desc' : 'asc')}
                 title={t(desc ? 'ASCENDING' : 'DESCENDING')}
-                onClick={onToggleDesc}
-              >
+                onClick={onToggleDesc}>
                 {icon.arrowDown}
               </button>
             </div>
@@ -359,10 +368,10 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
         </div>
       </div>
       
-      <ul className='table dense nolist font-sm' role='tree'>
+      <ul className='table dense nolist font-sm dash-table' role='tree'>
         <li className='labels'>
           <div className='row'>
-            <div className='col-auto'>#</div>
+            <div className='col-auto'># </div>
             <div className='col'>Uid</div>
             <div className='col col-sm-2 col-lg-1 text-right'>{t('CREATED')}</div>
           </div>
@@ -385,7 +394,9 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
           onClose={onCloseDeleteDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_REMOVE_TITLE')}
+          </DialogTitle>
           <DialogActions className='dialog-footer flex no-gutter'>
             <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
             <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>

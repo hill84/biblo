@@ -296,7 +296,7 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
-            <span className='counter hide-md'>{`${items.length || 0} di ${count || 0}`}</span>
+            <span className='counter hide-md'>{`${items.length || 0} ${t('OF')} ${count || 0}`}</span>
             <button
               type='button'
               className='btn sm flat counter last'
@@ -372,7 +372,9 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
           onClose={onCloseDeleteDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_REMOVE_TITLE')}
+          </DialogTitle>
           <DialogActions className='dialog-footer flex no-gutter'>
             <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
             <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_PROCEED')}</button>

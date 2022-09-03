@@ -209,7 +209,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
             <div className='row'>
               <div className='col-lg-11 col'>
                 <h3>{t('ADVANCED_STATISTICS')}</h3>
-                <ul className='table dense nolist font-sm'>
+                <ul className='table dense nolist font-sm dash'>
                   <li className='labels'>
                     <div className='row'>
                       <div className='col'>{t('YEAR')}</div>

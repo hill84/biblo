@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import DOMPurify from 'dompurify';
 import React, { ChangeEvent, CSSProperties, FC, FormEvent, Fragment, MouseEvent, useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
@@ -227,9 +228,7 @@ const SignupForm: FC = () => {
         style={labelStyle}
         // required
         label={(
-          <span className='text-sm'>
-            {t('common:SIGNUP_PARAGRAPH')}
-          </span>
+          <small dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('common:SIGNUP_PARAGRAPH'))}} />
         )}
         control={(
           <Checkbox

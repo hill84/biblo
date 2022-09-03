@@ -177,7 +177,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
       </Helmet>
       <div className='card light group relative'>
         {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
-        <Link to='/groups' className='btn clear dark rounded icon prepend absolute-content left hide-sm'>
+        <Link to='/groups' title={t('PAGE_GROUPS')} className='btn clear dark rounded icon prepend absolute-content left hide-sm'>
           {icon.arrowLeft}
         </Link>
         {isEditor && (isOwner || isModerator || isAdmin) ? (
@@ -355,11 +355,11 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>
-            Procedere con l&apos;eliminazione?
+            {t('DIALOG_REMOVE_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id='delete-dialog-description'>
-              Cancellando il gruppo verranno rimossi tutti i commenti.
+              {t('DIALOG_REMOVE_GROUP_PARAGRAPH')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>

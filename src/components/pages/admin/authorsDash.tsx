@@ -378,9 +378,12 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
           onClose={onCloseDeleteDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_REMOVE_TITLE')}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
+              {/* TODO: translate */}
               Ricordati di rimuovere il riferimento all&apos;autore nei singoli libri.
             </DialogContentText>
           </DialogContent>

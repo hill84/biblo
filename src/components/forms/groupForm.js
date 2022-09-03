@@ -249,7 +249,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                   id="description"
                   name="description"
                   type="text"
-                  placeholder={`Max ${max.chars.description} caratteri`}
+                  placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.description })}
                   value={data.description}
                   onChange={onChangeMaxChars}
                   maxRows={20}
@@ -276,7 +276,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                   id="rules"
                   name="rules"
                   type="text"
-                  placeholder={`Max ${max.chars.rules} caratteri`}
+                  placeholder={t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.rules })}
                   value={data.rules}
                   onChange={onChangeMaxChars}
                   maxRows={20}

@@ -66,10 +66,10 @@ const Discussion: FC<DiscussionProps> = ({
       groupDiscussionRef(gid, discussion.did).update({ flag }).then((): void => {
         setFlagLoading(false);
         setIsOpenFlagDialog(false);
-        openSnackbar('Discussione segnalata agli amministratori', 'success');
+        openSnackbar(t('SUCCESS_ITEM_FLAGGED'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('Cannot flag');
-  }, [gid, openSnackbar, discussion, user]);
+  }, [gid, openSnackbar, discussion, t, user]);
 
   const onRemoveFlag = useCallback((): void => {
     if (isAdmin && gid) {
@@ -78,10 +78,10 @@ const Discussion: FC<DiscussionProps> = ({
       const { flag, ...rest }: DiscussionModel = discussion;
       groupDiscussionRef(gid, discussion.did).set(rest).then((): void => {
         setFlagLoading(false);
-        openSnackbar('Segnalazione rimossa', 'success');
+        openSnackbar(t('SUCCESS_FLAG_REMOVED'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('Cannot remove flag');
-  }, [gid, isAdmin, openSnackbar, discussion]);
+  }, [discussion, gid, isAdmin, openSnackbar, t]);
 
   const onDelete = (): void => {
     if (gid) {

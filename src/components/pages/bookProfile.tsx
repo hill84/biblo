@@ -170,7 +170,7 @@ const BookProfile: FC<BookProfileProps> = ({
   }, [book?.authors]);
 
   if (!book && !loading) return (
-    <NoMatch title={t('common:BOOK_NOT_FOUND')} history={history} location={location} />
+    <NoMatch title={t('BOOK_NOT_FOUND')} history={history} location={location} />
   );
 
   const GenresList: FC = () => (
@@ -451,7 +451,7 @@ const BookProfile: FC<BookProfileProps> = ({
           aria-labelledby='remove-dialog-title'
           aria-describedby='remove-dialog-description'>
           <DialogTitle>
-            {t('DIALOG_REMOVE_USER_BOOK_TITLE')}
+            {t('DIALOG_REMOVE_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText>

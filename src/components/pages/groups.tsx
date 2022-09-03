@@ -332,7 +332,8 @@ const Groups: FC = () => {
                 style={{ '--btnHeight': '40px', } as CSSProperties}
                 onClick={onCreateGroup}
                 disabled={!isEditor}>
-                {t('ACTION_CREATE_GROUP')}
+                <span className='hide-md'>{t('ACTION_CREATE_GROUP')}</span>
+                <span className='show-md'>{icon.plus}</span>
               </button>
             </div>
           )}

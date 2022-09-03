@@ -148,11 +148,11 @@ const Review: FC<ReviewProps> = ({
         reviewerRef(bid, review.createdByUid).update({ flag }).then((): void => {
           setFlagLoading(false);
           setIsOpenFlagDialog(false);
-          openSnackbar('Recensione segnalata agli amministratori', 'success');
+          openSnackbar(t('SUCCESS_ITEM_FLAGGED'), 'success');
         }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
       } else console.warn('Cannot flag');
     }
-  }, [bid, openSnackbar, review, user]);
+  }, [bid, openSnackbar, review, t, user]);
 
   const onRemoveFlag = useCallback((): void => {
     if (bid && review && isAdmin) {
@@ -161,10 +161,10 @@ const Review: FC<ReviewProps> = ({
       const { flag, ...rest } = review;
       reviewerRef(bid, review.createdByUid).set(rest).then((): void => {
         setFlagLoading(false);
-        openSnackbar('Segnalazione rimossa', 'success');
+        openSnackbar(t('SUCCESS_FLAG_REMOVED'), 'success');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('Cannot remove flag');
-  }, [bid, isAdmin, openSnackbar, review]);
+  }, [bid, isAdmin, openSnackbar, t, review]);
 
   const onDeleteRequest = (): void => setIsOpenDeleteDialog(true);
 
@@ -363,11 +363,11 @@ const Review: FC<ReviewProps> = ({
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>
-            Procedere con l&apos;eliminazione?
+            {t('DIALOG_REMOVE_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id='delete-dialog-description'>
-              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+              {t('DIALOG_REMOVE_REVIEW_PARAGRAPH')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>

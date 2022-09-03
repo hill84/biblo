@@ -3,7 +3,6 @@ import { ActionCodeSettings } from '@firebase/auth-types';
 import { User } from 'firebase';
 import React, { FC, useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
@@ -51,18 +50,27 @@ const VerifyEmailPage: FC = () => {
         <title>{app.name} | {t('PAGE_CONFIRM_SIGNUP')}</title>
         <link rel='canonical' href={app.url} />
       </Helmet>
-      <h2>Conferma la tua registrazione</h2>
+      <h2>{t('VERIFY_EMAIL_TITLE')}</h2>
       <div className='card light' style={{ maxWidth: 360, }}>
         <div className='bubble icon popIn' style={{ marginBottom: 15, }}>{icon.email}</div>
-        <p><big>Ti abbiamo inviato un&apos;email di conferma.</big> Per favore, clicca sul link di verifica e poi torna qui per effettuare il <Link to='/login'>login</Link>.</p>
+        <p><big>{t('VERIFY_EMAIL_BIG')}</big> {t('VERIFY_EMAIL_PARAGRAPH')}</p>
       </div>
       <div className='fadeIn reveal delay20'>
-        <p className='sub-footer'>Non trovi l&apos;email? Controlla nella posta indesiderata.</p>
+        <p className='sub-footer'>
+          {t('VERIFY_EMAIL_FOOTER')}
+        </p>
         <p>
           {emailSent ? (
-            <span className='btn rounded success reveal fadeIn'>Email inviata</span>
+            <span className='btn rounded success reveal fadeIn'>
+              {t('SUCCESS_EMAIL_SENT')}
+            </span>
           ) : (
-            <button type='button' onClick={sendEmailVerification} className={classnames('btn', 'primary', 'rounded', loading ? 'loading icon' : 'toload')}>{loading ? icon.loading : 'Invia di nuovo'}</button>
+            <button
+              type='button'
+              onClick={sendEmailVerification}
+              className={classnames('btn', 'sm', 'primary', 'rounded', loading ? 'loading icon' : 'toload')}>
+              {loading ? icon.loading : t('ACTION_SEND_AGAIN')}
+            </button>
           )}
         </p>
       </div>

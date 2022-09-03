@@ -1,4 +1,5 @@
 import MomentUtils from '@date-io/moment';
+import { Badge } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
@@ -237,17 +238,21 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
         <div className='row basic-profile'>
           
           <div className='col-auto'>
-            <div className={classnames('upload-avatar', errors.upload ? 'error' : imgProgress === 100 ? 'success' : null)}>
-              <Avatar className='avatar' src={imgPreview} alt={user.displayName}>{!imgPreview && getInitials(user.displayName)}</Avatar>
-              {imgLoading ? (
-                <div aria-hidden='true' className='loader'><CircularProgress /></div>
-              ) : (
-                <div className='overlay'>
-                  <span title="Carica un'immagine">+</span>
-                  <input type='file' accept='image/*' className='upload' onChange={onImageChange}/>
-                </div>
-              )}
-            </div>
+            <Badge badgeContent='+' color='primary' className='avatar-badge'>
+              <div className={classnames('upload-avatar', errors.upload ? 'error' : imgProgress === 100 ? 'success' : null)}>
+                <Avatar className='avatar' src={imgPreview} alt={user.displayName}>
+                  {!imgPreview && getInitials(user.displayName)}
+                </Avatar>
+                {imgLoading ? (
+                  <div aria-hidden='true' className='loader'><CircularProgress /></div>
+                ) : (
+                  <div className='overlay'>
+                    <span title="Carica un'immagine">+</span>
+                    <input type='file' accept='image/*' className='upload' onChange={onImageChange}/>
+                  </div>
+                )}
+              </div>
+            </Badge>
           </div>
           <div className='col'>
             <div className='username'>{user.displayName || 'Innominato'}</div>

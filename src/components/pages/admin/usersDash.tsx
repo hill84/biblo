@@ -210,7 +210,9 @@ const UsersDash: FC<UsersDashProps> = ({
     const { email } =  (e.currentTarget as CurrentTarget).parentNode?.dataset || {};
     auth.sendPasswordResetEmail(email).then((): void => {
       openSnackbar('Email inviata', 'success');
-    }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
+    }).catch((err: FirestoreError): void => {
+      openSnackbar(handleFirestoreError(err), 'error');
+    });
   };
 
   // const onSendVerification = (): void => {}; // TODO
@@ -223,7 +225,9 @@ const UsersDash: FC<UsersDashProps> = ({
     // console.log(`${state ? 'Un' : 'L'}ocking ${id}`);
     userRef(uid).update({ 'roles.editor': !state }).then((): void => {
       openSnackbar(t(`form:${state ? 'SUCCESS_LOCKED_ITEM' : 'SUCCESS_UNLOCKED_ITEM'}`), 'success');
-    }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
+    }).catch((err: FirestoreError): void => {
+      openSnackbar(handleFirestoreError(err), 'error');
+    });
   };
 
   const onDeleteRequest = (e: MouseEvent): void => {
@@ -541,10 +545,15 @@ const UsersDash: FC<UsersDashProps> = ({
           onClose={onCloseDeleteDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_REMOVE_TITLE')}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText id='delete-dialog-description'>
-              Cancellando l&apos;utente <b>{selected.displayName}</b> <small className='monotype'>({selected.uid})</small> verranno rimosse anche la sua libreria e le sue notifiche.
+              <span dangerouslySetInnerHTML={{ __html: t('DIALOG_REMOVE_USER_PARAGRAPH', {
+                displayName: `<b>${selected.displayName}</b>`,
+                uid: `<small className='monotype'>${selected.uid}</small>` 
+              })}} />
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>

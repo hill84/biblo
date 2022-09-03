@@ -99,7 +99,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
   const [isOpenBriefDialog, setIsOpenBriefDialog] = useState<boolean>(false);
   const [isOpenFollowersDialog, setIsOpenFollowersDialog] = useState<boolean>(false);
 
-  const { t } = useTranslation(['form']);
+  const { t } = useTranslation(['form', 'common']);
 
   const textInput = useRef<HTMLInputElement>(null);
 
@@ -317,15 +317,16 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
             </button>
           </div>
           <DialogTitle id='brief-dialog-title'>
-            Aiuto per la formattazione
+            {t('common:DIALOG_HELP_TITLE')}
           </DialogTitle>
           <DialogContent id='brief-dialog-description'>
+            {/* TODO: translate */}
             <p>Nel commento puoi <b>menzionare</b> altri utenti o includere <b>link</b> a contenuti presenti su {app.name}. Puoi usare il pulsante {icon.account} o scrivere @ seguito da tipologia, identificativo e nome. Ecco una piccola guida:</p>
             <ul>
-              <li>Utente: <code>@dashboard/ID_UTENTE/Nome_Utente</code></li>
-              <li>Libro: <code>@book/ID_LIBRO/Titolo_Libro</code></li>
-              <li>Autore: <code>@author/ID_AUTORE/Nome_Autore</code></li>
-              <li>Collezione: <code>@collection/ID_COLLEZIONE/Titolo_Collezione</code></li>
+              <li>{t('common:USER')}: <code>@dashboard/ID_UTENTE/Nome_Utente</code></li>
+              <li>{t('common:BOOK')}: <code>@book/ID_LIBRO/Titolo_Libro</code></li>
+              <li>{t('common:AUTHOR')}: <code>@author/ID_AUTORE/Nome_Autore</code></li>
+              <li>{t('common:COLLECTION')}: <code>@collection/ID_COLLEZIONE/Titolo_Collezione</code></li>
             </ul>
           </DialogContent>
         </Dialog>

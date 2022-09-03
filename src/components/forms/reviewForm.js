@@ -86,7 +86,7 @@ const ReviewForm = ({ bid, userBook }) => {
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
 
-  const { t } = useTranslation(['common', 'form']);
+  const { t } = useTranslation(['form', 'common']);
 
   const is = useRef(true);
 
@@ -292,7 +292,7 @@ const ReviewForm = ({ bid, userBook }) => {
                     endAdornment={(
                       <div className='hide-sm'>
                         <InputAdornment position='end'>
-                          <Tooltip title={t(isOpenEmojiPicker ? 'ACTION_CLOSE' : 'ACTION_ADD_EMOJI')} placement='top'>
+                          <Tooltip title={t(`common:${isOpenEmojiPicker ? 'ACTION_CLOSE' : 'ACTION_ADD_EMOJI'}`)} placement='top'>
                             <IconButton
                               aria-label='toggle emoji-picker visibility'
                               onClick={toggleEmojiPicker}
@@ -322,7 +322,7 @@ const ReviewForm = ({ bid, userBook }) => {
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
                   <InputLabel error={Boolean(errors.title)} htmlFor='title'>
-                    {t('form:LABEL_TITLE')} ({t('OPTIONAL').toLowerCase()})
+                    {t('LABEL_TITLE')} ({t('OPTIONAL').toLowerCase()})
                   </InputLabel>
                   <Input
                     id='title'
@@ -341,7 +341,7 @@ const ReviewForm = ({ bid, userBook }) => {
                   )}
                   {leftChars.title && (
                     <FormHelperText className={classnames('message', leftChars.title < 0 ? 'warning' : 'neutral')}>
-                      Caratteri rimanenti: {leftChars.title}
+                      {t('REMAINING_CHARACTERS')}: {leftChars.title}
                     </FormHelperText>
                   )}
                 </FormControl>
@@ -349,14 +349,14 @@ const ReviewForm = ({ bid, userBook }) => {
 
               <div className='footer no-gutter'>
                 <button type='button' className='btn btn-footer primary' onClick={onSubmit} disabled={!changes}>
-                  {t('ACTION_SUBMIT')}
+                  {t('common:ACTION_SUBMIT')}
                 </button>
               </div>
             </form>
           ) : (
             !review.text ? (
               <button type='button' className='btn flat centered rounded' onClick={onEditing}>
-                {t('ACTION_ADD_REVIEW')}
+                {t('common:ACTION_ADD_REVIEW')}
               </button>
             ) : (
               <div className='review'>
@@ -381,7 +381,7 @@ const ReviewForm = ({ bid, userBook }) => {
                       <div className='col-auto likes'>
                         <Tooltip title={`${review.likes.length} mi piace`}>
                           <div className='counter'>
-                            <button type='button' className='btn sm flat thumb up' disabled title={`Piace a ${abbrNum(review.likes.length)}`}>
+                            <button type='button' className='btn sm flat thumb up' disabled title={t('common:COUNT_READERS_LIKE_IT', { count: review.likes.length })}>
                               {icon.thumbUp} {abbrNum(review.likes.length)}
                             </button>
                           </div>
@@ -395,12 +395,12 @@ const ReviewForm = ({ bid, userBook }) => {
                         </Tooltip>
                         <div className='counter'>
                           <button type='button' className='btn sm flat' onClick={onEditing}>
-                            {icon.pencil} <span className='hide-sm'>{t('ACTION_EDIT')}</span>
+                            {icon.pencil} <span className='hide-sm'>{t('common:ACTION_EDIT')}</span>
                           </button>
                         </div>
                         <div className='counter'>
                           <button type='button' className='btn sm flat' onClick={onDeleteRequest}>
-                            {icon.delete} <span className='hide-sm'>{t('ACTION_DELETE')}</span>
+                            {icon.delete} <span className='hide-sm'>{t('common:ACTION_DELETE')}</span>
                           </button>
                         </div>
                       </div>
@@ -427,16 +427,16 @@ const ReviewForm = ({ bid, userBook }) => {
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>
-            Procedere con l&apos;eliminazione?
+            {t('DIALOG_REMOVE_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id='delete-dialog-description'>
-              Cancellando la recensione perderai tutti i like e i commenti ricevuti.
+              {t('DIALOG_REMOVE_REVIEW_PARAGRAPH')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
-            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('ACTION_CANCEL')}</button>
-            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('ACTION_DELETE')}</button>
+            <button type='button' className='btn btn-footer flat' onClick={onCloseDeleteDialog}>{t('common:ACTION_CANCEL')}</button>
+            <button type='button' className='btn btn-footer primary' onClick={onDelete}>{t('common:ACTION_DELETE')}</button>
           </DialogActions>
         </Dialog>
       )}

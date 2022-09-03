@@ -99,12 +99,12 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
           if (is.current) {
             setFlagLoading(false);
             setIsOpenFlagDialog(false);
-            openSnackbar('Risposta segnalata agli amministratori', 'success');
+            openSnackbar(t('SUCCESS_ITEM_FLAGGED'), 'success');
           }
         }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
       } else console.warn('Cannot flag');
     }
-  }, [bid, comment, openSnackbar, rid, user]);
+  }, [bid, comment, openSnackbar, rid, t, user]);
 
   const onRemoveFlag = useCallback(() => {
     if (bid && comment && rid && isAdmin) {
@@ -114,11 +114,11 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
       reviewerCommenterRef(bid, rid, comment.createdByUid).set(rest).then(() => {
         if (is.current) {
           setFlagLoading(false);
-          openSnackbar('Segnalazione rimossa', 'success');
+          openSnackbar(t('SUCCESS_FLAG_REMOVED'), 'success');
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else console.warn('Cannot remove flag');
-  }, [bid, comment, isAdmin, openSnackbar, rid]);
+  }, [bid, comment, isAdmin, openSnackbar, rid, t]);
 
   const onDelete = () => {
     if (bid) {

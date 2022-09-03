@@ -302,7 +302,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
-            <span className='counter hide-md'>{`${items.length || 0} di ${count || 0}`}</span>
+            <span className='counter hide-md'>{`${items.length || 0} ${t('OF')} ${count || 0}`}</span>
             <button
               type='button'
               className='btn sm flat counter last'
@@ -377,9 +377,12 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
           onClose={onCloseDeleteDialog}
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
-          <DialogTitle id='delete-dialog-title'>Procedere con l&apos;eliminazione?</DialogTitle>
+          <DialogTitle id='delete-dialog-title'>
+            {t('DIALOG_REMOVE_TITLE')}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
+              {/* TODO: translate */}
               Ricordati di rimuovere il riferimento alla collezione nei singoli libri.
             </DialogContentText>
           </DialogContent>

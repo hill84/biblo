@@ -129,6 +129,7 @@ const HelpPage: FC = () => {
       <div className='container pad-v'>
         <h1>{t('HELP_TITLE')}</h1>
         <div className='text-justify text-left-sm'>
+          {/* TODO: translate */}
           <p>Consulta le nostre &quot;domande frequenti&quot;. Se non trovi quello che cercavi scrivici nel <Link to={app.help.group.url}>gruppo di assistenza</Link> o all&apos;indirizzo <a href={`mailto:${app.email}?subject=Biblo: aiuto`}>{app.email}</a>.</p><br />
 
           <h2>{t('FREQUENTLY_ASKED_QUESTIONS')}</h2>
