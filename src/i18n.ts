@@ -8,6 +8,12 @@ import locale_it_IT from 'date-fns/locale/it';
 import 'moment/locale/it';
 import { Language } from './types';
 
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    returnNull: false,
+  }
+}
+
 export const supportedLanguages: Language[] = [{
   id: 'it',
   label: 'Italiano',
@@ -70,6 +76,7 @@ i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
   react: {
     useSuspense: false,
   },
+  returnNull: false,
 });
 
 export default i18n;

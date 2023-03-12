@@ -1,5 +1,5 @@
-@import 'https://fonts.googleapis.com/css?family=Roboto+Slab:300&display=swap';
-@import 'media-queries.css';
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab:300&display=swap');
+@import url('media-queries.css');
 
 .book-incipit.dialog {
   --faderHeight: 52px;

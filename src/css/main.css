@@ -1,5 +1,5 @@
-@import 'media-queries.css';
-@import 'react-medium-image-zoom/dist/styles.css';
+@import url('media-queries.css');
+@import url('react-medium-image-zoom/dist/styles.css');
 
 :root {
   color-scheme: dark light;

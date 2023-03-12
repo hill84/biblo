@@ -31,11 +31,11 @@ export default class AuthorsPage extends Component {
     loading: true,
     orderByIndex: 1,
     page: 1
-  }
+  };
 
   static propTypes = {
     openSnackbar: funcType.isRequired
-  }
+  };
 
   componentDidMount() {
     this._isMounted = true;
@@ -97,7 +97,7 @@ export default class AuthorsPage extends Component {
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
-  }
+  };
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 

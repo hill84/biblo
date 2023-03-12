@@ -7,7 +7,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import React, { FC, Fragment, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { version } from '../../package.json';
+import pjson from '../../package.json';
 import icon from '../config/icons';
 import { getInitials } from '../config/shared';
 import { darkTheme } from '../config/themes';
@@ -122,7 +122,7 @@ const Sidebar: FC<SidebarProps> = ({
           )}
 
           <MenuItem disableRipple className='bottom-item'>
-            <div className='version'>v {version}</div>
+            <div className='version'>v {pjson.version}</div>
           </MenuItem>
           
         </nav>
