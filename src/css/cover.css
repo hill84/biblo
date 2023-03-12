@@ -139,7 +139,7 @@
     align-items: center;
     overflow: hidden;
     background-color: rgba(var(--bookClr), .8);
-    backdrop-filter: blur(4px);
+    backdrop-filter: saturate(180%) blur(6px);
     color: var(--mainTextClr);
     border-radius: 9px;
     padding: .16rem .54rem;
@@ -150,7 +150,8 @@
     z-index: 2;
   }
   & .readers-num {
-    background-color: rgb(var(--canvasLighterClr));
+    background-color: rgba(var(--canvasLighterClr), .8);
+    backdrop-filter: saturate(180%) blur(6px);
     color: var(--mainTextClr);
     font-weight: 200;
     will-change: opacity, transform;

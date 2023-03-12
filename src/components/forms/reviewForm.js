@@ -44,7 +44,7 @@ const EmojiPickerStyle = {
 
 const max = {
   chars: {
-    text: 1500,
+    text: 3000,
     title: 255
   }
 };

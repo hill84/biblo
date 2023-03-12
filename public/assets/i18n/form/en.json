@@ -24,7 +24,7 @@
   "ERROR_MIN_COUNT_ITEMS": "Minimum {{count}} elements",
   "ERROR_MIN_COUNT_NUMBER": "Minimum {{count}}",
   "ERROR_MIN_DATE": "Minimum date {{number, date}}",
-  "ERROR_NO_LINK_STRING": "Non inserire link ({{string}})",
+  "ERROR_NO_LINK_STRING": "Do not insert links ({{string}})",
   "ERROR_NO_VULGARITY": "No vulgarity",
   "ERROR_REMOVE_STRING": "Remove {{string}}",
   "ERROR_REQUIRED_CHECKBOX": "Required checkbox",

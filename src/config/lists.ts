@@ -1033,7 +1033,7 @@ export const publishers: string [] = [
   'Garzanti Editore', 
   'Giulio Einaudi Editore', 
   'Giunti Editore', 
-  'HarperCollins  Italia Editore', 
+  'HarperCollins Italia Editore', 
   'Hoepli Editore', 
   'ISBN Edizioni', 
   'La Corte editore', 
@@ -1044,4 +1044,5 @@ export const publishers: string [] = [
   'Mondadori',
   'Rizzoli', 
   'Rusconi libri Editore',
+  'Sperling & Kupfer',
 ];

@@ -57,6 +57,7 @@
     overflow: hidden;
     background-color: rgba(0, 151, 167, .5);
     box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .05);
+    backdrop-filter: saturate(180%) blur(4px);
     font-size: 2.6rem;
     color: #FFF;
     text-align: center;
