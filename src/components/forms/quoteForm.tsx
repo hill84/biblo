@@ -1,11 +1,12 @@
-import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import classnames from 'classnames';
-import React, { ChangeEvent, FC, FormEvent, Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { quoteRef, quotesRef } from '../../config/firebase';
@@ -183,7 +184,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
   };
   
   return (
-    <Fragment>
+    <>
       <Overlay onClick={() => onToggle()} />
       <div role='dialog' aria-describedby='new quote' className='dialog light'>
         {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
@@ -300,7 +301,7 @@ const QuoteForm: FC<QuoteFormProps> = ({ id, onToggle }: QuoteFormProps) => {
           <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Salva le modifiche</button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
  

@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { app } from '../config/shared';
-import { HistoryType, LocationType } from '../types';
+import type { HistoryType, LocationType } from '../types';
 import RandomQuote from './randomQuote';
 
 interface NoMatchProps {

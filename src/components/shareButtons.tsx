@@ -1,5 +1,5 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } from 'react-share';
 
 const IconProps = { size: 32, round: true };

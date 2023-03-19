@@ -1,10 +1,12 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import type { RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
 import '../../css/searchBook.css';
-import { BookModel } from '../../types';
+import type { BookModel } from '../../types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
@@ -55,7 +57,7 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
           location={location}
         />
       ) : (
-        <Fragment>
+        <>
           <p className='text-center'>
             <Link to='/genres' className='counter'>{t('PAGE_GENRES')}</Link>
             <Link to='/collections' className='counter'>{t('PAGE_COLLECTIONS')}</Link>
@@ -71,7 +73,7 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
               </p>
             </div>
           )}
-        </Fragment>
+        </>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { RouteComponentProps } from 'react-router';
+import type { FC } from 'react';
+import type { RouteComponentProps } from 'react-router';
 import '../../css/bookContainer.css';
 import Book from '../book';
 

@@ -1,6 +1,7 @@
-import React, { FC, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { BookModel } from '../../types';
+import type { FC } from 'react';
+import { useState } from 'react';
+import type { RouteComponentProps } from 'react-router';
+import type { BookModel } from '../../types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 

@@ -1,5 +1,5 @@
 import MomentUtils from '@date-io/moment';
-import { FirestoreError } from '@firebase/firestore-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -9,16 +9,18 @@ import TextField from '@material-ui/core/TextField';
 import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import moment from 'moment';
-import React, { ChangeEvent, FC, FormEvent, Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { ListModel, readingStates } from '../../config/lists';
+import type { ListModel } from '../../config/lists';
+import { readingStates } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import i18n from '../../i18n';
-import { IsCurrent, ReadingStateModel } from '../../types';
+import type { IsCurrent, ReadingStateModel } from '../../types';
 import { initialUserBook } from '../book';
 import Overlay from '../overlay';
 import Stepper from '../stepper';
@@ -195,7 +197,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
   const isSaveDisabled = useMemo((): boolean => loading || Object.values(errors).some(Boolean), [errors, loading]);
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={onToggle} />
       <div role='dialog' aria-describedby='reading state' className='dialog light reading-state' ref={is}>
         {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
@@ -221,7 +223,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
             </div>
           </div>
           {(state_num === 2 || state_num === 3) && (
-            <Fragment>
+            <>
               <div className='row'>
                 <div className={classnames('form-group', `col-${state_num === 3 ? '6' : '12'}`)}>
                   <LocalizationProvider dateAdapter={MomentUtils} dateLibInstance={moment} locale={i18n.language}>
@@ -289,7 +291,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
                   className='form-control' 
                 />
               )}
-            </Fragment>
+            </>
           )}
         </div>
         <div className='footer no-gutter'>
@@ -302,7 +304,7 @@ const ReadingStateForm: FC<ReadingStateFormProps> = ({
           </button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
  

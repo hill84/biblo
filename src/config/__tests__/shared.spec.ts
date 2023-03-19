@@ -1,5 +1,5 @@
-import { RolesModel, StatsModel, UserModel } from 'src/types';
-import { abbrNum, app, arrToObj, calcAge, calcVulgarity, capitalize, capitalizeInitials, checkBadWords, denormURL, diffDates, enrichText, extractMentions, extractMuids, extractRefs, extractUrls, getInitials, hasRole, join, joinObj, joinToLowerCase, msToDuration, normalizeAuthor, normalizeAuthors, normalizeCover, normalizeString, normURL, round, splitWords, timeSince, truncateString, validateImg } from '../shared';
+import type { RolesModel, StatsModel, UserModel } from '../../types';
+import { abbrNum, app, arrToObj, calcAge, calcVulgarity, capitalize, capitalizeInitials, checkBadWords, denormURL, diffDates, enrichText, extractMentions, extractMuids, extractRefs, extractUrls, getInitials, hasRole, join, joinObj, joinToLowerCase, msToDuration, normURL, normalizeAuthor, normalizeAuthors, normalizeCover, normalizeString, round, splitWords, timeSince, truncateString, validateImg } from '../shared';
 
 // JUNCTION
 

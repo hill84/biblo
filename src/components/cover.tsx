@@ -1,13 +1,14 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { FC, Fragment, useMemo } from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import { config } from '../config/firebase';
 import icon from '../config/icons';
 import { abbrNum, joinObj } from '../config/shared';
 import '../css/cover.css';
-import { BookModel, CoverModel, UserBookModel } from '../types';
+import type { BookModel, CoverModel, UserBookModel } from '../types';
 import Rating from './rating';
 
 const buildBackgrounds = (images: string[]): string => images.filter(Boolean).map((image: string): string => `url(${image})`).join(', ');
@@ -78,12 +79,12 @@ const Cover: FC<CoverProps> = ({
             {showReaders && (book as BookModel).readers_num ? <div className='readers-num'>{stringified_readers_num} {icon.account}</div> : ''}
             {loading ? <div aria-hidden='true' className='loader'><CircularProgress /></div> : <div className='overlay' />}
             {!backgroundImage && (
-              <Fragment>
+              <>
                 <h2 className='title'>{book.title}</h2>
                 {book.subtitle && <h3 className='subtitle'>{book.subtitle}</h3>}
                 <span className='author'>{joinedAuthors}</span>
                 {book.publisher && <span className='publisher'>{book.publisher}</span>}
-              </Fragment>
+              </>
             )}
           </div>
         )}

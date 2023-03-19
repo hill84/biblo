@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -10,10 +10,11 @@ import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Tooltip from '@material-ui/core/Tooltip';
-import { TransitionProps } from '@material-ui/core/transitions';
+import type { TransitionProps } from '@material-ui/core/transitions';
 import { ThemeProvider } from '@material-ui/styles';
 import classnames from 'classnames';
-import React, { ChangeEvent, CSSProperties, FC, FormEvent, forwardRef, MouseEvent, ReactElement, Ref, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, ChangeEvent, FC, FormEvent, MouseEvent, ReactElement, Ref } from 'react';
+import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionsRef, notesRef } from '../../config/firebase';
@@ -24,7 +25,7 @@ import GroupContext from '../../context/groupContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/discussionForm.css';
-import { CurrentTarget } from '../../types';
+import type { CurrentTarget } from '../../types';
 
 const Transition = forwardRef(function Transition(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

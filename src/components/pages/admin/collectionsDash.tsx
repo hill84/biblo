@@ -1,4 +1,4 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -7,7 +7,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect } from 'react-router-dom';
@@ -16,7 +17,7 @@ import icon from '../../../config/icons';
 import { app, handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
-import { BookModel, CollectionModel, CurrentTarget, OrderByModel } from '../../../types';
+import type { BookModel, CollectionModel, CurrentTarget, OrderByModel } from '../../../types';
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
@@ -298,7 +299,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
   ]));
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -392,7 +393,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

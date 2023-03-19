@@ -1,19 +1,21 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import { Tooltip } from '@material-ui/core';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import classnames from 'classnames';
-import React, { Dispatch, FC, Fragment, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { Dispatch, FC, SetStateAction } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { userBooksRef, userChallengeRef, userChallengesRef } from '../config/firebase';
 import icon from '../config/icons';
-import { ListModel, userBookTypes } from '../config/lists';
+import type { ListModel } from '../config/lists';
+import { userBookTypes } from '../config/lists';
 import { handleFirestoreError, normURL } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
-import { BookModel, BookshelfType, CurrentTarget, IsCurrent, OrderByModel, UserBookModel, UserChallengeModel } from '../types';
+import type { BookModel, BookshelfType, CurrentTarget, IsCurrent, OrderByModel, UserBookModel, UserChallengeModel } from '../types';
 import Cover from './cover';
 import PaginationControls from './paginationControls';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
@@ -289,7 +291,7 @@ const Shelf: FC<ShelfProps> = ({
                 {coverview ? icon.viewSequential : icon.viewGrid}
               </button>
               {shelf === 'shelf' && (
-                <Fragment>
+                <>
                   <button 
                     type='button'
                     className='btn sm flat counter' 
@@ -304,7 +306,7 @@ const Shelf: FC<ShelfProps> = ({
                     onClose={onCloseFilterMenu}>
                     {filterByOptions}
                   </Menu>
-                </Fragment>
+                </>
               )}
               <span className='counter last hide-sm'>
                 {count !== items.length ? `${items.length} ${t('OF')} ` : ''}{t('BOOKS_COUNT', { count })}

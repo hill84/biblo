@@ -3,16 +3,18 @@ import AppBar from '@material-ui/core/AppBar';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import classnames from 'classnames';
-import React, { ChangeEvent, CSSProperties, FC, Fragment, ReactNode, useContext, useEffect, useState } from 'react';
+import type { CSSProperties, ChangeEvent, FC, ReactNode } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import type { RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import icon from '../../../config/icons';
 import { app, screenSize } from '../../../config/shared';
 import UserContext from '../../../context/userContext';
-import { ScreenSizeType, UserContextModel, UserModel } from '../../../types';
+import type { ScreenSizeType, UserContextModel, UserModel } from '../../../types';
 import AuthorForm from '../../forms/authorForm';
 import CollectionForm from '../../forms/collectionForm';
 import NoteForm from '../../forms/noteForm';
@@ -206,10 +208,10 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
           scrollButtons='auto'>
           {tabs.map(tab => (
             <Tab key={tab.name} label={(
-              <Fragment>
+              <>
                 <span className='show-md'>{tab.icon}</span>
                 <span className='hide-md'>{t(tab.name)}</span>
-              </Fragment>
+              </>
             )} />
           ))}
         </Tabs>
@@ -243,13 +245,10 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
       </BindKeyboardSwipeableViews>
 
       {isOpenUserDialog && selectedItem && <UserForm user={selectedItem} onToggle={onToggleUserDialog} />}
-    
-      <Fragment>
-        {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={onToggleAuthorDialog} />}
-        {isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={onToggleCollectionDialog} />}
-        {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={onToggleNoteDialog} />}
-        {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={onToggleQuoteDialog} />}
-      </Fragment>
+      {isOpenAuthorDialog && <AuthorForm id={selectedId} onToggle={onToggleAuthorDialog} />}
+      {isOpenCollectionDialog && <CollectionForm id={selectedId} onToggle={onToggleCollectionDialog} />}
+      {isOpenNoteDialog && <NoteForm uid={selectedId} nid={selectedEl} onToggle={onToggleNoteDialog} />}
+      {isOpenQuoteDialog && <QuoteForm id={selectedId} onToggle={onToggleQuoteDialog} />}
     </div>
   );
 };

@@ -1,11 +1,12 @@
-import { DocumentData, DocumentSnapshot, FirestoreError } from '@firebase/firestore-types';
-import { User } from 'firebase';
-import React, { createContext, FC, useEffect, useMemo, useState } from 'react';
+import type { DocumentData, DocumentSnapshot, FirestoreError } from '@firebase/firestore-types';
+import type { User } from 'firebase';
+import type { FC } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { auth, userRef } from '../config/firebase';
 import { handleFirestoreError, hasRole } from '../config/shared';
 import { uidKey } from '../config/storage';
 import useLocalStorage from '../hooks/useLocalStorage';
-import { UserContextModel, UserModel } from '../types';
+import type { UserContextModel, UserModel } from '../types';
 
 const UserContext = createContext<UserContextModel>({
   emailVerified: false,

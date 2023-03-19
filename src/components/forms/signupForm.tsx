@@ -1,5 +1,5 @@
-import { ActionCodeSettings, User, UserCredential } from '@firebase/auth-types';
-import { FirestoreError } from '@firebase/firestore-types';
+import type { ActionCodeSettings, User, UserCredential } from '@firebase/auth-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
@@ -10,7 +10,8 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import DOMPurify from 'dompurify';
-import React, { ChangeEvent, CSSProperties, FC, FormEvent, Fragment, MouseEvent, useContext, useState } from 'react';
+import type { CSSProperties, ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
+import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
@@ -18,7 +19,7 @@ import { auth, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
-import { RolesModel, StatsModel } from '../../types';
+import type { RolesModel, StatsModel } from '../../types';
 import SocialAuth from '../socialAuth';
 
 const labelStyle: CSSProperties = { marginRight: 0, };
@@ -221,7 +222,7 @@ const SignupForm: FC = () => {
   );
 
   return (
-    <Fragment>
+    <>
       {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
       <FormControlLabel 
         className='text-left' 
@@ -315,7 +316,7 @@ const SignupForm: FC = () => {
           </button>
         </div>
       </form>
-    </Fragment>
+    </>
   );
 };
  

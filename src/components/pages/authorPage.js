@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classnames from 'classnames';
-import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { authorFollowersRef, authorRef, booksRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { historyType, locationType, matchType } from '../../config/proptypes';
-import { app, denormURL, getInitials, handleFirestoreError, normalizeString, normURL } from '../../config/shared';
+import { app, denormURL, getInitials, handleFirestoreError, normURL, normalizeString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/authorPage.css';
@@ -187,10 +187,10 @@ const AuthorPage = ({ history, location, match }) => {
                   onClick={onFollow} 
                   disabled={!user || !isEditor}>
                   {follow ? (
-                    <Fragment>
+                    <>
                       <span className="hide-on-hover">{icon.check} {t('ACTION_FOLLOW')}</span>
                       <span className="show-on-hover">{t('ACTION_STOP_FOLLOWING')}</span>
-                    </Fragment> 
+                    </> 
                   ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
                 </button>
                 <div className="counter last inline">
@@ -205,7 +205,7 @@ const AuthorPage = ({ history, location, match }) => {
       {loadingBooks ? (
         <div aria-hidden="true" className="loader relative"><CircularProgress /></div>
       ) : (
-        <Fragment>
+        <>
           {books ? (
             <div className="card light">
               <div className="shelf">
@@ -240,7 +240,7 @@ const AuthorPage = ({ history, location, match }) => {
               </Link>
             </div>
           )}
-        </Fragment>
+        </>
       )}
       <RandomQuote author={author.displayName} skeleton={false} className="card flat fadeIn slideUp reveal" />
     </div>

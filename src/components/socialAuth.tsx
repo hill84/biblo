@@ -1,13 +1,14 @@
-import { AuthProvider, UserCredential } from '@firebase/auth-types';
-import { FirestoreError } from '@firebase/firestore-types';
+import type { AuthProvider, UserCredential } from '@firebase/auth-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import React, { FC, useCallback, useContext, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, userRef } from '../config/firebase';
+import { FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, auth, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
 import '../css/socialAuth.css';
-import { RolesModel, StatsModel } from '../types';
+import type { RolesModel, StatsModel } from '../types';
 
 const roles: RolesModel = {
   admin: false,

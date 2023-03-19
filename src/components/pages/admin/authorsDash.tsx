@@ -1,4 +1,4 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import { DialogContent, DialogContentText } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,17 +7,18 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { app, getInitials, handleFirestoreError, normalizeString, normURL, timeSince } from '../../../config/shared';
+import { app, getInitials, handleFirestoreError, normURL, normalizeString, timeSince } from '../../../config/shared';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
-import { AuthorModel, CurrentTarget, OrderByModel } from '../../../types';
+import type { AuthorModel, CurrentTarget, OrderByModel } from '../../../types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -298,7 +299,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   ]));
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -393,7 +394,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

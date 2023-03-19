@@ -3,7 +3,7 @@ import { Tooltip } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { Fragment, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { collectionFollowersRef, collectionRef, collectionsRef } from '../../con
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { historyType, locationType, matchType } from '../../config/proptypes';
-import { app, denormURL, handleFirestoreError, isScrollable, normalizeString, normURL, screenSize as _screenSize, truncateString } from '../../config/shared';
+import { screenSize as _screenSize, app, denormURL, handleFirestoreError, isScrollable, normURL, normalizeString, truncateString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import BookCollection from '../bookCollection';
@@ -181,7 +181,7 @@ const Collection = ({ history, location, match }) => {
           <div className='card dark collection-profile'>
             <h2>{denormURL(cid)}</h2>
             {loading ? <div className='skltn rows' /> : 
-              <Fragment>
+              <>
                 <div className='info-row description'>
                   <MinifiableText text={collection.description} maxChars={500} />
                 </div>
@@ -193,10 +193,10 @@ const Collection = ({ history, location, match }) => {
                       onClick={onFollow} 
                       disabled={!user || !isEditor}>
                       {follow ? (
-                        <Fragment>
+                        <>
                           <span className='hide-on-hover'>{icon.check} {t('ACTION_FOLLOW')}</span>
                           <span className='show-on-hover'>{t('ACTION_STOP_FOLLOWING')}</span>
-                        </Fragment> 
+                        </> 
                       ) : (
                         <span>{icon.plus} {t('ACTION_FOLLOW')}</span>
                       )}
@@ -206,7 +206,7 @@ const Collection = ({ history, location, match }) => {
                     </div>
                   </div>
                 )}
-              </Fragment>
+              </>
             }
           </div>
           

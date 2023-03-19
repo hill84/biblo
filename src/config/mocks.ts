@@ -1,4 +1,4 @@
-import { GroupModel, NoteModel, UserModel } from '../types';
+import type { GroupModel, NoteModel, UserModel } from '../types';
 
 export const user: UserModel = {
   creationTime: 123456789,

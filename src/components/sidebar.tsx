@@ -4,7 +4,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { FC, Fragment, useContext } from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import pjson from '../../package.json';
@@ -34,7 +35,7 @@ const Sidebar: FC<SidebarProps> = ({
         onClick={onCloseDrawer}>
         <nav className='list'>
           {user ? (
-            <Fragment>
+            <>
               <NavLink to='/profile' className='auth-header'>
                 <div className='background' style={{ backgroundImage: `url(${user.photoURL})`, }} />
                 <div className='user'>
@@ -59,7 +60,7 @@ const Sidebar: FC<SidebarProps> = ({
                   <Typography variant='inherit'>{t('PAGE_DASHBOARD')}</Typography>
                 </MenuItem>
               </NavLink>
-            </Fragment>
+            </>
           ) : (
             <div className='auth-header-buttons'>
               <NavLink to='/login'>

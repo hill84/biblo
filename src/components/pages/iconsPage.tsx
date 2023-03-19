@@ -1,13 +1,15 @@
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { ChangeEvent, FC, Fragment, useContext, useState } from 'react';
+import type { ChangeEvent, FC } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import icon from '../../config/icons';
 import { app } from '../../config/shared';
 import { darkTheme } from '../../config/themes';
-import SnackbarContext, { OpenSnackbarType } from '../../context/snackbarContext';
+import type { OpenSnackbarType } from '../../context/snackbarContext';
+import SnackbarContext from '../../context/snackbarContext';
 
 const IconsPage: FC = () => {
   const { openSnackbar } = useContext(SnackbarContext);
@@ -34,9 +36,9 @@ const IconsPage: FC = () => {
   const highlightedText = (text: string) => {
     const arr: string[] = text.split(searchText);
     return (
-      <Fragment>
+      <>
         {arr[0]}<span className='primary-text'>{searchText}</span>{arr[1]}
-      </Fragment>
+      </>
     );
   };
 

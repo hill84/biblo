@@ -1,14 +1,15 @@
-import React, { CSSProperties, FC, Fragment, useContext, useEffect, useMemo, useState } from 'react';
+import type { CSSProperties, FC } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import { Link, Redirect } from 'react-router-dom';
-import { app, isTouchDevice, screenSize as _screenSize } from '../../config/shared';
+import { screenSize as _screenSize, app, isTouchDevice } from '../../config/shared';
 import UserContext from '../../context/userContext';
 import '../../css/home.css';
 import bgHero_jpg from '../../images/covers-dark.jpg';
 import bgHero_webp from '../../images/covers-dark.webp';
-import { ScreenSizeType } from '../../types';
+import type { ScreenSizeType } from '../../types';
 import Authors from '../authors';
 import BookCollection from '../bookCollection';
 import DonationButtons from '../donationButtons';
@@ -65,11 +66,11 @@ const Home: FC = () => {
         </Link>
         <div>
           {user ? (
-            <Fragment>
+            <>
               <Link className='counter' to='/about'>{t('PAGE_ABOUT')}</Link>
               <Link className='counter' to='/help'>{t('PAGE_HELP')}</Link>
               <Link className='counter last' to='/donations'>{t('PAGE_DONATIONS')}</Link>
-            </Fragment>
+            </>
           ) : <p className='counter last'>{t('ARE_YOU_ALREADY_REGISTERED')} <Link to='/login'>{t('PAGE_LOGIN')}</Link></p>}
         </div>
       </div>

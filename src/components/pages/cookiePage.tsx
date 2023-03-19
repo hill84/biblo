@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { app } from '../../config/shared';
 import BooksRowDivider from '../booksRowDivider';

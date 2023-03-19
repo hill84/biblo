@@ -1,4 +1,4 @@
-import { DocumentData } from '@firebase/firestore-types';
+import type { DocumentData } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Menu from '@material-ui/core/Menu';
@@ -9,18 +9,20 @@ import { ThemeProvider } from '@material-ui/styles';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import classnames from 'classnames';
-import React, { FC, FormEvent, MouseEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import Autosuggest, { ChangeEvent, InputProps, RenderInputComponentProps, RenderSuggestionParams, RenderSuggestionsContainerParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams } from 'react-autosuggest';
+import type { FC, FormEvent, MouseEvent } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent, InputProps, RenderInputComponentProps, RenderSuggestionParams, RenderSuggestionsContainerParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams } from 'react-autosuggest';
+import Autosuggest from 'react-autosuggest';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
-import { IndustryIdentifier, SearchParamsModel, VolumeInfo, VolumeModel } from '../../booksAPITypes';
+import type { IndustryIdentifier, SearchParamsModel, VolumeInfo, VolumeModel } from '../../booksAPITypes';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
-import { capitalizeInitials, normalizeAuthors, normalizeCover, normalizeFormat, normalizeString, normURL, switchGenres, switchLanguages } from '../../config/shared';
+import { capitalizeInitials, normURL, normalizeAuthors, normalizeCover, normalizeFormat, normalizeString, switchGenres, switchLanguages } from '../../config/shared';
 import { darkTheme, defaultTheme } from '../../config/themes';
 import UserContext from '../../context/userContext';
 import '../../css/searchBook.css';
-import { BookModel, SearchByModel, UserContextModel } from '../../types';
+import type { BookModel, SearchByModel, UserContextModel } from '../../types';
 
 interface SuggestionModel extends BookModel {
   label: string | number;

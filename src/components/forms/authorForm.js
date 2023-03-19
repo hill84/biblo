@@ -6,7 +6,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { authorRef, authorsRef } from '../../config/firebase';
@@ -166,7 +166,7 @@ const AuthorForm = ({ id, onToggle }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="new author" className="dialog light" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
@@ -302,7 +302,7 @@ const AuthorForm = ({ id, onToggle }) => {
           </button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
 

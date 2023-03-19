@@ -1,5 +1,5 @@
 import MomentUtils from '@date-io/moment';
-import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
 import Chip from '@material-ui/core/Chip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,19 +19,21 @@ import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import isbn from 'isbn-utils';
 import moment from 'moment';
-import React, { ChangeEvent, FC, FormEvent, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
 import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { authors, awards, collections, formats, GenreModel, genres, languages, ListModel, publishers } from '../../config/lists';
+import type { GenreModel, ListModel } from '../../config/lists';
+import { authors, awards, collections, formats, genres, languages, publishers } from '../../config/lists';
 import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, noCookie, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import i18n from '../../i18n';
-import { BookEDITModel, BookModel, IsCurrent } from '../../types';
+import type { BookEDITModel, BookModel, IsCurrent } from '../../types';
 import Cover from '../cover';
 
 interface ErrorMessagesModel {
@@ -653,7 +655,7 @@ const BookForm: FC<BookFormProps> = ({
   if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />;
   
   return (
-    <Fragment>
+    <>
       <div className='container top' ref={is}>
         <form className='card light'>
           {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
@@ -930,7 +932,7 @@ const BookForm: FC<BookFormProps> = ({
                 </FormControl>
               </div>
               {isAdmin && (
-                <Fragment>
+                <>
                   <div className='form-group'>
                     <FormControl className='chip-input' margin='normal' fullWidth>
                       <Autocomplete
@@ -1003,7 +1005,7 @@ const BookForm: FC<BookFormProps> = ({
                       {errors.awards && <FormHelperText className='message error'>{errors.awards}</FormHelperText>}
                     </FormControl>
                   </div>
-                </Fragment>
+                </>
               )}
               {isEditingDescription ? (
                 <div className='form-group'>
@@ -1108,7 +1110,7 @@ const BookForm: FC<BookFormProps> = ({
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

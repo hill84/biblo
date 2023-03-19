@@ -1,9 +1,9 @@
 import Avatar from '@material-ui/core/Avatar';
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { FC, Fragment } from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { abbrNum, getInitials } from '../../config/shared';
-import { FollowerModel } from '../../types';
+import type { FollowerModel } from '../../types';
 
 interface BubblesProps {
   // isScrollable: boolean;
@@ -23,7 +23,7 @@ const Bubbles: FC<BubblesProps> = ({
   if (!items) return null;
 
   if (count > 2 && count < 100) return (
-    <Fragment>
+    <>
       <div className='bubble-group inline'>
         {items.slice(0, limit).map(({ displayName, photoURL, uid }: FollowerModel) => (
           <Link to={`/dashboard/${uid}`} key={displayName} className='bubble'>
@@ -36,7 +36,7 @@ const Bubbles: FC<BubblesProps> = ({
         ))}
       </div>
       <Text count={count} label={label} />
-    </Fragment>
+    </>
   );
 
   return <Text count={count} label={label} />;
@@ -52,8 +52,8 @@ interface TextProps {
 const Text: FC<TextProps> = ({ count, label }: TextProps) => {
   if (!count) return null;
   return (
-    <Fragment>
+    <>
       <b>{abbrNum(count)}</b> <span className='light-text'>{label}</span>
-    </Fragment>
+    </>
   );
 };

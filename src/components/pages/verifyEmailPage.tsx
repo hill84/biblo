@@ -1,14 +1,15 @@
-import { FirestoreError } from '@firebase/firestore-types';
-import { ActionCodeSettings } from '@firebase/auth-types';
-import { User } from 'firebase';
-import React, { FC, useContext, useState } from 'react';
+import type { ActionCodeSettings } from '@firebase/auth-types';
+import type { FirestoreError } from '@firebase/firestore-types';
+import classnames from 'classnames';
+import type { User } from 'firebase';
+import type { FC } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, handleFirestoreError } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
-import classnames from 'classnames';
-import { useTranslation } from 'react-i18next';
 
 const VerifyEmailPage: FC = () => {
   const { openSnackbar } = useContext(SnackbarContext);

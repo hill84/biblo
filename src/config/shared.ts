@@ -1,9 +1,10 @@
-import { FirestoreError } from '@firebase/firestore-types';
-import { Duration, formatDistanceStrict, formatDuration, intervalToDuration } from 'date-fns';
+import type { FirestoreError } from '@firebase/firestore-types';
+import type { Duration } from 'date-fns';
+import { formatDistanceStrict, formatDuration, intervalToDuration } from 'date-fns';
 import 'regenerator-runtime/runtime';
 import i18n, { getLocale } from '../i18n';
 import logo from '../images/logo.png';
-import { AppModel, BookModel, BooksPerRowType, FormatType, RolesType, ScreenSizeType, UserModel } from '../types';
+import type { AppModel, BookModel, BooksPerRowType, FormatType, RolesType, ScreenSizeType, UserModel } from '../types';
 import { badWords, firestoreErrorMessages } from './lists';
 
 // APP

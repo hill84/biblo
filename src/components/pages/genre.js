@@ -1,7 +1,7 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
 import { matchType } from '../../config/proptypes';
-import { app, translateURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize, denormURL } from '../../config/shared';
+import { screenSize as _screenSize, app, denormURL, handleFirestoreError, isScrollable, normURL, translateURL } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
@@ -302,10 +302,10 @@ const Genre = ({ match }) => {
               disabled={!isEditor}
               onClick={onFollow}>
               {follow ? (
-                <Fragment>
+                <>
                   <span className="hide-on-hover">{icon.check} {t('ACTION_FOLLOW')}</span>
                   <span className="show-on-hover">{t('ACTION_STOP_FOLLOWING')}</span>
-                </Fragment> 
+                </> 
               ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
             </button>
             <div className="counter last inline">

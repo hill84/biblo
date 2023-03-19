@@ -1,15 +1,17 @@
-import { DocumentData, FirestoreError, Query, WhereFilterOp } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query, WhereFilterOp } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classnames from 'classnames';
-import React, { FC, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { reviewersGroupRef, reviewersRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import SnackbarContext, { SnackbarContextModel } from '../context/snackbarContext';
+import type { SnackbarContextModel } from '../context/snackbarContext';
+import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/reviews.css';
-import { ReviewModel, UserContextModel } from '../types';
+import type { ReviewModel, UserContextModel } from '../types';
 import PaginationControls from './paginationControls';
 import Review from './review';
 
@@ -129,10 +131,10 @@ const Reviews: FC<ReviewsProps> = ({
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classnames('reviews', { ['card dark'] : container })}>
         {!loading && !items.length ? <EmptyState /> : (
-          <Fragment>
+          <>
             {!bid && (
               <div className='head'>
                 <h2>{t('LAST_REVIEWS')}<span className='counter'>({items.length || limit} {t('OF')} {count || limit})</span></h2>
@@ -147,7 +149,7 @@ const Reviews: FC<ReviewsProps> = ({
               />
             ))}
             {loading && skeleton && skeletons}
-          </Fragment>
+          </>
         )}
       </div>
       {pagination && count > 0 && items?.length < count && (
@@ -160,7 +162,7 @@ const Reviews: FC<ReviewsProps> = ({
           page={page}
         />
       )}
-    </Fragment>
+    </>
   );
 };
  

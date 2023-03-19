@@ -1,13 +1,14 @@
-import { DocumentData, FirestoreError } from '@firebase/firestore-types';
-import React, { CSSProperties, FC, Fragment, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { DocumentData, FirestoreError } from '@firebase/firestore-types';
+import type { CSSProperties, FC } from 'react';
+import { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import type { RouteComponentProps } from 'react-router-dom';
 import { bookRef, collectionBookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
-import { BookModel, BookshelfType, UserBookModel } from '../types';
+import type { BookModel, BookshelfType, UserBookModel } from '../types';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
 
@@ -407,7 +408,7 @@ const Book: FC<BookProps> = ({
   const bgStyle: CSSProperties | undefined = book ? { backgroundImage: `url(${book.covers[0]})`, } : undefined;
 
   return (
-    <Fragment>
+    <>
       {seo && (
         <Helmet>
           <title>{app.name} | {book?.title || t('PAGE_BOOK')}</title>
@@ -453,7 +454,7 @@ const Book: FC<BookProps> = ({
           userBook={userBook}
         />
       )}
-    </Fragment>
+    </>
   );
 };
  

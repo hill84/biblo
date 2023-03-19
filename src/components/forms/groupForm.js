@@ -7,7 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
-import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Redirect } from 'react-router-dom';
@@ -195,7 +195,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
   if (redirectToReferrer) return <Redirect to={`group/${redirectToReferrer}`} />;
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="new group" className="dialog light" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
@@ -349,7 +349,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
           </button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
 

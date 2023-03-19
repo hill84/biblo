@@ -1,15 +1,17 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import { Tooltip } from '@material-ui/core';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { booksRef, collectionBooksRef } from '../config/firebase';
 import icon from '../config/icons';
-import { GenreModel, genres } from '../config/lists';
+import type { GenreModel } from '../config/lists';
+import { genres } from '../config/lists';
 import { booksPerRow as _booksPerRow, denormURL, handleFirestoreError /* , isTouchDevice */, normURL } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
-import { CollectionBookModel, CurrentTarget } from '../types';
+import type { CollectionBookModel, CurrentTarget } from '../types';
 import Cover from './cover';
 import { skltn_shelfRow, skltn_shelfStack } from './skeletons';
 
@@ -149,7 +151,7 @@ const BookCollection: FC<BookCollectionProps> = ({
   const isGenre = useMemo((): boolean => genres.some(item => item.name === cid), [cid]);
 
   return (
-    <Fragment>
+    <>
       <div className="head nav" role="navigation">
         <span className="counter last title"><span className="primary-text hide-sm">{t(isGenre ? 'GENRE' : 'COLLECTION')}:</span> {label || cid}</span> {count !== 0 && <span className="count hide-xs">({t('BOOKS_COUNT', { count })})</span>} 
         {!loading && count > 0 && (
@@ -176,7 +178,7 @@ const BookCollection: FC<BookCollectionProps> = ({
               </Tooltip>
             )}
             {hasMore && (
-              <Fragment>
+              <>
                 <button 
                   type="button"
                   disabled={page < 2} 
@@ -193,7 +195,7 @@ const BookCollection: FC<BookCollectionProps> = ({
                   onClick={fetch} title="successivo">
                   {icon.chevronRight}
                 </button>
-              </Fragment>
+              </>
             )}
           </div>
         )}
@@ -202,7 +204,7 @@ const BookCollection: FC<BookCollectionProps> = ({
       <div className={classnames('shelf', 'collection', 'hoverable-items', { scrollable })}>
         {loading ? stacked ? skltn_shelfStack : skltn_shelfRow : covers}
       </div>
-    </Fragment>
+    </>
   );
 };
  

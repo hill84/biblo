@@ -1,4 +1,4 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -6,7 +6,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
 import DOMPurify from 'dompurify';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
@@ -14,7 +15,7 @@ import { handleFirestoreError, timeSince } from '../../../config/shared';
 // import { Redirect } from 'react-router-dom';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
-import { CurrentTarget, NoteModel, OrderByModel } from '../../../types';
+import type { CurrentTarget, NoteModel, OrderByModel } from '../../../types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -320,7 +321,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   );
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -403,7 +404,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

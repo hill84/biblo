@@ -1,23 +1,26 @@
-import { DocumentData, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError } from '@firebase/firestore-types';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
 import { formatDuration } from 'date-fns';
-import React, { FC, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useTranslation } from 'react-i18next';
 import Rater from 'react-rater';
-import { getLocale } from 'src/i18n';
 import { userBooksRef } from '../config/firebase';
 import icon from '../config/icons';
-import { ListModel, MonthModel, months, ratingLabels, readingStates } from '../config/lists';
+import type { ListModel, MonthModel } from '../config/lists';
+import { months, ratingLabels, readingStates } from '../config/lists';
 import { diffDates, handleFirestoreError, round } from '../config/shared';
 import { userBooksKey } from '../config/storage';
-import SnackbarContext, { SnackbarContextModel } from '../context/snackbarContext';
+import type { SnackbarContextModel } from '../context/snackbarContext';
+import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/readingStats.css';
 import useLocalStorage from '../hooks/useLocalStorage';
-import { UserBookModel, UserContextModel } from '../types';
+import { getLocale } from '../i18n';
+import type { UserBookModel, UserContextModel } from '../types';
 
 const shelf = 'bookInShelf';
 const votes: number[] = [1, 2, 3, 4, 5];
@@ -185,7 +188,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
             <div className='relative chart-container'>
               <span className='absolute-content pull-right text-sm' style={switchContainerStyle}>
                 <FormControlLabel label={undefined} control={(
-                  <Fragment>
+                  <>
                     <span className={rangeYear ? 'light-text' : 'primary-text'}>
                       {formatDuration({ months: 12 }, { locale: getLocale() })}
                     </span>
@@ -193,7 +196,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
                     <span className={rangeYear ? 'primary-text' : 'light-text'}>
                       {formatDuration({ years: yearsRead?.length }, { locale: getLocale() })}
                     </span>
-                  </Fragment>
+                  </>
                 )} />
               </span>
               <Bar data={data} height={170} options={options} />
@@ -222,7 +225,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
                     </div>
                   </li>
                   {loading ? tableSkltn : yearsRead?.length ? (
-                    <Fragment>
+                    <>
                       {yearsRead.map((year: number) => (
                         <li className='avatar-row' key={year}>
                           <div className='row'>
@@ -247,7 +250,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
                           <div className='col'>{totalReviews}</div>
                         </div>
                       </li>
-                    </Fragment>
+                    </>
                   ) : <li className='empty avatar-row text-center'>{t('NO_BOOK_READ')}</li>}
                 </ul>
               </div>

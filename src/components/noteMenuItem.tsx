@@ -1,11 +1,12 @@
 import Avatar from '@material-ui/core/Avatar';
 import MenuItem from '@material-ui/core/MenuItem';
 import DOMPurify from 'dompurify';
-import React, { forwardRef, ForwardRefRenderFunction, Ref } from 'react';
+import type { ForwardRefRenderFunction, Ref } from 'react';
+import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import icon from '../config/icons';
 import { getInitials, timeSince } from '../config/shared';
-import { NoteModel } from '../types';
+import type { NoteModel } from '../types';
 
 interface NoteMenuItemProps {
   index?: number;

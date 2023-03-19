@@ -1,4 +1,4 @@
-import { RolesType } from '../types';
+import type { RolesType } from '../types';
 
 export type GenreNameType = 'Architettura' | 'Arte' | 'Avventura' | 'Biografie e autobiografie' | 'Cucina' | 'Economia e finanza' | 'Erotico' | 'Famiglia e relazioni' | 'Fantascienza' | 'Fantasy' | 'Filosofia' | 'Fumetti e Graphic novel' | 'Giallo' | 'Horror' | 'Informatica' | 'Per ragazzi' | 'Medicina e salute' | 'Mistero' | 'Musica' | 'Narrativa' | 'Poesia' | 'Politica' | 'Psicologia' | 'Religione e spiritualità' | 'Rosa' | 'Saggistica' | 'Scienza' | 'Sport' | 'Scienze sociali' | 'Storico' | 'Teatro' | 'Thriller' | 'Satira e umorismo' | 'Viaggi';
 

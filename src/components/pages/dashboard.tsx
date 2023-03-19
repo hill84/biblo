@@ -1,4 +1,4 @@
-import { FirestoreError } from '@firebase/firestore-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -6,22 +6,24 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
 import classnames from 'classnames';
-import React, { ChangeEvent, CSSProperties, FC, Fragment, lazy, MouseEvent, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, ChangeEvent, FC, MouseEvent, ReactNode } from 'react';
+import { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import type { RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, notesRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs } from '../../config/lists';
-import { app, booksPerRow, calcAge, capitalize, getInitials, isScrollable, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { screenSize as _screenSize, app, booksPerRow, calcAge, capitalize, getInitials, isScrollable, joinToLowerCase, normURL, timeSince, truncateString } from '../../config/shared';
 import DashboardContext from '../../context/dashboardContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
-import { FollowersModel, IsCurrent, ScreenSizeType, UserChallengeModel } from '../../types';
+import type { FollowersModel, IsCurrent, ScreenSizeType, UserChallengeModel } from '../../types';
 import ReadingStats from '../readingStats';
 import Reviews from '../reviews';
 import Shelf from '../shelf';
@@ -275,7 +277,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   
   const UsersList: FC<UsersListProps> = ({ followings, users }: UsersListProps) => {
     return (
-      <Fragment>
+      <>
         {Object.keys(users).map(f => (
           <div key={f} className='avatar-row rounded'>
             <Link to={`/dashboard/${f}`} className='row ripple'>
@@ -315,7 +317,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
             page={users === followers ? followersPage : followingsPage}
           /> 
         */}
-      </Fragment>
+      </>
     );
   };
 
@@ -333,10 +335,10 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   }
 
   const TabLabel: FC<TabLabelProps> = ({ icon, label }: TabLabelProps) => (
-    <Fragment>
+    <>
       <span className='icon show-md'>{icon}</span>
       <span className='label'>{label}</span>
-    </Fragment>
+    </>
   );
 
   const UnauthReadingStats = () => (
@@ -385,14 +387,14 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                       <span>
                         {duser?.displayName} {duser?.displayName && duser?.roles?.author && (
                           <Tooltip className='check-decagram primary-text' interactive title={(
-                            <Fragment>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></Fragment>
+                            <>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></>
                           )}>{icon.checkDecagram}</Tooltip>
                         )}
                       </span>
                     )} 
                   </h2>
                   {loading ? <div className='skltn three rows' style={skltnStyle} /> : (
-                    <Fragment>
+                    <>
                       <div className='info-row hide-xs'>
                         {duser?.sex && duser.sex !== 'x' && <span className='counter'>{switchSex(duser.sex)}</span>}
                         {duser?.birth_date && <span className='counter'>{t('AGE', { years: calcAge(duser.birth_date) || '-' })}</span>}
@@ -412,10 +414,10 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                             // disabled={!isAuth}
                             onClick={onFollowUser}>
                             {!follow ? <span>{icon.plus} {t('ACTION_FOLLOW')}</span> : (
-                              <Fragment>
+                              <>
                                 <span className='hide-on-hover'>{icon.check} {t('ACTION_FOLLOW')}</span>
                                 <span className='show-on-hover'>{t('ACTION_STOP_FOLLOWING')}</span>
-                              </Fragment> 
+                              </> 
                             )}
                           </button>
                         )}
@@ -427,7 +429,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                         {duser?.twitch && <span className='counter'>{!isMini && <b>{icon.twitch}</b>} <a href={`https://www.twitch.tv/${duser.twitch}`} target='_blank' rel='noopener noreferrer'>twitch</a></span>}
                         {duser?.facebook && <span className='counter'>{!isMini && <b>{icon.facebook}</b>} <a href={`https://www.facebook.com/${duser.facebook}`} target='_blank' rel='noopener noreferrer'>facebook</a></span>}
                       </div>
-                    </Fragment>
+                    </>
                   )}
                 </div>
               </div>

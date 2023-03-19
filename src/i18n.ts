@@ -1,12 +1,13 @@
-import i18n, { FormatFunction } from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-import Backend from 'i18next-http-backend';
-import { initReactI18next } from 'react-i18next';
-import { abbrNum } from './config/shared';
 import locale_en_US from 'date-fns/locale/en-US';
 import locale_it_IT from 'date-fns/locale/it';
+import type { FormatFunction } from 'i18next';
+import i18n from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import Backend from 'i18next-http-backend';
 import 'moment/locale/it';
-import { Language } from './types';
+import { initReactI18next } from 'react-i18next';
+import { abbrNum } from './config/shared';
+import type { Language } from './types';
 
 declare module 'i18next' {
   interface CustomTypeOptions {

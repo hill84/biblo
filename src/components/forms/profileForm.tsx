@@ -11,19 +11,22 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
-import { storage } from 'firebase';
+import type { storage } from 'firebase';
 import moment from 'moment';
-import React, { ChangeEvent, FC, FormEvent, Fragment, ReactText, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent, ReactText } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { storageRef, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { continents, europeanCountries, italianProvinces, languages, ListModel, northAmericanCountries } from '../../config/lists';
+import type { ListModel } from '../../config/lists';
+import { continents, europeanCountries, italianProvinces, languages, northAmericanCountries } from '../../config/lists';
 import { app, calcAge, getInitials, urlRegex, validateImg } from '../../config/shared';
-import SnackbarContext, { SnackbarContextModel } from '../../context/snackbarContext';
+import type { SnackbarContextModel } from '../../context/snackbarContext';
+import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/profileForm.css';
 import i18n from '../../i18n';
-import { IsCurrent, UserContextModel, UserModel } from '../../types';
+import type { IsCurrent, UserContextModel, UserModel } from '../../types';
 
 const min: Record<string, number> = {
   birth_date: new Date().setFullYear(new Date().getFullYear() - 120)
@@ -232,7 +235,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
   // if (!user) return null;
 
   return (
-    <Fragment>
+    <>
       {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
       <div className='container sm' ref={is}>
         <div className='row basic-profile'>
@@ -427,7 +430,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           </div>
 
           {isEditingSocial ? (
-            <Fragment>
+            <>
               <div className='form-group'>
                 <FormControl className='input-field' margin='normal' fullWidth>
                   <InputLabel error={Boolean(errors.website)} htmlFor='website'>Sito internet o blog</InputLabel>
@@ -519,7 +522,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
                   {errors.facebook && <FormHelperText className='message error'>{errors.facebook}</FormHelperText>}
                 </FormControl>
               </div>
-            </Fragment>
+            </>
           ) : (
             <div className='info-row'>
               <button type='button' className='btn flat rounded centered' onClick={onToggleSocial}>
@@ -548,7 +551,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ user: _user }: ProfileFormProps) =>
           {t(`common:${saved ? 'ACTION_SAVED' : 'ACTION_SAVE'}`)}
         </button>
       </div>
-    </Fragment>
+    </>
   );
 };
 

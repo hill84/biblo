@@ -1,7 +1,8 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import type { RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
 import LoginForm from '../forms/loginForm';
 

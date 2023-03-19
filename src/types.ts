@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { RouteComponentProps, RouteProps } from 'react-router';
+import type { ReactNode } from 'react';
+import type { RouteComponentProps, RouteProps } from 'react-router';
 
 export interface Language {
   id: string;

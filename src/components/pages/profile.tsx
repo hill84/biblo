@@ -1,4 +1,5 @@
-import React, { FC, useContext } from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

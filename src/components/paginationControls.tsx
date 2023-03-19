@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent } from 'react';
+import type { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import icon from '../config/icons';
 import '../css/pagination.css';
@@ -30,7 +30,7 @@ const PaginationControls: FC<PaginationControlsProps> = ({
   return (
     <div className={classnames('info-row', 'footer', 'centered', 'pagination', loading ? 'loading' : 'loaded')}>
       {!oneWay && (
-        <Fragment>
+        <>
           <button 
             type='button'
             disabled={page === 1} 
@@ -41,7 +41,7 @@ const PaginationControls: FC<PaginationControlsProps> = ({
             {icon.chevronLeft}
           </button>
           <span className='page'>{page} {t('OF')} {(count % limit > 0 ? 1 : 0) + ((count - count % limit) / limit)}</span>
-        </Fragment>
+        </>
       )}
       <button 
         type='button'

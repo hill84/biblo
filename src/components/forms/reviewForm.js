@@ -15,7 +15,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import classnames from 'classnames';
 import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
-import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
@@ -269,7 +269,7 @@ const ReviewForm = ({ bid, userBook }) => {
   if (!user || !userBook) return null;
 
   return (
-    <Fragment>
+    <>
       {isEditing && <Overlay onClick={onExitEditing} />}
       <div className={classnames('card', 'light', 'user-review', isEditing ? 'edit-review' : 'primary')}>
         {!loading && (
@@ -440,7 +440,7 @@ const ReviewForm = ({ bid, userBook }) => {
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 
