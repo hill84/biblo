@@ -9,7 +9,7 @@ import { isToday } from 'date-fns';
 import type { FC, MouseEvent } from 'react';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
-import type { Data } from 'react-csv/components/CommonPropTypes';
+import type { Data } from 'react-csv/lib/core';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
 import { Link, Redirect } from 'react-router-dom';
@@ -80,11 +80,11 @@ const BooksDash: FC = () => {
 
   const { t } = useTranslation(['common', 'form']);
 
-  const orderBy = useMemo((): OrderByModel[] => [ 
-    { type: 'EDIT.lastEdit_num', label: t('LAST_EDIT_DATE') }, 
+  const orderBy = useMemo((): OrderByModel[] => [
+    { type: 'EDIT.lastEdit_num', label: t('LAST_EDIT_DATE') },
     { type: 'EDIT.lastEditByUid', label: t('LAST_EDIT_BY') },
-    { type: 'EDIT.created_num', label: t('CREATED_DATE') }, 
-    { type: 'EDIT.createdByUid', label: t('CREATED_BY') },  
+    { type: 'EDIT.created_num', label: t('CREATED_DATE') },
+    { type: 'EDIT.createdByUid', label: t('CREATED_BY') },
     { type: 'title', label: t('TITLE') },
     { type: 'rating_num', label: t('RATING') },
     { type: 'ratings_num', label: t('RATINGS') },
@@ -161,7 +161,7 @@ const BooksDash: FC = () => {
   }, []);
 
   // const onToggleDesc = (): void => setDesc(desc => !desc);
-  
+
   const onOpenOrderMenu = (e: MouseEvent): void => setOrderMenuAnchorEl(e.currentTarget);
   const onChangeOrderBy = (i: number): void => {
     setOrderByIndex(i);
@@ -181,7 +181,7 @@ const BooksDash: FC = () => {
   const onView = ({ bid, title }: { bid: string; title: string }): void => {
     setRedirectTo(title ? `${bid}/${title}` : bid);
   };
-  
+
   const onEdit = ({ bid, title }: { bid: string; title: string }): void => {
     setRedirectTo(title ? `${bid}/${title}` : bid); // TODO
   };
@@ -217,7 +217,7 @@ const BooksDash: FC = () => {
       openSnackbar(t('SUCCESS_DELETED_ITEM'), 'success');
     }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
   };
-  
+
   if (redirectTo) return (
     <Redirect to={`/book/${redirectTo}`} />
   );
@@ -351,7 +351,7 @@ const BooksDash: FC = () => {
             >
               {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               anchorEl={limitMenuAnchorEl}
               className='dropdown-menu'
               open={Boolean(limitMenuAnchorEl)}
@@ -360,7 +360,7 @@ const BooksDash: FC = () => {
               {limitByOptions}
             </Menu>
           </div>
-          
+
           {Boolean(items.length) && (
             <div className='col-auto'>
               {sitemapData && (
@@ -374,10 +374,10 @@ const BooksDash: FC = () => {
               <button type='button' className='btn sm flat counter' onClick={onOpenOrderMenu}>
                 <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -418,9 +418,9 @@ const BooksDash: FC = () => {
         </li>
         {itemsList}
       </ul>
-      
-      <PaginationControls 
-        count={count} 
+
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}
