@@ -263,8 +263,8 @@ export const abbrNum = (num: number, decPlaces = 0): string => {
     const size = 10 ** ((i + 1) * 3);
     if (size <= num) {
       num = Math.round(num * decPlaces / size) / decPlaces;
-      if ((num === 1000) && (i < abbrev.length - 1)) { 
-        num = 1; i++; 
+      if ((num === 1000) && (i < abbrev.length - 1)) {
+        num = 1; i++;
       }
       res = num + abbrev[i];
       break;
@@ -334,7 +334,7 @@ export const switchGenres = (array: string[]): string[] => array.map((str: strin
     case 'Calculus':
     case 'Mathematics':
     case 'Physics':
-    case 'Science':                     return 'Scienza'; 
+    case 'Science':                     return 'Scienza';
     case 'Science fiction':             return 'Fantascienza';
     case 'Sports & Recreation':
     case 'Games':
@@ -360,7 +360,7 @@ export const switchLanguages = (str: string): string => {
     case 'pt': l = 'Portoghese'; break;
     case 'ru': l = 'Russo'; break;
     case 'es': l = 'Spagnolo'; break;
-    case 'de': l = 'Tedesco'; break; 
+    case 'de': l = 'Tedesco'; break;
     default: l = ''; break;
   }
   return l;
