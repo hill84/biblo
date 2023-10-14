@@ -683,6 +683,7 @@ hr.line {
 .tabs-container {
   user-select: none;
   padding: 0;
+  & [aria-hidden='true'] { height: 0; }
   & .card.tab { margin-top: 0; }
   &.card .card.tab {
     margin-bottom: 0;
@@ -1716,10 +1717,7 @@ mark {
   }
   & .progress-base, & .progress-value {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     margin: auto;
     display: flex;
     align-items: center;
@@ -2016,10 +2014,7 @@ progress {
 
 .btn .show-on-hover {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   margin: auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2239,7 +2234,10 @@ code {
   }
   .review .show-on-hover { opacity: 0; will-change: opacity; }
   .review:hover .show-on-hover { opacity: 1; }
-  .tabs-container.card .card.tab { min-height: 300px; }
+  .tabs-container.card .card.tab {
+    min-height: 300px;
+    max-height: 653px;
+  }
   .contacts-tab-col {
     min-height: 240px;
     & h4 {

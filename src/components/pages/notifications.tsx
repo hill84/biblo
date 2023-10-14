@@ -54,8 +54,8 @@ const Notifications: FC = () => {
 
   const { t } = useTranslation(['common']);
 
-  const orderBy = useMemo((): OrderByModel[] => [ 
-    { type: 'created_num', label: t('CREATED_DATE') }, 
+  const orderBy = useMemo((): OrderByModel[] => [
+    { type: 'created_num', label: t('CREATED_DATE') },
     { type: 'read', label: t('READING_STATE') },
     { type: 'createdByUid', label: t('SENDER') },
   ], [t]);
@@ -71,7 +71,7 @@ const Notifications: FC = () => {
         setItems(initialState.items);
         setPage(initialState.page);
       };
-      
+
       setLoading(true);
       ref.limit(limit).get().then((snap: DocumentData): void => {
         if (!snap.empty) {
@@ -111,9 +111,12 @@ const Notifications: FC = () => {
 
       ref.startAfter(lastVisible).limit(limit).get().then((nextSnap: DocumentData): void => {
         if (!nextSnap.empty) {
-          const items: NoteModel[] = [];
-          nextSnap.forEach((item: DocumentData): number => items.push(item.data()));
-          setItems(items);
+          console.log({ items, nextSnap });
+          setItems(prev => {
+            const items: NoteModel[] = prev ? [...prev] : [];
+            nextSnap.forEach((item: DocumentData): number => items.push(item.data()));
+            return items;
+          });
           setPage((page * limit) > count ? page : page + 1);
           setLastVisible(nextSnap.docs[nextSnap.docs.length-1] || lastVisible);
         } else {
@@ -151,7 +154,7 @@ const Notifications: FC = () => {
     </MenuItem>
   ));
 
-  if (!items && !loading) { 
+  if (!items && !loading) {
     return (
       <div className='reviews'>
         <div className='info-row empty text-center pad-v'>
@@ -167,7 +170,7 @@ const Notifications: FC = () => {
         <title>{app.name} | {t('PAGE_NOTIFICATIONS')}</title>
         <link rel='canonical' href={app.url} />
       </Helmet>
-        
+
       <div className='card light'>
         <div className='collection hoverable-items'>
           <div className='head nav'>
@@ -193,10 +196,10 @@ const Notifications: FC = () => {
                   disabled={!items || items.length < 2}>
                   {icon.arrowDown}
                 </button>
-                <Menu 
+                <Menu
                   className='dropdown-menu'
-                  anchorEl={orderMenuAnchorEl} 
-                  open={Boolean(orderMenuAnchorEl)} 
+                  anchorEl={orderMenuAnchorEl}
+                  open={Boolean(orderMenuAnchorEl)}
                   onClose={onCloseOrderMenu}>
                   {orderByOptions}
                 </Menu>
@@ -212,9 +215,9 @@ const Notifications: FC = () => {
       </div>
 
       {count > 0 && (items?.length || 0) < count && (
-        <PaginationControls 
-          count={count} 
-          fetch={fetchNext} 
+        <PaginationControls
+          count={count}
+          fetch={fetchNext}
           limit={limit}
           loading={loading}
           oneWay
@@ -224,5 +227,5 @@ const Notifications: FC = () => {
     </div>
   );
 };
- 
+
 export default Notifications;
