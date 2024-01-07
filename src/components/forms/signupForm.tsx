@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
-import DOMPurify from 'dompurify';
+import { sanitize } from 'dompurify';
 import type { CSSProperties, ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +120,7 @@ const SignupForm: FC = () => {
     setData(data => ({ ...data, [name]: value }));
     setErrors(errors => ({ ...errors, [name]: '' }));
   };
-  
+
   const validate = (): ErrorsModel => {
     const errors: ErrorsModel = {
       displayName: '',
@@ -128,17 +128,17 @@ const SignupForm: FC = () => {
       password: '',
       terms: '',
     };
-    
+
     if (!terms) {
-      errors.terms = t('ERROR_REQUIRED_CHECKBOX'); 
+      errors.terms = t('ERROR_REQUIRED_CHECKBOX');
     }
 
     const name: string = data.displayName.toLowerCase();
 
-    if (!data.displayName) { 
-      errors.displayName = t('ERROR_REQUIRED_FIELD'); 
+    if (!data.displayName) {
+      errors.displayName = t('ERROR_REQUIRED_FIELD');
     } else if (name === 'admin' || name === 'amministratore' || name.startsWith('biblo')) {
-      errors.displayName = t('ERROR_FORBIDDEN_DISPLAY_NAME'); 
+      errors.displayName = t('ERROR_FORBIDDEN_DISPLAY_NAME');
       // TODO: check further forbidden names
     } else if (data.displayName.length > max.chars.displayName) {
       errors.displayName = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.displayName });
@@ -153,7 +153,7 @@ const SignupForm: FC = () => {
     }
 
     if (!data.password) {
-      errors.password = t('ERROR_REQUIRED_FIELD'); 
+      errors.password = t('ERROR_REQUIRED_FIELD');
     } else if (data.password.length < min.chars.password) {
       errors.password = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.password });
     } else if (data.password.length > max.chars.password) {
@@ -166,10 +166,10 @@ const SignupForm: FC = () => {
   const onSubmit = (e: FormEvent<HTMLFormElement | HTMLButtonElement>): void => {
     e.preventDefault();
     const errors: ErrorsModel = validate();
-    
+
     setAuthError(initialState.authError);
     setErrors(errors);
-    
+
     if (!Object.values(errors).some(Boolean)) {
       setLoading(true);
       auth.createUserWithEmailAndPassword(data.email, data.password).then((userCredential: UserCredential) => {
@@ -199,7 +199,7 @@ const SignupForm: FC = () => {
           photoURL,
           roles,
           stats,
-          termsAgreement: timestamp, 
+          termsAgreement: timestamp,
           privacyAgreement: timestamp,
           uid,
         }).then().catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
@@ -224,12 +224,12 @@ const SignupForm: FC = () => {
   return (
     <>
       {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
-      <FormControlLabel 
-        className='text-left' 
+      <FormControlLabel
+        className='text-left'
         style={labelStyle}
         // required
         label={(
-          <small dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('common:SIGNUP_PARAGRAPH'))}} />
+          <small dangerouslySetInnerHTML={{ __html: sanitize(t('common:SIGNUP_PARAGRAPH'))}} />
         )}
         control={(
           <Checkbox
@@ -240,7 +240,7 @@ const SignupForm: FC = () => {
         )}
       />
       {errors.terms && <FormHelperText className='message error'>{icon.arrowUp} {errors.terms}</FormHelperText>}
-      
+
       <form onSubmit={onSubmit} noValidate style={formStyle}>
         <SocialAuth disabled={!terms} />
         <div className='form-group'>
@@ -319,5 +319,5 @@ const SignupForm: FC = () => {
     </>
   );
 };
- 
+
 export default SignupForm;

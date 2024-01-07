@@ -447,8 +447,7 @@ ul.nolist {
 
 .dash-table {
   max-height: 566px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto hidden;
 }
 
 .table li.read { color: var(--lighterTextClr); }
@@ -1481,8 +1480,7 @@ mark {
     max-width: 100%;
     box-sizing: border-box;
     white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     scroll-padding: 0 var(--pad);
@@ -1811,8 +1809,7 @@ progress {
     display: flex;
     width: calc(100% + (var(--pad) * 2) - .1px);
     white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     scroll-padding: 0 var(--pad);

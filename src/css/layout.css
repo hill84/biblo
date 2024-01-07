@@ -51,10 +51,17 @@
       background-color: rgba(var(--blackClr), .05);
     }
   }
-  & a, & button, & .more-btn, & .drawer-btn {
+  & a,
+  & button,
+  & .more-btn,
+  & .drawer-btn {
     color: currentcolor;
-    &:not(.primary, .secondary) {
-      &:hover, &.active:hover { color: rgb(var(--primaryClr)); }
+    &:not(.primary),
+    &:not(.secondary) {
+      &:hover,
+      &.active:hover {
+        color: rgb(var(--primaryClr));
+      }
     }
   }
   & .reveal { animation-duration: .3s; }

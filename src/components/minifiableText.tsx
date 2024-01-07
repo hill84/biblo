@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import DOMPurify from 'dompurify';
+import { sanitize } from 'dompurify';
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,10 +40,10 @@ const MinifiableText: FC<MinifiableTextProps> = ({
     setMinified(defaultMinified === false ? defaultMinified : (text.length > (maxChars || 700)));
   }, [maxChars, text, defaultMinified]);
 
-  const sanitizedHtml = useMemo((): string => DOMPurify.sanitize(rich ? enrichText(text) : text), [rich, text]);
-  
+  const sanitizedHtml = useMemo((): string => sanitize(rich ? enrichText(text) : text), [rich, text]);
+
   if (!text) return null;
-  
+
   const onMinify = (): void => setMinified(minified => !minified);
 
   return (
@@ -72,5 +72,5 @@ const MinifiableText: FC<MinifiableTextProps> = ({
     </>
   );
 };
- 
+
 export default MinifiableText;

@@ -9,7 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { ThemeProvider } from '@material-ui/styles';
 import classnames from 'classnames';
-import DOMPurify from 'dompurify';
+import { sanitize } from 'dompurify';
 import type { CSSProperties, ChangeEvent, FC, MouseEvent, ReactNode } from 'react';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -32,12 +32,12 @@ const limit = 3;
 const searchLimit = 2;
 
 export const mark = (text: string, searchText?: string, searchLimit?: number): ReactNode => {
-  const sanitizedText: string = DOMPurify.sanitize(text);
+  const sanitizedText: string = sanitize(text);
   if (!sanitizedText || !searchText) return text;
-  const sanitizedSearchText: string = DOMPurify.sanitize(searchText);
+  const sanitizedSearchText: string = sanitize(searchText);
   if (sanitizedSearchText && (searchLimit ? searchText.length > searchLimit : true) && text.toLowerCase().includes(searchText.toLowerCase())) {
     const dirtyHtml: string = sanitizedText.replace(new RegExp(sanitizedSearchText, 'gi'), (sanitizedSearchText: string): string => `<mark>${sanitizedSearchText}</mark>`);
-    const sanitizedHtml: string = DOMPurify.sanitize(dirtyHtml);
+    const sanitizedHtml: string = sanitize(dirtyHtml);
     return (
       <data value={sanitizedText} dangerouslySetInnerHTML={{
         __html: sanitizedHtml
@@ -104,9 +104,9 @@ const Groups: FC = () => {
     title: `${app.name} | ${t('PAGE_GROUPS')}`
   };
 
-  const orderBy = useMemo((): OrderByModel[] => [ 
-    { type: 'created_num', label: t('CREATED_DATE'), icon: icon.calendar }, 
-    { type: 'followers_num', label: t('SUBSCRIBERS'), icon: icon.formatTitle }, 
+  const orderBy = useMemo((): OrderByModel[] => [
+    { type: 'created_num', label: t('CREATED_DATE'), icon: icon.calendar },
+    { type: 'followers_num', label: t('SUBSCRIBERS'), icon: icon.formatTitle },
     { type: 'title', label: t('TITLE'), icon: icon.star },
   ], [t]);
 
@@ -116,7 +116,7 @@ const Groups: FC = () => {
   const fetcher = useCallback(() => {
     // console.log('fetcher');
     const ref: Query<DocumentData> = groupsRef.orderBy(order.type, desc ? 'desc' : 'asc').limit(limit);
-    
+
     setLoading(true);
     fetchItemsCanceler = ref.onSnapshot((snap: DocumentData): void => {
       if (!snap.empty) {
@@ -237,7 +237,7 @@ const Groups: FC = () => {
   const onToggleDesc = (): void => setDesc(desc => !desc);
 
   const onOpenOrderMenu = (e: MouseEvent<HTMLButtonElement>): void => setOrderMenuAnchorEl(e.currentTarget);
-  
+
   const onCloseOrderMenu = (): void => setOrderMenuAnchorEl(initialState.orderMenuAnchorEl);
 
   const onGroupCreated = (): void => setCount(prev => prev + 1);
@@ -271,18 +271,18 @@ const Groups: FC = () => {
           {items.length} {t('OF')} {count} {t('GROUPS').toLowerCase()}
         </div>
         <div className='col text-right'>
-          <button 
+          <button
             type='button'
-            className='btn sm rounded flat counter' 
-            onClick={onOpenOrderMenu} 
+            className='btn sm rounded flat counter'
+            onClick={onOpenOrderMenu}
             disabled={searching || count < 2}>
             <span className='hide-sm'>{t('SORT_BY')} {orderBy[orderByIndex].label}</span>
             <span className='show-sm'>{orderBy[orderByIndex].icon}</span>
           </button>
-          <Menu 
+          <Menu
             className='dropdown-menu'
-            anchorEl={orderMenuAnchorEl} 
-            open={Boolean(orderMenuAnchorEl)} 
+            anchorEl={orderMenuAnchorEl}
+            open={Boolean(orderMenuAnchorEl)}
             onClose={onCloseOrderMenu}>
             {orderByOptions}
           </Menu>
@@ -304,8 +304,8 @@ const Groups: FC = () => {
         <div className='row'>
           <div className='col'>
             <ThemeProvider theme={darkTheme}>
-              <TextField  
-                className='input-field' 
+              <TextField
+                className='input-field'
                 fullWidth
                 id='search'
                 label={t('ACTION_SEARCH_GROUP')}
@@ -339,9 +339,9 @@ const Groups: FC = () => {
             </div>
           )}
         </div>
-        
+
       </div>
-      
+
       <div className='groups-list'>
         {loading && !items.length ? (
           <div aria-hidden='true' className='relative loader'><CircularProgress /></div>
@@ -389,9 +389,9 @@ const Groups: FC = () => {
       </div>
 
       {count > 0 && items?.length < count && !searchText && (
-        <PaginationControls 
-          count={count} 
-          fetch={fetch} 
+        <PaginationControls
+          count={count}
+          fetch={fetch}
           limit={limit}
           loading={loading}
           // oneWay

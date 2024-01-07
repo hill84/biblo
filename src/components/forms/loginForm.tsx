@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
-import DOMPurify from 'dompurify';
+import { sanitize } from 'dompurify';
 import type { ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +72,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const email: string | null = params.get('email');
-    
+
     if (email) {
       setEmail(email);
     }
@@ -89,7 +89,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
     }
     setErrors({ ...errors, [name]: undefined });
   };
-  
+
   const validate = (data: {
     email: string;
     password: string;
@@ -111,17 +111,17 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
         errors.password = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.password });
       }
     } else errors.password = t('ERROR_REQUIRED_FIELD');
-    
+
     return errors;
   };
 
   const onSubmit = (e: MouseEvent | FormEvent): void => {
     e.preventDefault();
     const errors: ErrorsModel = validate({ email, password });
-    
+
     setAuthError('');
     setErrors(errors);
-    
+
     if (!Object.values(errors).some(Boolean)) {
       setLoading(true);
       auth.signInWithEmailAndPassword(email, password).then((): void => {
@@ -133,7 +133,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
       });
     }
   };
-  
+
   const onTogglePassword = (): void => setShowPassword(showPassword => !showPassword);
 
   const onMouseDownPassword = (e: MouseEvent<HTMLButtonElement>): void => e.preventDefault();
@@ -150,7 +150,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
       <SocialAuth />
 
       <div className='light-text pad-v-xs'>
-        <small dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('common:LOGIN_PARAGRAPH'))}} />
+        <small dangerouslySetInnerHTML={{ __html: sanitize(t('common:LOGIN_PARAGRAPH'))}} />
       </div>
 
       <form onSubmit={onSubmit} noValidate>

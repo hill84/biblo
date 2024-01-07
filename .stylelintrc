@@ -43,6 +43,7 @@
     "no-invalid-double-slash-comments": true,
     "number-max-precision": 2,
     "plugin/no-unsupported-browser-features": [true, {
+      "ignore": ["css-nesting", "css-backdrop-filter", "css-selection"],
       "ignorePartialSupport": true,
       "severity": "warning"
     }],
