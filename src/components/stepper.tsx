@@ -1,6 +1,7 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import classnames from 'classnames';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import icon from '../config/icons';
 

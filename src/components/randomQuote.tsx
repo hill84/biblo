@@ -1,10 +1,11 @@
-import { DocumentData } from '@firebase/firestore-types';
+import type { DocumentData } from '@firebase/firestore-types';
 import classnames from 'classnames';
-import React, { FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { quotesRef } from '../config/firebase';
 import { normURL } from '../config/shared';
-import { QuoteModel } from '../types';
+import type { QuoteModel } from '../types';
 import MinifiableText from './minifiableText';
 
 interface RandomQuoteProps {

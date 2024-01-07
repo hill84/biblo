@@ -1,15 +1,14 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { booksRef, genreFollowersRef, genreRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { matchType } from '../../config/proptypes';
-import { app, translateURL, handleFirestoreError, isScrollable, normURL, screenSize as _screenSize, denormURL } from '../../config/shared';
+import { screenSize as _screenSize, app, denormURL, handleFirestoreError, isScrollable, normURL, translateURL } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/genre.css';
@@ -27,7 +26,7 @@ const limit = 28;
 
 const skltnStyle = { display: 'inline-block', marginTop: '1.15em', };
 
-const Genre = ({ match }) => {
+const Genre = () => {
   const { isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const [count, setCount] = useState(0);
@@ -49,7 +48,7 @@ const Genre = ({ match }) => {
 
   const is = useRef(true);
 
-  const { gid } = match.params;
+  const { gid } = useParams();
 
   const item = useMemo(() => genres.find(({ name }) => gid === normURL(name)), [gid]);
 
@@ -67,20 +66,20 @@ const Genre = ({ match }) => {
   }, []);
 
   const fetchFollowers = useCallback(() => {
-    if (user) {
-      const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
-      unsub.genreFollowersFetch = genreFollowersRef(id).onSnapshot(snap => {
-        if (!snap.empty) {
-          const followers = [];
-          snap.forEach(follower => followers.push(follower.data()));
-          setFollow(user && followers.filter(follower => follower.uid === user.uid).length > 0);
-          setFollowers(followers);
-        } else {
-          setFollow(false);
-          setFollowers(null);
-        }
-      });
-    }
+    if (!gid || !user) return;
+
+    const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
+    unsub.genreFollowersFetch = genreFollowersRef(id).onSnapshot(snap => {
+      if (!snap.empty) {
+        const followers = [];
+        snap.forEach(follower => followers.push(follower.data()));
+        setFollow(user && followers.filter(follower => follower.uid === user.uid).length > 0);
+        setFollowers(followers);
+      } else {
+        setFollow(false);
+        setFollowers(null);
+      }
+    });
 
     return () => {
       unsub.genreFollowersFetch && unsub.genreFollowersFetch();
@@ -112,8 +111,8 @@ const Genre = ({ match }) => {
     });
   }, [gid, openSnackbar]);
 
-  const orderBy = useMemo(() => ([ 
-    { type: 'rating_num', label: t('RATING') }, 
+  const orderBy = useMemo(() => ([
+    { type: 'rating_num', label: t('RATING') },
     { type: 'title', label: t('TITLE') }
   ]), [t]);
 
@@ -207,6 +206,7 @@ const Genre = ({ match }) => {
   const onCloseOrderMenu = () => setOrderMenuAnchorEl(null);
 
   const onFollow = () => {
+    if (!gid) return;
     const id = decodeURI(gid.replace(/_/g, '-')).toLowerCase();
 
     if (follow) {
@@ -225,15 +225,15 @@ const Genre = ({ match }) => {
   };
 
   const isMini = useMemo(() => isScrollable(screenSize), [screenSize]);
-  
+
   const isTextMinified = useMemo(() => ['xs', 'sm', 'md'].some(m => m === screenSize), [screenSize]);
-  
+
   const covers = useMemo(() => items?.map((item, i) => (
     <Link key={item.bid} to={`/book/${item.bid}/${normURL(item.title)}`}>
       <Cover book={item} index={i} page={page} />
     </Link>
   )), [items, page]);
-  
+
   const orderByOptions = useMemo(() => orderBy.map((option, i) => (
     <MenuItem
       key={option.type}
@@ -243,7 +243,7 @@ const Genre = ({ match }) => {
       {option.label}
     </MenuItem>
   )), [orderBy, orderByIndex]);
-  
+
   const title = useMemo(() => t(`lists:GENRE_${translateURL(item?.canonical)}`), [item?.canonical, t]);
 
   const seo = useMemo(() => ({
@@ -253,9 +253,11 @@ const Genre = ({ match }) => {
     title: `Libri di genere ${title}`,
     url: `${app.url}/genre/${gid}`
   }), [item, gid, title]);
-  
+
   const cardStyle = useMemo(() => ({ borderTop: `4px solid ${item ? item.color : 'rgba(0, 0, 0, .1)'}`, }), [item]);
-  
+
+  if (!gid) return <Navigate to='/genres' />;
+
   return (
     <div className="container" id="genreComponent" ref={is}>
       <Helmet>
@@ -284,7 +286,7 @@ const Genre = ({ match }) => {
         </div>
         <Genres scrollable={isMini} />
         {loadingGenre ? (
-          <div className="skltn three rows" style={skltnStyle} /> 
+          <div className="skltn three rows" style={skltnStyle} />
         ) : (
           <div className="info-row text">
             <MinifiableText
@@ -302,10 +304,10 @@ const Genre = ({ match }) => {
               disabled={!isEditor}
               onClick={onFollow}>
               {follow ? (
-                <Fragment>
+                <>
                   <span className="hide-on-hover">{icon.check} {t('ACTION_FOLLOW')}</span>
                   <span className="show-on-hover">{t('ACTION_STOP_FOLLOWING')}</span>
-                </Fragment> 
+                </>
               ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
             </button>
             <div className="counter last inline">
@@ -322,7 +324,7 @@ const Genre = ({ match }) => {
               <div className="head nav">
                 <div className="row">
                   <div className="col">
-                    <button 
+                    <button
                       type="button"
                       className="btn sm flat counter"
                       disabled={!items}
@@ -350,10 +352,10 @@ const Genre = ({ match }) => {
                       onClick={onToggleDesc}>
                       {icon.arrowDown}
                     </button>
-                    <Menu 
+                    <Menu
                       className="dropdown-menu"
-                      anchorEl={orderMenuAnchorEl} 
-                      open={Boolean(orderMenuAnchorEl)} 
+                      anchorEl={orderMenuAnchorEl}
+                      open={Boolean(orderMenuAnchorEl)}
                       onClose={onCloseOrderMenu}>
                       {orderByOptions}
                     </Menu>
@@ -378,9 +380,9 @@ const Genre = ({ match }) => {
       )}
 
       {genre && count > 0 && items?.length < count && (
-        <PaginationControls 
-          count={count} 
-          fetch={fetchNext} 
+        <PaginationControls
+          count={count}
+          fetch={fetchNext}
           limit={limit}
           loading={loading}
           oneWay
@@ -389,14 +391,6 @@ const Genre = ({ match }) => {
       )}
     </div>
   );
-};
-
-Genre.propTypes = {
-  match: matchType
-};
-
-Genre.defaultProps = {
-  match: null
 };
 
 export default Genre;

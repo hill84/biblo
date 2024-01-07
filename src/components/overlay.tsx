@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent, MouseEvent, FC } from 'react';
 
 interface OverlayProps {
   onClick: (e: MouseEvent | KeyboardEvent) => void;

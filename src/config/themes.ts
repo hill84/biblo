@@ -1,7 +1,8 @@
 import amber from '@material-ui/core/colors/amber';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import cyan from '@material-ui/core/colors/cyan';
-import { createTheme, Theme } from '@material-ui/core/styles';
+import type { Theme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 
 export const defaultTheme: Theme = createTheme({
   palette: {

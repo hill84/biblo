@@ -1,18 +1,17 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
 import '../../css/searchBook.css';
-import { BookModel } from '../../types';
+import type { BookModel } from '../../types';
 import Book from '../book';
 import SearchBookForm from '../forms/searchBookForm';
 
-type AddBookProps = RouteComponentProps;
-
 let timeout: number;
 
-const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
+const AddBook: FC = () => {
   const [book, setBook] = useState<BookModel | null>(null);
   const [showNew, setShowNew] = useState<boolean>(false);
 
@@ -24,7 +23,7 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
   };
 
   useEffect(() => () => {
-    clearInterval(timeout);
+    if (timeout) clearInterval(timeout);
   }, []);
 
   const onBookSelect = (book: BookModel): void => setBook(book);
@@ -42,7 +41,7 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
         <meta name='description' content={seo.description} />
         <link rel='canonical' href={app.url} />
       </Helmet>
-      
+
       <div role='button' tabIndex={0} className='card sm flat search-book' onClick={onClick} onKeyDown={onClick}>
         <SearchBookForm onBookSelect={onBookSelect} />
       </div>
@@ -51,11 +50,9 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
         <Book
           bid={book.bid}
           book={book}
-          history={history}
-          location={location}
         />
       ) : (
-        <Fragment>
+        <>
           <p className='text-center'>
             <Link to='/genres' className='counter'>{t('PAGE_GENRES')}</Link>
             <Link to='/collections' className='counter'>{t('PAGE_COLLECTIONS')}</Link>
@@ -71,10 +68,10 @@ const AddBook: FC<AddBookProps> = ({ history, location }: AddBookProps) => {
               </p>
             </div>
           )}
-        </Fragment>
+        </>
       )}
     </div>
   );
 };
- 
+
 export default AddBook;

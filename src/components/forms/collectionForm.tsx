@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -7,14 +7,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
-import React, { ChangeEvent, FC, FormEvent, Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { collectionRef, collectionsRef } from '../../config/firebase';
 import { genres } from '../../config/lists';
 import { handleFirestoreError } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
-import { IsCurrent } from '../../types';
+import type { IsCurrent } from '../../types';
 import Overlay from '../overlay';
 
 interface MaxModel {
@@ -218,7 +219,7 @@ const CollectionForm: FC<CollectionFormProps> = ({
   ));
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={() => onToggle()} />
       <div role='dialog' aria-describedby='new collection' className='dialog light' ref={is}>
         {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
@@ -352,7 +353,7 @@ const CollectionForm: FC<CollectionFormProps> = ({
           <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Salva le modifiche</button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
 

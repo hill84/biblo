@@ -1,8 +1,10 @@
 import classnames from 'classnames';
-import React, { forwardRef, ForwardRefRenderFunction, HTMLAttributes, PropsWithChildren, Ref } from 'react';
+import type { ForwardRefRenderFunction, HTMLAttributes, PropsWithChildren, Ref } from 'react';
+import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { GenreModel, genres } from '../config/lists';
+import type { GenreModel } from '../config/lists';
+import { genres } from '../config/lists';
 import { normURL, translateURL } from '../config/shared';
 
 interface GenresProps extends PropsWithChildren<HTMLAttributes<HTMLDivElement>> {

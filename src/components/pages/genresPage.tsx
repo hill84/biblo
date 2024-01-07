@@ -1,16 +1,17 @@
-import React, { FC, Fragment } from 'react';
+import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
-import { GenreModel, genres } from '../../config/lists';
-import { app, normURL, translateURL } from '../../config/shared';
+import type { GenreModel } from '../../config/lists';
+import { genres } from '../../config/lists';
+import { app, denormURL, translateURL } from '../../config/shared';
 import BookCollection from '../bookCollection';
 
 const GenresPage: FC = () => {
   const { t } = useTranslation(['common', 'lists']);
 
   return (
-    <Fragment>
+    <>
       <Helmet>
         <title>{app.name} | {t('PAGE_GENRES')}</title>
       </Helmet>
@@ -20,7 +21,7 @@ const GenresPage: FC = () => {
             {({ inView, ref }) => (
               <div className='card dark card-fullwidth-sm' /* style={{'--cardClr': item.color}} */ ref={ref}>
                 <BookCollection
-                  cid={normURL(name)}
+                  cid={denormURL(name)}
                   desc pagination={false}
                   label={t(`lists:GENRE_${translateURL(canonical)}`)}
                   limit={7}
@@ -32,8 +33,8 @@ const GenresPage: FC = () => {
           </InView>
         )}
       </div>
-    </Fragment>
+    </>
   );
 };
- 
+
 export default GenresPage;

@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { authorsRef, countRef } from '../../config/firebase';
@@ -31,11 +31,11 @@ export default class AuthorsPage extends Component {
     loading: true,
     orderByIndex: 1,
     page: 1
-  }
+  };
 
   static propTypes = {
     openSnackbar: funcType.isRequired
-  }
+  };
 
   componentDidMount() {
     this._isMounted = true;
@@ -97,7 +97,7 @@ export default class AuthorsPage extends Component {
         }
       }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     } else fetcher();
-  }
+  };
 
   onToggleDesc = () => this.setState(prevState => ({ desc: !prevState.desc }));
 
@@ -130,7 +130,7 @@ export default class AuthorsPage extends Component {
           {!loading && !items ? (
             <div className="empty text-center">Nessun elemento</div>
           ) : (
-            <Fragment>
+            <>
               {loading && (
                 <div aria-hidden="true" className="loader"><CircularProgress /></div>
               )}
@@ -182,7 +182,7 @@ export default class AuthorsPage extends Component {
                 page={page}
               />
               
-            </Fragment>
+            </>
           )}
         </div>
       </div>

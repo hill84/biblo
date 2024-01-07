@@ -4,7 +4,7 @@ import Grow from '@material-ui/core/Grow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
@@ -138,7 +138,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
   
   return (
-    <Fragment>
+    <>
       <div className={classnames(isOwner ? 'own comment' : 'comment', { [`flagged ${comment.flag?.value}`]: comment.flag })} id={`${rid}-${comment.createdByUid}`} ref={is}>
         <div className="row">
           <div className="col-auto left">
@@ -235,7 +235,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
           value={flaggedByUser ? comment.flag?.value : ''}
         />
       )}
-    </Fragment>
+    </>
   );
 };
 

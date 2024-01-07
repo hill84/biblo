@@ -1,6 +1,7 @@
 import classnames from 'classnames';
-import DOMPurify from 'dompurify';
-import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { sanitize } from 'dompurify';
+import type { FC } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 // import { Link } from 'react-router-dom';
 import { enrichText } from '../config/shared';
@@ -39,14 +40,14 @@ const MinifiableText: FC<MinifiableTextProps> = ({
     setMinified(defaultMinified === false ? defaultMinified : (text.length > (maxChars || 700)));
   }, [maxChars, text, defaultMinified]);
 
-  const sanitizedHtml = useMemo((): string => DOMPurify.sanitize(rich ? enrichText(text) : text), [rich, text]);
-  
+  const sanitizedHtml = useMemo((): string => sanitize(rich ? enrichText(text) : text), [rich, text]);
+
   if (!text) return null;
-  
+
   const onMinify = (): void => setMinified(minified => !minified);
 
   return (
-    <Fragment>
+    <>
       <span
         className={classnames('minifiable', minified ? 'minified' : 'expanded')}
         dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
@@ -61,15 +62,15 @@ const MinifiableText: FC<MinifiableTextProps> = ({
         </span>
       )}
       {((minified && !forced) || toggle) && (
-        <Fragment>
+        <>
           <br/>
           <button type='button' className='link' onClick={onMinify}>
             {t(toggle && !minified ? 'ACTION_HIDE' : 'ACTION_SHOW_ALL')}
           </button>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 };
- 
+
 export default MinifiableText;

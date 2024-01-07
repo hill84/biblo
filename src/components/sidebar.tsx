@@ -4,10 +4,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { FC, Fragment, useContext } from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { version } from '../../package.json';
+import pjson from '../../package.json';
 import icon from '../config/icons';
 import { getInitials } from '../config/shared';
 import { darkTheme } from '../config/themes';
@@ -34,7 +35,7 @@ const Sidebar: FC<SidebarProps> = ({
         onClick={onCloseDrawer}>
         <nav className='list'>
           {user ? (
-            <Fragment>
+            <>
               <NavLink to='/profile' className='auth-header'>
                 <div className='background' style={{ backgroundImage: `url(${user.photoURL})`, }} />
                 <div className='user'>
@@ -59,7 +60,7 @@ const Sidebar: FC<SidebarProps> = ({
                   <Typography variant='inherit'>{t('PAGE_DASHBOARD')}</Typography>
                 </MenuItem>
               </NavLink>
-            </Fragment>
+            </>
           ) : (
             <div className='auth-header-buttons'>
               <NavLink to='/login'>
@@ -76,44 +77,44 @@ const Sidebar: FC<SidebarProps> = ({
               </NavLink>
             </div>
           )}
-          <NavLink to='/' exact>
+          <NavLink to='/' end>
             <MenuItem>
               <ListItemIcon>{icon.home}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_HOME')}</Typography>
             </MenuItem>
           </NavLink>
-          <NavLink to='/groups' exact>
+          <NavLink to='/groups' end>
             <MenuItem>
               <ListItemIcon>{icon.accountGroup}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_GROUPS')}</Typography>
             </MenuItem>
           </NavLink>
-          <NavLink to='/genres' exact>
+          <NavLink to='/genres' end>
             <MenuItem>
               <ListItemIcon>{icon.libraryShelves}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_GENRES')}</Typography>
             </MenuItem>
           </NavLink>
-          <NavLink to='/authors' exact>
+          <NavLink to='/authors' end>
             <MenuItem>
               <ListItemIcon>{icon.accountEdit}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_AUTHORS')}</Typography>
             </MenuItem>
           </NavLink>
-          {/* <NavLink to='/collections' exact>
+          {/* <NavLink to='/collections' end>
             <MenuItem>
               <ListItemIcon>{icon.bookmarkMultiple}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_COLLECTIONS')}</Typography>
             </MenuItem>
           </NavLink> */}
-          <NavLink to='/donations' exact>
+          <NavLink to='/donations' end>
             <MenuItem>
               <ListItemIcon>{icon.heart}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_DONATIONS')}</Typography>
             </MenuItem>
           </NavLink>
           {isAdmin && (
-            <NavLink to='/icons' exact>
+            <NavLink to='/icons' end>
               <MenuItem>
                 <ListItemIcon>{icon.emoticon}</ListItemIcon>
                 <Typography variant='inherit'>{t('PAGE_ICONS')}</Typography>
@@ -122,9 +123,9 @@ const Sidebar: FC<SidebarProps> = ({
           )}
 
           <MenuItem disableRipple className='bottom-item'>
-            <div className='version'>v {version}</div>
+            <div className='version'>v {pjson.version}</div>
           </MenuItem>
-          
+
         </nav>
       </Drawer>
     </ThemeProvider>

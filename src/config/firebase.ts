@@ -1,8 +1,9 @@
-import firebase, { firestore, storage } from 'firebase/app';
+import type { firestore, storage } from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
-import 'firebase/storage';
 import 'firebase/performance';
+import 'firebase/storage';
 import { prod } from './shared';
 
 type ConfigModel = Record<'appId' | 'apiKey' | 'authDomain' | 'databaseURL' | 'projectId' | 'storageBucket' | 'messagingSenderId', string | undefined>;

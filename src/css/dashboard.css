@@ -1,4 +1,4 @@
-@import 'media-queries.css';
+@import url('media-queries.css');
 
 .basic-profile {
   & .username {

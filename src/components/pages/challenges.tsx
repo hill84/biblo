@@ -1,9 +1,10 @@
-import React, { FC, Fragment, useContext, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { app } from '../../config/shared';
 // import { challengeRef, userChallengesRef } from '../../config/firebase';
 import UserContext from '../../context/userContext';
-import { ChallengesModel } from '../../types';
+import type { ChallengesModel } from '../../types';
 
 // const userChallengesMock: UserChallengesModel[] = [
 //   { books: [{ author: '', bid: '', cover: '', title: '' }], cid: 'user_challenge_1', completed_num: 0, created_num: 0, description: '', title: 'user_challenge_1' }, 
@@ -53,7 +54,7 @@ const Challenges: FC = () => {
       ) : !challenges ? (
         <div>Nothing to show</div>
       ) : (
-        <Fragment>
+        <>
           <h2>Sfide</h2>
           <div className='card dark card-fullwidth-sm'>
             {challenges?.map(({ cid, description, title }: ChallengesModel) => (
@@ -63,7 +64,7 @@ const Challenges: FC = () => {
               </div>
             ))}
           </div>
-        </Fragment>
+        </>
       )}
     </div>
   );

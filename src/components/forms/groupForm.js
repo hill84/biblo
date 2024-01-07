@@ -7,10 +7,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
-import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { groupRef, groupsRef } from '../../config/firebase';
 import { funcType, stringType } from '../../config/proptypes';
 import { capitalize, handleFirestoreError } from '../../config/shared';
@@ -84,11 +84,11 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
 
     if (is.current) {
       setChanges(true);
-      setData({ ...data, [name]: value }); 
+      setData({ ...data, [name]: value });
       setErrors({ ...errors, [name]: null });
     }
   };
-  
+
   const onChangeMaxChars = e => {
     e.persist();
     const { name, value } = e.target;
@@ -124,8 +124,8 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
     const errors = {};
     const isDuplicate = id ? false : await checkTitle(data.title);
 
-    if (!data.title) { 
-      errors.title = t('ERROR_REQUIRED_FIELD'); 
+    if (!data.title) {
+      errors.title = t('ERROR_REQUIRED_FIELD');
     } else if (isDuplicate) {
       errors.title = t('ERROR_DUPLICATED_ITEM');
     } else if (data.title?.length > max.chars.title) {
@@ -133,8 +133,8 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
     } else if (data.title?.length < min.chars.title) {
       errors.title = t('ERROR_MIN_COUNT_CHARACTERS', { count: min.chars.title });
     }
-    if (!data.description) { 
-      errors.description = t('ERROR_REQUIRED_FIELD'); 
+    if (!data.description) {
+      errors.description = t('ERROR_REQUIRED_FIELD');
     } else if (data.description?.length > max.chars.description) {
       errors.description = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.description });
     } else if (data.description?.length < min.chars.description) {
@@ -145,16 +145,16 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
     }
     return errors;
   };
-  
+
   const onSubmit = async e => {
     e.preventDefault();
 
     if (changes) {
       if (is.current) setLoading(true);
       const errors = await validate(data);
-      
+
       if (is.current) setErrors(errors);
-      
+
       if (!Object.values(errors).some(Boolean)) {
         if (is.current) setLoading(true);
         const ref = id ? groupRef(id) : groupsRef.doc();
@@ -191,11 +191,11 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
       } else if (is.current) setLoading(false);
     } else onToggle();
   };
-  
-  if (redirectToReferrer) return <Redirect to={`group/${redirectToReferrer}`} />;
+
+  if (redirectToReferrer) return <Navigate to={`group/${redirectToReferrer}`} />;
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={onToggle} />
       <div role="dialog" aria-describedby="new group" className="dialog light" ref={is}>
         {loading && <div aria-hidden="true" className="loader"><CircularProgress /></div>}
@@ -284,7 +284,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
                   error={Boolean(errors.rules)}
                 />
                 {errors.rules && <FormHelperText className="message error">{errors.rules}</FormHelperText>}
-                {(leftChars.rules !== null) && 
+                {(leftChars.rules !== null) &&
                   <FormHelperText className={classnames('message', leftChars.rules < 0 ? 'warning' : 'neutral')}>
                     {t('REMAINING_CHARACTERS')}: {leftChars.rules}
                   </FormHelperText>
@@ -292,7 +292,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
               </FormControl>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="form-group col">
               <FormControl className="input-field" margin="normal" fullWidth>
@@ -349,7 +349,7 @@ const GroupForm = ({ id, onCreated, onToggle, title }) => {
           </button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
 
@@ -364,5 +364,5 @@ GroupForm.defaultProps = {
   id: null,
   title: '',
 };
- 
+
 export default GroupForm;

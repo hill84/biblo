@@ -1,6 +1,7 @@
 import Tooltip from '@material-ui/core/Tooltip';
 import classnames from 'classnames';
-import React, { FC, Fragment, KeyboardEvent, MouseEvent, useMemo } from 'react';
+import type { FC, KeyboardEvent, MouseEvent } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SayButton } from 'react-say';
 import icon from '../config/icons';
@@ -35,7 +36,7 @@ const Incipit: FC<IncipitProps> = ({
   const publicationYear = useMemo((): number | undefined => publication ? new Date(publication).getFullYear() : undefined, [publication]);
 
   return (
-    <Fragment>
+    <>
       <div role='dialog' aria-describedby='incipit' className={classnames('dialog', 'book-incipit', 'force-theme', dark ? 'dark' : 'light')}>
         <div className='absolute-content'>
           <div role='navigation' className='head nav row'>
@@ -62,7 +63,7 @@ const Incipit: FC<IncipitProps> = ({
         </div>
       </div>
       <Overlay onClick={onToggle} />
-    </Fragment>
+    </>
   );
 };
  

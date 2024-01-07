@@ -1,7 +1,8 @@
-import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { followingsRef, notesRef, userRecommendationsRef } from '../../config/firebase';
@@ -10,7 +11,7 @@ import { app, diffDates, getInitials, handleFirestoreError, normURL, truncateStr
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/recommendationForm.css';
-import { BookModel, CurrentTarget, FollowingsModel, RecommendationModel, RecommendModel } from '../../types';
+import type { BookModel, CurrentTarget, FollowingsModel, RecommendModel, RecommendationModel } from '../../types';
 import Overlay from '../overlay';
 import { skltn_avatarRow } from '../skeletons';
 
@@ -209,7 +210,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
   const hasFollowings: boolean = Boolean(followings) && Boolean(Object.keys(followings as FollowingsModel).length);
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={onToggle} />
       <div role='dialog' aria-describedby='Recommend a book' className='dialog book-recommendation'>
         <div className='sticky-content'>
@@ -228,7 +229,7 @@ const RecommendationForm: FC<RecommendationFormProps> = ({
           </div>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
  

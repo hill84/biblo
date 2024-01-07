@@ -8,7 +8,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Grow from '@material-ui/core/Grow';
 import Input from '@material-ui/core/Input';
 import { ThemeProvider } from '@material-ui/styles';
-import React, { forwardRef, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notesRef, reviewerCommenterRef, reviewerRef, userBookRef } from '../../config/firebase';
 import { funcType, stringType } from '../../config/proptypes';
@@ -204,7 +204,7 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
   if (!user) return null;
 
   return (
-    <Fragment>
+    <>
       <div className="comment">
         <div className="row">
           <div className="col-auto left">
@@ -267,7 +267,7 @@ const CommentForm = ({ bid, bookTitle, onCancel, rid }) => {
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

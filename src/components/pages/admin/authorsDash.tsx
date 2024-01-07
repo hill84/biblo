@@ -1,4 +1,4 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import { DialogContent, DialogContentText } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,17 +7,18 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
-import { app, getInitials, handleFirestoreError, normalizeString, normURL, timeSince } from '../../../config/shared';
+import { app, getInitials, handleFirestoreError, normURL, normalizeString, timeSince } from '../../../config/shared';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
-import { AuthorModel, CurrentTarget, OrderByModel } from '../../../types';
+import type { AuthorModel, CurrentTarget, OrderByModel } from '../../../types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -83,10 +84,10 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
 
   const { t } = useTranslation(['common', 'form']);
 
-  const orderBy = useMemo((): OrderByModel[] => [  
-    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') }, 
+  const orderBy = useMemo((): OrderByModel[] => [
+    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') },
     { type: 'lastEditByUid', label: t('EDITED_BY') },
-    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') }, 
+    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') },
     { type: 'sex', label: t('form:LABEL_SEX') },
     { type: 'photoURL', label: t('IMAGE') }
   ], [t]);
@@ -211,7 +212,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   };
 
   if (redirectTo) return (
-    <Redirect to={`/author/${redirectTo}`} />
+    <Navigate to={`/author/${redirectTo}`} />
   );
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (
@@ -298,7 +299,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   ]));
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -311,10 +312,10 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
             >
               {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               className='dropdown-menu'
-              anchorEl={limitMenuAnchorEl} 
-              open={Boolean(limitMenuAnchorEl)} 
+              anchorEl={limitMenuAnchorEl}
+              open={Boolean(limitMenuAnchorEl)}
               onClose={onCloseLimitMenu}>
               {limitByOptions}
             </Menu>
@@ -337,10 +338,10 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
               >
                 {icon.arrowDown}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -348,7 +349,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
           )}
         </div>
       </div>
-      
+
       <ul className='table dense nolist font-sm'>
         <li className='avatar-row labels'>
           <div className='row'>
@@ -363,8 +364,8 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
         {itemsList}
       </ul>
 
-      <PaginationControls 
-        count={count} 
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}
@@ -393,7 +394,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import React, { FC, ReactNode, useContext } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import SnackbarContext from '../context/snackbarContext';
 

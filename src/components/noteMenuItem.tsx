@@ -1,11 +1,12 @@
 import Avatar from '@material-ui/core/Avatar';
 import MenuItem from '@material-ui/core/MenuItem';
-import DOMPurify from 'dompurify';
-import React, { forwardRef, ForwardRefRenderFunction, Ref } from 'react';
+import { sanitize } from 'dompurify';
+import type { ForwardRefRenderFunction, Ref } from 'react';
+import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import icon from '../config/icons';
 import { getInitials, timeSince } from '../config/shared';
-import { NoteModel } from '../types';
+import type { NoteModel } from '../types';
 
 interface NoteMenuItemProps {
   index?: number;
@@ -22,10 +23,10 @@ const NoteMenuItem: ForwardRefRenderFunction<HTMLLIElement, NoteMenuItemProps> =
 
   const { created_num, createdBy, createdByUid, nid, photoURL, tag, text } = item;
 
-  const sanitizedHtml: string = DOMPurify.sanitize(text);
+  const sanitizedHtml: string = sanitize(text);
 
   return (
-    <MenuItem key={nid} style={animation ? { animationDelay: `${(index + 1) / 10  }s`, } : { animation: 'none' }} ref={ref}> 
+    <MenuItem key={nid} style={animation ? { animationDelay: `${(index + 1) / 10  }s`, } : { animation: 'none' }} ref={ref}>
       <div className='row'>
         <div className='col-auto'>
           {(photoURL || (tag && (tag.indexOf('follow') > -1 || tag.indexOf('like') > -1))) ? (

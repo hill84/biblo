@@ -1,9 +1,10 @@
-import { DocumentData } from '@firebase/firestore-types';
-import React, { createContext, Dispatch, FC, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { DocumentData } from '@firebase/firestore-types';
+import type { Dispatch, FC, SetStateAction } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { followersRef, followingsRef, userChallengesRef, userRef } from '../config/firebase';
 import { profileKeys } from '../config/lists';
 import '../css/dashboard.css';
-import { BookModel, FollowersModel, IsCurrent, UserChallengeModel, UserModel } from '../types';
+import type { BookModel, FollowersModel, IsCurrent, UserChallengeModel, UserModel } from '../types';
 import UserContext from './userContext';
 
 let userFetchCanceler: (() => void) | null = null;

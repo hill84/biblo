@@ -1,4 +1,4 @@
-import { DocumentData } from '@firebase/firestore-types';
+import type { DocumentData } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -9,7 +9,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import NavigationClose from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, NavLink } from 'react-router-dom';
 import { noteRef, notesRef, signOut } from '../config/firebase';
@@ -19,7 +20,7 @@ import { app, getInitials, hasRole } from '../config/shared';
 import UserContext from '../context/userContext';
 import '../css/layout.css';
 import logo from '../images/logo.svg';
-import { NoteModel, RolesType } from '../types';
+import type { NoteModel, RolesType } from '../types';
 import NoteMenuItem from './noteMenuItem';
 
 let fetchNotesCanceler: null | (() => void) = null;
@@ -104,7 +105,7 @@ const Header: FC<HeaderProps> = ({
           </Link>
         </Typography>
         {user ? (
-          <Fragment>
+          <>
             {isEditor && (
               <Tooltip title={t('ACTION_ADD_BOOK')} placement='bottom'>
                 <IconButton
@@ -214,12 +215,12 @@ const Header: FC<HeaderProps> = ({
                 <ListItemIcon>{icon.logoutVariant}</ListItemIcon> {t('ACTION_LOGOUT')}
               </MenuItem>
             </Menu>
-          </Fragment>
+          </>
         ) : (
-          <Fragment>
+          <>
             <NavLink to='/login' className='btn rounded flat hide-xs'>{t('PAGE_LOGIN')}</NavLink>
             <NavLink to='/signup' className='btn rounded primary'>{t('PAGE_SIGNUP')}</NavLink>
-          </Fragment>
+          </>
         )}
       </Toolbar>
     </div>

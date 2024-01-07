@@ -1,4 +1,4 @@
-import { FirestoreError } from '@firebase/firestore-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,13 +8,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
 import Tooltip from '@material-ui/core/Tooltip';
-import { TransitionProps } from '@material-ui/core/transitions';
+import type { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
-import React, { FC, forwardRef, Fragment, lazy, MouseEvent, ReactElement, Ref, useContext, useEffect, useRef, useState } from 'react';
+import type { FC, MouseEvent, ReactElement, Ref } from 'react';
+import { forwardRef, lazy, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { groupFollowersRef, groupRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { app, getInitials, handleFirestoreError } from '../../config/shared';
@@ -22,7 +23,7 @@ import GroupContext from '../../context/groupContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/groups.css';
-import { CurrentTarget, IsCurrent, ModeratorModel } from '../../types';
+import type { CurrentTarget, IsCurrent, ModeratorModel } from '../../types';
 import Discussions from '../discussions';
 import DiscussionForm from '../forms/discussionForm';
 import GroupForm from '../forms/groupForm';
@@ -39,49 +40,45 @@ const Transition = forwardRef(function Transition(
   return <Grow ref={ref} {...props} />;
 });
 
-export type GroupProps = RouteComponentProps<MatchParams>;
-
 interface MatchParams {
   gid: string;
 }
 
-const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
+const Group: FC = () => {
   const { isAdmin, isAuth, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { 
-    clearStates, 
-    fetchGroup, 
-    follow, 
-    followers, 
-    isOwner, 
-    isModerator, 
-    item, 
-    loading, 
-    moderators: groupModerators, 
-    setFollow, 
+  const {
+    clearStates,
+    fetchGroup,
+    follow,
+    followers,
+    isOwner,
+    isModerator,
+    item,
+    loading,
+    moderators: groupModerators,
+    setFollow,
     setLoading,
-    setModerators 
+    setModerators
   } = useContext(GroupContext);
-  
+
   const [isOpenEditDialog, setIsOpenEditDialog] = useState<boolean>(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState<boolean>(false);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState<boolean>(false);
   const [isOpenModeratorsDialog, setIsOpenModeratorsDialog] = useState<boolean>(false);
-  const { gid } = match.params;
+
+  const { gid } = useParams<keyof MatchParams>();
 
   const { t } = useTranslation(['common', 'form']);
 
   const is = useRef<IsCurrent>(false);
-
-  const seo = {
-    title: `${app.name} | ${t('PAGE_GROUP')}`
-  };
 
   useEffect(() => {
     is.current = true;
   }, []);
 
   useEffect(() => {
+    if (!gid) return;
     fetchGroup(gid);
   }, [fetchGroup, gid]);
 
@@ -89,6 +86,12 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
     clearStates();
     is.current = false;
   }, [clearStates]);
+
+  if (!gid) return <Navigate to='/groups' />;
+
+  const seo = {
+    title: `${app.name} | ${t('PAGE_GROUP')}`
+  };
 
   const onFollow = (): void => {
     if (user) {
@@ -166,9 +169,9 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
     } else console.warn('No item');
   };
 
-  if (redirectToReferrer) return <Redirect to='/groups' />;
+  if (redirectToReferrer) return <Navigate to='/groups' />;
 
-  if (!loading && !item) return <NoMatch title={t('GROUP_NOT_FOUND')} history={history} location={location} />;
+  if (!loading && !item) return <NoMatch title={t('GROUP_NOT_FOUND')} />;
 
   return (
     <div className='container' ref={is}>
@@ -183,7 +186,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
         {isEditor && (isOwner || isModerator || isAdmin) ? (
           <div className='absolute-top-right'>
             {(isOwner || isAdmin) && (
-              <Fragment>
+              <>
                 <button
                   type='button'
                   className='btn sm flat counter icon-sm'
@@ -196,7 +199,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
                   onClick={onDeleteRequest}>
                   {icon.delete} <span className='hide-sm'>{t('ACTION_DELETE')}</span>
                 </button>
-              </Fragment>
+              </>
             )}
             <button
               type='button'
@@ -225,7 +228,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
             <h2 className='title flex'>{item?.title || <span className='skltn area' />}</h2>
             <div className='info-row owner flex'>
               {item ? (
-                <Fragment>
+                <>
                   <span className='counter'>{t('CREATED_BY')} <Link to={`/dashboard/${item.ownerUid}`}>{item.owner}</Link></span>
                   {item.moderators?.length > 1 && (
                     <button
@@ -235,7 +238,7 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
                       {t('MODERATORS_COUNT', { count: item.moderators.length })}
                     </button>
                   )}
-                </Fragment>
+                </>
               ) : <span className='skltn rows one' />}
             </div>
           </div>
@@ -247,20 +250,20 @@ const Group: FC<GroupProps> = ({ history, location, match }: GroupProps) => {
 
         {isAuth && user && (
           <div className='info-row'>
-            <button 
-              type='button' 
-              className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')} 
-              onClick={onFollow} 
+            <button
+              type='button'
+              className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')}
+              onClick={onFollow}
               disabled={!isEditor}>
               {follow ? (
-                <Fragment>
+                <>
                   <span className='hide-on-hover'>
                     {icon.check} {t('ACTION_FOLLOW')}
                   </span>
                   <span className='show-on-hover'>
                     {t('ACTION_STOP_FOLLOWING')}
                   </span>
-                </Fragment> 
+                </>
               ) : <span>{icon.plus} {t('ACTION_FOLLOW')}</span> }
             </button>
             <div className='counter inline'>

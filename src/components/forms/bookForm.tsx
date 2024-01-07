@@ -1,5 +1,5 @@
 import MomentUtils from '@date-io/moment';
-import { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
+import type { DocumentData, DocumentReference, FirestoreError } from '@firebase/firestore-types';
 import Chip from '@material-ui/core/Chip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,19 +19,21 @@ import { DatePicker, LocalizationProvider } from '@material-ui/pickers';
 import classnames from 'classnames';
 import isbn from 'isbn-utils';
 import moment from 'moment';
-import React, { ChangeEvent, FC, FormEvent, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import isISBN from 'validator/lib/isISBN';
 import isURL from 'validator/lib/isURL';
 import { bookRef, booksRef, collectionBookRef, collectionRef, storageRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { authors, awards, collections, formats, GenreModel, genres, languages, ListModel, publishers } from '../../config/lists';
+import type { GenreModel, ListModel } from '../../config/lists';
+import { authors, awards, collections, formats, genres, languages, publishers } from '../../config/lists';
 import { arrToObj, checkBadWords, extractUrls, handleFirestoreError, join, noCookie, normalizeString, numRegex, setFormatClass, validateImg } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import i18n from '../../i18n';
-import { BookEDITModel, BookModel, IsCurrent } from '../../types';
+import type { BookEDITModel, BookModel, IsCurrent } from '../../types';
 import Cover from '../cover';
 
 interface ErrorMessagesModel {
@@ -114,22 +116,22 @@ const buildInitialBook = ({
   awards = [],
   bid = '',
   collections = [],
-  covers = [], 
-  description = '', 
-  edition_num = 0, 
-  format = 'Libro', 
-  genres = [], 
+  covers = [],
+  description = '',
+  edition_num = 0,
+  format = 'Libro',
+  genres = [],
   incipit = '',
-  languages = [], 
-  pages_num = 0, 
-  publisher = '', 
-  publication = '', 
+  languages = [],
+  pages_num = 0,
+  publisher = '',
+  publication = '',
   readers_num = 0,
   rating_num = 0,
   ratings_num = 0,
   reviews_num = 0,
-  subtitle = '', 
-  title = '', 
+  subtitle = '',
+  title = '',
   title_sort = '',
   trailerURL = '',
   EDIT = initialEDIT,
@@ -137,29 +139,29 @@ const buildInitialBook = ({
   ISBN_13 = 0,
 }: BookModel): BookModel => {
   return {
-    ISBN_10: ISBN_10 || (ISBN_13 ? isbn.parse(String(ISBN_13))?.asIsbn10() || 0 : 0), 
-    ISBN_13, 
+    ISBN_10: ISBN_10 || (ISBN_13 ? isbn.parse(String(ISBN_13))?.asIsbn10() || 0 : 0),
+    ISBN_13,
     EDIT,
-    authors, 
+    authors,
     awards,
-    bid, 
+    bid,
     collections,
-    covers, 
-    description, 
-    edition_num, 
-    format, 
-    genres, 
+    covers,
+    description,
+    edition_num,
+    format,
+    genres,
     incipit,
-    languages, 
-    pages_num, 
-    publisher, 
-    publication, 
+    languages,
+    pages_num,
+    publisher,
+    publication,
     readers_num,
     rating_num,
     ratings_num,
     reviews_num,
-    subtitle, 
-    title, 
+    subtitle,
+    title,
     title_sort,
     trailerURL,
   };
@@ -172,7 +174,7 @@ const BookForm: FC<BookFormProps> = ({
   onEditing
 }: BookFormProps) => {
   const initialBook = useMemo((): BookModel => buildInitialBook(_book), [_book]);
-  
+
   const { isAdmin, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const [book, setBook] = useState<BookModel>(initialBook);
@@ -209,11 +211,11 @@ const BookForm: FC<BookFormProps> = ({
 
     setIsEditingDescription(isEditingDescription => !isEditingDescription);
   };
-  
+
   const onToggleIncipit = (e: MouseEvent): void => {
     // e.persist();
     e.preventDefault();
-    
+
     setIsEditingIncipit(isEditingIncipit => !isEditingIncipit);
   };
 
@@ -287,7 +289,7 @@ const BookForm: FC<BookFormProps> = ({
     const value: Record<string, unknown> = arrToObj(chips.map((c: string): string => c.split('.').join('')), (item: string): { key: string; value: boolean } => ({ key: item, value: true }));
     setBookChange(name, value);
   };
-  
+
   const onChangeMaxChars = useCallback((e: ChangeEvent<HTMLInputElement>): void => {
     e.persist();
     const { name, value } = e.target;
@@ -304,7 +306,7 @@ const BookForm: FC<BookFormProps> = ({
       minDate: t('ERROR_MIN_DATE', { number: min.publication }),
       maxDate: t('ERROR_MAX_DATE', { number: max.publication }),
     };
-    
+
     setErrors(errors => ({ ...errors, [name]: errorMessages[reason] }));
   };
 
@@ -319,7 +321,7 @@ const BookForm: FC<BookFormProps> = ({
   const validate = useCallback(async (book: BookModel): Promise<ErrorsModel> => {
     const errors: ErrorsModel = {};
     const isDuplicate: boolean = await checkISBNnum(book.ISBN_13);
-    
+
     if (!book.title) {
       errors.title = t('ERROR_REQUIRED_FIELD');
     } else if (book.title.length > max.chars.title) {
@@ -372,7 +374,7 @@ const BookForm: FC<BookFormProps> = ({
       } else if (!isISBN(String(book.ISBN_10), 10)) {
         errors.ISBN_10 = t('ERROR_INVALID_FORMAT');
       }
-    } 
+    }
 
     if (new Date(book.publication).getTime() > max.publication.getTime()) {
       errors.publication = t('ERROR_INVALID_DATE');
@@ -430,7 +432,7 @@ const BookForm: FC<BookFormProps> = ({
     if (book.trailerURL) {
       if (!isURL(book.trailerURL)) {
         errors.trailerURL = t('ERROR_INVALID_FORMAT');
-      } 
+      }
       if (book.trailerURL.length > max.chars.URL) {
         errors.trailerURL = t('ERROR_MAX_COUNT_CHARACTERS', { count: max.chars.URL });
       }
@@ -449,14 +451,14 @@ const BookForm: FC<BookFormProps> = ({
         errors[text as keyof ErrorsModel] = t('ERROR_NO_VULGARITY');
       }
     });
-    
+
     return errors;
   }, [checkISBNnum, _book, t]);
 
   const saveImage = useCallback((bid: string, file?: File): void => {
     if (!file) return;
     const uploadError: string = validateImg(file, 1) || '';
-      
+
     if (!uploadError) {
       setImgLoading(true);
       setErrors(errors => ({ ...errors, upload: '' }));
@@ -501,7 +503,7 @@ const BookForm: FC<BookFormProps> = ({
     const bid: string = _book.bid || book.bid;
     saveImage(bid, file);
   }, [_book.bid, book.bid, saveImage]);
-  
+
   const onSubmit = useCallback(async (e: FormEvent): Promise<void> => {
     e.preventDefault();
 
@@ -546,13 +548,13 @@ const BookForm: FC<BookFormProps> = ({
           newBid = newBookRef.id;
           newBookRef.set({
             ISBN_10: String(book.ISBN_10),
-            ISBN_13: book.ISBN_13, 
-            authors: book.authors, 
+            ISBN_13: book.ISBN_13,
+            authors: book.authors,
             awards: book.awards,
             bid: newBid,
             collections: book.collections,
-            covers: (imgPreview && Array(imgPreview)) || book.covers, 
-            description: book.description, 
+            covers: (imgPreview && Array(imgPreview)) || book.covers,
+            description: book.description,
             EDIT: {
               created_num: Date.now(),
               createdBy: userDisplayName,
@@ -562,20 +564,20 @@ const BookForm: FC<BookFormProps> = ({
               lastEditBy: userDisplayName,
               lastEditByUid: userUid
             },
-            edition_num: book.edition_num, 
-            format: book.format, 
-            genres: book.genres, 
+            edition_num: book.edition_num,
+            format: book.format,
+            genres: book.genres,
             incipit: book.incipit,
-            languages: book.languages, 
-            pages_num: book.pages_num, 
-            publisher: book.publisher, 
-            publication: book.publication, 
+            languages: book.languages,
+            pages_num: book.pages_num,
+            publisher: book.publisher,
+            publication: book.publication,
             readers_num: book.readers_num,
             rating_num: book.rating_num,
             ratings_num: book.ratings_num,
             reviews_num: book.reviews_num,
-            subtitle: book.subtitle, 
-            title: book.title, 
+            subtitle: book.subtitle,
+            title: book.title,
             title_sort: book.title_sort,
             trailerURL: noCookie(book.trailerURL)
           }).then((): void => {
@@ -596,15 +598,15 @@ const BookForm: FC<BookFormProps> = ({
           const bookCover: string = book.covers[0];
           book.collections.forEach((cid: string): void => {
             collectionBookRef(cid, book.bid || newBid).get().then((collection: DocumentData): void => {
-              if (collection.exists) { 
+              if (collection.exists) {
                 collectionBookRef(cid, book.bid || newBid).get().then((collectionBook: DocumentData): void => {
                   collectionBookRef(cid, book.bid || newBid).set({
-                    bid: book.bid || newBid, 
+                    bid: book.bid || newBid,
                     bcid: collectionBook.exists ? collectionBook.data().bcid : (collection.data().books_num || 0) + 1,
                     covers: (imgPreview && Array(imgPreview)) || (!!bookCover && Array(bookCover)) || [],
-                    title: book.title,  
-                    subtitle: book.subtitle, 
-                    authors: book.authors, 
+                    title: book.title,
+                    subtitle: book.subtitle,
+                    authors: book.authors,
                     publisher: book.publisher,
                     publication: book.publication,
                     rating_num: book.rating_num,
@@ -639,21 +641,21 @@ const BookForm: FC<BookFormProps> = ({
   }, [changes, onEditing]);
 
   const onCloseChangesDialog = (): void => setIsOpenChangesDialog(false);
-  
+
   const menuItemsMap = <G extends ListModel>(arr: G[], values?: string[]) => arr.map(({ id, name }: G) => (
-    <MenuItem 
-      value={name} 
-      key={id} 
-      // insetChildren={Boolean(values)} 
+    <MenuItem
+      value={name}
+      key={id}
+      // insetChildren={Boolean(values)}
       selected={values?.includes(name)}>
       {name}
     </MenuItem>
   ));
-  
-  if (redirectToBook) return <Redirect to={`/book/${redirectToBook}`} />;
-  
+
+  if (redirectToBook) return <Navigate to={`/book/${redirectToBook}`} />;
+
   return (
-    <Fragment>
+    <>
       <div className='container top' ref={is}>
         <form className='card light'>
           {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
@@ -714,7 +716,7 @@ const BookForm: FC<BookFormProps> = ({
                     options={authors}
                     value={Object.keys(book.authors)}
                     freeSolo
-                    renderTags={(value, getTagProps) => 
+                    renderTags={(value, getTagProps) =>
                       value.map((option, index) => (
                         <Chip
                           key={option[index]}
@@ -786,7 +788,7 @@ const BookForm: FC<BookFormProps> = ({
                       options={publishers}
                       value={book.publisher}
                       freeSolo
-                      renderTags={(value, getTagProps) => 
+                      renderTags={(value, getTagProps) =>
                         value.map((option, index) => (
                           <Chip
                             key={option[index]}
@@ -930,7 +932,7 @@ const BookForm: FC<BookFormProps> = ({
                 </FormControl>
               </div>
               {isAdmin && (
-                <Fragment>
+                <>
                   <div className='form-group'>
                     <FormControl className='chip-input' margin='normal' fullWidth>
                       <Autocomplete
@@ -942,7 +944,7 @@ const BookForm: FC<BookFormProps> = ({
                         options={collections}
                         value={book.collections}
                         freeSolo
-                        renderTags={(value, getTagProps) => 
+                        renderTags={(value, getTagProps) =>
                           value.map((option, index) => (
                             <Chip
                               key={option[index]}
@@ -1003,7 +1005,7 @@ const BookForm: FC<BookFormProps> = ({
                       {errors.awards && <FormHelperText className='message error'>{errors.awards}</FormHelperText>}
                     </FormControl>
                   </div>
-                </Fragment>
+                </>
               )}
               {isEditingDescription ? (
                 <div className='form-group'>
@@ -1108,7 +1110,7 @@ const BookForm: FC<BookFormProps> = ({
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

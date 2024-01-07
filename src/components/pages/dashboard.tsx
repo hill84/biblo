@@ -1,4 +1,4 @@
-import { FirestoreError } from '@firebase/firestore-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -6,22 +6,23 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Tooltip from '@material-ui/core/Tooltip';
 import classnames from 'classnames';
-import React, { ChangeEvent, CSSProperties, FC, Fragment, lazy, MouseEvent, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, ChangeEvent, FC, MouseEvent, ReactNode } from 'react';
+import { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import { followersRef, followingsRef, notesRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { dashboardTabs as tabs } from '../../config/lists';
-import { app, booksPerRow, calcAge, capitalize, getInitials, isScrollable, joinToLowerCase, normURL, screenSize as _screenSize, timeSince, truncateString } from '../../config/shared';
+import { screenSize as _screenSize, app, booksPerRow, calcAge, capitalize, getInitials, isScrollable, joinToLowerCase, normURL, timeSince, truncateString } from '../../config/shared';
 import DashboardContext from '../../context/dashboardContext';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/dashboard.css';
-import { FollowersModel, IsCurrent, ScreenSizeType, UserChallengeModel } from '../../types';
+import type { FollowersModel, IsCurrent, ScreenSizeType, UserChallengeModel } from '../../types';
 import ReadingStats from '../readingStats';
 import Reviews from '../reviews';
 import Shelf from '../shelf';
@@ -47,26 +48,30 @@ const max: MaxModel = {
   }
 };
 
-export type DashboardProps = RouteComponentProps<MatchParams>;
-
 interface MatchParams {
   tab?: string;
   uid: string;
 }
 
-const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardProps) => {
-  const { tab = '', uid } = match.params || {};
+const Dashboard: FC = () => {
   const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const luid: string = user?.uid || '';
-  const isOwner: boolean = luid === uid;
   const { closeSnackbar, openSnackbar } = useContext(SnackbarContext);
   const { duser, challenges, followers, followings, follow, lfollowers, lfollowings, loading, progress, shelfCount, shelfItems, wishlistCount, wishlistItems, fetchUser, fetchFollowers, fetchFollowings, fetchuserChallengesRef, setShelfCount, setShelfItems, setWishlistCount, setWishlistItems } = useContext(DashboardContext);
-  const [tabSelected, setTabSelected] = useState<number>(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
   const [screenSize, setScreenSize] = useState<ScreenSizeType>(_screenSize());
-  const [shelfLimit, setShelfLimit] = useState<number>((booksPerRow() * 2) - (isOwner ? 1 : 0));
 
   const { t } = useTranslation(['common']);
-  
+
+  const { pathname } = useLocation();
+
+  const navigate = useNavigate();
+
+  const { tab = '', uid } = useParams<keyof MatchParams>();
+
+  const isOwner: boolean = luid === uid;
+  const [tabSelected, setTabSelected] = useState<number>(tab ? tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0 : 0);
+  const [shelfLimit, setShelfLimit] = useState<number>((booksPerRow() * 2) - (isOwner ? 1 : 0));
+
   const is = useRef<IsCurrent>(false);
 
   useEffect(() => {
@@ -108,15 +113,11 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   }, [fetchUser, fetchFollowers, fetchFollowings, fetchuserChallengesRef, luid, uid]);
 
   useEffect(() => {
-    if (uid) {
-      if (tabSelected === 0) {
-        const newPath = `/dashboard/${uid}/${tabs[0]}`;
-        if (history.location.pathname !== newPath) {
-          history.replace(newPath, null);
-        }
-      }
-    }
-  }, [history, tabSelected, uid]);
+    if (!uid || tabSelected !== 0) return;
+    const to = `/dashboard/${uid}/${tabs[0]}`;
+    if (pathname === to) return;
+    navigate(to, { replace: true });
+  }, [navigate, pathname, tabSelected, uid]);
 
   useEffect(() => {
     if (isOwner && !user?.photoURL) {
@@ -129,18 +130,13 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   }, [closeSnackbar, isOwner, openSnackbar, user]);
 
   useEffect(() => {
-    if (tabs.indexOf(tab) !== -1) {
-      if (tabs.indexOf(tab) !== tabSelected) {
-        if (is.current) {
-          setTabSelected(tabs.indexOf(tab));
-        }
-      }
-    }
+    if ([-1, tabSelected].includes(tabs.indexOf(tab)) || !is.current) return;
+    setTabSelected(tabs.indexOf(tab));
   }, [tab, tabSelected]);
 
   const onFollowUser = useCallback((e: MouseEvent<HTMLButtonElement>, fuid = duser?.uid, fuser = duser) => {
     e.preventDefault();
-    
+
     if (isAuth && fuid && user && fuser) {
       let computedFollowers = luid !== fuid ? { ...followers } : { ...lfollowers };
       let computedFollowings = luid !== uid ? { ...lfollowings } : { ...followings };
@@ -149,7 +145,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
       let noteMsg = '';
       let followerDisplayName = '';
       const lindex = Object.keys(computedFollowers).indexOf(luid);
-      const findex = Object.keys(computedFollowings).indexOf(fuid);			
+      const findex = Object.keys(computedFollowings).indexOf(fuid);
       // console.log({ fuid, fuser, lindex, findex });
 
       if (lindex > -1 || findex > -1) {
@@ -157,7 +153,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
         if (findex > -1) delete computedFollowings[fuid];
         snackbarMsg = `Non segui più ${fuser.displayName}`;
       } else {
-        computedFollowers = { 
+        computedFollowers = {
           ...computedFollowers,
           [luid]: {
             displayName: user.displayName,
@@ -180,11 +176,11 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
       }
 
       const maxFollowings: number = isPremium || isAdmin ? max.followings.premium : max.followings.standard;
-  
+
       if (Object.keys(lfollowings).length < maxFollowings) {
         // VISITED
         followersRef(fuid).set(computedFollowers).then((): void => {
-          // Send notification to the followed user    
+          // Send notification to the followed user
           if (noteMsg) {
             const newNoteRef = notesRef(fuid).doc();
             newNoteRef.set({
@@ -202,7 +198,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
           // VISITOR
           followingsRef(luid).set(computedFollowings).then((): void => {
             openSnackbar(snackbarMsg, 'success');
-          }).catch((err: FirestoreError): void => console.warn(`Followings error: ${err}`)); 
+          }).catch((err: FirestoreError): void => console.warn(`Followings error: ${err}`));
         }).catch((err: FirestoreError): void => console.warn(`Followers error: ${err}`));
       } else {
         openSnackbar(t('ERROR_MAX_FOLLOWINGS_COUNT', { count: maxFollowings }), 'error');
@@ -213,28 +209,21 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   }, [duser, followers, followings, isAdmin, isAuth, isPremium, lfollowers, lfollowings, luid, openSnackbar, t, uid, user]);
 
   const historyPushTabIndex = (index: number): void => {
-    const newPath = `/dashboard/${uid}/${tabs[index]}`;
-    if (history.location.pathname !== newPath) {
-      history.push(newPath, null);
-    }
+    const to = `/dashboard/${uid}/${tabs[index]}`;
+    if (pathname === to) return;
+    navigate(to, { replace: true });
   };
 
   const onTabSelect = (_e: ChangeEvent<{}>, value: number): void => {
-    if (value !== -1) {
-      if (is.current) {
-        setTabSelected(value);
-        historyPushTabIndex(value);
-      }
-    }
+    if (value === -1 || !is.current) return;
+    setTabSelected(value);
+    historyPushTabIndex(value);
   };
 
   const onTabSelectIndex = (index: number, /* indexLatest, meta */): void => {
-    if (index !== -1) {
-      if (is.current) {
-        setTabSelected(index);
-        historyPushTabIndex(index);
-      }
-    }
+    if (index === -1 || !is.current) return;
+    setTabSelected(index);
+    historyPushTabIndex(index);
   };
 
   const challengeBooks = useMemo((): UserChallengeModel['books'] | undefined => challenges?.filter((challenge: UserChallengeModel): boolean => challenge.completed_num !== Object.keys(challenge.books)?.length)?.[0]?.books, [challenges]);
@@ -244,9 +233,13 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
   const challengeCompleted = useMemo((): boolean => challengeProgress === 100, [challengeProgress]);
   const isMini = useMemo((): boolean => isScrollable(screenSize), [screenSize]);
   const creationYear = useMemo((): string => duser ? String(new Date(duser.creationTime).getFullYear()) : '', [duser]);
-  
+
+  if (!uid || (!duser && !loading)) return (
+    <NoMatch title='Dashboard utente non trovata' />
+  );
+
   const contactsSkeleton = () => [...Array(3)].map((_e, i: number) => <div key={i} className='avatar-row skltn' />);
-  
+
   const ShelfDetails: FC = () => {
     const { stats } = duser || {};
     const books = stats?.shelf_num || 0;
@@ -264,18 +257,14 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
     );
   };
 
-  if (!duser && !loading) return (
-    <NoMatch title='Dashboard utente non trovata' history={history} location={location} />
-  );
-
   interface UsersListProps {
     followings?: FollowersModel;
     users: FollowersModel;
   }
-  
+
   const UsersList: FC<UsersListProps> = ({ followings, users }: UsersListProps) => {
     return (
-      <Fragment>
+      <>
         {Object.keys(users).map(f => (
           <div key={f} className='avatar-row rounded'>
             <Link to={`/dashboard/${f}`} className='row ripple'>
@@ -285,7 +274,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                   src={users[f].photoURL}
                   alt={users[f].displayName}>
                   {!users[f].photoURL && users[f].displayName ? getInitials(users[f].displayName) : icon.accountOff}
-                </Avatar> 
+                </Avatar>
                 {users[f].displayName}
               </div>
               {!isMini && followings && (
@@ -303,19 +292,19 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                 </div>
               )}
             </Link>
-          </div> 
+          </div>
         ))}
-        {/* 
+        {/*
           <PaginationControls // TODO
-            count={users === followers ? followersCount : followingsCount} 
-            fetch={users === followers ? fetchFollowers : fetchFollowings} 
+            count={users === followers ? followersCount : followingsCount}
+            fetch={users === followers ? fetchFollowers : fetchFollowings}
             limit={4}
             loading={users === followers ? followersLoading : followingsLoading}
             oneWay
             page={users === followers ? followersPage : followingsPage}
-          /> 
+          />
         */}
-      </Fragment>
+      </>
     );
   };
 
@@ -327,16 +316,16 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
     </div>
   );
 
-  interface TabLabelProps { 
+  interface TabLabelProps {
     icon: ReactNode;
     label: string;
   }
 
   const TabLabel: FC<TabLabelProps> = ({ icon, label }: TabLabelProps) => (
-    <Fragment>
+    <>
       <span className='icon show-md'>{icon}</span>
       <span className='label'>{label}</span>
-    </Fragment>
+    </>
   );
 
   const UnauthReadingStats = () => (
@@ -363,9 +352,9 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
               {duser && (
                 <div className='absolute-top-right'>
                   {!duser?.roles?.editor ? (
-                    <div className='badge red'>{t('BLOCKED_USER')}</div> 
+                    <div className='badge red'>{t('BLOCKED_USER')}</div>
                   ) : isOwner && progress === 100 && (
-                    <Link to='/profile' className='btn sm flat counter'>{icon.pencil} {t('ACTION_EDIT')}</Link> 
+                    <Link to='/profile' className='btn sm flat counter'>{icon.pencil} {t('ACTION_EDIT')}</Link>
                   )}
                 </div>
               )}
@@ -385,14 +374,14 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                       <span>
                         {duser?.displayName} {duser?.displayName && duser?.roles?.author && (
                           <Tooltip className='check-decagram primary-text' interactive title={(
-                            <Fragment>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></Fragment>
+                            <>Pagina autentica dell&apos;autore <Link to={`/author/${normURL(duser.displayName)}`}>{duser.displayName}</Link></>
                           )}>{icon.checkDecagram}</Tooltip>
                         )}
                       </span>
-                    )} 
+                    )}
                   </h2>
                   {loading ? <div className='skltn three rows' style={skltnStyle} /> : (
-                    <Fragment>
+                    <>
                       <div className='info-row hide-xs'>
                         {duser?.sex && duser.sex !== 'x' && <span className='counter'>{switchSex(duser.sex)}</span>}
                         {duser?.birth_date && <span className='counter'>{t('AGE', { years: calcAge(duser.birth_date) || '-' })}</span>}
@@ -406,16 +395,16 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                       </div>
                       <div className='info-row ellipsis'>
                         {!isOwner && isAuth && (
-                          <button 
+                          <button
                             type='button'
-                            className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')} 
+                            className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')}
                             // disabled={!isAuth}
                             onClick={onFollowUser}>
                             {!follow ? <span>{icon.plus} {t('ACTION_FOLLOW')}</span> : (
-                              <Fragment>
+                              <>
                                 <span className='hide-on-hover'>{icon.check} {t('ACTION_FOLLOW')}</span>
                                 <span className='show-on-hover'>{t('ACTION_STOP_FOLLOWING')}</span>
-                              </Fragment> 
+                              </>
                             )}
                           </button>
                         )}
@@ -427,7 +416,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
                         {duser?.twitch && <span className='counter'>{!isMini && <b>{icon.twitch}</b>} <a href={`https://www.twitch.tv/${duser.twitch}`} target='_blank' rel='noopener noreferrer'>twitch</a></span>}
                         {duser?.facebook && <span className='counter'>{!isMini && <b>{icon.facebook}</b>} <a href={`https://www.facebook.com/${duser.facebook}`} target='_blank' rel='noopener noreferrer'>facebook</a></span>}
                       </div>
-                    </Fragment>
+                    </>
                   )}
                 </div>
               </div>
@@ -457,7 +446,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
         )}
       </div>
       <AppBar position='static' className='appbar toppend mobile'>
-        <Tabs 
+        <Tabs
           // tabItemContainerStyle={{borderTopLeftRadius: 4, borderTopRightRadius: 4}}
           value={tabSelected}
           onChange={onTabSelect}
@@ -471,7 +460,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
           <Tab label={<TabLabel icon={icon.account} label={t('CONTACTS')} />} />
         </Tabs>
       </AppBar>
-      <BindKeyboardSwipeableViews 
+      <BindKeyboardSwipeableViews
         // animateHeight
         axis='x'
         className='card tabs-container bottompend mobile'
@@ -527,7 +516,7 @@ const Dashboard: FC<DashboardProps> = ({ history, location, match }: DashboardPr
               <div className='col-md-6 col-12 contacts-tab-col'>
                 <h4>{t('FOLLOWS')}:</h4>
                 {loading ? contactsSkeleton : Object.keys(followings).length ? (
-                  <UsersList users={followings} /> 
+                  <UsersList users={followings} />
                 ) : (
                   <EmptyRow />
                 )}

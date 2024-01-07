@@ -1,20 +1,21 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import DOMPurify from 'dompurify';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { sanitize } from 'dompurify';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
-// import { Redirect } from 'react-router-dom';
+// import { Navigate } from 'react-router-dom';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
-import { CurrentTarget, NoteModel, OrderByModel } from '../../../types';
+import type { CurrentTarget, NoteModel, OrderByModel } from '../../../types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -90,7 +91,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
 
   const { t } = useTranslation(['common']);
 
-  const orderBy = useMemo((): OrderByModel[] => [ 
+  const orderBy = useMemo((): OrderByModel[] => [
     { type: 'count', label: t('COUNT') },
   ], [t]);
 
@@ -145,7 +146,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
       console.warn(err);
     });
   };
-    
+
   useEffect(() => {
     countRef('notifications').get().then((fullSnap: DocumentData): void => {
       if (fullSnap.exists) {
@@ -233,7 +234,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   }
 
   if (redirectTo) return (
-    <Redirect to={`/notifications/${redirectTo}`} />
+    <Navigate to={`/notifications/${redirectTo}`} />
   ); */
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (
@@ -264,10 +265,10 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
     </li>
   ) : (
     items.map(({ id, count, notes }: NoteDashModel) => (
-      <li 
-        key={id} 
+      <li
+        key={id}
         role='treeitem'
-        className={classnames('expandible-parent', selectedId === id ? 'expanded' : 'compressed')} 
+        className={classnames('expandible-parent', selectedId === id ? 'expanded' : 'compressed')}
         onKeyDown={() => onToggleExpansion(id)}
         onClick={() => onToggleExpansion(id)}>
         <div className='row'>
@@ -280,7 +281,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
         {Boolean(notes?.length) && (
           <ul className='expandible'>
             {notes?.map(({ created_num, nid, read, text }: NoteModel, i: number) => {
-              const sanitizedHtml: string = DOMPurify.sanitize(text);
+              const sanitizedHtml: string = sanitize(text);
               return (
                 <li key={nid} className={read ? 'read' : 'not-read'}>
                   <div className='row'>
@@ -320,7 +321,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   );
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -332,10 +333,10 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
               onClick={onOpenLimitMenu}>
               {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               anchorEl={limitMenuAnchorEl}
               className='dropdown-menu'
-              open={Boolean(limitMenuAnchorEl)} 
+              open={Boolean(limitMenuAnchorEl)}
               onClose={onCloseLimitMenu}>
               {limitByOptions}
             </Menu>
@@ -349,10 +350,10 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
                 onClick={onOpenOrderMenu}>
                 <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -367,7 +368,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
           )}
         </div>
       </div>
-      
+
       <ul className='table dense nolist font-sm dash-table' role='tree'>
         <li className='labels'>
           <div className='row'>
@@ -379,8 +380,8 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
         {itemsList}
       </ul>
 
-      <PaginationControls 
-        count={count} 
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}
@@ -403,7 +404,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

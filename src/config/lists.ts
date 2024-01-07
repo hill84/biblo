@@ -1,4 +1,4 @@
-import { RolesType } from '../types';
+import type { RolesType } from '../types';
 
 export type GenreNameType = 'Architettura' | 'Arte' | 'Avventura' | 'Biografie e autobiografie' | 'Cucina' | 'Economia e finanza' | 'Erotico' | 'Famiglia e relazioni' | 'Fantascienza' | 'Fantasy' | 'Filosofia' | 'Fumetti e Graphic novel' | 'Giallo' | 'Horror' | 'Informatica' | 'Per ragazzi' | 'Medicina e salute' | 'Mistero' | 'Musica' | 'Narrativa' | 'Poesia' | 'Politica' | 'Psicologia' | 'Religione e spiritualità' | 'Rosa' | 'Saggistica' | 'Scienza' | 'Sport' | 'Scienze sociali' | 'Storico' | 'Teatro' | 'Thriller' | 'Satira e umorismo' | 'Viaggi';
 
@@ -1033,7 +1033,7 @@ export const publishers: string [] = [
   'Garzanti Editore', 
   'Giulio Einaudi Editore', 
   'Giunti Editore', 
-  'HarperCollins  Italia Editore', 
+  'HarperCollins Italia Editore', 
   'Hoepli Editore', 
   'ISBN Edizioni', 
   'La Corte editore', 
@@ -1044,4 +1044,5 @@ export const publishers: string [] = [
   'Mondadori',
   'Rizzoli', 
   'Rusconi libri Editore',
+  'Sperling & Kupfer',
 ];

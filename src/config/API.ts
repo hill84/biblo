@@ -1,4 +1,4 @@
-import { SearchParamsModel } from '../booksAPITypes';
+import type { SearchParamsModel } from '../booksAPITypes';
 
 const booksAPIKey: string | undefined = process.env.REACT_APP_BOOKS_API_KEY;
 const booksAPI = 'https://www.googleapis.com/books/v1/';

@@ -1,4 +1,4 @@
-import { DocumentData } from '@firebase/firestore-types';
+import type { DocumentData } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -7,7 +7,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import classnames from 'classnames';
-import React, { ChangeEvent, FC, FormEvent, Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import type { ChangeEvent, FC, FormEvent } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { noteRef, notesRef } from '../../config/firebase';
 import { noteTypes } from '../../config/lists';
@@ -166,7 +167,7 @@ const NoteForm: FC<NoteFormProps> = ({
   ));
 
   return (
-    <Fragment>
+    <>
       <Overlay onClick={() => onToggle()} />
       <div role='dialog' aria-describedby='new note' className='dialog light'>
         {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
@@ -219,7 +220,7 @@ const NoteForm: FC<NoteFormProps> = ({
           <button type='button' className='btn btn-footer primary' onClick={onSubmit}>Salva le modifiche</button>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
  

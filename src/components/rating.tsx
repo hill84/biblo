@@ -1,9 +1,10 @@
-import React, { FC, useMemo } from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Rater from 'react-rater';
 import { ratingLabels } from '../config/lists';
 import '../css/rating.css';
-import { RatingsModel } from '../types';
+import type { RatingsModel } from '../types';
 
 interface RatingProps {
   labels?: boolean;

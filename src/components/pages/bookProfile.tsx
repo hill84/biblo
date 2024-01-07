@@ -5,21 +5,23 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grow from '@material-ui/core/Grow';
-import { TransitionProps } from '@material-ui/core/transitions';
+import type { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
-import React, { ChangeEvent, FC, forwardRef, Fragment, lazy, ReactElement, Ref, useContext, useEffect, useMemo, useState } from 'react';
+import type { ChangeEvent, FC, ReactElement, Ref } from 'react';
+import { forwardRef, lazy, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { GenreModel, genres } from '../../config/lists';
+import type { GenreModel } from '../../config/lists';
+import { genres } from '../../config/lists';
 import { abbrNum, app, calcDurationTime, calcReadingTime, normURL, setFormatClass, timeSince, translateURL, truncateString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/bookProfile.css';
-import { BookModel, UserBookModel } from '../../types';
+import type { BookModel, UserBookModel } from '../../types';
 import BookCollection from '../bookCollection';
 import CopyToClipboard from '../copyToClipboard';
 import Cover from '../cover';
@@ -54,9 +56,7 @@ interface BookProfileProps {
   addBookToWishlist: (bid: string) => void;
   addBookToWishlistRef: Ref<HTMLButtonElement>;
   book?: BookModel;
-  history: RouteComponentProps['history'];
   loading?: boolean;
-  location: RouteComponentProps['location'];
   removeBookFromShelf: (bid: string) => void;
   removeBookFromWishlist: (bid: string) => void;
   // removeReview: () => void;
@@ -74,10 +74,8 @@ const BookProfile: FC<BookProfileProps> = ({
   addBookToWishlistRef,
   // addReview,
   book,
-  history,
   onEditing,
   loading,
-  location,
   rateBook,
   removeBookFromShelf,
   removeBookFromWishlist,
@@ -96,14 +94,18 @@ const BookProfile: FC<BookProfileProps> = ({
 
   const { t } = useTranslation(['common', 'form', 'lists']);
 
+  const navigate = useNavigate();
+
+  const { pathname } = useLocation();
+
   useEffect(() => {
     setUserBook(_userBook);
   }, [_userBook]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIsOpenIncipit(location.pathname.indexOf('/incipit') !== -1);
-  }, [location.pathname]);
+    setIsOpenIncipit(pathname.indexOf('/incipit') !== -1);
+  }, [pathname]);
 
   const onAddBookToShelf = (): void => book && addBookToShelf(book.bid);
 
@@ -130,14 +132,14 @@ const BookProfile: FC<BookProfileProps> = ({
   const onToggleIncipit = (): void => {
     setIsOpenIncipit(!isOpenIncipit);
 
-    history.push(location.pathname.indexOf('/incipit') === -1 
-      ? `${location.pathname}/incipit` 
-      : location.pathname.replace('/incipit', ''), null);
+    const isIncipit: boolean = pathname.indexOf('/incipit') !== -1;
+
+    navigate(isIncipit ? '' : `${pathname}/incipit`, { replace: isIncipit });
   };
 
   const onToggleReadingState = (): void => setIsOpenReadingState(!isOpenReadingState);
 
-  const onToggleSuggest = (): void => setIsOpenRecommendation(!isOpenRecommendation); 
+  const onToggleSuggest = (): void => setIsOpenRecommendation(!isOpenRecommendation);
 
   const onLock = (): void => {
     if (book && book.bid && book.EDIT) {
@@ -170,11 +172,11 @@ const BookProfile: FC<BookProfileProps> = ({
   }, [book?.authors]);
 
   if (!book && !loading) return (
-    <NoMatch title={t('BOOK_NOT_FOUND')} history={history} location={location} />
+    <NoMatch title={t('BOOK_NOT_FOUND')} />
   );
 
   const GenresList: FC = () => (
-    <Fragment>
+    <>
       {book?.genres.map((genre: string) => {
         const getLabel = (genre: string): string => {
           const canonical: string = genres.find(({ name }: GenreModel): boolean => name === genre)?.canonical || '';
@@ -187,23 +189,23 @@ const BookProfile: FC<BookProfileProps> = ({
           </Link>
         );
       })}
-    </Fragment>
+    </>
   );
 
   // const authors = book && <Link to={`/author/${normURL(Object.keys(book.authors)[0])}`}>{Object.keys(book.authors)[0]}</Link>;
 
   return (
-    <Fragment>
+    <>
       {book && isOpenIncipit && (
-        <Incipit 
-          title={book.title} 
-          incipit={book.incipit} 
-          copyrightHolder={book.publisher} 
-          publication={book.publication} 
-          onToggle={onToggleIncipit} 
+        <Incipit
+          title={book.title}
+          incipit={book.incipit}
+          copyrightHolder={book.publisher}
+          publication={book.publication}
+          onToggle={onToggleIncipit}
         />
       )}
-    
+
       <div id='bookProfile'>
         {book && isOpenReadingState && (
           <ReadingStateForm
@@ -233,7 +235,7 @@ const BookProfile: FC<BookProfileProps> = ({
                   ))}
                   {book?.EDIT && isAdmin && (
                     <Tooltip interactive title={book.EDIT.lastEdit_num ? (
-                      <span>{t('EDITED_BY')} <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(book.EDIT.lastEdit_num)}</span> 
+                      <span>{t('EDITED_BY')} <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(book.EDIT.lastEdit_num)}</span>
                     ) : (
                       <span>{t('CREATED_BY')} <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{createdBy}</Link> {timeSince(book.EDIT.created_num)}</span>
                     )}>
@@ -256,14 +258,14 @@ const BookProfile: FC<BookProfileProps> = ({
                     </button>
                   )}
                 </div>
-                
+
                 {book && (
-                  <Fragment>
+                  <>
                     {book.trailerURL && (
                       <button type='button' onClick={() => window.open(book.trailerURL, '_blank')} className='btn xs rounded flat centered btn-trailer'>Trailer</button>
                     )}
 
-                    <ShareButtons 
+                    <ShareButtons
                       className='btn-share-container'
                       // hashtags={['biblo', 'libri', 'twittalibro']}
                       // cover={book.covers && book.covers[0]}
@@ -271,32 +273,32 @@ const BookProfile: FC<BookProfileProps> = ({
                       url={`${app.url}${location.pathname}`}
                       via='BibloSpace'
                     />
-                  </Fragment>
+                  </>
                 )}
               </div>
 
               <div className='col book-profile'>
                 <h2 className='title flex'>
                   {loading ? <span className='skltn area' /> : book && (
-                    <Fragment>
+                    <>
                       {book.title} <span className='mention'>
                         <CopyToClipboard icon={icon.at} text={`@book/${book.bid}/${normURL(book.title)}`}/>
                       </span>
-                    </Fragment>
+                    </>
                   )}
                 </h2>
                 {book?.subtitle && <h3 className='subtitle'>{book.subtitle}</h3>}
                 {loading ? (
                   <div className='skltn rows' style={{ marginTop: '2em', }} />
                 ) : book && (
-                  <Fragment>
+                  <>
                     <div className='info-row'>
-                      {book.authors && <span className='counter comma author'>{t('BY').toLowerCase()} {bookAuthors.map((author: string) => 
-                        <Link to={`/author/${normURL(author)}`} className='counter' key={author}>{author}</Link> 
+                      {book.authors && <span className='counter comma author'>{t('BY').toLowerCase()} {bookAuthors.map((author: string) =>
+                        <Link to={`/author/${normURL(author)}`} className='counter' key={author}>{author}</Link>
                       )}</span>}
                       {book.publisher && <span className='counter hide-sm'>{t('PUBLISHER')} <b>{book.publisher}</b></span>}
                       {isAuth && hasBid && isEditor && (
-                        <Fragment>
+                        <>
                           {isAdmin && (
                             <button type='button' onClick={onLock} className={classnames('link', 'counter', book.EDIT.edit ? 'flat' : 'active')}>
                               <span className='show-sm'>{book.EDIT.edit ? icon.lock : icon.lockOpen}</span>
@@ -311,7 +313,7 @@ const BookProfile: FC<BookProfileProps> = ({
                             <span className='show-sm'>{icon.accountHeart}</span>
                             <span className='hide-sm'>{t('ACTION_RECOMMEND')}</span>
                           </button>
-                        </Fragment>
+                        </>
                       )}
                     </div>
 
@@ -339,10 +341,10 @@ const BookProfile: FC<BookProfileProps> = ({
                     </div>
 
                     {isAuth && (
-                      <Fragment>
+                      <>
                         <div className='info-row'>
                           {userBook.bookInShelf ? (
-                            <Fragment>
+                            <>
                               <button
                                 type='button'
                                 className='btn success rounded error-on-hover'
@@ -356,7 +358,7 @@ const BookProfile: FC<BookProfileProps> = ({
                                 onClick={onToggleReadingState}>
                                 {t('READING_STATE')}
                               </button>
-                            </Fragment>
+                            </>
                           ) : (
                             <button
                               type='button'
@@ -393,7 +395,7 @@ const BookProfile: FC<BookProfileProps> = ({
                             </div>
                           </div>
                         )}
-                      </Fragment>
+                      </>
                     )}
 
                     {book.description && (
@@ -407,7 +409,7 @@ const BookProfile: FC<BookProfileProps> = ({
                       <span className='counter'>{icon.messageTextOutline} <b>{abbrNum(book.reviews_num || 0)}</b> <span className='hide-sm'>{t(book.reviews_num === 1 ? 'REVIEW' : 'REVIEWS')}</span></span>
                       {book.pages_num && <span className='counter'>{icon.timer} <span className='hide-sm'>{t('READING_TIME')}</span> <b>{calcReadingTime(book.pages_num)}</b></span>}
                     </div>
-                  </Fragment>
+                  </>
                 )}
               </div>
             </div>
@@ -417,7 +419,7 @@ const BookProfile: FC<BookProfileProps> = ({
         {book && (
           <div className='container'>
             {book.bid && (
-              <Fragment>
+              <>
                 {isAuth && isEditor && userBook.bookInShelf && (
                   <ReviewForm
                     // addReview={addReview}
@@ -436,7 +438,7 @@ const BookProfile: FC<BookProfileProps> = ({
                     )}
                   </InView>
                 )}
-              </Fragment>
+              </>
             )}
           </div>
         )}
@@ -464,8 +466,8 @@ const BookProfile: FC<BookProfileProps> = ({
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
- 
+
 export default BookProfile;

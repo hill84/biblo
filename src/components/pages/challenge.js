@@ -1,10 +1,10 @@
 import classnames from 'classnames';
-import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { challengeRef, userChallengesRef } from '../../config/firebase';
-import { app, booksPerRow as _booksPerRow } from '../../config/shared';
+import { booksPerRow as _booksPerRow, app } from '../../config/shared';
 import UserContext from '../../context/userContext';
 import Cover from '../cover';
 import { skltn_shelfRow } from '../skeletons';
@@ -140,7 +140,7 @@ const Challenge = () => {
       </div>
 
       {!loading && userChallenges?.length > 0 && (
-        <Fragment>
+        <>
           <h2>Sfide completate</h2>
           {userChallenges.map((item, i) => (
             <div className="card dark card-fullwidth-sm" key={item.cid || i}>
@@ -158,7 +158,7 @@ const Challenge = () => {
               </div>
             </div>
           ))}
-        </Fragment>
+        </>
       )}
     </div>
   );

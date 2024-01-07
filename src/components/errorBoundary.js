@@ -12,11 +12,11 @@ export default class ErrorBoundary extends PureComponent {
   
   static propTypes = {
     children: childrenType
-  }
+  };
 
   static defaultProps = {
     children: null
-  }
+  };
 
   componentDidCatch(error, errorInfo) {
     this.setState({

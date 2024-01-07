@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 import '../css/skeletons.css';
 
 const skltnArr = (limit: number, className: string): JSX.Element[] => (

@@ -1,12 +1,13 @@
 import i18next from 'i18next';
 import moment from 'moment';
-import React, { ChangeEvent, FC, useEffect } from 'react';
+import type { ChangeEvent, FC } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { app } from '../config/shared';
 import '../css/footer.css';
 import { fallbackLanguage, supportedLanguages } from '../i18n';
-import { Language } from '../types';
+import type { Language } from '../types';
 
 const lsLng = 'i18nextLng';
 

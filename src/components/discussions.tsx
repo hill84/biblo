@@ -1,7 +1,8 @@
-import { CollectionReference, DocumentData, FirestoreError } from '@firebase/firestore-types';
+import type { CollectionReference, DocumentData, FirestoreError } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classnames from 'classnames';
-import React, { FC, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionsRef } from '../config/firebase';
@@ -9,7 +10,7 @@ import { handleFirestoreError } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import '../css/discussions.css';
-import { DiscussionModel } from '../types';
+import type { DiscussionModel } from '../types';
 import Discussion from './discussion';
 import PaginationControls from './paginationControls';
 
@@ -130,10 +131,10 @@ const Discussions: FC<DiscussionsProps> = ({
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classnames('discussions', { 'card dark': container })}>
         {!loading && !items.length ? <EmptyState /> : (
-          <Fragment>
+          <>
             {items.map((item: DiscussionModel) => (
               <Discussion 
                 key={item.did}
@@ -142,7 +143,7 @@ const Discussions: FC<DiscussionsProps> = ({
               />
             ))}
             {loading && skeleton && skeletons}
-          </Fragment>
+          </>
         )}
       </div>
       {pagination && count > 0 && items.length < count && (
@@ -155,7 +156,7 @@ const Discussions: FC<DiscussionsProps> = ({
           page={page}
         />
       )}
-    </Fragment>
+    </>
   );
 };
 

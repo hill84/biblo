@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { app } from '../../config/shared';
 import LoginForm from '../forms/loginForm';
 
-const Login: FC<RouteComponentProps> = ({ location }: RouteComponentProps) => {
+const Login: FC = () => {
   const { t } = useTranslation(['common']);
 
   return (
@@ -16,7 +16,7 @@ const Login: FC<RouteComponentProps> = ({ location }: RouteComponentProps) => {
       </Helmet>
       <h2>{t('PAGE_LOGIN')}</h2>
       <div className='card light'>
-        <LoginForm location={location} />
+        <LoginForm />
       </div>
       <Link to='/password-reset' className='sub-footer'>
         {t('FORGOT_PASSWORD')}

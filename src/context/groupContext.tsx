@@ -1,8 +1,9 @@
-import { DocumentData, FirestoreError } from '@firebase/firestore-types';
-import React, { createContext, Dispatch, FC, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { DocumentData, FirestoreError } from '@firebase/firestore-types';
+import type { Dispatch, FC, SetStateAction } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { groupFollowersRef, groupRef, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
-import { FollowerModel, GroupModel, ModeratorModel } from '../types';
+import type { FollowerModel, GroupModel, ModeratorModel } from '../types';
 import SnackbarContext from './snackbarContext';
 import UserContext from './userContext';
 

@@ -1,5 +1,5 @@
-@import 'media-queries.css';
-@import 'react-medium-image-zoom/dist/styles.css';
+@import url('media-queries.css');
+@import url('react-medium-image-zoom/dist/styles.css');
 
 :root {
   color-scheme: dark light;
@@ -313,6 +313,7 @@ ul.nolist {
   & span {
     top: 10px;
     right: 10px;
+    z-index: 2;
   }
 }
 
@@ -446,8 +447,7 @@ ul.nolist {
 
 .dash-table {
   max-height: 566px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto hidden;
 }
 
 .table li.read { color: var(--lighterTextClr); }
@@ -682,6 +682,7 @@ hr.line {
 .tabs-container {
   user-select: none;
   padding: 0;
+  & [data-swipeable][aria-hidden='true'] { height: 0; }
   & .card.tab { margin-top: 0; }
   &.card .card.tab {
     margin-bottom: 0;
@@ -704,13 +705,14 @@ hr.line {
   height: fit-content;
   max-width: calc(100% - 28px);
   max-height: calc(100% - 28px);
-  background-color: rgb(var(--cardClr));
+  background-color: rgba(var(--cardClr), .9);
+  backdrop-filter: saturate(180%) blur(10px);
   padding: var(--pad);
   border-radius: var(--radius);
   overflow: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  box-shadow: 0 10px 50px 10px rgba(var(--blackClr), .15);
+  box-shadow: 0 1px 3px rgba(var(--blackClr), .1), 0 10px 50px 10px rgba(var(--blackClr), .15);
   will-change: opacity, transform;
   transition: all .3s ease-in-out;
   transform-origin: top center;
@@ -1478,8 +1480,7 @@ mark {
     max-width: 100%;
     box-sizing: border-box;
     white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     scroll-padding: 0 var(--pad);
@@ -1714,10 +1715,7 @@ mark {
   }
   & .progress-base, & .progress-value {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     margin: auto;
     display: flex;
     align-items: center;
@@ -1811,8 +1809,7 @@ progress {
     display: flex;
     width: calc(100% + (var(--pad) * 2) - .1px);
     white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     scroll-padding: 0 var(--pad);
@@ -2014,10 +2011,7 @@ progress {
 
 .btn .show-on-hover {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   margin: auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2237,7 +2231,10 @@ code {
   }
   .review .show-on-hover { opacity: 0; will-change: opacity; }
   .review:hover .show-on-hover { opacity: 1; }
-  .tabs-container.card .card.tab { min-height: 300px; }
+  .tabs-container.card .card.tab {
+    min-height: 300px;
+    max-height: 653px;
+  }
   .contacts-tab-col {
     min-height: 240px;
     & h4 {
@@ -2280,7 +2277,6 @@ code {
     &.books-per-row-4 { grid-template-columns: 1fr 1fr; }
     &.books-per-row-3 { grid-template-columns: 1fr; }
   }
-  .edit-review { max-height: 950px; }
   .text-center-lg { text-align: center; }
   .hide-lg { display: none; }
 }
@@ -2316,7 +2312,7 @@ code {
   }
   .appbar.mobile {
     --bgClr: var(--canvasLightClr);
-    --bgOpacity: .96;
+    --bgOpacity: .6;
 
     position: fixed;
     bottom: 0;
@@ -2324,7 +2320,7 @@ code {
     right: 0;
     border-radius: 0;
     background-color: rgba(var(--bgClr), var(--bgOpacity));
-    /* backdrop-filter: saturate(180%) blur(10px); */
+    backdrop-filter: saturate(180%) blur(10px);
     background-image: linear-gradient(to bottom, rgba(var(--bgClr), var(--bgOpacity)) 0%, rgba(var(--bgClr), 1) 100%);
     box-shadow: 0 -1px 10px -2px rgba(var(--blackClr), .2);
     animation: fadeInSlideUp .4s cubic-bezier(.21, .61, .35, 1) .4s both;

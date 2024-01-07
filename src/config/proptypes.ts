@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { noteTypes } from './lists';
 
-const { array, arrayOf, bool, element, func, node, number, object, objectOf, oneOf: _oneOf, oneOfType: _oneOfType, shape, string } = PropTypes; 
+const { array, arrayOf, bool, element, func, node, number, object, objectOf, oneOf: _oneOf, oneOfType: _oneOfType, shape, string } = PropTypes;
 
 export const arrayType = array;
 export const arrayOfType = arrayOf;
@@ -20,48 +20,10 @@ export const oneOfType = (props: any) => _oneOfType(props);
 export const shapeType = (props: any) => shape(props);
 export const stringType = string;
 
-export const locationType = shape({
-  hash: string,
-  key: string, // only in createBrowserHistory and createMemoryHistory
-  pathname: string.isRequired,
-  search: string,
-  state: oneOfType([
-    array,
-    bool,
-    number,
-    object,
-    string,
-  ]), // only in createBrowserHistory and createMemoryHistory
-});
-
 export const childrenType = oneOfType([
   arrayOf(node),
   node
 ]);
-
-export const matchType = shape({
-  isExact: bool,
-  params: shape({}).isRequired,
-  path: string.isRequired,
-  url: string.isRequired,
-});
-
-export const historyType = shape({
-  action: oneOf(['PUSH', 'REPLACE', 'POP']).isRequired,
-  block: func.isRequired,
-  canGo: func, // only in createMemoryHistory
-  createHref: func.isRequired,
-  entries: arrayOf(locationType), // only in createMemoryHistory
-  go: func.isRequired,
-  goBack: func.isRequired,
-  goForward: func.isRequired,
-  index: number, // only in createMemoryHistory
-  length: number,
-  listen: func.isRequired,
-  location: locationType.isRequired,
-  push: func.isRequired,
-  replace: func.isRequired,
-});
 
 export const userType = shape({
   creationTime: number.isRequired,
@@ -187,7 +149,7 @@ export const userBookType = shape({
   }).isRequired,
   rating_num: number.isRequired,
   bookInShelf: bool.isRequired,
-  bookInWishlist: bool.isRequired 
+  bookInWishlist: bool.isRequired
 });
 
 export const ratingsType = shape({

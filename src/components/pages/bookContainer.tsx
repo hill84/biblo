@@ -1,26 +1,14 @@
-import React, { FC } from 'react';
-import { RouteComponentProps } from 'react-router';
+import type { FC } from 'react';
 import '../../css/bookContainer.css';
 import Book from '../book';
 
-type BookContainerProps = RouteComponentProps<MatchParams>;
-
-interface MatchParams {
-  bid: string;
-}
-
-const BookContainer: FC<BookContainerProps> = ({
-  history,
-  location,
-  match
-}: BookContainerProps) =>  (
-  <div id='bookContainerComponent'>
-    <Book 
-      bid={match.params.bid}
-      history={history}
-      location={location}
-    />
-  </div>
-);
+const BookContainer: FC = () => {
+  console.log('BOOK CONTAINER');
+  return (
+    <div id='bookComponent'>
+      <Book />
+    </div>
+  );
+};
 
 export default BookContainer;

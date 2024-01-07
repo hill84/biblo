@@ -1,4 +1,4 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,15 +8,17 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { auth, authorFollowerRef, collectionFollowersRef, commentersGroupRef, countRef, followersGroupRef, genreFollowerRef, noteRef, notesRef, reviewerCommenterRef, reviewerRef, reviewersGroupRef, userNotificationsRef, userRef, usersRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { asyncForEach, dateOptions, getInitials, handleFirestoreError, timeOptions } from '../../../config/shared';
-import SnackbarContext, { SnackbarContextModel } from '../../../context/snackbarContext';
-import { CurrentTarget, NoteModel, OrderByModel, UserModel } from '../../../types';
+import type { SnackbarContextModel } from '../../../context/snackbarContext';
+import SnackbarContext from '../../../context/snackbarContext';
+import type { CurrentTarget, NoteModel, OrderByModel, UserModel } from '../../../types';
 import CopyToClipboard from '../../copyToClipboard';
 import PaginationControls from '../../paginationControls';
 
@@ -88,11 +90,11 @@ const UsersDash: FC<UsersDashProps> = ({
   const [selected, setSelected] = useState<StateModel['selected']>(initialState.selected);
 
   const { t } = useTranslation(['common', 'form']);
-  
-  const orderBy: OrderByModel[] = [ 
-    { type: 'creationTime', label: 'Data' }, 
-    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') }, 
-    { type: 'uid', label: 'Uid' }, 
+
+  const orderBy: OrderByModel[] = [
+    { type: 'creationTime', label: 'Data' },
+    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') },
+    { type: 'uid', label: 'Uid' },
     { type: 'email', label: t('form:LABEL_EMAIL') },
     { type: 'stats.shelf_num', label: t('form:LABEL_BOOKS') },
     { type: 'stats.wishlist_num', label: t('WISHES') },
@@ -179,7 +181,7 @@ const UsersDash: FC<UsersDashProps> = ({
   }, [openSnackbar]);
 
   const onToggleDesc = (): void => setDesc(!desc);
-  
+
   const onOpenOrderMenu = (e: MouseEvent): void => setOrderMenuAnchorEl(e.currentTarget as Element);
   const onCloseOrderMenu = (): void => setOrderMenuAnchorEl(undefined);
   const onChangeOrderBy = (i: number): void => {
@@ -244,7 +246,7 @@ const UsersDash: FC<UsersDashProps> = ({
     if (!selected) return;
 
     const { uid } = selected;
-    
+
     userRef(uid).delete().then((): void => onDeleteSuccess('User')).catch((err: FirestoreError): void => onDeleteError('User', err));
 
     reviewersGroupRef.where('createdByUid', '==', uid).get().then((snap: DocumentData): void => {
@@ -308,7 +310,7 @@ const UsersDash: FC<UsersDashProps> = ({
         }).catch((err: FirestoreError): void => onDeleteError('Notes', err));
       } else console.log('No notifications collection');
     }).catch((err: FirestoreError): void => onDeleteError('Notifications', err));
-    
+
     onCloseDeleteDialog();
   }, [onDeleteError, onDeleteSuccess, selected]);
 
@@ -322,9 +324,9 @@ const UsersDash: FC<UsersDashProps> = ({
   };
 
   if (redirectTo) return (
-    <Redirect to={`/dashboard/${redirectTo}`} />
+    <Navigate to={`/dashboard/${redirectTo}`} />
   );
-  
+
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (
     <MenuItem
       key={option.type}
@@ -334,7 +336,7 @@ const UsersDash: FC<UsersDashProps> = ({
       {option.label}
     </MenuItem>
   ));
-  
+
   const limitByOptions = limitBy.map((option: number, index: number) => (
     <MenuItem
       key={option}
@@ -344,9 +346,9 @@ const UsersDash: FC<UsersDashProps> = ({
       {option}
     </MenuItem>
   ));
-  
+
   const skeletons = [...Array(limit)].map((_e, i: number) => <li key={i} className='avatar-row skltn dash' />);
-  
+
   const itemsList = loading ? skeletons : !items ? (
     <li className='empty text-center'>
       {t('EMPTY_LIST')}
@@ -419,7 +421,7 @@ const UsersDash: FC<UsersDashProps> = ({
               onClick={onNote}>
               {icon.bell}
             </button>
-            {/* 
+            {/*
               <button
                 type='button'
                 className='btn icon primary'
@@ -456,7 +458,7 @@ const UsersDash: FC<UsersDashProps> = ({
   );
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -469,10 +471,10 @@ const UsersDash: FC<UsersDashProps> = ({
             >
               {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               className='dropdown-menu'
-              anchorEl={limitMenuAnchorEl} 
-              open={Boolean(limitMenuAnchorEl)} 
+              anchorEl={limitMenuAnchorEl}
+              open={Boolean(limitMenuAnchorEl)}
               onClose={onCloseLimitMenu}>
               {limitByOptions}
             </Menu>
@@ -494,10 +496,10 @@ const UsersDash: FC<UsersDashProps> = ({
               >
                 {icon.arrowDown}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -529,9 +531,9 @@ const UsersDash: FC<UsersDashProps> = ({
         </li>
         {itemsList}
       </ul>
-      
-      <PaginationControls 
-        count={count} 
+
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}
@@ -552,7 +554,7 @@ const UsersDash: FC<UsersDashProps> = ({
             <DialogContentText id='delete-dialog-description'>
               <span dangerouslySetInnerHTML={{ __html: t('DIALOG_REMOVE_USER_PARAGRAPH', {
                 displayName: `<b>${selected.displayName}</b>`,
-                uid: `<small className='monotype'>${selected.uid}</small>` 
+                uid: `<small className='monotype'>${selected.uid}</small>`
               })}} />
             </DialogContentText>
           </DialogContent>
@@ -562,8 +564,8 @@ const UsersDash: FC<UsersDashProps> = ({
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
- 
+
 export default UsersDash;

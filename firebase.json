@@ -4,6 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "target": "delibris",
     "public": "build",
     "ignore": [
       "firebase.json",
@@ -16,7 +17,7 @@
         "key": "Access-Control-Allow-Origin",
         "value": "*"
       }]
-    }, { 
+    }, {
       "source": "/service-worker.js",
       "headers": [{
         "key": "Cache-Control",

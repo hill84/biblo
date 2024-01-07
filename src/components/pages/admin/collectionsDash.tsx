@@ -1,4 +1,4 @@
-import { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
+import type { DocumentData, FirestoreError, Query } from '@firebase/firestore-types';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -7,16 +7,17 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import React, { FC, Fragment, MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { collectionBooksRef, collectionRef, collectionsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { app, handleFirestoreError, normURL, timeSince } from '../../../config/shared';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
-import { BookModel, CollectionModel, CurrentTarget, OrderByModel } from '../../../types';
+import type { BookModel, CollectionModel, CurrentTarget, OrderByModel } from '../../../types';
 import PaginationControls from '../../paginationControls';
 
 const limitBy: number[] = [15, 25, 50, 100, 250, 500];
@@ -81,7 +82,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
 
   const { t } = useTranslation(['common', 'form']);
 
-  const orderBy = useMemo((): OrderByModel[] => [ 
+  const orderBy = useMemo((): OrderByModel[] => [
     { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') },
     { type: 'lastEditByUid', label: t('EDITED_BY') },
     { type: 'title', label: t('form:LABEL_TITLE') },
@@ -216,7 +217,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
   };
 
   if (redirectTo) return (
-    <Redirect to={`/collection/${redirectTo}`} />
+    <Navigate to={`/collection/${redirectTo}`} />
   );
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (
@@ -298,7 +299,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
   ]));
 
   return (
-    <Fragment>
+    <>
       <div className='head nav'>
         <div className='row'>
           <div className='col'>
@@ -311,10 +312,10 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
             >
               {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               className='dropdown-menu'
-              anchorEl={limitMenuAnchorEl} 
-              open={Boolean(limitMenuAnchorEl)} 
+              anchorEl={limitMenuAnchorEl}
+              open={Boolean(limitMenuAnchorEl)}
               onClose={onCloseLimitMenu}>
               {limitByOptions}
             </Menu>
@@ -329,10 +330,10 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
               >
                 <span className='hide-xs'>{t('SORT_BY')}</span> {orderBy[orderByIndex].label}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -348,7 +349,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
           )}
         </div>
       </div>
-      
+
       <ul className='table dense nolist font-sm'>
         <li className='labels'>
           <div className='row'>
@@ -362,8 +363,8 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
         {itemsList}
       </ul>
 
-      <PaginationControls 
-        count={count} 
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}
@@ -392,7 +393,7 @@ const CollectionsDash: FC<CollectionsDashProps> = ({ onToggleDialog }: Collectio
           </DialogActions>
         </Dialog>
       )}
-    </Fragment>
+    </>
   );
 };
 

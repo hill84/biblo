@@ -1,12 +1,13 @@
-import { FirestoreError } from '@firebase/firestore-types';
+import type { FirestoreError } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
 import Grow from '@material-ui/core/Grow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { TransitionProps } from '@material-ui/core/transitions';
+import type { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
 import { isToday } from 'date-fns';
-import React, { FC, forwardRef, Fragment, MouseEvent, ReactElement, Ref, useCallback, useContext, useMemo, useState } from 'react';
+import type { FC, MouseEvent, ReactElement, Ref } from 'react';
+import { forwardRef, useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionRef } from '../config/firebase';
@@ -15,7 +16,7 @@ import { getInitials, handleFirestoreError, timeSince } from '../config/shared';
 import GroupContext from '../context/groupContext';
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
-import { DiscussionModel, FlagModel } from '../types';
+import type { DiscussionModel, FlagModel } from '../types';
 import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
 
@@ -97,7 +98,7 @@ const Discussion: FC<DiscussionProps> = ({
   const flaggedByUser = useMemo((): boolean => (discussion.flag && discussion.flag.flaggedByUid) === user?.uid, [discussion.flag, user]);
   
   return (
-    <Fragment>
+    <>
       <div className={classnames(isOwner ? 'own discussion' : 'discussion', { [`flagged ${discussion.flag?.value}`]: discussion.flag})} id={discussion.did}>
         <div className='row'>
           <div className='col-auto left'>
@@ -160,7 +161,7 @@ const Discussion: FC<DiscussionProps> = ({
           value={flaggedByUser ? discussion.flag?.value : ''}
         />
       )}
-    </Fragment>
+    </>
   );
 };
 

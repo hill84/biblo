@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import booksRowImage_jpg from '../images/books-row.png';
 import booksRowImage_webp from '../images/books-row.webp';
 

@@ -1,4 +1,5 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import CookieBanner from 'react-cookie-banner';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

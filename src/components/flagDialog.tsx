@@ -7,8 +7,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { TransitionProps } from '@material-ui/core/transitions';
-import React, { ChangeEvent, ComponentType, FC, ReactElement, useState } from 'react';
+import type { TransitionProps } from '@material-ui/core/transitions';
+import type { ChangeEvent, ComponentType, FC, ReactElement } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FlagDialogProps {

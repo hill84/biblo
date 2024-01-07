@@ -1,9 +1,11 @@
 import IconButton from '@material-ui/core/IconButton';
-import Snackbar, { SnackbarCloseReason } from '@material-ui/core/Snackbar';
+import type { SnackbarCloseReason } from '@material-ui/core/Snackbar';
+import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { Close } from '@material-ui/icons';
 import classnames from 'classnames';
-import React, { createContext, FC, ReactElement, ReactNode, SyntheticEvent, useCallback, useContext, useMemo, useState } from 'react';
+import type { FC, ReactElement, ReactNode, SyntheticEvent } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import '../css/snackbar.css';
 
 const initialAutoHideDuration = 5000;

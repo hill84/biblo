@@ -1,24 +1,22 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { app } from '../config/shared';
-import { HistoryType, LocationType } from '../types';
+import { useNavigate } from 'react-router-dom';
 import RandomQuote from './randomQuote';
 
 interface NoMatchProps {
-  history: HistoryType;
   imgUrl?: string;
-  location?: LocationType;
   title?: string;
 }
 
 const NoMatch: FC<NoMatchProps> = ({
-  history,
   imgUrl,
-  location,
   title
 }: NoMatchProps) => {
   const { t } = useTranslation(['common']);
+
+  const navigate = useNavigate();
 
   return (
     <div className='container empty' id='noMatchComponent'>
@@ -31,7 +29,7 @@ const NoMatch: FC<NoMatchProps> = ({
           <h1>{title || t('PAGE_NOT_FOUND')}</h1>
           <p>{t('PAGE_NOT_FOUND_PARAGRAPH')}{location && <span className='hide-sm'>: <big><code className='primary-text'>{location.pathname}</code></big></span>}.</p>
           {imgUrl && <img src={imgUrl} alt={t('PAGE_NOT_FOUND')} />}
-          <button type='button' onClick={() => history.goBack()} className='btn flat rounded'>
+          <button type='button' onClick={() => navigate(-1)} className='btn flat rounded'>
             {t('ACTION_BACK')}
           </button>
         </div>
@@ -43,5 +41,5 @@ const NoMatch: FC<NoMatchProps> = ({
     </div>
   );
 };
- 
+
 export default NoMatch;
