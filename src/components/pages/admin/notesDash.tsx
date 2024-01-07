@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { countRef, noteRef, /* notesGroupRef, */ notesRef, notificationsRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, timeSince } from '../../../config/shared';
-// import { Redirect } from 'react-router-dom';
+// import { Navigate } from 'react-router-dom';
 import SnackbarContext from '../../../context/snackbarContext';
 import useToggle from '../../../hooks/useToggle';
 import type { CurrentTarget, NoteModel, OrderByModel } from '../../../types';
@@ -234,7 +234,7 @@ const NotesDash: FC<NotesDashProps> = ({ onToggleDialog }: NotesDashProps) => {
   }
 
   if (redirectTo) return (
-    <Redirect to={`/notifications/${redirectTo}`} />
+    <Navigate to={`/notifications/${redirectTo}`} />
   ); */
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (

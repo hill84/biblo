@@ -3,7 +3,7 @@ import type { FirestoreError } from '@firebase/firestore-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import type { FC } from 'react';
 import { useCallback, useContext, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, auth, userRef } from '../config/firebase';
 import { handleFirestoreError } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
@@ -49,7 +49,7 @@ const SocialAuth: FC<SocialAuthProps> = ({
   const socialAuth = useCallback((provider: AuthProvider): void => {
     auth.signInWithPopup(provider).then((userCredential: UserCredential): void => {
       setLoading(true);
-      
+
       if (userCredential.user) {
         const {
           displayName,
@@ -80,9 +80,7 @@ const SocialAuth: FC<SocialAuthProps> = ({
     });
   }, [openSnackbar]);
 
-  const { from } = { from: { pathname: '/' }};
-
-  if (redirectToReferrer) return <Redirect to={from} />;
+  if (redirectToReferrer) return <Navigate to='/' />;
 
   return (
     <div className='social-auth row'>
@@ -99,5 +97,5 @@ const SocialAuth: FC<SocialAuthProps> = ({
     </div>
   );
 };
- 
+
 export default SocialAuth;

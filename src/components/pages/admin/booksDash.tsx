@@ -12,7 +12,7 @@ import { CSVLink } from 'react-csv';
 import type { Data } from 'react-csv/lib/core';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { bookRef, booksRef, countRef /* , reviewRef */ } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { app, handleFirestoreError, normURL, timeSince } from '../../../config/shared';
@@ -219,7 +219,7 @@ const BooksDash: FC = () => {
   };
 
   if (redirectTo) return (
-    <Redirect to={`/book/${redirectTo}`} />
+    <Navigate to={`/book/${redirectTo}`} />
   );
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (

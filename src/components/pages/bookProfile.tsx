@@ -12,8 +12,7 @@ import { forwardRef, lazy, useContext, useEffect, useMemo, useState } from 'reac
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import Rater from 'react-rater';
-import type { RouteComponentProps } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { bookRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import type { GenreModel } from '../../config/lists';
@@ -57,9 +56,7 @@ interface BookProfileProps {
   addBookToWishlist: (bid: string) => void;
   addBookToWishlistRef: Ref<HTMLButtonElement>;
   book?: BookModel;
-  history: RouteComponentProps['history'];
   loading?: boolean;
-  location: RouteComponentProps['location'];
   removeBookFromShelf: (bid: string) => void;
   removeBookFromWishlist: (bid: string) => void;
   // removeReview: () => void;
@@ -77,10 +74,8 @@ const BookProfile: FC<BookProfileProps> = ({
   addBookToWishlistRef,
   // addReview,
   book,
-  history,
   onEditing,
   loading,
-  location,
   rateBook,
   removeBookFromShelf,
   removeBookFromWishlist,
@@ -99,14 +94,18 @@ const BookProfile: FC<BookProfileProps> = ({
 
   const { t } = useTranslation(['common', 'form', 'lists']);
 
+  const navigate = useNavigate();
+
+  const { pathname } = useLocation();
+
   useEffect(() => {
     setUserBook(_userBook);
   }, [_userBook]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIsOpenIncipit(location.pathname.indexOf('/incipit') !== -1);
-  }, [location.pathname]);
+    setIsOpenIncipit(pathname.indexOf('/incipit') !== -1);
+  }, [pathname]);
 
   const onAddBookToShelf = (): void => book && addBookToShelf(book.bid);
 
@@ -133,14 +132,14 @@ const BookProfile: FC<BookProfileProps> = ({
   const onToggleIncipit = (): void => {
     setIsOpenIncipit(!isOpenIncipit);
 
-    history.push(location.pathname.indexOf('/incipit') === -1 
-      ? `${location.pathname}/incipit` 
-      : location.pathname.replace('/incipit', ''), null);
+    const isIncipit: boolean = pathname.indexOf('/incipit') !== -1;
+
+    navigate(isIncipit ? '' : `${pathname}/incipit`, { replace: isIncipit });
   };
 
   const onToggleReadingState = (): void => setIsOpenReadingState(!isOpenReadingState);
 
-  const onToggleSuggest = (): void => setIsOpenRecommendation(!isOpenRecommendation); 
+  const onToggleSuggest = (): void => setIsOpenRecommendation(!isOpenRecommendation);
 
   const onLock = (): void => {
     if (book && book.bid && book.EDIT) {
@@ -173,7 +172,7 @@ const BookProfile: FC<BookProfileProps> = ({
   }, [book?.authors]);
 
   if (!book && !loading) return (
-    <NoMatch title={t('BOOK_NOT_FOUND')} history={history} location={location} />
+    <NoMatch title={t('BOOK_NOT_FOUND')} />
   );
 
   const GenresList: FC = () => (
@@ -198,15 +197,15 @@ const BookProfile: FC<BookProfileProps> = ({
   return (
     <>
       {book && isOpenIncipit && (
-        <Incipit 
-          title={book.title} 
-          incipit={book.incipit} 
-          copyrightHolder={book.publisher} 
-          publication={book.publication} 
-          onToggle={onToggleIncipit} 
+        <Incipit
+          title={book.title}
+          incipit={book.incipit}
+          copyrightHolder={book.publisher}
+          publication={book.publication}
+          onToggle={onToggleIncipit}
         />
       )}
-    
+
       <div id='bookProfile'>
         {book && isOpenReadingState && (
           <ReadingStateForm
@@ -236,7 +235,7 @@ const BookProfile: FC<BookProfileProps> = ({
                   ))}
                   {book?.EDIT && isAdmin && (
                     <Tooltip interactive title={book.EDIT.lastEdit_num ? (
-                      <span>{t('EDITED_BY')} <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(book.EDIT.lastEdit_num)}</span> 
+                      <span>{t('EDITED_BY')} <Link to={`/dashboard/${book.EDIT.lastEditByUid}`}>{lastEditBy}</Link> {timeSince(book.EDIT.lastEdit_num)}</span>
                     ) : (
                       <span>{t('CREATED_BY')} <Link to={`/dashboard/${book.EDIT.createdByUid}`}>{createdBy}</Link> {timeSince(book.EDIT.created_num)}</span>
                     )}>
@@ -259,14 +258,14 @@ const BookProfile: FC<BookProfileProps> = ({
                     </button>
                   )}
                 </div>
-                
+
                 {book && (
                   <>
                     {book.trailerURL && (
                       <button type='button' onClick={() => window.open(book.trailerURL, '_blank')} className='btn xs rounded flat centered btn-trailer'>Trailer</button>
                     )}
 
-                    <ShareButtons 
+                    <ShareButtons
                       className='btn-share-container'
                       // hashtags={['biblo', 'libri', 'twittalibro']}
                       // cover={book.covers && book.covers[0]}
@@ -294,8 +293,8 @@ const BookProfile: FC<BookProfileProps> = ({
                 ) : book && (
                   <>
                     <div className='info-row'>
-                      {book.authors && <span className='counter comma author'>{t('BY').toLowerCase()} {bookAuthors.map((author: string) => 
-                        <Link to={`/author/${normURL(author)}`} className='counter' key={author}>{author}</Link> 
+                      {book.authors && <span className='counter comma author'>{t('BY').toLowerCase()} {bookAuthors.map((author: string) =>
+                        <Link to={`/author/${normURL(author)}`} className='counter' key={author}>{author}</Link>
                       )}</span>}
                       {book.publisher && <span className='counter hide-sm'>{t('PUBLISHER')} <b>{book.publisher}</b></span>}
                       {isAuth && hasBid && isEditor && (
@@ -470,5 +469,5 @@ const BookProfile: FC<BookProfileProps> = ({
     </>
   );
 };
- 
+
 export default BookProfile;

@@ -13,7 +13,7 @@ import { sanitize } from 'dompurify';
 import type { CSSProperties, ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth, userRef } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -218,7 +218,7 @@ const SignupForm: FC = () => {
   };
 
   if (redirectTo) return (
-    <Redirect to={redirectTo} />
+    <Navigate to={redirectTo} />
   );
 
   return (

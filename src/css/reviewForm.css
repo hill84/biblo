@@ -11,5 +11,6 @@
   will-change: transform, opacity;
   transform-origin: top;
   animation: slideDown .4s ease-in-out;
+  max-height: 2000px;
   z-index: 10;
 }

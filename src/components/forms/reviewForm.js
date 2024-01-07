@@ -184,7 +184,7 @@ const ReviewForm = ({ bid, userBook }) => {
             openSnackbar(handleFirestoreError(err), 'error');
           });
 
-          userBookRef(authid, bid).update({ 
+          userBookRef(authid, bid).update({
             review: {
               ...userBookReview,
               ...updatedReview
@@ -213,7 +213,7 @@ const ReviewForm = ({ bid, userBook }) => {
   const onDelete = useCallback(() => {
     if (is.current) setIsOpenDeleteDialog(false);
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
-    if (bid) {        
+    if (bid) {
       reviewerRef(bid, authid).delete().then(() => {
         // console.log('Book review deleted');
         userBookRef(authid, bid).update({ review: {} }).then(() => {
@@ -240,15 +240,15 @@ const ReviewForm = ({ bid, userBook }) => {
   const onChangeMaxChars = e => {
     e.persist();
     const { name, value } = e.target;
-    
+
     if (is.current) {
       if (snackbarIsOpen) closeSnackbar();
       setReview({ ...review, [name]: value });
-      setErrors({ ...errors, [name]: null }); 
+      setErrors({ ...errors, [name]: null });
       setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
       setIsOpenEmojiPicker(false);
       setChanges(true);
-    } 
+    }
   };
 
   const toggleEmojiPicker = () => {
@@ -427,11 +427,11 @@ const ReviewForm = ({ bid, userBook }) => {
           aria-labelledby='delete-dialog-title'
           aria-describedby='delete-dialog-description'>
           <DialogTitle id='delete-dialog-title'>
-            {t('DIALOG_REMOVE_TITLE')}
+            {t('common:DIALOG_REMOVE_TITLE')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id='delete-dialog-description'>
-              {t('DIALOG_REMOVE_REVIEW_PARAGRAPH')}
+              {t('common:DIALOG_REMOVE_REVIEW_PARAGRAPH')}
             </DialogContentText>
           </DialogContent>
           <DialogActions className='dialog-footer flex no-gutter'>
@@ -452,5 +452,5 @@ ReviewForm.propTypes = {
 ReviewForm.defaultProps = {
   userBook: null
 };
- 
+
 export default ReviewForm;

@@ -682,7 +682,7 @@ hr.line {
 .tabs-container {
   user-select: none;
   padding: 0;
-  & [aria-hidden='true'] { height: 0; }
+  & [data-swipeable][aria-hidden='true'] { height: 0; }
   & .card.tab { margin-top: 0; }
   &.card .card.tab {
     margin-bottom: 0;
@@ -2277,7 +2277,6 @@ code {
     &.books-per-row-4 { grid-template-columns: 1fr 1fr; }
     &.books-per-row-3 { grid-template-columns: 1fr; }
   }
-  .edit-review { max-height: 950px; }
   .text-center-lg { text-align: center; }
   .hide-lg { display: none; }
 }

@@ -90,7 +90,7 @@ const Review: FC<ReviewProps> = ({
 
   const onThumbChange = useCallback(() => {
     let { likes } = review;
-    
+
     if (user) {
       if (like) {
         likes = likes.filter(e => e !== user.uid);
@@ -143,7 +143,7 @@ const Review: FC<ReviewProps> = ({
         flaggedByUid: user.uid,
         flagged_num: Date.now()
       };
-  
+
       if (bid && review) {
         setFlagLoading(true);
         reviewerRef(bid, review.createdByUid).update({ flag }).then((): void => {
@@ -235,7 +235,7 @@ const Review: FC<ReviewProps> = ({
                   {!bid && <span className='date'>{timeSince(review.created_num)}</span>}
                 </h3>
               </Link>
-              
+
               {review.rating_num > 0 && (
                 <div className='col-auto text-right'>
                   <Rating ratings={{ rating_num: review.rating_num }} labels />
@@ -252,30 +252,30 @@ const Review: FC<ReviewProps> = ({
                   <div className='counter'>
                     <Tooltip title={t(like ? 'ACTION_DISLIKE' : 'ACTION_LIKE')}>
                       <span>
-                        <button 
+                        <button
                           type='button'
-                          className={classnames('btn', 'flat', 'thumb', 'up', like)} 
-                          disabled={!isEditor || isOwner} 
+                          className={classnames('btn', 'flat', 'thumb', 'up', like)}
+                          disabled={!isEditor || isOwner}
                           onClick={onThumbChange}>
                           {icon.thumbUp} {abbrNum(likes_num)}
                         </button>
                       </span>
                     </Tooltip>
                   </div>
-                  {/* 
+                  {/*
                     <div className='counter'>
                       <Tooltip title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
                         <span>
-                          <button 
+                          <button
                             type='button'
-                            className={classnames('btn', 'flat', 'thumb', 'down', dislike)} 
-                            disabled={!isEditor || isOwner} 
+                            className={classnames('btn', 'flat', 'thumb', 'down', dislike)}
+                            disabled={!isEditor || isOwner}
                             onClick={onThumbChange}>
                             {icon.thumbDown} {abbrNum(dislikes_num)}
                           </button>
                         </span>
                       </Tooltip>
-                    </div> 
+                    </div>
                   */}
                   {isEditor && (!isOwner || review.comments_num > 0) && (
                     <div className='counter'>
@@ -313,7 +313,7 @@ const Review: FC<ReviewProps> = ({
                     </div>
                   )}
                 </div>
-                
+
                 <div className='col counter text-right date'>
                   {review.lastEdit_num && (
                     <span className='hide-xs' title={`${t('EDITED_female')} ${timeSince(review.lastEdit_num)}`}>
@@ -379,12 +379,12 @@ const Review: FC<ReviewProps> = ({
       )}
 
       {isOpenFlagDialog && (
-        <FlagDialog 
+        <FlagDialog
           loading={flagLoading}
-          open={isOpenFlagDialog} 
-          onClose={onCloseFlagDialog} 
-          onFlag={onFlag} 
-          TransitionComponent={Transition} 
+          open={isOpenFlagDialog}
+          onClose={onCloseFlagDialog}
+          onFlag={onFlag}
+          TransitionComponent={Transition}
           value={flaggedByUser ? review.flag?.value : ''}
         />
       )}

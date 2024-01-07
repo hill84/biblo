@@ -164,14 +164,14 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
             ...updatedDiscussion
           }).then((): void => {
             extractMuids(discussion.text)?.forEach((muid: string): void => {
-              if (followers?.some(follower => follower.uid === muid)) {   
+              if (followers?.some(follower => follower.uid === muid)) {
                 const discussantURL = `/dashboard/${authid}`;
                 const discussantDisplayName: string = truncateString(user.displayName.split(' ')[0], 25);
                 const groupURL = `/group/${gid}`;
                 const groupTitle: string = group?.title || '';
                 const noteMsg = `<a href='${discussantURL}'>${discussantDisplayName}</a> ti ha menzionato nel gruppo <a href='${groupURL}'>${groupTitle}</a>`;
                 const newNoteRef: DocumentReference<DocumentData> = notesRef(muid).doc();
-                
+
                 newNoteRef.set({
                   nid: newNoteRef.id,
                   text: noteMsg,
@@ -203,10 +203,10 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
   const onChangeMaxChars = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     e.persist();
     const { name, value } = e.target;
-    
+
     if (snackbarIsOpen) closeSnackbar(e);
     setDiscussion({ ...discussion, [name]: value });
-    setErrors({ ...errors, [name]: undefined }); 
+    setErrors({ ...errors, [name]: undefined });
     setLeftChars({ ...leftChars, [name]: max.chars[name as keyof MaxModel['chars']] - value.length });
     setChanges(true);
   };
@@ -225,7 +225,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
 
     if (snackbarIsOpen) closeSnackbar(e);
     setDiscussion({ ...discussion, text: discussion.text + mention });
-    setErrors({ ...errors, text: undefined }); 
+    setErrors({ ...errors, text: undefined });
     setLeftChars({ ...leftChars, text: max.chars.text - mention.length });
     setChanges(true);
     setIsOpenFollowersDialog(false);
@@ -350,7 +350,7 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
           <DialogTitle id='followers-dialog-title'>
             Iscritti del gruppo
           </DialogTitle>
-          <DialogContent className='dialog' id='followers-dialog-description'>
+          <DialogContent id='followers-dialog-description'>
             <div className='contacts-tab'>
               {groupFollowers?.map(user => (
                 <div key={user.uid} className='avatar-row'>
@@ -389,5 +389,5 @@ const DiscussionForm: FC<DiscussionFormProps> = ({ gid = '' }: DiscussionFormPro
     </form>
   );
 };
- 
+
 export default DiscussionForm;

@@ -9,7 +9,7 @@ import type { FC, MouseEvent } from 'react';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { countRef, quoteRef, quotesRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { handleFirestoreError, normURL, timeSince } from '../../../config/shared';
@@ -81,11 +81,11 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
 
   const { t } = useTranslation(['common', 'form']);
 
-  const orderBy = useMemo((): OrderByModel[] => [ 
+  const orderBy = useMemo((): OrderByModel[] => [
     { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') },
     { type: 'EDIT.lastEditByUid', label: t('LAST_EDIT_BY') },
-    { type: 'author', label: t('AUTHOR') }, 
-    { type: 'bookTitle', label: t('BOOK') }, 
+    { type: 'author', label: t('AUTHOR') },
+    { type: 'bookTitle', label: t('BOOK') },
     { type: 'coverURL', label: t('COVER') }
   ], [t]);
 
@@ -209,7 +209,7 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
   };
 
   if (redirectTo) return (
-    <Redirect to={`/author/${redirectTo}`} />
+    <Navigate to={`/author/${redirectTo}`} />
   );
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (
@@ -306,10 +306,10 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
             >
               {limit} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               className='dropdown-menu'
-              anchorEl={limitMenuAnchorEl} 
-              open={Boolean(limitMenuAnchorEl)} 
+              anchorEl={limitMenuAnchorEl}
+              open={Boolean(limitMenuAnchorEl)}
               onClose={onCloseLimitMenu}>
               {limitByOptions}
             </Menu>
@@ -331,10 +331,10 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
               >
                 {icon.arrowDown}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -357,9 +357,9 @@ const QuotesDash: FC<QuotesDashProps> = ({ onToggleDialog }: QuotesDashProps) =>
         </li>
         {itemsList}
       </ul>
-      
-      <PaginationControls 
-        count={count} 
+
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}

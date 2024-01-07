@@ -77,44 +77,44 @@ const Sidebar: FC<SidebarProps> = ({
               </NavLink>
             </div>
           )}
-          <NavLink to='/' exact>
+          <NavLink to='/' end>
             <MenuItem>
               <ListItemIcon>{icon.home}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_HOME')}</Typography>
             </MenuItem>
           </NavLink>
-          <NavLink to='/groups' exact>
+          <NavLink to='/groups' end>
             <MenuItem>
               <ListItemIcon>{icon.accountGroup}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_GROUPS')}</Typography>
             </MenuItem>
           </NavLink>
-          <NavLink to='/genres' exact>
+          <NavLink to='/genres' end>
             <MenuItem>
               <ListItemIcon>{icon.libraryShelves}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_GENRES')}</Typography>
             </MenuItem>
           </NavLink>
-          <NavLink to='/authors' exact>
+          <NavLink to='/authors' end>
             <MenuItem>
               <ListItemIcon>{icon.accountEdit}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_AUTHORS')}</Typography>
             </MenuItem>
           </NavLink>
-          {/* <NavLink to='/collections' exact>
+          {/* <NavLink to='/collections' end>
             <MenuItem>
               <ListItemIcon>{icon.bookmarkMultiple}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_COLLECTIONS')}</Typography>
             </MenuItem>
           </NavLink> */}
-          <NavLink to='/donations' exact>
+          <NavLink to='/donations' end>
             <MenuItem>
               <ListItemIcon>{icon.heart}</ListItemIcon>
               <Typography variant='inherit'>{t('PAGE_DONATIONS')}</Typography>
             </MenuItem>
           </NavLink>
           {isAdmin && (
-            <NavLink to='/icons' exact>
+            <NavLink to='/icons' end>
               <MenuItem>
                 <ListItemIcon>{icon.emoticon}</ListItemIcon>
                 <Typography variant='inherit'>{t('PAGE_ICONS')}</Typography>
@@ -125,7 +125,7 @@ const Sidebar: FC<SidebarProps> = ({
           <MenuItem disableRipple className='bottom-item'>
             <div className='version'>v {pjson.version}</div>
           </MenuItem>
-          
+
         </nav>
       </Drawer>
     </ThemeProvider>

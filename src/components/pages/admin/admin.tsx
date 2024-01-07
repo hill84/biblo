@@ -7,8 +7,7 @@ import type { CSSProperties, ChangeEvent, FC, ReactNode } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import type { RouteComponentProps } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { bindKeyboard } from 'react-swipeable-views-utils';
 import icon from '../../../config/icons';
@@ -44,11 +43,9 @@ const tabs: TabModel[] = [
   { name: 'NOTIFICATIONS', icon: icon.bell },
 ];
 
-interface RouterProps { 
+interface MatchParams {
   tab: string;
 }
-
-type AdminProps = RouteComponentProps<RouterProps>;
 
 interface StateModel {
   selectedEl: string;
@@ -76,7 +73,7 @@ const initialState: StateModel = {
   screenSize: screenSize(),
 };
 
-const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
+const Admin: FC = () => {
   const { isAdmin, user } = useContext<UserContextModel>(UserContext);
   const [selectedEl, setSelectedEl] = useState<string>(initialState.selectedEl);
   const [selectedId, setSelectedId] = useState<string>(initialState.selectedId);
@@ -91,14 +88,20 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
 
   const { t } = useTranslation(['common']);
 
-  useEffect(() => {
-    if (tabSelected === 0) history.replace(`/admin/${tabs[0].name}`, null);
-  }, [history, tabSelected]);
+  const navigate = useNavigate();
+
+  const { tab } = useParams<keyof MatchParams>();
 
   useEffect(() => {
-    const tabSelectedIndex: number = tabs.findIndex((tab: TabModel): boolean => tab.name === match.params.tab);
+    if (tabSelected !== 0) return;
+    const to = `/admin/${tabs[0].name}`;
+    navigate(to, { replace: true });
+  }, [navigate, tabSelected]);
+
+  useEffect(() => {
+    const tabSelectedIndex: number = tabs.findIndex(({ name }: TabModel): boolean => name === tab);
     setTabSelected(tabSelectedIndex !== -1 ? tabSelectedIndex : 0);
-  }, [match.params.tab]);
+  }, [tab]);
 
   useEffect(() => {
     const updateScreenSize = (): void => {
@@ -112,11 +115,25 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
     };
   }, []);
 
+  if (!user) return (
+    <div aria-hidden='true' className='loader'>
+      <CircularProgress />
+    </div>
+  );
+
+  if (!isAdmin) (
+    <div className='container'>
+      <div className='card flat empty text-center'>
+        <p>{icon.cancel}</p>
+        <p>Area riservata agli amministratori</p>
+      </div>
+    </div>
+  );
+
   const historyPushTabIndex = (index: number): void => {
-    const newPath = `/admin/${tabs[index].name}`;
-    if (String(history) !== newPath) {
-      history.push(newPath, null);
-    }
+    const to = `/admin/${tabs[index].name}`;
+    if (String(history) === to) return;
+    navigate(to, { replace: true });
   };
 
   const onTabSelect = (value: number): void => {
@@ -162,19 +179,6 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
     setSelectedId(son(id));
   };
 
-  if (!user) return <div aria-hidden='true' className='loader'><CircularProgress /></div>;
-
-  if (!isAdmin) {
-    return (
-      <div className='container'>
-        <div className='card flat empty text-center'>
-          <p>{icon.cancel}</p>
-          <p>Area riservata agli amministratori</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className='container' style={containerStyle}>
       <Helmet>
@@ -199,7 +203,7 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
         {/* <button type='button' onClick={() => onToggleNoteDialog()} title='Crea notifica' className='btn rounded primary'><span className='hide-sm'>{icon.plus} notifica</span><span className='show-sm'>{icon.bell}</span></button> */}
       </div>
       <AppBar position='static' className='appbar flat'>
-        <Tabs 
+        <Tabs
           value={tabSelected}
           onChange={(_: ChangeEvent<{}>, value: number): void => onTabSelect(value)}
           variant={_screenSize === 'sm' ? 'scrollable' : 'fullWidth'}
@@ -252,5 +256,5 @@ const Admin: FC<AdminProps> = ({ history, match }: AdminProps) => {
     </div>
   );
 };
- 
+
 export default Admin;

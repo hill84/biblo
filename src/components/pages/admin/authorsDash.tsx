@@ -12,7 +12,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
 import Zoom from 'react-medium-image-zoom';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { authorRef, authorsRef, countRef } from '../../../config/firebase';
 import icon from '../../../config/icons';
 import { app, getInitials, handleFirestoreError, normURL, normalizeString, timeSince } from '../../../config/shared';
@@ -84,10 +84,10 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
 
   const { t } = useTranslation(['common', 'form']);
 
-  const orderBy = useMemo((): OrderByModel[] => [  
-    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') }, 
+  const orderBy = useMemo((): OrderByModel[] => [
+    { type: 'lastEdit_num', label: t('LAST_EDIT_DATE') },
     { type: 'lastEditByUid', label: t('EDITED_BY') },
-    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') }, 
+    { type: 'displayName', label: t('form:LABEL_DISPLAY_NAME') },
     { type: 'sex', label: t('form:LABEL_SEX') },
     { type: 'photoURL', label: t('IMAGE') }
   ], [t]);
@@ -212,7 +212,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
   };
 
   if (redirectTo) return (
-    <Redirect to={`/author/${redirectTo}`} />
+    <Navigate to={`/author/${redirectTo}`} />
   );
 
   const orderByOptions = orderBy.map((option: OrderByModel, index: number) => (
@@ -312,10 +312,10 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
             >
               {limitBy[limitByIndex]} <span className='hide-xs'>{t('PER_PAGE')}</span>
             </button>
-            <Menu 
+            <Menu
               className='dropdown-menu'
-              anchorEl={limitMenuAnchorEl} 
-              open={Boolean(limitMenuAnchorEl)} 
+              anchorEl={limitMenuAnchorEl}
+              open={Boolean(limitMenuAnchorEl)}
               onClose={onCloseLimitMenu}>
               {limitByOptions}
             </Menu>
@@ -338,10 +338,10 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
               >
                 {icon.arrowDown}
               </button>
-              <Menu 
+              <Menu
                 className='dropdown-menu'
-                anchorEl={orderMenuAnchorEl} 
-                open={Boolean(orderMenuAnchorEl)} 
+                anchorEl={orderMenuAnchorEl}
+                open={Boolean(orderMenuAnchorEl)}
                 onClose={onCloseOrderMenu}>
                 {orderByOptions}
               </Menu>
@@ -349,7 +349,7 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
           )}
         </div>
       </div>
-      
+
       <ul className='table dense nolist font-sm'>
         <li className='avatar-row labels'>
           <div className='row'>
@@ -364,8 +364,8 @@ const AuthorsDash: FC<AuthorsDashProps> = ({ onToggleDialog }: AuthorsDashProps)
         {itemsList}
       </ul>
 
-      <PaginationControls 
-        count={count} 
+      <PaginationControls
+        count={count}
         fetch={fetch}
         forceVisibility
         limit={limit}

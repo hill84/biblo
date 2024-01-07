@@ -3,7 +3,6 @@ import type { CSSProperties, FC } from 'react';
 import { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import type { RouteComponentProps } from 'react-router-dom';
 import { bookRef, collectionBookRef, reviewerRef, userBookRef, userRef } from '../config/firebase';
 import { app, handleFirestoreError, normURL } from '../config/shared';
 import SnackbarContext from '../context/snackbarContext';
@@ -11,6 +10,7 @@ import UserContext from '../context/userContext';
 import type { BookModel, BookshelfType, UserBookModel } from '../types';
 import BookForm from './forms/bookForm';
 import BookProfile from './pages/bookProfile';
+import { useParams } from 'react-router-dom';
 
 const NoMatch = lazy(() => import('./noMatch'));
 
@@ -25,11 +25,15 @@ const max = {
   }
 };
 
-interface BookProps extends Pick<RouteComponentProps, 'location' | 'history'> {
+interface BookProps {
   bid?: string;
   book?: BookModel | null;
   isEditing?: boolean;
   // userBook?: UserBookModel;
+}
+
+interface MatchParams {
+  bid?: string;
 }
 
 export const initialUserBook: UserBookModel = {
@@ -64,14 +68,17 @@ let fetchUserBookCanceler: null | (() => void) = null;
 let fetchBookCanceler: null | (() => void) = null;
 
 const Book: FC<BookProps> = ({
-  bid,
   book: _book = null,
-  history,
   isEditing: _isEditing = false,
-  location
 }: BookProps) => {
   const { isAdmin, isAuth, isPremium, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
+
+  const { bid } = useParams<keyof MatchParams>();
+
+  useEffect(() => {
+    console.log({ bid });
+  }, [bid]);
 
   const initialSeo = useMemo(() => {
     if (!_book) return null;
@@ -107,13 +114,13 @@ const Book: FC<BookProps> = ({
         if (snap.exists) {
           setUserBook(snap.data());
         } else {
-          setUserBook(userBook => ({ 
+          setUserBook(userBook => ({
             ...userBook,
             review: {},
             readingState: { state_num: 1 },
             rating_num: 0,
             bookInShelf: false,
-            bookInWishlist: false 
+            bookInWishlist: false
           }));
         }
       });
@@ -184,12 +191,12 @@ const Book: FC<BookProps> = ({
           bookInWishlist: false
         }).then((): void => {
           openSnackbar(t('SUCCESS_BOOK_ADDED_TO_SHELF'), 'success');
-  
+
           bookRef(bid).update({
             readers_num: bookReaders_num
           }).then((): void => {
             // console.log(`Readers number increased to ${book.readers_num}`);
-            
+
             userRef(authid).update({
               'stats.shelf_num': user.stats.shelf_num + 1,
               'stats.wishlist_num': userWishlist_num
@@ -199,10 +206,10 @@ const Book: FC<BookProps> = ({
             }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
           }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
         }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
-      }      
+      }
     } else console.warn('Cannot addBookToShelf. User not authenticated');
   }, [authid, book, isAdmin, isAuth, isPremium, openSnackbar, t, user, userBook]);
-  
+
   const addBookToWishlist = useCallback((bid: string): void => {
     if (isAuth && user) {
       addBookToWishlistRef.current?.setAttribute('disabled', 'disabled');
@@ -228,7 +235,7 @@ const Book: FC<BookProps> = ({
       }
     } else console.warn('Cannot addBookToWishlist. User not authenticated');
   }, [authid, isAdmin, isAuth, isPremium, openSnackbar, t, user, userBook]);
-  
+
   const removeBookFromUserBooks = useCallback((bid: string, bookshelf: BookshelfType): void => {
     if (isAuth && user && book) {
       let userShelf_num: number = user.stats.shelf_num;
@@ -240,30 +247,30 @@ const Book: FC<BookProps> = ({
       let userRatings_num: number = user.stats.ratings_num;
       let userBookRating_num: number = userBook.rating_num;
       let { review } = userBook;
-  
+
       if (userBook.bookInShelf) {
         userShelf_num -= 1;
         bookReaders_num -= 1;
       } else {
         userWishlist_num -= 1;
       }
-  
+
       if (userBook.rating_num > 0) {
         bookRating_num -= userBookRating_num;
         bookRatings_num -= 1;
         userRatings_num -= 1;
         userBookRating_num = 0;
       }
-      
+
       if (userBook.review.created_num) {
         bookReviews_num -= 1;
         review = {};
       }
-      
+
       userBookRef(authid, bid).delete().then((): void => {
-        setUserBook(userBook => ({ 
+        setUserBook(userBook => ({
           ...userBook,
-          bookInShelf: false, 
+          bookInShelf: false,
           bookInWishlist: false,
           rating_num: userBookRating_num,
           readingState: { state_num: 1 },
@@ -271,15 +278,15 @@ const Book: FC<BookProps> = ({
         }));
         // console.log(`Book removed from user ${bookshelf}`);
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
-  
+
       bookRef(bid).update({
         rating_num: bookRating_num,
         ratings_num: bookRatings_num,
         readers_num: bookReaders_num
       }).then(() => {
-        setBook(book => ({ 
-          ...book, 
-          rating_num: bookRating_num, 
+        setBook(book => ({
+          ...book,
+          rating_num: bookRating_num,
           ratings_num: bookRatings_num,
           readers_num: bookReaders_num,
           review,
@@ -287,7 +294,7 @@ const Book: FC<BookProps> = ({
         } as BookModel));
         // console.log('Rating and reader removed');
       }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
-  
+
       if (bookshelf === 'shelf') {
         // console.log('will remove book and rating from user shelf stats');
         userRef(authid).update({
@@ -301,7 +308,7 @@ const Book: FC<BookProps> = ({
 
         if (userBook.review.created_num) {
           reviewerRef(bid, authid).delete().then((): void => {
-            setUserBook(userBook => ({ 
+            setUserBook(userBook => ({
               ...userBook,
               review
             }));
@@ -312,7 +319,7 @@ const Book: FC<BookProps> = ({
         if (book.collections) {
           book.collections.forEach((cid: string): void => {
             collectionBookRef(cid, book.bid).update({
-              rating_num: bookRating_num, 
+              rating_num: bookRating_num,
               ratings_num: bookRatings_num
             }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
           });
@@ -338,13 +345,13 @@ const Book: FC<BookProps> = ({
     if (isAuth && user && book) {
       let bookRating_num: number = book.rating_num;
       const userBookRating_num: number = userBook.rating_num;
-      let bookRatings_num: number = book.ratings_num; 
+      let bookRatings_num: number = book.ratings_num;
       let userRatings_num: number = user.stats.ratings_num;
 
       if (userBookRating_num === 0) {
         bookRating_num = (bookRating_num === 0) ? rate : (bookRating_num + rate);
         bookRatings_num += 1;
-        userRatings_num += 1; 
+        userRatings_num += 1;
       } else {
         bookRating_num = bookRating_num - userBookRating_num + rate;
       }
@@ -353,9 +360,9 @@ const Book: FC<BookProps> = ({
         rating_num: bookRating_num,
         ratings_num: bookRatings_num
       }).then((): void => {
-        setBook(book => ({ 
-          ...book, 
-          rating_num: bookRating_num, 
+        setBook(book => ({
+          ...book,
+          rating_num: bookRating_num,
           ratings_num: bookRatings_num
         } as BookModel));
         // console.log(`Book rated with ${rate} stars`);
@@ -364,16 +371,16 @@ const Book: FC<BookProps> = ({
           book.collections.forEach((cid: string): void => {
             // console.log(cid);
             collectionBookRef(cid, book.bid).update({
-              rating_num: bookRating_num, 
+              rating_num: bookRating_num,
               ratings_num: bookRatings_num
             }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
           });
         }
-  
+
         userBookRef(authid, bid).update({
           rating_num: rate
         }).then((): void => {
-          setUserBook(userBook => ({ 
+          setUserBook(userBook => ({
             ...userBook,
             rating_num: rate
           }));
@@ -386,7 +393,7 @@ const Book: FC<BookProps> = ({
 
     } else console.warn('Cannot rateBook. User not authenticated');
   }, [authid, book, isAuth, openSnackbar, user, userBook]);
-  
+
   // const addReview = useCallback((): void => {
   //   setBook(book => ({ ...book, reviews_num: book ? book.reviews_num + 1 : 0 } as BookModel));
   // }, []);
@@ -402,7 +409,7 @@ const Book: FC<BookProps> = ({
   }, [book, user]);
 
   if (!loading && !book) return (
-    <NoMatch title={t('BOOK_NOT_FOUND')} history={history} location={location} />
+    <NoMatch title={t('BOOK_NOT_FOUND')} />
   );
 
   const bgStyle: CSSProperties | undefined = book ? { backgroundImage: `url(${book.covers[0]})`, } : undefined;
@@ -426,7 +433,7 @@ const Book: FC<BookProps> = ({
           <meta property='books:rating:scale' content={seo.rating.scale} />
         </Helmet>
       )}
-      
+
       <div className='content-background reveal fadeIn delay4'>
         <div className='bg' style={bgStyle} />
       </div>
@@ -436,16 +443,14 @@ const Book: FC<BookProps> = ({
           book={book}
         />
       ) : (
-        <BookProfile 
-          addBookToShelf={addBookToShelf} 
-          addBookToShelfRef={addBookToShelfRef} 
-          addBookToWishlist={addBookToWishlist} 
-          addBookToWishlistRef={addBookToWishlistRef} 
+        <BookProfile
+          addBookToShelf={addBookToShelf}
+          addBookToShelfRef={addBookToShelfRef}
+          addBookToWishlist={addBookToWishlist}
+          addBookToWishlistRef={addBookToWishlistRef}
           // addReview={addReview}
-          history={history}
-          location={location}
-          removeBookFromShelf={removeBookFromShelf} 
-          removeBookFromWishlist={removeBookFromWishlist} 
+          removeBookFromShelf={removeBookFromShelf}
+          removeBookFromWishlist={removeBookFromWishlist}
           // removeReview={removeReview}
           rateBook={rateBook}
           onEditing={onEditing}
@@ -457,5 +462,5 @@ const Book: FC<BookProps> = ({
     </>
   );
 };
- 
+
 export default Book;

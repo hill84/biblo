@@ -10,8 +10,7 @@ import { sanitize } from 'dompurify';
 import type { ChangeEvent, FC, FormEvent, MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { RouteComponentProps } from 'react-router-dom';
-import { Redirect } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import isEmail from 'validator/lib/isEmail';
 import { auth } from '../../config/firebase';
 import icon from '../../config/icons';
@@ -28,10 +27,6 @@ const max = {
 const min = {
   chars: { password: 8 }
 };
-
-interface LoginFormProps {
-  location: RouteComponentProps['location'];
-}
 
 interface ErrorsModel {
   email?: string;
@@ -58,7 +53,7 @@ const initialState: StateModel = {
   showPassword: false,
 };
 
-const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
+const LoginForm: FC = () => {
   const [email, setEmail] = useState<string>(initialState.email);
   const [password, setPassword] = useState<string>(initialState.password);
   const [loading, setLoading] = useState<boolean>(initialState.loading);
@@ -69,14 +64,16 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
 
   const { t } = useTranslation(['form', 'common']);
 
+  const { search } = useLocation();
+
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(search);
     const email: string | null = params.get('email');
 
     if (email) {
       setEmail(email);
     }
-  }, [location.search]);
+  }, [search]);
 
   const onChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     e.persist();
@@ -138,11 +135,7 @@ const LoginForm: FC<LoginFormProps> = ({ location }: LoginFormProps) => {
 
   const onMouseDownPassword = (e: MouseEvent<HTMLButtonElement>): void => e.preventDefault();
 
-  const { from } = { from: { pathname: '/' } };
-
-  if (redirectToReferrer) return (
-    <Redirect to={from} />
-  );
+  if (redirectToReferrer) return <Navigate to='/' />;
 
   return (
     <div id='loginFormComponent'>

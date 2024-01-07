@@ -80,7 +80,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
   };
 
   const onToggleTable = (): void => setShowTable(s => !s);
-  
+
   const ratedBooks = useMemo((): number[] => {
     return votes.map((num: number): number => userBooks ? userBooks.filter((item: UserBookModel): boolean => item.rating_num === num).length : 0);
   }, [userBooks]);
@@ -92,12 +92,12 @@ const ReadingStats: FC<ReadingStatsProps> = ({
   )), [userBooks]);
 
   const booksRead = useMemo((): UserBookModel[] => userBooks?.filter(book => book.readingState.end_num) || [], [userBooks]);
-  
+
   const yearsRead = useMemo((): number[] => booksRead && [...new Set(booksRead.reduce((res: number[], book: UserBookModel): number[] => {
     if (book.readingState.end_num) res.push(new Date(book.readingState.end_num).getFullYear());
     return res;
   }, []))].sort((a, b) => b - a), [booksRead]);
-  
+
   const totalBooksRead = useMemo((): number => booksRead?.length, [booksRead]);
   const totalPagesRead = useMemo((): number => booksRead?.reduce((acc, book) => acc + (book.pages_num || 0), 0), [booksRead]);
   const avgPagesRead = useMemo((): number => booksRead && round(totalPagesRead / (yearsRead.length * 12)), [booksRead, totalPagesRead, yearsRead]);
@@ -128,7 +128,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
       return currentYearBooks?.filter(book => new Date(book.readingState.end_num || -1).getMonth() === i).length;
     }) : [];
   }, [currentYearBooks, monthsArr, rangeYear]);
-  
+
   const item = useCallback((year: number): ReadByYear => readByYear.filter((item: ReadByYear): boolean => item.year === year)[0], [readByYear]);
   const pages = useCallback((item: ReadByYear): number => item.books.reduce((acc: number, book: UserBookModel) => {
     return acc + (book.pages_num || 0);
@@ -136,7 +136,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
   const ratings_num = useCallback((item: ReadByYear): number => item.books?.reduce((acc: number, book: UserBookModel): number => acc + (book.rating_num ? 1 : 0), 0), []);
   const ratings = useCallback((item: ReadByYear): number => item.books?.reduce((acc: number, book: UserBookModel): number => acc + book.rating_num, 0), []);
   const reviews_num = useCallback((item: ReadByYear): number => item.books?.reduce((acc: number, book: UserBookModel): number => acc + (book.review.text ? 1 : 0), 0), []);
-  
+
   const data = useMemo(() => ((rangeYear && yearsRead) || (!rangeYear && monthsArr)) && {
     labels: rangeYear ? yearsRead : monthsArr,
     datasets: [{
@@ -145,7 +145,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
       data: rangeYear ? readByYear.map(({ books_num }: ReadByYear): number => books_num) : readByMonth
     }]
   }, [monthsArr, rangeYear, readByMonth, readByYear, yearsRead]);
-  
+
   const options = useMemo(() => ({
     maintainAspectRatio: false,
     legend: { display: false },
@@ -160,15 +160,15 @@ const ReadingStats: FC<ReadingStatsProps> = ({
     },
     tooltips: { enabled: false }
   }), [rangeYear]);
-  
+
   const tableSkltn = useMemo(() => [...Array(data ? 3 : 5)].map((_e, i: number) => <li key={i} className='avatar-row skltn dash' />), [data]);
-  
+
   if (!loading && !userBooks) return (
     <div className='text-center'>
       {t('NO_STATISTICS')}
     </div>
   );
-  
+
   return (
     <div>
       <div className='head row'>
@@ -282,7 +282,7 @@ const ReadingStats: FC<ReadingStatsProps> = ({
                   </li>
                 ))}
               </ul>
-            )}          
+            )}
           </div>
         </div>
       ) : (
@@ -293,5 +293,5 @@ const ReadingStats: FC<ReadingStatsProps> = ({
     </div>
   );
 };
- 
+
 export default ReadingStats;

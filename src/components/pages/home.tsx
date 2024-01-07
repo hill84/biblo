@@ -3,7 +3,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { screenSize as _screenSize, app, isTouchDevice } from '../../config/shared';
 import UserContext from '../../context/userContext';
 import '../../css/home.css';
@@ -78,7 +78,7 @@ const Home: FC = () => {
   );
 
   if (redirectTo) return (
-    <Redirect to={redirectTo} />
+    <Navigate to={redirectTo} />
   );
 
   return (
@@ -136,7 +136,7 @@ const Home: FC = () => {
             </div>
           )}
         </InView>
-        
+
         <div className='row flex'>
           <div className='col-12 col-lg-5 flex'>
             <div className='card dark card-fullwidth-sm'>
@@ -184,7 +184,7 @@ const Home: FC = () => {
         </InView>
 
         {/* <InView triggerOnce rootMargin={rootMargin}>
-          {({ inView, ref }) => ( 
+          {({ inView, ref }) => (
             <div className='card dark card-fullwidth-sm' ref={ref}>
               <BookCollection cid='Harry Potter' pagination={false} limit={7} inView={inView} scrollable />
             </div>

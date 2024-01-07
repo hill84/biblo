@@ -14,7 +14,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, InputProps, RenderInputComponentProps, RenderSuggestionParams, RenderSuggestionsContainerParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams } from 'react-autosuggest';
 import Autosuggest from 'react-autosuggest';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import type { IndustryIdentifier, SearchParamsModel, VolumeInfo, VolumeModel } from '../../booksAPITypes';
 import { booksAPIRef } from '../../config/API';
 import { booksRef } from '../../config/firebase';
@@ -81,8 +81,8 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
 
   const onClickSearchBy = (option: SearchByModel): void => {
     if (!is.current) return;
-    setSearchBy(option); 
-    setMaxSearchResults(option.key === 'ISBN_13' ? 1 : limit); 
+    setSearchBy(option);
+    setMaxSearchResults(option.key === 'ISBN_13' ? 1 : limit);
     setSearchByAnchorEl(null);
   };
   const onCloseSearchByMenu = (): void => setSearchByAnchorEl(null);
@@ -96,7 +96,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     const { ref, label, ...other } = inputProps as ExtendedRenderInputComponentProps; // CHECK
 
     const props: Object = { inputRef: ref, ...other };
-  
+
     return (
       <ThemeProvider theme={darkTheme}>
         <TextField fullWidth label={label} variant='outlined' InputProps={props} />
@@ -106,7 +106,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
 
   const renderSuggestionsContainer = (options: RenderSuggestionsContainerParams) => {
     const { containerProps, children } = options;
-  
+
     return (
       <Paper {...containerProps} elevation={2}>{children}</Paper>
     );
@@ -116,7 +116,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     const { newValue } = params;
     if (is.current) setValue(newValue);
   };
-    
+
   const shouldRenderSuggestions = (value: string): boolean => {
     const trimmedValue: string = value.trim();
     return trimmedValue && searchBy.key === 'ISBN_13' ? trimmedValue.length === 13 : trimmedValue.length > 1;
@@ -141,7 +141,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     const searchText: string = value.trim();
     const searchTextType: string | number = searchBy.key === 'ISBN_13' ? Number(searchText) || 0 : searchText;
     // searchBy.key === 'ISBN_13' ? Number(searchText) || 0 : typeof searchText === 'object' ? String(Object.keys(String(searchText).split('.').join(''))[0]) : String(searchText);
-    
+
     const emptyBook: SuggestionModel = {
       ISBN_13: searchBy.key === 'ISBN_13' ? Number(searchText) : 0,
       ISBN_10: 0,
@@ -149,9 +149,9 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
         createdBy: user?.displayName || '',
         createdByUid: user?.uid || '',
         created_num: Date.now(),
-        edit: true, 
-        lastEditBy: '', 
-        lastEditByUid: '', 
+        edit: true,
+        lastEditBy: '',
+        lastEditByUid: '',
         lastEdit_num: 0,
       },
       authors: searchBy.key === 'author' ? { searchTextType: true } : {},
@@ -191,7 +191,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     ); */
 
     if (!value) return;
-    
+
     timer && clearTimeout(timer);
 
     timer = window.setTimeout(() => {
@@ -199,7 +199,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
 
       if (newBook) {
         const searchParams: SearchParamsModel = {
-          q: searchText, 
+          q: searchText,
           [searchBy.type]: searchTextType
         };
         // console.log(searchParams);
@@ -253,9 +253,9 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
                   createdBy: user?.displayName || '',
                   createdByUid: user?.uid || '',
                   created_num: Date.now(),
-                  edit: true, 
-                  lastEditBy: '', 
-                  lastEditByUid: '', 
+                  edit: true,
+                  lastEditBy: '',
+                  lastEditByUid: '',
                   lastEdit_num: 0,
                 },
                 authors: normalizeAuthors(b.authors),
@@ -297,7 +297,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
           case 'ISBN_13':
             queryRef = booksRef.where(searchBy.where, '==', searchTextType); break;
           case 'author':
-            queryRef = booksRef.where(`${searchBy.where}.${capitalizeInitials(String(searchTextType).toLowerCase())}`, '==', true); 
+            queryRef = booksRef.where(`${searchBy.where}.${capitalizeInitials(String(searchTextType).toLowerCase())}`, '==', true);
             optionLabel = String(searchBy.where); break;
           case 'publisher':
             queryRef = booksRef.where(searchBy.where, '>=', capitalizeInitials(String(searchTextType).toLowerCase())); break;
@@ -326,7 +326,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
 
   const onSuggestionsFetchRequested = ({ value }: SuggestionsFetchRequestedParams): void => fetchOptions(value);
 
-  const renderSuggestion = (b: SuggestionModel, { query, isHighlighted }: RenderSuggestionParams) => { 
+  const renderSuggestion = (b: SuggestionModel, { query, isHighlighted }: RenderSuggestionParams) => {
     if (b.value) return b.value;
     const label: string | number = typeof b.label === 'object' ? String(Object.keys(b.label)[0]) : b.label;
     // console.log(b.label);
@@ -338,7 +338,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     ) : (
       <span key={String(index)}>{part.text}</span>
     ));
-  
+
     return (
       <MenuItem key={b.bid} className={classnames('menuitem-book', match(String(b.label), query))} selected={isHighlighted} component='div'>
         <div className='primaryText'>
@@ -373,10 +373,10 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
       onBookSelect(suggestion);
     } else console.warn('Suggestion not found');
   };
-  
+
   const options = searchByOptions.map((option: SearchByModel) => (
-    <MenuItem 
-      key={option.type} 
+    <MenuItem
+      key={option.type}
       value={option.type} // CHECK
       selected={option.type === searchBy.type}
       onClick={() => onClickSearchBy(option)}>
@@ -403,7 +403,7 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     )
   }; // CHECK
 
-  if (redirectToReferrer) return <Redirect to={redirectToReferrer} />;
+  if (redirectToReferrer) return <Navigate to={redirectToReferrer} />;
 
   return (
     <div className='container sm search-book-container'>
@@ -433,10 +433,10 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
         )}
 
         <ThemeProvider theme={defaultTheme}>
-          <Menu 
-            className='dropdown-menu' 
-            anchorEl={searchByAnchorEl} 
-            open={Boolean(searchByAnchorEl)} 
+          <Menu
+            className='dropdown-menu'
+            anchorEl={searchByAnchorEl}
+            open={Boolean(searchByAnchorEl)}
             onClose={onCloseSearchByMenu}>
             {options}
           </Menu>
@@ -445,5 +445,5 @@ const SearchBookForm: FC<SearchBookFormProps> = ({
     </div>
   );
 };
- 
+
 export default SearchBookForm;

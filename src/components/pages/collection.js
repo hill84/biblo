@@ -6,11 +6,10 @@ import classnames from 'classnames';
 import { lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { collectionFollowersRef, collectionRef, collectionsRef } from '../../config/firebase';
 import icon from '../../config/icons';
 import { genres } from '../../config/lists';
-import { historyType, locationType, matchType } from '../../config/proptypes';
 import { screenSize as _screenSize, app, denormURL, handleFirestoreError, isScrollable, normURL, normalizeString, truncateString } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
@@ -20,7 +19,7 @@ import Bubbles from './bubbles';
 
 const NoMatch = lazy(() => import('../noMatch'));
 
-const Collection = ({ history, location, match }) => {
+const Collection = () => {
   const { isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
   const [collection, setCollection] = useState(null);
@@ -38,11 +37,13 @@ const Collection = ({ history, location, match }) => {
 
   const is = useRef(true);
 
-  const { cid } = match.params;
+  const { cid } = useParams();
 
   const uid = user?.uid;
 
   const fetch = useCallback(() => {
+    if (!cid) return;
+
     let unsubCollectionFollowersFetch;
 
     collectionRef(denormURL(cid)).get().then(snap => {
@@ -112,18 +113,17 @@ const Collection = ({ history, location, match }) => {
   }, []);
 
   const onFollow = useCallback(() => {
-    if (uid) {
-      if (follow) {
-        collectionFollowersRef(denormURL(cid)).doc(uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-      } else {
-        collectionFollowersRef(denormURL(cid)).doc(uid).set({
-          cid: denormURL(cid),
-          uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          timestamp: Date.now()
-        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-      }
+    if (!cid || !uid) return;
+    if (follow) {
+      collectionFollowersRef(denormURL(cid)).doc(uid).delete().catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+    } else {
+      collectionFollowersRef(denormURL(cid)).doc(uid).set({
+        cid: denormURL(cid),
+        uid,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        timestamp: Date.now()
+      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
     }
   }, [cid, follow, openSnackbar, uid, user]);
 
@@ -165,8 +165,8 @@ const Collection = ({ history, location, match }) => {
     </MenuItem>
   ));
 
-  if (!loading && !collection) return (
-    <NoMatch title='Collezione non trovata' history={history} location={location} />
+  if (!cid || (!loading && !collection)) return (
+    <NoMatch title='Collezione non trovata' />
   );
 
   return (
@@ -180,23 +180,23 @@ const Collection = ({ history, location, match }) => {
         <div className='col'>
           <div className='card dark collection-profile'>
             <h2>{denormURL(cid)}</h2>
-            {loading ? <div className='skltn rows' /> : 
+            {loading ? <div className='skltn rows' /> :
               <>
                 <div className='info-row description'>
                   <MinifiableText text={collection.description} maxChars={500} />
                 </div>
                 {user && isEditor && (
                   <div className='info-row'>
-                    <button 
-                      type='button' 
-                      className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')} 
-                      onClick={onFollow} 
+                    <button
+                      type='button'
+                      className={classnames('btn', 'sm', follow ? 'success error-on-hover' : 'primary')}
+                      onClick={onFollow}
                       disabled={!user || !isEditor}>
                       {follow ? (
                         <>
                           <span className='hide-on-hover'>{icon.check} {t('ACTION_FOLLOW')}</span>
                           <span className='show-on-hover'>{t('ACTION_STOP_FOLLOWING')}</span>
-                        </> 
+                        </>
                       ) : (
                         <span>{icon.plus} {t('ACTION_FOLLOW')}</span>
                       )}
@@ -209,7 +209,7 @@ const Collection = ({ history, location, match }) => {
               </>
             }
           </div>
-          
+
           <div className='card dark text-left'>
             <div className='head nav' role='navigation'>
               <span className='counter last title'>Altre collezioni</span>
@@ -224,16 +224,16 @@ const Collection = ({ history, location, match }) => {
                   </button>
                 </Tooltip>
                 }
-                <button 
+                <button
                   type='button'
                   className='btn sm flat rounded counter'
                   onClick={onOpenFilterMenu}>
                   {filterByName || 'Filtra per genere'}
                 </button>
-                <Menu 
+                <Menu
                   className='dropdown-menu'
-                  anchorEl={filterMenuAnchorEl} 
-                  open={Boolean(filterMenuAnchorEl)} 
+                  anchorEl={filterMenuAnchorEl}
+                  open={Boolean(filterMenuAnchorEl)}
                   onClose={onCloseFilterMenu}>
                   {filterByOptions}
                 </Menu>
@@ -249,10 +249,10 @@ const Collection = ({ history, location, match }) => {
             </div>
             <div className={classnames('badges', 'table', isMini ? 'scrollable' : 'fullview', { 'stacked': filterByName })}>
               <div className='content'>
-                {loadingCollections ? <div className='skltn rows' /> : collections ? collections.map(collection => 
-                  <Link 
-                    to={`/collection/${normURL(collection.title)}`} 
-                    key={normalizeString(collection.title)} 
+                {loadingCollections ? <div className='skltn rows' /> : collections ? collections.map(collection =>
+                  <Link
+                    to={`/collection/${normURL(collection.title)}`}
+                    key={normalizeString(collection.title)}
                     className='badge'>
                     {collection.title}{filterByName && <span className='pull-right'>{t('BOOKS_COUNT', { count: collection.books_num })}</span>}
                   </Link>
@@ -282,16 +282,4 @@ const Collection = ({ history, location, match }) => {
   );
 };
 
-Collection.propTypes = {
-  history: historyType,
-  location: locationType,
-  match: matchType
-};
-
-Collection.defaultProps = {
-  history: null,
-  location: null,
-  match: null
-};
- 
 export default Collection;

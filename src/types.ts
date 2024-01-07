@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import type { RouteComponentProps, RouteProps } from 'react-router';
 
 export interface Language {
   id: string;
@@ -381,10 +380,6 @@ export type EventTargetElement = EventTarget & Element;
 export type FollowersModel = Record<string, FollowerModel>;
 
 export type FollowingsModel = Record<string, FollowingModel>;
-
-export type HistoryType = RouteComponentProps['history'];
-
-export type LocationType = RouteProps['location']; // ALSO: path, exact, strict, component, render, children, sensitive
 
 export type StatsModel = Record<StatsType, number>;
 
