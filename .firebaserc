@@ -2,5 +2,22 @@
   "projects": {
     "default": "delibris-4fa3b",
     "staging": "delibris-staging"
-  }
+  },
+  "targets": {
+    "delibris-4fa3b": {
+      "hosting": {
+        "delibris": [
+          "delibris-4fa3b"
+        ]
+      }
+    },
+    "delibris-staging": {
+      "hosting": {
+        "delibris": [
+          "delibris-staging"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
