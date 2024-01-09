@@ -76,10 +76,6 @@ const Book: FC<BookProps> = ({
 
   const { bid } = useParams<keyof MatchParams>();
 
-  useEffect(() => {
-    console.log({ bid });
-  }, [bid]);
-
   const initialSeo = useMemo(() => {
     if (!_book) return null;
     return {

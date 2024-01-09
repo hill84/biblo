@@ -1,120 +1,136 @@
-import { Tooltip } from '@material-ui/core';
+import data from '@emoji-mart/data';
+import emojiMartLocaleIt from '@emoji-mart/data/i18n/it.json';
+import Picker from '@emoji-mart/react';
+import type { FirestoreError } from '@firebase/firestore-types';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow, Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Grow from '@material-ui/core/Grow';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import type { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
-import { Picker } from 'emoji-mart';
-import 'emoji-mart/css/emoji-mart.css';
+import type { ChangeEvent, FC, MouseEvent, ReactElement, Ref } from 'react';
 import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { reviewerRef, userBookRef } from '../../config/firebase';
 import icon from '../../config/icons';
-import { stringType, userBookType } from '../../config/proptypes';
 import { abbrNum, checkBadWords, extractUrls, getInitials, handleFirestoreError, join, timeSince } from '../../config/shared';
 import SnackbarContext from '../../context/snackbarContext';
 import UserContext from '../../context/userContext';
 import '../../css/emojiMart.css';
 import '../../css/reviewForm.css';
-import emojiMartLocale from '../../locales/emojiMart';
+import { fallbackLanguage, getLocale } from '../../i18n';
+import type { ReviewModel, UserBookModel } from '../../types';
 import Overlay from '../overlay';
 import Rating from '../rating';
 
-const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} />);
+const Transition = forwardRef(function Transition(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: TransitionProps & { children?: ReactElement<any, any> },
+  ref: Ref<unknown>,
+) {
+  return <Grow ref={ref} {...props} />;
+});
 
-Transition.displayName = 'Transition';
+interface ErrorsModel {
+  text?: string;
+  title?: string;
+}
 
-const EmojiPickerStyle = {
-  position: 'absolute',
-  top: '100%',
-  marginTop: 4,
-  right: 0,
-  zIndex: 1,
-};
+interface LeftCharsState {
+  text: string | null;
+  title: string | null;
+}
 
 const max = {
   chars: {
     text: 3000,
-    title: 255
-  }
-};
+    title: 255,
+  },
+} as const;
 
 const min = {
   chars: {
-    text: 25
-  }
-};
+    text: 25,
+  },
+} as const;
 
 const formControlStyle = { zIndex: 1, };
 
-const ReviewForm = ({ bid, userBook }) => {
+const buildInitialReview = (authid: string, bid: string): ReviewModel => ({
+  bid,
+  bookTitle: '',
+  comments_num: 0,
+  covers: [],
+  coverURL: [],
+  created_num: 0,
+  createdByUid: authid,
+  displayName: '',
+  lastEdit_num: Date.now(),
+  lastEditByUid: authid,
+  likes: [],
+  photoURL: '',
+  rating_num: 0,
+  text: '',
+  title: ''
+});
+
+interface ReviewFormProps {
+  userBook: UserBookModel;
+  bid: string;
+}
+
+const ReviewForm: FC<ReviewFormProps> = ({
+  bid,
+  userBook,
+}: ReviewFormProps) => {
   const { user } = useContext(UserContext);
   const { closeSnackbar, openSnackbar, snackbarIsOpen } = useContext(SnackbarContext);
-  const authid = useMemo(() => user?.uid, [user]);
-  const initialReviewState = useMemo(() => ({
-    bid,
-    bookTitle: '',
-    comments_num: 0,
-    covers: [],
-    createdByUid: authid,
-    created_num: 0,
-    lastEditByUid: authid,
-    lastEdit_num: Date.now(),
-    displayName: '',
-    likes: [],
-    photoURL: '',
-    rating_num: 0,
-    text: '',
-    title: ''
-  }), [authid, bid]);
-  const [review, setReview] = useState(initialReviewState);
-  const [leftChars, setLeftChars] = useState({ text: null, title: null });
-  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
-  const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState(false);
-  const [changes, setChanges] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isEditing, setIsEditing] = useState(false);
+
+  const locale: Locale | undefined = getLocale();
+
+  const authid: string = user?.uid || '';
+
+  const initialReview = useMemo((): ReviewModel => buildInitialReview(authid, bid), [authid, bid]);
+
+  const [review, setReview] = useState<ReviewModel>(initialReview);
+  const [leftChars, setLeftChars] = useState<LeftCharsState>({ text: null, title: null });
+  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState<boolean>(false);
+  const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState<boolean>(false);
+  const [changes, setChanges] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<ErrorsModel>({});
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const { t } = useTranslation(['form', 'common']);
 
-  const is = useRef(true);
+  const is = useRef<boolean>(true);
 
-  const fetchReview = useCallback(() => {
-    reviewerRef(bid, authid).onSnapshot(snap => {
-      if (is.current) setLoading(true);
-
-      if (snap.exists) {
-        if (is.current) {
-          setReview({ ...initialReviewState, ...snap.data() });
-        }
-      } else if (is.current) {
-        setReview(initialReviewState);
-      }
+  const fetchReview = useCallback((): void => {
+    reviewerRef(bid, authid).onSnapshot((snap: firebase.firestore.DocumentSnapshot): void => {
       if (is.current) {
+        setLoading(true);
+
+        const initialReview: ReviewModel = buildInitialReview(authid, bid);
+
+        if (snap.exists) {
+          setReview({ ...initialReview, ...snap.data() });
+        } else {
+          setReview(initialReview);
+        }
         setLoading(false);
         setChanges(false);
       }
-    }, err => console.warn(err));
-  }, [authid, bid, initialReviewState]);
+    }, (err: FirestoreError): void => console.warn(err));
+  }, [authid, bid]);
 
   useEffect(() => {
     fetchReview();
   }, [fetchReview]);
-
-  useEffect(() => () => {
-    is.current = false;
-  }, []);
 
   useEffect(() => {
     if (isEditing && !user?.photoURL) {
@@ -122,15 +138,19 @@ const ReviewForm = ({ bid, userBook }) => {
       const action = <Link to='/profile' type='button' className='btn sm flat' onClick={closeSnackbar}>Aggiungila</Link>;
       openSnackbar(msg, 'info', 4000, action);
     }
-  }, [closeSnackbar, isEditing, openSnackbar, user]);
+  }, [closeSnackbar, isEditing, openSnackbar, user?.photoURL]);
 
-  const onEditing = () => setIsEditing(true);
+  useEffect(() => () => {
+    is.current = false;
+  }, []);
 
-  const validate = useCallback(review => {
+  const onEditing = (): void => setIsEditing(true);
+
+  const validate = (review: ReviewModel): ErrorsModel => {
     const { text, title } = review;
-    const errors = {};
-    const urlMatches = extractUrls(text);
-    const badWords = checkBadWords(text);
+    const errors: ErrorsModel = {};
+    const urlMatches: RegExpMatchArray | null = extractUrls(text);
+    const badWords: boolean = checkBadWords(text);
 
     if (!text) {
       errors.text = t('ERROR_REQUIRED_FIELD');
@@ -149,119 +169,114 @@ const ReviewForm = ({ bid, userBook }) => {
     }
 
     return errors;
-  }, [t]);
+  };
 
-  const onSubmit = useCallback(e => {
+  const onSubmit = (e: MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
 
-    if (changes) {
-      const errors = validate(review);
-      if (is.current) setErrors(errors);
+    if (!changes) return;
+    const errors: ErrorsModel = validate(review);
+    if (is.current) setErrors(errors);
 
-      if (!Object.values(errors).some(Boolean)) {
-        if (is.current) setLoading(true);
+    if (!Object.values(errors).some(Boolean)) {
+      if (is.current) setLoading(true);
 
-        if (bid && user) {
-          // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-          const { comments_num, flag, likes, ...userBookReview } = review;
-          const updatedReview = {
-            bookTitle: userBook.title,
-            covers: userBook.covers,
-            created_num: review.created_num || Date.now(),
-            displayName: user.displayName,
-            lastEditByUid: authid,
-            lastEdit_num: Date.now(),
-            photoURL: user.photoURL,
-            rating_num: userBook.rating_num
-          };
+      if (bid && user) {
+        // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+        const { comments_num, flag, likes, ...userBookReview } = review;
+        const updatedReview: Partial<ReviewModel> = {
+          bookTitle: userBook.title,
+          covers: userBook.covers,
+          created_num: review.created_num || Date.now(),
+          displayName: user.displayName,
+          lastEditByUid: authid,
+          lastEdit_num: Date.now(),
+          photoURL: user.photoURL,
+          rating_num: userBook.rating_num,
+        };
 
-          reviewerRef(bid, authid).set({
-            ...review,
+        reviewerRef(bid, authid).set({
+          ...review,
+          ...updatedReview
+        }).then((): void => {
+          openSnackbar('Recensione salvata', 'success');
+        }).catch((err: FirestoreError): void => {
+          openSnackbar(handleFirestoreError(err), 'error');
+        });
+
+        userBookRef(authid, bid).update({
+          review: {
+            ...userBookReview,
             ...updatedReview
-          }).then(() => {
-            openSnackbar('Recensione salvata', 'success');
-          }).catch(err => {
-            openSnackbar(handleFirestoreError(err), 'error');
-          });
-
-          userBookRef(authid, bid).update({
-            review: {
-              ...userBookReview,
-              ...updatedReview
-            }
-          }).catch(err => {
-            openSnackbar(handleFirestoreError(err), 'error');
-          }).finally(() => {
-            if (is.current) {
-              setChanges(false);
-              setErrors({});
-              setIsEditing(false);
-              setIsOpenEmojiPicker(false);
-              setLoading(false);
-              setLeftChars({ text: null, title: null });
-            }
-          });
-        } else console.warn('No bid or user');
-      }
+          }
+        }).catch((err: FirestoreError): void => {
+          openSnackbar(handleFirestoreError(err), 'error');
+        }).finally((): void => {
+          if (!is.current) return;
+          setChanges(false);
+          setErrors({});
+          setIsEditing(false);
+          setIsOpenEmojiPicker(false);
+          setLoading(false);
+          setLeftChars({ text: null, title: null });
+        });
+      } else console.warn('No bid or user');
     }
-  }, [authid, bid, changes, openSnackbar, review, user, userBook, validate]);
+  };
 
-  const onDeleteRequest = () => setIsOpenDeleteDialog(true);
+  const onDeleteRequest = (): void => setIsOpenDeleteDialog(true);
 
-  const onCloseDeleteDialog = () => setIsOpenDeleteDialog(false);
+  const onCloseDeleteDialog = (): void => setIsOpenDeleteDialog(false);
 
-  const onDelete = useCallback(() => {
+  const onDelete = (): void => {
     if (is.current) setIsOpenDeleteDialog(false);
     // DELETE USER REVIEW AND DECREMENT REVIEWS COUNTERS
     if (bid) {
-      reviewerRef(bid, authid).delete().then(() => {
+      reviewerRef(bid, authid).delete().then((): void => {
         // console.log('Book review deleted');
-        userBookRef(authid, bid).update({ review: {} }).then(() => {
+        userBookRef(authid, bid).update({ review: {} }).then((): void => {
           // console.log('User review deleted');
           openSnackbar(t('common:SUCCESS_DELETED_ITEM'), 'success');
-        }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
-      }).catch(err => openSnackbar(handleFirestoreError(err), 'error'));
+        }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
+      }).catch((err: FirestoreError): void => openSnackbar(handleFirestoreError(err), 'error'));
 
     } else console.warn('No bid');
-  }, [authid, bid, openSnackbar, t]);
+  };
 
-  const onExitEditing = useCallback(() => {
-    if (is.current) {
-      if (!review.created_num) {
-        setReview(initialReviewState);
-      }
-      setErrors({});
-      setIsEditing(false);
-      setIsOpenEmojiPicker(false);
-      setLeftChars({ text: null, title: null });
-    }
-  }, [initialReviewState, review.created_num]);
+  const onExitEditing = (): void => {
+    if (!is.current) return;
+    if (!review.created_num) setReview(initialReview);
+    setErrors({});
+    setIsEditing(false);
+    setIsOpenEmojiPicker(false);
+    setLeftChars({ text: null, title: null });
+  };
 
-  const onChangeMaxChars = e => {
+  const onChangeMaxChars = (e: ChangeEvent<HTMLInputElement>): void => {
     e.persist();
     const { name, value } = e.target;
 
-    if (is.current) {
-      if (snackbarIsOpen) closeSnackbar();
-      setReview({ ...review, [name]: value });
-      setErrors({ ...errors, [name]: null });
-      setLeftChars({ ...leftChars, [name]: max.chars[name] - value.length });
-      setIsOpenEmojiPicker(false);
-      setChanges(true);
-    }
+    if (!is.current) return;
+    if (snackbarIsOpen) closeSnackbar(e);
+    setReview({ ...review, [name]: value });
+    setErrors({ ...errors, [name]: null });
+    setLeftChars({ ...leftChars, [name]: max.chars[name as never] - value.length });
+    setIsOpenEmojiPicker(false);
+    setChanges(true);
   };
 
-  const toggleEmojiPicker = () => {
+  const toggleEmojiPicker = (): void => {
     if (is.current) setIsOpenEmojiPicker(!isOpenEmojiPicker);
   };
 
-  const onClick = () => {
+  const onClick = (): void => {
     if (isOpenEmojiPicker) setIsOpenEmojiPicker(false);
   };
 
-  const onMouseDown = e => e.preventDefault();
+  const onMouseDown = (e: MouseEvent<HTMLButtonElement>): void => e.preventDefault();
 
-  const addEmoji = emoji => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const addEmoji = (emoji: any): void => {
     setReview({ ...review, text: `${review.text}${emoji.native}` });
     setChanges(true);
   };
@@ -306,17 +321,25 @@ const ReviewForm = ({ bid, userBook }) => {
                   />
                   {isOpenEmojiPicker && (
                     <Picker
-                      color='rgb(var(--primaryClr))'
-                      style={EmojiPickerStyle}
-                      onSelect={addEmoji}
-                      i18n={emojiMartLocale}
-                      showPreview={false}
-                      showSkinTones={false}
+                      className='emoji-picker'
+                      data={data}
+                      emojiButtonColors={['rgb(var(--primaryClr))']}
+                      i18n={emojiMartLocaleIt}
+                      locale={locale?.code || fallbackLanguage.id}
+                      maxFrequentRows={0}
+                      onEmojiSelect={addEmoji}
+                      previewPosition='none'
                       theme='light'
                     />
                   )}
-                  {errors.text && <FormHelperText className='message error'>{errors.text}</FormHelperText>}
-                  {leftChars.text < 0 && <FormHelperText className='message warning'>{t('CHARACTERS_IN_EXCESS')}: {-leftChars.text}</FormHelperText>}
+                  {errors.text && (
+                    <FormHelperText className='message error'>{errors.text}</FormHelperText>
+                  )}
+                  {Number(leftChars.text) < 0 && (
+                    <FormHelperText className='message warning'>
+                      {t('CHARACTERS_IN_EXCESS')}: {-Number(leftChars.text)}
+                    </FormHelperText>
+                  )}
                 </FormControl>
               </div>
               <div className='form-group'>
@@ -340,7 +363,7 @@ const ReviewForm = ({ bid, userBook }) => {
                     </FormHelperText>
                   )}
                   {leftChars.title && (
-                    <FormHelperText className={classnames('message', leftChars.title < 0 ? 'warning' : 'neutral')}>
+                    <FormHelperText className={classnames('message', Number(leftChars.title) < 0 ? 'warning' : 'neutral')}>
                       {t('REMAINING_CHARACTERS')}: {leftChars.title}
                     </FormHelperText>
                   )}
@@ -442,15 +465,6 @@ const ReviewForm = ({ bid, userBook }) => {
       )}
     </>
   );
-};
-
-ReviewForm.propTypes = {
-  bid: stringType.isRequired,
-  userBook: userBookType
-};
-
-ReviewForm.defaultProps = {
-  userBook: null
 };
 
 export default ReviewForm;

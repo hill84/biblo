@@ -114,7 +114,7 @@ export interface ReviewModel {
   displayName: string;
   lastEdit_num: number;
   lastEditByUid: string;
-  flag: FlagModel;
+  flag?: FlagModel;
   likes: string[];
   photoURL: string;
   rating_num: number;

@@ -216,6 +216,14 @@
   --skltnClr: rgba(var(--skltn), .06);
 }
 
+em-emoji-picker {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  max-height: 268px;
+  z-index: 1;
+}
+
 /* MAIN STYLE */
 html {
   font-size: 16px;
