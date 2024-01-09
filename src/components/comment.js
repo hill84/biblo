@@ -1,10 +1,9 @@
 import { Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import Grow from '@material-ui/core/Grow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import classnames from 'classnames';
-import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { notesRef, reviewerCommenterRef } from '../config/firebase';
@@ -14,10 +13,6 @@ import { abbrNum, getInitials, handleFirestoreError, normURL, timeSince, truncat
 import SnackbarContext from '../context/snackbarContext';
 import UserContext from '../context/userContext';
 import FlagDialog from './flagDialog';
-
-const Transition = forwardRef((props, ref) => <Grow {...props} ref={ref} />);
-
-Transition.displayName = 'Transition';
 
 const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
@@ -39,7 +34,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
 
   const onThumbChange = useCallback(() => {
     let { likes } = comment;
-    
+
     if (user) {
       if (like) {
         likes = likes.filter(e => e !== user.uid);
@@ -59,7 +54,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
         const isLikerReviewer = user.uid === rid;
         const noteMsg = `<a href="${likerURL}">${likerDisplayName}</a> ha messo mi piace alla tua risposta alla ${isLikerReviewer ? 'sua recensione' : `recensione di <a href="${reviewerURL}">${reviewer}</a>`} del libro <a href="${bookURL}">${bookTitle}</a>`;
         const newNoteRef = notesRef(comment.createdByUid).doc();
-        
+
         newNoteRef.set({
           nid: newNoteRef.id,
           text: noteMsg,
@@ -92,7 +87,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
         flaggedByUid: user.uid,
         flagged_num: Date.now()
       };
-  
+
       if (bid && comment && rid) {
         if (is.current) setFlagLoading(true);
         reviewerCommenterRef(bid, rid, comment.createdByUid).update({ flag }).then(() => {
@@ -136,7 +131,7 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
   const isOwner = useMemo(() => comment.createdByUid === (user?.uid), [comment, user]);
   const isReviewer = useMemo(() => comment.createdByUid === rid, [comment, rid]);
   const flaggedByUser = useMemo(() => (comment.flag?.flaggedByUid) === (user?.uid), [comment, user]);
-  
+
   return (
     <>
       <div className={classnames(isOwner ? 'own comment' : 'comment', { [`flagged ${comment.flag?.value}`]: comment.flag })} id={`${rid}-${comment.createdByUid}`} ref={is}>
@@ -181,30 +176,30 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
                   <div className="counter">
                     <Tooltip title={t(like ? 'ACTION_DISLIKE' : 'ACTION_LIKE')}>
                       <span>
-                        <button 
+                        <button
                           type="button"
-                          className={classnames('btn', 'flat', 'thumb', 'up', like)} 
-                          disabled={!isEditor || isOwner} 
+                          className={classnames('btn', 'flat', 'thumb', 'up', like)}
+                          disabled={!isEditor || isOwner}
                           onClick={onThumbChange}>
                           {icon.thumbUp} {abbrNum(likes_num)}
                         </button>
                       </span>
                     </Tooltip>
                   </div>
-                  {/* 
+                  {/*
                     <div className="counter">
                       <Tooltip title={dislike ? 'Annulla non mi piace' : 'Non mi piace'}>
                         <span>
-                          <button 
+                          <button
                             type="button"
-                            className={classnames('btn', 'flat', 'thumb', 'down', dislike)} 
-                            disabled={!isEditor || isOwner} 
+                            className={classnames('btn', 'flat', 'thumb', 'down', dislike)}
+                            disabled={!isEditor || isOwner}
                             onClick={onThumbChange}>
                             {icon.thumbDown} {abbrNum(dislikes_num)}
                           </button>
                         </span>
                       </Tooltip>
-                    </div> 
+                    </div>
                   */}
                   {isEditor && !isOwner && isAdmin && flaggedByUser && (
                     <div className="counter">
@@ -226,12 +221,11 @@ const Comment = ({ bid, comment, onEdit, reviewerDisplayName, rid }) => {
       </div>
 
       {isOpenFlagDialog && (
-        <FlagDialog 
+        <FlagDialog
           loading={flagLoading}
-          open={isOpenFlagDialog} 
-          onClose={onCloseFlagDialog} 
-          onFlag={onFlag} 
-          TransitionComponent={Transition} 
+          open={isOpenFlagDialog}
+          onClose={onCloseFlagDialog}
+          onFlag={onFlag}
           value={flaggedByUser ? comment.flag?.value : ''}
         />
       )}

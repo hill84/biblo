@@ -1,13 +1,11 @@
 import type { FirestoreError } from '@firebase/firestore-types';
 import Avatar from '@material-ui/core/Avatar';
-import Grow from '@material-ui/core/Grow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import type { TransitionProps } from '@material-ui/core/transitions';
 import classnames from 'classnames';
 import { isToday } from 'date-fns';
-import type { FC, MouseEvent, ReactElement, Ref } from 'react';
-import { forwardRef, useCallback, useContext, useMemo, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { groupDiscussionRef } from '../config/firebase';
@@ -20,14 +18,6 @@ import type { DiscussionModel, FlagModel } from '../types';
 import FlagDialog from './flagDialog';
 import MinifiableText from './minifiableText';
 
-const Transition = forwardRef(function Transition(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  props: TransitionProps & { children?: ReactElement<any, any> },
-  ref: Ref<unknown>,
-) {
-  return <Grow ref={ref} {...props} />;
-});
-
 interface DiscussionProps {
   discussion: DiscussionModel;
   gid?: string;
@@ -39,9 +29,9 @@ const Discussion: FC<DiscussionProps> = ({
 }: DiscussionProps) => {
   const { isAdmin, isEditor, user } = useContext(UserContext);
   const { openSnackbar } = useContext(SnackbarContext);
-  const { 
-    isOwner: isGroupOwner, 
-    isModerator: isGroupModerator, 
+  const {
+    isOwner: isGroupOwner,
+    isModerator: isGroupModerator,
     moderatorsList,
     ownerUid: groupOwner
   } = useContext(GroupContext);
@@ -62,7 +52,7 @@ const Discussion: FC<DiscussionProps> = ({
         flaggedByUid: user.uid,
         flagged_num: Date.now()
       };
-  
+
       setFlagLoading(true);
       groupDiscussionRef(gid, discussion.did).update({ flag }).then((): void => {
         setFlagLoading(false);
@@ -96,7 +86,7 @@ const Discussion: FC<DiscussionProps> = ({
 
   const isOwner = useMemo((): boolean => discussion.createdByUid === user?.uid, [discussion.createdByUid, user]);
   const flaggedByUser = useMemo((): boolean => (discussion.flag && discussion.flag.flaggedByUid) === user?.uid, [discussion.flag, user]);
-  
+
   return (
     <>
       <div className={classnames(isOwner ? 'own discussion' : 'discussion', { [`flagged ${discussion.flag?.value}`]: discussion.flag})} id={discussion.did}>
@@ -152,12 +142,11 @@ const Discussion: FC<DiscussionProps> = ({
       </div>
 
       {isOpenFlagDialog && (
-        <FlagDialog 
+        <FlagDialog
           loading={flagLoading}
           open={isOpenFlagDialog}
           onClose={onCloseFlagDialog}
           onFlag={onFlag}
-          TransitionComponent={Transition}
           value={flaggedByUser ? discussion.flag?.value : ''}
         />
       )}

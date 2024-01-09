@@ -1,3 +1,4 @@
+import { Grow } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,17 +9,23 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import type { TransitionProps } from '@material-ui/core/transitions';
-import type { ChangeEvent, ComponentType, FC, ReactElement } from 'react';
-import { useState } from 'react';
+import type { ChangeEvent, FC, ReactElement, Ref } from 'react';
+import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const Transition = forwardRef(function Transition(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: TransitionProps & { children?: ReactElement<any, any> },
+  ref: Ref<unknown>,
+) {
+  return <Grow ref={ref} {...props} />;
+});
 
 interface FlagDialogProps {
   loading?: boolean;
   onClose: () => void;
   onFlag: (value: string) => void;
   open: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TransitionComponent?: ComponentType<TransitionProps & { children?: ReactElement<any, any> }>;
   value?: string;
 }
 
@@ -27,22 +34,21 @@ const FlagDialog: FC<FlagDialogProps> = ({
   onClose,
   onFlag: _onFlag,
   open,
-  TransitionComponent,
   value: _value
 }: FlagDialogProps) => {
   const [value, setValue] = useState(_value);
 
   const { t } = useTranslation(['common']);
-  
+
   const onChange = (e: ChangeEvent<HTMLInputElement>): void => setValue(e.target.value);
   const onFlag = (): void => _onFlag(value as string);
 
   return (
     <Dialog
       open={open}
-      TransitionComponent={TransitionComponent}
       keepMounted
       onClose={onClose}
+      TransitionComponent={Transition}
       aria-labelledby='flag-dialog-title'>
       {loading && <div aria-hidden='true' className='loader'><CircularProgress /></div>}
       <DialogTitle id='flag-dialog-title'>
@@ -70,9 +76,9 @@ const FlagDialog: FC<FlagDialogProps> = ({
           {t('ACTION_CANCEL')}
         </button>
         {value && (
-          <button 
-            type='button' 
-            className='btn btn-footer primary' 
+          <button
+            type='button'
+            className='btn btn-footer primary'
             onClick={onFlag}>
             {t('ACTION_FLAG')}
           </button>

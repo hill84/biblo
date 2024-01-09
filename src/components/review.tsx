@@ -384,7 +384,6 @@ const Review: FC<ReviewProps> = ({
           open={isOpenFlagDialog}
           onClose={onCloseFlagDialog}
           onFlag={onFlag}
-          TransitionComponent={Transition}
           value={flaggedByUser ? review.flag?.value : ''}
         />
       )}
